@@ -1,68 +1,475 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>C&B System</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C&B System — Drilling HR Operating Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body{
-font-family: Arial;
-margin:40px;
-background:#f5f5f5;
-}
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --border: #1e2330;
+    --border-light: #262c3d;
+    --accent: #c9a96e;
+    --accent-dim: #8b6f3e;
+    --text-primary: #e8e2d6;
+    --text-secondary: #7a7f8e;
+    --text-muted: #454a58;
+    --glow: rgba(201, 169, 110, 0.12);
+  }
 
-h1{
-color:#333;
-}
+  html { scroll-behavior: smooth; }
 
-p{
-color:#666;
-}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-ul{
-line-height:2.2;
-}
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(201,169,110,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(201,169,110,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-a{
-text-decoration:none;
-color:#0066cc;
-font-weight:bold;
-}
+  /* Grid lines */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-a:hover{
-color:#000;
-}
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
 
+  /* ── HEADER ── */
+  header {
+    padding: 64px 0 56px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .header-left {}
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .eyebrow span {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.05;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header-meta {
+    text-align: right;
+  }
+
+  .meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid var(--border-light);
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+
+  .meta-badge .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #4caf75;
+    box-shadow: 0 0 6px #4caf75;
+  }
+
+  .meta-count {
+    font-size: 42px;
+    font-family: 'DM Serif Display', serif;
+    color: var(--text-muted);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .meta-count span { font-size: 14px; color: var(--text-secondary); display: block; margin-top: 4px; letter-spacing: 0; font-family: 'DM Sans', sans-serif; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 40px 0 28px;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-label p {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* ── MODULE GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .card {
+    position: relative;
+    background: var(--surface);
+    padding: 32px 28px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background 0.25s ease;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--glow);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .card:hover { background: #171a24; }
+  .card:hover::before { opacity: 1; }
+
+  .card:hover .card-arrow { transform: translate(3px, -3px); opacity: 1; }
+  .card:hover .card-num { color: var(--accent); }
+  .card:hover .bar { width: 100%; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .card-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    transition: color 0.25s;
+    font-family: 'DM Serif Display', serif;
+    font-size: 13px;
+  }
+
+  .card-arrow {
+    width: 18px; height: 18px;
+    opacity: 0.2;
+    transition: transform 0.25s, opacity 0.25s;
+    flex-shrink: 0;
+  }
+
+  .card-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    background: var(--bg);
+  }
+
+  .card-body { flex: 1; }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--text-primary);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  .card-desc {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .bar-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  .bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+    border-radius: 2px;
+    width: 0;
+    transition: width 0.4s ease;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0 48px;
+    margin-top: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+
+  footer p {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  .footer-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Stagger cards */
+  .card:nth-child(1) { animation: fadeUp 0.6s 0.35s ease both; }
+  .card:nth-child(2) { animation: fadeUp 0.6s 0.42s ease both; }
+  .card:nth-child(3) { animation: fadeUp 0.6s 0.49s ease both; }
+  .card:nth-child(4) { animation: fadeUp 0.6s 0.56s ease both; }
+  .card:nth-child(5) { animation: fadeUp 0.6s 0.63s ease both; }
+  .card:nth-child(6) { animation: fadeUp 0.6s 0.70s ease both; }
+  .card:nth-child(7) { animation: fadeUp 0.6s 0.77s ease both; }
+  .card:nth-child(8) { animation: fadeUp 0.6s 0.84s ease both; }
+
+  @media (max-width: 600px) {
+    .wrapper { padding: 0 20px; }
+    header { padding: 40px 0 36px; }
+    .header-meta { display: none; }
+    .grid { grid-template-columns: 1fr; }
+  }
 </style>
-
 </head>
-
 <body>
 
-<h1>Compensation & Benefits System</h1>
-<p>Drilling HR Operating Framework</p>
+<div class="wrapper">
 
-<ul>
+  <header>
+    <div class="header-left">
+      <div class="eyebrow">
+        <div class="eyebrow-dot"></div>
+        <span>Drilling HR Operating Framework</span>
+      </div>
+      <h1>Compensation<br>&amp; <em>Benefits</em> System</h1>
+    </div>
+    <div class="header-meta">
+      <div class="meta-badge"><span class="dot"></span> Active</div>
+      <div class="meta-count">08<span>Modules</span></div>
+    </div>
+  </header>
 
-<li><a href="1_cb_total_rewards.html">1. Total Rewards Framework</a></li>
+  <div class="section-label">
+    <p>System Modules</p>
+  </div>
 
-<li><a href="2_cb_job_evaluation.html">2. Job Evaluation & Role Grading</a></li>
+  <div class="grid">
 
-<li><a href="3_cb_salary_bands.html">3. Salary Band Management</a></li>
+    <a class="card" href="1_cb_total_rewards.html">
+      <div class="card-top">
+        <div class="card-num">01</div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </div>
+      <div class="card-icon">🏆</div>
+      <div class="card-body">
+        <div class="card-title">Total Rewards Framework</div>
+        <div class="card-desc">Strategic overview of the complete employee value proposition across all reward elements.</div>
+      </div>
+      <div class="bar-track"><div class="bar"></div></div>
+    </a>
 
-<li><a href="4_cb_merit_matrix.html">4. Merit & Increment Matrix</a></li>
+    <a class="card" href="2_cb_job_evaluation.html">
+      <div class="card-top">
+        <div class="card-num">02</div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </div>
+      <div class="card-icon">⚖️</div>
+      <div class="card-body">
+        <div class="card-title">Job Evaluation & Role Grading</div>
+        <div class="card-desc">Structured methodology for evaluating, classifying, and grading all roles within the organisation.</div>
+      </div>
+      <div class="bar-track"><div class="bar"></div></div>
+    </a>
 
-<li><a href="5_cb_benefits_allowances.html">5. Benefits & Allowances Register</a></li>
+    <a class="card" href="3_cb_salary_bands.html">
+      <div class="card-top">
+        <div class="card-num">03</div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </div>
+      <div class="card-icon">📊</div>
+      <div class="card-body">
+        <div class="card-title">Salary Band Management</div>
+        <div class="card-desc">Definition and governance of pay ranges, midpoints, and band structures across all grades.</div>
+      </div>
+      <div class="bar-track"><div class="bar"></div></div>
+    </a>
 
-<li><a href="6_cb_incentive_variable_pay.html">6. Incentive & Variable Pay Framework</a></li>
+    <a class="card" href="4_cb_merit_matrix.html">
+      <div class="card-top">
+        <div class="card-num">04</div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </div>
+      <div class="card-icon">📈</div>
+      <div class="card-body">
+        <div class="card-title">Merit & Increment Matrix</div>
+        <div class="card-desc">Performance-linked pay progression guidelines and increment decision-making matrices.</div>
+      </div>
+      <div class="bar-track"><div class="bar"></div></div>
+    </a>
 
-<li><a href="7_cb_trs_generator.html">7. Total Rewards Statement Generator</a></li>
+    <a class="card" href="5_cb_benefits_allowances.html">
+      <div class="card-top">
+        <div class="card-num">05</div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </div>
+      <div class="card-icon">🎁</div>
+      <div class="card-body">
+        <div class="card-title">Benefits & Allowances Register</div>
+        <div class="card-desc">Comprehensive catalogue of all employee benefits, entitlements, and allowance policies.</div>
+      </div>
+      <div class="bar-track"><div class="bar"></div></div>
+    </a>
 
-<li><a href="8_cb_analytics_dashboard.html">8. C&B Analytics Dashboard</a></li>
+    <a class="card" href="6_cb_incentive_variable_pay.html">
+      <div class="card-top">
+        <div class="card-num">06</div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </div>
+      <div class="card-icon">💡</div>
+      <div class="card-body">
+        <div class="card-title">Incentive & Variable Pay Framework</div>
+        <div class="card-desc">Short and long-term incentive structures, bonus schemes, and performance-based pay design.</div>
+      </div>
+      <div class="bar-track"><div class="bar"></div></div>
+    </a>
 
-</ul>
+    <a class="card" href="7_cb_trs_generator.html">
+      <div class="card-top">
+        <div class="card-num">07</div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </div>
+      <div class="card-icon">📄</div>
+      <div class="card-body">
+        <div class="card-title">Total Rewards Statement Generator</div>
+        <div class="card-desc">Automated generation of personalised total rewards statements for individual employees.</div>
+      </div>
+      <div class="bar-track"><div class="bar"></div></div>
+    </a>
+
+    <a class="card" href="8_cb_analytics_dashboard.html">
+      <div class="card-top">
+        <div class="card-num">08</div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </div>
+      <div class="card-icon">🔍</div>
+      <div class="card-body">
+        <div class="card-title">C&B Analytics Dashboard</div>
+        <div class="card-desc">Real-time compensation analytics, benchmarking insights, and workforce pay equity reporting.</div>
+      </div>
+      <div class="bar-track"><div class="bar"></div></div>
+    </a>
+
+  </div>
+
+  <footer>
+    <p>© 2025 Drilling HR Operating Framework. All rights reserved.</p>
+    <div class="footer-logo">C&amp;B System</div>
+  </footer>
+
+</div>
 
 </body>
-
 </html>
