@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decision Rights &amp; Governance Map — OD Tool 9</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3ef;--surface:#ffffff;--surface2:#f0ede7;--surface3:#e8e4dc;
+  --border:#ddd9d0;--border2:#ccc7bb;
+  --ink:#1c1a16;--ink2:#2e2c27;--ink3:#57534a;--ink4:#8a8478;--ink5:#b8b2a8;
+  --sienna:#9b3a1a;--sienna2:#b44420;--sienna3:#c44e28;
+  --sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.22);
+  --slate:#2c3e50;--slate-dim:rgba(44,62,80,0.07);--slate-border:rgba(44,62,80,0.2);
+  --gold:#8a6914;--gold-dim:rgba(138,105,20,0.07);--gold-border:rgba(138,105,20,0.22);
+  --green:#2d6a4f;--green-dim:rgba(45,106,79,0.07);--green-border:rgba(45,106,79,0.22);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--sienna3),var(--sienna),rgba(155,58,26,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sienna3);background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:21px;font-weight:700;color:#f5f0e8;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--sienna3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(155,58,26,0.15);border-color:rgba(155,58,26,0.35);color:#e8a07a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--sienna)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#e8a07a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--sienna);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:56px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--sienna)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--sienna);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-slate{background:var(--slate-dim);color:var(--slate);border:1px solid var(--slate-border)}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.sienna{background:var(--sienna-dim);border-color:var(--sienna);color:var(--ink2)}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--sienna);padding:16px 20px;margin:16px 0;background:var(--sienna-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px;color:#f5f0e8}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:0;flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--sienna);border-bottom-color:var(--sienna);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* RACI */
+.raci-r{background:rgba(155,58,26,0.12);color:var(--sienna);font-weight:700;border-radius:2px;padding:1px 7px;font-family:var(--fm);font-size:11px;display:inline-block}
+.raci-a{background:var(--slate);color:#fff;font-weight:700;border-radius:2px;padding:1px 7px;font-family:var(--fm);font-size:11px;display:inline-block}
+.raci-c{background:var(--gold-dim);color:var(--gold);font-weight:700;border-radius:2px;padding:1px 7px;font-family:var(--fm);font-size:11px;display:inline-block;border:1px solid var(--gold-border)}
+.raci-i{background:var(--surface2);color:var(--ink4);font-weight:600;border-radius:2px;padding:1px 7px;font-family:var(--fm);font-size:11px;display:inline-block;border:1px solid var(--border)}
+.raci-x{color:var(--ink5);font-family:var(--fm);font-size:11px}
+/* ACCORDION */
+.acc-item{border:1px solid var(--border);border-radius:4px;margin-bottom:8px;overflow:hidden}
+.acc-header{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--surface);transition:background .12s;font-weight:600;color:var(--ink);font-size:14px}
+.acc-header:hover{background:var(--surface2)}
+.acc-header.open{background:var(--sienna-dim);border-bottom:1px solid var(--sienna-border)}
+.acc-header .acc-icon{font-family:var(--fm);font-size:12px;color:var(--sienna);transition:transform .2s}
+.acc-header.open .acc-icon{transform:rotate(45deg)}
+.acc-body{display:none;padding:18px;background:var(--surface)}
+.acc-body.open{display:block}
+/* BUILDER */
+.dr-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px}
+.dr-step{margin-bottom:16px}
+.dr-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;display:block}
+.dr-opts{display:flex;gap:6px;flex-wrap:wrap}
+.dr-opt{padding:7px 16px;border-radius:2px;border:1px solid rgba(255,255,255,0.1);font-size:12.5px;color:rgba(255,255,255,0.45);cursor:pointer;transition:all .13s;font-family:var(--fb)}
+.dr-opt:hover{border-color:rgba(155,58,26,0.4);color:#e8a07a}
+.dr-opt.sel{background:rgba(155,58,26,0.15);border-color:var(--sienna);color:#e8a07a;font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-sienna{background:var(--sienna);color:#fff}
+.btn-sienna:hover{background:var(--sienna2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:var(--sienna3);color:#e8a07a}
+.dr-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">OD Tool 9 / 9</div>
+    <div class="sb-title">Decision Rights<br><em>&amp; Governance</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>What Are Decision Rights?</div>
+    <div class="nav-item" onclick="showPage('raci',this)"><span class="nav-num">02</span>The RACI Framework</div>
+    <div class="nav-item" onclick="showPage('map',this)"><span class="nav-num">03</span>Valentis Decision Rights Map</div>
+    <div class="nav-item" onclick="showPage('hr',this)"><span class="nav-num">04</span>HR Governance Model</div>
+    <div class="nav-item" onclick="showPage('gaps',this)"><span class="nav-num">05</span>Current Governance Gaps</div>
+    <div class="nav-item" onclick="showPage('forums',this)"><span class="nav-num">06</span>Governance Forums &amp; Cadence</div>
+    <div class="nav-item" onclick="showPage('builder',this)"><span class="nav-num">07</span>RACI Builder</div>
+    <div class="nav-item" onclick="showPage('embed',this)"><span class="nav-num">08</span>Embedding &amp; Maintaining</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Organisation Design &amp; Development — Complete</strong>
+      Tool 9 of 9 · Decision Rights &amp; Governance Map<br>
+      <span style="color:rgba(255,255,255,0.12)">Unclear who decides is the source of most coordination failures at Valentis.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">OD Tool 9 / 9 — Decision Rights &amp; Governance Map</div>
+    <h1 class="page-title">What Are<br><em>Decision Rights?</em></h1>
+    <p class="page-desc">Decision rights define who has the authority to make which decisions — and who must be consulted, informed, or involved. When decision rights are unclear, the organisation defaults to either over-escalation (every decision goes to the COO) or under-accountability (no one owns the outcome). Both are active problems at Valentis.</p>
+  </div>
+  <div class="pull-quote">
+    <p>"Most coordination failures at Valentis are not caused by bad intentions or weak people — they are caused by the absence of a shared understanding of who has the authority to decide what. Decision rights make the implicit explicit."</p>
+    <cite>OD Governance Principle</cite>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Decision Rights vs Accountability</div>
+      <div class="card-body" style="margin-bottom:12px">These two concepts are related but distinct. Confusing them is a common governance design error.</div>
+      <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr 1fr">
+          <div style="padding:14px 16px;border-right:1px solid var(--border)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px">Decision Rights</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The authority to make a decision — before the outcome is known. Includes the right to gather input, weigh options, and commit to a course of action. The decision-maker bears the process risk.</div>
+          </div>
+          <div style="padding:14px 16px;background:var(--sienna-dim)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Accountability</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The obligation to answer for the outcome — after the decision is made. Accountability can be assigned to someone different from the decision-maker. The accountable party bears the outcome risk.</div>
+          </div>
+        </div>
+        <div style="padding:12px 16px;background:var(--surface2);border-top:1px solid var(--border);font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <strong style="color:var(--ink2)">Valentis example:</strong> The G4 Senior Driller has the <em>accountability</em> for trainee conversion rate — but currently has no formal <em>decision rights</em> over trainee programme delivery, schedule, or development interventions. This mismatch produces ghost accountability: the outcome is expected but the authority to influence it is absent.
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why Decision Rights Break Down</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red);display:block;margin-bottom:2px">Never defined in the first place</strong>The organisation grew from a small team where everyone knew who decided what — informally. As it scaled, the informal norms were never formalised. Each person assumes someone else has the authority. At Valentis: who approves an emergency G3 hire? Who decides programme delivery schedule?</div>
+        <div style="padding:11px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--gold);display:block;margin-bottom:2px">Defined but not communicated</strong>Role profiles exist but do not specify authority limits. The G4 knows they are responsible for trainees — but not whether they can unilaterally adjust the training schedule or must consult the SM first.</div>
+        <div style="padding:11px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--gold);display:block;margin-bottom:2px">Structure changed but rights were not updated</strong>When the Ops Lead is created, the COO's decision rights over operational matters must shift to the Ops Lead — or the role has no real authority and the COO remains the de facto decision-maker for everything the SMs escalate.</div>
+        <div style="padding:11px 14px;background:var(--slate-dim);border:1px solid var(--slate-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--slate);display:block;margin-bottom:2px">Consistency risk across countries</strong>In a four-country operation, the same decision (e.g. local hire at G2) may be made by the SM in one country and escalated to the COO in another — because rights were communicated inconsistently at founding. Result: SMs with different effective authority levels, and a COO who receives inconsistent escalation volumes.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">The Four Governance Failures at Valentis — Diagnosed</div>
+    <table class="dtable">
+      <thead><tr><th>Governance failure</th><th>How it shows up</th><th>Root cause</th><th>Fix required</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--sienna)">COO over-escalation</td><td>COO involved in operational decisions that SMs should own. Indonesia SM escalates routine programme decisions. COO cannot distinguish urgent from non-urgent because no escalation threshold is defined.</td><td>No formal authority boundary between COO and SM. SMs default to escalation because the downside of making an unintended autonomous decision is higher than the cost of asking.</td><td>RACI for operational decisions. Explicit escalation thresholds (what requires COO approval vs SM authority).</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Group HR vs SM authority conflict</td><td>Indonesia SM applies HR framework inconsistently. Compliance decisions (terminations, contract changes) vary by country. HRBP has no clear authority to enforce standards across countries.</td><td>Group HR authority is positional (functional) but not formally defined. SMs treat HR guidance as advisory, not mandatory in some domains.</td><td>HR governance model defining mandatory vs advisory domains. COO endorsement of Group HR authority in compliance and policy matters.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">G4 decision paralysis</td><td>G4 drillers manage tasks, not trainees. Trainee programme issues are escalated to SM rather than resolved at G4 level. Month-3 attrition goes unaddressed because no G4 feels authorised to act.</td><td>G4 role profile specifies accountability but not decision rights. G4 does not know whether they can modify a trainee's programme without SM approval.</td><td>G4 role profile to include specific decision rights: what G4 can decide alone, what requires SM consultation, what requires SM approval.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Ops Lead authority ambiguity</td><td>Not yet active — but will emerge immediately when the Ops Lead role is created if authority boundaries are not pre-defined. SMs will continue escalating to COO. Ops Lead will have title but no real authority.</td><td>Structural decision rights not designed before role creation. The role is announced before the governance model is updated.</td><td>COO explicitly communicates Ops Lead decision rights to all SMs before hire starts. RACI updated to reflect new structure before the hire is in post.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="page-raci" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — The RACI Framework</div>
+    <h1 class="page-title">The RACI<br><em>Framework</em></h1>
+    <p class="page-desc">RACI is the standard decision rights mapping tool. Used correctly, it makes authority, accountability, input, and information flow explicit for every decision that matters. Used incorrectly, it becomes a bureaucratic exercise that produces a spreadsheet nobody reads.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">RACI — The Four Roles</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-top:8px">
+      <div style="padding:16px 18px;background:rgba(155,58,26,0.08);border:2px solid var(--sienna-border);border-radius:4px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span class="raci-r">R</span>
+          <div style="font-weight:700;color:var(--sienna);font-size:14px">Responsible</div>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The person who <strong>does the work</strong> — executes the decision, completes the task, or produces the output. There can be more than one R, but multiple Rs without clear coordination often produce the same confusion as no R.</div>
+        <div style="font-size:12px;color:var(--sienna);font-family:var(--fm)">Valentis: G4 driller who conducts the month-3 check-in conversation</div>
+      </div>
+      <div style="padding:16px 18px;background:var(--slate-dim);border:2px solid var(--slate-border);border-radius:4px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span class="raci-a">A</span>
+          <div style="font-weight:700;color:var(--slate);font-size:14px">Accountable</div>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The person who <strong>owns the outcome</strong> — the single named individual who answers for whether the task was done correctly and on time. There must be exactly one A per decision. If there are two, there is effectively none.</div>
+        <div style="font-size:12px;color:var(--slate);font-family:var(--fm)">Valentis: Site Manager — accountable for trainee conversion rate in their country</div>
+      </div>
+      <div style="padding:16px 18px;background:var(--gold-dim);border:2px solid var(--gold-border);border-radius:4px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span class="raci-c">C</span>
+          <div style="font-weight:700;color:var(--gold);font-size:14px">Consulted</div>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">People whose <strong>input is sought before the decision</strong> is made. Two-way communication. The decision-maker is not obligated to follow their input — but is obligated to seek it. Too many Cs slow decisions.</div>
+        <div style="font-size:12px;color:var(--gold);font-family:var(--fm)">Valentis: Group HR consulted on any G1–G4 termination before SM decides</div>
+      </div>
+      <div style="padding:16px 18px;background:var(--surface2);border:2px solid var(--border);border-radius:4px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span class="raci-i">I</span>
+          <div style="font-weight:700;color:var(--ink3);font-size:14px">Informed</div>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">People who <strong>receive information after</strong> the decision is made. One-way communication. No input required. If someone who is I frequently provides unsolicited input, either they should be C — or they have a boundary management issue.</div>
+        <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Valentis: COO informed of all G1–G3 hires made by SM within budget authority</div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">RACI Design Rules</div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Rule 1 — Exactly one A per decision.</strong> If two people share accountability, neither is accountable. If the RACI shows two As, resolve it before publishing.</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Rule 2 — Minimise Cs.</strong> More than two Cs on a single decision usually indicates scope creep in the consultation. Each C adds cycle time. Ask: "do we need their input, or just their buy-in?"</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Rule 3 — A and R can be the same person.</strong> For operational decisions, the person doing the work is often also the accountable party. This is appropriate at SM level for within-country operational decisions.</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Rule 4 — Every cell must be intentional.</strong> A blank cell is a governance gap. An "I" that is really a "C" in practice is a governance ambiguity. Review each cell and ask: "is this what we actually want?"</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Rule 5 — RACI requires communication, not just documentation.</strong> A RACI that is designed but not communicated to all role holders produces no behaviour change. Each A must know they are the A. Each R must know what R means in practice.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">RACI Design Anti-Patterns</div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">The Rubber-Stamp A:</strong> The COO is listed as A for every decision because "ultimately everything reports up to them." Produces over-escalation. The A should be the lowest level at which the decision can be made effectively.</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">The Courtesy C:</strong> Stakeholders who are "consulted" out of political courtesy rather than genuine need for input. Creates decision delay without adding decision quality. At Valentis: Indonesia SM does not need to be C on Thailand programme scheduling.</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">The Vanity I:</strong> Role holders who are listed as I because they "want to be kept in the loop" — but who then use the information to provide unsolicited input and effectively behave as C. Either designate them C or remove the I and manage expectations.</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">The Orphan Decision:</strong> A decision that has an R (someone doing it) but no A (no one accountable for the outcome). Common in cross-functional decisions. At Valentis: monthly HR data submission — who is accountable if a country does not submit?</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="page-map" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Valentis Decision Rights Map</div>
+    <h1 class="page-title">Valentis Decision<br><em>Rights Map</em></h1>
+    <p class="page-desc">The complete RACI for Valentis's most consequential decision categories — across operations, people, finance, and governance. This is the live governance reference document for the COO, HRBP, and all Site Managers.</p>
+  </div>
+  <div class="info gold"><strong>How to read this map</strong>Roles across the top: CEO, COO, Ops Lead (new role — columns marked with * apply post-Ops Lead appointment), Site Manager (SM), Group HR (HRBP), Group Finance/HSE. R = Responsible (does the work). A = Accountable (owns the outcome). C = Consulted (input sought before decision). I = Informed (notified after decision). — = Not involved.</div>
+
+  <div class="card">
+    <div class="card-title">Operational Decisions</div>
+    <div style="overflow-x:auto;margin-top:8px">
+      <table class="dtable" style="min-width:750px">
+        <thead>
+          <tr>
+            <th style="width:28%">Decision</th>
+            <th style="width:9%;text-align:center">CEO</th>
+            <th style="width:9%;text-align:center">COO</th>
+            <th style="width:9%;text-align:center">Ops Lead*</th>
+            <th style="width:9%;text-align:center">SM</th>
+            <th style="width:9%;text-align:center">Group HR</th>
+            <th style="width:27%">Notes &amp; boundary conditions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-weight:600">Programme delivery schedule (country level)</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-a">A/R</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="font-size:12px;font-weight:300">SM owns. COO/Ops Lead informed monthly via data submission. Escalate to COO only if schedule deviation affects client commitment.</td></tr>
+          <tr><td style="font-weight:600">Programme recovery (delivery &lt;85%)</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="font-size:12px;font-weight:300">Post-Ops Lead: Ops Lead accountable for recovery plan. Pre-Ops Lead: COO is A. Recovery plan required within 10 days of breach.</td></tr>
+          <tr><td style="font-weight:600">Day-to-day site operations</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-a">A/R</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="font-size:12px;font-weight:300">SM full authority. HSE incidents escalate per safety protocol regardless.</td></tr>
+          <tr><td style="font-weight:600">Cross-country resource sharing (equipment, personnel)</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="font-size:12px;font-weight:300">Post-Ops Lead: Ops Lead facilitates and recommends. COO approves. SMs consulted. Pre-Ops Lead: COO both A and R.</td></tr>
+          <tr><td style="font-weight:600">HSE incident response (site level)</td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-a">A/R</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="font-size:12px;font-weight:300">SM first responder and accountable. All incidents reported to COO within 24hr regardless of severity.</td></tr>
+          <tr><td style="font-weight:600">Client relationship management (country)</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-a">A/R</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="font-size:12px;font-weight:300">SM owns client relationship in their country. COO consulted on contract changes or escalations.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">People &amp; HR Decisions</div>
+    <div style="overflow-x:auto;margin-top:8px">
+      <table class="dtable" style="min-width:750px">
+        <thead>
+          <tr>
+            <th style="width:28%">Decision</th>
+            <th style="width:9%;text-align:center">CEO</th>
+            <th style="width:9%;text-align:center">COO</th>
+            <th style="width:9%;text-align:center">Ops Lead*</th>
+            <th style="width:9%;text-align:center">SM</th>
+            <th style="width:9%;text-align:center">Group HR</th>
+            <th style="width:27%">Notes &amp; boundary conditions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-weight:600">G1–G2 hire (within approved headcount)</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-a">A/R</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="font-size:12px;font-weight:300">SM hires within approved headcount. Group HR consulted on job requirements, local compliance. COO informed via monthly data. Escalates only if above approved headcount.</td></tr>
+          <tr><td style="font-weight:600">G3 hire (within approved headcount)</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="font-size:12px;font-weight:300">Group HR runs the process (R) with SM as hiring manager. SM accountable for the hire decision. COO and Ops Lead consulted given pipeline criticality. Key role — not routine hire.</td></tr>
+          <tr><td style="font-weight:600">G4–G5 hire or promotion</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="font-size:12px;font-weight:300">COO approves all G4–G5 decisions. Group HR designs process and recommends. SM and Ops Lead consulted. Ensures grade integrity across countries.</td></tr>
+          <tr><td style="font-weight:600">G6+ hire or appointment</td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="font-size:12px;font-weight:300">CEO approves. Group HR leads process. Includes Ops Lead (G6) hire — CEO must approve, not COO alone, given strategic significance.</td></tr>
+          <tr><td style="font-weight:600">G1–G3 termination (performance or conduct)</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="font-size:12px;font-weight:300">SM accountable; Group HR executes process and ensures local compliance. Group HR must be consulted before any termination decision is communicated — non-negotiable compliance control.</td></tr>
+          <tr><td style="font-weight:600">G4+ termination or exit</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="font-size:12px;font-weight:300">COO must approve all G4+ exits. Group HR manages process. SM consulted. Protects against site-level impulse exits of pipeline-critical roles.</td></tr>
+          <tr><td style="font-weight:600">Trainee development programme (content, schedule)</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-a">A</span></td><td style="font-size:12px;font-weight:300">Group HR owns the programme framework. SM consulted on country-specific adaptation. G4 executes (R) — but this should be explicit in G4 role profile (see OD Tool 3).</td></tr>
+          <tr><td style="font-weight:600">Salary band placement and merit increases (G1–G4)</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-a">A/R</span></td><td style="font-size:12px;font-weight:300">Group HR owns total rewards decisions. SM consulted on individual readiness. COO informed of pool allocation. Consistent application across all four countries — non-negotiable.</td></tr>
+          <tr><td style="font-weight:600">G5 retention bonus renewal</td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="font-size:12px;font-weight:300">CEO approves given strategic significance. Group HR designs and presents the package. COO consulted on performance and succession context. Critical: Myo H. deadline Sep 2026, Wirawan S. Oct 2026.</td></tr>
+          <tr><td style="font-weight:600">HR policy issuance and compliance (group-wide)</td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="font-size:12px;font-weight:300">Group HR owns policy design and promulgation. COO accountable for group-wide compliance. SMs informed and required to comply. This is Group HR's mandatory authority domain — not advisory.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Strategic &amp; Financial Decisions</div>
+    <div style="overflow-x:auto;margin-top:8px">
+      <table class="dtable" style="min-width:750px">
+        <thead>
+          <tr>
+            <th style="width:28%">Decision</th>
+            <th style="width:9%;text-align:center">CEO</th>
+            <th style="width:9%;text-align:center">COO</th>
+            <th style="width:9%;text-align:center">Ops Lead*</th>
+            <th style="width:9%;text-align:center">SM</th>
+            <th style="width:9%;text-align:center">Group HR</th>
+            <th style="width:27%">Notes &amp; boundary conditions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-weight:600">Country entry decision (new geography)</td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="font-size:12px;font-weight:300">CEO decides. COO and Ops Lead consulted on operational readiness. Group HR consulted on people and pipeline readiness. The Scenario B/C framework (OD Tool 8) is Group HR's structured input to this decision.</td></tr>
+          <tr><td style="font-weight:600">Headcount budget approval (annual)</td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="font-size:12px;font-weight:300">Group HR prepares the people plan and headcount model. COO and Ops Lead review operational requirements. CEO approves. Basis for SM hire authority throughout the year.</td></tr>
+          <tr><td style="font-weight:600">Above-budget emergency hire (unplanned vacancy)</td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="font-size:12px;font-weight:300">COO approves unplanned hires (Indonesia G3 emergency — this is the current gap). SM initiates with Group HR support. Ops Lead consulted post-appointment. CEO informed if above material threshold.</td></tr>
+          <tr><td style="font-weight:600">Organisation restructure (role changes, reporting line changes)</td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-i">I</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="font-size:12px;font-weight:300">Group HR designs and recommends (R). CEO approves (A). COO and Ops Lead consulted on operational implications. SMs informed — not consulted — on structural decisions above their level.</td></tr>
+          <tr><td style="font-weight:600">People cost (salaries, benefits) as % revenue — review and response</td><td style="text-align:center"><span class="raci-a">A</span></td><td style="text-align:center"><span class="raci-c">C</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-x">—</span></td><td style="text-align:center"><span class="raci-r">R</span></td><td style="font-size:12px;font-weight:300">Group HR monitors and flags. CEO owns the people cost % as a strategic metric. If >45%, escalation required with options analysis within 30 days.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="page-hr" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — HR Governance Model</div>
+    <h1 class="page-title">HR Governance<br><em>Model</em></h1>
+    <p class="page-desc">The HR governance model defines where Group HR has mandatory authority, where it has advisory authority, and where Site Managers have full autonomy. Without this distinction, SMs will treat all HR guidance as optional — because no one has explicitly told them otherwise.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">The Core Distinction in HR Governance</div>
+    <div class="vx-title">Mandatory vs Advisory vs SM Autonomy</div>
+    <div class="vx-body">Group HR does not have — and should not have — authority over everything HR-related. The governance model is designed to define the three zones: where compliance is non-negotiable (Group HR is mandatory), where Group HR's role is to add value through expertise (advisory), and where the SM is best placed to decide without Group HR involvement (full autonomy). Getting this wrong in either direction creates problems: too much mandatory authority creates bureaucracy and resistance; too little creates inconsistency and compliance risk.</div>
+  </div>
+  <div style="display:grid;gap:10px;margin-bottom:14px">
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--sienna-border);border-radius:4px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="background:var(--sienna);color:#fff;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:2px">Mandatory</span>
+        <div style="font-weight:700;font-size:15px;color:var(--sienna)">Group HR has binding authority — SM compliance is not optional</div>
+      </div>
+      <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:12px">These are the domains where inconsistent application creates legal risk, ethical risk, or structural integrity risk. Group HR must be involved before action is taken — not informed after. The COO explicitly endorses this authority in the SM onboarding and the annual performance review.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="padding:10px 14px;background:rgba(155,58,26,0.05);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--sienna);display:block;margin-bottom:2px">All terminations</strong>Group HR must review and confirm legal process compliance before any termination communication. No exceptions. This applies in all four (and future five) countries regardless of local HR capacity.</div>
+        <div style="padding:10px 14px;background:rgba(155,58,26,0.05);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--sienna);display:block;margin-bottom:2px">Salary band placement and merit increases</strong>All G1–G4 offers and merit adjustments must be within approved salary bands. Group HR approves exceptions. No SM can make a salary commitment outside the band without Group HR sign-off.</div>
+        <div style="padding:10px 14px;background:rgba(155,58,26,0.05);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--sienna);display:block;margin-bottom:2px">Grade assignments</strong>All roles must be graded against the G1–G8 framework. SMs cannot unilaterally assign a grade to a new or changed role. Group HR grades all roles — including those the SM initiates.</div>
+        <div style="padding:10px 14px;background:rgba(155,58,26,0.05);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--sienna);display:block;margin-bottom:2px">HR policy compliance</strong>All group HR policies (harassment, conduct, data privacy, working hours, HSE where HR-related) are mandatory across all countries. SMs apply policies — they do not adapt or override them.</div>
+        <div style="padding:10px 14px;background:rgba(155,58,26,0.05);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--sienna);display:block;margin-bottom:2px">Monthly HR data submission</strong>All SMs submit the standard monthly HR data template by the 5th of each month. Non-submission is escalated to COO within 3 working days. Group HR consolidates for group talent review.</div>
+        <div style="padding:10px 14px;background:rgba(155,58,26,0.05);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--sienna);display:block;margin-bottom:2px">Trainee programme framework</strong>The G1→G4 development framework, milestones, and check-in process are defined by Group HR and are mandatory across all countries. Country-level adaptation is within the framework, not outside it.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--gold-border);border-radius:4px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="background:var(--gold);color:#fff;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:2px">Advisory</span>
+        <div style="font-weight:700;font-size:15px;color:var(--gold)">Group HR provides expertise — SM makes the final decision</div>
+      </div>
+      <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:12px">These are the domains where Group HR's value is in bringing expertise, frameworks, and cross-country perspective — not in controlling outcomes. The SM makes the final decision and is accountable for it. Group HR's job is to make that decision better, not to own it.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="padding:10px 14px;background:rgba(138,105,20,0.05);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--gold);display:block;margin-bottom:2px">G1–G2 candidate selection</strong>Group HR provides job design support and recruitment framework. SM selects from candidates who meet the minimum criteria.</div>
+        <div style="padding:10px 14px;background:rgba(138,105,20,0.05);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--gold);display:block;margin-bottom:2px">Performance management (individual)</strong>Group HR provides the framework and quality-checks the process. SM owns the conversation and the outcome rating.</div>
+        <div style="padding:10px 14px;background:rgba(138,105,20,0.05);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--gold);display:block;margin-bottom:2px">Development conversations (G1–G3)</strong>Group HR trains G4 supervisors and provides the check-in framework. G4 and SM own the conversations.</div>
+        <div style="padding:10px 14px;background:rgba(138,105,20,0.05);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--gold);display:block;margin-bottom:2px">Team dynamics and culture</strong>Group HR advises on cultural interventions. SM decides whether and how to act. Group HR does not impose culture programmes without SM partnership.</div>
+        <div style="padding:10px 14px;background:rgba(138,105,20,0.05);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--gold);display:block;margin-bottom:2px">Country-level workforce planning</strong>Group HR provides the workforce planning model (OD Tool 6). SM inputs country-level data and reviews projections. Final plan approved by COO.</div>
+        <div style="padding:10px 14px;background:rgba(138,105,20,0.05);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--gold);display:block;margin-bottom:2px">Succession candidate identification</strong>Group HR facilitates the process and provides the assessment framework. SM recommends candidates. COO approves. Group HR does not have veto over SM recommendations.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--green-border);border-radius:4px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="background:var(--green);color:#fff;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:2px">SM Autonomy</span>
+        <div style="font-weight:700;font-size:15px;color:var(--green)">SM decides — Group HR is not involved unless requested</div>
+      </div>
+      <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:12px">These are the domains where the SM has full authority and Group HR's involvement would add no value — and would signal a lack of trust in SM judgment. The SM does not need Group HR's permission or input. Group HR's role is to ensure SMs know what falls in this category — so they do not over-escalate or unnecessarily involve Group HR.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="padding:10px 14px;background:rgba(45,106,79,0.05);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Day-to-day task allocation and scheduling within the site team</div>
+        <div style="padding:10px 14px;background:rgba(45,106,79,0.05);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Leave and absence management within policy limits</div>
+        <div style="padding:10px 14px;background:rgba(45,106,79,0.05);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Informal recognition and day-to-day motivation approaches</div>
+        <div style="padding:10px 14px;background:rgba(45,106,79,0.05);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Local supplier and vendor relationships (non-employment)</div>
+        <div style="padding:10px 14px;background:rgba(45,106,79,0.05);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Communication style and team meeting cadence at site level</div>
+        <div style="padding:10px 14px;background:rgba(45,106,79,0.05);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">On-the-job training delivery (within the Group HR framework)</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="page-gaps" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Current Governance Gaps</div>
+    <h1 class="page-title">Current<br><em>Governance Gaps</em></h1>
+    <p class="page-desc">Governance gaps are the decisions that currently have no clear owner, inconsistent ownership, or contested ownership across Valentis's four countries. Each gap is a source of coordination failure, compliance risk, or decision delay. This section names them and sequences the fixes.</p>
+  </div>
+  <div class="info red"><strong>Priority framing</strong>Three gaps are rated Critical — they are causing active operational harm now. Three are rated High — they will cause harm within 6 months if unresolved. Two are rated Medium — important to resolve before Country 5 entry.</div>
+
+  <div class="card">
+    <div class="card-title">Critical Governance Gaps — Active Harm</div>
+    <div style="display:grid;gap:10px;margin-top:4px">
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)"><div><span class="chip chip-red" style="margin-right:8px">CRITICAL</span>Who approves an emergency G3 hire outside the annual headcount budget?</div><span class="acc-icon">+</span></div>
+        <div class="acc-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Current state</strong>No formal process. Indonesia SM has been managing 3 G3 vacancies for 40+ days. It is unclear whether the SM can initiate recruitment unilaterally, whether the COO must approve, or whether Group HR runs the process. The ambiguity is one reason the vacancies have persisted.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Business impact</strong>Indonesia programme delivery at 84% (vs 93% benchmark). Revenue and client risk from sustained delivery gap. Every week of vacancy is an operational cost. Governance clarity would have enabled faster action.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Fix and owner</strong>RACI: COO approves (A), Group HR executes process (R), SM is hiring manager (R). COO to communicate emergency hire authority threshold to all SMs: "any G3+ vacancy open beyond 20 working days triggers Group HR-led emergency sourcing without individual COO approval per role." <strong>Action: HRBP drafts and COO communicates by April 2026.</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)"><div><span class="chip chip-red" style="margin-right:8px">CRITICAL</span>Who is accountable for trainee conversion rate — the G4, the SM, or Group HR?</div><span class="acc-icon">+</span></div>
+        <div class="acc-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Current state</strong>Ghost accountability. The G4 is implicitly responsible for trainees but has no formal accountability. The SM has general accountability for site performance including pipeline, but trainee conversion is not a named SM metric. Group HR has no authority to intervene in trainee outcomes during the training period.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Business impact</strong>Myanmar conversion rate at 58% vs 70% target. At $1,000–$2,000 per lost trainee (excluding production downtime), this is $6,000–$12,000 wasted per cohort assuming 8 trainees. Over 3 cohorts per year: $18,000–$36,000 avoidable cost plus pipeline compression.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Fix and owner</strong>G4 role profile update (OD Tool 3): G4 is R for trainee development and has decision rights over programme schedule adjustments (within SM-approved parameters). SM is A for country conversion rate. Group HR is A for programme framework. COO communicates to all G4s directly. <strong>Action: Role profile update Q2 2026.</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)"><div><span class="chip chip-red" style="margin-right:8px">CRITICAL</span>Who decides if Group HR's compliance guidance is mandatory or advisory — and in which country?</div><span class="acc-icon">+</span></div>
+        <div class="acc-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Current state</strong>Indonesia SM currently treats Group HR guidance as advisory, not mandatory. Has applied HR processes inconsistently relative to other countries. This is a governance gap, not a personality conflict — the Indonesia SM has never been formally told that Group HR has mandatory authority in specific domains.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Business impact</strong>Inconsistent termination processes across countries create legal liability exposure in Indonesia (stricter labour law). Salary decisions made outside approved bands in at least two cases in 2025. Grade inflation risk if SMs can override Group HR grading.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Fix and owner</strong>HR governance model (Section 04 of this tool) defines mandatory vs advisory domains explicitly. COO communicates the mandatory domains to all SMs directly — not through Group HR alone, as that creates the appearance of Group HR self-appointing authority. <strong>Action: COO communication at Q2 SM peer forum.</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">High Priority Governance Gaps — 6-Month Horizon</div>
+    <div style="display:grid;gap:10px;margin-top:4px">
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)"><div><span class="chip chip-gold" style="margin-right:8px">HIGH</span>What decisions does the Group Ops Lead own vs the COO? (Pre-defined before hire)</div><span class="acc-icon">+</span></div>
+        <div class="acc-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Current state</strong>Ops Lead role does not exist yet. But when it is created, the authority boundary must be defined before the hire starts — not after. If SMs do not know which decisions to escalate to Ops Lead vs COO, they will default to COO (habit) and the Ops Lead will have no real authority. Indonesia SM resistance risk amplified if authority is ambiguous at launch.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Business impact</strong>If the Ops Lead's decision rights are undefined at launch, the COO span relief the role was designed to provide will not materialise. The COO will continue receiving the same escalation volume — plus the additional workload of managing a new G6 hire.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Fix and owner</strong>Ops Lead decision rights defined in role profile (OD Tool 3). COO communicates explicitly to all SMs: "from [date], operational matters that previously came to me should be directed to [Ops Lead name]." The RACI in Section 03 of this tool should be communicated at the same time as the Ops Lead hire announcement. <strong>Action: Pre-defined by Q3 2026.</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)"><div><span class="chip chip-gold" style="margin-right:8px">HIGH</span>Who owns the monthly HR data submission — and what happens if a country does not submit?</div><span class="acc-icon">+</span></div>
+        <div class="acc-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Current state</strong>No formal HR reporting obligation exists. Group HR requests data informally. Submission is variable across countries. There is no escalation mechanism for non-submission. The Group talent database (OD Tool 7 — Technostructural intervention) cannot function without consistent data.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Business impact</strong>Group HR cannot produce a reliable talent picture. Coordination failures are invisible until they become crises (Indonesia G3 vacancies were not flagged to Group HR until they reached 40 days). COO makes people decisions without group data.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Fix and owner</strong>Monthly HR submission formalised as mandatory (mandatory domain per Section 04). Deadline: 5th of each month. Non-submission escalated to COO by Group HR within 3 working days. SM performance metric includes data submission compliance. <strong>Action: Q2 2026 formalisation with COO endorsement.</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)"><div><span class="chip chip-gold" style="margin-right:8px">HIGH</span>Who decides on G5 retention bonus renewal — and when must the decision be made?</div><span class="acc-icon">+</span></div>
+        <div class="acc-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Current state</strong>Retention bonus renewal decisions for Myo H. and Wirawan S. have no formal decision owner or timeline. Group HR has not been given an explicit mandate to run the process. COO has not set a decision date. Without a formal process owner and deadline, the decisions will be made reactively — after the SM raises the subject or after the bonus expires.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Business impact</strong>Myo H. bonus expires April 2027. Wirawan S. bonus expires Q1 2027. If renewal decision is made in Q4 2026 or later, the SM has already had months of uncertainty that increases exit risk. Retention decisions made under time pressure produce worse outcomes than decisions made proactively.</div>
+            <div><strong style="color:var(--sienna);display:block;margin-bottom:4px">Fix and owner</strong>RACI: CEO approves (A), Group HR designs and presents options (R), COO consulted. Decision dates: Myo H. conversation by September 2026. Wirawan S. by October 2026. Group HR puts both dates in the 2026 HR calendar now and triggers the process 12 weeks prior. <strong>Action: Group HR calendar entries created — process starts June 2026.</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Medium Priority Gaps — Resolve Before Country 5 Entry</div>
+    <table class="dtable">
+      <thead><tr><th>Gap</th><th>Current ambiguity</th><th>Required fix</th><th>Deadline</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Country 5 HR setup authority</td><td>Who sets up the Country 5 HR framework — Group HR, the new SM, or the Ops Lead? Who approves the first hires before the SM is in post?</td><td>Group HR designs Country 5 framework. Ops Lead provides operational input. COO approves. Country 5 SM has no autonomous hire authority until formally onboarded and briefed on the RACI.</td><td>Q1 2027 — before Country 5 SM appointment</td></tr>
+        <tr><td style="font-weight:600">Cross-country G3/G4 mobility decisions</td><td>If a G3 driller in Laos is needed to cover an Indonesia G3 vacancy temporarily — who approves the deployment? SM to SM? COO? Ops Lead?</td><td>Post-Ops Lead: Ops Lead approves cross-country deployment with both SMs consulted. COO informed. Pre-Ops Lead: COO approves. Group HR handles contract and compliance implications.</td><td>Q3 2026 — before Ops Lead starts</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="page-forums" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Governance Forums &amp; Cadence</div>
+    <h1 class="page-title">Governance Forums<br><em>&amp; Cadence</em></h1>
+    <p class="page-desc">Governance is not only about who decides — it is also about when decisions are made, reviewed, and escalated. The governance calendar ensures that the right conversations happen at the right frequency, with the right attendees and the right outputs.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">Valentis Governance Architecture — 2026 onwards</div>
+    <div class="vx-title">Five forums. Four cadences. One integrated governance rhythm.</div>
+    <div class="vx-body">Valentis currently has no formal governance calendar. Decisions are made ad hoc, reviews happen when the COO initiates them, and Group HR has no standing agenda. The governance architecture below is not bureaucracy — it is the minimum structure needed to manage a 42-person, 4-country organisation that is growing to 65 FTE across 5 countries. Without it, the COO remains the sole integrating mechanism, which is the structural problem the Ops Lead is designed to solve.</div>
+  </div>
+
+  <div style="display:grid;gap:10px">
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:180px 1fr;gap:20px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Forum 1</div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:6px">Monthly HR Data Review</div>
+        <div style="display:grid;gap:3px">
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Cadence: Monthly</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Owner: Group HR (Ba)</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Attendees: Ba alone (reporting to COO)</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Duration: 1–2 hours (analysis)</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:10px">Group HR consolidates the monthly HR data submission from all four (then five) countries. Produces a one-page group talent summary for the COO: headcount vs plan, attrition, pipeline status, vacancies, compliance flags. Flags any issues requiring COO decision within the current month. Inputs into the quarterly talent review.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-sienna">Required output: Group HR monthly summary</span>
+          <span class="chip chip-muted">Deadline: 10th of each month</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:180px 1fr;gap:20px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Forum 2</div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:6px">COO–HRBP Monthly 1:1</div>
+        <div style="display:grid;gap:3px">
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Cadence: Monthly</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Owner: Ba (HRBP)</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Attendees: COO + Ba</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Duration: 45–60 minutes</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:10px">The primary channel for HR-to-business intelligence. Ba presents the monthly HR summary, flags decisions required from the COO, updates on active interventions, and raises any governance issues that require COO direction. This is how Ba earns access to business planning — not by being invited to business meetings, but by demonstrating that every monthly conversation has business-level intelligence and a clear ask. Agenda: data review (15 min), active decisions (15 min), HR workplan update (10 min), COO intel (10 min).</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-sienna">Required output: Decision log updated</span>
+          <span class="chip chip-muted">HRBP owns the agenda</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--sienna-border);border-radius:4px;display:grid;grid-template-columns:180px 1fr;gap:20px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Forum 3 — Key</div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:6px">SM Peer Forum</div>
+        <div style="display:grid;gap:3px">
+          <div style="font-size:12px;color:var(--sienna);font-family:var(--fm)">Cadence: Quarterly</div>
+          <div style="font-size:12px;color:var(--sienna);font-family:var(--fm)">Owner: COO (then Ops Lead)</div>
+          <div style="font-size:12px;color:var(--sienna);font-family:var(--fm)">Attendees: COO + all SMs + Ba</div>
+          <div style="font-size:12px;color:var(--sienna);font-family:var(--fm)">Duration: Half day (3–4 hours)</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:10px">The primary cross-country coordination mechanism. Quarterly structured meeting of all Site Managers. Agenda built by Ba and COO: performance data sharing (country vs country), one practice transfer per session (Thailand SM presents), talent pipeline update (Group HR presents), one strategic topic. Ba facilitates the talent agenda and uses the forum as the primary stakeholder intelligence channel. The inaugural session is designed as a team effectiveness intervention (see OD Tool 7). Transfers to Ops Lead chair once in post. Ba retains facilitation of the HR agenda.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-sienna">Required outputs: Action log, practice transfer record, pipeline summary</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--sienna-border);border-radius:4px;display:grid;grid-template-columns:180px 1fr;gap:20px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Forum 4 — Key</div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:6px">Group Talent Review</div>
+        <div style="display:grid;gap:3px">
+          <div style="font-size:12px;color:var(--sienna);font-family:var(--fm)">Cadence: Quarterly</div>
+          <div style="font-size:12px;color:var(--sienna);font-family:var(--fm)">Owner: Ba (HRBP)</div>
+          <div style="font-size:12px;color:var(--sienna);font-family:var(--fm)">Attendees: COO + Ops Lead + Ba</div>
+          <div style="font-size:12px;color:var(--sienna);font-family:var(--fm)">Duration: 90 minutes</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:10px">The primary people strategy decision forum. Ba presents the group talent picture: pipeline health by country, succession cover status, retention risk flags, development plan progress, and health diagnostic update. COO and Ops Lead make decisions on cross-country deployment, succession prioritisation, and G4+ development investment. This is the forum where the HRBP's strategic contribution is most visible. Agenda: pipeline review by country (30 min), succession status — all critical roles (20 min), decisions required (20 min), health diagnostic update (20 min).</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-sienna">Required output: Talent decisions log, updated succession tracker</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:180px 1fr;gap:20px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Forum 5</div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:6px">Annual HR &amp; OD Review</div>
+        <div style="display:grid;gap:3px">
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Cadence: Annual</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Owner: Ba (HRBP)</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Attendees: CEO + COO + Ops Lead + Ba</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Duration: Half day</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:10px">Annual review of the HR and OD agenda at CEO level. Ba presents: full org health diagnostic, scenario update (Tool 8), HR scorecard performance, merit pool outcomes, and the 12-month HR workplan for approval. This is the forum where the scenario switch decisions are formally reviewed (are we still on Scenario B?), the headcount budget for the coming year is agreed, and the HRBP earns the mandate for the next year's strategic work. The output is the CEO-approved HR plan that gives Ba authority to act on structural interventions without individual approvals throughout the year.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-muted">Required output: Approved HR plan, headcount budget, scenario confirmation</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:4px">
+    <div class="card-title">2026 Governance Calendar</div>
+    <table class="dtable">
+      <thead><tr><th>Month</th><th>Forum / Activity</th><th>Owner</th><th>Key output</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">April 2026</td><td>COO communication — mandatory HR domains to all SMs + emergency hire threshold</td><td>COO + Ba</td><td>Governance gaps 1 &amp; 3 closed</td></tr>
+        <tr><td style="font-weight:600">April 2026</td><td>G4 role profile update communicated — trainee conversion accountability</td><td>Ba + COO</td><td>Governance gap 2 closed</td></tr>
+        <tr><td style="font-weight:600">May 2026</td><td>SM peer forum — inaugural session (Q2)</td><td>COO (Ba facilitates HR agenda)</td><td>Cross-country coordination begins; practice transfer documented</td></tr>
+        <tr><td style="font-weight:600">May 2026</td><td>Monthly HR data submission formalised</td><td>Ba (COO endorses)</td><td>Monthly data flow established</td></tr>
+        <tr><td style="font-weight:600">June 2026</td><td>Group talent review — Q2</td><td>Ba</td><td>Laos pipeline, Indonesia recovery, succession status reviewed</td></tr>
+        <tr><td style="font-weight:600">September 2026</td><td>SM peer forum — Q3 + Myo H. retention conversation</td><td>COO + Ba</td><td>Ops Lead authority communicated; Myanmar retention outcome confirmed</td></tr>
+        <tr><td style="font-weight:600">October 2026</td><td>Group talent review — Q3 + Wirawan S. retention conversation</td><td>Ba</td><td>Indonesia retention outcome; succession pipeline updated</td></tr>
+        <tr><td style="font-weight:600">November 2026</td><td>Annual HR &amp; OD review — CEO level</td><td>Ba</td><td>2027 HR plan approved; headcount budget; Scenario B/A confirmed</td></tr>
+        <tr><td style="font-weight:600">January 2027</td><td>SM peer forum — Q4 (first with Ops Lead chairing)</td><td>Ops Lead + Ba</td><td>Ops Lead authority in practice; forum rhythm established</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="page-builder" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — RACI Builder</div>
+    <h1 class="page-title">RACI<br><em>Builder</em></h1>
+    <p class="page-desc">Use this tool to build a RACI for any Valentis decision that currently lacks one. Select the decision domain, identify the governance gap type, and generate a recommended RACI with boundary conditions and communication guidance.</p>
+  </div>
+  <div class="dr-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f0e8;margin-bottom:4px">Decision Rights Builder</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:20px">Select decision domain and gap type to generate your RACI recommendation</div>
+
+    <div class="dr-step">
+      <span class="dr-label">Step 1 — What domain does the decision fall in?</span>
+      <div class="dr-opts">
+        <div class="dr-opt" onclick="selectDr(this)">Operational / site delivery</div>
+        <div class="dr-opt" onclick="selectDr(this)">Hiring and recruitment</div>
+        <div class="dr-opt" onclick="selectDr(this)">Termination or exit</div>
+        <div class="dr-opt" onclick="selectDr(this)">Pay and grading</div>
+        <div class="dr-opt" onclick="selectDr(this)">Development and pipeline</div>
+        <div class="dr-opt" onclick="selectDr(this)">Cross-country coordination</div>
+        <div class="dr-opt" onclick="selectDr(this)">Strategic / structural</div>
+        <div class="dr-opt" onclick="selectDr(this)">HR policy and compliance</div>
+      </div>
+    </div>
+
+    <div class="dr-step">
+      <span class="dr-label">Step 2 — What is the grade level involved?</span>
+      <div class="dr-opts">
+        <div class="dr-opt" onclick="selectDr(this)">G1–G2 (Trainee / Driller)</div>
+        <div class="dr-opt" onclick="selectDr(this)">G3 (Driller)</div>
+        <div class="dr-opt" onclick="selectDr(this)">G4 (Senior Driller)</div>
+        <div class="dr-opt" onclick="selectDr(this)">G5 (Site Manager)</div>
+        <div class="dr-opt" onclick="selectDr(this)">G6+ (Group Functions)</div>
+        <div class="dr-opt" onclick="selectDr(this)">Not grade-specific</div>
+      </div>
+    </div>
+
+    <div class="dr-step">
+      <span class="dr-label">Step 3 — What is the governance gap type?</span>
+      <div class="dr-opts">
+        <div class="dr-opt" onclick="selectDr(this)">No clear owner — nobody knows who decides</div>
+        <div class="dr-opt" onclick="selectDr(this)">Two owners — contested accountability</div>
+        <div class="dr-opt" onclick="selectDr(this)">Wrong level — decisions being made too high or too low</div>
+        <div class="dr-opt" onclick="selectDr(this)">Missing consultation — key people excluded from input</div>
+        <div class="dr-opt" onclick="selectDr(this)">Inconsistent across countries — different practice in each site</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn btn-sienna" onclick="buildRaci()">Generate RACI →</button>
+      <button class="btn btn-ghost" onclick="clearRaci()">Reset</button>
+    </div>
+    <div class="dr-result" id="dr-result"></div>
+  </div>
+</div>
+
+<div id="page-embed" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Embedding &amp; Maintaining</div>
+    <h1 class="page-title">Embedding<br><em>&amp; Maintaining</em></h1>
+    <p class="page-desc">A governance map that is designed but not embedded is an academic exercise. Decision rights must be communicated, tested, reinforced, and updated as the organisation changes. This section is the implementation guide for making Valentis's governance model real rather than theoretical.</p>
+  </div>
+  <div class="pull-quote">
+    <p>"The RACI is not a document. It is a set of conversations that need to happen. The document is the output. The conversations are the intervention."</p>
+    <cite>OD Governance Principle</cite>
+  </div>
+  <div class="card">
+    <div class="card-title">The Four-Step Embedding Sequence</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      <div style="padding:16px 18px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;display:grid;grid-template-columns:40px 1fr;gap:12px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--sienna);line-height:1">1</div>
+        <div>
+          <div style="font-weight:700;color:var(--ink);font-size:14px;margin-bottom:4px">COO endorsement — not just Group HR publication</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The governance map must be communicated by the COO to all SMs — not distributed by Group HR alone. If SMs receive the RACI from Group HR, they may treat it as an HR initiative. If they receive it from the COO, they treat it as an operational requirement. The COO endorsement conversation should be: "I am formalising who decides what across the group. This is the framework I expect everyone to operate within. Group HR has designed it — I have approved it — and I will hold you to it." The SM peer forum inaugural session is the right venue for this communication.</div>
+        </div>
+      </div>
+      <div style="padding:16px 18px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;display:grid;grid-template-columns:40px 1fr;gap:12px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--sienna);line-height:1">2</div>
+        <div>
+          <div style="font-weight:700;color:var(--ink);font-size:14px;margin-bottom:4px">Role profile integration</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Decision rights must appear in role profiles — not only in a separate governance document. When a G4 driller's role profile includes "decision authority: adjust trainee programme schedule within SM-approved parameters; escalate to SM if trainee is at risk of programme failure," it becomes part of the role holder's lived understanding of what their job is. When it only appears in a governance map, it stays theoretical. Integrate the most relevant RACI entries into each role profile as part of the OD Tool 3 update cycle (G4 by Q2 2026; Ops Lead by Q3 2026).</div>
+        </div>
+      </div>
+      <div style="padding:16px 18px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;display:grid;grid-template-columns:40px 1fr;gap:12px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--sienna);line-height:1">3</div>
+        <div>
+          <div style="font-weight:700;color:var(--ink);font-size:14px;margin-bottom:4px">Test through use — track escalation patterns</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The most reliable test of whether the governance model is working is to track what the COO is actually being asked to decide. If operational decisions are still being escalated to COO level 90 days after the RACI is communicated, either the RACI was not communicated effectively, or there is a behaviour pattern (Indonesia SM's escalation habit) that requires a separate intervention. Ba tracks the types of COO escalations monthly and reviews whether the pattern is consistent with the RACI. Anomalies are raised in the monthly 1:1.</div>
+        </div>
+      </div>
+      <div style="padding:16px 18px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;display:grid;grid-template-columns:40px 1fr;gap:12px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--sienna);line-height:1">4</div>
+        <div>
+          <div style="font-weight:700;color:var(--ink);font-size:14px;margin-bottom:4px">Update the RACI when the structure changes</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The governance map becomes outdated the moment a structural change occurs. Three structural changes are planned for 2026–2027 that each require a RACI update: (1) Group Ops Lead appointment — Q3 2026, (2) HR Coordinator appointment — Q4 2026, (3) Country 5 SM appointment — Q2 2027. Each of these changes shifts A/R assignments in multiple decision categories. Ba schedules a RACI review within 30 days of each structural change. Updated RACI is communicated by COO (or Ops Lead where relevant) at the next governance forum.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Signs the Governance Model is Working</div>
+      <div style="display:grid;gap:6px;margin-top:4px">
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">COO escalation volume decreasing — SMs making operational decisions without COO involvement</div>
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Group HR mandatory guidance is being followed consistently across all four countries — no policy divergence</div>
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">G4 drillers taking ownership of trainee development decisions within their defined authority — not escalating to SM for routine programme questions</div>
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Monthly HR data submitted by all countries by the 5th — no Group HR chasing required</div>
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">No termination or G4+ salary commitment made without Group HR involvement — even in Indonesia</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Signs the Governance Model is Breaking Down</div>
+      <div style="display:grid;gap:6px;margin-top:4px">
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">COO is still making operational decisions that the RACI assigns to SM or Ops Lead — either the COO has not delegated, or SMs are bypassing the Ops Lead</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">SMs in different countries describe different understandings of what they can decide autonomously — governance was communicated inconsistently</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Group HR is being informed of decisions after they are made in domains where Group HR should be consulted before — particularly terminations and salary commitments</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Structural changes (Ops Lead hire, Country 5 SM) have happened but the RACI has not been updated — new role holders are operating without a defined decision rights framework</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">The governance forums (peer forum, talent review) have lapsed — decisions are being made informally again and the monthly data flow has broken down</div>
+      </div>
+    </div>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">OD Department — Complete</div>
+    <div class="vx-title">9 tools. One complete Organisation Design &amp; Development practice.</div>
+    <div class="vx-body" style="margin-bottom:12px">With this tool, the Valentis OD department toolkit is complete: Foundations → Structure Models → Role Design → Spans &amp; Layers → Org Health → Restructure Playbook → Intervention Builder → Org Design Scenarios → Decision Rights &amp; Governance. Each tool is designed to work alone and as part of the system. Together, they constitute the OD practice of a Group HR Manager operating at CHRO level — diagnosing structural problems, designing solutions, sequencing interventions, and measuring impact in the language the COO and CEO read.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div style="padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;font-size:12px;color:rgba(255,255,255,0.4);font-family:var(--fm);line-height:1.6">Tool 1 — OD Foundations<br>Tool 2 — Structure Models<br>Tool 3 — Role Design</div>
+      <div style="padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;font-size:12px;color:rgba(255,255,255,0.4);font-family:var(--fm);line-height:1.6">Tool 4 — Spans &amp; Layers<br>Tool 5 — Org Health<br>Tool 6 — Restructure Playbook</div>
+      <div style="padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;font-size:12px;color:rgba(255,255,255,0.4);font-family:var(--fm);line-height:1.6">Tool 7 — Intervention Builder<br>Tool 8 — Org Design Scenarios<br><strong style="color:#e8a07a">Tool 9 — Decision Rights ✓</strong></div>
+    </div>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tab-body').forEach(b=>b.classList.remove('active'));scope.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));}
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');
+  if(el)el.classList.add('active');
+}
+function toggleAcc(el){
+  var body=el.nextElementSibling;
+  var isOpen=el.classList.contains('open');
+  el.classList.toggle('open',!isOpen);
+  body.classList.toggle('open',!isOpen);
+}
+function selectDr(el){
+  el.closest('.dr-opts').querySelectorAll('.dr-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+var raciDB = {
+  'Operational / site delivery': {
+    'G1–G2 (Trainee / Driller)': {a:'Site Manager',r:'Site Manager / G4 Driller',c:'—',i:'Ops Lead (when in post), Group HR (monthly data)',boundary:'SM has full autonomy for G1–G2 operational decisions. Group HR is not involved in day-to-day delivery management.',comm:'Confirm with SM that this is their domain — they do not need to consult Group HR or COO for routine operational decisions.'},
+    'G3 (Driller)': {a:'Site Manager',r:'Site Manager',c:'Ops Lead (when in post)',i:'COO, Group HR',boundary:'SM owns G3 operational delivery. Escalate to COO/Ops Lead only if country delivery falls below 85% for 2+ weeks.',comm:'COO to communicate the 85% trigger threshold to all SMs explicitly at the peer forum.'},
+    'G4 (Senior Driller)': {a:'Site Manager',r:'Site Manager / G4',c:'Ops Lead (when in post), Group HR',i:'COO',boundary:'G4 drillers have decision rights over day-to-day trainee programme delivery within SM-approved parameters. SM is accountable for G4 quality.',comm:'G4 role profile must specify decision authority. SM must communicate to G4: "you own the trainee schedule day-to-day — escalate only if a trainee is at risk of programme failure."'},
+    'G5 (Site Manager)': {a:'COO',r:'COO',c:'Ops Lead (when in post), Group HR',i:'CEO',boundary:'Operational decisions at G5 level (SM cross-country deployment, SM responsibilities) require COO involvement. SMs do not have authority over other SMs.',comm:''},
+    'G6+ (Group Functions)': {a:'CEO',r:'COO',c:'Group HR',i:'—',boundary:'All G6+ operational appointments require CEO approval.',comm:''},
+    'Not grade-specific': {a:'Site Manager',r:'Site Manager',c:'—',i:'COO (monthly data), Group HR (monthly data)',boundary:'General operational decisions belong to the SM. COO involvement required only for decisions with cross-country or strategic implications.',comm:'Communicate the escalation threshold clearly: what requires COO involvement vs what is SM authority.'}
+  },
+  'Hiring and recruitment': {
+    'G1–G2 (Trainee / Driller)': {a:'Site Manager',r:'Site Manager',c:'Group HR (job design, compliance)',i:'COO (monthly headcount data)',boundary:'SM hires G1–G2 within approved headcount budget without individual approvals. Group HR consulted on role requirements and local compliance. Above-budget hires require COO approval.',comm:'Confirm approved headcount authority with each SM annually. SM should not need to ask COO for each individual G1–G2 hire within budget.'},
+    'G3 (Driller)': {a:'Site Manager',r:'Group HR (process), SM (hiring decision)',c:'COO, Ops Lead (when in post)',i:'COO',boundary:'G3 is a pipeline-critical role. Group HR runs the recruitment process. SM is hiring manager and makes the selection decision. COO and Ops Lead consulted given pipeline significance. Emergency G3 hire (vacancy >20 working days) triggers Group HR-led sourcing automatically.',comm:'Communicate the 20-working-day auto-trigger rule to all SMs. Indonesia SM must understand this applies retroactively.'},
+    'G4 (Senior Driller)': {a:'COO',r:'Group HR',c:'SM, Ops Lead (when in post)',i:'CEO',boundary:'All G4 appointments require COO approval. Group HR leads process. SM recommends. COO approves to maintain grade integrity across countries.',comm:''},
+    'G5 (Site Manager)': {a:'CEO',r:'Group HR',c:'COO',i:'—',boundary:'G5 appointments require CEO approval. COO consults. Group HR manages process. Group HR presents candidate recommendation to CEO.',comm:''},
+    'G6+ (Group Functions)': {a:'CEO',r:'Group HR',c:'COO',i:'—',boundary:'CEO approves all G6+ hires including Ops Lead. Group HR designs process. COO consulted on operational requirements.',comm:'Critical for Ops Lead hire: CEO must approve, not COO alone. This ensures the role has executive-level authority in the eyes of all SMs.'},
+    'Not grade-specific': {a:'Site Manager (within budget)',r:'Group HR (process)',c:'COO (if above budget)',i:'COO (monthly data)',boundary:'Default: SM hires within budget. Group HR supports. COO approves above-budget or pipeline-critical hires.',comm:''}
+  },
+  'Termination or exit': {
+    'G1–G2 (Trainee / Driller)': {a:'Site Manager',r:'Group HR (process compliance)',c:'Group HR (mandatory pre-decision)',i:'COO (monthly data), Ops Lead',boundary:'MANDATORY: Group HR must review and confirm legal compliance BEFORE any termination is communicated to the employee. This is non-negotiable in all four countries. SM is accountable for the decision; Group HR executes the process.',comm:'COO communicates to all SMs: "No termination communication happens before Group HR has confirmed the process is compliant. This is non-negotiable regardless of urgency."'},
+    'G3 (Driller)': {a:'Site Manager',r:'Group HR',c:'Group HR (mandatory), Ops Lead (when in post)',i:'COO',boundary:'Same as G1–G2 but Group HR must also confirm there is no pipeline impact before proceeding. If the G3 vacancy creates a delivery risk, COO must be informed before the exit is communicated.',comm:''},
+    'G4 (Senior Driller)': {a:'COO',r:'Group HR',c:'SM',i:'CEO',boundary:'All G4 exits require COO approval before any communication. The risk of losing a pipeline-critical role holder without a succession plan must be assessed by Group HR before the decision is confirmed.',comm:''},
+    'G5 (Site Manager)': {a:'CEO',r:'Group HR',c:'COO',i:'—',boundary:'CEO must approve all G5 exits. This is a strategic decision, not an operational one. Group HR presents options including succession implications before CEO decides.',comm:''},
+    'G6+ (Group Functions)': {a:'CEO',r:'Group HR',c:'COO',i:'—',boundary:'CEO approves.',comm:''},
+    'Not grade-specific': {a:'Site Manager (G1–G3) / COO (G4+)',r:'Group HR',c:'Group HR (mandatory, any grade)',i:'COO',boundary:'Group HR involvement is mandatory regardless of grade. The only variable is the approval authority level.',comm:''}
+  },
+  'Pay and grading': {
+    'G1–G2 (Trainee / Driller)': {a:'Group HR',r:'Group HR',c:'SM',i:'COO (pool allocation)',boundary:'MANDATORY: All G1–G2 salary placements and merit increases must be within approved salary bands. Group HR owns band compliance. SM consulted on individual readiness. No SM can commit to a salary figure without Group HR sign-off.',comm:''},
+    'G3 (Driller)': {a:'Group HR',r:'Group HR',c:'SM, COO',i:'COO',boundary:'Same as G1–G2. G3 band compliance is mandatory. COO consulted given pipeline role significance.',comm:''},
+    'G4 (Senior Driller)': {a:'COO',r:'Group HR',c:'SM',i:'CEO',boundary:'G4 pay decisions require COO approval. Group HR recommends. Band compliance is mandatory.',comm:''},
+    'G5 (Site Manager)': {a:'CEO',r:'Group HR',c:'COO',i:'—',boundary:'G5 pay and retention bonus decisions require CEO approval. This includes Myo H. (Sep 2026) and Wirawan S. (Oct 2026) retention reviews.',comm:''},
+    'G6+ (Group Functions)': {a:'CEO',r:'Group HR',c:'COO',i:'—',boundary:'',comm:''},
+    'Not grade-specific': {a:'Group HR',r:'Group HR',c:'SM (individual readiness), COO (pool)',i:'COO',boundary:'Group HR is accountable for total rewards consistency across all countries. No country has independent pay authority outside the approved bands.',comm:'Communicate salary band authority to all SMs: they can recommend, not commit.'}
+  },
+  'Development and pipeline': {
+    'G1–G2 (Trainee / Driller)': {a:'Site Manager',r:'G4 Driller',c:'Group HR (framework)',i:'Group HR (monthly data), Ops Lead',boundary:'G4 driller executes development. SM is accountable for country conversion rate. Group HR owns the programme framework. G4 has decision rights to adjust schedule within SM-approved parameters.',comm:'The G4 role profile must make this explicit. Without formal decision rights, G4s will not act autonomously.'},
+    'G3 (Driller)': {a:'Site Manager',r:'SM + Group HR',c:'Ops Lead (when in post), COO',i:'COO',boundary:'G3→G4 development plans require both SM and Group HR involvement. Group HR owns the milestone framework. SM owns the development relationship. COO and Ops Lead consulted on progression decisions given pipeline significance.',comm:''},
+    'G4 (Senior Driller)': {a:'COO',r:'Group HR + SM',c:'Ops Lead',i:'CEO',boundary:'G4 succession development is a pipeline-critical investment. COO accountable. Group HR and SM co-design the development plan.',comm:''},
+    'G5 (Site Manager)': {a:'COO',r:'Group HR',c:'COO, Ops Lead',i:'CEO',boundary:'G5 succession development is strategic. COO accountable. Group HR designs and runs the process. Critical deadline: G5 successors identified by Q3 2026.',comm:''},
+    'G6+ (Group Functions)': {a:'CEO',r:'Group HR',c:'COO',i:'—',boundary:'',comm:''},
+    'Not grade-specific': {a:'Group HR',r:'Group HR',c:'SM (country needs)',i:'COO',boundary:'Group HR owns the development framework for all grades. SMs own the application within their country.',comm:''}
+  },
+  'Cross-country coordination': {
+    'G1–G2 (Trainee / Driller)': {a:'Ops Lead (when in post) / COO',r:'Both SMs + Group HR',c:'Both SMs',i:'COO',boundary:'Cross-country resource deployment requires Ops Lead (or COO pre-Ops Lead) approval. Group HR handles compliance implications for any cross-border deployment.',comm:''},
+    'G3 (Driller)': {a:'Ops Lead / COO',r:'Group HR + both SMs',c:'Both SMs, COO',i:'CEO',boundary:'G3 cross-country deployment is significant given pipeline criticality. Both SMs must agree. Ops Lead approves. Group HR manages the contract implications.',comm:''},
+    'Not grade-specific': {a:'Ops Lead (when in post) / COO (pre-Ops Lead)',r:'Group HR + SMs',c:'Relevant SMs',i:'COO',boundary:'All cross-country coordination decisions route through Ops Lead. This is one of the primary value-add authorities of the Ops Lead role.',comm:'Communicate this explicitly at Ops Lead launch: SMs bring cross-country resource questions to Ops Lead, not COO.'},
+    'G4 (Senior Driller)': {a:'Ops Lead / COO',r:'Group HR + both SMs',c:'Both SMs',i:'COO',boundary:'',comm:''},
+    'G5 (Site Manager)': {a:'CEO',r:'COO',c:'Ops Lead, Group HR',i:'—',boundary:'SM redeployment across countries requires CEO approval. This is a strategic decision.',comm:''},
+    'G6+ (Group Functions)': {a:'CEO',r:'COO',c:'Group HR',i:'—',boundary:'',comm:''}
+  },
+  'Strategic / structural': {
+    'Not grade-specific': {a:'CEO',r:'Group HR (design)',c:'COO, Ops Lead',i:'SMs',boundary:'All structural decisions (org design, role changes, reporting line changes) require CEO approval. Group HR designs and recommends. COO and Ops Lead consulted. SMs informed — not consulted — on structural changes above their level.',comm:'Ba should present structural recommendations to CEO via COO, using the OD scenario framework (Tool 8) as the analytical basis.'},
+    'G1–G2 (Trainee / Driller)': {a:'CEO',r:'Group HR',c:'COO',i:'SMs',boundary:'',comm:''},
+    'G3 (Driller)': {a:'CEO',r:'Group HR',c:'COO',i:'SMs',boundary:'',comm:''},
+    'G4 (Senior Driller)': {a:'CEO',r:'Group HR',c:'COO',i:'SMs',boundary:'',comm:''},
+    'G5 (Site Manager)': {a:'CEO',r:'Group HR',c:'COO',i:'—',boundary:'',comm:''},
+    'G6+ (Group Functions)': {a:'CEO',r:'Group HR',c:'COO',i:'—',boundary:'',comm:''}
+  },
+  'HR policy and compliance': {
+    'Not grade-specific': {a:'COO (group-wide compliance)',r:'Group HR (policy design + promulgation)',c:'—',i:'SMs, CEO',boundary:'MANDATORY domain. HR policy issuance is Group HR authority. COO accountable for compliance. SMs apply policies — they do not adapt or override. Non-compliance by any SM is escalated to COO.',comm:'COO must communicate: "Group HR policies are mandatory. They are not suggestions. If you have a question about a policy, ask Group HR before acting, not after."'},
+    'G1–G2 (Trainee / Driller)': {a:'COO',r:'Group HR',c:'—',i:'SMs',boundary:'',comm:''},
+    'G3 (Driller)': {a:'COO',r:'Group HR',c:'—',i:'SMs',boundary:'',comm:''},
+    'G4 (Senior Driller)': {a:'COO',r:'Group HR',c:'—',i:'SMs',boundary:'',comm:''},
+    'G5 (Site Manager)': {a:'COO',r:'Group HR',c:'—',i:'CEO',boundary:'',comm:''},
+    'G6+ (Group Functions)': {a:'CEO',r:'Group HR',c:'COO',i:'—',boundary:'',comm:''}
+  }
+};
+
+function getRaciEntry(domain, grade) {
+  var domainData = raciDB[domain];
+  if (!domainData) return null;
+  if (domainData[grade]) return domainData[grade];
+  if (domainData['Not grade-specific']) return domainData['Not grade-specific'];
+  var keys = Object.keys(domainData);
+  return keys.length > 0 ? domainData[keys[0]] : null;
+}
+
+function buildRaci(){
+  var d=document.querySelectorAll('.dr-step')[0].querySelector('.dr-opt.sel');
+  var g=document.querySelectorAll('.dr-step')[1].querySelector('.dr-opt.sel');
+  var t=document.querySelectorAll('.dr-step')[2].querySelector('.dr-opt.sel');
+  if(!d||!g||!t){alert('Please answer all three questions.');return;}
+  var domain=d.textContent.trim();
+  var grade=g.textContent.trim();
+  var gapType=t.textContent.trim();
+  var entry=getRaciEntry(domain,grade);
+  if(!entry){entry={a:'COO',r:'Group HR / SM (as appropriate)',c:'Relevant stakeholders',i:'Other affected parties',boundary:'Review the governance map (Section 03) for the most applicable domain.',comm:'Consult the RACI table in Section 03 directly for the closest matching decision type.'};}
+  var gapAdvice={
+    'No clear owner — nobody knows who decides':'The most important fix is to designate a single Accountable party and communicate this explicitly via the COO. Do not distribute a document — have the COO state the A directly to each relevant role holder.',
+    'Two owners — contested accountability':'Resolve to exactly one A immediately. The lower-level person should usually be A unless the decision has strategic or cross-country implications. Present both candidates to the COO for the final call.',
+    'Wrong level — decisions being made too high or too low':'If decisions are going too high: the A and R at a lower level must be communicated explicitly, and the COO must model the behaviour by redirecting escalations. If too low: escalation trigger thresholds must be defined.',
+    'Missing consultation — key people excluded from input':'Add the missing party as C (not A or R). Communicate the consultation requirement as a process step — "before deciding X, you must seek input from Y." Define a reasonable response time for C parties.',
+    'Inconsistent across countries — different practice in each site':'This requires COO communication of the consistent standard to all SMs simultaneously — at the SM peer forum. Group HR cannot resolve country-level inconsistency without COO authority behind the message.'
+  };
+  var raciRow='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:12px;">'
+    +'<div style="padding:10px 14px;background:rgba(155,58,26,0.1);border:1px solid rgba(155,58,26,0.25);border-radius:3px;text-align:center"><div style="font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Accountable (A)</div><div style="font-size:13px;color:#e8a07a;font-weight:600">'+entry.a+'</div></div>'
+    +'<div style="padding:10px 14px;background:rgba(155,58,26,0.07);border:1px solid rgba(155,58,26,0.18);border-radius:3px;text-align:center"><div style="font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Responsible (R)</div><div style="font-size:13px;color:#e8a07a;font-weight:600">'+entry.r+'</div></div>'
+    +'<div style="padding:10px 14px;background:rgba(138,105,20,0.08);border:1px solid rgba(138,105,20,0.2);border-radius:3px;text-align:center"><div style="font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Consulted (C)</div><div style="font-size:13px;color:rgba(255,200,100,0.8);font-weight:600">'+entry.c+'</div></div>'
+    +'<div style="padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;text-align:center"><div style="font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Informed (I)</div><div style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:600">'+entry.i+'</div></div>'
+    +'</div>';
+  var res=document.getElementById('dr-result');
+  res.innerHTML='<div style="font-family:var(--fd);font-size:19px;font-weight:700;color:#f5f0e8;margin-bottom:4px">RACI Recommendation</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--fm);margin-bottom:12px">'+domain+' · '+grade+'</div>'
+    +raciRow
+    +(entry.boundary?'<div style="margin-top:10px;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.75"><strong style="color:#e8a07a;display:block;margin-bottom:3px">Boundary conditions</strong>'+entry.boundary+'</div>':'')
+    +'<div style="margin-top:10px;padding:12px 16px;background:rgba(155,58,26,0.08);border:1px solid rgba(155,58,26,0.18);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.75"><strong style="color:#e8a07a;display:block;margin-bottom:3px">Gap type guidance: '+gapType+'</strong>'+gapAdvice[gapType]+'</div>'
+    +(entry.comm?'<div style="margin-top:10px;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.75"><strong style="color:#e8a07a;display:block;margin-bottom:3px">Communication guidance</strong>'+entry.comm+'</div>':'');
+  res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearRaci(){
+  document.querySelectorAll('.dr-opt').forEach(o=>o.classList.remove('sel'));
+  document.getElementById('dr-result').style.display='none';
+}
+</script>
+</body>
+</html>

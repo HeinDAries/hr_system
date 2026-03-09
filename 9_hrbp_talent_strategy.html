@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategic Talent Strategy Builder — Valentis HRBP Tool 9</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=IBM+Plex+Sans:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f7f5;--surface:#ffffff;--surface2:#f2f2ef;--surface3:#e8e8e4;
+  --border:#e0e0db;--border2:#c8c8c2;
+  --ink:#0f0f0e;--ink2:#2a2a28;--ink3:#555550;--ink4:#888880;--ink5:#b8b8b0;
+  --teal:#0d7a6e;--teal2:#0e8f82;--teal3:#10a494;--teal-dim:rgba(13,122,110,0.07);--teal-border:rgba(13,122,110,0.22);
+  --amber:#b8720a;--amber-dim:rgba(184,114,10,0.07);--amber-border:rgba(184,114,10,0.22);
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --green:#1a7a3c;--green-dim:rgba(26,122,60,0.07);--green-border:rgba(26,122,60,0.22);
+  --navy:#1a3a5c;--navy-dim:rgba(26,58,92,0.07);--navy-border:rgba(26,58,92,0.2);
+  --sidebar-w:272px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+.sidebar{width:var(--sidebar-w);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--teal3),var(--teal),rgba(13,122,110,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal3);background:rgba(13,122,110,0.12);border:1px solid rgba(13,122,110,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#f5f5f2;line-height:1.15;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--teal3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(13,122,110,0.15);border-color:rgba(13,122,110,0.35);color:var(--teal3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--teal)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--teal3);display:block;margin-bottom:3px}
+
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:54px;font-weight:800;color:var(--ink);line-height:.95;margin-bottom:14px;letter-spacing:-1px}
+.page-title em{font-style:italic;font-weight:400;color:var(--teal)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:border-color .13s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.2}
+.card-title em{font-style:italic;color:var(--teal);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-teal{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border)}
+.chip-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-navy{background:var(--navy-dim);color:var(--navy);border:1px solid var(--navy-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.teal{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+.info.amber{background:var(--amber-dim);border-color:var(--amber);color:var(--amber)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--ink);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+
+/* STRATEGY BUILDER */
+.builder{background:var(--ink);border-radius:4px;padding:28px;margin-bottom:14px;color:#f5f5f2}
+.b-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:5px;display:block}
+.b-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 12px;color:#f5f5f2;font-family:var(--fb);font-size:13px;outline:none;width:100%;transition:border-color .13s;resize:vertical}
+.b-input:focus{border-color:var(--teal)}
+.b-select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 10px;color:#f5f5f2;font-family:var(--fm);font-size:12px;outline:none;width:100%}
+.b-select option{background:#1a1a18}
+.b-row{display:grid;gap:10px;margin-bottom:10px}
+.b-row-2{grid-template-columns:1fr 1fr}
+.b-row-3{grid-template-columns:1fr 1fr 1fr}
+.b-group{display:flex;flex-direction:column;gap:4px}
+.b-section{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:18px;margin-bottom:10px}
+.b-section-title{font-family:var(--fd);font-size:15px;font-weight:600;color:#f5f5f2;margin-bottom:12px}
+.b-divider{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:16px 0}
+
+/* STRATEGY DOCUMENT */
+.strategy-doc{background:var(--surface);border:2px solid var(--ink);border-radius:6px;overflow:hidden;margin-top:14px;display:none}
+.doc-cover{background:var(--ink);padding:52px;position:relative;overflow:hidden}
+.doc-cover::before{content:'';position:absolute;top:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:rgba(13,122,110,0.07);pointer-events:none}
+.doc-cover::after{content:'';position:absolute;bottom:-40px;left:40px;width:160px;height:160px;border-radius:50%;background:rgba(13,122,110,0.04);pointer-events:none}
+.doc-body{padding:40px 52px}
+.doc-section{margin-bottom:32px;padding-bottom:28px;border-bottom:1px solid var(--border)}
+.doc-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.doc-section-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+.doc-section-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:12px;line-height:1.1}
+.doc-section-title em{font-style:italic;color:var(--teal);font-weight:400}
+.doc-body-text{font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.9}
+.doc-priority{display:flex;gap:12px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;margin-bottom:8px;align-items:flex-start}
+.doc-priority-num{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--teal);line-height:1;flex-shrink:0;width:32px}
+.doc-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.doc-kpi{padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center}
+.doc-kpi-val{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--teal);line-height:1;margin-bottom:3px}
+.doc-kpi-lbl{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink5)}
+
+/* PILLAR CARD */
+.pillar{border-radius:4px;overflow:hidden;margin-bottom:8px}
+.pillar-hdr{padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:opacity .13s}
+.pillar-hdr:hover{opacity:.88}
+.pillar-num{font-family:var(--fd);font-size:28px;font-weight:800;line-height:1;color:#fff;width:40px;flex-shrink:0}
+.pillar-title{font-family:var(--fd);font-size:17px;font-weight:700;color:#fff;flex:1}
+.pillar-tag{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.55)}
+.pillar-body{display:none;padding:18px;border:1px solid;border-top:none;border-radius:0 0 4px 4px}
+.pillar-body.open{display:block}
+
+/* SWOT */
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;border-radius:4px;overflow:hidden;margin-bottom:14px}
+.swot-cell{padding:18px}
+.swot-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-weight:700}
+.swot-item{display:flex;gap:8px;font-size:13px;font-weight:300;line-height:1.7;margin-bottom:4px}
+.swot-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:7px}
+
+/* PRIORITY MATRIX */
+.matrix-wrap{display:grid;grid-template-columns:30px 1fr;gap:6px;align-items:center;margin:14px 0}
+.matrix-yaxis{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);writing-mode:vertical-rl;transform:rotate(180deg);text-align:center}
+.matrix-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;height:220px}
+.matrix-cell{border-radius:3px;padding:14px;display:flex;flex-direction:column;gap:6px;overflow:auto}
+.matrix-cell-label{font-family:var(--fm);font-size:7.5px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.matrix-item{font-size:11.5px;font-weight:300;line-height:1.5}
+
+/* ROADMAP */
+.roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin:14px 0}
+.rm-col{border-radius:3px;overflow:hidden}
+.rm-hdr{padding:10px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+.rm-body{padding:12px 14px;display:grid;gap:6px;min-height:120px}
+.rm-item{font-size:12px;font-weight:300;color:var(--ink3);line-height:1.6;padding:6px 8px;background:var(--surface);border:1px solid var(--border);border-radius:3px}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:var(--teal2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink3)}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+
+/* PULL QUOTE */
+.pull-quote{border-left:4px solid var(--teal);padding:16px 20px;margin:16px 0;background:var(--teal-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:17px;font-style:italic;color:var(--ink2);line-height:1.6;font-weight:400}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--teal)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+@media print{.sidebar{display:none}.main{margin-left:0}.page.active{padding:20px}.strategy-doc{display:block!important;border:none}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">HRBP Tool 9 / 10</div>
+    <div class="sb-title">Talent<br><em>Strategy</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>What is a Talent Strategy?</div>
+    <div class="nav-item" onclick="showPage('link',this)"><span class="nav-num">02</span>Business–Talent Linkage</div>
+    <div class="nav-item" onclick="showPage('pillars',this)"><span class="nav-num">03</span>The Five Talent Pillars</div>
+    <div class="nav-item" onclick="showPage('swot',this)"><span class="nav-num">04</span>Talent SWOT — Valentis</div>
+    <div class="nav-item" onclick="showPage('priorities',this)"><span class="nav-num">05</span>Priority Setting</div>
+    <div class="nav-item" onclick="showPage('roadmap',this)"><span class="nav-num">06</span>The Talent Roadmap</div>
+    <div class="nav-item" onclick="showPage('builder',this)"><span class="nav-num">07</span>Strategy Builder</div>
+    <div class="nav-item" onclick="showPage('pitch',this)"><span class="nav-num">08</span>The CEO Pitch</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>HRBP Department</strong>
+      Tool 9 of 10 · Talent Strategy<br>
+      <span style="color:rgba(255,255,255,0.12)">The document that earns the CHRO conversation</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 WHAT -->
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">HRBP Tool 9 — Strategic Talent Strategy Builder</div>
+    <h1 class="page-title">Talent<br><em>Strategy</em></h1>
+    <p class="page-desc">A talent strategy is the organisation's deliberate plan for ensuring it always has the people it needs to execute its business strategy — now and in the future. It is the document that earns the HR function a seat in the boardroom.</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Strategy without people is a plan. People without strategy is activity. A talent strategy is the bridge that turns both into results."</p>
+    <cite>HRBP Principle — Valentis Group</cite>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What a Talent Strategy Is — and Is Not</div>
+      <div class="card-body" style="margin-bottom:14px">Most HR departments have activity plans. Very few have talent strategies. The difference is not sophistication — it is the starting point.</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr 1fr">
+          <div style="padding:16px;border-right:1px solid var(--border)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:8px">Activity Plan</div>
+            <div style="display:grid;gap:5px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— Starts with HR activities</div>
+              <div>— Driven by HR calendar</div>
+              <div>— Answers "what will HR do?"</div>
+              <div>— Measured by completion</div>
+              <div>— Presented to HR team</div>
+              <div>— Updated annually or never</div>
+            </div>
+          </div>
+          <div style="padding:16px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:8px">Talent Strategy</div>
+            <div style="display:grid;gap:5px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— Starts with business goals</div>
+              <div>— Driven by business priorities</div>
+              <div>— Answers "what does the business need from its people?"</div>
+              <div>— Measured by business outcomes</div>
+              <div>— Presented to CEO and COO</div>
+              <div>— Updated with the business plan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why Valentis Needs One Now</div>
+      <div class="card-body">
+        Valentis is at an inflection point. The business is growing — from 4 countries to potentially 5, from 42 to 65+ FTE — in a constrained talent market for a specialist role that takes 18–24 months to develop. This is not a situation you can manage reactively.<br><br>
+        A documented talent strategy does three things for Valentis that nothing else can:
+        <div style="display:grid;gap:6px;margin-top:14px">
+          <div style="padding:10px 14px;border-left:3px solid var(--teal);background:var(--teal-dim);font-size:13px;color:var(--ink2);border-radius:0 3px 3px 0"><strong style="color:var(--teal)">Business credibility:</strong> The CEO and COO see that HR understands the business well enough to connect people decisions to financial outcomes.</div>
+          <div style="padding:10px 14px;border-left:3px solid var(--teal);background:var(--teal-dim);font-size:13px;color:var(--ink2);border-radius:0 3px 3px 0"><strong style="color:var(--teal)">Investment justification:</strong> Every HR investment — development programmes, retention bonuses, compensation reviews — can be traced to a strategic outcome, not just a HR activity.</div>
+          <div style="padding:10px 14px;border-left:3px solid var(--teal);background:var(--teal-dim);font-size:13px;color:var(--ink2);border-radius:0 3px 3px 0"><strong style="color:var(--teal)">HRBP positioning:</strong> The HRBP who presents a talent strategy is no longer a service provider. They are a strategic advisor. This is the document that accelerates the path from Group HR Manager to CHRO.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Talent Strategy — <em>Structure</em></div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-top:12px">
+      <div style="padding:16px 14px;background:var(--ink);border-radius:3px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal3);line-height:1;margin-bottom:6px">01</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.65);font-weight:400;line-height:1.5">Business Context</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:300;margin-top:4px">What does the business strategy require from people?</div>
+      </div>
+      <div style="padding:16px 14px;background:var(--ink2);border-radius:3px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal3);line-height:1;margin-bottom:6px">02</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.65);font-weight:400;line-height:1.5">Talent Assessment</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:300;margin-top:4px">Where are we today vs where we need to be?</div>
+      </div>
+      <div style="padding:16px 14px;background:var(--ink2);border-radius:3px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal3);line-height:1;margin-bottom:6px">03</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.65);font-weight:400;line-height:1.5">Strategic Priorities</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:300;margin-top:4px">What are the three to five things that must happen?</div>
+      </div>
+      <div style="padding:16px 14px;background:var(--ink2);border-radius:3px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal3);line-height:1;margin-bottom:6px">04</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.65);font-weight:400;line-height:1.5">Initiatives & Actions</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:300;margin-top:4px">What exactly will we do, by when, and who owns it?</div>
+      </div>
+      <div style="padding:16px 14px;background:var(--ink2);border-radius:3px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal3);line-height:1;margin-bottom:6px">05</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.65);font-weight:400;line-height:1.5">Investment Case</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:300;margin-top:4px">What does this cost, and what is the ROI?</div>
+      </div>
+      <div style="padding:16px 14px;background:var(--ink2);border-radius:3px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal3);line-height:1;margin-bottom:6px">06</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.65);font-weight:400;line-height:1.5">Measures</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);font-weight:300;margin-top:4px">How will we know it is working?</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 BUSINESS–TALENT LINKAGE -->
+<div id="page-link" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Business–Talent Linkage</div>
+    <h1 class="page-title">Business–Talent<br><em>Linkage</em></h1>
+    <p class="page-desc">The most important section of any talent strategy. Every talent priority must trace directly to a business priority. If the linkage cannot be stated clearly, the priority should not be in the strategy.</p>
+  </div>
+
+  <div class="info teal"><strong>The Linkage Test</strong>For every talent priority, complete this sentence: "We must do [talent action] because the business needs [specific outcome] — and without this, [specific consequence] will happen." If you cannot complete it with specificity, the priority is an HR assumption, not a business requirement.</div>
+
+  <div class="card">
+    <div class="card-title">Valentis Business Strategy — People Implications</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>Business Priority</th><th>People Requirement</th><th>Talent Risk if Unaddressed</th><th>Talent Strategy Response</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;color:var(--ink)">Sustain and grow programme delivery across 4 countries</td>
+          <td>Sufficient qualified G3/G4 drillers at each site — 18 G4 and 11 G3 minimum for current programme</td>
+          <td><span class="chip chip-red">Critical</span> Programme delivery falls below 80% within 2 quarters — direct revenue impact</td>
+          <td>Emergency G3 sourcing + G3→G4 development pipeline activation</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--ink)">Expand into a 5th country by H1 2027</td>
+          <td>A Site Manager-calibre leader ready 6 months before contract signing — cannot hire from outside at that speed</td>
+          <td><span class="chip chip-amber">High</span> Country entry delayed or handed to an underprepared leader — reputational and operational risk</td>
+          <td>Internal SM succession candidate identified and developed from Q3 2026</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--ink)">Protect profit margins as headcount grows</td>
+          <td>People cost held at 40–45% of revenue as team scales — requires efficient development and retention over repeated external hiring</td>
+          <td><span class="chip chip-amber">High</span> People cost drifts to 50%+ as repeated external hiring at premium rate replaces talent that could have been grown internally</td>
+          <td>Trainee programme at scale; retention of critical G4 talent through C&B strategy</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--ink)">Maintain safety record and client confidence</td>
+          <td>Experienced, embedded team — not a high-turnover workforce of recent hires who do not yet know the ground</td>
+          <td><span class="chip chip-red">Critical</span> LTIFR rises as experienced coverage thins — direct safety, legal, and client relationship risk</td>
+          <td>Critical talent retention strategy; succession planning for all senior roles</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--ink)">Build a leadership bench for a growing multi-country group</td>
+          <td>High-potential G4 and G5 leaders who can step into country management roles — today's pipeline is too thin</td>
+          <td><span class="chip chip-amber">High</span> Leadership gaps filled by external hires with no Valentis context — higher failure rate and slower ramp time</td>
+          <td>Structured high-potential identification, development, and succession planning</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 FIVE PILLARS -->
+<div id="page-pillars" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — The Five Talent Pillars</div>
+    <h1 class="page-title">The Five<br><em>Talent Pillars</em></h1>
+    <p class="page-desc">Valentis's talent strategy is organised around five pillars — each addressing a critical dimension of the talent challenge. Together, they form a complete and integrated talent system.</p>
+  </div>
+
+  <div style="display:grid;gap:8px">
+    <div class="pillar">
+      <div class="pillar-hdr" style="background:var(--teal)" onclick="togglePillar('p1')">
+        <div class="pillar-num">01</div>
+        <div class="pillar-title">Build the Pipeline — Driller Supply Chain</div>
+        <div class="pillar-tag">Talent Acquisition + L&D</div>
+        <div style="font-family:var(--fm);font-size:16px;color:rgba(255,255,255,0.4)" id="ptog-p1">+</div>
+      </div>
+      <div class="pillar-body" id="pbody-p1" style="background:var(--teal-dim);border-color:var(--teal-border)">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">The Problem</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Valentis cannot hire G4 drillers off the shelf in Southeast Asia. The only reliable path to G4 supply is a functional trainee pipeline. The current pipeline is producing at 58% conversion — below the 70% required to sustain growth. At current attrition, the G4 supply gap reaches −5 FTE by end of 2026.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Strategic Response</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Expand intake to 8 trainees per cohort. Fix the Myanmar supervisor communication gap to recover conversion to ≥70%. Activate formal G3→G4 development plans for 4 identified candidates. Run contract G4 bridge hires (×2, 12 months) while the internal pipeline catches up.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Success Measures</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Trainee conversion ≥70% by Q3 2026. Four G3→G4 candidates on structured development plans by June 2026. G4 supply gap ≤ −2 FTE by December 2026. Pipeline producing one G4-ready candidate per quarter by 2028.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <div class="pillar-hdr" style="background:var(--navy)" onclick="togglePillar('p2')">
+        <div class="pillar-num">02</div>
+        <div class="pillar-title">Retain Critical Talent — The Irreplaceables</div>
+        <div class="pillar-tag">C&B + Engagement</div>
+        <div style="font-family:var(--fm);font-size:16px;color:rgba(255,255,255,0.4)" id="ptog-p2">+</div>
+      </div>
+      <div class="pillar-body" id="pbody-p2" style="background:var(--navy-dim);border-color:var(--navy-border)">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:6px">The Problem</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Valentis has a small number of individuals whose departure would cause immediate operational disruption: Myo H. (Myanmar SM, retention bonus expiring Apr 2027), Wirawan S. (Indonesia, retention bonus expiring Q1 2027), and the Laos senior driller cohort (5 G4, average age 51, 3 at retirement risk within 3 years). All three risk events are approaching simultaneously.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:6px">Strategic Response</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Initiate Myo H. retention conversation Q3 2026 — nine months before expiry. Review Wirawan S. package by October 2026. For the Laos G4 cohort: structured knowledge transfer and mentoring of G3 successors, combined with a recognition and flexible arrangement to extend working tenure where appropriate.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:6px">Success Measures</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Myo H. retention secured (or succession plan activated) by Q4 2026. Wirawan S. retention decision confirmed by Q3 2026. Laos G4 cohort: at least 2 of 3 at-risk drillers extend tenure by 12+ months through flexible arrangements. Zero unplanned critical talent exits in 2026.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <div class="pillar-hdr" style="background:var(--amber)" onclick="togglePillar('p3')">
+        <div class="pillar-num">03</div>
+        <div class="pillar-title">Develop Leaders — The Next Generation</div>
+        <div class="pillar-tag">L&D + Succession</div>
+        <div style="font-family:var(--fm);font-size:16px;color:rgba(255,255,255,0.4)" id="ptog-p3">+</div>
+      </div>
+      <div class="pillar-body" id="pbody-p3" style="background:var(--amber-dim);border-color:var(--amber-border)">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">The Problem</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Valentis's leadership bench is thin. All four country site managers are the only person who can do their job — there is no ready successor for any of them. As the business grows to 5+ countries, this becomes an acute risk. The business cannot expand faster than its leadership pipeline can grow.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Strategic Response</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Identify one high-potential G4 leader at each site. Build individual development plans targeting Site Manager capability within 24 months. Create structured cross-country exposure — the future SM of Country 5 needs to see how all four existing countries operate. Identify the Country 5 SM candidate by Q3 2026.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Success Measures</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">One identified successor for each SM role by Q4 2026. Country 5 SM candidate on development plan by Q3 2026. Leadership readiness score: ≥1 ready candidate per critical role by end of 2027. Internal fill rate for SM roles ≥60% by 2028.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <div class="pillar-hdr" style="background:var(--green)" onclick="togglePillar('p4')">
+        <div class="pillar-num">04</div>
+        <div class="pillar-title">Reward Competitively — Total Rewards Positioning</div>
+        <div class="pillar-tag">C&B + Benefits</div>
+        <div style="font-family:var(--fm);font-size:16px;color:rgba(255,255,255,0.4)" id="ptog-p4">+</div>
+      </div>
+      <div class="pillar-body" id="pbody-p4" style="background:var(--green-dim);border-color:var(--green-border)">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">The Problem</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Valentis must compete for rare G4 drillers against better-known operators with deeper pockets. Pay competitiveness must be verified before every new hire and every retention risk — not after the first offer decline. One known risk: Zaw M. (Myanmar, G3) is below minimum compa-ratio — a retention vulnerability.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Strategic Response</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Annual market salary benchmarking for G3 and G4 roles across all four countries. Remediate Zaw M. below-minimum position by April 2026. Country 5 market pricing before first hire. Formalise total rewards proposition — not just salary but site allowances, development, and career path — as a retention and attraction tool.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Success Measures</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">All G3/G4 roles at 90–110% compa-ratio by mid-2026. Zero below-minimum positions by Q2 2026. Offer acceptance rate ≥80% across all new hires. People cost maintained at 40–45% of revenue through efficient compensation design.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <div class="pillar-hdr" style="background:var(--ink2)" onclick="togglePillar('p5')">
+        <div class="pillar-num">05</div>
+        <div class="pillar-title">Build the HR Function — From Service to Strategy</div>
+        <div class="pillar-tag">HRBP Capability + Systems</div>
+        <div style="font-family:var(--fm);font-size:16px;color:rgba(255,255,255,0.4)" id="ptog-p5">+</div>
+      </div>
+      <div class="pillar-body" id="pbody-p5" style="background:var(--surface2);border-color:var(--border)">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">The Problem</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Valentis's HR function is currently reactive — filling vacancies, processing payroll, managing compliance. As the business grows to 65+ FTE across 5 countries, the current HR model will not scale. The function must evolve from transactional to strategic while continuing to deliver the basics reliably.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Strategic Response</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Establish the monthly HR scorecard and quarterly business review as permanent fixtures by Q2 2026. Complete HRBP certification (AIHR) by year-end. Build the workforce planning model so that the business plan and the people plan are produced simultaneously, not sequentially. Prepare the case for a second HR hire as headcount crosses 50 FTE.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Success Measures</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">HRBP included in business planning cycle by Q4 2026. Monthly scorecard delivered without fail for 6 consecutive months. CEO references people data in board reporting. HRBP AIHR certification completed. Business case for HR team expansion presented to COO by Q3 2026.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 04 SWOT -->
+<div id="page-swot" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Talent SWOT</div>
+    <h1 class="page-title">Talent SWOT<br><em>Valentis</em></h1>
+    <p class="page-desc">The talent SWOT is the evidence base for the strategy. It defines where Valentis stands in the talent market — honestly — and where the greatest opportunity lies. Strategy without honest self-assessment is wishful thinking.</p>
+  </div>
+
+  <div class="swot-grid">
+    <div class="swot-cell" style="background:var(--green-dim);border:1px solid var(--green-border)">
+      <div class="swot-label" style="color:var(--green)">Strengths — What We Have</div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--green)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Established driller development programme.</strong> A functional trainee-to-G4 pipeline exists — one of very few in the region. At 70% conversion it is a competitive moat.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--green)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Multi-country operational experience.</strong> Staff with cross-country exposure are rare and highly sought after. Valentis creates this experience by default.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--green)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Strong site culture in Thailand.</strong> Thailand site demonstrates what Valentis can be at its best — high retention, high conversion, high satisfaction. A replicable model.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--green)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Relatively low people cost.</strong> At 43% of revenue, there is room within the 45% ceiling to invest in retention and development before financial pressure mounts.</div></div>
+    </div>
+    <div class="swot-cell" style="background:var(--red-dim);border:1px solid var(--red-border)">
+      <div class="swot-label" style="color:var(--red)">Weaknesses — What We Lack</div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--red)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">No succession cover for any SM role.</strong> A single leadership departure in any country creates an immediate programme risk with no internal bridge.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--red)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Myanmar supervisor capability gap.</strong> Trainee attrition is directly linked to supervisor communication — a capability gap that has been allowed to persist without diagnosis or intervention.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--red)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">HR function is reactive.</strong> No workforce planning, no regular business review, no structured talent pipeline management. The function is event-driven, not strategy-driven.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--red)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Ageing G4 cohort in Laos.</strong> Three of five senior drillers approaching retirement. Replacement pipeline is net negative if no action taken.</div></div>
+    </div>
+    <div class="swot-cell" style="background:var(--teal-dim);border:1px solid var(--teal-border)">
+      <div class="swot-label" style="color:var(--teal)">Opportunities — What We Could Capture</div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--teal)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Country 5 expansion.</strong> A new country entry creates the opportunity to build the HR model correctly from day one — structured onboarding, competitive rewards benchmarked before the first hire, clear career path.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--teal)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Thailand as a talent development hub.</strong> The highest-performing site can become the reference model and the cross-site rotation destination for high-potential talent from other countries.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--teal)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Formalising the EVP.</strong> Valentis has an informal employer value proposition — interesting work, international exposure, development programme — that has never been formalised or used in attraction. Doing so would improve offer acceptance rate and reduce sourcing cost.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--teal)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">HRBP strategic positioning.</strong> As the first person to build a structured talent strategy for Valentis, the Group HR Manager has an open field to define what strategic HR looks like in this organisation.</div></div>
+    </div>
+    <div class="swot-cell" style="background:var(--amber-dim);border:1px solid var(--amber-border)">
+      <div class="swot-label" style="color:var(--amber)">Threats — What Could Undermine Us</div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--amber)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Constrained driller supply market.</strong> Experienced G4 drillers in Southeast Asia are rare and increasingly competed for. Any major operator entering the region will compress the external hiring market.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--amber)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Political and regulatory risk in operating countries.</strong> Sudden changes to work permit regimes (Myanmar, Indonesia) can strand workforce plans that depend on cross-border mobility.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--amber)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Simultaneous retention risk events.</strong> Myo H., Wirawan S., and the Laos G4 cohort all create risk within the same 18-month window — a simultaneous cluster that would overwhelm a reactive HR function.</div></div>
+      <div class="swot-item"><div class="swot-dot" style="background:var(--amber)"></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Contract loss or revenue contraction.</strong> A lost contract forces rapid workforce adjustment — and organisations with no talent strategy lose the wrong people when they restructure.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 05 PRIORITIES -->
+<div id="page-priorities" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Priority Setting</div>
+    <h1 class="page-title">Priority<br><em>Setting</em></h1>
+    <p class="page-desc">Not all talent priorities are equal. The HRBP must sequence them by impact and urgency — doing everything is doing nothing. This section ranks Valentis's 2026 talent priorities and explains the sequencing logic.</p>
+  </div>
+
+  <div class="info teal"><strong>The Sequencing Principle</strong>Prioritise by the combination of business impact (what breaks if this is not done) and time sensitivity (how soon does the window close). A high-impact action with a long lead time is urgent even when it does not yet feel urgent. A low-impact action with immediate symptoms should wait.</div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="matrix-wrap" style="padding:20px;margin:0">
+      <div class="matrix-yaxis">Business Impact →</div>
+      <div>
+        <div class="matrix-grid">
+          <div class="matrix-cell" style="background:var(--amber-dim);border:1px solid var(--amber-border)">
+            <div class="matrix-cell-label" style="color:var(--amber)">High Impact · Low Urgency → Plan Now</div>
+            <div class="matrix-item" style="color:var(--ink3)">Country 5 SM development (15-month window)</div>
+            <div class="matrix-item" style="color:var(--ink3)">Laos G4 knowledge transfer programme</div>
+            <div class="matrix-item" style="color:var(--ink3)">Wirawan S. retention renewal (expiry Q1 2027)</div>
+          </div>
+          <div class="matrix-cell" style="background:var(--red-dim);border:1px solid var(--red-border)">
+            <div class="matrix-cell-label" style="color:var(--red)">High Impact · High Urgency → Act Immediately</div>
+            <div class="matrix-item" style="color:var(--ink2);font-weight:500">Indonesia G3 sourcing — 3 vacancies, 47+ days</div>
+            <div class="matrix-item" style="color:var(--ink2);font-weight:500">G3→G4 development pipeline activation (Jun deadline)</div>
+            <div class="matrix-item" style="color:var(--ink2);font-weight:500">Myo H. retention conversation (Sep deadline)</div>
+            <div class="matrix-item" style="color:var(--ink2);font-weight:500">Myanmar trainee supervisor coaching (Mar deadline)</div>
+          </div>
+          <div class="matrix-cell" style="background:var(--surface2);border:1px solid var(--border)">
+            <div class="matrix-cell-label" style="color:var(--ink4)">Low Impact · Low Urgency → Defer</div>
+            <div class="matrix-item">Policy documentation refresh</div>
+            <div class="matrix-item">HR system migration (non-critical)</div>
+            <div class="matrix-item">Non-critical role JD updates</div>
+          </div>
+          <div class="matrix-cell" style="background:var(--teal-dim);border:1px solid var(--teal-border)">
+            <div class="matrix-cell-label" style="color:var(--teal)">Low Impact · High Urgency → Quick Win</div>
+            <div class="matrix-item" style="color:var(--ink3)">Zaw M. below-minimum salary remediation</div>
+            <div class="matrix-item" style="color:var(--ink3)">HR scorecard launch — first issue</div>
+            <div class="matrix-item" style="color:var(--ink3)">Q1 trainee 30/60/90 check-in structure</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0 0;font-family:var(--fm);font-size:8px;letter-spacing:1px;color:var(--ink5)">
+          <span>Low Urgency</span><span>← Time Sensitivity →</span><span>High Urgency</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2026 Priority Sequence — The HRBP's Commitment</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>#</th><th>Priority</th><th>Business Consequence if Not Done</th><th>Deadline</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--fm);font-weight:700;color:var(--red)">P1</td><td style="font-weight:600;color:var(--ink)">Indonesia G3 emergency sourcing</td><td>Programme delivery drops to 78%; $47k/month revenue exposure</td><td><span class="chip chip-red">Apr 2026</span></td><td>TA COE + HRBP</td></tr>
+        <tr><td style="font-family:var(--fm);font-weight:700;color:var(--red)">P2</td><td style="font-weight:600;color:var(--ink)">Myanmar supervisor coaching</td><td>Trainee attrition continues; conversion stays below 70%; pipeline gap widens</td><td><span class="chip chip-red">Mar 2026</span></td><td>HRBP</td></tr>
+        <tr><td style="font-family:var(--fm);font-weight:700;color:var(--amber)">P3</td><td style="font-weight:600;color:var(--ink)">G3→G4 development plans — 4 candidates</td><td>G4 gap reaches −5 by Dec 2026; no internal path to close it without 18-month lead time</td><td><span class="chip chip-amber">Jun 2026</span></td><td>HRBP + SMs</td></tr>
+        <tr><td style="font-family:var(--fm);font-weight:700;color:var(--amber)">P4</td><td style="font-weight:600;color:var(--ink)">Myo H. retention conversation</td><td>Myanmar SM succession gap without leverage to retain or plan</td><td><span class="chip chip-amber">Sep 2026</span></td><td>HRBP + COO</td></tr>
+        <tr><td style="font-family:var(--fm);font-weight:700;color:var(--amber)">P5</td><td style="font-weight:600;color:var(--ink)">Country 5 SM candidate identification</td><td>Country entry blocked by leadership gap; business growth delayed</td><td><span class="chip chip-amber">Sep 2026</span></td><td>HRBP + COO</td></tr>
+        <tr><td style="font-family:var(--fm);font-weight:700;color:var(--teal)">P6</td><td style="font-weight:600;color:var(--ink)">HR Scorecard — first 6 monthly issues</td><td>HRBP remains invisible in business planning; mandate does not grow</td><td><span class="chip chip-teal">Apr 2026 start</span></td><td>HRBP</td></tr>
+        <tr><td style="font-family:var(--fm);font-weight:700;color:var(--teal)">P7</td><td style="font-weight:600;color:var(--ink)">Q4 trainee cohort expansion to 8</td><td>2027 G2 supply insufficient to feed G3→G4 pipeline</td><td><span class="chip chip-teal">Oct 2026</span></td><td>HRBP + L&D</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 06 ROADMAP -->
+<div id="page-roadmap" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — The Talent Roadmap</div>
+    <h1 class="page-title">The Talent<br><em>Roadmap</em></h1>
+    <p class="page-desc">The 24-month talent roadmap for Valentis — what happens when, across all five pillars, from Q1 2026 through Q4 2027. The visual plan the COO and CEO review at each quarterly business review.</p>
+  </div>
+
+  <div class="roadmap">
+    <div class="rm-col">
+      <div class="rm-hdr" style="background:var(--red);color:#fff">Q1–Q2 2026 — Foundation</div>
+      <div class="rm-body" style="background:var(--red-dim);border:1px solid var(--red-border);border-top:none">
+        <div class="rm-item"><strong>P1:</strong> Indonesia G3 sourcing — 3 hires, target Apr 30</div>
+        <div class="rm-item"><strong>P2:</strong> Myanmar supervisor coaching — 6-week programme from Mar 18</div>
+        <div class="rm-item"><strong>P6:</strong> HR Scorecard launched — first issue April</div>
+        <div class="rm-item"><strong>C&B:</strong> Zaw M. salary remediated — April</div>
+        <div class="rm-item"><strong>WFP:</strong> 12-month supply model published</div>
+        <div class="rm-item"><strong>P3:</strong> G3→G4 development plans — 4 candidates by June</div>
+        <div class="rm-item"><strong>Bridges:</strong> 30/60/90 trainee check-in activated</div>
+      </div>
+    </div>
+    <div class="rm-col">
+      <div class="rm-hdr" style="background:var(--amber);color:#fff">Q3 2026 — Momentum</div>
+      <div class="rm-body" style="background:var(--amber-dim);border:1px solid var(--amber-border);border-top:none">
+        <div class="rm-item"><strong>P4:</strong> Myo H. retention conversation initiated</div>
+        <div class="rm-item"><strong>P5:</strong> Country 5 SM candidate identified</div>
+        <div class="rm-item">Wirawan S. package review — October</div>
+        <div class="rm-item">Trainee conversion confirmed ≥70% — July scorecard</div>
+        <div class="rm-item">Contract G4 bridge hires (×2) — Jul start</div>
+        <div class="rm-item">Quarterly Business Review — CEO/COO — people strategy update</div>
+        <div class="rm-item">HRBP — AIHR C&B certification complete</div>
+      </div>
+    </div>
+    <div class="rm-col">
+      <div class="rm-hdr" style="background:var(--teal);color:#fff">Q4 2026 — Scale</div>
+      <div class="rm-body" style="background:var(--teal-dim);border:1px solid var(--teal-border);border-top:none">
+        <div class="rm-item"><strong>P7:</strong> Trainee cohort — 8 intakes</div>
+        <div class="rm-item">Myo H. retention decision confirmed</div>
+        <div class="rm-item">Country 5 SM candidate — development plan active</div>
+        <div class="rm-item">Annual salary benchmarking — all grades all countries</div>
+        <div class="rm-item">Business planning inclusion — HR inputs 2027 plan</div>
+        <div class="rm-item">HRBP — AIHR TA certification complete</div>
+        <div class="rm-item">Succession cover: 1 identified successor per SM role</div>
+      </div>
+    </div>
+    <div class="rm-col">
+      <div class="rm-hdr" style="background:var(--green);color:#fff">2027 — Harvest</div>
+      <div class="rm-body" style="background:var(--green-dim);border:1px solid var(--green-border);border-top:none">
+        <div class="rm-item">Country 5 entry — SM ready, team staffed</div>
+        <div class="rm-item">First G3→G4 promotions from 2026 development cohort</div>
+        <div class="rm-item">Trainee pipeline producing 5–6 G2 completions per cohort</div>
+        <div class="rm-item">Laos G4 succession — at least 2 successors ready</div>
+        <div class="rm-item">HR team expansion — business case approved</div>
+        <div class="rm-item">Talent strategy Year 2 — built with CEO input</div>
+        <div class="rm-item">HRBP: CHRO readiness assessment</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Talent Strategy — <em>Investment Summary</em></div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>Initiative</th><th>Type</th><th>Estimated Investment</th><th>Return / Avoided Cost</th><th>Payback</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--ink)">Indonesia G3 sourcing (×3)</td><td><span class="chip chip-navy">Buy</span></td><td>~$45k recruitment + relocation</td><td>$47k/month suppressed revenue avoided per month of delay</td><td style="color:var(--green);font-weight:600">&lt; 1 month</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Myanmar supervisor coaching</td><td><span class="chip chip-teal">Build</span></td><td>~$8k facilitator + time</td><td>$29k per prevented trainee exit (×2 min)</td><td style="color:var(--green);font-weight:600">&lt; 3 months</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">G3→G4 development — 4 candidates</td><td><span class="chip chip-teal">Build</span></td><td>~$20k training budget + SM time</td><td>External G4 hire = $35k+ per head vs $5k internal promotion cost</td><td style="color:var(--green);font-weight:600">12–18 months</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Contract G4 bridge (×2, 12mo)</td><td><span class="chip chip-amber">Borrow</span></td><td>~15% contract premium on 2 G4 salaries</td><td>Programme delivery protected during pipeline development</td><td style="color:var(--amber);font-weight:600">Revenue-linked</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Myo H. retention renewal</td><td><span class="chip chip-green">Bind</span></td><td>TBD — retention bonus quantum</td><td>SM replacement = 4–6 months programme disruption + $60k+ search cost</td><td style="color:var(--green);font-weight:600">Immediate risk avoided</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Trainee cohort expansion (6→8)</td><td><span class="chip chip-teal">Build</span></td><td>~$12k incremental programme cost</td><td>2 additional G2 completions per cycle feeding G3→G4 pipeline</td><td style="color:var(--amber);font-weight:600">18–24 months</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 07 BUILDER -->
+<div id="page-builder" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Strategy Builder</div>
+    <h1 class="page-title">Strategy<br><em>Builder</em></h1>
+    <p class="page-desc">Build a complete Talent Strategy document for Valentis — or adapt it for a specific review period. Fill in the key inputs and generate a formatted strategy document ready to present to the CEO or COO.</p>
+  </div>
+
+  <div class="builder">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f5f2;margin-bottom:16px">Talent Strategy Setup</div>
+    <div class="b-row b-row-3">
+      <div class="b-group"><label class="b-label">Strategy Period</label>
+        <select class="b-select" id="s-period">
+          <option>2026 Annual</option><option>2026–2027 (2-Year)</option><option>Q2–Q4 2026</option>
+        </select>
+      </div>
+      <div class="b-group"><label class="b-label">Prepared By</label><input class="b-input" id="s-author" placeholder="Group HR Manager" style="min-height:auto;resize:none"></div>
+      <div class="b-group"><label class="b-label">Audience</label>
+        <select class="b-select" id="s-audience">
+          <option>CEO &amp; COO</option><option>COO only</option><option>Leadership Team</option><option>Board</option>
+        </select>
+      </div>
+    </div>
+    <div class="b-section">
+      <div class="b-section-title">Business Context</div>
+      <div class="b-row b-row-2">
+        <div class="b-group"><label class="b-label">Top business priorities this period</label><textarea class="b-input" id="s-biz" placeholder="e.g. Sustain 4-country programme delivery. Expand to Country 5 by H1 2027. Protect margins as headcount scales." style="min-height:60px"></textarea></div>
+        <div class="b-group"><label class="b-label">Biggest people risk to the business</label><textarea class="b-input" id="s-risk" placeholder="e.g. G4 supply gap reaching −5 FTE by Dec 2026. SM succession gap across all four countries." style="min-height:60px"></textarea></div>
+      </div>
+    </div>
+    <div class="b-section">
+      <div class="b-section-title">Strategic Talent Priorities (up to 3)</div>
+      <div class="b-group" style="margin-bottom:8px"><label class="b-label">Priority 1 — Most urgent / highest impact</label><input class="b-input" id="s-p1" placeholder="e.g. Build the driller pipeline — fix trainee conversion and activate G3→G4 development" style="min-height:auto;resize:none"></div>
+      <div class="b-group" style="margin-bottom:8px"><label class="b-label">Priority 2</label><input class="b-input" id="s-p2" placeholder="e.g. Retain critical talent — Myo H., Wirawan S., Laos G4 cohort" style="min-height:auto;resize:none"></div>
+      <div class="b-group"><label class="b-label">Priority 3</label><input class="b-input" id="s-p3" placeholder="e.g. Build the leadership bench for country expansion" style="min-height:auto;resize:none"></div>
+    </div>
+    <div class="b-section">
+      <div class="b-section-title">Headline Metrics — Targets for this Period</div>
+      <div class="b-row b-row-3" style="margin-bottom:0">
+        <div class="b-group"><label class="b-label">Attrition Target</label><input class="b-input" id="s-m1" placeholder="≤ 12%" style="min-height:auto;resize:none;text-align:center;font-family:var(--fm)"></div>
+        <div class="b-group"><label class="b-label">Trainee Conversion</label><input class="b-input" id="s-m2" placeholder="≥ 70%" style="min-height:auto;resize:none;text-align:center;font-family:var(--fm)"></div>
+        <div class="b-group"><label class="b-label">Succession Cover</label><input class="b-input" id="s-m3" placeholder="≥ 80%" style="min-height:auto;resize:none;text-align:center;font-family:var(--fm)"></div>
+      </div>
+    </div>
+    <div class="b-section">
+      <div class="b-section-title">Investment Ask</div>
+      <div class="b-row b-row-2">
+        <div class="b-group"><label class="b-label">Total investment required</label><input class="b-input" id="s-inv" placeholder="e.g. ~$130k across 6 initiatives" style="min-height:auto;resize:none"></div>
+        <div class="b-group"><label class="b-label">Key decision required from CEO/COO</label><input class="b-input" id="s-dec" placeholder="e.g. Approve sourcing budget and development programme investment" style="min-height:auto;resize:none"></div>
+      </div>
+    </div>
+    <button class="btn btn-teal" onclick="generateStrategy()">Generate Strategy Document →</button>
+  </div>
+
+  <div class="strategy-doc" id="strategy-doc">
+    <div class="doc-cover">
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--teal3);margin-bottom:10px">Valentis Group · People Strategy</div>
+      <div style="font-family:var(--fd);font-size:44px;font-weight:800;color:#f5f5f2;line-height:.9;margin-bottom:8px;letter-spacing:-1px">Strategic <span style="font-style:italic;color:var(--teal3);font-weight:400">Talent</span><br>Strategy</div>
+      <div style="font-family:var(--fd);font-size:20px;font-weight:400;font-style:italic;color:rgba(255,255,255,0.35);margin-bottom:20px" id="dc-period"></div>
+      <div style="display:flex;gap:24px;font-size:12px;font-family:var(--fm)">
+        <span style="color:rgba(255,255,255,0.3)">Prepared by: <span id="dc-author" style="color:rgba(255,255,255,0.55)"></span></span>
+        <span style="color:rgba(255,255,255,0.3)">Audience: <span id="dc-audience" style="color:rgba(255,255,255,0.55)"></span></span>
+      </div>
+    </div>
+    <div class="doc-body">
+      <div class="doc-section">
+        <div class="doc-section-eyebrow">Section 1</div>
+        <div class="doc-section-title">Business <em>Context</em></div>
+        <div id="dc-biz" class="doc-body-text"></div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-section-eyebrow">Section 2</div>
+        <div class="doc-section-title">Strategic <em>Priorities</em></div>
+        <div id="dc-priorities"></div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-section-eyebrow">Section 3</div>
+        <div class="doc-section-title">Success <em>Measures</em></div>
+        <div class="doc-kpi-grid" id="dc-kpis"></div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-section-eyebrow">Section 4</div>
+        <div class="doc-section-title">Investment &amp; <em>Decision Required</em></div>
+        <div id="dc-investment" class="doc-body-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:10px;display:none" id="strat-actions">
+    <button class="btn btn-ghost" onclick="window.print()">Print Strategy</button>
+  </div>
+</div>
+
+<!-- 08 CEO PITCH -->
+<div id="page-pitch" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — The CEO Pitch</div>
+    <h1 class="page-title">The CEO<br><em>Pitch</em></h1>
+    <p class="page-desc">The talent strategy is only as powerful as the conversation it creates. This section prepares the HRBP for the most important pitch of the year — the annual people strategy presentation to the CEO and COO.</p>
+  </div>
+
+  <div class="info teal"><strong>This Is the CHRO Conversation</strong>The HRBP who presents a talent strategy to the CEO is no longer a HR manager. They are a business strategist who specialises in people. This distinction is felt in the room before the first slide is shown — in how you open, how you speak, and what you are willing to commit to.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">The Opening — Five Sentences</div>
+      <div class="card-body" style="margin-bottom:14px">The first five sentences of the CEO pitch determine whether the next 30 minutes are a strategic conversation or a presentation the CEO politely endures. Practice these until they are effortless.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:4px">Sentence 1 — The Business Frame</div>
+          <div style="color:var(--ink2);font-style:italic">"Valentis is growing faster than its talent pipeline — and by the end of this year, that gap will start to constrain what the business can deliver."</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:4px">Sentence 2 — The Evidence</div>
+          <div style="color:var(--ink2);font-style:italic">"Without action in the next 90 days, we project a 34% headcount shortfall against programme requirement by December — a position we cannot recover from in the hiring market."</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:4px">Sentence 3 — The Strategy</div>
+          <div style="color:var(--ink2);font-style:italic">"The strategy I am presenting today addresses this in five integrated moves — building the pipeline, retaining the irreplaceables, developing future leaders, fixing our rewards competitiveness, and upgrading the HR function itself."</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:4px">Sentence 4 — The Investment</div>
+          <div style="color:var(--ink2);font-style:italic">"The total investment is approximately $130k across six initiatives — against a cost-of-inaction estimate that runs significantly higher in lost programme revenue and replacement costs."</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:3px;font-size:13px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:4px">Sentence 5 — The Ask</div>
+          <div style="color:var(--ink2);font-style:italic">"I need two decisions from this conversation — and I will take ownership of the rest."</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Questions the CEO Will Ask</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-style:italic;color:var(--ink2);margin-bottom:6px;font-size:13.5px">"How does this compare to what other operators are doing?"</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Response: "Our trainee programme is a competitive differentiator — most regional operators recruit externally and pay the premium. At 70% conversion, our internal cost-per-G4 is approximately 40% below external hire cost. The strategy invests in making that advantage more reliable."</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-style:italic;color:var(--ink2);margin-bottom:6px;font-size:13.5px">"What happens if we do nothing for another 6 months?"</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Response: "In 6 months, the Myo H. retention window narrows to 3 months — too short to negotiate effectively. The Laos G4 succession gap becomes acute. And the G3→G4 development candidates we could have started in June will be 6 months behind schedule — pushing their G4 readiness from Q4 2027 to Q2 2028. The cost of delay compounds."</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-style:italic;color:var(--ink2);margin-bottom:6px;font-size:13.5px">"What is the single most important thing you need from me?"</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Response: "To be included in the 2027 business planning process before the plan is set — not after. Every people constraint I am managing today is the consequence of a business decision made without HR input. With a seat at that table, I can prevent the next generation of these problems rather than solve them in retrospect."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Closing the Pitch — The Commitment Statement</div>
+    <div class="card-body" style="margin-bottom:16px">Every talent strategy pitch must close with a personal commitment. Not "HR will deliver the following initiatives." But "I will personally ensure the following outcomes — and you will see them in the monthly scorecard."</div>
+    <div style="background:var(--ink);border-radius:4px;padding:24px;color:#f5f5f2">
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--teal3);margin-bottom:12px">Sample Closing Statement</div>
+      <div style="font-family:var(--fd);font-size:18px;font-style:italic;color:rgba(255,255,255,0.7);line-height:1.65;font-weight:400">"I am committing to three outcomes by the end of 2026: trainee conversion back above 70%, a named successor for every Site Manager role, and Valentis included in the business planning cycle for 2027. You will see progress on all three in every monthly scorecard. If any of them slip, I will tell you why in the review — and what changes. That is the kind of HR function I am building here."</div>
+      <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-top:12px">— Group HR Manager, Valentis Group</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function togglePillar(id) {
+  const body = document.getElementById('pbody-' + id);
+  const tog  = document.getElementById('ptog-' + id);
+  const open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  tog.textContent = open ? '+' : '−';
+}
+
+function generateStrategy() {
+  const get = id => document.getElementById(id)?.value?.trim() || '';
+  const period   = get('s-period') || document.getElementById('s-period')?.options[document.getElementById('s-period').selectedIndex]?.text || '2026';
+  const author   = get('s-author') || 'Group HR Manager';
+  const audEl    = document.getElementById('s-audience');
+  const audience = audEl?.options[audEl.selectedIndex]?.text || 'CEO & COO';
+  const biz      = get('s-biz');
+  const risk     = get('s-risk');
+  const p1       = get('s-p1');
+  const p2       = get('s-p2');
+  const p3       = get('s-p3');
+  const m1       = get('s-m1') || '≤ 12%';
+  const m2       = get('s-m2') || '≥ 70%';
+  const m3       = get('s-m3') || '≥ 80%';
+  const inv      = get('s-inv');
+  const dec      = get('s-dec');
+
+  document.getElementById('dc-period').textContent = period;
+  document.getElementById('dc-author').textContent = author;
+  document.getElementById('dc-audience').textContent = audience;
+
+  document.getElementById('dc-biz').innerHTML =
+    `<div style="margin-bottom:8px"><strong style="color:var(--ink2)">Business priorities:</strong> ${biz || '—'}</div>
+     <div><strong style="color:var(--red)">Primary people risk:</strong> ${risk || '—'}</div>`;
+
+  const priorities = [p1, p2, p3].filter(Boolean);
+  document.getElementById('dc-priorities').innerHTML = priorities.length
+    ? priorities.map((p, i) => `<div class="doc-priority"><div class="doc-priority-num">P${i+1}</div><div class="doc-body-text">${p}</div></div>`).join('')
+    : '<div class="doc-body-text">No priorities specified.</div>';
+
+  document.getElementById('dc-kpis').innerHTML = [
+    { label: 'Attrition Target', val: m1 },
+    { label: 'Trainee Conversion', val: m2 },
+    { label: 'Succession Cover', val: m3 },
+    { label: 'People Cost % Rev', val: '40–45%' },
+  ].map(k => `<div class="doc-kpi"><div class="doc-kpi-val">${k.val}</div><div class="doc-kpi-lbl">${k.label}</div></div>`).join('');
+
+  document.getElementById('dc-investment').innerHTML =
+    `<div style="margin-bottom:8px"><strong style="color:var(--ink2)">Total investment:</strong> ${inv || '—'}</div>
+     <div><strong style="color:var(--teal)">Decision required:</strong> ${dec || '—'}</div>`;
+
+  document.getElementById('strategy-doc').style.display = 'block';
+  document.getElementById('strat-actions').style.display = 'flex';
+}
+</script>
+</body>
+</html>

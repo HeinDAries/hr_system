@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workforce Planning & Scenario Modeller — Valentis HRBP Tool 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=IBM+Plex+Sans:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f7f5;--surface:#ffffff;--surface2:#f2f2ef;--surface3:#e8e8e4;
+  --border:#e0e0db;--border2:#c8c8c2;
+  --ink:#0f0f0e;--ink2:#2a2a28;--ink3:#555550;--ink4:#888880;--ink5:#b8b8b0;
+  --teal:#0d7a6e;--teal2:#0e8f82;--teal3:#10a494;--teal-dim:rgba(13,122,110,0.07);--teal-border:rgba(13,122,110,0.22);
+  --amber:#b8720a;--amber-dim:rgba(184,114,10,0.07);--amber-border:rgba(184,114,10,0.22);
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --green:#1a7a3c;--green-dim:rgba(26,122,60,0.07);--green-border:rgba(26,122,60,0.22);
+  --navy:#1a3a5c;--navy-dim:rgba(26,58,92,0.07);--navy-border:rgba(26,58,92,0.2);
+  --sidebar-w:272px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+.sidebar{width:var(--sidebar-w);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--teal3),var(--teal),rgba(13,122,110,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal3);background:rgba(13,122,110,0.12);border:1px solid rgba(13,122,110,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#f5f5f2;line-height:1.15;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--teal3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(13,122,110,0.15);border-color:rgba(13,122,110,0.35);color:var(--teal3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--teal)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--teal3);display:block;margin-bottom:3px}
+
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:54px;font-weight:800;color:var(--ink);line-height:.95;margin-bottom:14px;letter-spacing:-1px}
+.page-title em{font-style:italic;font-weight:400;color:var(--teal)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:border-color .13s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.2}
+.card-title em{font-style:italic;color:var(--teal);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-teal{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border)}
+.chip-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-navy{background:var(--navy-dim);color:var(--navy);border:1px solid var(--navy-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.teal{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+.info.amber{background:var(--amber-dim);border-color:var(--amber);color:var(--amber)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--red)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--ink);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:middle;font-weight:300;line-height:1.6}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+
+/* MODELLER INPUT */
+.mod-wrap{background:var(--ink);border-radius:4px;padding:28px;margin-bottom:14px;color:#f5f5f2}
+.mod-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:5px;display:block}
+.mod-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 12px;color:#f5f5f2;font-family:var(--fm);font-size:13px;outline:none;width:100%;transition:border-color .13s;text-align:right}
+.mod-input:focus{border-color:var(--teal)}
+.mod-select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 10px;color:#f5f5f2;font-family:var(--fm);font-size:12px;outline:none;width:100%}
+.mod-select option{background:#1a1a18}
+.mod-row{display:grid;gap:10px;margin-bottom:10px}
+.mod-row-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.mod-row-3{grid-template-columns:1fr 1fr 1fr}
+.mod-row-2{grid-template-columns:1fr 1fr}
+.mod-group{display:flex;flex-direction:column;gap:4px}
+.mod-divider{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:16px 0}
+.mod-section-title{font-family:var(--fd);font-size:16px;font-weight:600;color:#f5f5f2;margin-bottom:12px}
+
+/* GAP DISPLAY */
+.gap-panel{border-radius:4px;padding:20px 24px;margin-bottom:10px;border:1px solid}
+.gap-panel.surplus{background:var(--teal-dim);border-color:var(--teal-border)}
+.gap-panel.balanced{background:var(--green-dim);border-color:var(--green-border)}
+.gap-panel.deficit{background:var(--amber-dim);border-color:var(--amber-border)}
+.gap-panel.critical{background:var(--red-dim);border-color:var(--red-border)}
+.gap-num{font-family:var(--fd);font-size:48px;font-weight:800;line-height:1}
+.gap-label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.gap-desc{font-size:13px;font-weight:300;line-height:1.75;margin-top:8px}
+
+/* SCENARIO CARDS */
+.scenario-tabs{display:flex;gap:4px;margin-bottom:0;border-bottom:2px solid var(--ink)}
+.scenario-tab{padding:10px 20px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.scenario-tab:hover{color:var(--ink2)}
+.scenario-tab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
+.scenario-body{display:none;padding:20px 0}
+.scenario-body.active{display:block}
+
+/* SUPPLY-DEMAND VISUAL */
+.sd-bar-wrap{display:flex;gap:8px;align-items:flex-end;height:120px;margin:10px 0}
+.sd-bar{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.sd-bar-fill{width:100%;border-radius:3px 3px 0 0;transition:height .5s ease;min-height:4px}
+.sd-bar-label{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink5);text-align:center}
+.sd-bar-val{font-family:var(--fm);font-size:11px;font-weight:600;color:var(--ink3)}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:28px;margin:10px 0}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border2)}
+.tl-item{position:relative;margin-bottom:14px}
+.tl-dot{width:10px;height:10px;border-radius:50%;position:absolute;left:-24px;top:4px;border:2px solid var(--surface)}
+.tl-period{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink5);margin-bottom:3px}
+.tl-content{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7}
+.tl-title{font-weight:600;color:var(--ink2);margin-bottom:2px}
+
+/* SUPPLY CHAIN */
+.supply-chain{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin:14px 0}
+.sc-node{padding:14px 12px;text-align:center;border-radius:3px;border:1px solid}
+.sc-node-title{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.sc-node-num{font-family:var(--fd);font-size:26px;font-weight:800;line-height:1;margin-bottom:4px}
+.sc-node-sub{font-size:11px;font-weight:300;line-height:1.5}
+.sc-arrow{display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--ink5)}
+
+/* PLANNING TABLE */
+.plan-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px}
+.plan-table th{padding:9px 12px;background:var(--ink);color:rgba(255,255,255,0.6);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;text-align:center}
+.plan-table th:first-child{text-align:left}
+.plan-table td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:center;font-family:var(--fm);font-size:12px;font-weight:400}
+.plan-table td:first-child{text-align:left;font-family:var(--fb);font-weight:500;color:var(--ink2)}
+.plan-table tr:last-child td{border-bottom:none;font-weight:700;background:var(--surface2)}
+.plan-table tr:hover td{background:var(--surface2)}
+.cell-green{color:var(--green);font-weight:600}
+.cell-amber{color:var(--amber);font-weight:600}
+.cell-red{color:var(--red);font-weight:600}
+.cell-teal{color:var(--teal);font-weight:600}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:var(--teal2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink3)}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+
+/* RESULTS */
+.results-dark{background:var(--ink);border-radius:4px;padding:24px;color:#f5f5f2;margin-top:14px}
+.res-row{display:grid;grid-template-columns:200px 80px 80px 80px 1fr;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.res-row:last-child{border-bottom:none}
+.res-label{font-size:13px;color:rgba(255,255,255,0.65);font-weight:300}
+.res-val{font-family:var(--fm);font-size:13px;font-weight:600;text-align:center}
+.res-bar-bg{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden}
+.res-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+.page.active .card:nth-child(4){animation-delay:.13s}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+@media print{.sidebar{display:none}.main{margin-left:0}.page.active{padding:20px}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">HRBP Tool 6 / 10</div>
+    <div class="sb-title">Workforce<br><em>Planning</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>What is Workforce Planning?</div>
+    <div class="nav-item" onclick="showPage('framework',this)"><span class="nav-num">02</span>The Planning Framework</div>
+    <div class="nav-item" onclick="showPage('supply',this)"><span class="nav-num">03</span>Supply Analysis</div>
+    <div class="nav-item" onclick="showPage('demand',this)"><span class="nav-num">04</span>Demand Forecasting</div>
+    <div class="nav-item" onclick="showPage('gap',this)"><span class="nav-num">05</span>Gap Analysis & Modeller</div>
+    <div class="nav-item" onclick="showPage('scenarios',this)"><span class="nav-num">06</span>Scenario Planning</div>
+    <div class="nav-item" onclick="showPage('actions',this)"><span class="nav-num">07</span>Action Planning</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">08</span>Valentis Workforce Plan</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>HRBP Department</strong>
+      Tool 6 of 10 · Workforce Planning<br>
+      <span style="color:rgba(255,255,255,0.12)">Right people, right place, right time</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 WHAT -->
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">HRBP Tool 6 — Workforce Planning & Scenario Modeller</div>
+    <h1 class="page-title">Workforce<br><em>Planning</em></h1>
+    <p class="page-desc">Workforce planning is the process of ensuring the organisation has the right people, with the right skills, in the right roles, at the right time — at a cost the business can sustain. It is the most strategically important thing an HRBP does.</p>
+  </div>
+
+  <div class="info teal"><strong>The Core Principle</strong>Most organisations hire reactively — filling vacancies as they appear. Workforce planning replaces that reactive cycle with a forward-looking model: understanding what the business will need 12 to 24 months ahead, then working backwards to ensure supply is ready before demand arrives. The HRBP who masters this becomes indispensable in business planning.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Why Workforce Planning Matters at Valentis</div>
+      <div class="card-body">
+        Valentis operates in a constrained talent market for a highly specialised role — the experienced driller. Unlike most professional roles, drillers cannot be hired off the shelf. They take 18–24 months to develop from G3 to G4. External hiring is slow, expensive, and unreliable in Southeast Asia.<br><br>
+        This means the gap between "we need more G4 drillers" and "we have more G4 drillers" is nearly two years. An HRBP who does not plan 24 months ahead on the driller pipeline is already behind the business need by the time the problem becomes visible.
+        <div style="display:grid;gap:5px;margin-top:14px">
+          <div style="padding:9px 14px;background:var(--red-dim);border-left:3px solid var(--red);font-size:13px;color:var(--ink2);border-radius:0 3px 3px 0"><strong style="color:var(--red)">Reactive model:</strong> G4 driller leaves → COO flags programme risk → HRBP begins sourcing → 90 days to hire → programme slips</div>
+          <div style="padding:9px 14px;background:var(--green-dim);border-left:3px solid var(--green);font-size:13px;color:var(--ink2);border-radius:0 3px 3px 0"><strong style="color:var(--green)">Planned model:</strong> HRBP flags G4 retirement risk 18 months out → G3 development activated → successor ready before departure → zero programme impact</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The Three Planning Horizons</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:60px 1fr;gap:12px;align-items:start">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);line-height:1">0–6<br><span style="font-size:12px;font-style:normal">mo</span></div>
+          <div>
+            <div style="font-weight:700;color:var(--ink);margin-bottom:4px">Operational Horizon</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Fill current vacancies, manage immediate attrition risk, deploy existing talent to cover gaps. Focus: execution and damage control.</div>
+          </div>
+        </div>
+        <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:60px 1fr;gap:12px;align-items:start">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);line-height:1">6–18<br><span style="font-size:12px;font-style:normal">mo</span></div>
+          <div>
+            <div style="font-weight:700;color:var(--ink);margin-bottom:4px">Tactical Horizon</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Develop pipeline candidates, run structured sourcing for hard-to-fill roles, activate succession plans. Focus: building supply before demand arrives.</div>
+          </div>
+        </div>
+        <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:60px 1fr;gap:12px;align-items:start">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);line-height:1">18–36<br><span style="font-size:12px;font-style:normal">mo</span></div>
+          <div>
+            <div style="font-weight:700;color:var(--ink);margin-bottom:4px">Strategic Horizon</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Model workforce requirements against business growth scenarios, design organisational structures for future state, build capability for roles that do not yet exist. Focus: shaping the future workforce.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 FRAMEWORK -->
+<div id="page-framework" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — The Planning Framework</div>
+    <h1 class="page-title">The Planning<br><em>Framework</em></h1>
+    <p class="page-desc">The four-step workforce planning cycle used at Valentis. Each step feeds the next — and the output of Step 4 becomes the input for the next planning cycle.</p>
+  </div>
+
+  <div style="display:grid;gap:10px;margin-bottom:14px">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+      <div style="display:grid;grid-template-columns:80px 1fr 1fr 200px;background:var(--ink)">
+        <div style="padding:10px 14px"></div>
+        <div style="padding:10px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);border-left:1px solid rgba(255,255,255,0.07)">What you do</div>
+        <div style="padding:10px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);border-left:1px solid rgba(255,255,255,0.07)">Key questions</div>
+        <div style="padding:10px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal3);border-left:1px solid rgba(255,255,255,0.07)">Output</div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 1fr 200px;border-top:1px solid var(--border)">
+        <div style="padding:18px 16px;background:var(--teal-dim);border-right:1px solid var(--teal-border);display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;text-align:center"><span style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal)">01</span><span style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal)">Supply</span></div>
+        <div style="padding:16px;border-right:1px solid var(--border)"><div style="font-weight:700;color:var(--ink);margin-bottom:5px">Analyse current workforce supply</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Map your existing headcount by role, grade, location, and age/tenure profile. Project how supply will change through natural attrition, retirements, planned exits, and internal movement.</div></div>
+        <div style="padding:16px;border-right:1px solid var(--border);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">What do we have today? Who will still be here in 12 and 24 months? What will we lose through natural attrition? Where are our single points of failure?</div>
+        <div style="padding:16px;font-size:13px;color:var(--teal);font-weight:300;line-height:1.8">Current workforce profile · Projected supply curve · Attrition model · Risk map</div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 1fr 200px;border-top:1px solid var(--border)">
+        <div style="padding:18px 16px;background:var(--navy-dim);border-right:1px solid var(--navy-border);display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;text-align:center"><span style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--navy)">02</span><span style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy)">Demand</span></div>
+        <div style="padding:16px;border-right:1px solid var(--border)"><div style="font-weight:700;color:var(--ink);margin-bottom:5px">Forecast business demand for people</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Translate the business plan into headcount requirements. How many people, in what roles, at what grade, by what date — to deliver the planned programme across all four countries.</div></div>
+        <div style="padding:16px;border-right:1px solid var(--border);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">What will the business need in 12 and 24 months? How do different growth scenarios change our requirements? What roles are we currently under-resourced for?</div>
+        <div style="padding:16px;font-size:13px;color:var(--navy);font-weight:300;line-height:1.8">Headcount requirements model · Scenario demand curves · Critical role analysis</div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 1fr 200px;border-top:1px solid var(--border)">
+        <div style="padding:18px 16px;background:var(--amber-dim);border-right:1px solid var(--amber-border);display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;text-align:center"><span style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--amber)">03</span><span style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber)">Gap</span></div>
+        <div style="padding:16px;border-right:1px solid var(--border)"><div style="font-weight:700;color:var(--ink);margin-bottom:5px">Identify and quantify gaps</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Compare projected supply against forecast demand. Calculate the gap — by role, grade, location, and time period. Identify which gaps are critical to business delivery and which are manageable.</div></div>
+        <div style="padding:16px;border-right:1px solid var(--border);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Where are our supply shortfalls? Which gaps will hit us first? What is the business cost of each gap if unaddressed? What is the lead time to close each gap?</div>
+        <div style="padding:16px;font-size:13px;color:var(--amber);font-weight:300;line-height:1.8">Gap analysis by role/location · Criticality ranking · Cost of gap model · Lead time assessment</div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 1fr 200px;border-top:1px solid var(--border)">
+        <div style="padding:18px 16px;background:var(--green-dim);border-right:1px solid var(--green-border);display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;text-align:center"><span style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--green)">04</span><span style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green)">Action</span></div>
+        <div style="padding:16px;border-right:1px solid var(--border)"><div style="font-weight:700;color:var(--ink);margin-bottom:5px">Build and execute the workforce plan</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">For each gap, determine the right intervention: develop internally, hire externally, redeploy, restructure, or accept the risk. Build the action plan, assign owners, set timelines, and track delivery.</div></div>
+        <div style="padding:16px;border-right:1px solid var(--border);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Build vs buy vs borrow — which response for each gap? What is the fastest path to closing the most critical gaps? Who owns each action and by when?</div>
+        <div style="padding:16px;font-size:13px;color:var(--green);font-weight:300;line-height:1.8">Workforce action plan · Build/Buy/Borrow decisions · Owner accountability matrix · Review cadence</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 SUPPLY ANALYSIS -->
+<div id="page-supply" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Supply Analysis</div>
+    <h1 class="page-title">Supply<br><em>Analysis</em></h1>
+    <p class="page-desc">Supply analysis maps your current workforce and projects how it will change over time through attrition, retirements, development, and internal movement. It answers the question: how many people will we actually have available in 12 and 24 months?</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Valentis Current Workforce Supply — 2026 Baseline</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:14px">
+      <div style="padding:0"></div>
+      <div style="padding:8px 12px;background:var(--ink);text-align:center;font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal3)">Laos</div>
+      <div style="padding:8px 12px;background:var(--ink);text-align:center;font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal3)">Myanmar</div>
+      <div style="padding:8px 12px;background:var(--ink);text-align:center;font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal3)">Indonesia</div>
+      <div style="padding:8px 12px;background:var(--ink);text-align:center;font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal3)">Thailand</div>
+    </div>
+    <table class="plan-table">
+      <thead>
+        <tr>
+          <th>Role / Grade</th>
+          <th>Laos</th><th>Myanmar</th><th>Indonesia</th><th>Thailand</th>
+          <th>Group Total</th><th>Req'd 2026</th><th>Gap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Site Manager (G6)</td><td>1</td><td>1</td><td>1</td><td>1</td><td>4</td><td>4</td><td class="cell-green">0</td></tr>
+        <tr><td>Senior Driller (G4)</td><td>5</td><td>4</td><td>4</td><td>3</td><td>16</td><td>18</td><td class="cell-amber">−2</td></tr>
+        <tr><td>Driller (G3)</td><td>2</td><td>3</td><td>1</td><td>2</td><td>8</td><td>11</td><td class="cell-red">−3</td></tr>
+        <tr><td>Junior Driller (G2)</td><td>1</td><td>2</td><td>1</td><td>1</td><td>5</td><td>5</td><td class="cell-green">0</td></tr>
+        <tr><td>Trainee (G1)</td><td>2</td><td>1</td><td>0</td><td>2</td><td>5</td><td>6</td><td class="cell-amber">−1</td></tr>
+        <tr><td>Support / Admin</td><td>1</td><td>1</td><td>1</td><td>1</td><td>4</td><td>4</td><td class="cell-green">0</td></tr>
+        <tr><td style="font-weight:700;color:var(--ink)">Total</td><td style="font-weight:700">12</td><td style="font-weight:700">12</td><td style="font-weight:700">8</td><td style="font-weight:700">10</td><td style="font-weight:700">42</td><td style="font-weight:700">48</td><td class="cell-red" style="font-size:14px">−6</td></tr>
+      </tbody>
+    </table>
+    <div class="info amber" style="margin-top:14px;margin-bottom:0"><strong>Current Supply Position</strong>Valentis is currently 6 FTE short of its 2026 programme requirement — a 12.5% shortfall. The most acute gap is at G3 Driller (−3) which feeds directly into programme delivery capacity. The G4 gap (−2) is the higher-risk gap due to the 18-24 month development time required to close it through internal promotion.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Projected Supply — 12-Month Attrition Model</div>
+    <div class="card-body" style="margin-bottom:16px">Based on a 14% annualised attrition rate and known departure risks (Myo H. retention expiry, Laos G4 retirement cohort), this is the projected supply position at end of 2026 without intervention.</div>
+    <table class="plan-table">
+      <thead>
+        <tr><th>Role</th><th>Current Supply</th><th>Projected Exits (12mo)</th><th>Natural Attrition</th><th>Known Risk Exits</th><th>Net Supply (Dec 26)</th><th>2026 Requirement</th><th>Gap</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Site Manager (G6)</td><td>4</td><td>1</td><td>0</td><td>1 (Myo H.)</td><td>3</td><td>4</td><td class="cell-amber">−1</td></tr>
+        <tr><td>Senior Driller (G4)</td><td>16</td><td>3</td><td>1</td><td>2 (Laos retire)</td><td>13</td><td>18</td><td class="cell-red">−5</td></tr>
+        <tr><td>Driller (G3)</td><td>8</td><td>2</td><td>2</td><td>0</td><td>6</td><td>11</td><td class="cell-red">−5</td></tr>
+        <tr><td>Junior Driller (G2)</td><td>5</td><td>1</td><td>1</td><td>0</td><td>4</td><td>5</td><td class="cell-amber">−1</td></tr>
+        <tr><td>Trainee (G1)</td><td>5</td><td>2</td><td>1</td><td>1 (Myanmar exit pattern)</td><td>3</td><td>6</td><td class="cell-red">−3</td></tr>
+        <tr><td>Total</td><td>38</td><td>9</td><td>5</td><td>4</td><td>29</td><td>44</td><td class="cell-red">−15</td></tr>
+      </tbody>
+    </table>
+    <div class="info red" style="margin-top:14px;margin-bottom:0"><strong>12-Month Supply Warning</strong>Without intervention, Valentis faces a net supply deficit of 15 FTE by December 2026 — a 34% shortfall against requirement. This is not a recruitment problem. It is a workforce planning emergency that requires immediate activation of development pipelines, targeted retention, and strategic hiring in parallel.</div>
+  </div>
+</div>
+
+<!-- 04 DEMAND FORECASTING -->
+<div id="page-demand" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Demand Forecasting</div>
+    <h1 class="page-title">Demand<br><em>Forecasting</em></h1>
+    <p class="page-desc">Demand forecasting translates the business plan into headcount requirements. At Valentis, the primary driver of workforce demand is the drilling programme schedule — metres committed, rigs planned, and new country operations.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Demand Drivers — Valentis</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px">
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:8px">Primary Driver</div>
+        <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:5px">Programme Schedule</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Number of active drilling programmes per country directly determines G3/G4 headcount requirement. Each active rig requires one G4 and 1.5 G3 FTE on average.</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:8px">Growth Driver</div>
+        <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:5px">Country Expansion</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Any new country entry adds a baseline requirement: 1 Site Manager, 2 G4, 3 G3, plus support. Lead time for country-entry staffing is typically 6–9 months.</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:8px">Pipeline Driver</div>
+        <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:5px">Trainee Programme</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Each cohort requires 6 trainees per intake to produce 4 qualified G2 completions (at 70% conversion target). Intake timing must align with 18-month development cycle.</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:8px">Constraint Driver</div>
+        <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:5px">Succession Events</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Planned retirements, retention expiries, and known departure risks create demand spikes that must be pre-planned 12–18 months ahead to avoid operational disruption.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2026–2027 Demand Forecast — Valentis Group</div>
+    <table class="plan-table">
+      <thead>
+        <tr><th>Role</th><th>Q1 2026</th><th>Q2 2026</th><th>Q3 2026</th><th>Q4 2026</th><th>Q1 2027</th><th>Q2 2027</th><th>Driver</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Site Manager (G6)</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td><td>5</td><td><span class="chip chip-amber">Country expansion Q2 2027</span></td></tr>
+        <tr><td>Senior Driller (G4)</td><td>18</td><td>18</td><td>20</td><td>20</td><td>22</td><td>24</td><td><span class="chip chip-red">Programme scale + retirements</span></td></tr>
+        <tr><td>Driller (G3)</td><td>11</td><td>12</td><td>13</td><td>13</td><td>14</td><td>15</td><td><span class="chip chip-red">Pipeline to G4 + growth</span></td></tr>
+        <tr><td>Junior Driller (G2)</td><td>5</td><td>5</td><td>6</td><td>6</td><td>7</td><td>7</td><td><span class="chip chip-teal">Trainee progression</span></td></tr>
+        <tr><td>Trainee (G1)</td><td>6</td><td>6</td><td>6</td><td>8</td><td>8</td><td>8</td><td><span class="chip chip-teal">Cohort intake schedule</span></td></tr>
+        <tr><td>Support / Admin</td><td>4</td><td>4</td><td>4</td><td>5</td><td>5</td><td>6</td><td><span class="chip chip-navy">Headcount-linked scaling</span></td></tr>
+        <tr><td>Total Required</td><td>48</td><td>49</td><td>53</td><td>56</td><td>60</td><td>65</td><td><span class="chip chip-red">+35% growth over 6 quarters</span></td></tr>
+      </tbody>
+    </table>
+    <div class="info amber" style="margin-top:14px;margin-bottom:0"><strong>Demand Acceleration Alert</strong>Valentis's workforce requirement grows from 48 to 65 FTE over six quarters — a 35% increase. The steepest growth is in Q3 2026 (programme scale-up) and Q1 2027 (post-retirement replacement + expansion). Both events require workforce action that must begin now, in Q1 2026.</div>
+  </div>
+</div>
+
+<!-- 05 GAP & MODELLER -->
+<div id="page-gap" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Gap Analysis & Modeller</div>
+    <h1 class="page-title">Gap Analysis<br><em>&amp; Modeller</em></h1>
+    <p class="page-desc">Model your workforce supply vs demand gap for any role. Adjust headcount, attrition, development timelines, and hiring targets to see how the gap evolves — and what combination of actions closes it.</p>
+  </div>
+
+  <div class="mod-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f5f2;margin-bottom:18px">Workforce Gap Modeller</div>
+    <div class="mod-row mod-row-3">
+      <div class="mod-group"><label class="mod-label">Role / Grade</label>
+        <select class="mod-select" id="g-role" onchange="calcGap()">
+          <option value="g4">Senior Driller (G4)</option>
+          <option value="g3" selected>Driller (G3)</option>
+          <option value="g2">Junior Driller (G2)</option>
+          <option value="g1">Trainee (G1)</option>
+          <option value="sm">Site Manager (G6)</option>
+        </select>
+      </div>
+      <div class="mod-group"><label class="mod-label">Planning Horizon (months)</label>
+        <select class="mod-select" id="g-horizon" onchange="calcGap()">
+          <option value="6">6 months</option>
+          <option value="12" selected>12 months</option>
+          <option value="18">18 months</option>
+          <option value="24">24 months</option>
+        </select>
+      </div>
+      <div class="mod-group"><label class="mod-label">Scenario</label>
+        <select class="mod-select" id="g-scenario" onchange="calcGap()">
+          <option value="base">Base Case (current plan)</option>
+          <option value="growth">High Growth (+30% demand)</option>
+          <option value="conservative">Conservative (−10% demand)</option>
+        </select>
+      </div>
+    </div>
+    <hr class="mod-divider">
+    <div class="mod-section-title">Current Supply Inputs</div>
+    <div class="mod-row mod-row-4">
+      <div class="mod-group"><label class="mod-label">Current Headcount</label><input class="mod-input" id="g-current" value="8" oninput="calcGap()"></div>
+      <div class="mod-group"><label class="mod-label">Attrition Rate (%/yr)</label><input class="mod-input" id="g-attr" value="14" oninput="calcGap()"></div>
+      <div class="mod-group"><label class="mod-label">Known Planned Exits</label><input class="mod-input" id="g-exits" value="2" oninput="calcGap()"></div>
+      <div class="mod-group"><label class="mod-label">Internal Promotions Out</label><input class="mod-input" id="g-promo" value="1" oninput="calcGap()"></div>
+    </div>
+    <div class="mod-section-title">Supply Actions</div>
+    <div class="mod-row mod-row-4">
+      <div class="mod-group"><label class="mod-label">External Hires Planned</label><input class="mod-input" id="g-hire" value="2" oninput="calcGap()"></div>
+      <div class="mod-group"><label class="mod-label">Internal Promotions In</label><input class="mod-input" id="g-promin" value="1" oninput="calcGap()"></div>
+      <div class="mod-group"><label class="mod-label">Trainees Graduating In</label><input class="mod-input" id="g-grad" value="2" oninput="calcGap()"></div>
+      <div class="mod-group"><label class="mod-label">Cross-Country Transfers</label><input class="mod-input" id="g-xfer" value="0" oninput="calcGap()"></div>
+    </div>
+    <div class="mod-section-title">Demand Inputs</div>
+    <div class="mod-row mod-row-3">
+      <div class="mod-group"><label class="mod-label">Current Requirement</label><input class="mod-input" id="g-demand" value="11" oninput="calcGap()"></div>
+      <div class="mod-group"><label class="mod-label">Demand Growth (per period)</label><input class="mod-input" id="g-dgrowth" value="2" oninput="calcGap()"></div>
+      <div class="mod-group"><label class="mod-label">Lead Time to Close Gap (months)</label><input class="mod-input" id="g-leadtime" value="6" oninput="calcGap()"></div>
+    </div>
+  </div>
+
+  <div id="gap-results"></div>
+
+  <div style="margin-top:10px;display:flex;gap:10px">
+    <button class="btn btn-teal" onclick="showPage('scenarios',document.querySelector('.nav-item:nth-child(7)'))">Run Scenario Comparison →</button>
+    <button class="btn btn-ghost" onclick="resetModeller()">Reset</button>
+  </div>
+</div>
+
+<!-- 06 SCENARIOS -->
+<div id="page-scenarios" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Scenario Planning</div>
+    <h1 class="page-title">Scenario<br><em>Planning</em></h1>
+    <p class="page-desc">Scenario planning stress-tests the workforce plan against different business futures. At Valentis, the three scenarios that matter most are base-case programme delivery, accelerated growth, and a contract-loss contraction.</p>
+  </div>
+
+  <div class="info teal"><strong>Why Three Scenarios</strong>A workforce plan built around a single future is fragile. If the business grows faster than planned, you are understaffed. If it contracts, you are overstaffed and people costs rise as a percentage of revenue. Modelling three scenarios allows the COO to understand the range of outcomes and make informed decisions under uncertainty.</div>
+
+  <div class="scenario-tabs">
+    <div class="scenario-tab active" onclick="showScenario('base',this)">Base Case</div>
+    <div class="scenario-tab" onclick="showScenario('growth',this)">High Growth</div>
+    <div class="scenario-tab" onclick="showScenario('contract',this)">Contraction</div>
+  </div>
+
+  <div class="scenario-body active" id="sc-base">
+    <div class="grid-2">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <span class="chip chip-teal">Base Case</span>
+          <div class="card-title" style="margin-bottom:0">Current Trajectory — No Intervention</div>
+        </div>
+        <div class="card-body" style="margin-bottom:14px">Programme delivers at current contracted rate. Valentis headcount requirement grows from 42 to 56 FTE by Q4 2026. Attrition at 14% annualised. Known risks (Myo H., Laos G4 retirements) materialise.</div>
+        <div style="display:grid;gap:5px">
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--surface2);border-radius:3px;font-size:13px">
+            <span style="color:var(--ink4);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">Q4 2026 Demand</span>
+            <span style="font-weight:700;color:var(--ink);font-family:var(--fm)">56 FTE</span>
+          </div>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--surface2);border-radius:3px;font-size:13px">
+            <span style="color:var(--ink4);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">Projected Supply</span>
+            <span style="font-weight:700;color:var(--red);font-family:var(--fm)">29 FTE</span>
+          </div>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px">
+            <span style="color:var(--red);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">Gap</span>
+            <span style="font-weight:700;color:var(--red);font-family:var(--fm)">−27 FTE without action</span>
+          </div>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--surface2);border-radius:3px;font-size:13px">
+            <span style="color:var(--ink4);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">People Cost %</span>
+            <span style="font-weight:700;color:var(--amber);font-family:var(--fm)">~48% (rising)</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Required Actions — Base Case</div>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-period">Now — Q1 2026</div><div class="tl-title">Emergency sourcing: 3 G3 drillers (Indonesia + Myanmar)</div><div class="tl-content">Target time-to-fill ≤ 35 days. Cross-country deployment if external sourcing delayed beyond 21 days.</div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-period">Q2 2026</div><div class="tl-title">Activate G3-to-G4 development for 4 candidates (Laos ×2, Myanmar ×1, Thailand ×1)</div><div class="tl-content">18-month programme. G4-ready by Q4 2027. This is the minimum required to offset the Laos retirement cohort.</div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-period">Q2–Q3 2026</div><div class="tl-title">Hire 2 external G4 drillers — bridge supply while internal pipeline develops</div><div class="tl-content">Target: experienced Southeast Asia market. Contract basis acceptable for 12-month bridge.</div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-period">Q3 2026</div><div class="tl-title">Initiate Myo H. retention conversation — 9 months ahead of bonus expiry</div><div class="tl-content">Determine career intent, agree retention package extension or succession plan activation.</div></div>
+          <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-period">Q4 2026</div><div class="tl-title">New trainee cohort intake — 8 trainees (up from 6) to buffer 30% attrition</div><div class="tl-content">Revised cohort size based on 70% conversion target producing 5–6 completions per cycle.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-body" id="sc-growth">
+    <div class="grid-2">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <span class="chip chip-navy">High Growth</span>
+          <div class="card-title" style="margin-bottom:0">+30% Programme Expansion</div>
+        </div>
+        <div class="card-body" style="margin-bottom:14px">New contracts secured. A fifth country operation opens in H1 2027. Programme volume increases 30% across existing sites. Requirement accelerates to 72 FTE by Q2 2027.</div>
+        <div style="display:grid;gap:5px">
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--surface2);border-radius:3px;font-size:13px">
+            <span style="color:var(--ink4);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">Q2 2027 Demand</span>
+            <span style="font-weight:700;color:var(--ink);font-family:var(--fm)">72 FTE</span>
+          </div>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--surface2);border-radius:3px;font-size:13px">
+            <span style="color:var(--ink4);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">Additional G4 needed</span>
+            <span style="font-weight:700;color:var(--red);font-family:var(--fm)">+10 beyond base case</span>
+          </div>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px">
+            <span style="color:var(--red);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">New SM needed</span>
+            <span style="font-weight:700;color:var(--red);font-family:var(--fm)">+1 (5th country)</span>
+          </div>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px;font-size:13px">
+            <span style="color:var(--amber);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">Trainee intake needed</span>
+            <span style="font-weight:700;color:var(--amber);font-family:var(--fm)">+1 cohort (Q1 2026)</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Additional Actions — High Growth Scenario</div>
+        <div class="card-body" style="margin-bottom:10px">In addition to all base-case actions, the following are required if the growth scenario materialises:</div>
+        <div style="display:grid;gap:6px">
+          <div style="padding:10px 14px;border-left:3px solid var(--navy);background:var(--navy-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--navy)">Succession acceleration:</strong> Identify and fast-track one internal candidate to Site Manager level for 5th country — begin now, 15-month development window.</div>
+          <div style="padding:10px 14px;border-left:3px solid var(--navy);background:var(--navy-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--navy)">External G4 pipeline:</strong> Build a pre-qualified external candidate pool of 6–8 experienced drillers in the target region — engage before the contracts are signed, not after.</div>
+          <div style="padding:10px 14px;border-left:3px solid var(--navy);background:var(--navy-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--navy)">Trainee intake expansion:</strong> Add one additional cohort in Q1 2026 (targeting 12 trainees total) to ensure G2 supply is available for the growth wave in 2027.</div>
+          <div style="padding:10px 14px;border-left:3px solid var(--navy);background:var(--navy-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--navy)">Rewards review:</strong> Benchmark G4 and G3 compensation in the new country — ensure Valentis is competitive before starting hiring rather than after the first offer declines.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-body" id="sc-contract">
+    <div class="grid-2">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <span class="chip chip-amber">Contraction</span>
+          <div class="card-title" style="margin-bottom:0">Contract Loss — 20% Volume Reduction</div>
+        </div>
+        <div class="card-body" style="margin-bottom:14px">One major client contract is not renewed. Programme volume in Indonesia or Myanmar reduces by 20%. Headcount requirement falls. People cost as a % of revenue rises sharply.</div>
+        <div style="display:grid;gap:5px">
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--surface2);border-radius:3px;font-size:13px">
+            <span style="color:var(--ink4);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">Revised Q4 Demand</span>
+            <span style="font-weight:700;color:var(--ink);font-family:var(--fm)">45 FTE (vs 56)</span>
+          </div>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px;font-size:13px">
+            <span style="color:var(--amber);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">Surplus Risk</span>
+            <span style="font-weight:700;color:var(--amber);font-family:var(--fm)">+5–8 FTE over-supply</span>
+          </div>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px">
+            <span style="color:var(--red);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">People Cost % Rev</span>
+            <span style="font-weight:700;color:var(--red);font-family:var(--fm)">Rising to ~54%</span>
+          </div>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;padding:8px 12px;background:var(--surface2);border-radius:3px;font-size:13px">
+            <span style="color:var(--ink4);font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.8px">HRBP Response</span>
+            <span style="font-weight:700;color:var(--teal);font-family:var(--fm)">Redeploy before restructure</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">HRBP Response — Contraction Scenario</div>
+        <div class="card-body" style="margin-bottom:10px">The HRBP's role in a contraction is to protect business-critical talent while managing people cost responsibly — in that order.</div>
+        <div style="display:grid;gap:6px">
+          <div style="padding:10px 14px;border-left:3px solid var(--amber);background:var(--amber-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--amber)">Step 1 — Redeploy:</strong> Identify cross-country or cross-programme deployment options for surplus G3/G4 before considering any exits. One country's surplus is often another's shortage.</div>
+          <div style="padding:10px 14px;border-left:3px solid var(--amber);background:var(--amber-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--amber)">Step 2 — Pause hiring:</strong> Immediately suspend all external hiring in the affected country. Defer the next trainee cohort intake by one cycle.</div>
+          <div style="padding:10px 14px;border-left:3px solid var(--amber);background:var(--amber-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--amber)">Step 3 — Protect critical talent:</strong> Identify the 5–8 individuals who are absolutely irreplaceable in the 24-month recovery window. Ringfence them with retention mechanisms before the market learns about the contraction.</div>
+          <div style="padding:10px 14px;border-left:3px solid var(--red);background:var(--red-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">Step 4 — If restructure required:</strong> Present COO with a talent-first restructure plan: who stays, who goes, why — based on capability and future-state requirements, not seniority or cost alone.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07 ACTION PLANNING -->
+<div id="page-actions" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Action Planning</div>
+    <h1 class="page-title">Action<br><em>Planning</em></h1>
+    <p class="page-desc">The Build–Buy–Borrow–Bind decision framework — and the Valentis workforce action plan for 2026. Every gap has an owner, a timeline, and a success measure.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Build–Buy–Borrow–Bind Framework</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px">
+      <div style="padding:18px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);margin-bottom:8px;line-height:1">Build</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">Develop internally. Use when: the role requires Valentis-specific knowledge, the development timeline is feasible, and the candidate is identified.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--teal)">Best for</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-top:3px">G3→G4 pipeline, Site Manager succession, trainee programme</div>
+      </div>
+      <div style="padding:18px;background:var(--navy-dim);border:1px solid var(--navy-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--navy);margin-bottom:8px;line-height:1">Buy</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">Hire externally. Use when: the gap is immediate, internal pipeline is insufficient, and the external market has supply.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--navy)">Best for</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-top:3px">Immediate G3 gap (Indonesia), bridge G4 supply, 5th country Site Manager</div>
+      </div>
+      <div style="padding:18px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--amber);margin-bottom:8px;line-height:1">Borrow</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">Redeploy internally or use contractors. Use when: the gap is temporary, cross-country deployment is viable, or a contract hire bridges a known window.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--amber)">Best for</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-top:3px">Cross-country deployment, contract G4 bridge (12 months), programme surge cover</div>
+      </div>
+      <div style="padding:18px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--green);margin-bottom:8px;line-height:1">Bind</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">Retain critical talent. Use when: the person is irreplaceable in the planning window and departure would be catastrophic.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--green)">Best for</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-top:3px">Myo H. retention bonus renewal, Laos G4 senior drillers, Wirawan S.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Valentis 2026 Workforce Action Plan</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>Action</th><th>Type</th><th>Gap Addressed</th><th>Timeline</th><th>Owner</th><th>Investment</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--ink)">Emergency G3 sourcing — Indonesia (×3)</td><td><span class="chip chip-navy">Buy</span></td><td>G3 Indonesia gap; programme delivery</td><td><span class="chip chip-red">Apr 2026</span></td><td>TA COE + HRBP</td><td>3× recruitment + relocation</td><td><span class="chip chip-amber">In Progress</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">G3→G4 development plans — 4 candidates</td><td><span class="chip chip-teal">Build</span></td><td>G4 pipeline; Laos succession</td><td><span class="chip chip-amber">Jun 2026</span></td><td>HRBP + Site Managers</td><td>Training budget + supervisor time</td><td><span class="chip chip-red">Not Started</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Contract G4 bridge hires (×2, 12-month)</td><td><span class="chip chip-amber">Borrow</span></td><td>G4 gap while internal pipeline develops</td><td><span class="chip chip-amber">Jul 2026</span></td><td>TA COE</td><td>Contract premium ~15%</td><td><span class="chip chip-red">Not Started</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Myo H. retention conversation + plan</td><td><span class="chip chip-green">Bind</span></td><td>Myanmar SM succession; site continuity</td><td><span class="chip chip-amber">Sep 2026</span></td><td>HRBP + COO</td><td>Retention bonus renewal TBD</td><td><span class="chip chip-red">Not Started</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Trainee cohort expansion — 8 intakes</td><td><span class="chip chip-teal">Build</span></td><td>G1/G2 pipeline for 2027–2028</td><td><span class="chip chip-teal">Oct 2026</span></td><td>HRBP + L&amp;D COE</td><td>Programme cost + supervisor allocation</td><td><span class="chip chip-red">Not Started</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Myanmar Site Manager succession plan</td><td><span class="chip chip-teal">Build</span></td><td>SM G6 gap; Myo H. succession</td><td><span class="chip chip-teal">Dec 2026</span></td><td>HRBP + COO</td><td>Development budget; internal candidate</td><td><span class="chip chip-red">Not Started</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 08 VALENTIS PLAN -->
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Valentis Workforce Plan</div>
+    <h1 class="page-title">Valentis<br><em>Workforce Plan</em></h1>
+    <p class="page-desc">The integrated 24-month workforce view for Valentis Group — the full supply-demand picture by role and country, with an HRBP assessment of the workforce risk exposure by quarter.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Driller Supply Chain — Valentis</div>
+    <div class="card-body" style="margin-bottom:16px">The Valentis driller pipeline is a sequential supply chain. Each stage feeds the next. Disruption at any stage propagates downstream with an 18–24 month delay. The HRBP manages the entire chain — not just the vacancies at the top.</div>
+    <div class="supply-chain">
+      <div class="sc-node" style="background:var(--teal-dim);border-color:var(--teal-border)">
+        <div class="sc-node-title" style="color:var(--teal)">Intake</div>
+        <div class="sc-node-num" style="color:var(--teal)">8</div>
+        <div class="sc-node-sub" style="color:var(--ink3)">Trainee (G1) per cohort<br>30% attrition in programme</div>
+      </div>
+      <div class="sc-arrow">→</div>
+      <div class="sc-node" style="background:var(--surface2);border-color:var(--border)">
+        <div class="sc-node-title" style="color:var(--ink4)">Completes</div>
+        <div class="sc-node-num" style="color:var(--ink3)">5–6</div>
+        <div class="sc-node-sub" style="color:var(--ink4)">Junior Driller (G2)<br>18 months from intake</div>
+      </div>
+      <div class="sc-arrow">→</div>
+      <div class="sc-node" style="background:var(--amber-dim);border-color:var(--amber-border)">
+        <div class="sc-node-title" style="color:var(--amber)">Develops</div>
+        <div class="sc-node-num" style="color:var(--amber)">3–4</div>
+        <div class="sc-node-sub" style="color:var(--ink3)">Driller (G3)<br>12–18 months from G2</div>
+      </div>
+      <div class="sc-arrow">→</div>
+      <div class="sc-node" style="background:var(--red-dim);border-color:var(--red-border)">
+        <div class="sc-node-title" style="color:var(--red)">Promotes</div>
+        <div class="sc-node-num" style="color:var(--red)">1–2</div>
+        <div class="sc-node-sub" style="color:var(--ink3)">Senior Driller (G4)<br>18–24 months from G3</div>
+      </div>
+    </div>
+    <div class="info amber" style="margin-bottom:0"><strong>The Critical Insight</strong>Every G4 driller Valentis needs in 2028 must be a trainee today. The window to influence the 2028 workforce is now — not in 2027. This is the core argument for HRBP inclusion in the annual business planning cycle.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Quarterly People Risk Register — 2026–2027</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>Quarter</th><th>Risk Event</th><th>Impact</th><th>HRBP Action Deadline</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:700;color:var(--teal);font-family:var(--fm)">Q1 2026</td><td>Indonesia G3 shortage (3 vacancies 40+ days)</td><td><span class="chip chip-red">Programme delivery ↓ to 84%</span></td><td>Emergency sourcing activated — April 2026</td><td><span class="chip chip-amber">In Progress</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--teal);font-family:var(--fm)">Q2 2026</td><td>Laos G4 retirement wave begins (2 of 5 at risk)</td><td><span class="chip chip-amber">Capacity reduction; programme risk</span></td><td>G3→G4 development plans activated — June 2026</td><td><span class="chip chip-red">Not Started</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--teal);font-family:var(--fm)">Q3 2026</td><td>Myanmar trainee attrition continues at month-3</td><td><span class="chip chip-amber">Conversion below 70% target</span></td><td>Supervisor coaching + 30/60/90 check-in — March 2026</td><td><span class="chip chip-amber">In Progress</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--teal);font-family:var(--fm)">Q4 2026</td><td>Myo H. retention window approaching (Apr 2027)</td><td><span class="chip chip-red">Myanmar SM succession gap if exits</span></td><td>Retention conversation — September 2026</td><td><span class="chip chip-red">Not Started</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--amber);font-family:var(--fm)">Q1 2027</td><td>Wirawan S. retention bonus expiry</td><td><span class="chip chip-amber">Indonesia experience loss risk</span></td><td>Renewal or succession plan — October 2026</td><td><span class="chip chip-red">Not Started</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--amber);font-family:var(--fm)">Q2 2027</td><td>Potential country 5 expansion — SM required</td><td><span class="chip chip-navy">Growth blocked without SM ready</span></td><td>Internal succession candidate identified — Q3 2026</td><td><span class="chip chip-red">Not Started</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── NAV ───────────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showScenario(id, el) {
+  document.querySelectorAll('.scenario-body').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.scenario-tab').forEach(t => t.classList.remove('active'));
+  const sc = document.getElementById('sc-' + id);
+  if (sc) sc.classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+// ── GAP MODELLER ──────────────────────────────────────────────────────
+const ROLE_DEFAULTS = {
+  g4: { current:16, attr:10, exits:2, promo:0, hire:2, promin:1, grad:0, xfer:0, demand:18, dgrowth:1, leadtime:18 },
+  g3: { current:8,  attr:14, exits:2, promo:1, hire:2, promin:1, grad:2, xfer:0, demand:11, dgrowth:2, leadtime:6  },
+  g2: { current:5,  attr:18, exits:1, promo:2, hire:0, promin:2, grad:3, xfer:0, demand:5,  dgrowth:1, leadtime:3  },
+  g1: { current:5,  attr:30, exits:2, promo:0, hire:0, promin:0, grad:0, xfer:0, demand:6,  dgrowth:1, leadtime:1  },
+  sm: { current:4,  attr:8,  exits:1, promo:0, hire:0, promin:1, grad:0, xfer:0, demand:4,  dgrowth:0, leadtime:12 },
+};
+
+function calcGap() {
+  const role     = document.getElementById('g-role').value;
+  const horizon  = parseInt(document.getElementById('g-horizon').value) || 12;
+  const scenario = document.getElementById('g-scenario').value;
+
+  const get = id => parseFloat(document.getElementById(id).value) || 0;
+  const current  = get('g-current');
+  const attr     = get('g-attr') / 100;
+  const exits    = get('g-exits');
+  const promo    = get('g-promo');
+  const hire     = get('g-hire');
+  const promin   = get('g-promin');
+  const grad     = get('g-grad');
+  const xfer     = get('g-xfer');
+  const demand   = get('g-demand');
+  const dgrowth  = get('g-dgrowth');
+  const leadtime = get('g-leadtime');
+
+  const periods = horizon / 3; // quarterly
+
+  // Project supply
+  const attrPerQtr = attr / 4;
+  let supply = current;
+  const supplyArr = [current];
+  for (let i = 0; i < periods; i++) {
+    supply = supply * (1 - attrPerQtr);
+    if (i === 0) supply -= exits;
+    if (i === 0) supply -= promo;
+    supply += hire / periods;
+    supply += promin / periods;
+    supply += grad / periods;
+    supply += xfer / periods;
+    supplyArr.push(Math.max(0, Math.round(supply)));
+  }
+
+  // Project demand
+  const scenarioMult = scenario === 'growth' ? 1.3 : scenario === 'conservative' ? 0.9 : 1.0;
+  let dem = demand * scenarioMult;
+  const demandArr = [Math.round(demand)];
+  for (let i = 0; i < periods; i++) {
+    dem += dgrowth * scenarioMult;
+    demandArr.push(Math.round(dem));
+  }
+
+  const finalSupply = supplyArr[supplyArr.length - 1];
+  const finalDemand = demandArr[demandArr.length - 1];
+  const gap = finalSupply - finalDemand;
+  const gapClass = gap >= 0 ? (gap > 3 ? 'surplus' : 'balanced') : (gap >= -3 ? 'deficit' : 'critical');
+  const gapColor = gap >= 0 ? 'var(--green)' : gap >= -3 ? 'var(--amber)' : 'var(--red)';
+  const gapLabel = gap >= 0 ? 'Surplus' : gap >= -3 ? 'Watch' : 'Critical Deficit';
+
+  const quarters = ['Now'];
+  for (let i = 1; i <= periods; i++) quarters.push('Q' + i);
+
+  const maxVal = Math.max(...supplyArr, ...demandArr) * 1.15;
+  const bars = quarters.map((q, i) => {
+    const sp = supplyArr[i] || 0;
+    const dm = demandArr[i] || 0;
+    const spPct = Math.round((sp / maxVal) * 100);
+    const dmPct = Math.round((dm / maxVal) * 100);
+    const gColor = sp >= dm ? 'var(--teal)' : 'var(--red)';
+    return `<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:3px">
+      <div style="display:flex;gap:2px;align-items:flex-end;height:80px;width:100%">
+        <div style="flex:1;height:${spPct}%;min-height:3px;background:var(--teal);border-radius:2px 2px 0 0;opacity:${i===0?0.4:0.85}"></div>
+        <div style="flex:1;height:${dmPct}%;min-height:3px;background:${i===quarters.length-1?gColor:'var(--ink3)'};border-radius:2px 2px 0 0;opacity:0.55"></div>
+      </div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--ink5)">${q}</div>
+    </div>`;
+  }).join('');
+
+  const advisory = gap >= 2 ? `Supply is projected to exceed demand by <strong>${gap}</strong> FTE. Review whether open requisitions should be paused or converted to pipeline candidates.` :
+    gap >= 0 ? `Supply is approximately balanced with demand. Monitor attrition closely — any increase above ${Math.round(attr)}% will create a deficit within this horizon.` :
+    gap >= -3 ? `<strong>Watch:</strong> Gap of <strong>${Math.abs(gap)}</strong> FTE is manageable but requires action within <strong>${leadtime} months</strong>. Recommended: activate one internal development pathway and open one external requisition in parallel.` :
+    `<strong>Critical deficit of ${Math.abs(gap)} FTE.</strong> At the current lead time of ${leadtime} months, action required immediately. Recommended: Buy (external hire) + Build (internal development) in parallel. Brief COO within this period's scorecard.`;
+
+  const res = document.getElementById('gap-results');
+  if (!res) return;
+  res.innerHTML = `
+    <div class="results-dark">
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px">Projected Gap at ${horizon} months</div>
+          <div style="font-family:var(--fd);font-size:56px;font-weight:800;color:${gapColor};line-height:1">${gap >= 0 ? '+' : ''}${gap}</div>
+          <div style="font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px">${gapLabel}</div>
+          <div style="margin-top:16px;display:grid;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-family:var(--fm);font-size:11px"><span style="color:rgba(255,255,255,0.3)">Projected Supply</span><span style="color:var(--teal3);font-weight:600">${finalSupply}</span></div>
+            <div style="display:flex;justify-content:space-between;font-family:var(--fm);font-size:11px"><span style="color:rgba(255,255,255,0.3)">Projected Demand</span><span style="color:rgba(255,255,255,0.6);font-weight:600">${finalDemand}</span></div>
+            <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:6px;display:flex;justify-content:space-between;font-family:var(--fm);font-size:11px"><span style="color:rgba(255,255,255,0.3)">Lead Time</span><span style="color:rgba(255,255,255,0.45)">${leadtime}mo to close</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px">Supply vs Demand — ${horizon}-month View</div>
+          <div style="display:flex;gap:16px;align-items:center;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:2px;background:var(--teal)"></div><span style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3)">Supply</span></div>
+            <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:2px;background:var(--ink3)"></div><span style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3)">Demand</span></div>
+          </div>
+          <div style="display:flex;gap:4px;align-items:flex-end;height:90px">${bars}</div>
+          <div style="margin-top:16px;padding:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:${gapColor};margin-bottom:4px">Advisory</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.75">${advisory}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function resetModeller() {
+  const role = document.getElementById('g-role').value;
+  const d = ROLE_DEFAULTS[role] || ROLE_DEFAULTS.g3;
+  Object.keys(d).forEach(k => {
+    const el = document.getElementById('g-' + k);
+    if (el) el.value = d[k];
+  });
+  calcGap();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  calcGap();
+  document.getElementById('g-role').addEventListener('change', () => {
+    const role = document.getElementById('g-role').value;
+    const d = ROLE_DEFAULTS[role] || ROLE_DEFAULTS.g3;
+    Object.keys(d).forEach(k => {
+      const el = document.getElementById('g-' + k);
+      if (el) el.value = d[k];
+    });
+    calcGap();
+  });
+});
+</script>
+</body>
+</html>

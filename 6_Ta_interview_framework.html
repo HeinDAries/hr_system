@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Framework | Valentis Laos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Instrument+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8f7f4;
+  --white: #ffffff;
+  --ink: #18181b;
+  --ink2: #3f3f46;
+  --ink3: #71717a;
+  --ink4: #a1a1aa;
+  --border: #e4e4e7;
+  --border2: #d4d4d8;
+  --surface: #fafaf9;
+  --navy: #1e3a5f;
+  --navy-bg: #eef2f9;
+  --navy-border: #b0c4de;
+  --gold: #c27b0e;
+  --gold-bg: #fefce8;
+  --gold-border: #fde68a;
+  --red: #b91c1c;
+  --red-bg: #fef2f2;
+  --red-border: #fecaca;
+  --green: #15803d;
+  --green-bg: #f0fdf4;
+  --green-border: #bbf7d0;
+  --teal: #0f766e;
+  --teal-bg: #f0fdfa;
+  --teal-border: #99f6e4;
+  --purple: #7c3aed;
+  --purple-bg: #faf5ff;
+  --purple-border: #ddd6fe;
+  --orange: #c2410c;
+  --orange-bg: #fff7ed;
+  --orange-border: #fed7aa;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Instrument Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+/* LAYOUT */
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 260px; min-width: 260px;
+  background: var(--navy);
+  position: fixed; top: 0; left: 0; bottom: 0;
+  display: flex; flex-direction: column;
+  overflow-y: auto; z-index: 20;
+}
+.main { margin-left: 260px; flex: 1; }
+
+/* SIDEBAR */
+.sidebar-head { padding: 30px 22px 22px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.s-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+.s-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: #fff; line-height: 1.2; }
+.s-title span { color: #f5c842; }
+.s-sub { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 6px; }
+
+.s-section { padding: 18px 14px 6px; }
+.s-section-label { font-size: 9px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: rgba(255,255,255,0.25); padding: 0 8px; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; }
+
+.nav-btn {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 9px 10px; border-radius: 7px;
+  background: transparent; border: none;
+  color: rgba(255,255,255,0.5); font-family: 'Instrument Sans', sans-serif;
+  font-size: 12.5px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; text-align: left; margin-bottom: 2px;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
+.nav-btn.active { background: rgba(255,255,255,0.13); color: #fff; }
+.nav-btn .n-icon { font-size: 13px; opacity: 0.7; width: 18px; text-align: center; }
+.nav-btn .n-badge {
+  margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);
+  padding: 1px 7px; border-radius: 10px;
+}
+.nav-btn.active .n-badge { background: #f5c842; color: #1e3a5f; }
+
+.s-footer { margin-top: auto; padding: 16px 22px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 10px; color: rgba(255,255,255,0.2); font-family: 'JetBrains Mono', monospace; line-height: 1.7; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 18px 40px; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--ink); }
+.topbar-sub { font-size: 11.5px; color: var(--ink3); margin-top: 2px; }
+.conf-tag { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; }
+
+/* CONTENT */
+.content { padding: 36px 40px; }
+.tab-panel { display: none; animation: fadeIn 0.2s ease; }
+.tab-panel.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* SECTION */
+.sec-label { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ink4); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* CARDS */
+.card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+.card-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-head-left { display: flex; align-items: center; gap: 12px; }
+.card-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.card-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--ink); }
+.card-sub { font-size: 11.5px; color: var(--ink3); margin-top: 2px; }
+.card-body { padding: 20px; }
+
+/* INTERVIEW FLOW */
+.flow-steps { display: flex; gap: 0; margin-bottom: 20px; }
+.flow-step { flex: 1; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-right: none; position: relative; }
+.flow-step:first-child { border-radius: 10px 0 0 10px; }
+.flow-step:last-child { border-right: 1px solid var(--border); border-radius: 0 10px 10px 0; }
+.flow-step::after { content: '→'; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); color: var(--ink4); font-size: 14px; z-index: 1; background: var(--bg); padding: 0 2px; }
+.flow-step:last-child::after { display: none; }
+.flow-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink4); margin-bottom: 5px; }
+.flow-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.flow-dur { font-size: 10.5px; color: var(--ink3); }
+.flow-owner { font-size: 10px; color: var(--ink4); margin-top: 4px; font-style: italic; }
+
+/* QUESTION CARDS */
+.q-block { margin-bottom: 16px; }
+.q-competency-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.comp-pill { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; border: 1px solid; }
+.comp-ops { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.comp-lead { background: var(--navy-bg); color: var(--navy); border-color: var(--navy-border); }
+.comp-safe { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+.comp-comm { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+.comp-tech { background: var(--orange-bg); color: var(--orange); border-color: var(--orange-border); }
+.comp-hr { background: var(--gold-bg); color: var(--gold); border-color: var(--gold-border); }
+
+.q-items { display: flex; flex-direction: column; gap: 10px; }
+.q-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.q-item-top { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+.q-type-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; white-space: nowrap; margin-top: 1px; flex-shrink: 0; }
+.qt-star { background: var(--navy-bg); color: var(--navy); }
+.qt-probe { background: var(--gold-bg); color: var(--gold); }
+.qt-hypo { background: var(--purple-bg); color: var(--purple); }
+.q-text { font-size: 13px; color: var(--ink); font-weight: 500; line-height: 1.5; }
+.q-look-for { font-size: 11.5px; color: var(--green); background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 6px; padding: 8px 12px; margin-top: 6px; line-height: 1.5; }
+.q-look-for strong { display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
+
+/* SCORING RUBRIC */
+.rubric-table { width: 100%; border-collapse: collapse; }
+.rubric-table thead tr { background: var(--navy); }
+.rubric-table thead th { padding: 12px 14px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: rgba(255,255,255,0.8); text-align: left; border-right: 1px solid rgba(255,255,255,0.1); font-family: 'JetBrains Mono', monospace; }
+.rubric-table thead th:last-child { border-right: none; }
+.rubric-table tbody tr { border-bottom: 1px solid var(--border); }
+.rubric-table tbody tr:hover { background: var(--surface); }
+.rubric-table tbody td { padding: 12px 14px; font-size: 12px; color: var(--ink2); border-right: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+.rubric-table tbody td:last-child { border-right: none; }
+.score-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; }
+.s5 { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.s4 { background: var(--teal-bg); color: var(--teal); border: 1px solid var(--teal-border); }
+.s3 { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-border); }
+.s2 { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+.s1 { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+/* RED FLAGS */
+.flags-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.flag-card { background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 9px; padding: 14px 16px; }
+.flag-title { font-size: 12.5px; font-weight: 700; color: var(--red); margin-bottom: 6px; display: flex; align-items: center; gap: 7px; }
+.flag-desc { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+.flag-action { font-size: 11px; color: var(--ink3); margin-top: 6px; font-style: italic; }
+
+/* GREEN FLAGS */
+.gflags-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+.gflag-card { background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 9px; padding: 14px 16px; }
+.gflag-title { font-size: 12.5px; font-weight: 700; color: var(--green); margin-bottom: 5px; }
+.gflag-desc { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+
+/* PANEL GUIDE */
+.panel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.panel-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+.panel-type { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.panel-when { font-size: 11px; color: var(--ink3); margin-bottom: 10px; }
+.panel-pros { font-size: 12px; color: var(--green); margin-bottom: 6px; }
+.panel-cons { font-size: 12px; color: var(--red); }
+.rec-tag { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 8px; font-family: 'JetBrains Mono', monospace; }
+.rec-yes { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.rec-dep { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-border); }
+.rec-no  { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+/* SCORECARD FORM */
+.scorecard-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.scorecard-header { background: var(--navy); padding: 18px 24px; }
+.sc-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: #fff; }
+.sc-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+.scorecard-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
+.sc-meta-cell { background: var(--surface); padding: 12px 16px; }
+.sc-meta-label { font-size: 9.5px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--ink4); font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+.sc-meta-value { font-size: 13px; font-weight: 600; color: var(--ink); }
+.scorecard-body { padding: 20px 24px; }
+.sc-criteria { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.sc-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+.sc-crit-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.sc-crit-desc { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.sc-scores { display: flex; gap: 6px; }
+.sc-score-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border2); background: var(--white); font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; color: var(--ink3); }
+.sc-score-btn:hover { border-color: var(--navy); color: var(--navy); }
+.sc-score-btn.sel-5 { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.sc-score-btn.sel-4 { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+.sc-score-btn.sel-3 { background: var(--gold-bg); color: var(--gold); border-color: var(--gold-border); }
+.sc-score-btn.sel-2 { background: var(--orange-bg); color: var(--orange); border-color: var(--orange-border); }
+.sc-score-btn.sel-1 { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.sc-total-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--navy-bg); border: 1px solid var(--navy-border); border-radius: 8px; }
+.sc-total-label { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy); }
+.sc-total-val { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--navy); }
+.sc-verdict { margin-top: 12px; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; display: none; }
+.sc-notes { width: 100%; margin-top: 16px; padding: 12px; border: 1px solid var(--border2); border-radius: 8px; font-family: 'Instrument Sans', sans-serif; font-size: 12.5px; color: var(--ink); background: var(--surface); resize: vertical; min-height: 80px; outline: none; }
+.sc-notes:focus { border-color: var(--navy); }
+
+/* FOOTNOTE */
+.footnote { font-size: 11px; color: var(--ink3); font-style: italic; padding: 10px 14px; background: var(--surface); border-radius: 7px; border-left: 2px solid var(--border2); margin-top: 8px; line-height: 1.6; }
+
+.scroll-x { overflow-x: auto; }
+@media (max-width: 900px) {
+  .sidebar { width: 220px; min-width: 220px; }
+  .main { margin-left: 220px; }
+  .flags-grid, .gflags-grid, .panel-grid { grid-template-columns: 1fr; }
+  .content { padding: 24px 20px; }
+  .topbar { padding: 14px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-head">
+    <div class="s-eyebrow">Valentis Laos · HR</div>
+    <div class="s-title">Interview <span>Framework</span></div>
+    <div class="s-sub">Structured · Consistent · Defensible</div>
+  </div>
+
+  <div class="s-section">
+    <div class="s-section-label">Process</div>
+    <button class="nav-btn active" onclick="switchTab('flow',this)"><span class="n-icon">◷</span> Interview Flow Guide</button>
+    <button class="nav-btn" onclick="switchTab('panel',this)"><span class="n-icon">◉</span> Panel vs Solo Guide</button>
+  </div>
+
+  <div class="s-section">
+    <div class="s-section-label">By Role</div>
+    <button class="nav-btn" onclick="switchTab('q-sitemgr',this)"><span class="n-icon">▸</span> Site Manager <span class="n-badge">8Q</span></button>
+    <button class="nav-btn" onclick="switchTab('q-drillsup',this)"><span class="n-icon">▸</span> Drilling Supervisor <span class="n-badge">7Q</span></button>
+    <button class="nav-btn" onclick="switchTab('q-driller',this)"><span class="n-icon">▸</span> Senior Driller <span class="n-badge">6Q</span></button>
+    <button class="nav-btn" onclick="switchTab('q-hse',this)"><span class="n-icon">▸</span> HSE Officer <span class="n-badge">6Q</span></button>
+    <button class="nav-btn" onclick="switchTab('q-hrbp',this)"><span class="n-icon">▸</span> HRBP / HR Manager <span class="n-badge">7Q</span></button>
+    <button class="nav-btn" onclick="switchTab('q-support',this)"><span class="n-icon">▸</span> Support Roles <span class="n-badge">5Q</span></button>
+  </div>
+
+  <div class="s-section">
+    <div class="s-section-label">Tools</div>
+    <button class="nav-btn" onclick="switchTab('rubric',this)"><span class="n-icon">◈</span> Scoring Rubric</button>
+    <button class="nav-btn" onclick="switchTab('flags',this)"><span class="n-icon">⚑</span> Red Flag Guide</button>
+    <button class="nav-btn" onclick="switchTab('scorecard',this)"><span class="n-icon">☑</span> Live Scorecard</button>
+  </div>
+
+  <div class="s-footer">Valentis Laos · HR<br>Interview Framework v1.0<br>March 2026 · Confidential</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Interview Framework — Valentis Laos</div>
+      <div class="topbar-sub">Competency-based · SEA Operations · All roles</div>
+    </div>
+    <span class="conf-tag">Confidential · HR Use Only</span>
+  </div>
+
+  <div class="content">
+
+    <!-- FLOW GUIDE -->
+    <div id="tab-flow" class="tab-panel active">
+      <div class="sec-label">Standard interview structure · all roles</div>
+      <div class="flow-steps">
+        <div class="flow-step"><div class="flow-num">01</div><div class="flow-name">Welcome & Context</div><div class="flow-dur">5 min</div><div class="flow-owner">HR leads</div></div>
+        <div class="flow-step"><div class="flow-num">02</div><div class="flow-name">Candidate Overview</div><div class="flow-dur">10 min</div><div class="flow-owner">Candidate speaks</div></div>
+        <div class="flow-step"><div class="flow-num">03</div><div class="flow-name">Competency Questions</div><div class="flow-dur">30–40 min</div><div class="flow-owner">Panel / HR</div></div>
+        <div class="flow-step"><div class="flow-num">04</div><div class="flow-name">Role Specifics</div><div class="flow-dur">10 min</div><div class="flow-owner">Hiring Mgr</div></div>
+        <div class="flow-step"><div class="flow-num">05</div><div class="flow-name">Candidate Q&A</div><div class="flow-dur">10 min</div><div class="flow-owner">Candidate leads</div></div>
+        <div class="flow-step"><div class="flow-num">06</div><div class="flow-name">Close & Next Steps</div><div class="flow-dur">5 min</div><div class="flow-owner">HR closes</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+        <div class="card">
+          <div class="card-head"><div class="card-head-left"><div class="card-icon" style="background:var(--navy-bg);color:var(--navy);">◈</div><div><div class="card-title">STAR Method — Required for All Answers</div><div class="card-sub">Every competency question must be answered using STAR format</div></div></div></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="min-width:28px;height:28px;border-radius:7px;background:var(--navy-bg);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:13px;">S</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--ink);">Situation</div><div style="font-size:12px;color:var(--ink3);">What was the context or challenge? When, where, what role?</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="min-width:28px;height:28px;border-radius:7px;background:var(--gold-bg);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:13px;">T</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--ink);">Task</div><div style="font-size:12px;color:var(--ink3);">What was their specific responsibility? What were they accountable for?</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="min-width:28px;height:28px;border-radius:7px;background:var(--teal-bg);color:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:13px;">A</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--ink);">Action</div><div style="font-size:12px;color:var(--ink3);">What did THEY specifically do? Not the team — the individual.</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="min-width:28px;height:28px;border-radius:7px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:13px;">R</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--ink);">Result</div><div style="font-size:12px;color:var(--ink3);">What was the measurable outcome? Numbers, timeframes, impact.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div class="card-head-left"><div class="card-icon" style="background:var(--gold-bg);color:var(--gold);">⚑</div><div><div class="card-title">Interviewer Ground Rules</div><div class="card-sub">Non-negotiable standards for every interview</div></div></div></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;gap:9px;font-size:12.5px;color:var(--ink2);line-height:1.5;"><span style="color:var(--green);font-weight:700;">✓</span> Ask the same core questions to every candidate for the same role — no improvising</div>
+              <div style="display:flex;gap:9px;font-size:12.5px;color:var(--ink2);line-height:1.5;"><span style="color:var(--green);font-weight:700;">✓</span> Score DURING the interview — do not rely on memory after</div>
+              <div style="display:flex;gap:9px;font-size:12.5px;color:var(--ink2);line-height:1.5;"><span style="color:var(--green);font-weight:700;">✓</span> Never share your score or opinion with other interviewers before independent scoring</div>
+              <div style="display:flex;gap:9px;font-size:12.5px;color:var(--ink2);line-height:1.5;"><span style="color:var(--green);font-weight:700;">✓</span> Use probe questions if an answer is vague — push for specifics</div>
+              <div style="display:flex;gap:9px;font-size:12.5px;color:var(--ink2);line-height:1.5;"><span style="color:var(--red);font-weight:700;">✗</span> Do not ask about age, marital status, religion, or family plans — illegal in most jurisdictions</div>
+              <div style="display:flex;gap:9px;font-size:12.5px;color:var(--ink2);line-height:1.5;"><span style="color:var(--red);font-weight:700;">✗</span> Do not make hiring decisions based on "gut feel" alone — score must support decision</div>
+              <div style="display:flex;gap:9px;font-size:12.5px;color:var(--ink2);line-height:1.5;"><span style="color:var(--red);font-weight:700;">✗</span> Do not discuss salary in round 1 — this is HR's role and comes only after shortlisting</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-head-left"><div class="card-icon" style="background:var(--purple-bg);color:var(--purple);">▸</div><div><div class="card-title">Universal Opening & Closing Questions</div><div class="card-sub">Use for every role — adapt wording to context</div></div></div></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">Opening (after candidate overview)</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div class="q-item"><div class="q-text">"What specifically attracted you to this role and to Valentis — not a generic answer, what about this opportunity specifically?"</div></div>
+                <div class="q-item"><div class="q-text">"Walk me through a career decision you made that didn't work out as planned and what you learned from it."</div></div>
+                <div class="q-item"><div class="q-text">"What does working in a remote SEA site mean to you practically — what have you done to prepare for or adapt to that environment?"</div></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--navy);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">Closing (before candidate Q&A)</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div class="q-item"><div class="q-text">"Is there anything about your experience or background that you haven't had the chance to share today that you think is relevant?"</div></div>
+                <div class="q-item"><div class="q-text">"What is your notice period and are there any constraints on your availability to start?"</div></div>
+                <div class="q-item"><div class="q-text">"On a scale of 1–10, how interested are you in this role right now — and what would make it a 10?"</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footnote">The interview flow is a minimum standard — not a ceiling. For senior roles (Site Manager, Drilling Supervisor), add a second round technical assessment or case study. For all roles, a reference check is mandatory before offer — see reference check framework (pending build).</div>
+    </div>
+
+    <!-- PANEL GUIDE -->
+    <div id="tab-panel" class="tab-panel">
+      <div class="sec-label">When to use panel vs solo interview · and how to run each</div>
+      <div class="panel-grid" style="margin-bottom:24px;">
+        <div class="panel-card">
+          <div class="panel-type">Solo Interview</div>
+          <div class="panel-when">1 interviewer · HR or Hiring Manager</div>
+          <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px;">Best for:</div>
+          <div class="panel-pros">Initial screening. Support / admin roles. Lower-risk hires. Exploratory pre-screen calls.</div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);margin-top:8px;margin-bottom:4px;">Risks:</div>
+          <div class="panel-cons">Single perspective. Higher bias risk. Not defensible for senior hires.</div>
+          <span class="rec-tag rec-dep">Use for Round 1 screening only</span>
+        </div>
+        <div class="panel-card">
+          <div class="panel-type">2-Person Panel</div>
+          <div class="panel-when">HR + Hiring Manager</div>
+          <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px;">Best for:</div>
+          <div class="panel-pros">Most standard hires. Operational roles (Driller, Supervisor). Balances HR and technical perspective. Manageable coordination.</div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);margin-top:8px;margin-bottom:4px;">Risks:</div>
+          <div class="panel-cons">Interviewer groupthink if both are aligned before interview. Need clear role split.</div>
+          <span class="rec-tag rec-yes">Recommended for most roles</span>
+        </div>
+        <div class="panel-card">
+          <div class="panel-type">3-Person Panel</div>
+          <div class="panel-when">HR + Hiring Mgr + COO/CEO</div>
+          <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px;">Best for:</div>
+          <div class="panel-pros">Senior hires only (Site Manager, Country HR Manager). Roles reporting directly to C-suite. When culture fit is a critical factor.</div>
+          <div style="font-size:11px;font-weight:700;color:var(--red);margin-top:8px;margin-bottom:4px;">Risks:</div>
+          <div class="panel-cons">Intimidating for candidate. Scheduling complexity. CEO/COO influence can dominate scoring.</div>
+          <span class="rec-tag rec-dep">Senior roles only · Round 2</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-head"><div class="card-head-left"><div class="card-icon" style="background:var(--navy-bg);color:var(--navy);">◉</div><div><div class="card-title">Role Split in a 2-Person Panel</div><div class="card-sub">Clear ownership prevents duplication and gaps</div></div></div></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div style="background:var(--navy-bg);border:1px solid var(--navy-border);border-radius:9px;padding:16px;">
+              <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;">HR Interviewer Owns:</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--ink2);">
+                <div>• Opening, structure, and closing</div>
+                <div>• Behavioral / competency questions</div>
+                <div>• Culture and values fit assessment</div>
+                <div>• Red flag monitoring (personal conduct, stability)</div>
+                <div>• Logistics: availability, notice period, location</div>
+                <div>• Communication and documentation of next steps</div>
+              </div>
+            </div>
+            <div style="background:var(--teal-bg);border:1px solid var(--teal-border);border-radius:9px;padding:16px;">
+              <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:10px;">Hiring Manager Owns:</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--ink2);">
+                <div>• Technical competency questions</div>
+                <div>• Role-specific scenario / problem solving</div>
+                <div>• Equipment or process knowledge assessment</div>
+                <div>• Team dynamics and site environment fit</div>
+                <div>• Operational expectations and deliverables</div>
+                <div>• Technical red flags (credibility of experience claims)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footnote">Never brief the Hiring Manager on your own scoring or impressions before they have independently scored. Discuss and compare AFTER both parties have completed their individual scorecards. This is the most important anti-bias practice in structured interviewing.</div>
+    </div>
+
+    <!-- SITE MANAGER QUESTIONS -->
+    <div id="tab-q-sitemgr" class="tab-panel">
+      <div class="sec-label">Site Manager · competency-based question bank</div>
+
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-ops">Site Operations Leadership</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about the largest workforce you have personally managed on a single site. What was your structure, what were the biggest people challenges, and how did you address them?</div></div><div class="q-look-for"><strong>Look for:</strong> Specific headcount numbers (we need 300+). Clear org structure described. Concrete people challenges with actions taken. Evidence of proactive management, not just reactive.</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-probe">PROBE</span><div class="q-text">You mentioned [X headcount] — who were your direct reports and how did you cascade accountability below you?</div></div><div class="q-look-for"><strong>Look for:</strong> Clear delegation structure. Understands difference between managing and micromanaging. Can describe how they held people accountable without being on top of everything.</div></div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-safe">HSE Leadership</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Describe a serious safety incident or near-miss that occurred on your site. Walk me through your immediate response, the investigation process, and what systemic changes you made afterward.</div></div><div class="q-look-for"><strong>Look for:</strong> Calm, methodical response. Uses structured investigation (5-Why, root cause). Takes accountability — doesn't blame subordinates. Demonstrates systemic fix, not just individual reprimand. Most importantly: what changed after?</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-hypo">HYPO</span><div class="q-text">You arrive on site and observe a driller operating without required PPE. This is not the first time. The driller is your most experienced and productive operator. What do you do?</div></div><div class="q-look-for"><strong>Look for:</strong> Zero tolerance framing but pragmatic approach. Addresses it immediately, not later. Follows process. Does NOT make an exception for productivity. Understands this is a culture signal to the whole site.</div></div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-lead">Decision Making Under Pressure</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about a time operations on your site were at serious risk — equipment failure, supply crisis, or personnel emergency. What was the situation and how did you manage it?</div></div><div class="q-look-for"><strong>Look for:</strong> Clear-headed under pressure. Prioritizes correctly (people safety first, then ops continuity). Can make decisions without full information. Communicates up the chain while managing the situation. Quantifies the impact and outcome.</div></div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-comm">Stakeholder & Government Relations</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Describe your experience managing relationships with government authorities or regulatory bodies at a site level. What was the most challenging interaction and how did you handle it?</div></div><div class="q-look-for"><strong>Look for:</strong> Has direct experience — not "my team handled it." Understands local government relationship dynamics in SEA or similar environment. Diplomatic but firm. Does not describe avoiding or ignoring regulatory contact.</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-probe">PROBE</span><div class="q-text">What do you know about operating in Laos specifically — the regulatory environment, local labor practices, and cultural norms?</div></div><div class="q-look-for"><strong>Look for:</strong> Genuine research or experience. If no Laos experience, do they acknowledge the gap and show how they would close it? Red flag: "It's similar to everywhere else I've worked."</div></div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-tech">Budget & Cost Control</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about the largest operational budget you have personally managed. How did you track spend, identify variances, and report to leadership?</div></div><div class="q-look-for"><strong>Look for:</strong> Owns budget accountability — not just "I had visibility." Specific dollar amounts. Can describe variance analysis process. Understands cost drivers in drilling operations. Has escalated budget issues proactively.</div></div>
+        </div>
+      </div>
+      <div class="footnote">Site Manager is a Tier 1 critical role — use all 8 questions across two rounds. Round 1 (HR): competency and culture questions. Round 2 (HR + COO): technical depth, budget, and government relations. Reference checks mandatory for this role before any offer.</div>
+    </div>
+
+    <!-- DRILLING SUPERVISOR QUESTIONS -->
+    <div id="tab-q-drillsup" class="tab-panel">
+      <div class="sec-label">Drilling Supervisor · competency-based question bank</div>
+
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-ops">Drilling Operations Expertise</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Walk me through the most technically complex drilling program you have supervised. What were the geological or operational challenges and how did you manage them?</div></div><div class="q-look-for"><strong>Look for:</strong> Specific technical knowledge — drill parameters, formation challenges, deviation control. Understands the program vs execution gap. Can articulate what made it complex and what they changed.</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-hypo">HYPO</span><div class="q-text">You're 200 metres into a hole and you suddenly lose circulation — mud is not returning. You cannot reach the Geologist. What do you do in the next 30 minutes?</div></div><div class="q-look-for"><strong>Look for:</strong> Immediate steps: stop drilling, assess, document depth and parameters. Does not just keep going. Follows emergency protocol. Knows when to make the call to pull out vs attempt remediation. Communicates up immediately.</div></div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-safe">HSE on the Rig Floor</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about a time a crew member refused to follow a safety instruction. What was the situation and how did you handle it?</div></div><div class="q-look-for"><strong>Look for:</strong> Does not ignore it or handle it "later." Acts immediately and consistently. Understands the cultural dynamics of crew authority. Does not use physical intimidation (red flag). Documents the incident properly.</div></div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-lead">Crew Leadership</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Describe a time you had a serious performance problem with a crew member on a remote site. What steps did you take?</div></div><div class="q-look-for"><strong>Look for:</strong> Follows process — verbal warning, documentation, escalation path. Does not handle it through intimidation. Understands the isolation challenge of remote site discipline. Involves HR/Site Manager at right point.</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-probe">PROBE</span><div class="q-text">How do you manage a mixed crew of local nationals and expats where language and cultural differences create friction?</div></div><div class="q-look-for"><strong>Look for:</strong> Specific strategies — clear visual SOPs, buddy systems, daily briefings, translators. Has actually done this. Does not dismiss it as "not a real issue." Understanding of cultural hierarchy on drilling sites in SEA.</div></div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-tech">Equipment & Maintenance</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about a major equipment breakdown you experienced during an active drilling program. How did you minimize downtime and what was the business impact?</div></div><div class="q-look-for"><strong>Look for:</strong> Quantifies downtime and recovery. Has clear escalation path. Understands the cost of unplanned downtime. Proactively reviews maintenance after the event. Strong candidates will mention what they did differently going forward.</div></div>
+        </div>
+      </div>
+      <div class="footnote">Drilling Supervisor is a CRITICAL OVERDUE role for Myanmar. Compress to a single combined round (HR + Ops Manager) to save time. Technical depth questions are more important than behavioral for this role. Verify certifications before interview.</div>
+    </div>
+
+    <!-- SENIOR DRILLER QUESTIONS -->
+    <div id="tab-q-driller" class="tab-panel">
+      <div class="sec-label">Senior Driller · competency-based question bank</div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-ops">Rig Operation</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Which rig types have you operated and what are the key operational differences between them? Which do you prefer and why?</div></div><div class="q-look-for"><strong>Look for:</strong> Specific rig models and manufacturers. Can articulate technical differences. Preference should be backed by operational rationale, not just familiarity.</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-hypo">HYPO</span><div class="q-text">You're on shift and you notice the drill string is vibrating abnormally and penetration rate has dropped significantly. Your Supervisor is not on site. What do you do?</div></div><div class="q-look-for"><strong>Look for:</strong> Stops drilling. Checks parameters. Diagnoses possible cause (bit wear, formation change, balling). Does not just push through. Contacts Supervisor. Documents findings. Strong candidates will troubleshoot methodically before escalating.</div></div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-lead">Crew & Mentoring</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Describe how you have developed a junior driller or helper into a competent operator. What was your approach?</div></div><div class="q-look-for"><strong>Look for:</strong> Genuine investment in others' development. Uses show-don't-tell method. Patient but holds standards. This is a differentiator between a Senior Driller and someone who just does their own job.</div></div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-safe">Site Safety Ownership</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about a time you identified a safety hazard on the rig before an incident occurred. What did you do?</div></div><div class="q-look-for"><strong>Look for:</strong> Proactively identifies — not just responds to incidents. Reports it formally. Does not wait for Supervisor to notice. Follows up to ensure it was fixed. Best candidates will describe a hazard that was non-obvious.</div></div>
+        </div>
+      </div>
+      <div class="footnote">Senior Driller can be assessed in a single 45-minute round with HR + Drilling Supervisor or Ops Manager. Focus 60% of time on technical competency. Verify certifications and check reference from most recent Drilling Supervisor before offer.</div>
+    </div>
+
+    <!-- HSE OFFICER QUESTIONS -->
+    <div id="tab-q-hse" class="tab-panel">
+      <div class="sec-label">HSE Officer · competency-based question bank</div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-safe">HSE Management System</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about a site where you built or significantly improved the HSE management system from scratch. What was the baseline, what did you do, and what changed?</div></div><div class="q-look-for"><strong>Look for:</strong> Systematic approach — risk register, permit to work, inspection regime, training. Quantifies improvement (incident rate, near-miss reporting frequency). Understands the difference between a paper system and a live one.</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-probe">PROBE</span><div class="q-text">How would you approach HSE compliance in a country where the local regulatory standard is below your own company standard? Which standard do you apply?</div></div><div class="q-look-for"><strong>Look for:</strong> Always applies the higher standard. Can articulate why (moral, legal liability, company reputation). Does not take the easy path. Understands how to educate and enforce simultaneously.</div></div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-tech">Incident Investigation</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Walk me through an incident investigation you personally led. What methodology did you use and what was the most important finding?</div></div><div class="q-look-for"><strong>Look for:</strong> Named methodology (5-Why, ICAM, Bowtie). Systematic process. Understands that root cause is almost never "operator error." Findings led to systemic change. Can distinguish between immediate cause and contributing factors.</div></div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-comm">Safety Culture Influence</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-hypo">HYPO</span><div class="q-text">You arrive at a new site and discover that near-miss reporting is almost zero — not because nothing is happening, but because workers fear punishment for reporting. What is your first 30 days approach?</div></div><div class="q-look-for"><strong>Look for:</strong> Does not mandate reporting from day one. Builds trust first. Separates reporting from blame. Uses positive reinforcement for reporters. Works with Site Manager to create visible leadership commitment. Understands this is cultural, not procedural.</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Describe a time you had to challenge a senior manager or Site Manager on a safety decision. How did you handle it and what was the outcome?</div></div><div class="q-look-for"><strong>Look for:</strong> Does it — does not back down when safety is at stake. Uses data and standards, not emotion. Documents the challenge formally. Escalates if necessary. Red flag: never has had to do this or avoids conflict at all costs.</div></div>
+        </div>
+      </div>
+      <div class="footnote">HSE Officer must have NEBOSH or equivalent verified before interview. Ask to see certificates. This role has functional authority over everyone on site on safety matters — assess their confidence and assertiveness in behavioral questions, not just knowledge.</div>
+    </div>
+
+    <!-- HRBP QUESTIONS -->
+    <div id="tab-q-hrbp" class="tab-panel">
+      <div class="sec-label">HRBP / HR Manager · competency-based question bank</div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-hr">HR Generalist Depth</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about a time you had to manage a complex employee relations case — disciplinary, grievance, or termination — from beginning to resolution. Walk me through your process.</div></div><div class="q-look-for"><strong>Look for:</strong> Follows process rigorously. Documents every step. Consults labor law. Manages the business stakeholder alongside the employee. Reaches a defensible conclusion. Does not cut corners to resolve quickly.</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-probe">PROBE</span><div class="q-text">In that case — what was the most difficult part of the process and where did you feel most uncertain?</div></div><div class="q-look-for"><strong>Look for:</strong> Self-awareness. Knows their limits. Sought advice when uncertain. Red flag: "I knew exactly what to do throughout" — HR cases are almost never that clean.</div></div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-hr">Thai Labor Law</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-hypo">HYPO</span><div class="q-text">A line manager wants to terminate an employee who has been with the company for 3 years for "poor performance" — but there are no documented performance reviews. What do you advise?</div></div><div class="q-look-for"><strong>Look for:</strong> Flags the legal risk immediately (Thailand LPA severance exposure). Does not just comply with the manager. Advises on a proper PIP and documentation path going forward. Understands the company's liability. Strong candidates will cite specific LPA provisions.</div></div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-lead">Working in a Lean HR Function</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Describe a time you were the only HR person for a large or complex operation. What did you prioritize, what did you let go, and how did you manage your own time?</div></div><div class="q-look-for"><strong>Look for:</strong> Can triage effectively. Knows what has legal or operational urgency vs what is nice-to-have. Does not try to do everything perfectly. Communicates workload limitations upward. This is critical for Valentis context — solo HR in a multi-country operation.</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-hypo">HYPO</span><div class="q-text">In your first 90 days here, you identify that payroll compliance in two countries has serious gaps. You also have three urgent hires to fill. You cannot do both simultaneously. How do you decide what to do first?</div></div><div class="q-look-for"><strong>Look for:</strong> Compliance first — legal exposure outweighs recruitment delay. Communicates the triage to leadership clearly. Seeks to get temporary support for the deprioritized workstream. Does not just silently do one and ignore the other.</div></div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-comm">Stakeholder Management</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about a time a senior manager or business leader pushed back hard on your HR recommendation. How did you handle it?</div></div><div class="q-look-for"><strong>Look for:</strong> Holds their position when backed by policy/law. Listens and adjusts when the manager has a valid point. Does not simply capitulate under pressure. Documents disagreements. Red flag: "I always deferred to the business" — that is compliance, not partnership.</div></div>
+        </div>
+      </div>
+      <div class="footnote">HRBP is a medium-priority role but critical for reducing Group HR Manager workload. Assess self-direction heavily — this person needs to operate with minimal supervision in Bangkok while you are managing SEA operations. Solo HR experience is non-negotiable.</div>
+    </div>
+
+    <!-- SUPPORT ROLES -->
+    <div id="tab-q-support" class="tab-panel">
+      <div class="sec-label">Support & Admin roles · universal question bank</div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-ops">Organisation & Reliability</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about a time you were managing multiple urgent tasks simultaneously and something fell through the cracks. What happened and what did you do?</div></div><div class="q-look-for"><strong>Look for:</strong> Owns the mistake. Does not blame workload volume. Describes a specific recovery action. Most importantly — describes what system or habit they changed afterward.</div></div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-lead">Remote / Site Environment Fit</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-hypo">HYPO</span><div class="q-text">This role is based on a remote drilling site — limited internet, no city amenities, mostly male workforce. What's your honest reaction to that and what would be your biggest personal adjustment?</div></div><div class="q-look-for"><strong>Look for:</strong> Has thought about it. Is honest about the adjustment. Red flag: "That's no problem for me" with zero reflection — they haven't actually thought about it. Green flag: specific coping mechanisms, prior remote experience, practical questions about facilities.</div></div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-competency-bar"><span class="comp-pill comp-comm">Communication & Discretion</span></div>
+        <div class="q-items">
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Tell me about a time you handled sensitive or confidential information. How did you manage it and was there ever a moment where you were tempted or pressured to share it?</div></div><div class="q-look-for"><strong>Look for:</strong> Takes confidentiality seriously. Has a clear principle. Was not swayed by social pressure to share. For EA/Office Manager roles especially — discretion failure in this role directly affects C-suite operations.</div></div>
+          <div class="q-item"><div class="q-item-top"><span class="q-type-tag qt-star">STAR</span><div class="q-text">Describe the most complex logistics or coordination challenge you've managed. How did you keep track of everything and what happened when something went wrong mid-process?</div></div><div class="q-look-for"><strong>Look for:</strong> Uses systems (checklists, trackers) — not just memory. Proactive communication when issues arise. Does not wait to be asked for an update. Stays calm when plans change.</div></div>
+        </div>
+      </div>
+      <div class="footnote">Support roles can be assessed in a single 30–40 minute interview with HR only. Use a practical task assessment where possible — e.g. ask an Admin candidate to demonstrate how they would set up a filing system or tracking sheet. Behavior in practical tasks is more predictive than answers alone.</div>
+    </div>
+
+    <!-- RUBRIC -->
+    <div id="tab-rubric" class="tab-panel">
+      <div class="sec-label">Universal scoring rubric · apply to every competency assessed</div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-body" style="padding:0;">
+          <div class="scroll-x">
+            <table class="rubric-table">
+              <thead><tr><th>Score</th><th>Label</th><th style="min-width:200px;">What it Looks Like</th><th style="min-width:180px;">Answer Quality</th><th>Hiring Signal</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="score-badge s5">5</span></td>
+                  <td style="font-weight:700;color:var(--green);">Outstanding</td>
+                  <td>Exceeds all expectations for the role. Evidence is specific, quantified, and directly relevant. Demonstrates depth beyond what the role requires.</td>
+                  <td>Full STAR structure. Specific numbers and timeframes. Clear ownership of outcome. Proactively identifies what they'd do differently.</td>
+                  <td style="font-weight:600;color:var(--green);">Strong hire signal</td>
+                </tr>
+                <tr>
+                  <td><span class="score-badge s4">4</span></td>
+                  <td style="font-weight:700;color:var(--teal);">Strong</td>
+                  <td>Clearly meets role requirements. Evidence is relevant and credible. Minor gaps in depth or specificity but overall compelling.</td>
+                  <td>Mostly complete STAR. Some specifics. Clear personal contribution. Outcome described but may lack quantification.</td>
+                  <td style="font-weight:600;color:var(--teal);">Proceed / Recommend</td>
+                </tr>
+                <tr>
+                  <td><span class="score-badge s3">3</span></td>
+                  <td style="font-weight:700;color:var(--gold);">Acceptable</td>
+                  <td>Meets basic requirements. Evidence is present but somewhat generic or vague. Raise this competency in round 2 for further probing before deciding.</td>
+                  <td>Partial STAR. Some relevant experience referenced. Personal contribution unclear. Outcome described at high level only.</td>
+                  <td style="font-weight:600;color:var(--gold);">Probe further</td>
+                </tr>
+                <tr>
+                  <td><span class="score-badge s2">2</span></td>
+                  <td style="font-weight:700;color:var(--orange);">Weak</td>
+                  <td>Below role requirement. Evidence is limited, hypothetical, or primarily team-based rather than individual. Significant gap for this competency.</td>
+                  <td>Answers are vague or theoretical. Uses "we" more than "I." Cannot provide specifics when probed. Describes what should happen, not what they did.</td>
+                  <td style="font-weight:600;color:var(--orange);">Significant concern</td>
+                </tr>
+                <tr>
+                  <td><span class="score-badge s1">1</span></td>
+                  <td style="font-weight:700;color:var(--red);">Unacceptable</td>
+                  <td>No credible evidence of this competency. Answers are contradictory, implausible, or show a fundamental misunderstanding of the requirement.</td>
+                  <td>Cannot provide an example. Contradicts earlier statements. Shows values or behaviors incompatible with role requirements.</td>
+                  <td style="font-weight:600;color:var(--red);">Do not proceed</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="card">
+          <div class="card-head"><div class="card-head-left"><div class="card-icon" style="background:var(--navy-bg);color:var(--navy);">◎</div><div><div class="card-title">Minimum Score Thresholds</div><div class="card-sub">By role seniority</div></div></div></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);">
+                <div style="font-size:12.5px;font-weight:600;">Site Manager / Country HR</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--navy);">Avg ≥ 4.0</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);">
+                <div style="font-size:12.5px;font-weight:600;">Drilling Supervisor / HSE Officer</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--teal);">Avg ≥ 3.5</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);">
+                <div style="font-size:12.5px;font-weight:600;">Senior Driller / Payroll / Compliance</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--gold);">Avg ≥ 3.0</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);">
+                <div style="font-size:12.5px;font-weight:600;">Support / Admin Roles</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--orange);">Avg ≥ 2.8</div>
+              </div>
+              <div style="font-size:11.5px;color:var(--red);background:var(--red-bg);border:1px solid var(--red-border);border-radius:6px;padding:9px 12px;margin-top:4px;">
+                Any single competency score of 1 = automatic disqualifier regardless of overall average
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div class="card-head-left"><div class="card-icon" style="background:var(--gold-bg);color:var(--gold);">⚡</div><div><div class="card-title">Anti-Bias Reminders</div><div class="card-sub">Apply before scoring debrief</div></div></div></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;padding:8px 10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--gold);">
+                <strong>Halo Effect:</strong> Don't let one impressive answer inflate all scores. Score each competency independently.
+              </div>
+              <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;padding:8px 10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--gold);">
+                <strong>Similarity Bias:</strong> Don't score higher because a candidate reminds you of yourself or a previous top performer.
+              </div>
+              <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;padding:8px 10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--gold);">
+                <strong>Recency Bias:</strong> Don't let the last answer dominate your overall impression. Weight all answers equally.
+              </div>
+              <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;padding:8px 10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--red);">
+                <strong>Seniority Deference:</strong> In panel interviews, score independently BEFORE discussing with COO/CEO. Their seniority should not override your professional assessment.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RED FLAGS -->
+    <div id="tab-flags" class="tab-panel">
+      <div class="sec-label">Green flags · strong positive indicators</div>
+      <div class="gflags-grid" style="margin-bottom:24px;">
+        <div class="gflag-card"><div class="gflag-title">✓ Quantifies everything</div><div class="gflag-desc">Gives specific numbers — headcount managed, budget size, incident rates, timeframes. Doesn't need to be asked — volunteers data naturally.</div></div>
+        <div class="gflag-card"><div class="gflag-title">✓ Owns failures openly</div><div class="gflag-desc">Can describe a genuine failure without deflecting blame. Articulates what they learned and changed. Self-awareness is a strong predictor of performance.</div></div>
+        <div class="gflag-card"><div class="gflag-title">✓ Asks sharp questions</div><div class="gflag-desc">Questions reveal how they think. Strong candidates ask about operational scope, team structure, and success metrics — not just salary and holidays.</div></div>
+        <div class="gflag-card"><div class="gflag-title">✓ Researched Valentis</div><div class="gflag-desc">Knows what the company does, the operating countries, and has specific observations or questions about the context. Shows genuine interest, not desperation.</div></div>
+        <div class="gflag-card"><div class="gflag-title">✓ Proactive communication</div><div class="gflag-desc">Acknowledged receipt of interview invite. Was on time. Followed up after. Behavior during the recruitment process predicts behavior on the job.</div></div>
+        <div class="gflag-card"><div class="gflag-title">✓ Pushes back respectfully</div><div class="gflag-desc">Disagrees with an interviewer's framing or corrects a factual error politely. Shows confidence and integrity — important for operational leadership roles.</div></div>
+      </div>
+
+      <div class="sec-label">Red flags · disqualifying and concerning signals</div>
+      <div class="flags-grid">
+        <div class="flag-card"><div class="flag-title">🚩 Vague about headcount</div><div class="flag-desc">Claims large workforce experience but cannot name the structure, org chart, or specific challenges. "Around 500 people" with no detail is a credibility concern.</div><div class="flag-action">Action: Probe hard. Ask for names of direct reports, org chart, reporting chain.</div></div>
+        <div class="flag-card"><div class="flag-title">🚩 Always says "we"</div><div class="flag-desc">Uses "we" for every achievement but "I" when describing failures. Individual contribution is invisible. May be overstating their personal role.</div><div class="flag-action">Action: "What specifically did YOU do in that situation — not the team?"</div></div>
+        <div class="flag-card"><div class="flag-title">🚩 Badmouths past employers</div><div class="flag-desc">Describes previous employers or managers very negatively without any self-reflection. Predicts the same behavior when they leave Valentis.</div><div class="flag-action">Action: Note it. Ask "What did you take from that experience?" — see if any self-awareness emerges.</div></div>
+        <div class="flag-card"><div class="flag-title">🚩 Evasive on terminations</div><div class="flag-desc">Inconsistencies in why they left previous roles. "Mutual agreement" that sounds like termination. Stories that don't add up on dates or reasons.</div><div class="flag-action">Action: Probe calmly. "Walk me through exactly how that transition happened." Reference check is critical here.</div></div>
+        <div class="flag-card"><div class="flag-title">🚩 No questions at end</div><div class="flag-desc">A serious candidate for a senior role with no questions means either they're not genuinely interested or they haven't thought deeply about the role.</div><div class="flag-action">Action: Flag for HR. Ask directly: "What's your biggest unknown about this role right now?"</div></div>
+        <div class="flag-card"><div class="flag-title">🚩 Inflexible on location</div><div class="flag-desc">For site-based roles, candidate shows reluctance about remote conditions, rotation schedule, or SEA environment but hasn't disclosed this clearly.</div><div class="flag-action">Action: Address directly. "This is genuinely remote. Tell me about your last remote posting." Do not proceed if genuine hesitation remains.</div></div>
+        <div class="flag-card"><div class="flag-title">🚩 Safety culture dismissal</div><div class="flag-desc">For any ops role — candidate describes safety requirements as "box-ticking" or hints that productivity sometimes has to come before safety procedures.</div><div class="flag-action">Action: Automatic disqualifier for Site Manager and HSE roles. Flag for all ops roles.</div></div>
+        <div class="flag-card"><div class="flag-title">🚩 Salary as first question</div><div class="flag-desc">Opens the interview with salary expectations before understanding the role scope. Not disqualifying alone but signals motivation may be purely financial.</div><div class="flag-action">Action: Note it. Observe whether engagement increases once role scope is described. Probe intrinsic motivation later.</div></div>
+      </div>
+      <div class="footnote" style="margin-top:16px;">Red flags are indicators, not automatic disqualifiers (except safety culture dismissal for ops roles). Weigh them against the overall evidence. One red flag with strong STAR answers is different from three red flags with weak answers. Document all observations — they are legally important if a hire goes wrong.</div>
+    </div>
+
+    <!-- LIVE SCORECARD -->
+    <div id="tab-scorecard" class="tab-panel">
+      <div class="sec-label">Live interview scorecard · complete during the interview</div>
+      <div class="scorecard-wrap">
+        <div class="scorecard-header">
+          <div class="sc-title">Interview Scorecard</div>
+          <div class="sc-sub">Complete independently · Do not share scores until both interviewers have finished</div>
+        </div>
+        <div class="scorecard-meta">
+          <div class="sc-meta-cell"><div class="sc-meta-label">Candidate Name</div><div class="sc-meta-value"><input style="border:none;background:transparent;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink);width:100%;outline:none;" placeholder="Enter name..." /></div></div>
+          <div class="sc-meta-cell"><div class="sc-meta-label">Role Applied For</div><div class="sc-meta-value"><input style="border:none;background:transparent;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink);width:100%;outline:none;" placeholder="Role..." /></div></div>
+          <div class="sc-meta-cell"><div class="sc-meta-label">Interviewer</div><div class="sc-meta-value"><input style="border:none;background:transparent;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink);width:100%;outline:none;" placeholder="Your name..." /></div></div>
+          <div class="sc-meta-cell"><div class="sc-meta-label">Interview Date</div><div class="sc-meta-value"><input type="date" style="border:none;background:transparent;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink);width:100%;outline:none;" /></div></div>
+        </div>
+        <div class="scorecard-body">
+          <div class="sc-criteria" id="scCriteria">
+            <div class="sc-row" data-crit="0"><div><div class="sc-crit-name">Relevant Experience & Technical Fit</div><div class="sc-crit-desc">Quality and relevance of experience to this specific role</div></div><div class="sc-scores" id="scores-0"></div></div>
+            <div class="sc-row" data-crit="1"><div><div class="sc-crit-name">Leadership & People Management</div><div class="sc-crit-desc">Evidence of leading teams, managing performance, developing others</div></div><div class="sc-scores" id="scores-1"></div></div>
+            <div class="sc-row" data-crit="2"><div><div class="sc-crit-name">HSE Mindset & Safety Culture</div><div class="sc-crit-desc">Commitment to safety — not compliance, genuine culture ownership</div></div><div class="sc-scores" id="scores-2"></div></div>
+            <div class="sc-row" data-crit="3"><div><div class="sc-crit-name">Communication & Stakeholder Clarity</div><div class="sc-crit-desc">Ability to communicate clearly with different audiences and levels</div></div><div class="sc-scores" id="scores-3"></div></div>
+            <div class="sc-row" data-crit="4"><div><div class="sc-crit-name">Problem Solving & Decision Making</div><div class="sc-crit-desc">Quality of reasoning under pressure or in ambiguous situations</div></div><div class="sc-scores" id="scores-4"></div></div>
+            <div class="sc-row" data-crit="5"><div><div class="sc-crit-name">SEA / Remote Environment Fit</div><div class="sc-crit-desc">Genuine readiness for remote site, SEA context, cultural fit</div></div><div class="sc-scores" id="scores-5"></div></div>
+            <div class="sc-row" data-crit="6"><div><div class="sc-crit-name">Integrity & Self-Awareness</div><div class="sc-crit-desc">Honesty about failures, limitations, and areas for development</div></div><div class="sc-scores" id="scores-6"></div></div>
+          </div>
+          <div class="sc-total-row">
+            <div class="sc-total-label">Total Score <span style="font-size:12px;color:var(--ink3);font-weight:400;">(Max 35)</span></div>
+            <div class="sc-total-val" id="scTotalVal">—</div>
+          </div>
+          <div class="sc-verdict" id="scVerdict"></div>
+          <textarea class="sc-notes" placeholder="Overall observations, key strengths, concerns, recommended next step..."></textarea>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// Build scorecard buttons
+const scores = {};
+for (let i = 0; i <= 6; i++) {
+  scores[i] = 0;
+  const wrap = document.getElementById('scores-' + i);
+  if (!wrap) continue;
+  [1,2,3,4,5].forEach(v => {
+    const btn = document.createElement('button');
+    btn.className = 'sc-score-btn';
+    btn.textContent = v;
+    btn.onclick = () => selectScore(i, v, btn);
+    wrap.appendChild(btn);
+  });
+}
+
+function selectScore(crit, val, btn) {
+  const wrap = document.getElementById('scores-' + crit);
+  wrap.querySelectorAll('.sc-score-btn').forEach(b => {
+    b.className = 'sc-score-btn';
+  });
+  btn.classList.add('sel-' + val);
+  scores[crit] = val;
+  updateTotal();
+}
+
+function updateTotal() {
+  const vals = Object.values(scores).filter(v => v > 0);
+  if (vals.length === 0) { document.getElementById('scTotalVal').textContent = '—'; return; }
+  const total = vals.reduce((a,b) => a+b, 0);
+  const max = vals.length * 5;
+  document.getElementById('scTotalVal').textContent = total + ' / ' + (vals.length * 5);
+  const pct = total / max;
+  const verdict = document.getElementById('scVerdict');
+  verdict.style.display = 'block';
+  if (pct >= 0.8) { verdict.style.background = 'var(--green-bg)'; verdict.style.color = 'var(--green)'; verdict.style.border = '1px solid var(--green-border)'; verdict.textContent = '✓ Strong Recommend — Proceed to next round or offer'; }
+  else if (pct >= 0.65) { verdict.style.background = 'var(--gold-bg)'; verdict.style.color = 'var(--gold)'; verdict.style.border = '1px solid var(--gold-border)'; verdict.textContent = '→ Proceed with caution — probe key gaps in round 2'; }
+  else if (pct >= 0.5) { verdict.style.background = 'var(--orange-bg)'; verdict.style.color = 'var(--orange)'; verdict.style.border = '1px solid var(--orange-border)'; verdict.textContent = '⚠ Borderline — significant concerns, discuss with panel before proceeding'; }
+  else { verdict.style.background = 'var(--red-bg)'; verdict.style.color = 'var(--red)'; verdict.style.border = '1px solid var(--red-border)'; verdict.textContent = '✗ Do Not Proceed — insufficient evidence of required competencies'; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stakeholder Mapping & Advisory Planner — Valentis HRBP Tool 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=IBM+Plex+Sans:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f7f5;--surface:#ffffff;--surface2:#f2f2ef;--surface3:#e8e8e4;--surface4:#ddddd8;
+  --border:#e0e0db;--border2:#c8c8c2;--border3:#a8a8a0;
+  --ink:#0f0f0e;--ink2:#2a2a28;--ink3:#555550;--ink4:#888880;--ink5:#b8b8b0;
+  --teal:#0d7a6e;--teal2:#0e8f82;--teal3:#10a494;--teal-dim:rgba(13,122,110,0.07);--teal-border:rgba(13,122,110,0.22);
+  --amber:#b8720a;--amber-dim:rgba(184,114,10,0.07);--amber-border:rgba(184,114,10,0.22);
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --navy:#1a3a5c;--navy-dim:rgba(26,58,92,0.07);--navy-border:rgba(26,58,92,0.2);
+  --sidebar-w:272px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--teal3),var(--teal),rgba(13,122,110,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal3);background:rgba(13,122,110,0.12);border:1px solid rgba(13,122,110,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#f5f5f2;line-height:1.15;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--teal3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(13,122,110,0.15);border-color:rgba(13,122,110,0.35);color:var(--teal3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--teal)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--teal3);display:block;margin-bottom:3px}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1080px}
+.page.active{display:block}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:54px;font-weight:800;color:var(--ink);line-height:.95;margin-bottom:14px;letter-spacing:-1px}
+.page-title em{font-style:italic;font-weight:400;color:var(--teal)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;transition:border-color .13s;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.2}
+.card-title em{font-style:italic;color:var(--teal);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-teal{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border)}
+.chip-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-navy{background:var(--navy-dim);color:var(--navy);border:1px solid var(--navy-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+
+/* INFO */
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.teal{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+.info.amber{background:var(--amber-dim);border-color:var(--amber);color:var(--amber)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--red)}
+.info.navy{background:var(--navy-dim);border-color:var(--navy);color:var(--navy)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--ink);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+
+/* STAKEHOLDER CARD */
+.sh-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:border-color .13s}
+.sh-card:hover{border-color:var(--border2)}
+.sh-header{padding:16px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border)}
+.sh-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:16px;font-weight:700;flex-shrink:0;color:#fff}
+.sh-name{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);line-height:1.2}
+.sh-role{font-size:11.5px;color:var(--ink4);font-family:var(--fm);margin-top:2px}
+.sh-body{padding:16px 20px}
+.sh-row{display:grid;grid-template-columns:110px 1fr;gap:8px;margin-bottom:8px;font-size:12.5px}
+.sh-label{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink5);padding-top:2px}
+.sh-val{color:var(--ink3);font-weight:300;line-height:1.6}
+.sh-footer{padding:12px 20px;background:var(--surface2);border-top:1px solid var(--border);font-size:12px;color:var(--ink4);font-family:var(--fm)}
+
+/* GRID MAP */
+.map-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;border:1px solid var(--border);border-radius:4px;overflow:hidden;background:var(--border)}
+.map-cell{background:var(--surface);padding:18px;min-height:160px}
+.map-cell-title{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.map-axis-h{position:relative;height:24px;margin-top:6px;display:flex;align-items:center;justify-content:center}
+.map-axis-v{position:relative;width:24px;display:flex;align-items:center;justify-content:center}
+.map-wrap{display:grid;grid-template-columns:24px 1fr;grid-template-rows:1fr 24px;gap:4px;height:460px;margin:14px 0}
+.map-v-label{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);display:flex;align-items:center;gap:8px;justify-content:center}
+.map-h-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);display:flex;align-items:center;justify-content:center;gap:8px}
+.map-arrow{font-size:10px}
+
+/* INFLUENCE DOT */
+.dot-item{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:500;font-family:var(--fb);margin:3px;cursor:default;border:1px solid}
+.dot-high{background:var(--teal-dim);color:var(--teal);border-color:var(--teal-border)}
+.dot-med{background:var(--amber-dim);color:var(--amber);border-color:var(--amber-border)}
+.dot-low{background:var(--surface2);color:var(--ink4);border-color:var(--border2)}
+
+/* STRATEGY BAND */
+.strategy-band{border-radius:4px;padding:18px 20px;margin-bottom:10px;border:1px solid}
+.strategy-band.manage-closely{background:var(--teal-dim);border-color:var(--teal-border)}
+.strategy-band.keep-satisfied{background:var(--navy-dim);border-color:var(--navy-border)}
+.strategy-band.keep-informed{background:var(--amber-dim);border-color:var(--amber-border)}
+.strategy-band.monitor{background:var(--surface2);border-color:var(--border)}
+
+/* TRUST METER */
+.trust-bar{height:6px;border-radius:3px;background:var(--surface3);overflow:hidden;margin:6px 0}
+.trust-fill{height:100%;border-radius:3px;transition:width .4s ease}
+
+/* PLANNER FORM */
+.planner-form{background:var(--ink);border-radius:4px;padding:24px;color:#f5f5f2;margin-bottom:14px}
+.pf-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;display:block}
+.pf-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:9px 12px;color:#f5f5f2;font-family:var(--fb);font-size:13px;outline:none;transition:border-color .13s;width:100%}
+.pf-input:focus{border-color:var(--teal)}
+.pf-select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 10px;color:#f5f5f2;font-family:var(--fm);font-size:12px;outline:none;width:100%}
+.pf-select option{background:#1a1a18}
+.pf-textarea{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:9px 12px;color:#f5f5f2;font-family:var(--fb);font-size:13px;outline:none;resize:vertical;width:100%;min-height:72px}
+.pf-textarea:focus{border-color:var(--teal)}
+.pf-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.pf-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.pf-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+
+/* PLAN OUTPUT */
+.plan-output{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:20px;margin-top:14px;display:none}
+.plan-section{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.plan-section:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.plan-sec-title{font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+.plan-item{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:4px;display:flex;gap:8px}
+.plan-bullet{color:var(--teal);font-weight:700;flex-shrink:0}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:var(--teal2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink3)}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .sh-card,.page.active .strategy-band{animation:fadeUp .28s ease both}
+.page.active .card:nth-child(2),.page.active .sh-card:nth-child(2){animation-delay:.06s}
+.page.active .card:nth-child(3),.page.active .sh-card:nth-child(3){animation-delay:.1s}
+.page.active .card:nth-child(4),.page.active .sh-card:nth-child(4){animation-delay:.14s}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+@media print{.sidebar{display:none}.main{margin-left:0}.page.active{padding:20px}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">HRBP Tool 3 / 10</div>
+    <div class="sb-title">Stakeholder<br><em>Mapping</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('why',this)"><span class="nav-num">01</span>Why Stakeholder Mapping?</div>
+    <div class="nav-item" onclick="showPage('model',this)"><span class="nav-num">02</span>The Influence Model</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">03</span>Valentis Stakeholder Map</div>
+    <div class="nav-item" onclick="showPage('profiles',this)"><span class="nav-num">04</span>Stakeholder Profiles</div>
+    <div class="nav-item" onclick="showPage('strategies',this)"><span class="nav-num">05</span>Engagement Strategies</div>
+    <div class="nav-item" onclick="showPage('trust',this)"><span class="nav-num">06</span>Trust-Building Framework</div>
+    <div class="nav-item" onclick="showPage('difficult',this)"><span class="nav-num">07</span>Difficult Stakeholders</div>
+    <div class="nav-item" onclick="showPage('planner',this)"><span class="nav-num">08</span>Advisory Planner</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>HRBP Department</strong>
+      Tool 3 of 10 · Stakeholder Mapping<br>
+      <span style="color:rgba(255,255,255,0.12)">Influence without authority</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 WHY -->
+<div id="page-why" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">HRBP Tool 3 — Stakeholder Mapping &amp; Advisory Planner</div>
+    <h1 class="page-title">Stakeholder<br><em>Mapping</em></h1>
+    <p class="page-desc">An HRBP has no line authority over the leaders they advise. Every recommendation succeeds or fails based entirely on the quality of the relationships behind it. This toolkit makes stakeholder influence systematic, not accidental.</p>
+  </div>
+
+  <div class="info teal"><strong>The HRBP Influence Problem</strong>Unlike a COO who can direct teams, or a Finance Director who controls budgets, the HRBP achieves outcomes entirely through influence. That means the quality of your stakeholder relationships is not just important — it is your primary operating asset. This toolkit helps you manage that asset deliberately.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What Stakeholder Mapping Achieves</div>
+      <div class="card-body">
+        Most HR professionals manage stakeholder relationships reactively — responding to who approaches them, being helpful when asked, and hoping credibility accumulates over time. Stakeholder mapping replaces hope with strategy.
+        <div style="display:grid;gap:6px;margin-top:12px">
+          <div style="padding:10px 14px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="display:block;color:var(--teal);font-size:11px;font-family:var(--fm);letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px">Clarity</strong>You know exactly who you need to influence, at what level, and why — before you need their support.</div>
+          <div style="padding:10px 14px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="display:block;color:var(--teal);font-size:11px;font-family:var(--fm);letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px">Prioritisation</strong>You allocate relationship-building time to the stakeholders who matter most, not just the loudest or most visible ones.</div>
+          <div style="padding:10px 14px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="display:block;color:var(--teal);font-size:11px;font-family:var(--fm);letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px">Strategy</strong>You approach each stakeholder with a tailored engagement plan — their priorities, their communication style, their concerns about HR.</div>
+          <div style="padding:10px 14px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="display:block;color:var(--teal);font-size:11px;font-family:var(--fm);letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px">Early warning</strong>You detect shifting attitudes before they become blockers — and act to maintain alignment before relationships erode.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The Three Stakeholder Questions</div>
+      <div class="card-body" style="margin-bottom:14px">Before mapping any stakeholder, answer these three questions. They determine your entire engagement approach.</div>
+      <div style="display:grid;gap:10px">
+        <div style="padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:32px;font-style:italic;font-weight:700;color:var(--teal);margin-bottom:6px;line-height:1">Power</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">How much formal authority does this person have over decisions that affect HR outcomes? Can they approve, block, or accelerate what you need?</div>
+        </div>
+        <div style="padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:32px;font-style:italic;font-weight:700;color:var(--teal);margin-bottom:6px;line-height:1">Interest</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">How engaged is this person in people and HR matters? Do they actively seek HR input, or do they see HR as an administrative function to be managed?</div>
+        </div>
+        <div style="padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:32px;font-style:italic;font-weight:700;color:var(--teal);margin-bottom:6px;line-height:1">Stance</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Is this person an active supporter of strategic HR, neutral, sceptical, or resistant? Their current stance determines how you approach them — not how you wish they would respond.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 MODEL -->
+<div id="page-model" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — The Influence Model</div>
+    <h1 class="page-title">The Influence<br><em>Model</em></h1>
+    <p class="page-desc">The Power-Interest Matrix is the foundational stakeholder tool. It places every stakeholder into one of four quadrants based on how much power they hold and how interested they are in HR matters — and prescribes a specific engagement strategy for each.</p>
+  </div>
+
+  <div class="map-wrap">
+    <div class="map-v-label">
+      <span class="map-arrow">↑</span>
+      <span>HIGH POWER</span>
+      <span style="flex:1"></span>
+      <span>LOW POWER</span>
+      <span class="map-arrow">↓</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div class="map-grid" style="flex:1">
+        <!-- Top-left: High Power, Low Interest -->
+        <div class="map-cell" style="border-right:2px solid var(--ink);border-bottom:2px solid var(--ink)">
+          <div class="map-cell-title">
+            <span style="color:var(--navy);font-size:9px;letter-spacing:1.5px">KEEP SATISFIED</span>
+            <span class="chip chip-navy">High Power / Low Interest</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">These stakeholders can block or approve major HR initiatives but are not deeply engaged in the day-to-day. Do not overload them — but do not let them be surprised. Keep them informed of major moves before they happen.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <span class="dot-item dot-low">CEO (when disengaged)</span>
+            <span class="dot-item dot-low">Board members</span>
+            <span class="dot-item dot-low">External investors</span>
+          </div>
+        </div>
+        <!-- Top-right: High Power, High Interest -->
+        <div class="map-cell" style="border-bottom:2px solid var(--ink)">
+          <div class="map-cell-title">
+            <span style="color:var(--teal);font-size:9px;letter-spacing:1.5px">MANAGE CLOSELY</span>
+            <span class="chip chip-teal">High Power / High Interest</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">Your most critical stakeholders. They have the authority to make decisions and the interest to be actively involved in them. Invest the most time here. Build deep, trust-based relationships. Meet regularly. Know their priorities.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <span class="dot-item dot-high">COO</span>
+            <span class="dot-item dot-high">CEO (when engaged)</span>
+            <span class="dot-item dot-high">Country Managers</span>
+          </div>
+        </div>
+        <!-- Bottom-left: Low Power, Low Interest -->
+        <div class="map-cell" style="border-right:2px solid var(--ink)">
+          <div class="map-cell-title">
+            <span style="color:var(--ink4);font-size:9px;letter-spacing:1.5px">MONITOR</span>
+            <span class="chip chip-muted">Low Power / Low Interest</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">Minimum viable engagement. Keep informed through general communications. Do not invest significant personal relationship-building time here — but do not ignore them. Attitudes can shift, and today's monitor can become tomorrow's resistant stakeholder.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <span class="dot-item dot-low">Junior office staff</span>
+            <span class="dot-item dot-low">External vendors</span>
+          </div>
+        </div>
+        <!-- Bottom-right: Low Power, High Interest -->
+        <div class="map-cell">
+          <div class="map-cell-title">
+            <span style="color:var(--amber);font-size:9px;letter-spacing:1.5px">KEEP INFORMED</span>
+            <span class="chip chip-amber">Low Power / High Interest</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">These people care deeply about people matters but do not hold formal decision authority. They are often informal influencers — respected voices whose opinion shapes others. Keep them well-informed and engaged; they can become powerful advocates or vocal critics.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <span class="dot-item dot-med">Team leads</span>
+            <span class="dot-item dot-med">Senior drillers</span>
+            <span class="dot-item dot-med">Employee advocates</span>
+          </div>
+        </div>
+      </div>
+      <div class="map-h-label">
+        <span class="map-arrow">←</span>
+        <span>LOW INTEREST</span>
+        <span style="flex:1;text-align:center;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5)">Interest in HR / People Matters</span>
+        <span>HIGH INTEREST</span>
+        <span class="map-arrow">→</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Beyond the Matrix — The Third Dimension</div>
+    <div class="card-body" style="margin-bottom:14px">Power and interest tell you where to focus. But the most important variable is <strong>stance</strong> — how each stakeholder currently views HR's role. This determines how you approach the relationship, not just how often.</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      <div style="padding:16px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--teal);margin-bottom:6px">Champion</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">Actively advocates for HR. Believes people strategy drives business outcomes. Pulls HR into decisions.</div>
+        <div style="margin-top:8px;font-size:11px;color:var(--teal);font-family:var(--fm)">Approach: leverage and maintain</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink3);margin-bottom:6px">Neutral</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">Neither blocks nor enables. Follows the path of least resistance. Waits to see if HR is useful before committing.</div>
+        <div style="margin-top:8px;font-size:11px;color:var(--ink4);font-family:var(--fm)">Approach: prove value early</div>
+      </div>
+      <div style="padding:16px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--amber);margin-bottom:6px">Sceptic</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">Doubts HR's strategic value. May have had a bad experience with HR. Needs to see evidence before engaging.</div>
+        <div style="margin-top:8px;font-size:11px;color:var(--amber);font-family:var(--fm)">Approach: data and small wins</div>
+      </div>
+      <div style="padding:16px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--red);margin-bottom:6px">Resistant</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">Actively works against HR involvement. Sees people decisions as exclusively managerial territory. Requires careful navigation.</div>
+        <div style="margin-top:8px;font-size:11px;color:var(--red);font-family:var(--fm)">Approach: understand root cause</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 VALENTIS MAP -->
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Valentis Stakeholder Map</div>
+    <h1 class="page-title">Valentis<br><em>Stakeholder Map</em></h1>
+    <p class="page-desc">The complete stakeholder landscape for the Group HR Manager at Valentis — every key relationship mapped by power, interest, stance, and engagement priority.</p>
+  </div>
+
+  <div class="info teal"><strong>How to Read This Map</strong>These are your current stakeholders as assessed at the start of 2026. Stakeholder positions shift — especially stance. Review this map quarterly and after any significant organisational event.</div>
+
+  <table class="dtable" style="margin-bottom:14px">
+    <thead>
+      <tr>
+        <th>Stakeholder</th>
+        <th>Role</th>
+        <th>Power</th>
+        <th>Interest</th>
+        <th>Stance</th>
+        <th>Quadrant</th>
+        <th>Priority</th>
+        <th>Key HRBP Need from Them</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="font-weight:600;color:var(--ink)">CEO</td>
+        <td>Group Chief Executive</td>
+        <td><span class="chip chip-red">Very High</span></td>
+        <td><span class="chip chip-amber">Medium</span></td>
+        <td style="color:var(--teal);font-weight:400">Neutral–Champion</td>
+        <td><span class="chip chip-navy">Keep Satisfied</span></td>
+        <td><span class="chip chip-red">Critical</span></td>
+        <td>Mandate for strategic HR seat at planning table; endorsement of people strategy</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;color:var(--ink)">COO</td>
+        <td>Chief Operating Officer</td>
+        <td><span class="chip chip-red">Very High</span></td>
+        <td><span class="chip chip-teal">High</span></td>
+        <td style="color:var(--teal);font-weight:400">Champion</td>
+        <td><span class="chip chip-teal">Manage Closely</span></td>
+        <td><span class="chip chip-red">Critical</span></td>
+        <td>Monthly HRBP review inclusion; access to programme data; approval authority for people decisions</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;color:var(--ink)">Myo H.</td>
+        <td>Myanmar Site Manager (G6)</td>
+        <td><span class="chip chip-amber">High</span></td>
+        <td><span class="chip chip-amber">Medium</span></td>
+        <td style="color:var(--amber);font-weight:400">Neutral</td>
+        <td><span class="chip chip-navy">Keep Satisfied</span></td>
+        <td><span class="chip chip-red">Critical</span></td>
+        <td>Retention signal; succession candidate identification; open communication on career intent</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;color:var(--ink)">Laos Site Mgr</td>
+        <td>Laos Country Manager (G6)</td>
+        <td><span class="chip chip-amber">High</span></td>
+        <td><span class="chip chip-teal">High</span></td>
+        <td style="color:var(--teal);font-weight:400">Champion</td>
+        <td><span class="chip chip-teal">Manage Closely</span></td>
+        <td><span class="chip chip-amber">High</span></td>
+        <td>Talent needs transparency; early flag on site workforce issues; programme delivery input</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;color:var(--ink)">Indonesia Site Mgr</td>
+        <td>Indonesia Country Manager (G6)</td>
+        <td><span class="chip chip-amber">High</span></td>
+        <td><span class="chip chip-amber">Medium</span></td>
+        <td style="color:var(--amber);font-weight:400">Sceptic</td>
+        <td><span class="chip chip-navy">Keep Satisfied</span></td>
+        <td><span class="chip chip-amber">High</span></td>
+        <td>Buy-in on HR frameworks; proof of HR value in operational terms; compliance cooperation</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;color:var(--ink)">Thailand Site Mgr</td>
+        <td>Thailand Country Manager (G5)</td>
+        <td><span class="chip chip-teal">Medium</span></td>
+        <td><span class="chip chip-teal">High</span></td>
+        <td style="color:var(--teal);font-weight:400">Champion</td>
+        <td><span class="chip chip-teal">Manage Closely</span></td>
+        <td><span class="chip chip-amber">High</span></td>
+        <td>Development pathway clarity; succession planning support; rewards benchmarking input</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;color:var(--ink)">Site Supervisors</td>
+        <td>G4–G5 Supervisors (×6)</td>
+        <td><span class="chip chip-muted">Low–Med</span></td>
+        <td><span class="chip chip-teal">High</span></td>
+        <td style="color:var(--amber);font-weight:400">Mixed</td>
+        <td><span class="chip chip-amber">Keep Informed</span></td>
+        <td><span class="chip chip-teal">Medium</span></td>
+        <td>Ground-level intelligence on team health; early warning on attrition risk; culture signals</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;color:var(--ink)">Finance Lead</td>
+        <td>Group Finance (G6)</td>
+        <td><span class="chip chip-amber">High</span></td>
+        <td><span class="chip chip-muted">Low</span></td>
+        <td style="color:var(--amber);font-weight:400">Sceptic</td>
+        <td><span class="chip chip-navy">Keep Satisfied</span></td>
+        <td><span class="chip chip-amber">High</span></td>
+        <td>Budget approval for people investments; shared language on people cost as % of revenue</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info amber"><strong>The Indonesia Site Manager Flag</strong>The Indonesia Site Manager is mapped as a Sceptic — this is the highest-risk stakeholder configuration for an HRBP. High power, medium interest, and a sceptical stance means HR recommendations for Indonesia face friction. Priority action: secure a small win in Indonesia (resolve a specific people problem they have been sitting on) to shift stance from Sceptic toward Neutral. Section 07 covers the approach for difficult stakeholders.</div>
+</div>
+
+<!-- 04 PROFILES -->
+<div id="page-profiles" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Stakeholder Profiles</div>
+    <h1 class="page-title">Stakeholder<br><em>Profiles</em></h1>
+    <p class="page-desc">Deep profiles on the four most critical stakeholders for the Group HR Manager at Valentis — what drives them, what they need from HR, how to communicate with them, and what to watch for.</p>
+  </div>
+
+  <div style="display:grid;gap:14px">
+
+    <div class="sh-card">
+      <div class="sh-header">
+        <div class="sh-avatar" style="background:var(--teal)">COO</div>
+        <div style="flex:1">
+          <div class="sh-name">Chief Operating Officer</div>
+          <div class="sh-role">Primary HRBP Client · Manage Closely</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <span class="chip chip-teal">Champion</span>
+          <span class="chip chip-red">Critical</span>
+        </div>
+      </div>
+      <div class="sh-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div class="sh-row"><div class="sh-label">Driven by</div><div class="sh-val">Programme delivery rate, rig utilisation, cost per programme, client retention. Thinks in operational outcomes, not people processes.</div></div>
+            <div class="sh-row"><div class="sh-label">HR view</div><div class="sh-val">Values HR when it solves operational problems — driller pipeline, site stability, supervisor quality. Expects HR to speak in business terms.</div></div>
+            <div class="sh-row"><div class="sh-label">Comms style</div><div class="sh-val">Concise. Data-led. Prefers a one-page summary over a detailed report. Wants the recommendation first, the rationale second.</div></div>
+          </div>
+          <div>
+            <div class="sh-row"><div class="sh-label">Needs from HRBP</div><div class="sh-val">Monthly HR scorecard. Early warning on talent risks. Options — not just problems. Workforce plan tied to programme schedule.</div></div>
+            <div class="sh-row"><div class="sh-label">Engagement rhythm</div><div class="sh-val">Monthly formal HRBP review. Informal check-in every 2 weeks. Pre-brief before any major talent decision.</div></div>
+            <div class="sh-row"><div class="sh-label">Watch for</div><div class="sh-val">Making people decisions without HR input. A sign the HRBP is not yet fully in the room — address immediately.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="sh-footer">Trust-building action: Present the first HR Scorecard (Tool 5) unprompted. Frame it as: "Here is what the people data tells us about our programme risk for Q2."</div>
+    </div>
+
+    <div class="sh-card">
+      <div class="sh-header">
+        <div class="sh-avatar" style="background:var(--navy)">CEO</div>
+        <div style="flex:1">
+          <div class="sh-name">Chief Executive Officer</div>
+          <div class="sh-role">Strategic Mandate Holder · Keep Satisfied</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <span class="chip chip-navy">Neutral–Champion</span>
+          <span class="chip chip-red">Critical</span>
+        </div>
+      </div>
+      <div class="sh-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div class="sh-row"><div class="sh-label">Driven by</div><div class="sh-val">Company growth, reputation, investor relationships, and country expansion. Thinks at the 3–5 year horizon. People strategy matters to the extent it enables growth.</div></div>
+            <div class="sh-row"><div class="sh-label">HR view</div><div class="sh-val">Currently sees HR as an operational support function. The HRBP's goal is to shift this view by demonstrating that talent strategy is a growth enabler, not a cost centre.</div></div>
+            <div class="sh-row"><div class="sh-label">Comms style</div><div class="sh-val">Big picture. Narrative-driven. Wants to understand the story, not the detail. Responds well to "here is the risk if we do nothing."</div></div>
+          </div>
+          <div>
+            <div class="sh-row"><div class="sh-label">Needs from HRBP</div><div class="sh-val">Quarterly talent risk briefing. People strategy narrative aligned with growth plan. Succession assurance for critical roles.</div></div>
+            <div class="sh-row"><div class="sh-label">Engagement rhythm</div><div class="sh-val">Quarterly strategic briefing. Major talent risks flagged immediately. HRBP charter presented and endorsed within H1 2026.</div></div>
+            <div class="sh-row"><div class="sh-label">Watch for</div><div class="sh-val">Signs of reduced confidence in HR capability. If the CEO starts bypassing HR on organisational decisions, the HRBP mandate is at risk.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="sh-footer">Trust-building action: Request a 30-minute quarterly briefing slot. Frame it as "People risks and opportunities for Valentis's growth agenda." Deliver it in three slides maximum.</div>
+    </div>
+
+    <div class="sh-card">
+      <div class="sh-header">
+        <div class="sh-avatar" style="background:var(--amber)">MH</div>
+        <div style="flex:1">
+          <div class="sh-name">Myo H. — Myanmar Site Manager</div>
+          <div class="sh-role">G6 · Critical Retention Risk · Keep Satisfied</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <span class="chip chip-amber">Neutral</span>
+          <span class="chip chip-red">Critical</span>
+        </div>
+      </div>
+      <div class="sh-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div class="sh-row"><div class="sh-label">Driven by</div><div class="sh-val">Programme success, team stability, fair recognition for operating in a complex environment. Likely values autonomy and operational authority highly.</div></div>
+            <div class="sh-row"><div class="sh-label">HR sensitivity</div><div class="sh-val">Retention bonus expiry April 2027 is a known pressure point. The HRBP must understand Myo's career intentions before the renewal conversation — not during it.</div></div>
+            <div class="sh-row"><div class="sh-label">Comms style</div><div class="sh-val">Likely direct and operational. Responds to being treated as a peer by HR, not as a subject. Avoid HR-speak in conversations with Myo.</div></div>
+          </div>
+          <div>
+            <div class="sh-row"><div class="sh-label">Needs from HRBP</div><div class="sh-val">Visible career development pathway. Recognition proportional to the difficulty of the Myanmar environment. Clarity on succession expectations — is he being groomed for more, or managed in place?</div></div>
+            <div class="sh-row"><div class="sh-label">Engagement rhythm</div><div class="sh-val">Informal check-in quarterly. Formal career conversation bi-annually. Retention intent signal assessment by Q3 2026 at latest.</div></div>
+            <div class="sh-row"><div class="sh-label">Watch for</div><div class="sh-val">Reduced responsiveness, increased frustration signals, any indication of external market interest. Act immediately if any of these appear.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="sh-footer">Trust-building action: Schedule a non-performance conversation with Myo — career aspirations, what would make Valentis the right long-term choice, and what concerns him. Listen first. Advise second.</div>
+    </div>
+
+    <div class="sh-card">
+      <div class="sh-header">
+        <div class="sh-avatar" style="background:var(--red)">ID</div>
+        <div style="flex:1">
+          <div class="sh-name">Indonesia Site Manager</div>
+          <div class="sh-role">G6 · High Power Sceptic · Needs Conversion</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <span class="chip chip-amber">Sceptic</span>
+          <span class="chip chip-amber">High Priority</span>
+        </div>
+      </div>
+      <div class="sh-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div class="sh-row"><div class="sh-label">Driven by</div><div class="sh-val">Operational autonomy, programme results, and minimal interference. Likely views HR frameworks as bureaucratic constraints rather than enablers.</div></div>
+            <div class="sh-row"><div class="sh-label">Root cause of scepticism</div><div class="sh-val">Almost certainly stems from a prior experience of HR adding process friction without adding value. The HRBP must understand the specific incident or pattern before attempting to shift the stance.</div></div>
+            <div class="sh-row"><div class="sh-label">Comms style</div><div class="sh-val">Operational. Results-focused. Do not lead with HR frameworks or policy. Lead with: "What is the people problem I can solve for you this quarter?"</div></div>
+          </div>
+          <div>
+            <div class="sh-row"><div class="sh-label">Strategy</div><div class="sh-val">Identify one specific, concrete problem the Indonesia manager has been sitting on — a hiring delay, a pay inequity complaint, a supervisor conflict. Solve it quickly and visibly. One well-executed win shifts a sceptic more than any amount of relationship-building conversation.</div></div>
+            <div class="sh-row"><div class="sh-label">What to avoid</div><div class="sh-val">Do not introduce new HR frameworks, compliance requirements, or processes to a sceptic before you have earned credibility. It confirms their worst expectations of HR.</div></div>
+            <div class="sh-row"><div class="sh-label">Success signal</div><div class="sh-val">Indonesia manager begins proactively flagging people issues to HRBP rather than resolving them unilaterally or escalating to COO.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="sh-footer">Trust-building action: Ask a single question in the first meeting: "What is the one people problem that would make the biggest difference to your programme if it were solved?" Then solve it.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 05 STRATEGIES -->
+<div id="page-strategies" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Engagement Strategies</div>
+    <h1 class="page-title">Engagement<br><em>Strategies</em></h1>
+    <p class="page-desc">A tailored engagement strategy for each quadrant of the Power-Interest Matrix. The right approach depends entirely on where the stakeholder sits — and using the wrong strategy is worse than using none.</p>
+  </div>
+
+  <div class="strategy-band manage-closely">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:4px">Quadrant 1 — High Power, High Interest</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink)">Manage Closely</div>
+      </div>
+      <span class="chip chip-teal">COO · Laos · Thailand</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">These stakeholders require your most intensive and personalised engagement. The relationship must be genuinely two-way — you learn from them as much as you advise them.</div>
+        <div style="display:grid;gap:5px">
+          <div style="font-size:13px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--teal);font-weight:700;flex-shrink:0">→</span>Monthly one-to-one advisory meetings with a prepared agenda</div>
+          <div style="font-size:13px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--teal);font-weight:700;flex-shrink:0">→</span>Proactive sharing of people intelligence before they ask for it</div>
+          <div style="font-size:13px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--teal);font-weight:700;flex-shrink:0">→</span>Pre-briefing on any significant HR decision before it is announced</div>
+          <div style="font-size:13px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--teal);font-weight:700;flex-shrink:0">→</span>Soliciting their input on HR priorities — and visibly acting on it</div>
+          <div style="font-size:13px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--teal);font-weight:700;flex-shrink:0">→</span>Attendance in their operational review meetings, not just HR meetings</div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--teal-border);border-radius:3px;padding:14px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:8px">Common Mistakes to Avoid</div>
+        <div style="display:grid;gap:5px">
+          <div style="font-size:12.5px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--red);flex-shrink:0">✗</span>Only engaging when you have a problem or need an approval</div>
+          <div style="font-size:12.5px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--red);flex-shrink:0">✗</span>Sending lengthy reports when a concise verbal update would suffice</div>
+          <div style="font-size:12.5px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--red);flex-shrink:0">✗</span>Using HR language when they think in operational outcomes</div>
+          <div style="font-size:12.5px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--red);flex-shrink:0">✗</span>Agreeing with everything they say to preserve the relationship</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strategy-band keep-satisfied">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--navy);margin-bottom:4px">Quadrant 2 — High Power, Low Interest</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink)">Keep Satisfied</div>
+      </div>
+      <span class="chip chip-navy">CEO · Myo H. · Finance · Indonesia</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">These stakeholders will not block you if you keep them informed and avoid surprises. The risk is in assuming silence means support — it does not. Silence means they have not had a reason to object yet.</div>
+        <div style="display:grid;gap:5px">
+          <div style="font-size:13px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--navy);font-weight:700;flex-shrink:0">→</span>Quarterly briefings — concise, outcome-focused, no HR jargon</div>
+          <div style="font-size:13px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--navy);font-weight:700;flex-shrink:0">→</span>Pre-notification before any decision that affects their area</div>
+          <div style="font-size:13px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--navy);font-weight:700;flex-shrink:0">→</span>Framing HR in terms of risk mitigation — they respond to risk language</div>
+          <div style="font-size:13px;color:var(--ink3);display:flex;gap:8px;font-weight:300"><span style="color:var(--navy);font-weight:700;flex-shrink:0">→</span>Never surprise them with bad news — always pre-brief sensitive matters</div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--navy-border);border-radius:3px;padding:14px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:8px">The Danger Zone</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">The most common HRBP failure with Keep Satisfied stakeholders is under-engaging until a crisis hits, then over-engaging at the worst possible moment. The absence of visible interest does not mean absence of opinion — it means they have not been given a reason to form one yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strategy-band keep-informed">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:4px">Quadrant 3 — Low Power, High Interest</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink)">Keep Informed</div>
+      </div>
+      <span class="chip chip-amber">Site Supervisors · Senior Drillers</span>
+    </div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">These are your informal intelligence network. They are close to the ground, and they know things leadership does not. They cannot approve HR decisions but they can influence sentiment. Invest in genuine listening relationships here — not policy communications. A supervisor who trusts the HRBP will flag attrition risk before the person resigns. That early warning is worth more than any retention programme implemented after the fact.</div>
+  </div>
+
+  <div class="strategy-band monitor">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Quadrant 4 — Low Power, Low Interest</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink)">Monitor</div>
+      </div>
+      <span class="chip chip-muted">Junior Staff · Vendors</span>
+    </div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Minimum viable attention. Include in general HR communications. Note any shifts in engagement or sentiment. The primary risk here is not current friction — it is missing the moment when someone from this quadrant moves into a higher-influence position. Positions shift as Valentis grows. Today's junior driller is tomorrow's team lead.</div>
+  </div>
+</div>
+
+<!-- 06 TRUST -->
+<div id="page-trust" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Trust-Building Framework</div>
+    <h1 class="page-title">Trust-Building<br><em>Framework</em></h1>
+    <p class="page-desc">Trust is the HRBP's operating currency. Without it, the best recommendation lands as an opinion. With it, the same recommendation becomes a decision. Trust is built systematically — through consistent behaviours over time, not through single impressive moments.</p>
+  </div>
+
+  <div class="info teal"><strong>The Maister Trust Equation</strong>David Maister's Trust Equation (from The Trusted Advisor) defines trust as: Trust = (Credibility + Reliability + Intimacy) ÷ Self-Orientation. The denominator — self-orientation — is the single biggest driver of low trust. An HRBP who appears to be advancing their own agenda rather than the business's agenda destroys trust faster than any competence gap.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">The Four Components of HRBP Trust</div>
+      <div style="display:grid;gap:10px;margin-top:8px">
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink)">Credibility</div>
+            <span class="chip chip-teal">Know your stuff</span>
+          </div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">You are believed because you demonstrate deep knowledge — of HR, of the business, of the data. At Valentis, your nine years of multi-country payroll depth is the foundation. Layer business acumen (Tool 2) on top to become credible in both HR and business domains.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink)">Reliability</div>
+            <span class="chip chip-teal">Do what you say</span>
+          </div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">You are trusted because you follow through — every time, on time. A COO who relies on HR data needs to know the data will be there, accurate and on schedule. Every missed commitment erodes reliability. Every delivery on a promise builds it.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink)">Intimacy</div>
+            <span class="chip chip-teal">Create safety</span>
+          </div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">People share difficult information with you because they trust you to handle it with discretion and good judgement. Intimacy is built through confidential conversations handled well, through remembering what matters to people, through genuine curiosity about their challenges — not just their role.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink)">Low Self-Orientation</div>
+            <span class="chip chip-red">The trust killer</span>
+          </div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">If leaders believe you are advancing HR's interests over the business's interests, trust collapses. An HRBP who defends every HR policy regardless of context, or who prioritises process compliance over business outcomes, signals high self-orientation. The antidote: always lead with what is best for the business, and let HR process serve that goal — not the other way around.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Trust-Building Behaviours — By Quarter</div>
+      <div style="display:grid;gap:8px;margin-top:8px">
+        <div style="border:1px solid var(--teal-border);border-radius:4px;overflow:hidden">
+          <div style="background:var(--teal);padding:8px 14px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#fff">Q1 2026 — Establish Credibility</div>
+          <div style="padding:12px 14px;background:var(--surface2)">
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;display:grid;gap:4px">
+              <div class="plan-item"><span class="plan-bullet">→</span>Present HRBP Charter to COO and CEO — set the mandate explicitly</div>
+              <div class="plan-item"><span class="plan-bullet">→</span>Deliver first HR Scorecard unprompted — show the data is ready</div>
+              <div class="plan-item"><span class="plan-bullet">→</span>Resolve one specific problem for Indonesia Site Manager — earn first credibility point</div>
+              <div class="plan-item"><span class="plan-bullet">→</span>Schedule career conversation with Myo H. — signal investment in key talent</div>
+            </div>
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+          <div style="background:var(--ink2);padding:8px 14px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.7)">Q2 2026 — Build Reliability</div>
+          <div style="padding:12px 14px;background:var(--surface2)">
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;display:grid;gap:4px">
+              <div class="plan-item"><span class="plan-bullet">→</span>Second HR Scorecard delivered on schedule — pattern established</div>
+              <div class="plan-item"><span class="plan-bullet">→</span>Follow through on every Q1 commitment — reliability is built by repetition</div>
+              <div class="plan-item"><span class="plan-bullet">→</span>Present workforce plan to COO before Q3 programme planning begins</div>
+              <div class="plan-item"><span class="plan-bullet">→</span>Begin regular supervisor check-ins — build informal intelligence network</div>
+            </div>
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+          <div style="background:var(--ink2);padding:8px 14px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.7)">Q3–Q4 2026 — Deepen Influence</div>
+          <div style="padding:12px 14px;background:var(--surface2)">
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;display:grid;gap:4px">
+              <div class="plan-item"><span class="plan-bullet">→</span>Request inclusion in 2027 business planning cycle — use Track Record to justify</div>
+              <div class="plan-item"><span class="plan-bullet">→</span>Present first Organisational Diagnostic finding to COO (Tool 4)</div>
+              <div class="plan-item"><span class="plan-bullet">→</span>Initiate CEO quarterly briefing — people strategy aligned with growth plan</div>
+              <div class="plan-item"><span class="plan-bullet">→</span>Myo H. succession plan activated and agreed with COO</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07 DIFFICULT -->
+<div id="page-difficult" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Difficult Stakeholders</div>
+    <h1 class="page-title">Difficult<br><em>Stakeholders</em></h1>
+    <p class="page-desc">Every HRBP encounters stakeholders who resist, ignore, or actively undermine HR's role. This section provides a diagnostic and response framework for the four most common difficult stakeholder types — all of which exist at Valentis.</p>
+  </div>
+
+  <div class="info amber"><strong>The Core Principle</strong>A difficult stakeholder is not a problem to be managed around. They are a signal. Their resistance carries information about a past experience, a current fear, or a genuine gap between HR's value and what HR has actually delivered. Diagnose before you respond.</div>
+
+  <div style="display:grid;gap:12px">
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <div style="width:48px;height:48px;border-radius:4px;background:var(--amber-dim);border:1px solid var(--amber-border);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:22px;font-weight:800;color:var(--amber)">S</div>
+        <div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink)">The Sceptic</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Indonesia Site Manager archetype — doubts HR value, waits for proof</div>
+        </div>
+        <span class="chip chip-amber" style="margin-left:auto">Root cause: past disappointment</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Diagnosis</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Ask yourself: what has HR done to this person in the past? Was there a policy applied without context? A promise not kept? An HR process that cost them time with no visible benefit? The scepticism almost always has a specific origin.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Response</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Do not defend HR or explain what HR is supposed to do. Ask what their biggest people problem is — then solve it. A single tangible win changes the conversation from "what has HR done for me?" to "what else can HR do?"</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">What to avoid</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Do not introduce new HR requirements to a sceptic. Do not try to convince them HR is valuable through argument. Do not schedule relationship-building meetings before you have earned the right to their time.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <div style="width:48px;height:48px;border-radius:4px;background:var(--red-dim);border:1px solid var(--red-border);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:22px;font-weight:800;color:var(--red)">R</div>
+        <div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink)">The Resistant</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Actively undermines HR involvement — makes unilateral people decisions</div>
+        </div>
+        <span class="chip chip-red" style="margin-left:auto">Root cause: territory or fear</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Diagnosis</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Resistance usually reflects either territorial protection (they see people decisions as their exclusive domain) or fear (HR involvement means scrutiny they would rather avoid). Which is it? The response differs significantly.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Response</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">For territorial resistance: frame HR involvement as making them more effective, not limiting their authority. For fear-based resistance: create safety — no HR conversation should feel like an inspection. Position yourself as an advisor, not an auditor.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Escalation</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">If resistance persists and creates genuine business risk (unilateral hiring outside grade, discriminatory decisions), escalate to COO with specific examples and business risk framing — not a complaint about non-cooperation.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <div style="width:48px;height:48px;border-radius:4px;background:var(--navy-dim);border:1px solid var(--navy-border);display:flex;align-items:center;justify-content:justify;font-family:var(--fd);font-size:22px;font-weight:800;color:var(--navy);display:flex;align-items:center;justify-content:center">B</div>
+        <div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink)">The Bypasser</div>
+          <div style="font-size:12px;color:var(--ink4);font-family:var(--fm)">Makes people decisions without consulting HR — acts first, informs later</div>
+        </div>
+        <span class="chip chip-navy" style="margin-left:auto">Root cause: habit or urgency</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:6px">Diagnosis and Response</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Bypassers are often not hostile to HR — they are just fast-moving and have learned that involving HR slows things down. The solution is to make HR involvement faster and more valuable than bypassing it. If it takes HR three days to respond to a hiring query and the manager can decide in an afternoon, the behaviour is rational. Make HR the faster, smarter option.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:6px">Practical Actions</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Set a 24-hour response commitment for urgent people queries. Create a one-page decision guide for the most common people decisions. After a bypass occurs, debrief — not to discipline, but to show what could have been done better with HR involved. One good debrief often prevents ten future bypasses.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 08 PLANNER -->
+<div id="page-planner" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Advisory Planner</div>
+    <h1 class="page-title">Advisory<br><em>Planner</em></h1>
+    <p class="page-desc">Generate a tailored stakeholder advisory plan for any key relationship. Input the stakeholder details and receive a structured engagement plan — objectives, communication approach, actions, and success measures.</p>
+  </div>
+
+  <div class="planner-form">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f5f2;margin-bottom:18px">Stakeholder Advisory Plan Generator</div>
+    <div class="pf-row">
+      <div class="pf-group"><label class="pf-label">Stakeholder Name / Role</label><input class="pf-input" id="pl-name" placeholder="e.g. Indonesia Site Manager" oninput="updatePlan()"></div>
+      <div class="pf-group"><label class="pf-label">Quadrant</label>
+        <select class="pf-select" id="pl-quad" onchange="updatePlan()">
+          <option value="">Select quadrant</option>
+          <option value="manage">Manage Closely — High Power, High Interest</option>
+          <option value="satisfy">Keep Satisfied — High Power, Low Interest</option>
+          <option value="inform">Keep Informed — Low Power, High Interest</option>
+          <option value="monitor">Monitor — Low Power, Low Interest</option>
+        </select>
+      </div>
+    </div>
+    <div class="pf-row">
+      <div class="pf-group"><label class="pf-label">Current Stance</label>
+        <select class="pf-select" id="pl-stance" onchange="updatePlan()">
+          <option value="">Select stance</option>
+          <option value="champion">Champion — actively supports HR</option>
+          <option value="neutral">Neutral — neither blocks nor enables</option>
+          <option value="sceptic">Sceptic — doubts HR value</option>
+          <option value="resistant">Resistant — actively resists HR</option>
+        </select>
+      </div>
+      <div class="pf-group"><label class="pf-label">Primary Business Priority</label><input class="pf-input" id="pl-priority" placeholder="e.g. Programme delivery rate in Indonesia" oninput="updatePlan()"></div>
+    </div>
+    <div class="pf-group"><label class="pf-label">Key People Issue in Their Area</label><input class="pf-input" id="pl-issue" placeholder="e.g. High site attrition, weak supervisor capability" oninput="updatePlan()"></div>
+    <div class="pf-group"><label class="pf-label">What You Need from This Stakeholder</label><input class="pf-input" id="pl-need" placeholder="e.g. Buy-in on new performance framework, access to team for diagnostic" oninput="updatePlan()"></div>
+  </div>
+
+  <div class="plan-output" id="plan-output">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)">Advisory Plan — <span id="po-name"></span></div>
+
+    <div class="plan-section">
+      <div class="plan-sec-title">Engagement Objective</div>
+      <div id="po-objective" class="card-body"></div>
+    </div>
+
+    <div class="plan-section">
+      <div class="plan-sec-title">Recommended Engagement Rhythm</div>
+      <div id="po-rhythm" class="card-body"></div>
+    </div>
+
+    <div class="plan-section">
+      <div class="plan-sec-title">Communication Approach</div>
+      <div id="po-comms" class="card-body"></div>
+    </div>
+
+    <div class="plan-section">
+      <div class="plan-sec-title">First 30-Day Actions</div>
+      <div id="po-actions"></div>
+    </div>
+
+    <div class="plan-section">
+      <div class="plan-sec-title">Success Indicators</div>
+      <div id="po-success"></div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px">
+    <button class="btn btn-ghost" onclick="window.print()">Print Plan</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── NAV ───────────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── ADVISORY PLANNER ─────────────────────────────────────────────────
+function updatePlan() {
+  const name     = document.getElementById('pl-name').value.trim();
+  const quad     = document.getElementById('pl-quad').value;
+  const stance   = document.getElementById('pl-stance').value;
+  const priority = document.getElementById('pl-priority').value.trim();
+  const issue    = document.getElementById('pl-issue').value.trim();
+  const need     = document.getElementById('pl-need').value.trim();
+
+  if (!name || !quad || !stance) {
+    document.getElementById('plan-output').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('plan-output').style.display = 'block';
+  document.getElementById('po-name').textContent = name;
+
+  // Objective
+  const objectives = {
+    manage: { champion: 'Maintain and deepen this high-value partnership. Leverage their advocacy to amplify HR initiatives across the business. Ensure they remain fully informed and engaged as the HRBP function grows in influence.', neutral: 'Convert neutral engagement into active partnership. Demonstrate consistent HR value on the issues that matter most to their operational agenda. Aim to move from neutral to champion within two quarters.', sceptic: 'Rebuild confidence in HR through tangible delivery. Move stance from sceptic to neutral by solving one concrete people problem in their area within 30 days. Earn the right to deeper engagement through results.', resistant: 'Understand the root cause of resistance before attempting to change it. Create conditions of safety — ensure they do not experience HR as a threat to their authority. Pursue small, low-risk wins first.' },
+    satisfy: { champion: 'Maintain their support without over-burdening them. Ensure they are always pre-briefed on significant HR moves. Leverage their advocacy selectively for high-stakes approvals.', neutral: 'Ensure they never have a reason to become a blocker. Keep communications concise and outcome-focused. Seek a small win that demonstrates HR value without demanding significant engagement.', sceptic: 'Prevent their scepticism from escalating into active blockage. Frame all HR communications in risk-mitigation terms — the language high-power stakeholders respond to most consistently.', resistant: 'Neutralise potential blockage before it occurs. Identify and address the specific concern driving resistance. Escalate to COO if necessary, framing as a business risk rather than an HR relationship issue.' },
+    inform: { champion: 'Leverage their enthusiasm as an informal advocacy channel. Keep them well-informed and involved in HR thinking. They can become powerful peer influencers for HR initiatives.', neutral: 'Maintain a light but positive engagement. Treat them as a valuable ground-level intelligence source. Build enough relationship warmth that they will flag concerns to HR before they escalate.', sceptic: 'Listen more than advise. Understand what HR has failed to deliver for them personally. Use their scepticism as diagnostic data about where HR needs to improve its operational credibility.', resistant: 'Do not force engagement. Create open channels without pressure. Monitor for any signals that their attitude is influencing peers negatively.' },
+    monitor: { champion: 'Acknowledge their support through general communications. Do not invest significant personal relationship time but do not be dismissive.', neutral: 'Minimum viable contact. Include in standard HR communications.', sceptic: 'Note the attitude. No active intervention required unless it spreads to higher-influence stakeholders.', resistant: 'Monitor for escalation in influence or seniority. No active intervention at current influence level.' }
+  };
+
+  const rhythms = {
+    manage: 'Monthly one-to-one meeting with prepared HRBP agenda. Informal check-in every two weeks. Pre-brief on any significant people decision before it is made. Attend their operational review meeting where possible.',
+    satisfy: 'Quarterly structured briefing — maximum 20 minutes, outcome-focused. Immediate notification for any significant people decision affecting their area. No surprises — ever.',
+    inform: 'Informal quarterly check-in. Include in relevant HR communications. Occasional listening session to gather ground-level intelligence.',
+    monitor: 'Include in standard HR communications. No dedicated individual engagement required at this stage.'
+  };
+
+  const commsApproach = {
+    champion: 'Speak as peers. Share thinking early, not just conclusions. Invite their input on HR priorities — and visibly act on it.',
+    neutral: 'Lead with business outcomes, not HR process. Demonstrate value before asking for engagement. Be concise and specific.',
+    sceptic: 'Lead with a question, not a recommendation. Ask what their biggest people problem is. Avoid HR terminology. Let results speak before relationship-building.',
+    resistant: 'Create psychological safety first. Frame HR involvement as support, not scrutiny. Do not defend HR — listen to the concern behind the resistance.'
+  };
+
+  // Actions
+  const baseActions = {
+    manage: ['Schedule first monthly HRBP advisory meeting with a prepared agenda', 'Present current HR Scorecard data framed around their specific programme priorities', 'Identify one active people risk in their area and bring a recommendation — unprompted'],
+    satisfy: ['Send a concise briefing note on the current state of people in their area — one page maximum', 'Identify any upcoming decision that could affect their domain and pre-brief them before it is made', 'Establish the right communication channel — do they prefer email, a brief call, or a one-page summary?'],
+    inform: ['Schedule an informal listening conversation — not an HR meeting, a genuine check-in', 'Ask specifically: what is the one people issue that concerns you most about your team?', 'Follow up on anything you committed to in the conversation within one week'],
+    monitor: ['Ensure they are included in all relevant HR communications', 'Note their name and current position in the stakeholder register for quarterly review']
+  };
+
+  const stanceActions = {
+    sceptic: ['Identify their most pressing unresolved people problem and solve it within 30 days', 'After the first win, request 15 minutes to share what HR did and why — frame it as a debrief, not a presentation'],
+    resistant: ['Have a one-to-one conversation with the sole intent of understanding their concern — no agenda, no recommendations', 'Identify whether resistance is territorial or fear-based, and adjust approach accordingly'],
+    champion: ['Ask how they would like to be involved in shaping the HRBP agenda for their area'],
+    neutral: []
+  };
+
+  const allActions = [...(baseActions[quad] || []), ...(stanceActions[stance] || [])];
+  if (priority) allActions.push('Frame every HR communication through the lens of their stated priority: ' + priority);
+  if (issue)    allActions.push('Address the identified people issue directly: ' + issue + ' — bring a recommendation within 30 days');
+  if (need)     allActions.push('Work toward the specific outcome needed: ' + need + ' — identify the right moment and approach to make this ask');
+
+  // Success
+  const successItems = [
+    quad === 'manage' ? 'Stakeholder proactively includes HRBP in business planning discussions without being asked' : null,
+    quad === 'satisfy' ? 'No surprises — stakeholder never learns of a significant HR development for the first time in a meeting' : null,
+    quad === 'inform'  ? 'Stakeholder begins flagging people concerns to HRBP before they escalate' : null,
+    stance === 'sceptic'  ? 'Stance moves from sceptic to neutral within 60 days; first proactive engagement received' : null,
+    stance === 'resistant'? 'Root cause of resistance identified and addressed; at minimum one collaborative interaction completed' : null,
+    stance === 'champion' ? 'Stakeholder actively advocates for HR involvement in at least one key business decision this quarter' : null,
+    need ? 'Specific need achieved: ' + need : null,
+  ].filter(Boolean);
+
+  document.getElementById('po-objective').textContent = objectives[quad]?.[stance] || 'Build a positive, trust-based advisory relationship focused on business outcomes.';
+  document.getElementById('po-rhythm').textContent = rhythms[quad] || '';
+  document.getElementById('po-comms').textContent = commsApproach[stance] || '';
+
+  document.getElementById('po-actions').innerHTML = allActions
+    .map(a => `<div class="plan-item"><span class="plan-bullet">→</span>${a}</div>`)
+    .join('');
+
+  document.getElementById('po-success').innerHTML = successItems
+    .map(s => `<div class="plan-item"><span class="plan-bullet" style="color:var(--teal)">✓</span>${s}</div>`)
+    .join('');
+}
+</script>
+</body>
+</html>

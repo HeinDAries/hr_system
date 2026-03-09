@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Review System | Valentis Laos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Source+Sans+3:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --slate:#1c2333;--slate2:#232d42;--slate3:#2d3a54;--steel:#3d4f70;--steel-l:#6b82a8;
+  --mist:#c4cede;--paper:#f5f6f9;--paper2:#eceef4;--paper3:#e2e6ef;--rule:#d0d6e4;--rule2:#bcc4d8;--white:#ffffff;
+  --ink:#111827;--ink2:#1e2d45;--ink3:#4a5a78;--ink4:#7a8daa;--ink5:#a8b5c8;
+  --burg:#6b1a2a;--burg-l:#fdf2f4;--burg-b:#c87080;
+  --amber:#7a5010;--amber-l:#fdf8ee;--amber-b:#d4a84a;
+  --teal:#0f4a5a;--teal-l:#edf8fb;--teal-b:#60b0c4;
+  --green:#1a4a2a;--green-l:#f0f8f3;--green-b:#70b888;--r:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(107,26,42,0.03) 0%,transparent 60%),radial-gradient(circle at 80% 20%,rgba(28,35,51,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+.shell{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* RAIL */
+.rail{width:256px;min-width:256px;background:var(--slate);position:fixed;inset-y:0;left:0;display:flex;flex-direction:column;overflow-y:auto;z-index:40;}
+.rail-brand{padding:26px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.rb-ey{font-family:'Source Code Pro',monospace;font-size:7px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.18);margin-bottom:11px;}
+.rb-title{font-family:'Playfair Display',serif;font-size:19px;color:#fff;line-height:1.25;}
+.rb-title em{color:#c0a0a8;font-style:italic;}
+.rb-sub{font-size:10px;color:rgba(255,255,255,0.2);margin-top:6px;}
+
+.cycle-badge{margin:12px 14px 0;background:rgba(107,26,42,0.35);border:1px solid rgba(200,112,128,0.2);border-radius:8px;padding:10px 13px;}
+.cb-lbl{font-family:'Source Code Pro',monospace;font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:5px;}
+.cb-type{display:flex;gap:6px;margin-bottom:4px;}
+.cb-btn{flex:1;padding:5px 0;border-radius:5px;border:1px solid;font-family:'Source Code Pro',monospace;font-size:9px;font-weight:600;cursor:pointer;transition:all .13s;text-align:center;background:transparent;}
+.cb-btn.mid{border-color:rgba(200,112,128,0.3);color:rgba(255,255,255,0.3);}
+.cb-btn.mid.active{background:rgba(107,26,42,0.5);border-color:var(--burg-b);color:var(--burg-b);}
+.cb-btn.ann{border-color:rgba(212,168,74,0.3);color:rgba(255,255,255,0.3);}
+.cb-btn.ann.active{background:rgba(122,80,16,0.4);border-color:var(--amber-b);color:var(--amber-b);}
+.cb-sub{font-size:10px;color:rgba(255,255,255,0.18);margin-top:4px;}
+
+.rail-sec{padding:14px 14px 4px;}
+.rs-lbl{font-family:'Source Code Pro',monospace;font-size:7px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.12);padding:0 6px;margin-bottom:7px;}
+.rnav{display:flex;flex-direction:column;gap:2px;}
+.nb{display:flex;align-items:center;gap:9px;width:100%;padding:8px 9px;border-radius:7px;background:transparent;border:none;color:rgba(255,255,255,0.28);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .13s;text-align:left;}
+.nb:hover{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.55);}
+.nb.active{background:rgba(107,26,42,0.3);color:#e8c0c8;}
+.nb-num{font-family:'Source Code Pro',monospace;font-size:9px;color:rgba(255,255,255,0.15);min-width:16px;}
+.nb.active .nb-num{color:rgba(200,112,128,0.6);}
+.nb-chip{margin-left:auto;font-family:'Source Code Pro',monospace;font-size:8px;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.18);}
+.nb.active .nb-chip{background:rgba(107,26,42,0.4);color:var(--burg-b);}
+.rail-foot{margin-top:auto;padding:13px 20px;border-top:1px solid rgba(255,255,255,0.04);font-family:'Source Code Pro',monospace;font-size:8px;color:rgba(255,255,255,0.1);line-height:2;}
+
+/* MAIN */
+.main{margin-left:256px;flex:1;display:flex;flex-direction:column;}
+.topbar{background:var(--white);border-bottom:1px solid var(--rule);padding:13px 36px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.tb-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--ink);}
+.tb-sub{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--ink4);margin-top:2px;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-tag{font-family:'Source Code Pro',monospace;font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:4px 11px;border-radius:4px;border:1px solid;}
+.tb-tag.mid{background:var(--burg-l);color:var(--burg);border-color:var(--burg-b);}
+.tb-tag.ann{background:var(--amber-l);color:var(--amber);border-color:var(--amber-b);}
+.content{padding:28px 36px;flex:1;}
+.tab{display:none;animation:up .18s ease;}
+.tab.active{display:block;}
+@keyframes up{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+/* COMPONENTS */
+.sl{font-family:'Source Code Pro',monospace;font-size:7.5px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--ink4);margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+.sl::after{content:'';flex:1;height:1px;background:var(--rule);}
+.card{background:var(--white);border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.03);}
+.card-hd{padding:13px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px;}
+.card-ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.card-tt{font-size:13px;font-weight:700;color:var(--ink);}
+.card-st{font-size:11px;color:var(--ink3);margin-top:1px;}
+.card-bd{padding:16px 18px;}
+.pill{display:inline-flex;padding:2px 8px;border-radius:3px;font-family:'Source Code Pro',monospace;font-size:9px;font-weight:600;border:1px solid;white-space:nowrap;}
+.p-burg{background:var(--burg-l);color:var(--burg);border-color:var(--burg-b);}
+.p-amber{background:var(--amber-l);color:var(--amber);border-color:var(--amber-b);}
+.p-teal{background:var(--teal-l);color:var(--teal);border-color:var(--teal-b);}
+.p-green{background:var(--green-l);color:var(--green);border-color:var(--green-b);}
+.p-slate{background:var(--paper2);color:var(--ink3);border-color:var(--rule2);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.sx{overflow-x:auto;}
+.note{font-size:11.5px;color:var(--ink3);padding:10px 14px;background:var(--paper2);border-radius:7px;border-left:3px solid var(--rule2);margin:10px 0;line-height:1.65;}
+.insight{font-size:11.5px;color:var(--teal);padding:10px 14px;background:var(--teal-l);border-radius:7px;border-left:3px solid var(--teal-b);margin:10px 0;line-height:1.65;}
+.warn{font-size:11.5px;color:var(--burg);padding:10px 14px;background:var(--burg-l);border-radius:7px;border-left:3px solid var(--burg-b);margin:10px 0;line-height:1.65;}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.fg label{font-family:'Source Code Pro',monospace;font-size:7.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);}
+.fg input,.fg select,.fg textarea{padding:9px 11px;border:1px solid var(--rule2);border-radius:7px;font-family:'Source Sans 3',sans-serif;font-size:12.5px;color:var(--ink);background:var(--white);outline:none;transition:border-color .13s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--steel);}
+.fg textarea{resize:vertical;min-height:75px;line-height:1.65;}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.fr4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.btn{padding:9px 18px;border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .13s;border:1px solid;}
+.btn-slate{background:var(--slate);color:#fff;border-color:var(--slate);}
+.btn-slate:hover{background:var(--slate2);}
+.btn-burg{background:var(--burg);color:#fff;border-color:var(--burg);}
+.btn-out{background:transparent;color:var(--ink3);border-color:var(--rule2);}
+.btn-out:hover{border-color:var(--ink3);color:var(--ink);}
+.btn-sm{padding:6px 13px;font-size:11.5px;}
+
+/* GOAL ROW */
+.goal-row{background:var(--paper);border:1px solid var(--rule);border-radius:9px;padding:14px 16px;margin-bottom:10px;}
+.gr-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;}
+.gr-bottom{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:start;}
+
+/* SCORE PANEL */
+.score-panel{background:var(--slate);border-radius:var(--r);padding:20px 22px;margin-bottom:16px;}
+.sp-label{font-family:'Source Code Pro',monospace;font-size:7.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:14px;}
+.sp-breakdown{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px;}
+.spb-item{background:rgba(255,255,255,0.06);border-radius:7px;padding:9px 10px;}
+.spb-lbl{font-family:'Source Code Pro',monospace;font-size:8px;color:rgba(255,255,255,0.2);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.spb-val{font-family:'Playfair Display',serif;font-size:16px;color:rgba(255,255,255,0.7);}
+.spb-w{font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;}
+
+/* PRINT HEADER */
+.print-header{background:var(--white);border:1px solid var(--rule);border-radius:var(--r);padding:20px 22px;margin-bottom:16px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;}
+.ph-company{font-family:'Playfair Display',serif;font-size:18px;color:var(--ink);}
+.ph-sub{font-size:11px;color:var(--ink3);margin-top:3px;}
+.ph-meta-row{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--ink4);}
+
+/* SECTION DIVIDER */
+.sec-div{display:flex;align-items:center;gap:12px;margin:20px 0 14px;}
+.sec-div-num{font-family:'Playfair Display',serif;font-size:22px;color:var(--burg);line-height:1;}
+.sec-div-title{font-size:14px;font-weight:700;color:var(--ink);}
+.sec-div-sub{font-size:11px;color:var(--ink3);margin-top:2px;}
+.sec-div-line{flex:1;height:1px;background:var(--rule);}
+
+/* CALIBRATION TABLE */
+.cal-tbl{width:100%;border-collapse:collapse;}
+.cal-tbl thead tr{background:var(--slate);}
+.cal-tbl thead th{padding:10px 14px;font-family:'Source Code Pro',monospace;font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5);text-align:left;border-right:1px solid rgba(255,255,255,0.07);}
+.cal-tbl thead th:last-child{border-right:none;}
+.cal-tbl tbody tr{border-bottom:1px solid var(--rule);transition:background .12s;}
+.cal-tbl tbody tr:last-child{border-bottom:none;}
+.cal-tbl tbody tr:hover{background:var(--paper);}
+.cal-tbl tbody td{padding:11px 14px;font-size:12px;color:var(--ink2);border-right:1px solid var(--rule);vertical-align:top;line-height:1.5;}
+.cal-tbl tbody td:first-child{font-weight:600;color:var(--ink);}
+.cal-tbl tbody td:last-child{border-right:none;}
+
+/* CONV STEP */
+.conv-step{background:var(--white);border:1px solid var(--rule);border-radius:9px;margin-bottom:10px;overflow:hidden;}
+.cs-head{padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
+.cs-head:hover{background:var(--paper);}
+.cs-num{width:28px;height:28px;border-radius:50%;background:var(--slate);color:#fff;font-family:'Playfair Display',serif;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cs-title{font-size:13px;font-weight:700;color:var(--ink);flex:1;}
+.cs-time{font-family:'Source Code Pro',monospace;font-size:9px;color:var(--ink4);}
+.cs-arrow{font-size:10px;color:var(--ink5);transition:transform .15s;}
+.cs-arrow.open{transform:rotate(90deg);}
+.cs-body{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;}
+.cs-body.open{max-height:700px;padding:12px 16px 16px;}
+
+.toast{position:fixed;bottom:20px;right:22px;background:var(--slate);color:#fff;padding:9px 16px;border-radius:8px;font-family:'Source Code Pro',monospace;font-size:11px;opacity:0;transform:translateY(5px);transition:all .2s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;transform:none;}
+@media print{.rail,.topbar,.no-print{display:none!important;}.main{margin-left:0;}.content{padding:20px;}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="rail">
+  <div class="rail-brand">
+    <div class="rb-ey">Valentis Laos · Group HR</div>
+    <div class="rb-title">Performance<br><em>Review System</em></div>
+    <div class="rb-sub">PM Tool 2 of 5 · Review Forms &amp; Calibration</div>
+  </div>
+  <div class="cycle-badge">
+    <div class="cb-lbl">Review Type</div>
+    <div class="cb-type">
+      <button class="cb-btn mid active" id="cycle-mid" onclick="setCycle('mid')">Mid-Year</button>
+      <button class="cb-btn ann" id="cycle-ann" onclick="setCycle('ann')">Annual</button>
+    </div>
+    <div class="cb-sub" id="cycle-sub">July 2026 · No final rating</div>
+  </div>
+  <div class="rail-sec">
+    <div class="rs-lbl">Sections</div>
+    <div class="rnav">
+      <button class="nb active" onclick="sw('selfassess',this)"><span class="nb-num">01</span>Self-Assessment <span class="nb-chip">Employee</span></button>
+      <button class="nb" onclick="sw('mgrassess',this)"><span class="nb-num">02</span>Manager Assessment <span class="nb-chip">Manager</span></button>
+      <button class="nb" onclick="sw('calculator',this)"><span class="nb-num">03</span>Rating Calculator <span class="nb-chip">HR</span></button>
+      <button class="nb" onclick="sw('calibration',this)"><span class="nb-num">04</span>Calibration Guide <span class="nb-chip">HR</span></button>
+      <button class="nb" onclick="sw('convguide',this)"><span class="nb-num">05</span>Conversation Guide <span class="nb-chip">Manager</span></button>
+    </div>
+  </div>
+  <div class="rail-foot">Valentis Laos · Group HR<br>PM Tool 2 · Review System v1.0<br>Confidential · HR Use Only</div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-title" id="tb-title">Performance Review — Self-Assessment Form</div>
+      <div class="tb-sub" id="tb-sub">PM TOOL 2 OF 5 · EMPLOYEE COMPLETES BEFORE REVIEW MEETING</div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-tag mid" id="tb-cycle-tag">Mid-Year Review</span>
+      <button class="btn btn-out btn-sm no-print" onclick="window.print()">Print / Save PDF</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- TAB 1: SELF-ASSESSMENT -->
+    <div id="tab-selfassess" class="tab active">
+      <div class="print-header">
+        <div>
+          <div class="ph-company">Valentis Resources — Performance Review</div>
+          <div class="ph-sub">Self-Assessment Form · Employee Copy · Confidential</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="ph-meta-row">Review Type: <strong id="ph-cycle">Mid-Year Review</strong></div>
+          <div class="ph-meta-row">Period: <strong id="ph-period">January – June 2026</strong></div>
+          <div class="ph-meta-row">Ref: <strong>VL-PM2-SA-2026</strong></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--paper2);">👤</div><div><div class="card-tt">Employee Information</div><div class="card-st">Complete all fields before submitting to your manager</div></div></div>
+        <div class="card-bd">
+          <div class="fr3">
+            <div class="fg"><label>Full Name</label><input id="sa-name" placeholder="As per employment contract"/></div>
+            <div class="fg"><label>Job Title</label><input id="sa-title" placeholder="e.g. Senior Driller"/></div>
+            <div class="fg"><label>Role Category</label>
+              <select id="sa-category" onchange="loadRoleQs()">
+                <option value="">Select category…</option>
+                <option value="ops">Operations (Site / Drilling / HSE)</option>
+                <option value="hr">HR / People</option>
+                <option value="fin">Finance</option>
+                <option value="admin">Admin / Support</option>
+              </select>
+            </div>
+          </div>
+          <div class="fr3">
+            <div class="fg"><label>Department / Site</label><input id="sa-dept" placeholder="e.g. Drilling Operations — Laos"/></div>
+            <div class="fg"><label>Direct Manager</label><input id="sa-mgr" placeholder="Manager name"/></div>
+            <div class="fg"><label>Review Period</label><input id="sa-period" value="January – June 2026"/></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sec-div-num">1</div>
+        <div><div class="sec-div-title">Goal Progress Assessment</div><div class="sec-div-sub">Assess your progress against each agreed goal. Be specific and evidence-based.</div></div>
+        <div class="sec-div-line"></div>
+      </div>
+      <div id="sa-goals-container"></div>
+      <button class="btn btn-out btn-sm no-print" onclick="addSAGoal()" style="margin-bottom:16px;">+ Add Goal</button>
+
+      <div class="sec-div">
+        <div class="sec-div-num">2</div>
+        <div><div class="sec-div-title">Key Achievements This Period</div><div class="sec-div-sub">Describe 2–3 specific contributions you are most proud of. Situation, Action, Result.</div></div>
+        <div class="sec-div-line"></div>
+      </div>
+      <div class="card"><div class="card-bd">
+        <div class="fg"><label>Achievement 1 — Situation, Action, Result</label><textarea id="sa-ach1" placeholder="When [situation], I [action], which resulted in [outcome with numbers if possible]."></textarea></div>
+        <div class="fg"><label>Achievement 2</label><textarea id="sa-ach2" placeholder="Describe a second key achievement…"></textarea></div>
+        <div class="fg"><label>Achievement 3 (optional)</label><textarea id="sa-ach3" placeholder="Optional third achievement…"></textarea></div>
+      </div></div>
+
+      <div class="sec-div">
+        <div class="sec-div-num">3</div>
+        <div><div class="sec-div-title">Challenges and Development Areas</div><div class="sec-div-sub">Honest self-reflection builds trust. Identifying your own gaps is a sign of maturity.</div></div>
+        <div class="sec-div-line"></div>
+      </div>
+      <div class="card"><div class="card-bd">
+        <div class="fg"><label>What was the biggest challenge you faced this period?</label><textarea id="sa-chal1" placeholder="Describe a specific challenge, what you tried, and what you would do differently…"></textarea></div>
+        <div class="fg"><label>What skill or knowledge gap most affected your performance?</label><textarea id="sa-chal2" placeholder="e.g. I found contractor relationship management difficult because I lacked formal negotiation training…"></textarea></div>
+        <div class="fg"><label>What support do you need from your manager or company in H2?</label><textarea id="sa-support" placeholder="Be specific — training, coaching, clearer direction, more resources, etc."></textarea></div>
+      </div></div>
+
+      <div id="sa-role-questions" style="display:none;">
+        <div class="sec-div">
+          <div class="sec-div-num">4</div>
+          <div><div class="sec-div-title" id="sa-rq-title">Role-Specific Questions</div><div class="sec-div-sub">Additional questions tailored to your role category</div></div>
+          <div class="sec-div-line"></div>
+        </div>
+        <div class="card"><div class="card-bd" id="sa-rq-body"></div></div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sec-div-num" id="sa-dev-num">5</div>
+        <div><div class="sec-div-title">Development Goals for Next Period</div><div class="sec-div-sub">What do you want to learn or achieve for your career in the next 6–12 months?</div></div>
+        <div class="sec-div-line"></div>
+      </div>
+      <div class="card"><div class="card-bd">
+        <div class="fr2">
+          <div class="fg"><label>Development Goal 1</label><input id="sa-dev1" placeholder="e.g. Complete AIHR C&amp;B certification by Q4 2026"/></div>
+          <div class="fg"><label>Support Required</label><input id="sa-dev1s" placeholder="e.g. Company study leave, certification fee"/></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label>Development Goal 2 (optional)</label><input id="sa-dev2" placeholder="e.g. Shadow site manager during monthly ops review"/></div>
+          <div class="fg"><label>Support Required</label><input id="sa-dev2s" placeholder="Manager endorsement, time allocation"/></div>
+        </div>
+        <div class="fg"><label>Where do you see your career in 2–3 years?</label><textarea id="sa-career" placeholder="This is a career conversation, not a commitment. Your manager wants to understand your aspirations." style="min-height:60px;"></textarea></div>
+      </div></div>
+
+      <div class="card" style="background:var(--paper);">
+        <div class="card-bd">
+          <div style="font-size:12px;color:var(--ink3);margin-bottom:12px;line-height:1.65;">I confirm that the information in this self-assessment is accurate and reflects my honest assessment of my own performance. I understand this document will be shared with my manager and HR.</div>
+          <div class="fr3">
+            <div class="fg"><label>Employee Signature</label><input id="sa-sig" placeholder="Type full name as signature"/></div>
+            <div class="fg"><label>Date Submitted</label><input id="sa-date" type="date"/></div>
+            <div style="display:flex;align-items:flex-end;padding-bottom:1px;"><button class="btn btn-slate" onclick="showToast('Self-assessment saved. Share with your manager.')">Save Self-Assessment</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MANAGER ASSESSMENT -->
+    <div id="tab-mgrassess" class="tab">
+      <div class="print-header">
+        <div>
+          <div class="ph-company">Valentis Resources — Performance Review</div>
+          <div class="ph-sub">Manager Assessment Form · Confidential · HR Filing Copy</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="ph-meta-row">Review Type: <strong id="ph-cycle2">Mid-Year Review</strong></div>
+          <div class="ph-meta-row">Period: <strong id="ph-period2">January – June 2026</strong></div>
+          <div class="ph-meta-row">Ref: <strong>VL-PM2-MA-2026</strong></div>
+        </div>
+      </div>
+
+      <div class="note">Complete this form <strong>after</strong> reading the employee self-assessment but <strong>before</strong> the review meeting. Do not share your ratings with the employee until HR calibration is complete (annual review only).</div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--paper2);">📋</div><div><div class="card-tt">Review Details</div></div></div>
+        <div class="card-bd">
+          <div class="fr3">
+            <div class="fg"><label>Employee Name</label><input id="ma-emp" placeholder="Employee being reviewed"/></div>
+            <div class="fg"><label>Employee Role</label><input id="ma-role" placeholder="Job title"/></div>
+            <div class="fg"><label>Role Category</label>
+              <select id="ma-category">
+                <option value="">Select…</option>
+                <option>Operations</option><option>HR / People</option><option>Finance</option><option>Admin / Support</option>
+              </select>
+            </div>
+          </div>
+          <div class="fr3">
+            <div class="fg"><label>Reviewing Manager</label><input id="ma-mgr" placeholder="Your name"/></div>
+            <div class="fg"><label>Review Date</label><input id="ma-date" type="date"/></div>
+            <div class="fg"><label>Country / Site</label><input id="ma-country" placeholder="e.g. Laos — Vientiane Site"/></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sec-div-num">1</div>
+        <div><div class="sec-div-title">Goal-by-Goal Assessment</div><div class="sec-div-sub">Rate each goal 1–5 with specific evidence. Vague comments will be returned by HR.</div></div>
+        <div class="sec-div-line"></div>
+      </div>
+      <div id="ma-goals-container"></div>
+      <button class="btn btn-out btn-sm no-print" onclick="addMAGoal()" style="margin-bottom:16px;">+ Add Goal</button>
+
+      <div class="sec-div">
+        <div class="sec-div-num">2</div>
+        <div><div class="sec-div-title">Behavioural Competencies</div><div class="sec-div-sub">Rate each competency 1–5. Carries 20% of the overall score at annual review.</div></div>
+        <div class="sec-div-line"></div>
+      </div>
+      <div class="card"><div class="card-bd" id="comp-rows-ma"></div></div>
+
+      <div class="sec-div">
+        <div class="sec-div-num">3</div>
+        <div><div class="sec-div-title">Overall Manager Assessment</div><div class="sec-div-sub">This narrative is shared with the employee. Write as if they will read it.</div></div>
+        <div class="sec-div-line"></div>
+      </div>
+      <div class="card"><div class="card-bd">
+        <div class="fg"><label>Overall Performance Summary (2–3 sentences)</label><textarea id="ma-summary" placeholder="Summarise overall performance. Strongest contributions? Primary development area?"></textarea></div>
+        <div class="fr2">
+          <div class="fg"><label>Strengths to Continue and Build On</label><textarea id="ma-strengths" placeholder="Be specific. Name behaviours or outputs you want to see more of."></textarea></div>
+          <div class="fg"><label>Development Areas — What Needs to Change</label><textarea id="ma-develop" placeholder="Specific, actionable, respectful. Describe exactly what improvement looks like."></textarea></div>
+        </div>
+        <div class="fg"><label>Manager Recommendation for Next Period</label><textarea id="ma-rec" placeholder="Continue in role? Development plan? Promotion discussion? PIP? State clearly." style="min-height:60px;"></textarea></div>
+      </div></div>
+
+      <div id="ma-annual-section" style="display:none;">
+        <div class="sec-div">
+          <div class="sec-div-num">4</div>
+          <div><div class="sec-div-title">Proposed Overall Rating (Annual Only)</div><div class="sec-div-sub">Proposed only — confirmed after HR calibration. Do not share with employee until calibration complete.</div></div>
+          <div class="sec-div-line"></div>
+        </div>
+        <div class="card" style="background:var(--slate);">
+          <div class="card-bd">
+            <div style="font-family:'Source Code Pro',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px;">Proposed Rating</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <div id="ma-r5" onclick="setMAR(5)" style="cursor:pointer;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);text-align:center;min-width:90px;transition:all .15s;">
+                <div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;">5</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">Exceptional</div>
+              </div>
+              <div id="ma-r4" onclick="setMAR(4)" style="cursor:pointer;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);text-align:center;min-width:90px;transition:all .15s;">
+                <div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;">4</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">Strong</div>
+              </div>
+              <div id="ma-r3" onclick="setMAR(3)" style="cursor:pointer;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);text-align:center;min-width:90px;transition:all .15s;">
+                <div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;">3</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">Meets Exp.</div>
+              </div>
+              <div id="ma-r2" onclick="setMAR(2)" style="cursor:pointer;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);text-align:center;min-width:90px;transition:all .15s;">
+                <div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;">2</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">Needs Impr.</div>
+              </div>
+              <div id="ma-r1" onclick="setMAR(1)" style="cursor:pointer;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);text-align:center;min-width:90px;transition:all .15s;">
+                <div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;">1</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">Unsatisfact.</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;">
+              <div style="font-size:11.5px;color:rgba(255,255,255,0.35);margin-bottom:6px;">Rating justification (required for ratings 1, 2, and 5)</div>
+              <textarea id="ma-rating-reason" style="width:100%;padding:9px 11px;border:1px solid rgba(255,255,255,0.1);border-radius:7px;background:rgba(255,255,255,0.05);color:#fff;font-family:'Source Sans 3',sans-serif;font-size:12.5px;min-height:60px;outline:none;resize:vertical;line-height:1.55;" placeholder="Provide specific evidence. All extreme ratings require written justification before HR will approve."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--paper);margin-top:16px;">
+        <div class="card-bd">
+          <div class="note" style="margin-top:0;">Before signing: confirm you have (1) read the employee self-assessment, (2) rated all goals with evidence, (3) consulted HR if proposing a 1 or 2 rating, (4) completed calibration step for annual reviews.</div>
+          <div class="fr3">
+            <div class="fg"><label>Manager Signature</label><input id="ma-sig" placeholder="Type full name as signature"/></div>
+            <div class="fg"><label>Date</label><input id="ma-sig-date" type="date"/></div>
+            <div style="display:flex;align-items:flex-end;padding-bottom:1px;"><button class="btn btn-burg" onclick="showToast('Manager assessment saved. Submit to HR for calibration.')">Save &amp; Submit to HR</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: RATING CALCULATOR -->
+    <div id="tab-calculator" class="tab">
+      <div class="sl">Weighted rating calculator · annual review only</div>
+      <div class="insight">Enter each goal, its weight, and the manager rating. The calculator computes the weighted final score and overall rating. Goals carry 80% of the total score; behavioural competencies carry 20%.</div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--paper2);">◈</div><div><div class="card-tt">Employee &amp; Review Details</div></div></div>
+        <div class="card-bd">
+          <div class="fr4">
+            <div class="fg"><label>Employee Name</label><input id="calc-name" placeholder="Employee" oninput="calcScore()"/></div>
+            <div class="fg"><label>Role</label><input id="calc-role" placeholder="Job title" oninput="calcScore()"/></div>
+            <div class="fg"><label>Manager</label><input id="calc-mgr" placeholder="Reviewing manager" oninput="calcScore()"/></div>
+            <div class="fg"><label>Review Year</label><input id="calc-year" value="2026" oninput="calcScore()"/></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--burg-l);color:var(--burg);">%</div><div><div class="card-tt">Goals — Weight &amp; Rating</div><div class="card-st">Goal weights total must equal 80% (remaining 20% = competencies)</div></div></div>
+        <div class="card-bd">
+          <div id="calc-rows" style="display:flex;flex-direction:column;gap:8px;"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+            <button class="btn btn-out btn-sm no-print" onclick="addCalcRow()">+ Add Goal</button>
+            <div style="font-family:'Source Code Pro',monospace;font-size:11px;color:var(--ink4);">Goal weight total: <span id="total-weight" style="font-weight:700;color:var(--ink);">0%</span> <span style="color:var(--ink5);">(target: 80%)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--teal-l);color:var(--teal);">★</div><div><div class="card-tt">Behavioural Competencies (20% of total score)</div></div></div>
+        <div class="card-bd">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="comp-calc-rows"></div>
+          <div style="margin-top:12px;padding:10px 13px;background:var(--paper2);border-radius:7px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:12px;color:var(--ink3);">Average competency score (weighted at 20% of final score)</div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:13px;font-weight:600;color:var(--ink);" id="comp-avg">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="score-panel">
+        <div class="sp-label">Final Weighted Score · <span id="score-name">Employee Name</span></div>
+        <div style="display:flex;align-items:baseline;gap:16px;">
+          <div style="font-family:'Playfair Display',serif;font-size:52px;color:#fff;line-height:1;" id="final-score">—</div>
+          <div style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.4);" id="final-rating">Enter goals to calculate</div>
+        </div>
+        <div class="sp-breakdown" id="score-breakdown"></div>
+      </div>
+
+      <div class="card" style="background:var(--paper);">
+        <div class="card-bd">
+          <div style="font-family:'Source Code Pro',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:10px;">Rating Thresholds</div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+            <div style="padding:10px 11px;background:var(--slate);border-radius:8px;text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:18px;color:#fff;">5</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:3px;">4.50 – 5.00</div><div style="font-size:10px;color:rgba(255,255,255,0.35);">Exceptional</div></div>
+            <div style="padding:10px 11px;background:var(--steel);border-radius:8px;text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:18px;color:#fff;">4</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:3px;">3.50 – 4.49</div><div style="font-size:10px;color:rgba(255,255,255,0.35);">Strong</div></div>
+            <div style="padding:10px 11px;background:var(--paper2);border:1px solid var(--rule);border-radius:8px;text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--ink);">3</div><div style="font-size:10px;color:var(--ink4);margin-top:3px;">2.50 – 3.49</div><div style="font-size:10px;color:var(--ink4);">Meets Exp.</div></div>
+            <div style="padding:10px 11px;background:var(--amber-l);border:1px solid var(--amber-b);border-radius:8px;text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--amber);">2</div><div style="font-size:10px;color:var(--amber);margin-top:3px;">1.50 – 2.49</div><div style="font-size:10px;color:var(--amber);">Needs Impr.</div></div>
+            <div style="padding:10px 11px;background:var(--burg-l);border:1px solid var(--burg-b);border-radius:8px;text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--burg);">1</div><div style="font-size:10px;color:var(--burg);margin-top:3px;">1.00 – 1.49</div><div style="font-size:10px;color:var(--burg);">Unsatisfact.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: CALIBRATION GUIDE -->
+    <div id="tab-calibration" class="tab">
+      <div class="sl">HR calibration guide · annual review · December</div>
+      <div class="warn"><strong>Annual review only.</strong> No employee receives a final rating until HR calibration is complete. This is non-negotiable.</div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--burg-l);color:var(--burg);">◎</div><div><div class="card-tt">Why Calibration Exists</div></div></div>
+          <div class="card-bd">
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div style="padding:10px 13px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;font-size:12px;color:var(--ink2);line-height:1.6;border-left:3px solid var(--burg);">Different managers interpret the same performance level differently. Manager A's 3 may equal Manager B's 4. Without calibration, employees in different teams are judged by different standards — which is unfair and legally risky.</div>
+              <div style="padding:10px 13px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;font-size:12px;color:var(--ink2);line-height:1.6;border-left:3px solid var(--burg);">Calibration is not about hitting a rating quota. It is about ensuring the rating scale means the same thing across all Valentis managers, countries, and role types.</div>
+              <div style="padding:10px 13px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;font-size:12px;color:var(--ink2);line-height:1.6;border-left:3px solid var(--burg);">HR leads the calibration session. Managers attend but do not dominate. COO attends for senior roles or contested ratings.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--teal-l);color:var(--teal);">◷</div><div><div class="card-tt">Calibration Process — Step by Step</div></div></div>
+          <div class="card-bd">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start;padding:8px 0;border-bottom:1px solid var(--rule);">
+                <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--burg);line-height:1.2;">1</div>
+                <div><div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:2px;">HR collects all manager assessments (1 Dec)</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;">All forms submitted to HR. HR reviews for completeness and flags missing evidence before the session.</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start;padding:8px 0;border-bottom:1px solid var(--rule);">
+                <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--burg);line-height:1.2;">2</div>
+                <div><div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:2px;">HR builds distribution view (2–5 Dec)</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;">HR plots all proposed ratings by team. Checks for leniency clustering, central tendency, or unsupported outliers.</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start;padding:8px 0;border-bottom:1px solid var(--rule);">
+                <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--burg);line-height:1.2;">3</div>
+                <div><div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:2px;">Calibration session with managers (8–10 Dec)</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;">HR-led. Managers with 5s or 1s present evidence. HR challenges inconsistencies. Agreed final ratings recorded.</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start;padding:8px 0;">
+                <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--burg);line-height:1.2;">4</div>
+                <div><div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:2px;">Final ratings issued to employees (15–31 Dec)</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;">Manager communicates rating face-to-face or by video call — never email alone. HR files all signed documents.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--amber-l);color:var(--amber);">!</div><div><div class="card-tt">Common Rating Biases — What HR Looks For</div><div class="card-st">These patterns trigger a calibration challenge</div></div></div>
+        <div class="card-bd" style="padding:0;"><div class="sx">
+          <table class="cal-tbl">
+            <thead><tr><th>Bias Type</th><th>What It Looks Like</th><th>Why It Happens</th><th>HR Response</th></tr></thead>
+            <tbody>
+              <tr><td>Leniency Bias</td><td>Manager rates everyone 4 or 5. No 3s or below in the team.</td><td>Wanting to be liked. Avoiding difficult conversations. Guilt about salary constraints.</td><td>Request evidence for all 4s and 5s. If thin, propose downgrade to 3.</td></tr>
+              <tr><td>Central Tendency</td><td>Manager rates everyone a 3 regardless of performance difference.</td><td>Risk aversion. Fear of challenge. Unfamiliarity with the full scale.</td><td>Ask manager to identify best and worst performer. If truly equal, document why.</td></tr>
+              <tr><td>Recency Bias</td><td>Rating reflects only the last 2–3 months, ignoring full year.</td><td>Recent events are more vivid in memory.</td><td>Request evidence from across the full 12-month period.</td></tr>
+              <tr><td>Halo Effect</td><td>One strong goal leads to high ratings on all other goals too.</td><td>One impressive achievement colours the entire assessment.</td><td>Review each goal independently. One excellent goal does not auto-elevate others.</td></tr>
+              <tr><td>Horns Effect</td><td>One mistake drags all ratings below what evidence supports.</td><td>One failure is memorable. Manager anchors the whole assessment on it.</td><td>Same as halo — each goal rated independently.</td></tr>
+              <tr><td>Affinity Bias</td><td>Employees similar to the manager consistently rated higher.</td><td>Unconscious preference for people we identify with.</td><td>Compare ratings across genders, nationalities, sites. Flag statistical outliers.</td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--paper2);">☰</div><div><div class="card-tt">Calibration Tracker — 2026 Annual Review</div><div class="card-st">HR tracks submission and calibration status for every employee</div></div></div>
+        <div class="card-bd">
+          <div style="display:grid;grid-template-columns:1fr 1fr 80px 110px 100px 80px;gap:8px;padding:8px 12px;background:var(--slate);border-radius:7px;margin-bottom:8px;">
+            <div style="font-family:'Source Code Pro',monospace;font-size:8px;color:rgba(255,255,255,0.4);">Employee</div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:8px;color:rgba(255,255,255,0.4);">Manager</div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:8px;color:rgba(255,255,255,0.4);">Proposed</div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:8px;color:rgba(255,255,255,0.4);">Status</div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:8px;color:rgba(255,255,255,0.4);">Final Rating</div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:8px;color:rgba(255,255,255,0.4);">Action</div>
+          </div>
+          <div id="calib-tracker"></div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button class="btn btn-out btn-sm no-print" onclick="addCalibRow()">+ Add Employee</button>
+            <button class="btn btn-slate btn-sm no-print" onclick="showToast('Calibration tracker saved.')">Save Tracker</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: CONVERSATION GUIDE -->
+    <div id="tab-convguide" class="tab">
+      <div class="sl">Manager guide · how to run a performance review conversation</div>
+      <div class="note">This guide is for Valentis managers — particularly operations managers — who have not conducted structured performance reviews before. A review conversation is not an evaluation delivered to an employee. It is a two-way conversation. The manager speaks for 40% of the time. The employee speaks for 60%.</div>
+
+      <div class="g2" style="margin-bottom:4px;">
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--burg-l);color:var(--burg);">◷</div><div><div class="card-tt">Meeting Structure</div><div class="card-st">60 min annual · 45 min mid-year</div></div></div>
+          <div class="card-bd">
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="display:grid;grid-template-columns:55px 1fr;gap:10px;padding:9px 11px;background:var(--paper);border-radius:7px;border:1px solid var(--rule);">
+                <div style="font-family:'Source Code Pro',monospace;font-size:10px;color:var(--burg);font-weight:600;">0–5 min</div>
+                <div><div style="font-size:12px;font-weight:700;color:var(--ink);">Open — Set the tone</div><div style="font-size:11px;color:var(--ink3);">Welcome, confirm agenda, create safety to speak honestly</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:55px 1fr;gap:10px;padding:9px 11px;background:var(--paper);border-radius:7px;border:1px solid var(--rule);">
+                <div style="font-family:'Source Code Pro',monospace;font-size:10px;color:var(--burg);font-weight:600;">5–20 min</div>
+                <div><div style="font-size:12px;font-weight:700;color:var(--ink);">Employee speaks first</div><div style="font-size:11px;color:var(--ink3);">Employee walks through self-assessment. Manager listens. Do not interrupt.</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:55px 1fr;gap:10px;padding:9px 11px;background:var(--paper);border-radius:7px;border:1px solid var(--rule);">
+                <div style="font-family:'Source Code Pro',monospace;font-size:10px;color:var(--burg);font-weight:600;">20–40 min</div>
+                <div><div style="font-size:12px;font-weight:700;color:var(--ink);">Goal-by-goal discussion</div><div style="font-size:11px;color:var(--ink3);">Manager shares assessment per goal. Evidence shared. Discussion where views differ.</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:55px 1fr;gap:10px;padding:9px 11px;background:var(--paper);border-radius:7px;border:1px solid var(--rule);">
+                <div style="font-family:'Source Code Pro',monospace;font-size:10px;color:var(--burg);font-weight:600;">40–55 min</div>
+                <div><div style="font-size:12px;font-weight:700;color:var(--ink);">Development and career conversation</div><div style="font-size:11px;color:var(--ink3);">Forward-looking. Aspirations. Development plan for next period.</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:55px 1fr;gap:10px;padding:9px 11px;background:var(--paper);border-radius:7px;border:1px solid var(--rule);">
+                <div style="font-family:'Source Code Pro',monospace;font-size:10px;color:var(--burg);font-weight:600;">55–60 min</div>
+                <div><div style="font-size:12px;font-weight:700;color:var(--ink);">Close and next steps</div><div style="font-size:11px;color:var(--ink3);">Summarise actions. Communicate rating (annual only). Confirm follow-up date.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--teal-l);color:var(--teal);">✓</div><div><div class="card-tt">Before the Meeting — Manager Checklist</div></div></div>
+          <div class="card-bd">
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink2);line-height:1.5;"><input type="checkbox" style="margin-top:2px;accent-color:var(--burg);flex-shrink:0;"> Read the employee self-assessment thoroughly before the meeting</label>
+              <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink2);line-height:1.5;"><input type="checkbox" style="margin-top:2px;accent-color:var(--burg);flex-shrink:0;"> Complete your manager assessment form with specific evidence per goal</label>
+              <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink2);line-height:1.5;"><input type="checkbox" style="margin-top:2px;accent-color:var(--burg);flex-shrink:0;"> Book a private room or video call — never in an open area</label>
+              <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink2);line-height:1.5;"><input type="checkbox" style="margin-top:2px;accent-color:var(--burg);flex-shrink:0;"> Block 60 minutes — do not schedule back-to-back</label>
+              <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink2);line-height:1.5;"><input type="checkbox" style="margin-top:2px;accent-color:var(--burg);flex-shrink:0;"> If delivering a 1 or 2 rating — brief HR before the meeting, not after</label>
+              <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink2);line-height:1.5;"><input type="checkbox" style="margin-top:2px;accent-color:var(--burg);flex-shrink:0;"> Prepare 2–3 specific examples of strong performance — not just gaps</label>
+              <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--ink2);line-height:1.5;"><input type="checkbox" style="margin-top:2px;accent-color:var(--burg);flex-shrink:0;"> Know your answer to "What is my development plan for next year?" before entering the room</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sl" style="margin-top:8px;">Step-by-step conversation guide · click to expand each section</div>
+
+      <div class="conv-step">
+        <div class="cs-head" onclick="toggleCS(this)">
+          <div class="cs-num">1</div>
+          <div><div class="cs-title">Opening the Conversation</div><div style="font-size:11px;color:var(--ink4);margin-top:2px;">Set tone · confirm agenda · make the employee feel safe to speak honestly</div></div>
+          <div class="cs-time">5 min</div>
+          <div class="cs-arrow">&#9658;</div>
+        </div>
+        <div class="cs-body">
+          <div style="font-family:'Source Code Pro',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">What to say</div>
+          <div style="background:var(--slate);border-radius:8px;padding:13px 15px;margin-bottom:10px;"><div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.8;font-style:italic;">"Thanks for taking the time. I want this to be a real conversation — not me reading scores to you. I have read your self-assessment and I have my own thoughts, but I want to hear from you first. Nothing here should surprise you — if it does, that is on me, not on you."</div></div>
+          <div style="font-family:'Source Code Pro',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;margin-top:12px;">What not to say</div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="padding:7px 10px;background:var(--burg-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--burg-b);">&#10007; "This will not take long." — signals the conversation is an inconvenience</div>
+            <div style="padding:7px 10px;background:var(--burg-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--burg-b);">&#10007; "I have already decided your rating." — kills psychological safety immediately</div>
+            <div style="padding:7px 10px;background:var(--burg-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--burg-b);">&#10007; "HR told me I have to do this." — removes your ownership of the process</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="conv-step">
+        <div class="cs-head" onclick="toggleCS(this)">
+          <div class="cs-num">2</div>
+          <div><div class="cs-title">Letting the Employee Speak First</div><div style="font-size:11px;color:var(--ink4);margin-top:2px;">Employee reflects first · manager listens · do not correct until they finish</div></div>
+          <div class="cs-time">15 min</div>
+          <div class="cs-arrow">&#9658;</div>
+        </div>
+        <div class="cs-body">
+          <div style="font-family:'Source Code Pro',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">Useful opening questions</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
+            <div style="padding:8px 11px;background:var(--teal-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--teal-b);">"Walk me through your self-assessment. What are you most proud of this period?"</div>
+            <div style="padding:8px 11px;background:var(--teal-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--teal-b);">"What felt hardest? What would you do differently?"</div>
+            <div style="padding:8px 11px;background:var(--teal-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--teal-b);">"Where do you feel you had less support than you needed?"</div>
+          </div>
+          <div class="insight" style="margin:0;">Active listening rule: after the employee answers, pause for 3 seconds before responding. Most managers respond too quickly and signal they were not really listening.</div>
+        </div>
+      </div>
+
+      <div class="conv-step">
+        <div class="cs-head" onclick="toggleCS(this)">
+          <div class="cs-num">3</div>
+          <div><div class="cs-title">Giving Feedback — The SBI Model</div><div style="font-size:11px;color:var(--ink4);margin-top:2px;">Situation · Behaviour · Impact · the only safe way to give feedback</div></div>
+          <div class="cs-time">20 min</div>
+          <div class="cs-arrow">&#9658;</div>
+        </div>
+        <div class="cs-body">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+            <div style="padding:12px 13px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;"><div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--burg);margin-bottom:5px;">S</div><div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;">Situation</div><div style="font-size:11.5px;color:var(--ink3);">Name the specific situation. "In March, during the rig downtime…"</div></div>
+            <div style="padding:12px 13px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;"><div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--burg);margin-bottom:5px;">B</div><div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;">Behaviour</div><div style="font-size:11.5px;color:var(--ink3);">What they did or did not do — no judgement. "You escalated to the contractor within 2 hours and coordinated the repair schedule."</div></div>
+            <div style="padding:12px 13px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;"><div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--burg);margin-bottom:5px;">I</div><div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;">Impact</div><div style="font-size:11.5px;color:var(--ink3);">The result. "This kept us within 15% of weekly meterage target and avoided a client escalation."</div></div>
+          </div>
+          <div class="warn" style="margin:0;"><strong>Never use:</strong> "always", "never", "attitude", "lazy", or "difficult." These are judgements — they trigger defensiveness and in some countries create legal exposure.</div>
+        </div>
+      </div>
+
+      <div class="conv-step">
+        <div class="cs-head" onclick="toggleCS(this)">
+          <div class="cs-num">4</div>
+          <div><div class="cs-title">Handling Disagreement or Emotional Reaction</div><div style="font-size:11px;color:var(--ink4);margin-top:2px;">When the employee disputes a rating or becomes upset</div></div>
+          <div class="cs-time">As needed</div>
+          <div class="cs-arrow">&#9658;</div>
+        </div>
+        <div class="cs-body">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="padding:10px 13px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.6;"><strong style="display:block;margin-bottom:3px;">If the employee disagrees with a rating:</strong>Do not argue. Say: "I hear you — can you walk me through the evidence you have in mind?" Listen. If their evidence is strong, acknowledge it. If the rating should change, say you will discuss with HR before finalising. Never change a rating in the room under pressure.</div>
+            <div style="padding:10px 13px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.6;"><strong style="display:block;margin-bottom:3px;">If the employee becomes emotional:</strong>Pause. Do not keep talking. Say: "Take a moment — this conversation matters and I want us both to be present." Offer water. Allow time. Reschedule if necessary — do not push through a breakdown.</div>
+            <div style="padding:10px 13px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.6;"><strong style="display:block;margin-bottom:3px;">If a grievance is raised during the review:</strong>Acknowledge it, write it down, park it: "That is important — let me complete this conversation and I will follow up within 5 days." Do not try to resolve a formal grievance inside a performance review.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="conv-step">
+        <div class="cs-head" onclick="toggleCS(this)">
+          <div class="cs-num">5</div>
+          <div><div class="cs-title">Development and Career Conversation</div><div style="font-size:11px;color:var(--ink4);margin-top:2px;">Forward-looking · aspirations · agree next period development plan</div></div>
+          <div class="cs-time">15 min</div>
+          <div class="cs-arrow">&#9658;</div>
+        </div>
+        <div class="cs-body">
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+            <div style="padding:8px 11px;background:var(--teal-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--teal-b);">"Where do you see yourself in 2–3 years? What kind of role are you interested in?"</div>
+            <div style="padding:8px 11px;background:var(--teal-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--teal-b);">"What is the one skill or experience that would make the biggest difference to your career right now?"</div>
+            <div style="padding:8px 11px;background:var(--teal-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--teal-b);">"What can the company do better to support your development?"</div>
+          </div>
+          <div class="note" style="margin:0;">After this section you should be able to name: (1) one concrete development action the employee will take in the next 6 months, and (2) one thing you will do to support it. If you cannot name both — the conversation was not complete.</div>
+        </div>
+      </div>
+
+      <div class="conv-step">
+        <div class="cs-head" onclick="toggleCS(this)">
+          <div class="cs-num">6</div>
+          <div><div class="cs-title">Closing, Communicating the Rating, and Documenting</div><div style="font-size:11px;color:var(--ink4);margin-top:2px;">Summarise · communicate rating (annual) · confirm actions · sign forms</div></div>
+          <div class="cs-time">5 min</div>
+          <div class="cs-arrow">&#9658;</div>
+        </div>
+        <div class="cs-body">
+          <div style="background:var(--slate);border-radius:8px;padding:13px 15px;margin-bottom:10px;"><div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.8;font-style:italic;">"To close — here is what I heard: [1–2 strengths, 1 development area]. Your development goal for next period is [goal]. I will [manager action] by [date]. For annual review: your confirmed rating is [X] — [rating name]. This reflects [brief rationale]. If you have questions, come to me or HR within 5 working days."</div></div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="padding:7px 11px;background:var(--green-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--green-b);">&#10003; Both parties sign the review form before the meeting ends</div>
+            <div style="padding:7px 11px;background:var(--green-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--green-b);">&#10003; Manager sends a one-paragraph summary email within 24 hours</div>
+            <div style="padding:7px 11px;background:var(--green-l);border-radius:6px;font-size:12px;color:var(--ink2);border-left:2px solid var(--green-b);">&#10003; Signed review form submitted to HR within 3 working days of the meeting</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var saGoalN=0, maGoalN=0, calcRowN=0, calibN=0;
+var COMPS=['Safety Awareness','Communication','Teamwork & Collaboration','Problem Solving','Work Quality & Accuracy'];
+
+function setCycle(c){
+  document.getElementById('cycle-mid').classList.toggle('active',c==='mid');
+  document.getElementById('cycle-ann').classList.toggle('active',c==='ann');
+  document.getElementById('cycle-sub').textContent=c==='mid'?'July 2026 · No final rating':'December 2026 · Final rating issued';
+  var tag=document.getElementById('tb-cycle-tag');
+  tag.textContent=c==='mid'?'Mid-Year Review':'Annual Review';
+  tag.className='tb-tag '+c;
+  var ann=document.getElementById('ma-annual-section');
+  if(ann) ann.style.display=c==='ann'?'block':'none';
+  var lbl=c==='mid'?'Mid-Year Review':'Annual Review';
+  var per=c==='mid'?'January \u2013 June 2026':'January \u2013 December 2026';
+  ['ph-cycle','ph-cycle2'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=lbl;});
+  ['ph-period','ph-period2'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=per;});
+}
+
+var META={
+  selfassess:['Performance Review \u2014 Self-Assessment Form','PM TOOL 2 OF 5 \u00b7 EMPLOYEE COMPLETES BEFORE REVIEW MEETING'],
+  mgrassess:['Performance Review \u2014 Manager Assessment','PM TOOL 2 OF 5 \u00b7 MANAGER COMPLETES BEFORE REVIEW MEETING'],
+  calculator:['Performance Review \u2014 Rating Calculator','PM TOOL 2 OF 5 \u00b7 WEIGHTED SCORE \u00b7 ANNUAL REVIEW ONLY'],
+  calibration:['Performance Review \u2014 Calibration Guide','PM TOOL 2 OF 5 \u00b7 HR-LED CALIBRATION \u00b7 DECEMBER'],
+  convguide:['Performance Review \u2014 Conversation Guide','PM TOOL 2 OF 5 \u00b7 MANAGER GUIDE \u00b7 HOW TO RUN A REVIEW'],
+};
+function sw(id,btn){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  var m=META[id]||[id,''];
+  document.getElementById('tb-title').textContent=m[0];
+  document.getElementById('tb-sub').textContent=m[1];
+}
+
+function goalRadios(name){
+  return [5,4,3,2,1].map(function(r){
+    return '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="'+name+'" value="'+r+'" style="accent-color:var(--burg);" onchange="calcScore()"><span style="font-size:12px;color:var(--ink2);">'+r+' \u2014 '+['','Unsatisfact.','Needs Impr.','Meets Exp.','Strong','Exceptional'][r]+'</span></label>';
+  }).join('');
+}
+
+function addSAGoal(t,w,d){
+  saGoalN++;
+  var n=saGoalN;
+  var el=document.createElement('div');
+  el.className='goal-row';
+  el.id='sa-goal-'+n;
+  el.innerHTML='<div class="gr-top">'+
+    '<input style="flex:1;padding:7px 10px;border:1px solid var(--rule2);border-radius:6px;font-family:\'Source Sans 3\',sans-serif;font-size:13px;font-weight:700;color:var(--ink);background:transparent;" placeholder="Goal title" value="'+(t||'')+'"/>'+
+    '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">'+
+      '<span style="font-family:\'Source Code Pro\',monospace;font-size:9px;color:var(--ink4);">Weight</span>'+
+      '<input type="number" min="5" max="40" value="'+(w||20)+'" style="width:55px;padding:5px 7px;border:1px solid var(--rule2);border-radius:5px;font-family:\'Source Code Pro\',monospace;font-size:11px;text-align:center;"/>'+
+      '<span style="font-family:\'Source Code Pro\',monospace;font-size:10px;color:var(--ink4);">%</span>'+
+      '<button onclick="document.getElementById(\'sa-goal-'+n+'\').remove()" style="background:transparent;border:none;cursor:pointer;color:var(--ink5);font-size:16px;padding:0 4px;">\u00d7</button>'+
+    '</div></div>'+
+    '<div class="fg" style="margin-bottom:8px;"><label>Goal Description</label><input placeholder="Agreed goal…" value="'+(d||'')+'"/></div>'+
+    '<div class="gr-bottom">'+
+      '<div class="fg" style="margin-bottom:0;"><label>Your Assessment &amp; Evidence</label><textarea placeholder="What did you do? What was the result? Reference numbers where possible."></textarea></div>'+
+      '<div><div style="font-family:\'Source Code Pro\',monospace;font-size:8px;color:var(--ink4);margin-bottom:6px;text-align:center;">Self-Rating</div>'+goalRadios('sa-r-'+n)+'</div>'+
+    '</div>';
+  document.getElementById('sa-goals-container').appendChild(el);
+}
+
+function addMAGoal(t,w){
+  maGoalN++;
+  var n=maGoalN;
+  var el=document.createElement('div');
+  el.className='goal-row';
+  el.id='ma-goal-'+n;
+  el.innerHTML='<div class="gr-top">'+
+    '<input style="flex:1;padding:7px 10px;border:1px solid var(--rule2);border-radius:6px;font-family:\'Source Sans 3\',sans-serif;font-size:13px;font-weight:700;color:var(--ink);background:transparent;" placeholder="Goal title" value="'+(t||'')+'"/>'+
+    '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">'+
+      '<span style="font-family:\'Source Code Pro\',monospace;font-size:9px;color:var(--ink4);">Weight</span>'+
+      '<input type="number" min="5" max="40" value="'+(w||20)+'" style="width:55px;padding:5px 7px;border:1px solid var(--rule2);border-radius:5px;font-family:\'Source Code Pro\',monospace;font-size:11px;text-align:center;"/>'+
+      '<span style="font-family:\'Source Code Pro\',monospace;font-size:10px;color:var(--ink4);">%</span>'+
+      '<button onclick="document.getElementById(\'ma-goal-'+n+'\').remove()" style="background:transparent;border:none;cursor:pointer;color:var(--ink5);font-size:16px;padding:0 4px;">\u00d7</button>'+
+    '</div></div>'+
+    '<div class="gr-bottom">'+
+      '<div class="fg" style="margin-bottom:0;"><label>Manager Evidence &amp; Notes</label><textarea placeholder="Specific, evidenced commentary. Quote examples. Reference KPI data."></textarea></div>'+
+      '<div><div style="font-family:\'Source Code Pro\',monospace;font-size:8px;color:var(--ink4);margin-bottom:6px;text-align:center;">Manager Rating</div>'+goalRadios('ma-r-'+n)+'</div>'+
+    '</div>';
+  document.getElementById('ma-goals-container').appendChild(el);
+}
+
+function buildCompRows(containerId,prefix){
+  var c=document.getElementById(containerId);
+  if(!c) return;
+  c.innerHTML='';
+  COMPS.forEach(function(comp,i){
+    var row=document.createElement('div');
+    row.style.cssText='display:grid;grid-template-columns:1fr 110px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--rule);';
+    if(i===COMPS.length-1) row.style.borderBottom='none';
+    row.innerHTML='<div>'+
+      '<div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:4px;">'+comp+'</div>'+
+      '<input placeholder="Evidence observation…" style="width:100%;padding:7px 10px;border:1px solid var(--rule2);border-radius:6px;font-family:\'Source Sans 3\',sans-serif;font-size:12px;color:var(--ink);outline:none;"/>'+
+      '</div>'+
+      '<div style="text-align:center;">'+
+        '<div style="font-family:\'Source Code Pro\',monospace;font-size:8px;color:var(--ink4);margin-bottom:5px;">Rating</div>'+
+        '<select id="'+prefix+i+'" onchange="calcScore()" style="padding:6px 8px;border:1px solid var(--rule2);border-radius:6px;font-family:\'Source Code Pro\',monospace;font-size:11px;color:var(--ink);width:100%;">'+
+          '<option value="">--</option>'+
+          [5,4,3,2,1].map(function(r){return '<option value="'+r+'">'+r+'</option>';}).join('')+
+        '</select>'+
+      '</div>';
+    c.appendChild(row);
+  });
+}
+
+function addCalcRow(){
+  calcRowN++;
+  var n=calcRowN;
+  var el=document.createElement('div');
+  el.id='calc-row-'+n;
+  el.style.cssText='display:grid;grid-template-columns:1fr 90px 140px auto;gap:8px;align-items:center;padding:9px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;';
+  el.innerHTML=
+    '<input id="calc-g-'+n+'" placeholder="Goal title" style="padding:7px 10px;border:1px solid var(--rule2);border-radius:6px;font-family:\'Source Sans 3\',sans-serif;font-size:12.5px;color:var(--ink);outline:none;" oninput="calcScore()"/>'+
+    '<div style="display:flex;align-items:center;gap:5px;"><input type="number" id="calc-w-'+n+'" min="5" max="40" value="20" style="width:55px;padding:6px 8px;border:1px solid var(--rule2);border-radius:6px;font-family:\'Source Code Pro\',monospace;font-size:12px;text-align:center;outline:none;" oninput="calcScore()"/><span style="font-family:\'Source Code Pro\',monospace;font-size:10px;color:var(--ink4);">%</span></div>'+
+    '<select id="calc-r-'+n+'" onchange="calcScore()" style="padding:7px 9px;border:1px solid var(--rule2);border-radius:6px;font-family:\'Source Code Pro\',monospace;font-size:11px;color:var(--ink);outline:none;">'+
+      '<option value="">Rating...</option>'+
+      [5,4,3,2,1].map(function(r){return '<option value="'+r+'">'+r+' \u2014 '+['','Unsatisfact.','Needs Impr.','Meets Exp.','Strong','Exceptional'][r]+'</option>';}).join('')+
+    '</select>'+
+    '<button onclick="document.getElementById(\'calc-row-'+n+'\').remove();calcScore();" style="background:transparent;border:none;cursor:pointer;color:var(--ink5);font-size:16px;padding:0 4px;">\u00d7</button>';
+  document.getElementById('calc-rows').appendChild(el);
+  calcScore();
+}
+
+function buildCompCalcRows(){
+  var c=document.getElementById('comp-calc-rows');
+  if(!c) return;
+  c.innerHTML='';
+  COMPS.forEach(function(comp,i){
+    var d=document.createElement('div');
+    d.className='fg';
+    d.style.marginBottom='0';
+    d.innerHTML='<label>'+comp+'</label>'+
+      '<select id="comp-c-'+i+'" onchange="calcScore()" style="padding:7px 9px;border:1px solid var(--rule2);border-radius:6px;font-family:\'Source Code Pro\',monospace;font-size:11px;color:var(--ink);">'+
+        '<option value="">--</option>'+
+        [5,4,3,2,1].map(function(r){return '<option value="'+r+'">'+r+' \u2014 '+['','Unsatisfact.','Needs Impr.','Meets Exp.','Strong','Exceptional'][r]+'</option>';}).join('')+
+      '</select>';
+    c.appendChild(d);
+  });
+}
+
+function calcScore(){
+  var rows=document.querySelectorAll('[id^="calc-row-"]');
+  var totalW=0,totalWR=0;
+  var breakdown=[];
+  rows.forEach(function(row){
+    var id=row.id.split('-')[2];
+    var w=parseFloat(document.getElementById('calc-w-'+id)?document.getElementById('calc-w-'+id).value:0)||0;
+    var r=parseFloat(document.getElementById('calc-r-'+id)?document.getElementById('calc-r-'+id).value:0)||0;
+    var g=document.getElementById('calc-g-'+id)?document.getElementById('calc-g-'+id).value:'Goal';
+    totalW+=w;
+    if(r) totalWR+=w*r;
+    breakdown.push({g:g,w:w,r:r});
+  });
+  var compSum=0,compCount=0;
+  for(var i=0;i<COMPS.length;i++){
+    var el=document.getElementById('comp-c-'+i);
+    var v=el?parseFloat(el.value)||0:0;
+    if(v){compSum+=v;compCount++;}
+  }
+  var compAvg=compCount?compSum/compCount:0;
+  var compEl=document.getElementById('comp-avg');
+  if(compEl) compEl.textContent=compAvg?compAvg.toFixed(2):'--';
+  var tw=document.getElementById('total-weight');
+  if(tw){
+    tw.textContent=totalW+'%';
+    tw.style.color=totalW===80?'var(--green)':totalW>80?'var(--burg)':'var(--ink)';
+  }
+  var goalScore=totalW>0?(totalWR/totalW)*0.8:0;
+  var compScore=compAvg*0.2;
+  var final=goalScore+compScore;
+  var sEl=document.getElementById('final-score');
+  var rEl=document.getElementById('final-rating');
+  var bEl=document.getElementById('score-breakdown');
+  var nEl=document.getElementById('score-name');
+  if(nEl) nEl.textContent=document.getElementById('calc-name')?document.getElementById('calc-name').value||'Employee Name':'Employee Name';
+  if(final>0){
+    sEl.textContent=final.toFixed(2);
+    var ri=final>=4.5?['Exceptional','#7ab899']:final>=3.5?['Strong','#8ab0d0']:final>=2.5?['Meets Expectations','rgba(255,255,255,0.6)']:final>=1.5?['Needs Improvement','var(--amber-b)']:['Unsatisfactory','var(--burg-b)'];
+    rEl.textContent=ri[0];rEl.style.color=ri[1];
+  } else {
+    sEl.textContent='--';rEl.textContent='Enter goals to calculate';rEl.style.color='rgba(255,255,255,0.3)';
+  }
+  if(bEl) bEl.innerHTML=breakdown.slice(0,5).map(function(b){return '<div class="spb-item"><div class="spb-lbl">'+b.g.substring(0,16)+'</div><div class="spb-val">'+(b.r||'--')+'</div><div class="spb-w">'+b.w+'%</div></div>';}).join('');
+}
+
+function addCalibRow(){
+  calibN++;
+  var n=calibN;
+  var el=document.createElement('div');
+  el.id='calib-row-'+n;
+  el.style.cssText='display:grid;grid-template-columns:1fr 1fr 80px 110px 100px 40px;gap:8px;align-items:center;padding:8px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;margin-bottom:6px;';
+  el.innerHTML=
+    '<input placeholder="Employee name" style="padding:6px 9px;border:1px solid var(--rule2);border-radius:5px;font-family:\'Source Sans 3\',sans-serif;font-size:12px;outline:none;"/>'+
+    '<input placeholder="Manager" style="padding:6px 9px;border:1px solid var(--rule2);border-radius:5px;font-family:\'Source Sans 3\',sans-serif;font-size:12px;outline:none;"/>'+
+    '<select style="padding:6px 8px;border:1px solid var(--rule2);border-radius:5px;font-family:\'Source Code Pro\',monospace;font-size:11px;outline:none;"><option>--</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>'+
+    '<select style="padding:6px 8px;border:1px solid var(--rule2);border-radius:5px;font-family:\'Source Code Pro\',monospace;font-size:11px;outline:none;"><option>Pending</option><option>Submitted</option><option>Calibrated</option><option>Final</option></select>'+
+    '<select style="padding:6px 8px;border:1px solid var(--rule2);border-radius:5px;font-family:\'Source Code Pro\',monospace;font-size:11px;outline:none;"><option>Final...</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>'+
+    '<button onclick="document.getElementById(\'calib-row-'+n+'\').remove();" style="background:transparent;border:none;cursor:pointer;color:var(--ink5);font-size:15px;">\u00d7</button>';
+  document.getElementById('calib-tracker').appendChild(el);
+}
+
+var ROLE_QS={
+  ops:{title:'Operations Role — Additional Questions',qs:[
+    'Describe your approach to HSE on site this period. What habits or changes did you personally drive?',
+    'Have there been any near-misses, incidents, or unsafe conditions you observed or reported?',
+    'How effectively did you manage your crew or work team? What would they say about working with you?'
+  ]},
+  hr:{title:'HR / People Role — Additional Questions',qs:[
+    'What is one HR process you improved or built this period? What was the business impact?',
+    'How did you balance operational HR demands (payroll, contracts, permits) with strategic work?',
+    'What is still missing from Valentis HR capability that you could help address?'
+  ]},
+  fin:{title:'Finance Role — Additional Questions',qs:[
+    'Were there any month-end close or reporting challenges this period? How did you resolve them?',
+    'Have you identified any financial controls gaps or compliance risks? What did you do?'
+  ]},
+  admin:{title:'Admin / Support Role — Additional Questions',qs:[
+    'Who are your main internal stakeholders and how would they rate your responsiveness and accuracy?',
+    'What process or system could be improved to make your work and the team more effective?'
+  ]}
+};
+function loadRoleQs(){
+  var cat=document.getElementById('sa-category').value;
+  var cont=document.getElementById('sa-role-questions');
+  var body=document.getElementById('sa-rq-body');
+  var ttl=document.getElementById('sa-rq-title');
+  var devN=document.getElementById('sa-dev-num');
+  if(!cat){cont.style.display='none';return;}
+  var d=ROLE_QS[cat];
+  if(!d){cont.style.display='none';return;}
+  ttl.textContent=d.title;
+  body.innerHTML='';
+  d.qs.forEach(function(q,i){
+    var div=document.createElement('div');
+    div.className='fg';
+    div.innerHTML='<label>Question '+(i+1)+'</label><div style="font-size:12.5px;color:var(--ink);margin-bottom:6px;font-weight:600;">'+q+'</div><textarea placeholder="Your answer…"></textarea>';
+    body.appendChild(div);
+  });
+  cont.style.display='block';
+  if(devN) devN.textContent='5';
+}
+
+function setMAR(r){
+  var cols={5:'rgba(107,26,42,0.8)',4:'rgba(61,79,112,0.8)',3:'rgba(107,114,128,0.5)',2:'rgba(122,80,16,0.6)',1:'rgba(107,26,42,0.5)'};
+  for(var i=1;i<=5;i++){
+    var el=document.getElementById('ma-r'+i);
+    if(!el) continue;
+    el.style.background=i===r?cols[r]:'rgba(255,255,255,0.04)';
+    el.style.borderColor=i===r?'rgba(255,255,255,0.3)':'rgba(255,255,255,0.1)';
+  }
+}
+
+function toggleCS(head){
+  var body=head.nextElementSibling;
+  var arrow=head.querySelector('.cs-arrow');
+  var isOpen=body.classList.contains('open');
+  document.querySelectorAll('.cs-body').forEach(function(b){b.classList.remove('open');});
+  document.querySelectorAll('.cs-arrow').forEach(function(a){a.classList.remove('open');});
+  if(!isOpen){body.classList.add('open');arrow.classList.add('open');}
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2800);
+}
+
+(function init(){
+  addSAGoal('Safety \u2014 Zero LTI',25,'Achieve zero Lost Time Injuries on site throughout the review period');
+  addSAGoal('Drilling Output \u2014 Meterage Target',20,'Achieve 90%+ of program meterage target for the period');
+  addSAGoal('Crew Retention',15,'Retain 80%+ of core site crew through the review period');
+  addSAGoal('Development Goal',20,'Complete assigned development activity by agreed deadline');
+  addMAGoal('Safety \u2014 Zero LTI',25);
+  addMAGoal('Drilling Output \u2014 Meterage Target',20);
+  addMAGoal('Crew Retention',15);
+  addMAGoal('Development Goal',20);
+  buildCompRows('comp-rows-ma','comp-ma-');
+  buildCompCalcRows();
+  addCalibRow();addCalibRow();addCalibRow();
+  addCalcRow();addCalcRow();addCalcRow();
+  var today=new Date().toISOString().split('T')[0];
+  ['sa-date','ma-date','ma-sig-date'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=today;});
+})();
+</script>
+</body>
+</html>

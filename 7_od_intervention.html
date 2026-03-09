@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OD Intervention Builder — Valentis OD Tool 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3ef;--surface:#ffffff;--surface2:#f0ede7;--surface3:#e8e4dc;
+  --border:#ddd9d0;--border2:#ccc7bb;
+  --ink:#1c1a16;--ink2:#2e2c27;--ink3:#57534a;--ink4:#8a8478;--ink5:#b8b2a8;
+  --sienna:#9b3a1a;--sienna2:#b44420;--sienna3:#c44e28;
+  --sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.22);
+  --slate:#2c3e50;--slate-dim:rgba(44,62,80,0.07);--slate-border:rgba(44,62,80,0.2);
+  --gold:#8a6914;--gold-dim:rgba(138,105,20,0.07);--gold-border:rgba(138,105,20,0.22);
+  --green:#2d6a4f;--green-dim:rgba(45,106,79,0.07);--green-border:rgba(45,106,79,0.22);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--sienna3),var(--sienna),rgba(155,58,26,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sienna3);background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--sienna3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(155,58,26,0.15);border-color:rgba(155,58,26,0.35);color:#e8a07a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--sienna)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#e8a07a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--sienna);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--sienna)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--sienna);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-slate{background:var(--slate-dim);color:var(--slate);border:1px solid var(--slate-border)}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.sienna{background:var(--sienna-dim);border-color:var(--sienna);color:var(--ink2)}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--sienna);padding:16px 20px;margin:16px 0;background:var(--sienna-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6;font-weight:400}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px;color:#f5f0e8}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:0;flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--sienna);border-bottom-color:var(--sienna);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* INTERVENTION BUILDER */
+.ib-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px}
+.ib-step{margin-bottom:18px}
+.ib-step-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;display:block}
+.ib-opts{display:flex;gap:6px;flex-wrap:wrap}
+.ib-opt{padding:7px 16px;border-radius:2px;border:1px solid rgba(255,255,255,0.1);font-size:12.5px;color:rgba(255,255,255,0.45);cursor:pointer;transition:all .13s;font-family:var(--fb);font-weight:400}
+.ib-opt:hover{border-color:rgba(155,58,26,0.4);color:#e8a07a}
+.ib-opt.sel{background:rgba(155,58,26,0.15);border-color:var(--sienna);color:#e8a07a;font-weight:600}
+.ib-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-sienna{background:var(--sienna);color:#fff}
+.btn-sienna:hover{background:var(--sienna2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:var(--sienna3);color:#e8a07a}
+/* LIBRARY CARDS */
+.int-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;margin-bottom:10px}
+.int-card-header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.int-card-title{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink)}
+.int-card-body{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75}
+.int-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">OD Tool 7 / 9</div>
+    <div class="sb-title">OD Intervention<br><em>Builder</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>What is an OD Intervention?</div>
+    <div class="nav-item" onclick="showPage('taxonomy',this)"><span class="nav-num">02</span>Intervention Taxonomy</div>
+    <div class="nav-item" onclick="showPage('library',this)"><span class="nav-num">03</span>Intervention Library</div>
+    <div class="nav-item" onclick="showPage('select',this)"><span class="nav-num">04</span>Selecting the Right Intervention</div>
+    <div class="nav-item" onclick="showPage('design',this)"><span class="nav-num">05</span>Intervention Design Principles</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">06</span>Valentis 2026 Interventions</div>
+    <div class="nav-item" onclick="showPage('builder',this)"><span class="nav-num">07</span>Live Intervention Builder</div>
+    <div class="nav-item" onclick="showPage('measure',this)"><span class="nav-num">08</span>Measuring Intervention Impact</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Organisation Design &amp; Development</strong>
+      Tool 7 of 9 · OD Intervention Builder<br>
+      <span style="color:rgba(255,255,255,0.12)">The right intervention solves the right problem. The wrong one adds cost and creates the illusion of progress.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">OD Tool 7 / 9 — OD Intervention Builder</div>
+    <h1 class="page-title">OD Intervention<br><em>Builder</em></h1>
+    <p class="page-desc">An OD intervention is any deliberate action taken to improve how an organisation functions — its structure, its processes, its culture, its capability, or its relationships. Knowing which intervention to use, when, and how is the core HRBP design skill. Using the wrong one is the most common OD failure.</p>
+  </div>
+  <div class="pull-quote">
+    <p>"Most organisational problems are treated with the intervention the HRBP knows best — not the intervention the problem requires. The result is a well-executed solution to the wrong problem."</p>
+    <cite>OD Practice Principle</cite>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What Makes Something an OD Intervention?</div>
+      <div class="card-body" style="margin-bottom:12px">Not every HR activity is an OD intervention. The distinction matters because OD interventions require a diagnostic process, a clear problem statement, a design phase, and a measurement plan. HR activities do not necessarily require any of these.</div>
+      <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr 1fr">
+          <div style="padding:14px 16px;border-right:1px solid var(--border)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px">HR Activity</div>
+            <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— Running a recruitment campaign</div>
+              <div>— Processing payroll accurately</div>
+              <div>— Administering a performance review</div>
+              <div>— Updating an employment contract</div>
+              <div>— Delivering a compliance training</div>
+            </div>
+          </div>
+          <div style="padding:14px 16px;background:var(--sienna-dim)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">OD Intervention</div>
+            <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— Redesigning the driller pipeline to fix conversion rates</div>
+              <div>— Establishing the SM peer forum to improve coordination</div>
+              <div>— Implementing a G4 accountability framework to own trainee outcomes</div>
+              <div>— Running a month-3 check-in to diagnose trainee attrition</div>
+              <div>— Coaching the Indonesia SM through a resistance pattern</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The Three Tests of a Good Intervention</div>
+      <div class="card-body" style="margin-bottom:12px">Before designing any intervention, the HRBP must be able to answer all three questions. If any answer is unclear, the intervention is not ready to proceed.</div>
+      <div style="display:grid;gap:8px">
+        <div style="padding:14px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Test 1 — Problem clarity</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">"What specific problem is this intervention solving — and how do we know it is the root cause, not a symptom?" If the answer is "low morale" or "poor performance," the diagnosis is not complete.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Test 2 — Intervention fit</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">"Is this intervention designed to solve this type of problem — or is it the intervention we default to because it's familiar?" A team-building session does not fix an accountability gap. An engagement survey does not fix a structural coordination failure.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Test 3 — Measurable outcome</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">"How will we know the intervention worked — in 30 days, 90 days, 6 months?" If the outcome cannot be observed or measured, the intervention has no accountability mechanism. And the HRBP cannot demonstrate impact to the COO.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">The HRBP as OD Practitioner</div>
+    <table class="dtable">
+      <thead><tr><th>OD role</th><th>What it requires</th><th>What it does NOT mean</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--sienna)">Diagnoses before designing</td><td>Uses health data (Tool 5), structural analysis (Tools 2–4), and stakeholder intelligence to understand root causes before selecting or designing an intervention</td><td>Does not assume the intervention type before the diagnosis is complete. "We need a training programme" is a conclusion, not a diagnosis.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Selects from a repertoire</td><td>Has a working knowledge of the full range of OD interventions — structural, process, human process, and technology — and can match intervention type to problem type</td><td>Does not have a single favourite intervention (engagement survey, away-day, coaching) that gets applied to every problem regardless of fit.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Designs for context</td><td>Adapts the intervention to the specific organisation, culture, and maturity level. A large-group intervention that works in a 500-person corporate will not work the same way in a 42-person multi-country mining exploration company.</td><td>Does not lift frameworks from textbooks or other organisations and apply them without calibration.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Measures and learns</td><td>Defines success metrics before the intervention begins. Reviews results at 30/90 days. Adjusts or stops the intervention if it is not producing the intended effect.</td><td>Does not declare success based on completion ("we ran the workshop") rather than outcome ("trainee attrition dropped from 42% to 22% at month 3").</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="page-taxonomy" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Intervention Taxonomy</div>
+    <h1 class="page-title">Intervention<br><em>Taxonomy</em></h1>
+    <p class="page-desc">OD interventions are classified into four families. Each family addresses a different class of organisational problem. Selecting the right family before designing the specific intervention is the first act of OD diagnosis.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">The Four Intervention Families — Adapted for Valentis</div>
+    <div class="vx-title">Structural · Process · Human Process · Technostructural</div>
+    <div class="vx-body">These four families map to the four root causes of organisational dysfunction. Most problems at Valentis have a primary family and a secondary family. The intervention must address both — or it will solve half the problem and leave the other half to resurface.</div>
+  </div>
+  <div style="display:grid;gap:8px">
+
+    <div style="padding:22px 26px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:200px 1fr 1fr;gap:20px;align-items:start">
+      <div>
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--sienna);margin-bottom:4px;line-height:1">Family 1</div>
+        <div style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:6px">Structural Interventions</div>
+        <span class="chip chip-sienna">Organisation design</span>
+        <div style="margin-top:8px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Address problems rooted in how the organisation is configured — reporting lines, role definitions, spans, layers, authority boundaries.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Problem signals</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>— Coordination failures that persist despite process and cultural fixes</div>
+          <div>— Spans that prevent effective management quality</div>
+          <div>— Accountability gaps where no role owns an outcome</div>
+          <div>— Strategy that cannot be executed in the current structure</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:6px">Valentis examples</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>— Group Ops Lead role creation (span relief + coordination)</div>
+          <div>— G4 role profile update (ghost accountability fix)</div>
+          <div>— HR Coordinator hire (Group HR capacity)</div>
+          <div>— Country 5 SM role design before entry</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:22px 26px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:200px 1fr 1fr;gap:20px;align-items:start">
+      <div>
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--sienna);margin-bottom:4px;line-height:1">Family 2</div>
+        <div style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:6px">Process Interventions</div>
+        <span class="chip chip-slate">Systems &amp; workflows</span>
+        <div style="margin-top:8px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Address problems rooted in how work flows through the organisation — decision processes, information flows, handoffs, review cycles, and formal mechanisms.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Problem signals</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>— Decisions that are slow or inconsistent despite clear roles</div>
+          <div>— Information that does not reach people who need it</div>
+          <div>— Processes that produce inconsistent outcomes across countries</div>
+          <div>— Review cycles that add no value or arrive too late to act</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:6px">Valentis examples</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>— SM peer forum (cross-country information flow)</div>
+          <div>— Monthly pipeline tracking process (talent visibility)</div>
+          <div>— Month-3 trainee check-in (structured touch-point)</div>
+          <div>— Quarterly group talent review cadence</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:22px 26px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:200px 1fr 1fr;gap:20px;align-items:start">
+      <div>
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--sienna);margin-bottom:4px;line-height:1">Family 3</div>
+        <div style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:6px">Human Process Interventions</div>
+        <span class="chip chip-gold">People &amp; culture</span>
+        <div style="margin-top:8px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Address problems rooted in how people work together — relationships, behaviours, leadership quality, psychological safety, team dynamics, and culture.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Problem signals</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>— Leadership behaviour inconsistent with stated expectations</div>
+          <div>— Trust breakdown between individuals or teams</div>
+          <div>— Culture that suppresses problem-raising or candid feedback</div>
+          <div>— Interpersonal conflict blocking effective collaboration</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:6px">Valentis examples</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>— Indonesia SM stakeholder coaching (resistance pattern)</div>
+          <div>— Myanmar supervisor coaching programme (K+A gap)</div>
+          <div>— COO–SM authority boundary conversation (relational clarity)</div>
+          <div>— G4 development conversations (leadership quality cascade)</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:22px 26px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:200px 1fr 1fr;gap:20px;align-items:start">
+      <div>
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--sienna);margin-bottom:4px;line-height:1">Family 4</div>
+        <div style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:6px">Technostructural Interventions</div>
+        <span class="chip chip-green">Systems &amp; tools</span>
+        <div style="margin-top:8px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Address problems that require new or redesigned tools, systems, or physical/digital infrastructure to enable the organisation to function differently.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Problem signals</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>— People lack the tools to do work the new structure requires</div>
+          <div>— Data needed for decisions does not exist or is inaccessible</div>
+          <div>— Processes are constrained by manual workarounds</div>
+          <div>— Cross-country coordination is hindered by system fragmentation</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:6px">Valentis examples</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>— Group talent database (pipeline visibility tool)</div>
+          <div>— This OD toolkit (capability infrastructure)</div>
+          <div>— Unified HR reporting template across all countries</div>
+          <div>— G1–G4 development milestone tracking system</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">Most Problems Require Interventions from Multiple Families</div>
+    <div class="card-body" style="margin-bottom:12px">The four families are not mutually exclusive. The most significant organisational problems at Valentis require a coordinated intervention across two or three families. Choosing only one family's intervention treats the symptom without addressing the system.</div>
+    <table class="dtable">
+      <thead><tr><th>Valentis problem</th><th>Primary family</th><th>Secondary family</th><th>Why both are needed</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Month-3 trainee attrition</td><td><span class="chip chip-sienna">Structural</span></td><td><span class="chip chip-gold">Human Process</span></td><td>The accountability gap (no G4 owner) is structural. But even after fixing the role design, G4 drillers need coaching to have effective development conversations. The structural fix without the human process fix will produce accountability on paper but not in practice.</td></tr>
+        <tr><td style="font-weight:600">Indonesia programme delivery gap</td><td><span class="chip chip-sienna">Structural</span></td><td><span class="chip chip-slate">Process</span></td><td>Vacancies (structural) are the primary cause. But even when filled, Indonesia needs a clearer escalation and recovery process — so the next shortfall is caught at day 10, not day 40.</td></tr>
+        <tr><td style="font-weight:600">Cross-country coordination failure</td><td><span class="chip chip-slate">Process</span></td><td><span class="chip chip-green">Technostructural</span></td><td>The SM peer forum (process) creates the mechanism. But without a shared talent database and common reporting template (technostructural), the forum lacks the data needed to drive meaningful cross-country decisions.</td></tr>
+        <tr><td style="font-weight:600">Indonesia SM resistance</td><td><span class="chip chip-gold">Human Process</span></td><td><span class="chip chip-sienna">Structural</span></td><td>The resistance is a leadership and relational issue (human process). But it is also triggered by genuine structural ambiguity — until the Ops Lead authority boundary is structurally defined, coaching the SM's mindset alone will not resolve the underlying concern.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="page-library" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Intervention Library</div>
+    <h1 class="page-title">Intervention<br><em>Library</em></h1>
+    <p class="page-desc">Twenty interventions across the four families — each with a definition, the problem it solves, the conditions required for it to work, and a Valentis application note. The library is the HRBP's design reference: consult it before selecting an approach.</p>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('lib-s',this)">Structural (5)</div>
+    <div class="tab" onclick="showTab('lib-p',this)">Process (5)</div>
+    <div class="tab" onclick="showTab('lib-h',this)">Human Process (5)</div>
+    <div class="tab" onclick="showTab('lib-t',this)">Technostructural (5)</div>
+  </div>
+
+  <div class="tab-body active" id="tab-lib-s">
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Role Redesign</div><div class="int-meta"><span class="chip chip-sienna">Structural</span><span class="chip chip-muted">2–4 weeks</span></div></div>
+      <div class="int-card-body">Rewriting a role profile to assign explicit accountabilities, define authority limits, and remove ghost or dual ownership. The most frequently needed and most frequently skipped OD intervention. <strong>Problem it solves:</strong> Ghost accountability, dual ownership, misaligned expectations. <strong>Conditions required:</strong> The structural gap must be confirmed — not a capability or behaviour issue. COO must be willing to communicate the new accountabilities clearly to affected parties. <strong style="color:var(--sienna)">Valentis:</strong> G4 Senior Driller profile updated to include trainee conversion rate as a formal accountability. COO communicates change to all G4 drillers directly. Linked to PM framework update (PM Tools 1–2).</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Span Restructure</div><div class="int-meta"><span class="chip chip-sienna">Structural</span><span class="chip chip-muted">1–3 months</span></div></div>
+      <div class="int-card-body">Deliberately adjusting the number of direct reports to a manager — either by adding a coordination layer, merging reporting lines, or creating new supervisory roles — to bring the span within the effective range for the role complexity. <strong>Problem it solves:</strong> Management quality decline due to excessive span; decision bottlenecks at an overwhelmed leader. <strong>Conditions required:</strong> Span analysis (Tool 4) confirming the issue. New role profiles designed before the restructure is announced. <strong style="color:var(--sienna)">Valentis:</strong> Group Ops Lead creation reduces COO effective span from 6 to 4. Sequenced before Country 5 entry.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Job Architecture Review</div><div class="int-meta"><span class="chip chip-sienna">Structural</span><span class="chip chip-muted">4–8 weeks</span></div></div>
+      <div class="int-card-body">Reviewing the grade structure, job family definitions, and progression pathways across the organisation to ensure they are internally consistent and externally competitive. <strong>Problem it solves:</strong> Grade inflation, misaligned compensation, unclear career pathways, and the "grade as reward" pattern where promotions happen without genuine role change. <strong>Conditions required:</strong> Full role inventory. Compensation data. Clear grade definitions. <strong style="color:var(--sienna)">Valentis:</strong> G1–G8 grade architecture is defined (Tool 3). The next step is ensuring all current role holders are correctly graded — including Zaw M. (Myanmar G3, flagged below minimum) and the incoming Group Ops Lead (confirmed at G6).</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Succession Planning</div><div class="int-meta"><span class="chip chip-sienna">Structural</span><span class="chip chip-muted">Ongoing</span></div></div>
+      <div class="int-card-body">Systematically identifying and developing candidates to fill critical roles when they become vacant — before the vacancy occurs. Distinguished from talent management by its focus on critical role continuity rather than individual development. <strong>Problem it solves:</strong> Operational disruption from unexpected vacancies in key roles; over-reliance on single individuals. <strong>Conditions required:</strong> Critical roles identified. Development plans active for named successors. <strong style="color:var(--sienna)">Valentis:</strong> Zero succession cover for any G5 role. Laos G3 development activation June 2026. G5 successor identification for Myo H. and Wirawan S. by Q3 2026.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Coordination Mechanism Design</div><div class="int-meta"><span class="chip chip-sienna">Structural</span><span class="chip chip-muted">4–6 weeks</span></div></div>
+      <div class="int-card-body">Creating formal mechanisms — committees, forums, liaison roles, shared functions — that enable coordination across structural boundaries without adding management layers. <strong>Problem it solves:</strong> Coordination failures between country, functional, or operational units that persist despite good intentions. <strong>Conditions required:</strong> Structural diagnosis confirms the problem is coordination, not capability or culture. Leadership commitment to the mechanism's authority and cadence. <strong style="color:var(--sienna)">Valentis:</strong> SM peer forum (quarterly, COO-chaired initially, Ops Lead-chaired when in post). Group talent review (quarterly, HRBP-run). Both are coordination mechanisms — not management structures.</div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-lib-p">
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">After-Action Review</div><div class="int-meta"><span class="chip chip-slate">Process</span><span class="chip chip-muted">Half-day</span></div></div>
+      <div class="int-card-body">A structured debrief process run after a project, programme, or significant event to capture what worked, what did not, and what should change next time. Distinct from a post-mortem: the focus is learning and improvement, not accountability for failure. <strong>Problem it solves:</strong> Organisational learning that is informal, inconsistent, and dependent on individual memory rather than documented practice. <strong>Conditions required:</strong> Facilitated structure. Psychological safety to name failures without penalty. Leadership commitment to act on outputs. <strong style="color:var(--sienna)">Valentis:</strong> Quarterly AAR for programmes above/below plan. Two learnings per quarter shared to all sites. Addresses D7 Renewal health gap directly.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Decision Rights Clarification (RACI)</div><div class="int-meta"><span class="chip chip-slate">Process</span><span class="chip chip-muted">2–3 weeks</span></div></div>
+      <div class="int-card-body">Mapping who is Responsible, Accountable, Consulted, and Informed for each critical decision or process. Resolves ambiguity about who makes decisions, who inputs, and who is simply kept in the loop. <strong>Problem it solves:</strong> Slow decisions, escalation of decisions that should be made at a lower level, diffuse accountability, and post-decision disputes about who was consulted. <strong>Conditions required:</strong> Process owner identified for each RACI. Leader willing to communicate and uphold the decision rights. <strong style="color:var(--sienna)">Valentis:</strong> HR compliance: Indonesia SM vs Group HR RACI needed. Programme recovery ownership: SM vs COO RACI needed. See OD Tool 9 — Decision Rights and Governance Map.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Onboarding Redesign</div><div class="int-meta"><span class="chip chip-slate">Process</span><span class="chip chip-muted">3–6 weeks</span></div></div>
+      <div class="int-card-body">Redesigning the structured onboarding process for a role type to improve time-to-productivity, reduce early attrition, and build psychological safety during the high-vulnerability early months. <strong>Problem it solves:</strong> High early attrition, slow ramp-up, and trainees or new hires who leave before they have enough context to make an informed decision about staying. <strong>Conditions required:</strong> Root cause analysis of early exits. Role-holder commitment to structured check-in conversations (not just administrative onboarding). <strong style="color:var(--sienna)">Valentis:</strong> Month-3 trainee check-in process (three structured questions: what is working, what is difficult, what support do you need). Owned by G4 driller, documented, mandatory. Directly addresses Myanmar attrition root cause.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Performance Review Redesign</div><div class="int-meta"><span class="chip chip-slate">Process</span><span class="chip chip-muted">4–8 weeks</span></div></div>
+      <div class="int-card-body">Redesigning the performance review process — cadence, format, metrics, and conversation quality — to ensure it drives genuine accountability and development rather than administrative compliance. <strong>Problem it solves:</strong> Performance reviews that measure activity rather than outcome; reviews that happen too infrequently to influence behaviour; metrics that do not reflect the role's real accountability. <strong>Conditions required:</strong> Updated role profiles (accountabilities defined before metrics can be set). Manager capability to hold effective performance conversations. <strong style="color:var(--sienna)">Valentis:</strong> G4 performance metrics updated to include trainee conversion rate. SM performance review updated to include development conversation quality. Already embedded in PM Tool 1.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Communication Cascade Design</div><div class="int-meta"><span class="chip chip-slate">Process</span><span class="chip chip-muted">1–2 weeks</span></div></div>
+      <div class="int-card-body">Designing a structured mechanism for strategic information to travel from senior leadership to all levels of the organisation consistently, without distortion, and with a feedback loop. <strong>Problem it solves:</strong> Strategic direction that is clear at executive level but absent at operational level; inconsistent messages received by different parts of the organisation depending on their manager. <strong>Conditions required:</strong> Leadership commitment to consistent messaging. SM capability and willingness to have structured team conversations. <strong style="color:var(--sienna)">Valentis:</strong> SM-led half-yearly team briefings using HRBP-prepared talking points. Addresses D1 Direction health gap. Each SM holds a structured team conversation on group direction — not an informal mention in a site meeting.</div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-lib-h">
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Executive Coaching</div><div class="int-meta"><span class="chip chip-gold">Human Process</span><span class="chip chip-muted">3–6 months</span></div></div>
+      <div class="int-card-body">A structured 1:1 development relationship between a leader and an internal or external coach, focused on specific behavioural or leadership challenges. Distinct from mentoring (advice-giving) and from performance management (managing a gap). <strong>Problem it solves:</strong> Leadership behaviour that is limiting the leader's effectiveness or the organisation's performance — where the leader has genuine motivation to develop and the gap is behavioural, not structural. <strong>Conditions required:</strong> The leader must be willing. The behaviour change must be achievable within the coaching timeframe. Coaching cannot fix a structural problem or a motivation problem. <strong style="color:var(--sienna)">Valentis:</strong> Indonesia SM — if resistance pattern is confirmed as a leadership style issue rather than a structural ambiguity, coaching is the right intervention post-authority-boundary conversation.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Team Effectiveness Intervention</div><div class="int-meta"><span class="chip chip-gold">Human Process</span><span class="chip chip-muted">1–2 days + follow-up</span></div></div>
+      <div class="int-card-body">A structured facilitated session with a team to improve working relationships, clarify shared purpose, establish ways of working, or rebuild trust following a period of conflict or change. Not an away-day. The intervention has a defined problem statement, a facilitated process, and measurable outputs. <strong>Problem it solves:</strong> Team-level dysfunction — low trust, poor communication, unclear shared purpose — that is creating performance risk. <strong>Conditions required:</strong> Structural and role issues are resolved first. The team has the psychological safety to engage honestly. <strong style="color:var(--sienna)">Valentis:</strong> SM peer forum inaugural session designed as a structured team effectiveness intervention — not just an information-sharing meeting. Establishes shared purpose, ways of working, and the peer accountability norms for the forum going forward.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Supervisor Coaching Programme</div><div class="int-meta"><span class="chip chip-gold">Human Process</span><span class="chip chip-muted">6–12 weeks</span></div></div>
+      <div class="int-card-body">A structured group learning programme building the coaching, feedback, and development conversation skills of a supervisor cohort — typically G4-level leaders who are expected to develop the people below them but have had no training in how to do so. <strong>Problem it solves:</strong> Leaders who manage tasks but cannot develop people; trainees who do not receive effective development support because their G4 supervisor does not know how to provide it. <strong>Conditions required:</strong> Accountability for development outcomes formalised in role profile first. Programme content calibrated to real Valentis development conversations — not generic coaching theory. <strong style="color:var(--sienna)">Valentis:</strong> Myanmar supervisor coaching programme Q1 2026. Three supervisors with confirmed Knowledge + Ability gap. Focuses on: development conversation structure, month-3 check-in technique, and trainee feedback skills.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Stakeholder Influence Campaign</div><div class="int-meta"><span class="chip chip-gold">Human Process</span><span class="chip chip-muted">4–12 weeks</span></div></div>
+      <div class="int-card-body">A structured approach to shifting a high-power stakeholder from resistance or scepticism to support — through targeted conversations, evidence, peer influence, and addressing the specific concerns driving the resistance. <strong>Problem it solves:</strong> Change initiatives blocked or undermined by a key stakeholder whose resistance has not been addressed at root cause. <strong>Conditions required:</strong> Root cause of resistance identified (authority threat, information gap, trust deficit, genuine substantive concern). Influence strategy matched to root cause. <strong style="color:var(--sienna)">Valentis:</strong> Indonesia SM conversion strategy — four-step: authority boundary clarification by COO, peer influence from Thailand SM, evidence of Ops Lead coordination value (not management), retention renewal conversation linked to growth story.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Psychological Safety Building</div><div class="int-meta"><span class="chip chip-gold">Human Process</span><span class="chip chip-muted">Ongoing</span></div></div>
+      <div class="int-card-body">A set of deliberate leadership and cultural practices designed to increase team members' confidence that they can speak up, ask questions, and raise concerns without fear of personal risk. Not a one-off training — a sustained change in leader behaviour modelled from the top. <strong>Problem it solves:</strong> Cultures where problems are not raised until they become crises; near-miss under-reporting; early exit of trainees who do not feel able to ask for support. <strong>Conditions required:</strong> Leader modelling is essential — psychological safety cannot be built through training alone if leaders do not demonstrate it. <strong style="color:var(--sienna)">Valentis:</strong> Month-3 trainee check-in is a psychological safety intervention. G4 coaches modelling: "there are no stupid questions in this conversation." Reduces month-3 attrition by giving trainees a structured, safe moment to surface concerns before leaving.</div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-lib-t">
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Talent Data System</div><div class="int-meta"><span class="chip chip-green">Technostructural</span><span class="chip chip-muted">4–8 weeks</span></div></div>
+      <div class="int-card-body">A single source of truth for talent pipeline data — grade distribution, succession readiness, development plan status, attrition risk flags — accessible across the organisation and maintained by Group HR. <strong>Problem it solves:</strong> Talent decisions made on incomplete data; COO unable to see group talent picture; cross-country pipeline imbalances invisible until they become operational crises. <strong>Conditions required:</strong> Data collection process agreed with all SMs. Quarterly update cadence. HRBP owns the database and presents to COO. <strong style="color:var(--sienna)">Valentis:</strong> Group talent database — covers G1–G5 across all four countries. Updated quarterly. Used in group talent review and SM peer forum. The data infrastructure that makes coordination interventions effective.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">HR Reporting Standardisation</div><div class="int-meta"><span class="chip chip-green">Technostructural</span><span class="chip chip-muted">2–4 weeks</span></div></div>
+      <div class="int-card-body">Creating a common reporting template and cadence across all country operations — ensuring Group HR receives consistent, comparable data from all sites and can produce reliable group-level analysis. <strong>Problem it solves:</strong> Group HR data that is unreliable because each country reports differently; inability to identify group-level patterns (attrition, pipeline gaps, compliance) from country-level data alone. <strong>Conditions required:</strong> SM buy-in to standard template (or COO direction to comply). HRBP designs template around the decisions it needs to inform — not around what is easy to collect. <strong style="color:var(--sienna)">Valentis:</strong> Unified monthly HR data submission from all four SMs — headcount, attrition, trainee pipeline stage, vacancies, compliance flags. Group HR compiles group view monthly. Feeds quarterly talent review.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Development Milestone Tracker</div><div class="int-meta"><span class="chip chip-green">Technostructural</span><span class="chip chip-muted">2–3 weeks</span></div></div>
+      <div class="int-card-body">A structured tool that tracks each individual in the development pipeline (G1 → G2 → G3 → G4) against defined competency milestones — making pipeline progress visible, flagging stalled development, and enabling the HRBP to intervene before a development failure becomes a vacancy. <strong>Problem it solves:</strong> Development pipeline that is invisible until someone is promoted or exits; development conversations that happen informally and are not tracked; G3→G4 cycles that exceed 24 months without detection. <strong style="color:var(--sienna)">Valentis:</strong> G1–G4 tracker across all countries. Each trainee has a named G4 sponsor, a milestone plan, and a quarterly status update. Laos and Myanmar pipelines prioritised for 2026 setup.</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">HR Toolkit Infrastructure</div><div class="int-meta"><span class="chip chip-green">Technostructural</span><span class="chip chip-muted">Ongoing build</span></div></div>
+      <div class="int-card-body">A structured set of tools — frameworks, diagnostics, templates, and calculators — that enable the HRBP to deliver consistent, high-quality OD and HR work across the organisation without reinventing the approach for each situation. <strong>Problem it solves:</strong> HR that is reactive, inconsistent, and dependent on individual memory rather than codified practice; inability to scale HR capability as the organisation grows. <strong>Conditions required:</strong> HRBP investment in building and maintaining the toolkit. COO visibility of the toolkit as a strategic asset — not an administrative exercise. <strong style="color:var(--sienna)">Valentis:</strong> This toolkit — 37+ tools across 5 departments to date. The most comprehensive technostructural HR intervention in progress at Valentis. Directly addresses D7 Renewal health gap (systemic vs personality-dependent capability).</div>
+    </div>
+    <div class="int-card">
+      <div class="int-card-header"><div class="int-card-title">Role Profile Library</div><div class="int-meta"><span class="chip chip-green">Technostructural</span><span class="chip chip-muted">4–6 weeks</span></div></div>
+      <div class="int-card-body">A maintained library of all current role profiles — accessible to managers and employees — ensuring that accountability and authority are documented and visible, not held informally in the HRBP's head or scattered across email threads. <strong>Problem it solves:</strong> Accountability ambiguity driven by role profiles that are out of date, inaccessible, or non-existent; onboarding of new role holders who have no written reference for what their role requires. <strong>Conditions required:</strong> All active roles have a current profile. Review trigger process in place (role changes, annual audit). <strong style="color:var(--sienna)">Valentis:</strong> OD Tool 3 provides the architecture and the G1–G8 grade profiles. The next step is completing individual role profiles for all current role holders and publishing them as a maintained library.</div>
+    </div>
+  </div>
+</div>
+
+<div id="page-select" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Selecting the Right Intervention</div>
+    <h1 class="page-title">Selecting the<br><em>Right Intervention</em></h1>
+    <p class="page-desc">The most consequential OD decision is not how to design the intervention — it is whether this is the right intervention for this problem. This section provides the diagnostic framework for intervention selection.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">The Selection Framework — Four Diagnostic Questions</div>
+    <div class="card-body" style="margin-bottom:14px">Answer these four questions in sequence before selecting an intervention. Skipping any question increases the probability of selecting the wrong intervention type.</div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:16px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:40px 1fr;gap:14px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--sienna);line-height:1">Q1</div>
+        <div>
+          <div style="font-weight:700;color:var(--ink);font-size:14px;margin-bottom:4px">What is the root cause? (Not the symptom)</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">State the problem at root cause level — not the presenting symptom. "Low morale" is a symptom. "G4 drillers have no formal accountability for trainee development outcomes, so they default to task management rather than coaching" is a root cause. The intervention must address the root cause. If the root cause is structural, a human process intervention will not fix it. If the root cause is behavioural, a structural intervention will not fix it.</div>
+        </div>
+      </div>
+      <div style="padding:16px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:40px 1fr;gap:14px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--sienna);line-height:1">Q2</div>
+        <div>
+          <div style="font-weight:700;color:var(--ink);font-size:14px;margin-bottom:4px">Which intervention family addresses this root cause?</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Match the root cause to the family. Structural root cause → Structural intervention. Behavioural root cause → Human Process intervention. Process root cause → Process intervention. Note which families are secondary — because complex problems require multi-family intervention. A single-family approach to a multi-root-cause problem will be partially effective at best.</div>
+        </div>
+      </div>
+      <div style="padding:16px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:40px 1fr;gap:14px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--sienna);line-height:1">Q3</div>
+        <div>
+          <div style="font-weight:700;color:var(--ink);font-size:14px;margin-bottom:4px">What are the enabling conditions — and do they exist?</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Every intervention has conditions that must be present for it to work. Coaching requires the coachee's genuine willingness. Team effectiveness interventions require psychological safety. Structural interventions require COO authority to communicate the new design. If the enabling conditions do not exist, the intervention should not proceed — or the conditions must be created first (which is itself an intervention).</div>
+        </div>
+      </div>
+      <div style="padding:16px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:40px 1fr;gap:14px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--sienna);line-height:1">Q4</div>
+        <div>
+          <div style="font-weight:700;color:var(--ink);font-size:14px;margin-bottom:4px">What does success look like — and when?</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Define the measurable outcome before the intervention begins. 30-day indicator: is the intervention being implemented as designed? 90-day indicator: is the root cause changing? 6-month indicator: is the business outcome improving? If the outcome cannot be observed or measured, the intervention has no accountability mechanism and the HRBP cannot demonstrate impact.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Intervention Selection — Common Mismatches</div>
+    <div class="card-body" style="margin-bottom:12px">These are the most common intervention selection errors in organisations of Valentis's profile. Each represents a well-intentioned but mismatched response that fails to address the root cause.</div>
+    <table class="dtable">
+      <thead><tr><th>Presenting problem</th><th>Common wrong choice</th><th>Why it fails</th><th>Right choice</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Trainee attrition at month 3</td><td>Engagement survey / focus group</td><td>Produces data about how trainees feel — which is already known. Does not fix the accountability gap or the absence of a structured check-in process.</td><td>Role redesign (G4 accountability) + onboarding redesign (month-3 check-in) + rewards review (C&amp;B)</td></tr>
+        <tr><td style="font-weight:600">Indonesia programme delivery gap</td><td>Performance management conversation with SM</td><td>The root cause is 3 G3 vacancies — not SM performance. Managing a structural problem as a people problem creates resentment and does not fill the vacancies.</td><td>Emergency G3 recruitment + programme recovery process (RACI) + SM acknowledgement that structural gap is being addressed</td></tr>
+        <tr><td style="font-weight:600">Cross-country standards inconsistency</td><td>Policy update / compliance email</td><td>Sends new policy to SMs who are already inconsistently applying existing policy. The problem is no coordination mechanism — not awareness of the standard.</td><td>Coordination mechanism design (SM peer forum + Ops Lead) + HR reporting standardisation</td></tr>
+        <tr><td style="font-weight:600">COO overwhelmed by decisions</td><td>COO time management coaching</td><td>Treats a structural span problem as an individual capacity problem. Coaching the COO to prioritise does not change the fact that 6 complex reporting relationships is structurally unsustainable.</td><td>Span restructure (Group Ops Lead creation) + decision rights clarification (RACI for SM vs COO decisions)</td></tr>
+        <tr><td style="font-weight:600">Laos succession risk</td><td>Retirement party planning / phased exit programme</td><td>Manages the departure without building the pipeline. The problem is -1 G4 by 2027, not the process of departure itself.</td><td>Succession planning (G3 development plans active June 2026) + cross-country mobility assessment</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="page-design" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Intervention Design Principles</div>
+    <h1 class="page-title">Intervention Design<br><em>Principles</em></h1>
+    <p class="page-desc">Selecting the right intervention family is necessary but not sufficient. The intervention must also be designed correctly for the specific context, maturity level, and stakeholder landscape at Valentis. These principles govern how the HRBP designs interventions — not just which type to choose.</p>
+  </div>
+  <div style="display:grid;gap:8px">
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr;gap:16px">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D1</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Design for minimum viable change</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The intervention changes only what needs to change. It does not redesign processes that are working to fix processes that are broken. Every additional element of an intervention carries implementation cost — resistance, distraction, confusion, and capacity — that must be justified by a corresponding benefit. At Valentis with 42 people and stretched operational capacity, interventions must be lean and targeted. A comprehensive OD programme that consumes SM attention for three months is worse than a focused 4-week intervention that solves one problem cleanly.</div>
+      </div>
+    </div>
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr;gap:16px">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D2</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Sequence interventions, don't stack them</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Multiple interventions running simultaneously compete for attention and obscure cause-and-effect. If trainee attrition and coordination failure and succession risk are all active problems, sequence the interventions — highest business impact first. The HRBP's 2026 intervention sequence at Valentis: (1) G3 vacancies emergency recruitment → (2) G4 accountability role redesign → (3) Laos development plans → (4) SM peer forum → (5) Group Ops Lead. Not all at once. The order matters because some interventions depend on others to be in place first.</div>
+      </div>
+    </div>
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr;gap:16px">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D3</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Design for the actual stakeholder, not the ideal one</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">An intervention designed for a highly capable, highly motivated, psychologically safe leader will fail when applied to a resistant stakeholder operating in a low-trust environment. The Indonesia SM resistance is a design constraint — not a reason to abandon the intervention. Design the stakeholder engagement sequence so that the Indonesia SM experiences the intervention as addressing a concern (authority ambiguity), not imposing a threat. Design with the actual stakeholder's psychology in mind. The Thailand SM will engage differently from the Laos SM from the Myanmar SM — and the intervention design must account for all four.</div>
+      </div>
+    </div>
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr;gap:16px">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D4</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Build in early wins — especially in low-trust contexts</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">In organisations where the HRBP's strategic credibility is being established (not yet included in business planning meetings), interventions that produce visible business results quickly build the trust and access needed for more complex work later. Prioritise interventions that: (a) connect directly to a business metric the COO watches, and (b) produce results within 90 days. The Indonesia G3 vacancy intervention is a high-visibility early win — filling three vacancies and recovering programme delivery is a measurable outcome the COO can see. Use that credibility to earn the more complex intervention conversations.</div>
+      </div>
+    </div>
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr;gap:16px">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D5</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Stop failing interventions quickly</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">An intervention that is not producing the intended outcome at the 30-day mark is unlikely to produce it at 90 days. The HRBP must be willing to diagnose and stop a failing intervention — which requires having defined success metrics before the intervention began. The most common reason interventions continue past their failure point is that no success criteria were defined upfront, so there is no agreed basis for stopping. Define the 30-day leading indicator before the intervention starts. If it is not moving at 30 days, re-diagnose before investing another 60 days of effort.</div>
+      </div>
+    </div>
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr;gap:16px">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D6</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Connect every intervention to a business outcome — not an HR metric</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The COO approves interventions (implicitly or explicitly) based on their business value — not their HR logic. Every intervention proposal must include: the business problem being solved, the cost of not intervening, and the business metric that will improve. "The month-3 check-in will reduce trainee attrition from 42% to below 25% within two cohorts, recovering an estimated $15,000–$30,000 in avoided replacement cost per cohort" is a business case. "We are introducing a structured onboarding touchpoint to improve employee experience" is not. The HRBP who frames in business terms gets access. The HRBP who frames in HR terms gets compliance.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Valentis 2026 Interventions</div>
+    <h1 class="page-title">Valentis 2026<br><em>Interventions</em></h1>
+    <p class="page-desc">The full Valentis 2026 intervention portfolio — eight active or planned interventions, each mapped to family, business outcome, enabling conditions, and measurable success criteria. Sequenced by business impact and dependency.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">Valentis Group — 2026 OD Intervention Portfolio</div>
+    <div class="vx-title">Eight interventions. Three red-priority. Sequential delivery. Each linked to a business outcome the COO tracks.</div>
+    <div class="vx-body">The portfolio is not a list of HR programmes. It is a sequenced set of structural, process, and human process fixes to specific organisational problems — each with a measurable business outcome. The sequence is deliberate: structural fixes before process fixes before human process fixes, because structural gaps undermine process interventions, and process gaps undermine human process ones.</div>
+  </div>
+
+  <div style="display:grid;gap:10px">
+
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--red-border);border-radius:4px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:3px">Intervention 1 — Red priority</div>
+          <div style="font-weight:700;font-size:15px;color:var(--ink)">Indonesia G3 Emergency Recruitment</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-sienna">Structural</span><span class="chip chip-muted">Q2 2026</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Business problem</strong>3 G3 vacancies open 40+ days. Programme delivery dropped 93% → 84%. Revenue risk from continued delivery gap.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Intervention</strong>Emergency sourcing across widened geography. Wirawan S. given dedicated recruitment support from Group HR. Vacancy owner is HRBP — not SM alone.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Success at 90 days</strong>All 3 G3 roles filled. Indonesia programme delivery recovering toward 90%+. SM no longer operating with structural span stress from vacancies.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--red-border);border-radius:4px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:3px">Intervention 2 — Red priority</div>
+          <div style="font-weight:700;font-size:15px;color:var(--ink)">G4 Accountability Role Redesign + Month-3 Check-in</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-sienna">Structural</span><span class="chip chip-slate">Process</span><span class="chip chip-muted">Q2 2026</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Business problem</strong>Myanmar trainee conversion 58% vs target 70%. Ghost accountability — no G4 owner of trainee development outcomes. Month-3 attrition with no structured intervention point.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Intervention</strong>Update G4 role profile: trainee conversion rate as formal accountability. Add month-3 structured check-in to onboarding process (3 questions, documented, G4-owned). G4 performance metric includes conversion rate from next review cycle.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Success at 90 days</strong>All G4 drillers aware of updated accountability. Month-3 check-ins documented for all current trainees. Within 2 cohorts: Myanmar conversion rate ≥65%.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--red-border);border-radius:4px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:3px">Intervention 3 — Red priority</div>
+          <div style="font-weight:700;font-size:15px;color:var(--ink)">Laos Succession Pipeline Activation</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-sienna">Structural</span><span class="chip chip-muted">June 2026</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Business problem</strong>Laos: 3 of 5 G4 drillers at retirement risk within 3 years. Only 2 G3 candidates. Net -1 G4 by 2027 without intervention. 24-month development cycle means activation deadline June 2026.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Intervention</strong>Laos G3 candidates assessed and formally entered into G4 development programme. Named development sponsors assigned. Milestone plan agreed. Cross-country mobility feasibility assessed (can Laos G3 get site experience in Thailand or Indonesia during development?).</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Success at 90 days</strong>Both G3 candidates have active development plans with named sponsors and milestone dates. Retirement risk flagged to Laos SM with succession timeline explicitly stated. Third candidate sourced if internal pipeline insufficient.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--gold-border);border-radius:4px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:3px">Intervention 4 — Amber priority</div>
+          <div style="font-weight:700;font-size:15px;color:var(--ink)">SM Peer Forum Establishment</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-slate">Process</span><span class="chip chip-gold">Human Process</span><span class="chip chip-muted">Q2 2026</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Business problem</strong>D4 Coordination 3/10. Thailand best practices not reaching Laos or Myanmar. Group HR framework applied inconsistently. No mechanism for cross-country learning.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Intervention</strong>Quarterly SM peer forum — COO-chaired initially. Structured agenda: performance data sharing, one practice transfer per session, talent pipeline visibility update. Inaugural session designed as team effectiveness intervention (not just information sharing).</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Success at 90 days</strong>First forum held. Documented output shared to all SMs. At least one practice identified in Thailand to be trialled in one other country. D4 score improvement trajectory visible at next health diagnostic.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--gold-border);border-radius:4px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:3px">Intervention 5 — Amber priority</div>
+          <div style="font-weight:700;font-size:15px;color:var(--ink)">Indonesia SM Stakeholder Influence Campaign</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-gold">Human Process</span><span class="chip chip-sienna">Structural</span><span class="chip chip-muted">Q2–Q3 2026</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Business problem</strong>Indonesia SM is a High Power Sceptic. Resistance to Group HR frameworks. Likely to resist Group Ops Lead role unless handled correctly. Exit risk compounded by retention bonus expiry Q1 2027.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Intervention</strong>Four-step influence sequence: (1) Indonesia G3 vacancies filled — HRBP demonstrates value as ally. (2) COO authority boundary conversation before Ops Lead announcement. (3) Thailand SM peer influence in forum setting. (4) Retention conversation by October 2026 linked to growth story.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Success at 90 days</strong>SM actively engaged with vacancy resolution. No escalation incidents. Prepared for Ops Lead announcement with authority boundary pre-established. Retention conversation scheduled.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--gold-border);border-radius:4px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:3px">Intervention 6 — Amber priority</div>
+          <div style="font-weight:700;font-size:15px;color:var(--ink)">Myanmar Supervisor Coaching Programme</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-gold">Human Process</span><span class="chip chip-muted">Q1–Q2 2026</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Business problem</strong>3 Myanmar supervisors identified with Knowledge + Ability gap. D3 Leadership amber. G4 drillers expected to develop trainees without the skills to do so.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Intervention</strong>6-week structured coaching programme: development conversation technique, month-3 check-in delivery, trainee feedback skills. Delivered by HRBP or external facilitator. Content calibrated to real Valentis conversations — not generic coaching theory.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Success at 90 days</strong>All 3 supervisors have completed programme. Month-3 check-ins being conducted consistently. Evidence of improved trainee relationship quality (via check-in documentation review).</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:3px">Intervention 7 — Planned</div>
+          <div style="font-weight:700;font-size:15px;color:var(--ink)">Group Ops Lead Role Creation + Recruitment</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-sienna">Structural</span><span class="chip chip-muted">Q3 2026</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Business problem</strong>COO span at ceiling (6 effective). D4 Coordination 3/10. Country 5 entry without redesign = span of 8+. No permanent coordination infrastructure.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Intervention</strong>Group Ops Lead (G6) role designed and recruited. Authority boundary explicitly communicated to all SMs by COO before hire starts. SM peer forum transferred to Ops Lead chairing by end of Q3. Country 5 SM appointment follows Ops Lead appointment.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Success at 90 days</strong>Ops Lead in role. COO span confirmed at 4. No authority boundary incidents. SM peer forum meeting quarterly with Ops Lead. D4 health score trajectory improving.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:3px">Intervention 8 — Planned</div>
+          <div style="font-weight:700;font-size:15px;color:var(--ink)">G5 Succession Identification + Development Planning</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-sienna">Structural</span><span class="chip chip-gold">Human Process</span><span class="chip chip-muted">Q2–Q3 2026</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Business problem</strong>Zero succession cover for any G5 SM role. Myo H. and Wirawan S. both at retention risk. Country 5 SM required by Q2 2027 — internal pipeline must start developing now.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Intervention</strong>Name one G4 succession candidate for each G5 role. Build development plans with named milestones. Country 5 SM candidate identified from current G4–G5 pool by Q3 2026. Retention conversations for Myo H. (Sep 2026) and Wirawan S. (Oct 2026) linked to succession transparency.</div>
+        <div><strong style="color:var(--sienna);display:block;margin-bottom:2px">Success at 90 days</strong>Named successor for each G5 role. Development plans active. Retention conversations completed. D5 health score improvement trajectory visible.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div id="page-builder" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Live Intervention Builder</div>
+    <h1 class="page-title">Live Intervention<br><em>Builder</em></h1>
+    <p class="page-desc">Select the problem type, severity, and context to generate a tailored intervention recommendation — including family, specific intervention, enabling conditions, sequencing advice, and 30/90-day success criteria.</p>
+  </div>
+  <div class="ib-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f0e8;margin-bottom:4px">Intervention Builder</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:20px">Answer four questions to generate your intervention recommendation</div>
+
+    <div class="ib-step">
+      <span class="ib-step-label">Step 1 — What is the primary problem type?</span>
+      <div class="ib-opts">
+        <div class="ib-opt" onclick="selectIb(this,'p1')">Accountability gap / ghost ownership</div>
+        <div class="ib-opt" onclick="selectIb(this,'p1')">Pipeline / succession shortage</div>
+        <div class="ib-opt" onclick="selectIb(this,'p1')">Coordination failure across units</div>
+        <div class="ib-opt" onclick="selectIb(this,'p1')">Leadership quality / behaviour</div>
+        <div class="ib-opt" onclick="selectIb(this,'p1')">Span / structure overload</div>
+        <div class="ib-opt" onclick="selectIb(this,'p1')">Culture / psychological safety</div>
+        <div class="ib-opt" onclick="selectIb(this,'p1')">Data visibility / system gap</div>
+        <div class="ib-opt" onclick="selectIb(this,'p1')">Early attrition / onboarding</div>
+      </div>
+    </div>
+
+    <div class="ib-step">
+      <span class="ib-step-label">Step 2 — What is the urgency?</span>
+      <div class="ib-opts">
+        <div class="ib-opt" onclick="selectIb(this,'p2')">Critical — affecting operations now</div>
+        <div class="ib-opt" onclick="selectIb(this,'p2')">High — will affect operations within 6 months</div>
+        <div class="ib-opt" onclick="selectIb(this,'p2')">Medium — 6–18 month horizon</div>
+        <div class="ib-opt" onclick="selectIb(this,'p2')">Planned — strategic investment</div>
+      </div>
+    </div>
+
+    <div class="ib-step">
+      <span class="ib-step-label">Step 3 — What is the stakeholder readiness?</span>
+      <div class="ib-opts">
+        <div class="ib-opt" onclick="selectIb(this,'p3')">High — leadership aligned and supportive</div>
+        <div class="ib-opt" onclick="selectIb(this,'p3')">Mixed — some support, some resistance</div>
+        <div class="ib-opt" onclick="selectIb(this,'p3')">Low — key stakeholder resistant</div>
+        <div class="ib-opt" onclick="selectIb(this,'p3')">Unknown — not yet assessed</div>
+      </div>
+    </div>
+
+    <div class="ib-step">
+      <span class="ib-step-label">Step 4 — What capacity does the HRBP have to lead this intervention?</span>
+      <div class="ib-opts">
+        <div class="ib-opt" onclick="selectIb(this,'p4')">Full capacity — this is the priority</div>
+        <div class="ib-opt" onclick="selectIb(this,'p4')">Partial — alongside other active interventions</div>
+        <div class="ib-opt" onclick="selectIb(this,'p4')">Limited — needs to be lean and fast</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn btn-sienna" onclick="buildIntervention()">Generate Recommendation →</button>
+      <button class="btn btn-ghost" onclick="clearBuilder()">Reset</button>
+    </div>
+    <div class="ib-result" id="ib-result"></div>
+  </div>
+</div>
+
+<div id="page-measure" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Measuring Intervention Impact</div>
+    <h1 class="page-title">Measuring<br><em>Intervention Impact</em></h1>
+    <p class="page-desc">An intervention without measurement is an activity. Measurement is not a post-hoc addition — it is built into the intervention design before implementation begins. This section provides the measurement framework for every Valentis intervention in the 2026 portfolio.</p>
+  </div>
+  <div class="info sienna"><strong>The HRBP's measurement challenge at Valentis</strong>Valentis has limited formal data infrastructure. The HRBP cannot rely on an HRIS or automated analytics pipeline. Measurement at Valentis is manual, direct, and observation-based — which is appropriate for a 42-person organisation. The discipline is in defining what to measure and tracking it consistently.</div>
+  <div class="card">
+    <div class="card-title">The Three-Horizon Measurement Model</div>
+    <div class="card-body" style="margin-bottom:14px">Every intervention is measured across three time horizons. Each horizon answers a different question. Missing any horizon leaves a gap in the accountability chain.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div style="padding:16px 18px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--sienna);margin-bottom:4px">30 Days</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Is it being implemented?</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Activity measures — is the intervention happening as designed? Are the right people doing the right things at the right time? This is not about impact yet — it is about implementation fidelity. If activity is not happening at 30 days, the intervention is already failing and must be re-diagnosed.</div>
+      </div>
+      <div style="padding:16px 18px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--sienna);margin-bottom:4px">90 Days</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Is the root cause changing?</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Leading outcome measures — is the underlying condition the intervention targets beginning to improve? Is accountability being exercised? Is the pipeline moving? Is the stakeholder's position shifting? These are leading indicators — they predict the business outcome, but do not yet confirm it. They are the earliest signal of intervention effectiveness.</div>
+      </div>
+      <div style="padding:16px 18px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--sienna);margin-bottom:4px">6 Months</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Is the business outcome improving?</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Lagging business outcome measures — is the metric the COO watches actually improving? Trainee conversion rate, programme delivery percentage, pipeline fill rate, SM retention, COO effective span. These are the measures that demonstrate HR's value to the business. They are the HRBP's proof of impact.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Valentis 2026 — Intervention Measurement Dashboard</div>
+    <table class="dtable">
+      <thead><tr><th>Intervention</th><th>30-day measure (activity)</th><th>90-day measure (leading outcome)</th><th>6-month measure (business outcome)</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">1. Indonesia G3 Recruitment</td>
+          <td>3 G3 roles actively in recruitment process. JDs posted. SM engaged with candidate review.</td>
+          <td>At least 1 G3 offer made and accepted. SM reporting reduced operational pressure.</td>
+          <td>All 3 G3 roles filled. Indonesia programme delivery ≥90%. SM span stress resolved.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">2. G4 Accountability + Month-3 Check-in</td>
+          <td>Updated G4 role profiles distributed. Month-3 check-in process documented and communicated to all G4 drillers.</td>
+          <td>Month-3 check-ins documented for all trainees currently in months 2–4. G4 drillers can articulate their trainee conversion accountability.</td>
+          <td>Myanmar trainee conversion rate ≥65% within 2 cohorts (from 58% baseline). Month-3 attrition dropping.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">3. Laos Succession Activation</td>
+          <td>G3 candidates identified and development conversations initiated by Laos SM + HRBP. Milestone plan template completed.</td>
+          <td>Both G3 candidates have signed development plans with named sponsors. First milestone review completed.</td>
+          <td>Development plans on track at 6-month milestone. Third G3 candidate sourced if pipeline is insufficient. Retirement risk communicated to Laos SM with succession timeline.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">4. SM Peer Forum</td>
+          <td>Forum agenda designed. Date set. COO confirmed as chair. Indonesia SM individually pre-briefed.</td>
+          <td>First forum completed. Documented output shared. Thailand SM has nominated one practice for group transfer.</td>
+          <td>Forum running quarterly. At least 2 cross-country practice transfers documented. D4 Coordination health score improving from 3/10 baseline.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">5. Indonesia SM Influence</td>
+          <td>G3 vacancy support provided — HRBP visible as ally. COO pre-briefing scheduled.</td>
+          <td>COO authority boundary conversation completed. SM not escalating opposition to Ops Lead concept. Retention conversation scheduled.</td>
+          <td>SM engaged in SM peer forum. Retention conversation completed. No exit indication. Operating within agreed authority boundary.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">6. Myanmar Supervisor Coaching</td>
+          <td>Programme dates confirmed. 3 supervisors enrolled. Content designed around Valentis development conversations.</td>
+          <td>All 3 supervisors completed programme. Month-3 check-ins being conducted. Observable change in approach to trainee conversations reported by Myo H.</td>
+          <td>Myanmar trainee conversion rate improving. D3 Leadership health score improving. G4 development conversation quality included in SM's next performance review.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">7. Group Ops Lead</td>
+          <td>Role profile complete and COO-approved. Recruitment commenced. Indonesia SM pre-briefed by COO.</td>
+          <td>Offer made to preferred candidate. All SMs briefed on authority boundary. SM peer forum transfer planned.</td>
+          <td>Ops Lead in post. COO effective span confirmed at 4. No authority boundary incidents. D4 Coordination score ≥5.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">8. G5 Succession Planning</td>
+          <td>G4 succession candidates identified for each G5 role. Development plan framework shared with each SM.</td>
+          <td>Named successor for each G5 with active development plan. Country 5 SM candidate pool identified.</td>
+          <td>Myo H. retention conversation complete (Sep 2026). Wirawan S. retention complete (Oct 2026). D5 Pipeline health score improving from 4/10. Country 5 SM candidate in accelerated development.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">Presenting Intervention Results to the COO</div>
+    <div class="card-body" style="margin-bottom:14px">The HRBP presents intervention results at the quarterly COO review. Format matters — the COO reads business data, not HR narrative.</div>
+    <div class="grid-2">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:8px">Don't present like this</div>
+        <div style="padding:14px 16px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+          "We have completed the supervisor coaching programme in Myanmar. The supervisors found it very useful and the feedback was positive. We are now embedding the learnings and monitoring progress. We expect to see improvements in the coming months."
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:8px">Present like this</div>
+        <div style="padding:14px 16px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+          "Myanmar supervisor coaching: complete. All 3 supervisors have conducted documented month-3 check-ins with current trainees. One trainee flagged support need — additional G4 mentoring arranged. We are tracking conversion rate for the current cohort — Q3 data will show whether we have moved the needle from 58% baseline. Next: embed the month-3 process into the standard induction checklist so it persists beyond the intervention."
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var parent=el.closest('.card')||el.closest('.page');
+  if(parent){
+    parent.querySelectorAll('.tab-body').forEach(b=>b.classList.remove('active'));
+    parent.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  }
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');
+  if(el)el.classList.add('active');
+}
+function selectIb(el,group){
+  el.closest('.ib-opts').querySelectorAll('.ib-opt').forEach(function(o){o.classList.remove('sel');});
+  el.classList.add('sel');
+}
+var interventionDB = {
+  'Accountability gap / ghost ownership': {
+    family:'Structural + Process',
+    interventions:'Role Redesign (primary) → Performance Review Redesign (secondary) → RACI Clarification (supporting)',
+    conditions:'COO must communicate new accountabilities directly to affected role holders. Role profile must be updated before performance conversation.',
+    sequence:'Update role profile first. Then update PM metrics. Then communicate. Do not performance-manage a gap that has not yet been formally assigned.',
+    d30:'Updated role profile distributed. Affected role holders briefed by COO or SM.',
+    d90:'Role holders can articulate their specific accountabilities. Performance conversations referencing the updated metrics.',
+    biz:'Business outcome metric improving (e.g. trainee conversion rate, programme delivery rate).'
+  },
+  'Pipeline / succession shortage': {
+    family:'Structural',
+    interventions:'Succession Planning (primary) → Development Milestone Tracker (supporting) → Coordination Mechanism (if cross-country mobility needed)',
+    conditions:'Critical roles identified and prioritised. Named development sponsors willing to commit. Milestone timeline realistic given development cycle duration.',
+    sequence:'Identify the vacancy risk first (retirement probability, retention risk). Then name successors. Then activate development plans. Do not wait until the vacancy occurs.',
+    d30:'Named successor for each critical role. Development plan template completed for each.',
+    d90:'Development plans active with milestone dates. First milestone review completed. Sponsor accountability established.',
+    biz:'Succession cover ratio improving. No G5 exits without a ready or near-ready internal candidate.'
+  },
+  'Coordination failure across units': {
+    family:'Process + Structural',
+    interventions:'Coordination Mechanism Design (SM peer forum) → RACI Clarification (cross-boundary decision rights) → HR Reporting Standardisation (data infrastructure)',
+    conditions:'Leadership commitment to the mechanism\'s authority and cadence. At least one unit with high performance to share practices from (Thailand SM at Valentis).',
+    sequence:'Establish the forum first (fast, low-cost). Then build the data infrastructure. Then create the permanent structural coordination role (Group Ops Lead).',
+    d30:'Forum inaugural session scheduled and held. Documented output shared. Data template agreed.',
+    d90:'Forum has met twice. At least one practice transfer documented. Data quality improving across countries.',
+    biz:'D4 Coordination health score improving. Cross-country delivery consistency improving. Group talent visibility achieved.'
+  },
+  'Leadership quality / behaviour': {
+    family:'Human Process',
+    interventions:'Executive Coaching (primary) → Supervisor Coaching Programme (for cohort gaps) → Stakeholder Influence Campaign (for resistant stakeholders)',
+    conditions:'The leader must be willing (or need must be created through performance expectation). The gap must be behavioural — not structural or motivational. Coaching cannot fix a structural problem.',
+    sequence:'Diagnose root cause first: is this a capability gap, a motivation gap, or a resistance pattern? Each requires a different human process intervention. Do not default to coaching for every leadership gap.',
+    d30:'Coaching relationship established. Specific behavioural goal defined and agreed with leader.',
+    d90:'Observable behavioural shift in at least one defined area. Leader self-reporting changed approach.',
+    biz:'Team outcomes improving (development conversation quality, trainee attrition, forum engagement). D3 Leadership health score improving.'
+  },
+  'Span / structure overload': {
+    family:'Structural',
+    interventions:'Span Restructure (primary) → Role Redesign for new roles → Coordination Mechanism Design (interim while structural fix is being implemented)',
+    conditions:'Span analysis (Tool 4) confirms the issue is structural — not a time management or delegation problem. New role profiles designed before announcement. Budget approved.',
+    sequence:'Diagnose → Design new role(s) → Get COO approval → Pre-brief high-risk stakeholders → Recruit → Announce → Embed. Never announce before the design is complete.',
+    d30:'New role profile approved. Recruitment commenced. High-risk stakeholders individually briefed.',
+    d90:'Role offer made. All SMs briefed on authority boundary. Span relief visible in COO calendar.',
+    biz:'COO effective span at target. Decision quality improving. D4 and D3 health scores improving.'
+  },
+  'Culture / psychological safety': {
+    family:'Human Process + Process',
+    interventions:'Psychological Safety Building (leadership modelling) → Onboarding Redesign (structured check-in) → After-Action Review (learning culture)',
+    conditions:'Leader modelling is non-negotiable — psychological safety built through training alone does not persist. Must start at SM level. Process change (month-3 check-in) gives it structure.',
+    sequence:'Leadership behaviour change must precede or accompany process change. A month-3 check-in run by a G4 who creates psychological unsafety is worse than no check-in.',
+    d30:'G4 and SM briefed on psychological safety language and the month-3 check-in structure. First check-ins scheduled.',
+    d90:'Month-3 check-ins documented for all trainees. Near-miss reporting rate monitored. Exit interview language tracked.',
+    biz:'Month-3 attrition reducing. Near-miss reports stable or increasing (good sign — safety to report). D6 Culture health score improving.'
+  },
+  'Data visibility / system gap': {
+    family:'Technostructural',
+    interventions:'Talent Data System (primary) → HR Reporting Standardisation → Development Milestone Tracker',
+    conditions:'SM buy-in to standard reporting — or COO direction to comply. HRBP capacity to build and maintain the system. Template designed around decisions it needs to inform.',
+    sequence:'Design the decision first (what does the COO need to see?). Then design the data that informs it. Then design the collection process. Do not collect data before you know what decisions it will inform.',
+    d30:'Standard reporting template agreed and distributed to all SMs. First submission received and reviewed.',
+    d90:'Group talent database populated for all countries. Quarterly group talent review held using the data.',
+    biz:'COO has group talent visibility. Pipeline gaps identified earlier. D7 Renewal health score improving (systemic learning vs personality-dependent).'
+  },
+  'Early attrition / onboarding': {
+    family:'Process + Structural + Human Process',
+    interventions:'Onboarding Redesign (month-3 check-in) + Role Redesign (G4 accountability) + Psychological Safety Building (check-in quality)',
+    conditions:'G4 accountability for development outcomes must be structural (in role profile) before the process check-in is introduced. Otherwise the check-in has no owner and becomes optional.',
+    sequence:'Role redesign (G4 accountability) first → then check-in process design → then G4 coaching on check-in delivery. All three must happen in sequence — not simultaneously.',
+    d30:'G4 role profiles updated. Check-in process documented. G4 drillers briefed on process and accountability.',
+    d90:'Check-ins documented for all trainees in months 1–4. At least one trainee retained via early intervention who would otherwise have left.',
+    biz:'Month-3 attrition rate reducing. Trainee conversion rate improving toward 70% target. Cost per trained driller reducing.'
+  }
+};
+function buildIntervention(){
+  var p1=document.querySelector('.ib-step:nth-child(1) .ib-opt.sel');
+  var p2=document.querySelector('.ib-step:nth-child(2) .ib-opt.sel');
+  var p3=document.querySelector('.ib-step:nth-child(3) .ib-opt.sel');
+  var p4=document.querySelector('.ib-step:nth-child(4) .ib-opt.sel');
+  if(!p1||!p2||!p3||!p4){alert('Please answer all four questions.');return;}
+  var pt=p1.textContent.trim();
+  var urgency=p2.textContent.trim();
+  var readiness=p3.textContent.trim();
+  var capacity=p4.textContent.trim();
+  var db=interventionDB[pt]||interventionDB['Accountability gap / ghost ownership'];
+  var urgencyNote=urgency.includes('Critical')?'Given critical urgency, begin implementation in parallel with stakeholder preparation — do not wait for perfect conditions.':urgency.includes('High')?'High urgency — complete design phase within 2 weeks and move to implementation.':'Planned horizon allows for thorough design. Use the time to build stakeholder alignment before implementation.';
+  var readinessNote=readiness.includes('Low')||readiness.includes('resistant')?'Low stakeholder readiness is a constraint. Build a pre-intervention influence campaign (see Stakeholder Influence Campaign in the library) before launching the main intervention.':readiness.includes('Mixed')?'Mixed readiness: pre-brief resistant stakeholders individually before group launch. Use change champions to build peer momentum.':'High readiness: proceed to design immediately. Use champion stakeholders to co-design where possible — increases ownership.';
+  var capacityNote=capacity.includes('Limited')?'Limited capacity: select the minimum viable version of this intervention. One focused action that delivers 80% of the value in 20% of the time.':capacity.includes('Partial')?'Partial capacity: sequence clearly. Define what you will stop or defer to create space for this intervention.':'Full capacity available: consider whether a more comprehensive multi-family intervention is warranted for this problem.';
+  var res=document.getElementById('ib-result');
+  res.innerHTML='<div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f5f0e8;margin-bottom:14px">Intervention Recommendation</div>'
+    +'<div style="padding:14px 16px;background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.25);border-radius:3px;margin-bottom:10px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna3);margin-bottom:4px">Problem: '+pt+'</div><div style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:300;line-height:1.7"><strong style="color:#e8a07a;display:block;margin-bottom:2px">Intervention family:</strong>'+db.family+'</div></div>'
+    +'<div style="display:grid;gap:8px">'
+    +'<div style="padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.6);font-weight:300;line-height:1.7"><strong style="color:#e8a07a;display:block;margin-bottom:2px">Recommended interventions:</strong>'+db.interventions+'</div>'
+    +'<div style="padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.6);font-weight:300;line-height:1.7"><strong style="color:#e8a07a;display:block;margin-bottom:2px">Enabling conditions required:</strong>'+db.conditions+'</div>'
+    +'<div style="padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.6);font-weight:300;line-height:1.7"><strong style="color:#e8a07a;display:block;margin-bottom:2px">Sequencing guidance:</strong>'+db.sequence+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.25);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">30-day measure</div><div style="font-size:12.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.7">'+db.d30+'</div></div>'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.25);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">90-day measure</div><div style="font-size:12.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.7">'+db.d90+'</div></div>'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.25);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Business outcome</div><div style="font-size:12.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.7">'+db.biz+'</div></div>'
+    +'</div>'
+    +'<div style="padding:12px 16px;background:rgba(155,58,26,0.08);border:1px solid rgba(155,58,26,0.18);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.75"><strong style="color:#e8a07a;display:block;margin-bottom:4px">Urgency note:</strong>'+urgencyNote+'</div>'
+    +'<div style="padding:12px 16px;background:rgba(155,58,26,0.08);border:1px solid rgba(155,58,26,0.18);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.75"><strong style="color:#e8a07a;display:block;margin-bottom:4px">Stakeholder readiness note:</strong>'+readinessNote+'</div>'
+    +'<div style="padding:12px 16px;background:rgba(155,58,26,0.08);border:1px solid rgba(155,58,26,0.18);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.75"><strong style="color:#e8a07a;display:block;margin-bottom:4px">Capacity note:</strong>'+capacityNote+'</div>'
+    +'</div>';
+  res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearBuilder(){
+  document.querySelectorAll('.ib-opt').forEach(function(o){o.classList.remove('sel');});
+  document.getElementById('ib-result').style.display='none';
+}
+</script>
+</body>
+</html>

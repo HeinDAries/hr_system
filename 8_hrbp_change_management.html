@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Change & Transition Management — Valentis HRBP Tool 8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=IBM+Plex+Sans:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f7f5;--surface:#ffffff;--surface2:#f2f2ef;--surface3:#e8e8e4;
+  --border:#e0e0db;--border2:#c8c8c2;
+  --ink:#0f0f0e;--ink2:#2a2a28;--ink3:#555550;--ink4:#888880;--ink5:#b8b8b0;
+  --teal:#0d7a6e;--teal2:#0e8f82;--teal3:#10a494;--teal-dim:rgba(13,122,110,0.07);--teal-border:rgba(13,122,110,0.22);
+  --amber:#b8720a;--amber-dim:rgba(184,114,10,0.07);--amber-border:rgba(184,114,10,0.22);
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --green:#1a7a3c;--green-dim:rgba(26,122,60,0.07);--green-border:rgba(26,122,60,0.22);
+  --navy:#1a3a5c;--navy-dim:rgba(26,58,92,0.07);--navy-border:rgba(26,58,92,0.2);
+  --sidebar-w:272px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+.sidebar{width:var(--sidebar-w);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--teal3),var(--teal),rgba(13,122,110,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal3);background:rgba(13,122,110,0.12);border:1px solid rgba(13,122,110,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#f5f5f2;line-height:1.15;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--teal3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(13,122,110,0.15);border-color:rgba(13,122,110,0.35);color:var(--teal3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--teal)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--teal3);display:block;margin-bottom:3px}
+
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:54px;font-weight:800;color:var(--ink);line-height:.95;margin-bottom:14px;letter-spacing:-1px}
+.page-title em{font-style:italic;font-weight:400;color:var(--teal)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.2}
+.card-title em{font-style:italic;color:var(--teal);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-teal{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border)}
+.chip-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-navy{background:var(--navy-dim);color:var(--navy);border:1px solid var(--navy-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.teal{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+.info.amber{background:var(--amber-dim);border-color:var(--amber);color:var(--amber)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--ink);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+
+/* CURVE VISUAL */
+.curve-wrap{position:relative;height:120px;margin:20px 0;overflow:visible}
+.curve-svg{width:100%;height:100%}
+.curve-label{position:absolute;font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4)}
+
+/* CHANGE PLANNER */
+.planner-wrap{background:var(--ink);border-radius:4px;padding:28px;margin-bottom:14px}
+.pl-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:5px;display:block}
+.pl-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 12px;color:#f5f5f2;font-family:var(--fb);font-size:13px;outline:none;width:100%;transition:border-color .13s;resize:vertical}
+.pl-input:focus{border-color:var(--teal)}
+.pl-select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 10px;color:#f5f5f2;font-family:var(--fm);font-size:12px;outline:none;width:100%}
+.pl-select option{background:#1a1a18}
+.pl-row{display:grid;gap:10px;margin-bottom:10px}
+.pl-row-3{grid-template-columns:1fr 1fr 1fr}
+.pl-row-2{grid-template-columns:1fr 1fr}
+.pl-group{display:flex;flex-direction:column;gap:4px}
+.pl-section{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:18px;margin-bottom:10px}
+.pl-section-title{font-family:var(--fd);font-size:15px;font-weight:600;color:#f5f5f2;margin-bottom:12px}
+.pl-divider{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:16px 0}
+
+/* PLAN OUTPUT */
+.plan-output{background:var(--surface);border:2px solid var(--ink);border-radius:4px;padding:36px;margin-top:14px;display:none}
+.plan-header{border-bottom:3px solid var(--ink);padding-bottom:16px;margin-bottom:24px}
+.plan-section{margin-bottom:22px}
+.plan-section-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid var(--teal-border)}
+.plan-section-title{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.plan-body{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.85}
+.plan-action-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;font-size:13px;color:var(--ink3);font-weight:300;padding:8px 12px;background:var(--surface2);border-radius:3px}
+.plan-action-num{font-family:var(--fm);font-size:10px;font-weight:700;color:var(--teal);flex-shrink:0;width:20px;padding-top:1px}
+
+/* RESISTANCE TRACKER */
+.resist-row{display:grid;grid-template-columns:180px 80px 1fr 180px;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;font-size:13px}
+.resist-row:last-child{border-bottom:none}
+.resist-row:hover{background:var(--surface2)}
+.resist-name{font-weight:500;color:var(--ink2)}
+.resist-level{text-align:center}
+
+/* HEAT BAR */
+.heat-bar{height:8px;border-radius:4px;background:var(--surface3);overflow:hidden}
+.heat-fill{height:100%;border-radius:4px;transition:width .4s}
+
+/* TIMELINE BUILDER */
+.phase-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.phase-hdr{display:flex;align-items:center;gap:14px;padding:12px 18px;cursor:pointer;transition:background .13s}
+.phase-hdr:hover{background:var(--surface2)}
+.phase-num{font-family:var(--fd);font-size:24px;font-weight:800;line-height:1;width:32px;flex-shrink:0}
+.phase-title{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);flex:1}
+.phase-duration{font-family:var(--fm);font-size:9px;color:var(--ink5)}
+.phase-body{display:none;padding:16px 18px;border-top:1px solid var(--border);background:var(--surface2)}
+.phase-body.open{display:block}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:var(--teal2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink3)}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+
+/* SCENARIO TABS */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+
+/* QUOTE */
+.pull-quote{border-left:4px solid var(--teal);padding:16px 20px;margin:16px 0;background:var(--teal-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:17px;font-style:italic;color:var(--ink2);line-height:1.6;font-weight:400}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--teal)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+@media print{.sidebar{display:none}.main{margin-left:0}.page.active{padding:20px}.plan-output{display:block!important;border:none}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">HRBP Tool 8 / 10</div>
+    <div class="sb-title">Change &amp;<br><em>Transition</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('why',this)"><span class="nav-num">01</span>Change vs Transition</div>
+    <div class="nav-item" onclick="showPage('models',this)"><span class="nav-num">02</span>Change Models</div>
+    <div class="nav-item" onclick="showPage('hrbp',this)"><span class="nav-num">03</span>The HRBP's Role</div>
+    <div class="nav-item" onclick="showPage('resistance',this)"><span class="nav-num">04</span>Reading Resistance</div>
+    <div class="nav-item" onclick="showPage('comms',this)"><span class="nav-num">05</span>Communication Strategy</div>
+    <div class="nav-item" onclick="showPage('phases',this)"><span class="nav-num">06</span>Change Phases Playbook</div>
+    <div class="nav-item" onclick="showPage('planner',this)"><span class="nav-num">07</span>Change Plan Builder</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">08</span>Valentis Change Cases</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>HRBP Department</strong>
+      Tool 8 of 10 · Change Management<br>
+      <span style="color:rgba(255,255,255,0.12)">People don't resist change — they resist loss</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 CHANGE VS TRANSITION -->
+<div id="page-why" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">HRBP Tool 8 — Change & Transition Management</div>
+    <h1 class="page-title">Change &amp;<br><em>Transition</em></h1>
+    <p class="page-desc">Change is what happens to an organisation. Transition is what happens inside the people experiencing it. Most change programmes fail not because the plan was wrong — but because the transition was ignored. The HRBP manages both.</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Change is situational. Transition is the psychological process people go through to come to terms with the new situation."</p>
+    <cite>William Bridges — Managing Transitions</cite>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">The Critical Distinction</div>
+      <div class="card-body" style="margin-bottom:16px">Most change initiatives focus entirely on the structural change — the new process, the org redesign, the new system. They treat people as the passive recipients of decisions made above them. This is why 70% of change programmes underdeliver.</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr 1fr">
+          <div style="padding:16px;border-right:1px solid var(--border)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--navy);margin-bottom:10px">Change</div>
+            <div style="display:grid;gap:5px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— External and situational</div>
+              <div>— Has a start and end date</div>
+              <div>— Managed by project teams</div>
+              <div>— Visible on a Gantt chart</div>
+              <div>— Examples: restructure, system launch, new policy, site expansion</div>
+            </div>
+          </div>
+          <div style="padding:16px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:10px">Transition</div>
+            <div style="display:grid;gap:5px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— Internal and psychological</div>
+              <div>— Happens at each person's pace</div>
+              <div>— Managed by leaders and HRBP</div>
+              <div>— Invisible — felt, not tracked</div>
+              <div>— Examples: letting go of old ways, uncertainty, identity shift, rebuilding trust</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:12px 14px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--teal)">The HRBP's role:</strong> manage the change (what, when, how) AND facilitate the transition (why it matters, what is lost, what comes next).</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why Change Fails at Valentis</div>
+      <div class="card-body" style="margin-bottom:14px">Oil and gas field operations create specific change challenges that most textbook models do not address. Understanding these makes the HRBP's role clearer.</div>
+      <div style="display:grid;gap:8px">
+        <div style="padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-weight:700;color:var(--ink);margin-bottom:4px;font-size:14px">Site isolation</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Field staff at remote sites have limited access to leadership. Rumour fills the communication vacuum faster than official channels can reach them. Changes announced at HQ take weeks to land meaningfully on site.</div>
+        </div>
+        <div style="padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-weight:700;color:var(--ink);margin-bottom:4px;font-size:14px">Multi-country, multi-culture dynamics</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">The same change message lands differently in Laos, Myanmar, Indonesia, and Thailand. What feels transparent and engaging in one cultural context can feel threatening or disrespectful in another.</div>
+        </div>
+        <div style="padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-weight:700;color:var(--ink);margin-bottom:4px;font-size:14px">Specialist identity</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Experienced drillers carry strong occupational identity. Changes to how they work, who they report to, or what is expected of them touch something deeper than a process change — they touch professional pride.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 MODELS -->
+<div id="page-models" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Change Models</div>
+    <h1 class="page-title">Change<br><em>Models</em></h1>
+    <p class="page-desc">Three frameworks the HRBP uses to understand, diagnose, and navigate change at Valentis. Each model illuminates a different dimension — use them together, not in isolation.</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('bridges',this)">Bridges Transition</div>
+    <div class="tab" onclick="showTab('kotter',this)">Kotter 8-Step</div>
+    <div class="tab" onclick="showTab('adkar',this)">ADKAR</div>
+  </div>
+
+  <div class="tab-body active" id="tab-bridges">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Bridges' Three Zones of Transition</div>
+        <div class="card-body" style="margin-bottom:16px">William Bridges identified that transition always begins with an ending, not a beginning. People must first let go of the old before they can embrace the new. The zone between is the most dangerous — and the one most organisations rush through.</div>
+        <div style="display:grid;gap:6px">
+          <div style="padding:16px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--red)">Zone 1</div>
+              <div style="font-weight:700;color:var(--ink)">Endings — Letting Go</div>
+            </div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">People experience loss — of the familiar, the comfortable, identity, status, or relationships. This zone is marked by denial, anger, and grief. The HRBP's role is to acknowledge what is being lost, not minimise it. Rushing through this zone creates hidden resistance that surfaces later.</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--red);font-family:var(--fm)">HRBP action: name the loss explicitly. Create space for it.</div>
+          </div>
+          <div style="padding:16px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:4px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--amber)">Zone 2</div>
+              <div style="font-weight:700;color:var(--ink)">The Neutral Zone — In Between</div>
+            </div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The old is gone, the new is not yet established. This zone is characterised by confusion, anxiety, low productivity, and high attrition risk. It is also where the most creative problem-solving and innovation can happen — if people feel safe enough. The HRBP must hold steady here and communicate frequently.</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--amber);font-family:var(--fm)">HRBP action: over-communicate. Short feedback loops. Celebrate small wins.</div>
+          </div>
+          <div style="padding:16px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:4px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--green)">Zone 3</div>
+              <div style="font-weight:700;color:var(--ink)">New Beginnings — Embracing</div>
+            </div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">People develop a new identity and relationship with the changed reality. Energy returns. Commitment builds. The HRBP's role is to reinforce and reward the new behaviours, embed them into systems (performance, reward, culture), and ensure backsliding is noticed and addressed quickly.</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--green);font-family:var(--fm)">HRBP action: embed in systems. Recognise the early adopters publicly.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Applying Bridges at Valentis</div>
+        <div class="card-body" style="margin-bottom:14px">The trainee programme attrition issue is a Bridges problem. When trainees arrive at site, they enter Zone 1 — the ending of their previous identity (civilian, student) — without being guided through it. They are expected to perform as drillers before the transition has happened.</div>
+        <div style="display:grid;gap:8px">
+          <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:5px">What trainees experience at month 3</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">They are in Zone 2 — the neutral zone. Their previous identity has ended, but the driller identity has not yet formed. The discomfort is real and normal. Without a supervisor who names and holds this experience, they exit rather than persist through it.</div>
+          </div>
+          <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:5px">The HRBP intervention</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The 30/60/90-day check-in programme is a Bridges-informed intervention. It explicitly acknowledges the transition stages — "this stage is normal, here is what comes next, here is how you will know you have made it through." This is what the supervisors were not doing.</div>
+          </div>
+          <div style="padding:14px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:5px">The broader principle</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Any change at Valentis — new site opening, process change, leadership transition, restructure — should be analysed through the Bridges lens first. Ask: where are people in the transition curve? What does each zone require from leadership and HR?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-kotter">
+    <div class="card">
+      <div class="card-title">Kotter's 8-Step Change Model — Applied to Valentis</div>
+      <div class="card-body" style="margin-bottom:16px">Kotter's model is the most useful for large, planned change — restructures, new country entry, major policy overhaul. It emphasises that change requires urgency and coalition, not just a plan.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--teal);margin-bottom:6px">01 — Create urgency</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:6px">The COO must understand why this change cannot wait. Use data: "Without this restructure, we project a 34% headcount shortfall by Q4." Urgency is not panic — it is a clear articulation of the cost of delay.</div>
+          <div style="font-size:11.5px;color:var(--teal);font-family:var(--fm)">Valentis: vacancy gap data, attrition cost model, programme delivery risk</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--teal);margin-bottom:6px">02 — Build the coalition</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:6px">Identify who needs to lead this change with you. At Valentis: the COO is the sponsor, but the country managers are the delivery layer. A change the COO endorses but the site managers resist will fail at the implementation stage.</div>
+          <div style="font-size:11.5px;color:var(--teal);font-family:var(--fm)">Valentis: engage Thailand champion first — use their model to convert Indonesia sceptic</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--teal);margin-bottom:6px">03 — Form a clear vision</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:6px">People can absorb almost any change if they can see where it leads and believe the destination is better. The HRBP crafts the vision narrative — what does success look like, and what does it feel like to work at Valentis when this change is complete?</div>
+          <div style="font-size:11.5px;color:var(--teal);font-family:var(--fm)">Valentis: "A driller who joins Valentis has a clear 4-year path to G4 — and we never leave them alone in the neutral zone."</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--teal);margin-bottom:6px">04–08 — Communicate, empower, win short-term, sustain, anchor</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:6px">The remaining five steps are all about disciplined execution: communicating the vision relentlessly, removing blockers, celebrating early wins to build momentum, not declaring victory too early, and anchoring the change in culture and systems so it survives leadership turnover.</div>
+          <div style="font-size:11.5px;color:var(--teal);font-family:var(--fm)">HRBP role: own steps 4 (communication), 6 (quick wins), 8 (culture anchoring)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-adkar">
+    <div class="card">
+      <div class="card-title">ADKAR — The Individual Change Model</div>
+      <div class="card-body" style="margin-bottom:16px">ADKAR is the most useful diagnostic for understanding why a specific individual or group is struggling with a change. It breaks the change adoption journey into five sequential building blocks — and shows where the blockage is.</div>
+      <div style="display:grid;gap:6px">
+        <div style="display:grid;grid-template-columns:80px 1fr 1fr;gap:16px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:start">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);line-height:1">A<br><span style="font-size:13px;color:var(--ink4);font-weight:400;font-style:italic">wareness</span></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Does the person understand why the change is necessary? If they do not see the reason, they will not move. The HRBP must ensure the case for change has been communicated clearly and in terms that connect to what the individual cares about.</div>
+          <div style="font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7;font-family:var(--fm)">Diagnostic: "Do you understand why we're making this change?" If no → communication gap.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 1fr;gap:16px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:start">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);line-height:1">D<br><span style="font-size:13px;color:var(--ink4);font-weight:400;font-style:italic">esire</span></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Does the person want to participate and support the change? Awareness without desire produces compliance at best, active resistance at worst. Desire is built through connection to personal benefit — not just organisational benefit.</div>
+          <div style="font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7;font-family:var(--fm)">Diagnostic: "What's in it for you?" If no answer → motivation gap. Address personal impact.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 1fr;gap:16px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:start">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);line-height:1">K<br><span style="font-size:13px;color:var(--ink4);font-weight:400;font-style:italic">nowledge</span></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Does the person know how to change? Even willing participants fail if they do not have the skills, information, or training to perform in the new way. This is the gap most organisations address last — and should address first.</div>
+          <div style="font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7;font-family:var(--fm)">Diagnostic: "Do you know what to do differently?" If no → training/process gap.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 1fr;gap:16px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:start">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);line-height:1">A<br><span style="font-size:13px;color:var(--ink4);font-weight:400;font-style:italic">bility</span></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Can the person actually perform in the new way in practice? Knowledge and ability are different. Practice, coaching, and permission to make mistakes during the transition period are all required to convert knowledge into consistent ability.</div>
+          <div style="font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7;font-family:var(--fm)">Diagnostic: "Can you do it?" If no → coaching, practice, psychological safety gap.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr 1fr;gap:16px;padding:14px 16px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:4px;align-items:start">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);line-height:1">R<br><span style="font-size:13px;color:var(--ink4);font-weight:400;font-style:italic">einforcement</span></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Will the person sustain the change? Without reinforcement — recognition, accountability, and removal of barriers — people revert to old behaviours. The HRBP must embed the change into performance management, rewards, and leadership expectations.</div>
+          <div style="font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7;font-family:var(--fm)">Diagnostic: "Is the new way actually rewarded?" If no → systems and culture gap.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 HRBP ROLE -->
+<div id="page-hrbp" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — The HRBP's Role</div>
+    <h1 class="page-title">The HRBP's<br><em>Role</em></h1>
+    <p class="page-desc">The HRBP occupies a unique position in change — not the sponsor, not the project manager, but the architect of the human experience of change. This section defines what the HRBP is responsible for, and what they are not.</p>
+  </div>
+
+  <div class="info teal"><strong>The HRBP as Change Architect</strong>The HRBP does not design the org structure or own the project plan. The HRBP designs how the change will be experienced by people — the communication, the transition support, the leader capability, the resistance management, and the cultural reinforcement. These are the dimensions that determine whether the change sticks.</div>
+
+  <div class="card">
+    <div class="card-title">HRBP Responsibilities in Change</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>Responsibility</th><th>What it Means</th><th>Tools Used</th><th>Not the HRBP's Job</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--teal)">Change readiness assessment</td><td>Diagnose how ready the organisation and its people are to absorb the change before it lands. What is the current change fatigue level? Who are the likely resisters?</td><td>Org Diagnostic (Tool 4), Stakeholder Map (Tool 3)</td><td>Deciding whether to proceed with the change</td></tr>
+        <tr><td style="font-weight:600;color:var(--teal)">Stakeholder engagement strategy</td><td>Map who needs to be influenced, in what order, using what approach. Identify the coalition builders and the critical sceptics who must be converted.</td><td>Stakeholder Map (Tool 3), Influence model</td><td>Designing the change itself</td></tr>
+        <tr><td style="font-weight:600;color:var(--teal)">Leader communication coaching</td><td>Prepare site managers and the COO to communicate the change in a way that builds trust rather than eroding it. Coach them on what to say, what not to say, and how to handle resistance.</td><td>This tool — Section 05</td><td>Delivering the communication directly to all staff</td></tr>
+        <tr><td style="font-weight:600;color:var(--teal)">Resistance diagnosis and response</td><td>Read the nature of resistance — is it Awareness, Desire, Knowledge, or Ability? Tailor the response to the diagnosis rather than applying a generic engagement campaign.</td><td>ADKAR model (Section 02), Resistance tracker (Section 04)</td><td>Removing all resistance by force or authority</td></tr>
+        <tr><td style="font-weight:600;color:var(--teal)">Change impact on people systems</td><td>Identify where the change touches rewards, performance, L&amp;D, policies, and org design — and ensure those systems are updated to reinforce, not contradict, the new direction.</td><td>C&amp;B tools, PM framework, L&amp;D tools</td><td>Updating technical systems or processes</td></tr>
+        <tr><td style="font-weight:600;color:var(--teal)">Change health monitoring</td><td>Track the human health of the change through the implementation period — attrition spikes, absenteeism, engagement signals, and scorecard movements that indicate transition distress.</td><td>HR Scorecard (Tool 5)</td><td>Tracking project milestones or technical delivery</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What the HRBP Should Never Do in Change</div>
+      <div style="display:grid;gap:6px;margin-top:4px">
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">✗ Take ownership of the change</strong> — The HRBP advises and enables. The business leader must own the change and be seen to own it. A change that is perceived as "HR's thing" will never have the authority it needs.</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">✗ Position as "just communication"</strong> — Calling a change programme a communication exercise signals that the hard stuff — the loss, the resistance, the identity shift — will be glossed over.</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">✗ Minimise the loss</strong> — Telling people "it's not that different really" invalidates their experience and destroys the HRBP's credibility as a trusted advisor.</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">✗ Declare success too early</strong> — Real change adoption takes 12–18 months. Declaring success when the announcement has landed invites the change to unravel quietly while attention has moved on.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The HRBP as Honest Broker</div>
+      <div class="card-body">
+        In change, the HRBP occupies a unique position: trusted by leadership because of strategic alignment, but trusted by employees because of independence and confidentiality. This dual trust is the most valuable asset the HRBP holds — and the easiest to lose.<br><br>
+        When leadership asks the HRBP to "manage the messaging" in a way that hides difficult truths, the HRBP must push back — not by refusing to help, but by reframing: <em style="color:var(--teal)">"I can help you communicate this clearly and honestly. What I can't do is help you say something that employees will not believe — because the moment they don't believe it, they stop believing anything you say."</em><br><br>
+        The HRBP who maintains this position — even when it is uncomfortable — earns a quality of trust from both sides that is irreplaceable in future changes.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 04 RESISTANCE -->
+<div id="page-resistance" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Reading Resistance</div>
+    <h1 class="page-title">Reading<br><em>Resistance</em></h1>
+    <p class="page-desc">Resistance is not the enemy of change — it is information about what the change is costing people. The HRBP who can read and diagnose resistance accurately will navigate change faster and with less attrition than one who simply tries to overcome it.</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>"People don't resist change. They resist loss."</p>
+    <cite>Ronald Heifetz — Leadership on the Line</cite>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Four Types of Resistance</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px">
+      <div style="padding:18px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--red);margin-bottom:8px;line-height:1">Information<br>Resistance</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">The person lacks information or has inaccurate information about the change. Rumour has filled the gap.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Signals</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300">Questions start with "I heard that..." or "Is it true that..."</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);margin-top:8px;margin-bottom:4px">Response</div>
+        <div style="font-size:12px;color:var(--teal);font-weight:300">Communicate clearly and directly. Repeat the truth more than you think is necessary.</div>
+      </div>
+      <div style="padding:18px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--amber);margin-bottom:8px;line-height:1">Value<br>Resistance</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">The person understands the change but believes it is wrong — ethically, strategically, or professionally.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--amber);margin-bottom:4px">Signals</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300">Principled objections. "This isn't how we do things here." Thoughtful, consistent challenge.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);margin-top:8px;margin-bottom:4px">Response</div>
+        <div style="font-size:12px;color:var(--teal);font-weight:300">Listen seriously. Some value resistance contains a legitimate concern. Incorporate where possible. Explain the trade-off where you cannot.</div>
+      </div>
+      <div style="padding:18px;background:var(--navy-dim);border:1px solid var(--navy-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px;line-height:1">Loss<br>Resistance</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">The person understands and accepts the change but is grieving what it costs them — status, relationships, familiarity, identity.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--navy);margin-bottom:4px">Signals</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300">Withdrawal, low energy, nostalgia for the old way. Not hostile — just sad.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);margin-top:8px;margin-bottom:4px">Response</div>
+        <div style="font-size:12px;color:var(--teal);font-weight:300">Acknowledge the loss explicitly. Do not rush people through this zone. Create rituals that mark the ending.</div>
+      </div>
+      <div style="padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--ink3);margin-bottom:8px;line-height:1">Political<br>Resistance</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">The person is using the change as leverage in a pre-existing power dynamic or personal agenda. Their objections are not about the change itself.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Signals</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300">Resistance shifts as soon as personal situation changes. Objections are inconsistent or opportunistic.</div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);margin-top:8px;margin-bottom:4px">Response</div>
+        <div style="font-size:12px;color:var(--teal);font-weight:300">Address the underlying concern directly in private. Do not negotiate with the stated objection — it will shift again.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Valentis Resistance <em>Tracker</em></div>
+    <div class="card-body" style="margin-bottom:14px">The current resistance landscape for Valentis's active change initiatives. Assessed by HRBP based on stakeholder interactions and site intelligence.</div>
+    <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:180px 80px 1fr 180px;padding:8px 14px;background:var(--ink)">
+        <span style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4)">Stakeholder</span>
+        <span style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);text-align:center">Level</span>
+        <span style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4)">Resistance Type &amp; Signals</span>
+        <span style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4)">HRBP Response</span>
+      </div>
+      <div class="resist-row">
+        <div class="resist-name">Indonesia Site Manager</div>
+        <div class="resist-level"><span class="chip chip-red">High</span></div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--ink2)">Value + Political.</strong> Questions need for group HR processes — "we managed fine before." Resistance consistent across all HR initiatives, not just this change.</div>
+        <div style="font-size:12px;color:var(--teal);font-weight:300;line-height:1.6">Private conversation to surface underlying concern. Involve in designing local implementation. Small visible wins.</div>
+      </div>
+      <div class="resist-row">
+        <div class="resist-name">Myanmar Senior Drillers (G4)</div>
+        <div class="resist-level"><span class="chip chip-amber">Medium</span></div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--ink2)">Loss.</strong> Trainee programme means more coaching responsibility with no additional recognition. "I'm here to drill, not babysit."</div>
+        <div style="font-size:12px;color:var(--teal);font-weight:300;line-height:1.6">Acknowledge the cost. Explore recognition mechanism — consider mentor allowance or formal mentor designation in grade profile.</div>
+      </div>
+      <div class="resist-row">
+        <div class="resist-name">Myanmar Supervisors (3)</div>
+        <div class="resist-level"><span class="chip chip-amber">Medium</span></div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--ink2)">Knowledge + Ability.</strong> Not resistant to the coaching requirement, but do not know how to have the conversations. Silence misread as resistance.</div>
+        <div style="font-size:12px;color:var(--teal);font-weight:300;line-height:1.6">Supervisor communication coaching — practical skill building. This is the core Q1 intervention. Frame as development, not correction.</div>
+      </div>
+      <div class="resist-row">
+        <div class="resist-name">Laos Site Manager</div>
+        <div class="resist-level"><span class="chip chip-green">Low</span></div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--ink2)">Information.</strong> Asks more questions than others but questions are genuine, not obstructive. Wants to understand before committing.</div>
+        <div style="font-size:12px;color:var(--teal);font-weight:300;line-height:1.6">Increase information flow — include in early briefings. Use as a sounding board for implementation design. Will convert to champion once informed.</div>
+      </div>
+      <div class="resist-row" style="border-bottom:none">
+        <div class="resist-name">Thailand Site Manager</div>
+        <div class="resist-level"><span class="chip chip-teal" style="font-size:8px">Champion</span></div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6">No resistance. Proactively implementing trainee check-in structure. High performer culture already established.</div>
+        <div style="font-size:12px;color:var(--teal);font-weight:300;line-height:1.6">Use as the reference case. Invite to share approach with other country managers — peer influence is stronger than HRBP mandate.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 05 COMMUNICATION -->
+<div id="page-comms" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Communication Strategy</div>
+    <h1 class="page-title">Communication<br><em>Strategy</em></h1>
+    <p class="page-desc">The HRBP designs the change communication strategy — who says what, to whom, in what order, through which channel, and with what tone. This is the engineering of trust under conditions of uncertainty.</p>
+  </div>
+
+  <div class="info teal"><strong>The Golden Rule of Change Communication</strong>Communicate before people have to ask. The moment employees are asking questions you have not answered yet, rumour has taken hold — and rumour is always worse than the truth. Over-communicate when you have little to say. Under-communication is the single most common change failure.</div>
+
+  <div class="card">
+    <div class="card-title">The Communication Architecture</div>
+    <div class="card-body" style="margin-bottom:16px">Change communication must be sequenced carefully. The wrong message to the wrong person at the wrong time destroys trust faster than silence.</div>
+    <div style="display:grid;gap:6px">
+      <div style="display:grid;grid-template-columns:80px 1fr 1fr 120px;gap:14px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:start">
+        <div style="font-family:var(--fm);font-size:9px;font-weight:700;color:var(--teal)">Wave 1<br><span style="color:var(--ink5);font-weight:400">Before announcement</span></div>
+        <div><div style="font-weight:600;color:var(--ink);margin-bottom:3px;font-size:13px">Brief the leadership coalition</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">COO, country managers, direct sponsors. They need to understand before they are asked to communicate. If they learn at the same time as their teams, they lose authority.</div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Purpose: build the messenger coalition. Ensure consistent language. Prepare them for questions they will receive from their teams.</div>
+        <div><span class="chip chip-navy">Private</span><div style="font-size:11px;color:var(--ink5);margin-top:4px">1:1 or small group</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 1fr 120px;gap:14px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:start">
+        <div style="font-family:var(--fm);font-size:9px;font-weight:700;color:var(--teal)">Wave 2<br><span style="color:var(--ink5);font-weight:400">Announcement day</span></div>
+        <div><div style="font-weight:600;color:var(--ink);margin-bottom:3px;font-size:13px">Full announcement to all affected staff</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Delivered by the most senior relevant leader — not HR. HR coaches the delivery; the leader delivers it. Include: what is changing, why, what it means for people, what happens next.</div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Purpose: eliminate the information vacuum. People who do not know will assume the worst. Give them the truth, even if incomplete.</div>
+        <div><span class="chip chip-amber">All Staff</span><div style="font-size:11px;color:var(--ink5);margin-top:4px">Town hall or site brief</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 1fr 120px;gap:14px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:start">
+        <div style="font-family:var(--fm);font-size:9px;font-weight:700;color:var(--teal)">Wave 3<br><span style="color:var(--ink5);font-weight:400">Week 1–4</span></div>
+        <div><div style="font-weight:600;color:var(--ink);margin-bottom:3px;font-size:13px">Q&amp;A, listening sessions, follow-up</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Create structured opportunities for people to ask questions and express concerns — safely, without judgement. This is where the HRBP listens for resistance type and feeds intelligence back to leadership.</div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Purpose: convert one-way announcement into two-way dialogue. People commit to changes they have been heard on — not ones imposed on them silently.</div>
+        <div><span class="chip chip-teal">Dialogue</span><div style="font-size:11px;color:var(--ink5);margin-top:4px">Small groups preferred</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 1fr 120px;gap:14px;padding:12px 16px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:4px;align-items:start">
+        <div style="font-family:var(--fm);font-size:9px;font-weight:700;color:var(--teal)">Wave 4<br><span style="color:var(--ink5);font-weight:400">Ongoing</span></div>
+        <div><div style="font-weight:600;color:var(--ink);margin-bottom:3px;font-size:13px">Progress updates and milestone celebrations</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Regular updates on how the change is progressing — even when the answer is "still on track." Silence after the announcement is the second most common communication failure, after insufficient initial communication.</div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Purpose: sustain momentum. Recognise early wins. Keep the coalition engaged. Signal that leadership has not moved on just because the announcement was made.</div>
+        <div><span class="chip chip-green">Monthly</span><div style="font-size:11px;color:var(--ink5);margin-top:4px">Scorecard + brief</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What Leaders Must Say — and Must Not Say</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>Say This</th><th>Not This</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--green);font-weight:500">"Here is what we know, and here is what we don't know yet."</td><td style="color:var(--red);font-weight:500">"Everything is fine. Nothing to worry about."</td><td>Honesty about uncertainty builds more trust than false certainty. People know when they're being managed.</td></tr>
+        <tr><td style="color:var(--green);font-weight:500">"This will be difficult. Here is the support that is in place."</td><td style="color:var(--red);font-weight:500">"Change is exciting! This is a great opportunity."</td><td>Forced positivity invalidates real concerns and reads as leadership being out of touch with ground reality.</td></tr>
+        <tr><td style="color:var(--green);font-weight:500">"What we are leaving behind mattered. It is okay to feel that loss."</td><td style="color:var(--red);font-weight:500">"The old way wasn't working. This is better."</td><td>Dismissing the past tells people their experience was worthless — and breaks trust with those who built the old way.</td></tr>
+        <tr><td style="color:var(--green);font-weight:500">"I don't have the answer to that yet — I will find out and come back to you by Friday."</td><td style="color:var(--red);font-weight:500">"We'll cross that bridge when we come to it."</td><td>Committing to a follow-up and delivering on it is the single highest-leverage trust-building behaviour in change.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 06 PHASES PLAYBOOK -->
+<div id="page-phases" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Change Phases Playbook</div>
+    <h1 class="page-title">Change Phases<br><em>Playbook</em></h1>
+    <p class="page-desc">The HRBP action playbook for each phase of a change — from first signal through to full embedding. What to do, what to watch for, and what success looks like at each stage.</p>
+  </div>
+
+  <div style="display:grid;gap:8px">
+    <div class="phase-card">
+      <div class="phase-hdr" onclick="togglePhase('p1')">
+        <div class="phase-num" style="color:var(--navy)">01</div>
+        <div class="phase-title">Anticipation — Change is Coming</div>
+        <div class="phase-duration">Weeks before announcement</div>
+        <div style="font-family:var(--fm);font-size:16px;color:var(--ink5)" id="tog-p1">+</div>
+      </div>
+      <div class="phase-body" id="body-p1">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">HRBP Actions</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Conduct change readiness assessment. Identify stakeholder resistance profile. Begin building the communication plan. Coach leadership on their role in the transition. Assess which HR systems need updating.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Watch For</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Premature leaking of information — if people are hearing things informally before the official announcement, trust damage has already begun. Move the announcement forward if possible.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Success Signal</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Leadership coalition is briefed, aligned, and ready to communicate. Communication plan is complete. Known resisters have been identified and a response approach is ready before they resist publicly.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-hdr" onclick="togglePhase('p2')">
+        <div class="phase-num" style="color:var(--red)">02</div>
+        <div class="phase-title">Announcement — The Change Lands</div>
+        <div class="phase-duration">Day 0 to Day 14</div>
+        <div style="font-family:var(--fm);font-size:16px;color:var(--ink5)" id="tog-p2">+</div>
+      </div>
+      <div class="phase-body" id="body-p2">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">HRBP Actions</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Be visible. Attend site briefings where possible. Collect the questions that were not asked in the room — people hold back in groups. Set up 1:1 check-ins with key individuals flagged as high-resistance. Begin listening for resistance type.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Watch For</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Sudden increase in unplanned leave, sick days, or informal conversation spikes. Early exit conversations from key talent. Leaders going silent after the announcement — they must stay visible and accessible.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Success Signal</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">People are asking questions — this is healthy, not dangerous. Silence is the danger signal. A first Q&amp;A session is scheduled within 5 days of announcement.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-hdr" onclick="togglePhase('p3')">
+        <div class="phase-num" style="color:var(--amber)">03</div>
+        <div class="phase-title">The Neutral Zone — The Hard Middle</div>
+        <div class="phase-duration">Weeks 2–12</div>
+        <div style="font-family:var(--fm);font-size:16px;color:var(--ink5)" id="tog-p3">+</div>
+      </div>
+      <div class="phase-body" id="body-p3">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">HRBP Actions</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Maintain a high communication frequency — at minimum biweekly updates. Celebrate small wins visibly. Create short feedback loops: ask people what is working and what is not, then respond to what you hear. Monitor attrition and absenteeism weekly. Keep the coalition engaged — they tire faster than the HRBP expects.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Watch For</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">The "we're over it" signal from leadership — they have moved on psychologically because they knew about the change weeks before the team did. If leaders stop communicating, the neutral zone extends. Also watch: attrition spike 4–8 weeks after announcement as the reality sets in.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Success Signal</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">The nature of questions shifts from "why is this happening" to "how does this work in practice" — this signals the move from Zone 1 (endings) to Zone 3 (beginnings). First small wins are visible and being celebrated.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-hdr" onclick="togglePhase('p4')">
+        <div class="phase-num" style="color:var(--green)">04</div>
+        <div class="phase-title">Embedding — Making it Stick</div>
+        <div class="phase-duration">Months 3–12</div>
+        <div style="font-family:var(--fm);font-size:16px;color:var(--ink5)" id="tog-p4">+</div>
+      </div>
+      <div class="phase-body" id="body-p4">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">HRBP Actions</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Update performance frameworks to include the new behaviours. Revise rewards or recognition to reinforce the new way. Address any backsliding — publicly if needed. Assess whether the change has achieved what it set out to achieve and report on it. Recognise those who led the change.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Watch For</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Quiet reversion to old practices, especially after a leadership change or a period of operational pressure. The change is not embedded until it survives its first major test. If the first crisis causes people to revert, the change was compliance, not adoption.</div></div>
+          <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Success Signal</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">New starters onboard into the new way without being told it is "new." The change is no longer referred to as "the change" — it is just "how we do things." Leadership is using the new behaviours without being prompted.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07 PLANNER -->
+<div id="page-planner" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Change Plan Builder</div>
+    <h1 class="page-title">Change Plan<br><em>Builder</em></h1>
+    <p class="page-desc">Build a structured HRBP change plan for any Valentis change initiative. Fill in the details and generate a ready-to-use change management document.</p>
+  </div>
+
+  <div class="planner-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f5f2;margin-bottom:16px">Change Initiative Setup</div>
+    <div class="pl-row pl-row-3">
+      <div class="pl-group"><label class="pl-label">Change Initiative Name</label><input class="pl-input" id="p-name" placeholder="e.g. Trainee Programme Redesign" style="min-height:auto;resize:none"></div>
+      <div class="pl-group"><label class="pl-label">Change Type</label>
+        <select class="pl-select" id="p-type">
+          <option value="process">Process / Ways of Working</option>
+          <option value="structure">Organisational Structure</option>
+          <option value="people">Leadership / People Transition</option>
+          <option value="system">New System or Technology</option>
+          <option value="policy">Policy or Compliance</option>
+          <option value="culture">Culture / Behavioural</option>
+        </select>
+      </div>
+      <div class="pl-group"><label class="pl-label">Scale</label>
+        <select class="pl-select" id="p-scale">
+          <option value="site">Site-level (1 country)</option>
+          <option value="multi">Multi-country</option>
+          <option value="group">Group-wide</option>
+        </select>
+      </div>
+    </div>
+    <hr class="pl-divider">
+    <div class="pl-section">
+      <div class="pl-section-title">The Case for Change</div>
+      <div class="pl-row pl-row-2">
+        <div class="pl-group"><label class="pl-label">What is changing and why</label><textarea class="pl-input" id="p-what" placeholder="Describe the change and the business reason for it." style="min-height:60px"></textarea></div>
+        <div class="pl-group"><label class="pl-label">What happens if we don't change</label><textarea class="pl-input" id="p-risk" placeholder="The business cost or risk of the status quo." style="min-height:60px"></textarea></div>
+      </div>
+    </div>
+    <div class="pl-section">
+      <div class="pl-section-title">People Impact</div>
+      <div class="pl-row pl-row-2">
+        <div class="pl-group"><label class="pl-label">Who is affected and how</label><textarea class="pl-input" id="p-who" placeholder="Which roles, sites, or individuals. What specifically changes for them." style="min-height:56px"></textarea></div>
+        <div class="pl-group"><label class="pl-label">What is being lost (Bridges lens)</label><textarea class="pl-input" id="p-loss" placeholder="What familiar practices, status, relationships, or routines are ending." style="min-height:56px"></textarea></div>
+      </div>
+    </div>
+    <div class="pl-section">
+      <div class="pl-section-title">Stakeholder &amp; Resistance Assessment</div>
+      <div class="pl-row pl-row-2">
+        <div class="pl-group"><label class="pl-label">Likely champions</label><textarea class="pl-input" id="p-champ" placeholder="Who will support this change and how will you leverage them?" style="min-height:56px"></textarea></div>
+        <div class="pl-group"><label class="pl-label">Likely resisters and resistance type</label><textarea class="pl-input" id="p-resist" placeholder="Who will resist, what type (Information/Value/Loss/Political), and how will you respond?" style="min-height:56px"></textarea></div>
+      </div>
+    </div>
+    <div class="pl-section">
+      <div class="pl-section-title">HRBP Action Plan</div>
+      <div class="pl-group" style="margin-bottom:8px"><label class="pl-label">Announcement approach (who says what, to whom, in what order)</label><textarea class="pl-input" id="p-announce" placeholder="Describe the announcement cascade — who is briefed first and how." style="min-height:56px"></textarea></div>
+      <div class="pl-group" style="margin-bottom:8px"><label class="pl-label">Key HRBP actions in the neutral zone (Weeks 2–12)</label><textarea class="pl-input" id="p-neutral" placeholder="Communication cadence, Q&A sessions, quick win milestones, resistance response." style="min-height:56px"></textarea></div>
+      <div class="pl-group"><label class="pl-label">Embedding actions (how the change is anchored in systems)</label><textarea class="pl-input" id="p-embed" placeholder="Performance framework updates, rewards changes, leader accountability." style="min-height:56px"></textarea></div>
+    </div>
+    <button class="btn btn-teal" onclick="generatePlan()">Generate Change Plan →</button>
+  </div>
+
+  <div class="plan-output" id="plan-output">
+    <div class="plan-header">
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Valentis Group · HRBP Change Management Plan</div>
+      <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--ink);margin-bottom:4px" id="po-title"></div>
+      <div style="display:flex;gap:12px;margin-top:8px" id="po-chips"></div>
+    </div>
+    <div class="plan-section">
+      <div class="plan-section-eyebrow">Section 1</div>
+      <div class="plan-section-title">Case for Change</div>
+      <div class="plan-body" id="po-case"></div>
+    </div>
+    <div class="plan-section">
+      <div class="plan-section-eyebrow">Section 2</div>
+      <div class="plan-section-title">People Impact — What is Being Lost</div>
+      <div class="plan-body" id="po-impact"></div>
+    </div>
+    <div class="plan-section">
+      <div class="plan-section-eyebrow">Section 3</div>
+      <div class="plan-section-title">Stakeholder &amp; Resistance Map</div>
+      <div id="po-stakeholders"></div>
+    </div>
+    <div class="plan-section">
+      <div class="plan-section-eyebrow">Section 4</div>
+      <div class="plan-section-title">HRBP Action Plan</div>
+      <div id="po-actions"></div>
+    </div>
+    <div style="margin-top:20px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:var(--fm);font-size:9px;color:var(--ink5)">
+      <span>Valentis Group · HRBP Change Management · Confidential</span>
+      <span>Generated by HRBP Tool 8</span>
+    </div>
+  </div>
+
+  <div style="margin-top:10px;display:none" id="plan-actions">
+    <button class="btn btn-ghost" onclick="window.print()">Print Change Plan</button>
+  </div>
+</div>
+
+<!-- 08 VALENTIS CASES -->
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Valentis Change Cases</div>
+    <h1 class="page-title">Valentis<br><em>Change Cases</em></h1>
+    <p class="page-desc">Three live change situations at Valentis — each analysed through the change management frameworks in this tool. Applied examples of how the HRBP diagnoses and responds to real transitions.</p>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:16px">
+      <div style="font-family:var(--fd);font-size:40px;font-weight:800;color:var(--teal);line-height:1;flex-shrink:0">01</div>
+      <div>
+        <div class="card-title" style="margin-bottom:4px">Trainee Programme Redesign — Myanmar</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-teal">Culture/Behavioural</span><span class="chip chip-amber">Site-level</span><span class="chip chip-red">Active</span></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+      <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Bridges Analysis</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Trainees are stuck in Zone 2 — the neutral zone — at month 3. Their pre-driller identity has ended; the driller identity has not formed. Supervisors did not know this was happening because they were never taught to name it. The redesign introduces structured Zone 2 support.</div></div>
+      <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">ADKAR Diagnosis</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Supervisors have Awareness (they know training is expected) but lack Knowledge and Ability (they do not know how to hold a transition conversation). The intervention targets K and A — practical coaching on what to say at each trainee milestone.</div></div>
+      <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">HRBP Plan</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Wave 1: Brief Myo H. — frame as professional development for his supervisors, not a criticism of their current practice. Wave 2: Deliver coaching programme (March). Wave 3: 30/60/90 check-in structure from next cohort. Monitor: conversion rate by July scorecard.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:16px">
+      <div style="font-family:var(--fd);font-size:40px;font-weight:800;color:var(--amber);line-height:1;flex-shrink:0">02</div>
+      <div>
+        <div class="card-title" style="margin-bottom:4px">Myo H. — Retention &amp; Succession Transition</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-navy">Leadership Transition</span><span class="chip chip-amber">Myanmar</span><span class="chip chip-amber">Approaching</span></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+      <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">The Change</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Whether Myo H. renews his retention agreement (continuation scenario) or exits (transition scenario), a change is coming to Myanmar site leadership. The HRBP must plan for both — one is a retention intervention, one is a succession execution.</div></div>
+      <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Bridges for the Team</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">If Myo exits, the Myanmar team enters a major Zone 1 event. Myo has been site manager for years — he is part of the team's identity. His successor will be judged against his memory, not their own merits. The transition plan must acknowledge this explicitly.</div></div>
+      <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">HRBP Plan</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Q3 2026: retention conversation with Myo H. Simultaneously: identify internal successor candidate and begin development. If renewal: 2-year succession plan. If exit: structured handover plan including Myo's active involvement in successor integration. Protect Myanmar team from the uncertainty vacuum.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:16px">
+      <div style="font-family:var(--fd);font-size:40px;font-weight:800;color:var(--navy);line-height:1;flex-shrink:0">03</div>
+      <div>
+        <div class="card-title" style="margin-bottom:4px">Country 5 Entry — Future State</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-navy">Structural</span><span class="chip chip-navy">Group-wide</span><span class="chip chip-muted">Planning</span></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+      <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Kotter Application</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Country entry is a high-visibility change requiring Kotter's full 8-step approach. Urgency: competitive window for the contract. Coalition: COO + the Site Manager who will run Country 5 — must be identified and briefed before the contract is signed. Vision: what success looks like 12 months post-entry.</div></div>
+      <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">People Risk</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The biggest people risk in country entry is deploying an internal leader into a context they are not ready for. The second is the cross-country deployment of experienced staff creating gaps in their home country. Both require the HRBP to model the supply-demand impact before the business decision is made.</div></div>
+      <div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">HRBP Early Actions</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Identify the internal SM candidate by Q3 2026. Begin development now — 15-month window to contract sign. Build country-specific rewards benchmark before the first offer is made. Prepare the existing 4-country team for what the 5th country entry means for their own resources and career paths.</div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showTab(id, el) {
+  document.querySelectorAll('.tab-body').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tb = document.getElementById('tab-' + id);
+  if (tb) tb.classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+function togglePhase(id) {
+  const body = document.getElementById('body-' + id);
+  const tog  = document.getElementById('tog-' + id);
+  const open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  tog.textContent = open ? '+' : '−';
+}
+
+function generatePlan() {
+  const get = id => document.getElementById(id)?.value?.trim() || '';
+  const name     = get('p-name') || 'Change Initiative';
+  const type     = document.getElementById('p-type');
+  const scale    = document.getElementById('p-scale');
+  const typeText = type?.options[type.selectedIndex]?.text || '';
+  const scaleText = scale?.options[scale.selectedIndex]?.text || '';
+  const what     = get('p-what');
+  const risk     = get('p-risk');
+  const who      = get('p-who');
+  const loss     = get('p-loss');
+  const champ    = get('p-champ');
+  const resist   = get('p-resist');
+  const announce = get('p-announce');
+  const neutral  = get('p-neutral');
+  const embed    = get('p-embed');
+
+  document.getElementById('po-title').textContent = name;
+  document.getElementById('po-chips').innerHTML =
+    `<span class="chip chip-teal">${typeText}</span><span class="chip chip-navy">${scaleText}</span><span class="chip chip-amber">In Planning</span>`;
+
+  document.getElementById('po-case').innerHTML =
+    `<div style="margin-bottom:8px"><strong style="color:var(--ink2)">What is changing:</strong> ${what || '—'}</div><div><strong style="color:var(--ink2)">Cost of inaction:</strong> ${risk || '—'}</div>`;
+
+  document.getElementById('po-impact').innerHTML =
+    `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div><strong style="color:var(--ink2);display:block;margin-bottom:4px">Who is affected:</strong>${who || '—'}</div><div><strong style="color:var(--red);display:block;margin-bottom:4px">What is being lost (Bridges Zone 1):</strong>${loss || '—'}</div></div>`;
+
+  document.getElementById('po-stakeholders').innerHTML =
+    `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div style="padding:12px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:5px">Champions</div><div style="font-size:13px;color:var(--ink3);font-weight:300">${champ || '—'}</div></div><div style="padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:5px">Resisters &amp; Type</div><div style="font-size:13px;color:var(--ink3);font-weight:300">${resist || '—'}</div></div></div>`;
+
+  const actions = [
+    { label:'Announcement cascade', content: announce },
+    { label:'Neutral zone (Weeks 2–12)', content: neutral },
+    { label:'Embedding actions', content: embed },
+  ].filter(a => a.content);
+
+  document.getElementById('po-actions').innerHTML = actions.map((a,i) =>
+    `<div class="plan-action-row"><div class="plan-action-num">${String(i+1).padStart(2,'0')}</div><div><strong style="color:var(--ink2);display:block;margin-bottom:2px">${a.label}</strong><span style="color:var(--ink3)">${a.content}</span></div></div>`
+  ).join('') || '<div style="color:var(--ink4);font-size:13px">No actions specified.</div>';
+
+  document.getElementById('plan-output').style.display = 'block';
+  document.getElementById('plan-actions').style.display = 'flex';
+}
+</script>
+</body>
+</html>

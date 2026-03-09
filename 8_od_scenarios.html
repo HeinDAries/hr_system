@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentis Org Design Scenarios — OD Tool 8</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3ef;--surface:#ffffff;--surface2:#f0ede7;--surface3:#e8e4dc;
+  --border:#ddd9d0;--border2:#ccc7bb;
+  --ink:#1c1a16;--ink2:#2e2c27;--ink3:#57534a;--ink4:#8a8478;--ink5:#b8b2a8;
+  --sienna:#9b3a1a;--sienna2:#b44420;--sienna3:#c44e28;
+  --sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.22);
+  --slate:#2c3e50;--slate-dim:rgba(44,62,80,0.07);--slate-border:rgba(44,62,80,0.2);
+  --gold:#8a6914;--gold-dim:rgba(138,105,20,0.07);--gold-border:rgba(138,105,20,0.22);
+  --green:#2d6a4f;--green-dim:rgba(45,106,79,0.07);--green-border:rgba(45,106,79,0.22);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--sienna3),var(--sienna),rgba(155,58,26,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sienna3);background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--sienna3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(155,58,26,0.15);border-color:rgba(155,58,26,0.35);color:#e8a07a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--sienna)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#e8a07a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--sienna);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--sienna)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--sienna);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-slate{background:var(--slate-dim);color:var(--slate);border:1px solid var(--slate-border)}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.sienna{background:var(--sienna-dim);border-color:var(--sienna);color:var(--ink2)}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--sienna);padding:16px 20px;margin:16px 0;background:var(--sienna-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6;font-weight:400}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px;color:#f5f0e8}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:0;flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--sienna);border-bottom-color:var(--sienna);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* ORG CHART */
+.org-wrap{overflow-x:auto;padding:16px 0}
+.org-tree{display:flex;flex-direction:column;align-items:center;gap:0;font-size:12px}
+.org-row{display:flex;align-items:flex-start;justify-content:center;gap:0;position:relative;width:100%}
+.org-row-connector{display:flex;justify-content:center;height:24px;position:relative}
+.org-row-connector::before{content:'';position:absolute;top:0;left:50%;width:2px;height:100%;background:var(--border2)}
+.org-branches{display:flex;justify-content:center;gap:0;position:relative;width:100%}
+.org-branches::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--border2)}
+.org-branch{display:flex;flex-direction:column;align-items:center;gap:0;position:relative}
+.org-branch::before{content:'';position:absolute;top:0;left:50%;width:2px;height:18px;background:var(--border2)}
+.org-node{padding:10px 14px;border-radius:3px;text-align:center;min-width:110px;max-width:140px;margin:18px 8px 0;border:1px solid var(--border);position:relative;font-size:11.5px}
+.org-node-name{font-weight:600;color:var(--ink);margin-bottom:2px;line-height:1.2}
+.org-node-role{font-size:10px;color:var(--ink4);font-family:var(--fm);letter-spacing:.3px;line-height:1.3}
+.org-node-grade{font-family:var(--fm);font-size:9px;color:var(--ink5);margin-top:3px}
+.org-node.coo{background:var(--slate);border-color:var(--slate);color:#fff}
+.org-node.coo .org-node-name{color:#f5f0e8}
+.org-node.coo .org-node-role{color:rgba(255,255,255,0.45)}
+.org-node.coo .org-node-grade{color:rgba(255,255,255,0.25)}
+.org-node.sm{background:var(--sienna-dim);border-color:var(--sienna-border)}
+.org-node.sm .org-node-name{color:var(--sienna2)}
+.org-node.ops{background:var(--gold-dim);border-color:var(--gold-border)}
+.org-node.ops .org-node-name{color:var(--gold)}
+.org-node.hr{background:var(--green-dim);border-color:var(--green-border)}
+.org-node.hr .org-node-name{color:var(--green)}
+.org-node.new{border:2px dashed var(--sienna);background:rgba(155,58,26,0.04)}
+.org-node.new .org-node-name{color:var(--sienna)}
+.org-node.flag{border-color:var(--red);background:var(--red-dim)}
+.org-node.flag .org-node-name{color:var(--red)}
+.org-node .flag-dot{position:absolute;top:-5px;right:-5px;width:10px;height:10px;border-radius:50%;background:var(--red);border:2px solid white}
+/* SCENARIO SELECTOR */
+.sc-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:3px;border:1px solid var(--border);font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s;color:var(--ink4);background:var(--surface2);margin-right:6px;margin-bottom:6px}
+.sc-btn:hover{border-color:var(--sienna-border);color:var(--sienna)}
+.sc-btn.active{background:var(--sienna);border-color:var(--sienna);color:#fff}
+/* TIMELINE */
+.tl-item{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px;border:2px solid}
+.tl-dot.green{background:var(--green-dim);border-color:var(--green)}
+.tl-dot.gold{background:var(--gold-dim);border-color:var(--gold)}
+.tl-dot.sienna{background:var(--sienna-dim);border-color:var(--sienna)}
+.tl-dot.slate{background:var(--slate-dim);border-color:var(--slate)}
+.tl-line{width:2px;background:var(--border2);flex-shrink:0;align-self:stretch;margin-left:4px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-sienna{background:var(--sienna);color:#fff}
+.btn-sienna:hover{background:var(--sienna2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">OD Tool 8 / 9</div>
+    <div class="sb-title">Valentis Org<br><em>Scenarios</em></div>
+    <div class="sb-sub">Valentis Group · 2026–2028</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('baseline',this)"><span class="nav-num">01</span>Current State Baseline</div>
+    <div class="nav-item" onclick="showPage('forces',this)"><span class="nav-num">02</span>Strategic Forces &amp; Drivers</div>
+    <div class="nav-item" onclick="showPage('scenarios',this)"><span class="nav-num">03</span>Three Scenarios</div>
+    <div class="nav-item" onclick="showPage('sc-a',this)"><span class="nav-num">04</span>Scenario A — Steady State</div>
+    <div class="nav-item" onclick="showPage('sc-b',this)"><span class="nav-num">05</span>Scenario B — Growth (Managed)</div>
+    <div class="nav-item" onclick="showPage('sc-c',this)"><span class="nav-num">06</span>Scenario C — Growth (Accelerated)</div>
+    <div class="nav-item" onclick="showPage('compare',this)"><span class="nav-num">07</span>Scenario Comparison</div>
+    <div class="nav-item" onclick="showPage('recommend',this)"><span class="nav-num">08</span>Recommendation &amp; Triggers</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Organisation Design &amp; Development</strong>
+      Tool 8 of 9 · Valentis Org Design Scenarios<br>
+      <span style="color:rgba(255,255,255,0.12)">42 FTE today → 65 FTE by Q2 2027. Three paths. One recommendation.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+<div id="page-baseline" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">OD Tool 8 / 9 — Valentis Org Design Scenarios</div>
+    <h1 class="page-title">Current State<br><em>Baseline</em></h1>
+    <p class="page-desc">Before modelling future states, the baseline must be precisely documented. Every scenario is defined relative to the current structure — what changes, what remains, and what the change costs in disruption and investment. This is the Valentis starting point as at March 2026.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">Valentis Group — Structural Baseline · March 2026</div>
+    <div class="vx-title">42 active employees. 4 countries. 3 management layers. COO span at ceiling.</div>
+    <div class="vx-body">The current structure is functioning — programmes are running, clients are being served. But three structural constraints are visible in the data: the COO's span is at its effective ceiling, the cross-country coordination mechanism does not exist, and the talent pipeline is running below the replacement rate needed for the organisation's growth ambition. The structure that got Valentis to 42 FTE is not the structure that will get it to 65 FTE across five countries.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Current Org Chart — March 2026</div>
+    <div class="card-body" style="margin-bottom:16px">Solid lines = reporting lines. Red flag = retention risk or structural stress. All spans shown are effective spans (complexity-adjusted).</div>
+    <div class="org-wrap">
+      <div class="org-tree">
+        <div class="org-row" style="justify-content:center">
+          <div class="org-node coo" style="min-width:150px">
+            <div class="org-node-name">Chief Executive</div>
+            <div class="org-node-role">CEO</div>
+            <div class="org-node-grade">G8</div>
+          </div>
+        </div>
+        <div class="org-row-connector"></div>
+        <div class="org-row" style="justify-content:center">
+          <div class="org-node coo" style="min-width:150px">
+            <div class="org-node-name">Chief Operating</div>
+            <div class="org-node-role">COO — 6 direct reports</div>
+            <div class="org-node-grade">G7 · Span: AMBER ⚠</div>
+          </div>
+        </div>
+        <div style="height:18px;display:flex;justify-content:center"><div style="width:2px;background:var(--border2)"></div></div>
+        <div style="display:flex;justify-content:center;position:relative;width:100%">
+          <div style="position:absolute;top:0;left:18%;right:18%;height:2px;background:var(--border2)"></div>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:nowrap">
+
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm" style="margin-top:0">
+                <div class="org-node-name">SM — Laos</div>
+                <div class="org-node-role">Site Manager</div>
+                <div class="org-node-grade">G5 · ~14 FTE</div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm flag" style="margin-top:0">
+                <div class="flag-dot"></div>
+                <div class="org-node-name">Myo H.</div>
+                <div class="org-node-role">SM — Myanmar</div>
+                <div class="org-node-grade">G5 · Retention risk</div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm flag" style="margin-top:0">
+                <div class="flag-dot"></div>
+                <div class="org-node-name">Wirawan S.</div>
+                <div class="org-node-role">SM — Indonesia</div>
+                <div class="org-node-grade">G5 · 3 G3 vacancies</div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm" style="margin-top:0">
+                <div class="org-node-name">SM — Thailand</div>
+                <div class="org-node-role">Site Manager</div>
+                <div class="org-node-grade">G5 · Champion</div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node hr" style="margin-top:0">
+                <div class="org-node-name">Ba</div>
+                <div class="org-node-role">Group HR Manager</div>
+                <div class="org-node-grade">G6 · HRBP</div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node" style="margin-top:0;background:var(--slate-dim);border-color:var(--slate-border)">
+                <div class="org-node-name" style="color:var(--slate)">Finance / HSE</div>
+                <div class="org-node-role">Group Functions</div>
+                <div class="org-node-grade">G5–G6</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Baseline Structural Metrics</div>
+      <table class="dtable" style="margin-top:4px">
+        <thead><tr><th>Metric</th><th>Current</th><th>Target / Benchmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Total headcount</td><td>42 active FTE</td><td>65 FTE by Q2 2027</td><td><span class="chip chip-gold">35% growth needed</span></td></tr>
+          <tr><td>Management layers</td><td>3 (CEO → COO → SM → drillers)</td><td>3–4 appropriate at 65 FTE</td><td><span class="chip chip-green">Appropriate</span></td></tr>
+          <tr><td>COO effective span</td><td>6 (4 SMs + HR + Finance/HSE)</td><td>4–6 at executive complexity</td><td><span class="chip chip-gold">At ceiling</span></td></tr>
+          <tr><td>Countries operating</td><td>4 (Laos, Myanmar, Indonesia, Thailand)</td><td>5 by Q2 2027</td><td><span class="chip chip-muted">Country 5 unconfirmed</span></td></tr>
+          <tr><td>G5 succession cover</td><td>0 ready successors</td><td>1 per critical role minimum</td><td><span class="chip chip-red">Critical gap</span></td></tr>
+          <tr><td>G3→G4 pipeline (Laos)</td><td>2 G3 candidates / 5 G4 needed</td><td>Net neutral or positive</td><td><span class="chip chip-red">Net -1 by 2027</span></td></tr>
+          <tr><td>Coordination mechanism</td><td>None formal</td><td>SM peer forum + Ops Lead</td><td><span class="chip chip-red">Absent</span></td></tr>
+          <tr><td>People cost as % revenue</td><td>~43%</td><td>Hold or reduce as revenue grows</td><td><span class="chip chip-gold">Watch</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Baseline Health Summary</div>
+      <div class="card-body" style="margin-bottom:12px">Health scores from Tool 5 diagnostic — March 2026. Three red dimensions require structural intervention. Four amber require managed improvement.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--ink2)">D2 Accountability &amp; Ownership</span><span style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--red)">4/10</span></div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--ink2)">D4 Coordination &amp; Integration</span><span style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--red)">3/10</span></div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--ink2)">D5 Talent Pipeline &amp; Capability</span><span style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--red)">4/10</span></div>
+        <div style="padding:10px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--ink2)">D1 Direction &amp; Strategic Clarity</span><span style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--gold)">6/10</span></div>
+        <div style="padding:10px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--ink2)">D3 Leadership Quality</span><span style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--gold)">6/10</span></div>
+        <div style="padding:10px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--ink2)">D6 Culture &amp; Psychological Safety</span><span style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--gold)">6/10</span></div>
+        <div style="padding:10px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--ink2)">D7 Renewal &amp; Adaptability</span><span style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--gold)">5/10</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-forces" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Strategic Forces &amp; Drivers</div>
+    <h1 class="page-title">Strategic Forces<br><em>&amp; Drivers</em></h1>
+    <p class="page-desc">Scenarios are not arbitrary alternatives — they are structural responses to real strategic forces. These are the forces acting on Valentis's organisation design between now and 2028. Each scenario reflects a different weight given to these forces.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Growth Forces <em>— pushing structure to change</em></div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:12px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+          <div style="font-weight:700;color:var(--sienna);font-size:13px;margin-bottom:3px">Country 5 expansion — Q2 2027</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Adding a fifth country adds a fifth Site Manager reporting to the COO — taking effective span from 6 to 8 without structural relief. The Group Ops Lead role must precede Country 5 entry, not follow it.</div>
+        </div>
+        <div style="padding:12px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+          <div style="font-weight:700;color:var(--sienna);font-size:13px;margin-bottom:3px">42 → 65 FTE growth (35%)</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Growth of 23 FTE in 6 quarters requires a functioning pipeline and onboarding capacity that the current structure does not have. HR Coordinator and G4 development accountability are not optional at 65 FTE.</div>
+        </div>
+        <div style="padding:12px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+          <div style="font-weight:700;color:var(--sienna);font-size:13px;margin-bottom:3px">Client and programme demand increasing</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Revenue growth depends on programme delivery capacity — which depends on having enough trained G3/G4 drillers in place. The pipeline constraint is a growth constraint, not just a people risk.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Risk Forces <em>— creating structural urgency</em></div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:12px 16px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-weight:700;color:var(--red);font-size:13px;margin-bottom:3px">Dual SM retention risk — 2027 cliff</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Myo H. (Myanmar) and Wirawan S. (Indonesia) both have retention bonuses expiring in Q1 2027. If either exits without a successor in development, Valentis faces a 6–12 month capability gap in that country — precisely when Country 5 activation demands COO attention elsewhere.</div>
+        </div>
+        <div style="padding:12px 16px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-weight:700;color:var(--red);font-size:13px;margin-bottom:3px">Laos G4 retirement wave — 2027</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">3 of 5 Laos G4 senior drillers at retirement risk within 3 years. Net -1 G4 by 2027 without pipeline intervention. The 24-month development cycle means activation window closes June 2026.</div>
+        </div>
+        <div style="padding:12px 16px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px">
+          <div style="font-weight:700;color:var(--gold);font-size:13px;margin-bottom:3px">People cost at 43% revenue — scale sensitivity</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Adding 23 FTE must be absorbed by proportionally greater revenue growth. If revenue does not scale with headcount, people cost as a percentage rises. Each scenario must be assessed against its people cost implications.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Structural Decision Points — What Valentis Must Choose</div>
+    <div class="card-body" style="margin-bottom:12px">These are not optional decisions — the structure will change in one of these directions regardless. The choice is whether it happens by design or by default.</div>
+    <table class="dtable">
+      <thead><tr><th>Decision point</th><th>The choice</th><th>Consequence of avoiding it</th><th>Trigger deadline</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--sienna)">COO span relief</td><td>Create Group Ops Lead before Country 5 entry — or accept COO span of 8+ and the management quality loss that follows</td><td>COO becomes the coordination bottleneck. Decisions slow. Development stops. Country 5 entry is managed from an already-overloaded COO.</td><td>Q3 2026 — before Country 5 SM appointment</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Coordination infrastructure</td><td>Formalise cross-country coordination (peer forum + Ops Lead) — or continue with 4 independent country operations that share a brand but not a practice</td><td>Thailand's operational advantages never reach other sites. Group HR framework continues to be applied inconsistently. Country 5 inherits no standards — reinvents from scratch.</td><td>Q2 2026 — peer forum regardless of Ops Lead timeline</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">SM succession</td><td>Identify and develop G5 successors now — or accept the risk that either or both SM retention bonuses expire without a ready internal candidate</td><td>Myo H. or Wirawan S. exits in Q1 2027. External recruitment takes 6–12 months. Country programme delivery drops during transition. Country 5 window compresses.</td><td>Q3 2026 — retention conversations Sep/Oct 2026</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">HR capacity</td><td>Hire HR Coordinator (G4) before 65 FTE — or accept Group HR becoming 100% operational as headcount grows, eliminating Ba's strategic capacity</td><td>HRBP is pulled back into administration as the organisation scales. Strategic OD work stops. The toolkit becomes theoretical rather than active.</td><td>Q4 2026 — before Country 5 headcount onboarding</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="page-scenarios" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Three Scenarios</div>
+    <h1 class="page-title">Three<br><em>Scenarios</em></h1>
+    <p class="page-desc">Three structural futures for Valentis between now and 2028. Each represents a coherent set of design choices — not a best/worst/middle split. The question is not which scenario is "best in theory" but which is most appropriate given Valentis's strategic ambition, risk tolerance, and execution capacity.</p>
+  </div>
+  <div style="display:grid;gap:12px">
+
+    <div style="padding:24px 28px;background:var(--surface);border:2px solid var(--border);border-radius:4px;display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:start">
+      <div style="text-align:center">
+        <div style="font-family:var(--fd);font-size:52px;font-weight:800;color:var(--ink5);line-height:1">A</div>
+        <span class="chip chip-muted" style="margin-top:4px">Steady State</span>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px">Optimise the current structure — no Country 5</div>
+        <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.8">Valentis holds at four countries and focuses on fixing structural gaps in the current model: G4 accountability, Laos pipeline, coordination infrastructure, and COO span relief via the Group Ops Lead. No Country 5 entry in the planning horizon. HR Coordinator hired at 55+ FTE. Growth is organic and contained within the four existing countries.</div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-green">Lowest execution risk</span>
+          <span class="chip chip-muted">42 → 52 FTE by Q2 2027</span>
+          <span class="chip chip-muted">4 countries</span>
+          <span class="chip chip-gold">Misses growth ambition</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <button class="btn btn-sienna" onclick="showPage('sc-a',document.querySelectorAll('.nav-item')[3])">View Scenario →</button>
+      </div>
+    </div>
+
+    <div style="padding:24px 28px;background:var(--surface);border:2px solid var(--sienna-border);border-radius:4px;display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:start">
+      <div style="text-align:center">
+        <div style="font-family:var(--fd);font-size:52px;font-weight:800;color:var(--sienna);line-height:1">B</div>
+        <span class="chip chip-sienna" style="margin-top:4px">Recommended</span>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px">Managed growth — Country 5 entry with structural preparation</div>
+        <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.8">Valentis enters Country 5 in Q2 2027 — but only after completing the structural preparation sequence: Group Ops Lead in post (Q3 2026), SM peer forum running (Q2 2026), G5 succession identified (Q3 2026), HR Coordinator hired (Q4 2026). Country 5 entry is enabled by the new structure, not squeezed into the old one. Target: 65 FTE across 5 countries by end 2027.</div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-sienna">HRBP recommended</span>
+          <span class="chip chip-muted">42 → 65 FTE by Q4 2027</span>
+          <span class="chip chip-muted">5 countries</span>
+          <span class="chip chip-green">Sequenced and executable</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <button class="btn btn-sienna" onclick="showPage('sc-b',document.querySelectorAll('.nav-item')[4])">View Scenario →</button>
+      </div>
+    </div>
+
+    <div style="padding:24px 28px;background:var(--surface);border:2px solid var(--border);border-radius:4px;display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:start">
+      <div style="text-align:center">
+        <div style="font-family:var(--fd);font-size:52px;font-weight:800;color:var(--gold);line-height:1">C</div>
+        <span class="chip chip-gold" style="margin-top:4px">Accelerated</span>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px">Accelerated growth — Country 5 plus potential Country 6 preparation</div>
+        <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.8">Valentis moves faster and bigger: Country 5 entry Q4 2026 (compressed timeline), Country 6 preparation begins Q2 2027. Requires the Group Ops Lead to be recruited externally by Q2 2026 (not Q3), HR Coordinator by Q3 2026, and G5 succession to be running in parallel — not sequentially. High execution risk. Appropriate only if client demand or competitive pressure requires faster entry.</div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-gold">Highest growth potential</span>
+          <span class="chip chip-muted">42 → 75+ FTE by Q4 2027</span>
+          <span class="chip chip-muted">5–6 countries</span>
+          <span class="chip chip-red">Significant execution risk</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <button class="btn btn-sienna" onclick="showPage('sc-c',document.querySelectorAll('.nav-item')[5])">View Scenario →</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">How to Use These Scenarios</div>
+    <div class="card-body">Scenarios are decision tools — not predictions. They are used in three ways at Valentis. First, as a framework for the COO conversation: "here are three structurally coherent futures — which one matches our strategic intent?" Second, as a planning input: each scenario defines the sequence of structural changes needed, and therefore the HR workplan. Third, as a trigger document: if the business context changes (Country 5 confirmed earlier than expected, or a G5 exit forces the succession question), the scenario framework tells you which path you have moved to and what that requires next. The scenarios are reviewed quarterly — they are not set once and filed.</div>
+  </div>
+</div>
+
+<div id="page-sc-a" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Scenario A</div>
+    <h1 class="page-title">Scenario A<br><em>Steady State</em></h1>
+    <p class="page-desc">Valentis holds at four countries and invests in fixing structural quality within the current footprint. No Country 5 entry in the 2026–2027 planning horizon. Growth is organic. The focus is on making the existing structure work excellently rather than expanding before it is ready.</p>
+  </div>
+  <div class="info gold"><strong>When is Scenario A the right choice?</strong>If Country 5 is not commercially confirmed, if the COO has low risk appetite for execution complexity, or if the 2026 intervention backlog (Indonesia vacancies, Laos succession, Myanmar attrition) requires full attention before expansion is responsible. Scenario A is not a failure — it is a deliberate choice to build structural quality before structural scale.</div>
+
+  <div class="card">
+    <div class="card-title">Scenario A — Target Org Structure <em>by Q4 2027</em></div>
+    <div class="card-body" style="margin-bottom:16px">Three structural additions from baseline: Group Ops Lead (G6) relieving COO span, HR Coordinator (G4) providing operational HR support, and formalised SM peer forum as a coordination mechanism. No new country. COO span reduced from 6 to 4.</div>
+    <div class="org-wrap">
+      <div class="org-tree">
+        <div class="org-row" style="justify-content:center">
+          <div class="org-node coo" style="min-width:150px"><div class="org-node-name">CEO</div><div class="org-node-grade">G8</div></div>
+        </div>
+        <div class="org-row-connector"></div>
+        <div class="org-row" style="justify-content:center">
+          <div class="org-node coo" style="min-width:160px"><div class="org-node-name">COO</div><div class="org-node-role">4 direct reports</div><div class="org-node-grade">G7 · Span: GREEN ✓</div></div>
+        </div>
+        <div style="height:18px;display:flex;justify-content:center"><div style="width:2px;background:var(--border2)"></div></div>
+        <div style="display:flex;justify-content:center;position:relative;width:100%">
+          <div style="position:absolute;top:0;left:22%;right:22%;height:2px;background:var(--border2)"></div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node ops new" style="margin-top:0"><div class="org-node-name">Group Ops Lead</div><div class="org-node-role">NEW — G6</div><div class="org-node-grade">4 SMs report here</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node hr" style="margin-top:0"><div class="org-node-name">Ba — Group HR</div><div class="org-node-role">G6 · Strategic HRBP</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node" style="margin-top:0;background:var(--slate-dim);border-color:var(--slate-border)"><div class="org-node-name" style="color:var(--slate)">Finance / HSE</div><div class="org-node-role">Group Functions</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="height:18px;display:flex;justify-content:center;margin-left:-260px"><div style="width:2px;background:var(--border2)"></div></div>
+        <div style="display:flex;justify-content:flex-start;padding-left:60px;position:relative;width:100%">
+          <div style="position:absolute;top:0;left:60px;width:420px;height:2px;background:var(--border2)"></div>
+          <div style="display:flex;gap:8px">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm" style="margin-top:0"><div class="org-node-name">SM — Laos</div><div class="org-node-grade">G5</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm" style="margin-top:0"><div class="org-node-name">Myo H.</div><div class="org-node-role">Myanmar</div><div class="org-node-grade">G5 · Retained</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm" style="margin-top:0"><div class="org-node-name">Wirawan S.</div><div class="org-node-role">Indonesia</div><div class="org-node-grade">G5 · Retained</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm" style="margin-top:0"><div class="org-node-name">SM — Thailand</div><div class="org-node-grade">G5</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="height:18px;display:flex;justify-content:center;margin-left:80px"><div style="width:2px;background:var(--border2)"></div></div>
+        <div style="display:flex;justify-content:center;margin-left:80px">
+          <div class="org-node hr new" style="min-width:130px"><div class="org-node-name">HR Coordinator</div><div class="org-node-role">NEW — G4</div><div class="org-node-grade">Reports to Ba</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Scenario A — Change Sequence</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div class="tl-item"><div class="tl-dot green"></div><div><div style="font-family:var(--fm);font-size:8px;color:var(--green);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Q2 2026</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Indonesia G3 vacancies filled. G4 accountability role redesign complete. Month-3 check-in process active. SM peer forum inaugural session held. Laos G3 development plans activated.</div></div></div>
+        <div class="tl-item"><div class="tl-dot gold"></div><div><div style="font-family:var(--fm);font-size:8px;color:var(--gold);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Q3 2026</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Group Ops Lead recruited and in role. COO span confirmed at 4. G5 succession candidates named. Retention conversations scheduled for Myo H. (Sep) and Wirawan S. (Oct).</div></div></div>
+        <div class="tl-item"><div class="tl-dot sienna"></div><div><div style="font-family:var(--fm);font-size:8px;color:var(--sienna);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Q4 2026</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">HR Coordinator hired (G4). Ba's strategic capacity preserved. Retention outcomes confirmed for both G5 SMs. Country 5 formally deferred — communicated to COO with structural rationale.</div></div></div>
+        <div class="tl-item"><div class="tl-dot slate"></div><div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">2027 — Steady State</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">52 FTE. 4 countries. Health scores improving across all 7 dimensions. Country 5 decision made when both structure and pipeline are demonstrably ready. This is Scenario A's endpoint.</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Scenario A — Assessment</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Strengths</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Lowest execution risk of the three scenarios. Fixes the real structural problems before adding complexity. COO workload manageable. Pipeline repair has time to produce results before the next expansion.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Risks</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">If Country 5 commercial opportunity has a window, Scenario A may be too slow. If retention bonuses are not extended and SMs exit, Scenario A provides less structural resilience than B because there is no Ops Lead continuity layer.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">People cost implication</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Two new permanent roles (Ops Lead G6, HR Coordinator G4) add approx. $90K–$130K annual people cost. Offset by improved programme delivery capacity and HRBP strategic reorientation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="page-sc-b" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Scenario B (Recommended)</div>
+    <h1 class="page-title">Scenario B<br><em>Managed Growth</em></h1>
+    <p class="page-desc">Valentis enters Country 5 in Q2 2027 — but only after completing the structural preparation sequence that makes the entry sustainable. The new structure enables Country 5; it does not struggle to accommodate it. This is the HRBP's recommended scenario.</p>
+  </div>
+  <div class="info sienna"><strong>Why Scenario B is recommended</strong>Scenario B matches Valentis's stated growth ambition (65 FTE, 5 countries by Q2 2027) while building the structural prerequisites that make that growth executable. The sequencing is the key: every structural change in the 2026 workplan creates a foundation that Country 5 entry depends on. Scenario B is achievable — but only if the 2026 structural changes are completed on schedule.</div>
+
+  <div class="card">
+    <div class="card-title">Scenario B — Target Org Structure <em>by Q4 2027</em></div>
+    <div class="card-body" style="margin-bottom:16px">Five structural changes from baseline: Group Ops Lead (G6, Q3 2026), HR Coordinator (G4, Q4 2026), Country 5 Site Manager (G5, Q2 2027), G5 successor in accelerated development, and formalised group coordination infrastructure. COO span holds at 4 through and beyond Country 5 entry.</div>
+    <div class="org-wrap">
+      <div class="org-tree">
+        <div class="org-row" style="justify-content:center">
+          <div class="org-node coo" style="min-width:150px"><div class="org-node-name">CEO</div><div class="org-node-grade">G8</div></div>
+        </div>
+        <div class="org-row-connector"></div>
+        <div class="org-row" style="justify-content:center">
+          <div class="org-node coo" style="min-width:165px"><div class="org-node-name">COO</div><div class="org-node-role">4 direct reports</div><div class="org-node-grade">G7 · Span: GREEN ✓</div></div>
+        </div>
+        <div style="height:18px;display:flex;justify-content:center"><div style="width:2px;background:var(--border2)"></div></div>
+        <div style="display:flex;justify-content:center;position:relative;width:100%">
+          <div style="position:absolute;top:0;left:22%;right:22%;height:2px;background:var(--border2)"></div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node ops new" style="margin-top:0"><div class="org-node-name">Group Ops Lead</div><div class="org-node-role">G6 — Q3 2026</div><div class="org-node-grade">5 SMs report here</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node hr" style="margin-top:0"><div class="org-node-name">Ba — Group HR</div><div class="org-node-role">G6 · Strategic HRBP</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node" style="margin-top:0;background:var(--slate-dim);border-color:var(--slate-border)"><div class="org-node-name" style="color:var(--slate)">Finance / HSE</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="height:18px;display:flex;justify-content:center;margin-left:-280px"><div style="width:2px;background:var(--border2)"></div></div>
+        <div style="display:flex;justify-content:flex-start;padding-left:30px;position:relative;width:100%">
+          <div style="position:absolute;top:0;left:30px;width:570px;height:2px;background:var(--border2)"></div>
+          <div style="display:flex;gap:6px">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm" style="margin-top:0;min-width:100px"><div class="org-node-name">SM Laos</div><div class="org-node-grade">G5</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm" style="margin-top:0;min-width:100px"><div class="org-node-name">Myo H.</div><div class="org-node-role">Myanmar</div><div class="org-node-grade">G5</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm" style="margin-top:0;min-width:100px"><div class="org-node-name">Wirawan S.</div><div class="org-node-role">Indonesia</div><div class="org-node-grade">G5</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm" style="margin-top:0;min-width:100px"><div class="org-node-name">SM Thailand</div><div class="org-node-grade">G5</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:2px;height:18px;background:var(--border2)"></div>
+              <div class="org-node sm new" style="margin-top:0;min-width:110px"><div class="org-node-name">SM Country 5</div><div class="org-node-role">NEW — Q2 2027</div><div class="org-node-grade">G5 · Internal or ext.</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="height:18px;display:flex;justify-content:center;margin-left:110px"><div style="width:2px;background:var(--border2)"></div></div>
+        <div style="display:flex;justify-content:center;margin-left:110px">
+          <div class="org-node hr new" style="min-width:130px"><div class="org-node-name">HR Coordinator</div><div class="org-node-role">NEW G4 — Q4 2026</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Scenario B — Full Change Sequence</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      <div class="tl-item"><div class="tl-dot green"></div><div><div style="font-family:var(--fm);font-size:8px;color:var(--green);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Q2 2026 — Foundation</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Indonesia G3 vacancies filled. G4 accountability role redesign + month-3 check-in active. SM peer forum inaugural session (COO-chaired). Laos G3 development plans activated. Myanmar supervisor coaching programme complete. Indonesia SM influence campaign underway.</div></div></div>
+      <div class="tl-item"><div class="tl-dot sienna"></div><div><div style="font-family:var(--fm);font-size:8px;color:var(--sienna);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Q3 2026 — Structural</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Group Ops Lead in role. COO span confirmed at 4. Indonesia SM individually pre-briefed on Ops Lead authority boundary by COO. G5 succession candidates named for each country. Retention conversations: Myo H. (September), Wirawan S. (October). Country 5 SM candidate identified from internal pool.</div></div></div>
+      <div class="tl-item"><div class="tl-dot gold"></div><div><div style="font-family:var(--fm);font-size:8px;color:var(--gold);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Q4 2026 — Capacity</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">HR Coordinator hired. Ba's strategic capacity protected. SM peer forum transferred to Ops Lead chairing. Country 5 SM candidate in accelerated development. COO briefed on Country 5 go/no-go criteria. Decision: proceed to Scenario B or hold at Scenario A based on commercial confirmation.</div></div></div>
+      <div class="tl-item"><div class="tl-dot slate"></div><div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Q1 2027 — Pre-Entry</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Country 5 site establishment. SM candidate confirmed (internal preferred). Operating framework, HR policies, and compliance set up. Pipeline plan for Country 5 G1–G3 agreed before first hire. Ops Lead accountable for Country 5 onboarding coordination.</div></div></div>
+      <div class="tl-item"><div class="tl-dot sienna"></div><div><div style="font-family:var(--fm);font-size:8px;color:var(--sienna);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Q2 2027 — Country 5 Live</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Country 5 operational. 5 SMs reporting to Ops Lead. COO at 4 effective reports throughout transition. 65 FTE target approached. Group talent review includes Country 5 data. Health diagnostic run at 6-month post-launch mark.</div></div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Scenario B — Critical Dependencies</div>
+      <div style="display:grid;gap:7px;margin-top:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px"><strong style="color:var(--red);display:block;margin-bottom:2px">Non-negotiable: Ops Lead before Country 5</strong>If the Group Ops Lead role is not filled by Q3 2026, the Country 5 entry date must slip to Q3 2027 minimum. There is no version of Scenario B where Country 5 is entered with a COO span of 8.</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px"><strong style="color:var(--red);display:block;margin-bottom:2px">Non-negotiable: SM retention secured before entry</strong>If Myo H. or Wirawan S. signals exit before Country 5 entry, the entry timeline must be reviewed. An unstable incumbent country + new country simultaneously exceeds management capacity.</div>
+        <div style="padding:10px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px"><strong style="color:var(--gold);display:block;margin-bottom:2px">Important: Country 5 SM identified internally if possible</strong>External SM hire for Country 5 is viable but carries a 6-month ramp-up during which Ops Lead carries higher coordination load. Internal candidate preferred — even if development needs accelerating.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Scenario B — Headcount &amp; Cost Projection</div>
+      <table class="dtable" style="margin-top:4px">
+        <thead><tr><th>Point in time</th><th>FTE</th><th>Countries</th><th>New roles vs baseline</th></tr></thead>
+        <tbody>
+          <tr><td>March 2026 (now)</td><td>42</td><td>4</td><td>Baseline</td></tr>
+          <tr><td>Q3 2026</td><td>44</td><td>4</td><td>+Group Ops Lead (G6)</td></tr>
+          <tr><td>Q4 2026</td><td>46</td><td>4</td><td>+HR Coordinator (G4)</td></tr>
+          <tr><td>Q2 2027</td><td>55–60</td><td>5</td><td>+Country 5 SM + site G1–G3 hires</td></tr>
+          <tr><td>Q4 2027</td><td>63–65</td><td>5</td><td>Full pipeline running in all countries</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--sienna);display:block;margin-bottom:2px">People cost watch</strong>Ops Lead + HR Coordinator add approx. $90K–$130K to annual people cost in 2026. Country 5 adds SM + site team ($200K–$300K depending on country factor). Scenario B is cost-positive if Country 5 revenue comes online within 12 months of entry.</div>
+    </div>
+  </div>
+</div>
+
+<div id="page-sc-c" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Scenario C</div>
+    <h1 class="page-title">Scenario C<br><em>Accelerated Growth</em></h1>
+    <p class="page-desc">Valentis compresses the Country 5 timeline to Q4 2026 and begins Country 6 preparation in parallel. All structural changes that are sequenced in Scenario B must now happen simultaneously — not sequentially. High execution risk. Appropriate only under specific commercial conditions.</p>
+  </div>
+  <div class="info gold"><strong>When is Scenario C the right choice?</strong>Only if a specific commercial window requires Country 5 entry before Q2 2027, and the COO has explicitly accepted the execution risk of compressing the structural preparation timeline. Scenario C is not "more ambitious Scenario B" — it is a fundamentally different risk posture that requires different resourcing from day one.</div>
+
+  <div class="card">
+    <div class="card-title">Scenario C — How It Differs from Scenario B</div>
+    <table class="dtable">
+      <thead><tr><th>Element</th><th>Scenario B (Recommended)</th><th>Scenario C (Accelerated)</th><th>Additional risk in C</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Group Ops Lead</td><td>Recruited Q3 2026 (6–8 week recruitment)</td><td>Must be in role Q2 2026 — external recruit required immediately</td><td>Compressed timeline increases risk of wrong hire. Ops Lead in role before peer forum is established — harder to build authority</td></tr>
+        <tr><td style="font-weight:600">HR Coordinator</td><td>Hired Q4 2026</td><td>Must be hired Q3 2026 to handle Country 5 pre-entry admin</td><td>Ba's strategic capacity compressed further during most complex structural change period</td></tr>
+        <tr><td style="font-weight:600">Country 5 SM</td><td>Internal candidate preferred, developed Q3–Q4 2026</td><td>Must be confirmed by Q3 2026 — likely external hire given compressed development timeline</td><td>External SM adds 6-month ramp-up. Ops Lead managing a new external hire in a new country simultaneously</td></tr>
+        <tr><td style="font-weight:600">SM retention</td><td>Retention conversations Sep/Oct 2026 — time to adjust</td><td>Retention decisions must be known by Q2 2026 — or Country 5 entry risks concurrent SM instability</td><td>Insufficient time to course-correct if Myo H. or Wirawan S. signals exit after Country 5 is committed</td></tr>
+        <tr><td style="font-weight:600">COO span</td><td>Held at 4 throughout via sequenced Ops Lead hire</td><td>Risk of temporary span of 5–6 during transition if Ops Lead recruitment slips</td><td>Any recruitment delay creates a window where the COO is simultaneously managing Country 5 entry and structural transition</td></tr>
+        <tr><td style="font-weight:600">Country 6 preparation</td><td>Not in scope</td><td>Country 6 scoping begins Q2 2027</td><td>Second country entry preparation begins before Country 5 is stabilised. Executive and HR capacity fully consumed.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Scenario C — Org Structure <em>by Q4 2027</em></div>
+      <div class="card-body" style="margin-bottom:12px">Same end state as Scenario B plus Country 6 scoping underway. The difference is entirely in the execution sequence — everything happens 1–2 quarters earlier and in parallel.</div>
+      <div style="padding:14px 16px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <strong style="color:var(--gold);display:block;margin-bottom:4px">End state: 5 countries live, Country 6 in scoping</strong>
+        Ops Lead (G6) in role Q2 2026. 5 SMs reporting to Ops Lead by Q4 2026. HR Coordinator (G4) in role Q3 2026. 75+ FTE by Q4 2027. Country 6 SM pipeline identification begins Q2 2027 — adding a second wave of succession and onboarding work before the first wave is complete.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Scenario C — Risk Assessment</div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red);display:block;margin-bottom:2px">High: Execution overload</strong>All structural changes — Ops Lead, HR Coordinator, Country 5 SM, retention conversations, succession planning — happening in Q2–Q3 2026. COO and HRBP both at maximum capacity simultaneously.</div>
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red);display:block;margin-bottom:2px">High: Wrong hire risk</strong>Compressed timelines on critical roles (Ops Lead, Country 5 SM) increase the probability of a hire that looks right at pace but is wrong for the role. Both roles carry 6+ month cost of a mis-hire.</div>
+        <div style="padding:11px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--gold);display:block;margin-bottom:2px">Medium: Indonesia SM resistance amplified</strong>In Scenario C, the Ops Lead is announced while the Indonesia SM is still dealing with 3 G3 vacancies. The influence campaign has less time to run before the structural announcement. Resistance risk is higher.</div>
+        <div style="padding:11px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--gold);display:block;margin-bottom:2px">Medium: People cost spike</strong>Adding Ops Lead + HR Coordinator + Country 5 team in a 9-month window adds $350K–$500K people cost before Country 5 revenue materialises. Cash flow sensitivity must be confirmed with Finance.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Scenario C — Conditions Required to Proceed</div>
+    <div class="card-body" style="margin-bottom:12px">Scenario C should not proceed unless all five conditions are confirmed by the COO and CEO. If any condition is absent, Scenario B is the correct path.</div>
+    <table class="dtable">
+      <thead><tr><th>#</th><th>Condition</th><th>Who confirms</th><th>Deadline for confirmation</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:700;color:var(--sienna)">1</td><td>Country 5 commercial opportunity has a hard window that cannot accommodate a Q2 2027 entry date</td><td>CEO / Commercial lead</td><td>March 2026</td></tr>
+        <tr><td style="font-weight:700;color:var(--sienna)">2</td><td>COO has explicitly accepted the execution risk of parallel structural changes and the cost of a compressed hire process</td><td>COO</td><td>March 2026</td></tr>
+        <tr><td style="font-weight:700;color:var(--sienna)">3</td><td>Budget confirmed for Ops Lead + HR Coordinator + Country 5 SM all in 2026 cost base</td><td>CFO / CEO</td><td>April 2026</td></tr>
+        <tr><td style="font-weight:700;color:var(--sienna)">4</td><td>Indonesia SM retention can be secured quickly — Wirawan S. retention conversation brought forward to Q2 2026</td><td>COO + HRBP</td><td>April 2026</td></tr>
+        <tr><td style="font-weight:700;color:var(--sienna)">5</td><td>Viable Country 5 SM candidate identified by Q2 2026 — internal or committed external process underway</td><td>HRBP + COO</td><td>May 2026</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="page-compare" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Scenario Comparison</div>
+    <h1 class="page-title">Scenario<br><em>Comparison</em></h1>
+    <p class="page-desc">Side-by-side analysis across six dimensions. Use this page for the COO briefing conversation — it translates scenario differences into business language the COO can evaluate directly.</p>
+  </div>
+  <div class="card">
+    <table class="dtable">
+      <thead>
+        <tr>
+          <th style="width:22%">Dimension</th>
+          <th style="width:26%">Scenario A — Steady State</th>
+          <th style="width:26%;background:var(--sienna);color:rgba(255,255,255,0.8)">Scenario B — Managed Growth ★</th>
+          <th style="width:26%">Scenario C — Accelerated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">Target FTE by Q4 2027</td>
+          <td>~52 FTE</td>
+          <td style="background:rgba(155,58,26,0.03)"><strong>63–65 FTE</strong></td>
+          <td>75+ FTE</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">Countries by Q4 2027</td>
+          <td>4 countries</td>
+          <td style="background:rgba(155,58,26,0.03)"><strong>5 countries</strong></td>
+          <td>5–6 countries</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">COO span (peak)</td>
+          <td>4 (post Ops Lead) — stable</td>
+          <td style="background:rgba(155,58,26,0.03)"><strong>4 throughout — protected</strong></td>
+          <td>Risk of 5–6 during transition window</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">New permanent roles added</td>
+          <td>Ops Lead (G6) + HR Coord. (G4)</td>
+          <td style="background:rgba(155,58,26,0.03)"><strong>Ops Lead + HR Coord. + Country 5 SM</strong></td>
+          <td>All of B + Country 6 SM pipeline</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">People cost addition (2026)</td>
+          <td>~$90K–$130K</td>
+          <td style="background:rgba(155,58,26,0.03)"><strong>~$90K–$130K (Country 5 cost in 2027)</strong></td>
+          <td>~$350K–$500K in 2026 before revenue</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">Execution risk</td>
+          <td><span class="chip chip-green">Low</span></td>
+          <td style="background:rgba(155,58,26,0.03)"><span class="chip chip-gold">Medium — sequencing dependent</span></td>
+          <td><span class="chip chip-red">High — parallel changes required</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">Indonesia SM resistance risk</td>
+          <td>Managed — full influence campaign time</td>
+          <td style="background:rgba(155,58,26,0.03)"><strong>Managed — full influence campaign time</strong></td>
+          <td>Compressed — resistance window shorter</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">Laos pipeline fix</td>
+          <td>Full time — G3 development complete before growth</td>
+          <td style="background:rgba(155,58,26,0.03)"><strong>Full time — pipeline runs in parallel with Country 5 prep</strong></td>
+          <td>Partial — pipeline competes with Country 5 execution for HRBP attention</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">G5 succession readiness</td>
+          <td>Developed fully before next complexity</td>
+          <td style="background:rgba(155,58,26,0.03)"><strong>Developed in parallel — sufficient</strong></td>
+          <td>Developed under pressure — higher gap risk</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">HRBP strategic capacity</td>
+          <td>Protected — HR Coordinator adds capacity before growth</td>
+          <td style="background:rgba(155,58,26,0.03)"><strong>Protected — sequenced hire before Country 5</strong></td>
+          <td>Compressed — HR Coordinator hire and Country 5 entry overlap</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">Revenue growth potential</td>
+          <td>Modest — 4-country ceiling maintained</td>
+          <td style="background:rgba(155,58,26,0.03)"><strong>Strong — 5th country revenue stream from Q2 2027</strong></td>
+          <td>Highest — 5th and 6th revenue streams, earlier</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--ink2)">Overall verdict</td>
+          <td>Appropriate if Country 5 is commercially uncertain or if the COO wants to fix before expanding</td>
+          <td style="background:rgba(155,58,26,0.03);font-weight:700;color:var(--sienna)">Recommended. Matches growth ambition with a sequenced structure that makes entry sustainable.</td>
+          <td>Appropriate only if a hard commercial window forces earlier Country 5 entry — and all 5 enabling conditions are met</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What Each Scenario Requires the HRBP to Deliver</div>
+    <div class="card-body" style="margin-bottom:12px">The scenario choice directly determines the HRBP's 2026 workplan. Each scenario requires a different intensity and sequencing of HR work.</div>
+    <div class="grid-3" style="margin-bottom:0">
+      <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px">Scenario A — HRBP Workplan</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>→ Indonesia G3 emergency recruitment</div>
+          <div>→ G4 role redesign + month-3 check-in</div>
+          <div>→ Laos succession pipeline activation</div>
+          <div>→ SM peer forum design and launch</div>
+          <div>→ Group Ops Lead JD + recruitment</div>
+          <div>→ G5 succession identification</div>
+          <div>→ HR Coordinator JD + recruitment</div>
+          <div>→ Country 5 deferred — communicate rationale to COO</div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Scenario B — HRBP Workplan ★</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>→ All of Scenario A, plus:</div>
+          <div>→ Country 5 SM candidate development plan</div>
+          <div>→ Country 5 HR operating framework</div>
+          <div>→ Country 5 compliance setup (new jurisdiction)</div>
+          <div>→ Ops Lead transition: SM peer forum handover</div>
+          <div>→ Retention conversations Sep/Oct 2026</div>
+          <div>→ Country 5 G1–G3 pipeline plan agreed before first hire</div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Scenario C — HRBP Workplan</div>
+        <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>→ All of Scenario B, compressed into 6 months</div>
+          <div>→ Ops Lead recruitment starts immediately (March 2026)</div>
+          <div>→ Retention conversations brought forward to Q2</div>
+          <div>→ Country 5 SM external search running in parallel</div>
+          <div>→ Country 6 scoping begins Q2 2027</div>
+          <div style="color:var(--red)">→ HRBP at full capacity throughout — no buffer for reactive issues</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-recommend" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Recommendation &amp; Triggers</div>
+    <h1 class="page-title">Recommendation<br><em>&amp; Triggers</em></h1>
+    <p class="page-desc">The HRBP recommendation, the rationale, and the trigger conditions that would cause a scenario switch. Scenarios are not permanent — they are reviewed quarterly and updated when context changes. This section is the live decision document.</p>
+  </div>
+
+  <div style="padding:28px 32px;background:var(--slate);border-radius:4px;margin-bottom:14px">
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:8px">HRBP Recommendation</div>
+    <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:#f5f0e8;line-height:1.1;margin-bottom:14px">Proceed with <em style="color:var(--sienna3)">Scenario B</em> — Managed Growth</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.9;max-width:680px;margin-bottom:16px">Scenario B is the only scenario that simultaneously honours Valentis's growth ambition and respects the structural constraints that make growth sustainable. It enters Country 5 — which Scenario A does not — but it does so after completing the structural preparation that makes Country 5 entry manageable rather than chaotic.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div style="padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Why not Scenario A</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7">Scenario A solves the structural problems but does not capture the growth opportunity. If Country 5 has commercial viability, deferring it indefinitely while the structure is fixed does not serve the business case for the structural investment.</div>
+      </div>
+      <div style="padding:14px 16px;background:rgba(155,58,26,0.1);border:1px solid rgba(155,58,26,0.25);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;color:#e8a07a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Why Scenario B</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:300;line-height:1.7">Achievable within the current resource envelope. The sequencing is executable. Every 2026 structural change builds the foundation the next change needs. Country 5 entry is enabled by the new structure — not added to the old one.</div>
+      </div>
+      <div style="padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Why not Scenario C</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7">The execution risk is disproportionate to the acceleration benefit unless a hard commercial window forces it. Compressing the structural preparation timeline for Country 5 increases the probability that the problems we are trying to fix (accountability gaps, retention risk, coordination failures) are simply imported into a fifth country.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Scenario Switch Triggers — When to Move Between Scenarios</div>
+    <div class="card-body" style="margin-bottom:12px">These are the specific conditions that, if they occur, should cause the HRBP and COO to review the current scenario and consider switching. Triggers are reviewed at the quarterly COO meeting.</div>
+    <table class="dtable">
+      <thead><tr><th>Trigger event</th><th>From</th><th>To</th><th>HRBP action</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Country 5 commercial window confirmed with hard deadline before Q2 2027</td><td><span class="chip chip-sienna">B</span></td><td><span class="chip chip-gold">C</span></td><td>Present Scenario C enabling conditions checklist to COO. Get explicit approval on all 5 conditions. Accelerate Ops Lead recruitment immediately.</td></tr>
+        <tr><td style="font-weight:600">Country 5 commercial opportunity falls through or is deferred beyond 2027</td><td><span class="chip chip-sienna">B</span> or <span class="chip chip-gold">C</span></td><td><span class="chip chip-muted">A</span></td><td>Continue all structural fixes (Ops Lead, HR Coordinator, pipeline). Remove Country 5 SM development from active workplan. Brief COO on scenario change and updated timeline.</td></tr>
+        <tr><td style="font-weight:600">Myo H. (Myanmar) signals exit before Q4 2026</td><td><span class="chip chip-sienna">B</span></td><td><span class="chip chip-muted">A (modified)</span></td><td>Pause Country 5 entry until Myanmar SM succession confirmed. Accelerate Myanmar G5 successor identification. Country 5 timeline slips to Q3–Q4 2027 minimum.</td></tr>
+        <tr><td style="font-weight:600">Wirawan S. (Indonesia) signals exit before Q4 2026</td><td><span class="chip chip-sienna">B</span></td><td><span class="chip chip-muted">A (modified)</span></td><td>Pause Country 5 entry. Prioritise Indonesia SM succession. The Indonesia SM's involvement in Country 5 onboarding (as a reference case) is lost — Ops Lead takes higher coordination load.</td></tr>
+        <tr><td style="font-weight:600">Group Ops Lead recruitment slips beyond Q4 2026</td><td><span class="chip chip-sienna">B</span></td><td><span class="chip chip-muted">A (with deferral)</span></td><td>Country 5 entry date pushed to Q3 2027 minimum. Cannot enter Country 5 with COO span of 8. Communicate delay to COO with structural rationale — not as an HR failure but as a structural sequencing requirement.</td></tr>
+        <tr><td style="font-weight:600">Laos G4 retirement accelerates — more than 2 retirements in 2026</td><td>Any</td><td>Review</td><td>Immediate escalation. If Laos loses 3 G4 drillers before replacements are ready, Laos programme delivery drops sharply. Country 5 consideration paused until Laos pipeline is stabilised. Cross-country G4 mobility assessed.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The COO Briefing — How to Present This</div>
+    <div class="card-body" style="margin-bottom:14px">The scenario framework is a strategic planning tool — but it must be presented to the COO in business language, not org design language. This is the recommended briefing structure.</div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:14px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Open with the business question</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">"I want to walk you through three ways the structure could evolve between now and 2028 — and get your view on which path matches our growth intent. The choice affects what we do in the next 6 months."</div>
+      </div>
+      <div style="padding:14px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Present the scenarios as choices, not recommendations first</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">"Scenario A keeps us at four countries and focuses on structural quality — lowest risk, slower revenue growth. Scenario B enters Country 5 in mid-2027 with a sequenced structural build — this is what I recommend. Scenario C enters Country 5 faster but requires parallel execution of every structural change — appropriate only if there's a hard commercial window."</div>
+      </div>
+      <div style="padding:14px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Make the ask explicit</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">"I'd like to confirm: are we planning for Country 5, and if so, is Q2 2027 the right target? That answer determines whether I build the 2026 HR workplan around Scenario B or Scenario A. And it determines when the Group Ops Lead hire needs to start."</div>
+      </div>
+      <div style="padding:14px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Close with the trigger framework</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">"Whatever we decide today isn't permanent — I'll bring a quarterly update on whether we're on track for the chosen scenario or whether a trigger event means we should switch paths. The most important thing is that we're making this decision deliberately, not by default."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">HRBP Note — What This Tool Earns You</div>
+    <div class="vx-title">Scenario planning is how the HRBP earns a seat at the business planning table.</div>
+    <div class="vx-body">Walking into a COO conversation with three structurally coherent futures — each with a timeline, a cost, a risk profile, and a trigger mechanism — is the difference between an HRBP who reacts to the organisation and one who shapes it. The scenario framework does not tell the COO what to decide. It tells the COO what each decision costs, what it requires, and what will force a review. That is the HRBP's contribution to business planning. This is the tool that closes the gap between "Group HR Manager" and "strategic HRBP."</div>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tab-body').forEach(b=>b.classList.remove('active'));scope.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));}
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');
+  if(el)el.classList.add('active');
+}
+</script>
+</body>
+</html>

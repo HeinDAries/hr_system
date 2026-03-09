@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TA Toolkit | Valentis Laos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f4f1eb;
+  --surface:  #faf8f4;
+  --white:    #ffffff;
+  --ink:      #1a1814;
+  --ink2:     #3d3a35;
+  --ink3:     #7a7570;
+  --ink4:     #b8b3ac;
+  --border:   #e5e0d8;
+  --border2:  #cec8be;
+
+  --amber:    #c8860a;
+  --amber-bg: #fdf7ea;
+  --amber-bd: #f0d080;
+
+  --forest:   #2d6a4f;
+  --forest-bg:#edf7f2;
+  --forest-bd:#90c8ab;
+
+  --slate:    #2c4a6e;
+  --slate-bg: #edf2f9;
+  --slate-bd: #9ab4d4;
+
+  --rust:     #9b3a1e;
+  --rust-bg:  #fdf1ee;
+  --rust-bd:  #e8a898;
+
+  --plum:     #5e3370;
+  --plum-bg:  #f6f0fb;
+  --plum-bd:  #c8a8e0;
+
+  --sienna:   #7a4520;
+  --sienna-bg:#fdf4ee;
+  --sienna-bd:#e8b888;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── SHELL ── */
+.shell { display: flex; min-height: 100vh; }
+
+/* ── LEFT RAIL ── */
+.rail {
+  width: 272px; min-width: 272px;
+  background: var(--ink);
+  display: flex; flex-direction: column;
+  position: fixed; inset-y: 0; left: 0;
+  overflow-y: auto; z-index: 30;
+}
+
+.rail-brand {
+  padding: 28px 22px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.rail-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase;
+  color: rgba(255,255,255,0.3); margin-bottom: 10px;
+}
+.rail-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px; color: #fff; line-height: 1.25;
+}
+.rail-title em { color: #f0c060; font-style: italic; }
+.rail-sub { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 6px; }
+
+/* MODULE SWITCHER */
+.module-switch {
+  display: flex; margin: 14px 16px 0;
+  background: rgba(255,255,255,0.06);
+  border-radius: 8px; padding: 3px; gap: 3px;
+}
+.mod-btn {
+  flex: 1; padding: 7px 4px;
+  background: transparent; border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  border-radius: 6px; cursor: pointer;
+  transition: all 0.18s; text-align: center;
+}
+.mod-btn.active {
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+}
+.mod-btn:hover:not(.active) { color: rgba(255,255,255,0.65); }
+
+/* NAV SECTIONS */
+.nav-sec { padding: 16px 14px 4px; }
+.nav-sec-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  padding: 0 8px; margin-bottom: 6px;
+}
+.nav-group { display: flex; flex-direction: column; gap: 2px; }
+
+.nav-btn {
+  display: flex; align-items: center; gap: 9px;
+  width: 100%; padding: 8px 10px; border-radius: 7px;
+  background: transparent; border: none;
+  color: rgba(255,255,255,0.45);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+  text-align: left;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.75); }
+.nav-btn.active { background: rgba(240,192,96,0.15); color: #f0c060; }
+.nav-ic { font-size: 12px; opacity: 0.6; width: 16px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; padding: 1px 6px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.35);
+}
+.nav-btn.active .nav-badge { background: rgba(240,192,96,0.2); color: #f0c060; }
+
+.rail-footer {
+  margin-top: auto;
+  padding: 14px 22px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: rgba(255,255,255,0.18); line-height: 1.8;
+}
+
+/* ── MAIN ── */
+.main { margin-left: 272px; flex: 1; display: flex; flex-direction: column; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 15px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 20;
+}
+.tb-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 17px; color: var(--ink);
+}
+.tb-crumb {
+  font-size: 11.5px; color: var(--ink3);
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.tb-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 10px; border-radius: 4px;
+  background: var(--rust-bg); color: var(--rust);
+  border: 1px solid var(--rust-bd);
+}
+
+/* CONTENT */
+.content { padding: 36px 40px; flex: 1; }
+
+/* TAB PANELS */
+.tab-panel { display: none; animation: fadeUp 0.22s ease; }
+.tab-panel.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* MODULE PANELS */
+.module { display: none; }
+.module.active { display: block; }
+
+/* ── SECTION LABEL ── */
+.sl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--ink4);
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.sl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── CARD ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.card-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.card-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.card-title { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.card-sub   { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.card-body  { padding: 18px 20px; }
+
+/* ── PILL / BADGE ── */
+.pill {
+  display: inline-flex; align-items: center;
+  padding: 2px 9px; border-radius: 20px;
+  font-size: 10px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid; white-space: nowrap;
+}
+.p-amber  { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); }
+.p-forest { background: var(--forest-bg); color: var(--forest); border-color: var(--forest-bd); }
+.p-slate  { background: var(--slate-bg); color: var(--slate); border-color: var(--slate-bd); }
+.p-rust   { background: var(--rust-bg); color: var(--rust); border-color: var(--rust-bd); }
+.p-plum   { background: var(--plum-bg); color: var(--plum); border-color: var(--plum-bd); }
+.p-sienna { background: var(--sienna-bg); color: var(--sienna); border-color: var(--sienna-bd); }
+
+/* ── FOOTNOTE ── */
+.fn {
+  font-size: 11px; color: var(--ink3); font-style: italic;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-radius: 7px;
+  border-left: 2px solid var(--border2);
+  margin-top: 10px; line-height: 1.6;
+}
+
+/* ── SCROLL ── */
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ══════════════════════════════════════
+   INTERVIEW MODULE STYLES
+══════════════════════════════════════ */
+
+/* FLOW STEPS */
+.flow-row {
+  display: flex; gap: 0; margin-bottom: 22px;
+  overflow-x: auto;
+}
+.flow-step {
+  flex: 1; min-width: 110px;
+  padding: 13px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-right: none;
+  position: relative;
+}
+.flow-step:first-child { border-radius: 9px 0 0 9px; }
+.flow-step:last-child  { border-right: 1px solid var(--border); border-radius: 0 9px 9px 0; }
+.flow-step::after {
+  content: '›';
+  position: absolute; right: -9px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px; color: var(--ink4);
+  z-index: 1; background: var(--bg); padding: 0 1px;
+}
+.flow-step:last-child::after { display: none; }
+.fs-num  { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--ink4); margin-bottom: 4px; }
+.fs-name { font-size: 11.5px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.fs-dur  { font-size: 10.5px; color: var(--ink3); }
+.fs-who  { font-size: 10px; color: var(--ink4); margin-top: 3px; font-style: italic; }
+
+/* STAR BLOCKS */
+.star-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.star-cell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px; padding: 14px;
+}
+.star-letter {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px; font-weight: 700;
+  line-height: 1; margin-bottom: 6px;
+}
+.star-label { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.star-desc  { font-size: 11.5px; color: var(--ink3); line-height: 1.5; }
+
+/* QUESTION BANKS */
+.q-block { margin-bottom: 20px; }
+.q-comp-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.comp-pill {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 11px; border-radius: 20px; border: 1px solid;
+}
+.cp-ops    { background: var(--rust-bg); color: var(--rust); border-color: var(--rust-bd); }
+.cp-lead   { background: var(--slate-bg); color: var(--slate); border-color: var(--slate-bd); }
+.cp-safe   { background: var(--forest-bg); color: var(--forest); border-color: var(--forest-bd); }
+.cp-comm   { background: var(--plum-bg); color: var(--plum); border-color: var(--plum-bd); }
+.cp-tech   { background: var(--sienna-bg); color: var(--sienna); border-color: var(--sienna-bd); }
+.cp-hr     { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); }
+
+.q-items { display: flex; flex-direction: column; gap: 10px; }
+.q-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px; padding: 14px 16px;
+}
+.q-top { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+.q-type {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; padding: 2px 7px;
+  border-radius: 3px; white-space: nowrap; margin-top: 2px; flex-shrink: 0;
+}
+.qt-star  { background: var(--slate-bg); color: var(--slate); }
+.qt-probe { background: var(--amber-bg); color: var(--amber); }
+.qt-hypo  { background: var(--plum-bg); color: var(--plum); }
+.q-text   { font-size: 13px; color: var(--ink); font-weight: 500; line-height: 1.55; }
+.q-lf {
+  font-size: 11.5px; color: var(--forest);
+  background: var(--forest-bg);
+  border: 1px solid var(--forest-bd);
+  border-radius: 6px; padding: 8px 12px; margin-top: 4px; line-height: 1.5;
+}
+.q-lf strong {
+  display: block; font-size: 9px; letter-spacing: 1.2px;
+  text-transform: uppercase; margin-bottom: 3px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* PANEL GUIDE */
+.panel-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+.panel-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px;
+}
+.pc-type { font-family: 'DM Serif Display', serif; font-size: 15px; color: var(--ink); margin-bottom: 3px; }
+.pc-when { font-size: 11px; color: var(--ink3); margin-bottom: 10px; }
+.rec-tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; padding: 3px 8px;
+  border-radius: 4px; margin-top: 8px; border: 1px solid;
+}
+.rec-y { background: var(--forest-bg); color: var(--forest); border-color: var(--forest-bd); }
+.rec-d { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); }
+.rec-n { background: var(--rust-bg); color: var(--rust); border-color: var(--rust-bd); }
+
+/* RED/GREEN FLAG GRIDS */
+.flag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rf-card {
+  background: var(--rust-bg);
+  border: 1px solid var(--rust-bd);
+  border-radius: 9px; padding: 13px 15px;
+}
+.rf-title { font-size: 12.5px; font-weight: 700; color: var(--rust); margin-bottom: 5px; }
+.rf-desc  { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+.rf-action{ font-size: 11px; color: var(--ink3); margin-top: 5px; font-style: italic; }
+.gf-card {
+  background: var(--forest-bg);
+  border: 1px solid var(--forest-bd);
+  border-radius: 9px; padding: 13px 15px;
+}
+.gf-title { font-size: 12.5px; font-weight: 700; color: var(--forest); margin-bottom: 5px; }
+.gf-desc  { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+
+/* RUBRIC TABLE */
+.rubric-tbl { width: 100%; border-collapse: collapse; }
+.rubric-tbl thead tr { background: var(--ink); }
+.rubric-tbl thead th {
+  padding: 11px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; color: rgba(255,255,255,0.7);
+  text-align: left; border-right: 1px solid rgba(255,255,255,0.1);
+}
+.rubric-tbl thead th:last-child { border-right: none; }
+.rubric-tbl tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+.rubric-tbl tbody tr:hover { background: var(--surface); }
+.rubric-tbl tbody td {
+  padding: 12px 14px;
+  font-size: 12px; color: var(--ink2);
+  border-right: 1px solid var(--border);
+  vertical-align: top; line-height: 1.5;
+}
+.rubric-tbl tbody td:last-child { border-right: none; }
+.score-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 7px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; font-weight: 700; border: 1px solid;
+}
+.s5 { background: var(--forest-bg); color: var(--forest); border-color: var(--forest-bd); }
+.s4 { background: var(--slate-bg);  color: var(--slate);  border-color: var(--slate-bd); }
+.s3 { background: var(--amber-bg);  color: var(--amber);  border-color: var(--amber-bd); }
+.s2 { background: var(--sienna-bg); color: var(--sienna); border-color: var(--sienna-bd); }
+.s1 { background: var(--rust-bg);   color: var(--rust);   border-color: var(--rust-bd); }
+
+/* LIVE SCORECARD */
+.sc-wrap {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.sc-hd {
+  background: var(--ink); padding: 18px 24px;
+}
+.sc-hd-title { font-family: 'DM Serif Display', serif; font-size: 18px; color: #fff; }
+.sc-hd-sub   { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+.sc-meta {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.sc-meta-cell { background: var(--surface); padding: 11px 16px; }
+.sc-meta-lbl  {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--ink4); margin-bottom: 4px;
+}
+.sc-meta-val  { font-size: 13px; font-weight: 600; color: var(--ink); }
+.sc-meta-val input {
+  border: none; background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 600; color: var(--ink);
+  width: 100%; outline: none;
+}
+.sc-body  { padding: 20px 24px; }
+.sc-rows  { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.sc-row {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 14px; align-items: center;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.sc-crit-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.sc-crit-desc { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.sc-score-btns { display: flex; gap: 5px; }
+.sc-score-btn {
+  width: 30px; height: 30px; border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: var(--white);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all 0.13s; color: var(--ink3);
+}
+.sc-score-btn:hover { border-color: var(--ink3); color: var(--ink); }
+.sc-score-btn.sel-5 { background: var(--forest-bg); color: var(--forest); border-color: var(--forest-bd); }
+.sc-score-btn.sel-4 { background: var(--slate-bg);  color: var(--slate);  border-color: var(--slate-bd); }
+.sc-score-btn.sel-3 { background: var(--amber-bg);  color: var(--amber);  border-color: var(--amber-bd); }
+.sc-score-btn.sel-2 { background: var(--sienna-bg); color: var(--sienna); border-color: var(--sienna-bd); }
+.sc-score-btn.sel-1 { background: var(--rust-bg);   color: var(--rust);   border-color: var(--rust-bd); }
+.sc-total {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--slate-bg);
+  border: 1px solid var(--slate-bd);
+  border-radius: 8px;
+}
+.sc-total-lbl { font-family: 'DM Serif Display', serif; font-size: 15px; color: var(--slate); }
+.sc-total-val { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--slate); }
+.sc-verdict {
+  margin-top: 10px; padding: 11px 16px;
+  border-radius: 8px; font-size: 13px; font-weight: 600;
+  text-align: center; display: none;
+}
+.sc-notes {
+  width: 100%; margin-top: 14px; padding: 12px;
+  border: 1px solid var(--border2); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 12.5px;
+  color: var(--ink); background: var(--surface);
+  resize: vertical; min-height: 80px; outline: none;
+}
+.sc-notes:focus { border-color: var(--amber); }
+
+/* ══════════════════════════════════════
+   SOURCING MODULE STYLES
+══════════════════════════════════════ */
+
+/* CHANNEL MIX */
+.ch-mix { display: flex; flex-direction: column; gap: 8px; }
+.ch-row {
+  display: grid; grid-template-columns: 200px 1fr;
+  gap: 16px; align-items: center;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.ch-label { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.ch-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* PLATFORM CARDS */
+.platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.plat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 15px;
+  transition: border-color 0.15s;
+}
+.plat-card:hover { border-color: var(--border2); }
+.plat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+.plat-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.eff {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 3px;
+}
+.eff-h { background: var(--forest-bg); color: var(--forest); border: 1px solid var(--forest-bd); }
+.eff-m { background: var(--amber-bg);  color: var(--amber);  border: 1px solid var(--amber-bd); }
+.eff-l { background: var(--rust-bg);   color: var(--rust);   border: 1px solid var(--rust-bd); }
+.plat-desc { font-size: 11.5px; color: var(--ink2); line-height: 1.5; margin-bottom: 7px; }
+.plat-best { font-size: 11px; color: var(--ink3); font-style: italic; }
+.plat-cost { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink4); margin-top: 5px; }
+
+/* SEARCH STRINGS */
+.ss-block { margin-bottom: 18px; }
+.ss-lbl { font-size: 11.5px; font-weight: 700; color: var(--ink2); margin-bottom: 7px; display: flex; align-items: center; gap: 8px; }
+.ss-box {
+  background: var(--ink);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 9px; padding: 14px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px; color: #f0c060; line-height: 1.7;
+  position: relative; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.ss-box:hover { border-color: rgba(240,192,96,0.4); }
+.ss-copy-hint {
+  position: absolute; top: 9px; right: 12px;
+  font-size: 8.5px; color: rgba(255,255,255,0.25);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.ss-notes { font-size: 11px; color: var(--ink3); margin-top: 6px; font-style: italic; line-height: 1.5; }
+
+/* AGENCY TABLE */
+.ag-tbl { width: 100%; border-collapse: collapse; }
+.ag-tbl thead tr { background: var(--ink); }
+.ag-tbl thead th {
+  padding: 11px 13px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; color: rgba(255,255,255,0.65);
+  text-align: left; border-right: 1px solid rgba(255,255,255,0.08);
+}
+.ag-tbl thead th:last-child { border-right: none; }
+.ag-tbl tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+.ag-tbl tbody tr:last-child { border-bottom: none; }
+.ag-tbl tbody tr:hover { background: var(--surface); }
+.ag-tbl tbody td {
+  padding: 12px 13px;
+  font-size: 12px; color: var(--ink2);
+  border-right: 1px solid var(--border);
+  vertical-align: top; line-height: 1.5;
+}
+.ag-tbl tbody td:last-child { border-right: none; }
+
+/* COMMUNITY GRID */
+.comm-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.comm-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 15px;
+}
+.comm-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.comm-type {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px; letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--ink4); margin-bottom: 8px;
+}
+.comm-desc { font-size: 12px; color: var(--ink2); line-height: 1.5; margin-bottom: 7px; }
+.comm-action { font-size: 11.5px; color: var(--amber); }
+
+/* KPI BAR */
+.kpi-bar {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; margin-bottom: 22px;
+}
+.kpi-cell { background: var(--white); padding: 16px 18px; }
+.kpi-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--ink4); margin-bottom: 7px;
+}
+.kpi-val { font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1; }
+.kpi-sub { font-size: 11px; color: var(--ink3); margin-top: 4px; }
+
+/* ROLE STRATEGY BLOCKS */
+.role-strat {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.rs-item {
+  display: grid; grid-template-columns: 28px 1fr auto;
+  gap: 12px; align-items: center;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.rs-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700; color: var(--ink4);
+}
+.rs-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.rs-desc { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+
+/* TIMELINE TABLE */
+.tl-tbl { width: 100%; border-collapse: collapse; }
+.tl-tbl thead tr { background: var(--ink); }
+.tl-tbl thead th {
+  padding: 11px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; color: rgba(255,255,255,0.65);
+  text-align: left; border-right: 1px solid rgba(255,255,255,0.08);
+  white-space: nowrap;
+}
+.tl-tbl thead th:last-child { border-right: none; }
+.tl-tbl tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+.tl-tbl tbody tr:last-child { border-bottom: none; }
+.tl-tbl tbody tr:hover { background: var(--surface); }
+.tl-tbl tbody td {
+  padding: 12px 14px;
+  font-size: 12px; color: var(--ink2);
+  border-right: 1px solid var(--border);
+  vertical-align: middle; line-height: 1.4;
+  font-family: 'JetBrains Mono', monospace;
+}
+.tl-tbl tbody td:first-child { font-family: 'DM Sans', sans-serif; }
+.tl-tbl tbody td:last-child { border-right: none; }
+
+/* GROUND RULES LIST */
+.gr-list { display: flex; flex-direction: column; gap: 7px; }
+.gr-item {
+  display: flex; gap: 10px;
+  padding: 9px 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 7px; font-size: 12.5px; color: var(--ink2); line-height: 1.5;
+}
+.gr-ok  { color: var(--forest); font-weight: 800; }
+.gr-no  { color: var(--rust); font-weight: 800; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; right: 28px;
+  background: var(--ink); color: #fff;
+  padding: 11px 18px; border-radius: 8px;
+  font-size: 12.5px; font-weight: 600;
+  opacity: 0; transform: translateY(8px);
+  transition: all 0.22s; pointer-events: none; z-index: 999;
+}
+.toast.show { opacity: 1; transform: none; }
+
+@media (max-width: 1050px) {
+  .rail { width: 220px; min-width: 220px; }
+  .main { margin-left: 220px; }
+  .platform-grid { grid-template-columns: 1fr 1fr; }
+  .panel-trio { grid-template-columns: 1fr; }
+  .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .rail { position: relative; width: 100%; min-width: unset; }
+  .main { margin-left: 0; }
+  .shell { flex-direction: column; }
+  .content { padding: 20px; }
+  .topbar { padding: 12px 20px; }
+  .platform-grid, .flag-grid, .comm-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══ RAIL ══ -->
+<aside class="rail">
+  <div class="rail-brand">
+    <div class="rail-eyebrow">Valentis Laos · HR</div>
+    <div class="rail-title">TA <em>Toolkit</em></div>
+    <div class="rail-sub">Interview Framework + Sourcing Strategy</div>
+  </div>
+
+  <div class="module-switch">
+    <button class="mod-btn active" onclick="switchModule('iv',this)">Interview</button>
+    <button class="mod-btn" onclick="switchModule('ss',this)">Sourcing</button>
+  </div>
+
+  <!-- INTERVIEW NAV -->
+  <div id="nav-iv">
+    <div class="nav-sec">
+      <div class="nav-sec-label">Process</div>
+      <div class="nav-group">
+        <button class="nav-btn active" onclick="switchTab('iv','flow',this)"><span class="nav-ic">◷</span> Interview Flow</button>
+        <button class="nav-btn" onclick="switchTab('iv','panel',this)"><span class="nav-ic">◉</span> Panel vs Solo</button>
+        <button class="nav-btn" onclick="switchTab('iv','rubric',this)"><span class="nav-ic">◈</span> Scoring Rubric</button>
+        <button class="nav-btn" onclick="switchTab('iv','flags',this)"><span class="nav-ic">⚑</span> Red/Green Flags</button>
+        <button class="nav-btn" onclick="switchTab('iv','scorecard',this)"><span class="nav-ic">☑</span> Live Scorecard</button>
+      </div>
+    </div>
+    <div class="nav-sec">
+      <div class="nav-sec-label">Question Banks</div>
+      <div class="nav-group">
+        <button class="nav-btn" onclick="switchTab('iv','q-sm',this)"><span class="nav-ic">▸</span> Site Manager <span class="nav-badge">8Q</span></button>
+        <button class="nav-btn" onclick="switchTab('iv','q-ds',this)"><span class="nav-ic">▸</span> Drilling Supervisor <span class="nav-badge">7Q</span></button>
+        <button class="nav-btn" onclick="switchTab('iv','q-dr',this)"><span class="nav-ic">▸</span> Senior Driller <span class="nav-badge">6Q</span></button>
+        <button class="nav-btn" onclick="switchTab('iv','q-hse',this)"><span class="nav-ic">▸</span> HSE Officer <span class="nav-badge">6Q</span></button>
+        <button class="nav-btn" onclick="switchTab('iv','q-hr',this)"><span class="nav-ic">▸</span> HRBP / HR Manager <span class="nav-badge">7Q</span></button>
+        <button class="nav-btn" onclick="switchTab('iv','q-sup',this)"><span class="nav-ic">▸</span> Support Roles <span class="nav-badge">5Q</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOURCING NAV -->
+  <div id="nav-ss" style="display:none;">
+    <div class="nav-sec">
+      <div class="nav-sec-label">Strategy</div>
+      <div class="nav-group">
+        <button class="nav-btn" onclick="switchTab('ss','overview',this)"><span class="nav-ic">◈</span> Overview</button>
+        <button class="nav-btn" onclick="switchTab('ss','timeline',this)"><span class="nav-ic">◷</span> Lead Times</button>
+      </div>
+    </div>
+    <div class="nav-sec">
+      <div class="nav-sec-label">By Role</div>
+      <div class="nav-group">
+        <button class="nav-btn" onclick="switchTab('ss','r-ops',this)"><span class="nav-ic">▸</span> Operations Roles</button>
+        <button class="nav-btn" onclick="switchTab('ss','r-hr',this)"><span class="nav-ic">▸</span> HR & Finance</button>
+        <button class="nav-btn" onclick="switchTab('ss','r-sup',this)"><span class="nav-ic">▸</span> Support & Admin</button>
+      </div>
+    </div>
+    <div class="nav-sec">
+      <div class="nav-sec-label">Channels</div>
+      <div class="nav-group">
+        <button class="nav-btn" onclick="switchTab('ss','platforms',this)"><span class="nav-ic">◎</span> Job Boards</button>
+        <button class="nav-btn" onclick="switchTab('ss','linkedin',this)"><span class="nav-ic">◉</span> LinkedIn Strings</button>
+        <button class="nav-btn" onclick="switchTab('ss','agencies',this)"><span class="nav-ic">◷</span> Agencies & Fees</button>
+        <button class="nav-btn" onclick="switchTab('ss','communities',this)"><span class="nav-ic">◫</span> Mining Networks</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail-footer">
+    Valentis Laos · Group HR<br>
+    TA Toolkit v1.0 · March 2026<br>
+    Confidential — HR Use Only
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-title" id="tb-title">Interview Framework</div>
+      <div class="tb-crumb" id="tb-crumb">FLOW GUIDE</div>
+    </div>
+    <span class="tb-tag">Confidential · HR Only</span>
+  </div>
+
+  <div class="content">
+
+    <!-- ════════════════════════
+         INTERVIEW MODULE
+    ════════════════════════ -->
+    <div id="module-iv" class="module active">
+
+      <!-- FLOW -->
+      <div id="iv-flow" class="tab-panel active">
+        <div class="sl">Standard interview structure · all roles</div>
+        <div class="flow-row">
+          <div class="flow-step"><div class="fs-num">01</div><div class="fs-name">Welcome & Context</div><div class="fs-dur">5 min</div><div class="fs-who">HR leads</div></div>
+          <div class="flow-step"><div class="fs-num">02</div><div class="fs-name">Candidate Overview</div><div class="fs-dur">10 min</div><div class="fs-who">Candidate speaks</div></div>
+          <div class="flow-step"><div class="fs-num">03</div><div class="fs-name">Competency Questions</div><div class="fs-dur">30–40 min</div><div class="fs-who">Panel / HR</div></div>
+          <div class="flow-step"><div class="fs-num">04</div><div class="fs-name">Role Specifics</div><div class="fs-dur">10 min</div><div class="fs-who">Hiring Mgr</div></div>
+          <div class="flow-step"><div class="fs-num">05</div><div class="fs-name">Candidate Q&A</div><div class="fs-dur">10 min</div><div class="fs-who">Candidate leads</div></div>
+          <div class="flow-step"><div class="fs-num">06</div><div class="fs-name">Close & Next Steps</div><div class="fs-dur">5 min</div><div class="fs-who">HR closes</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+          <div class="card">
+            <div class="card-head"><div class="card-icon" style="background:var(--slate-bg);color:var(--slate);">◈</div><div><div class="card-title">STAR Method — Required for All Answers</div><div class="card-sub">Every competency question must follow STAR format</div></div></div>
+            <div class="card-body">
+              <div class="star-grid">
+                <div class="star-cell"><div class="star-letter" style="color:var(--slate);">S</div><div class="star-label">Situation</div><div class="star-desc">Context and background — when, where, what was happening?</div></div>
+                <div class="star-cell"><div class="star-letter" style="color:var(--amber);">T</div><div class="star-label">Task</div><div class="star-desc">Their specific responsibility — what were they accountable for?</div></div>
+                <div class="star-cell"><div class="star-letter" style="color:var(--forest);">A</div><div class="star-label">Action</div><div class="star-desc">What did THEY do — not the team. Push for individual ownership.</div></div>
+                <div class="star-cell"><div class="star-letter" style="color:var(--rust);">R</div><div class="star-label">Result</div><div class="star-desc">Measurable outcome — numbers, timeframes, business impact.</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-icon" style="background:var(--amber-bg);color:var(--amber);">⚑</div><div><div class="card-title">Interviewer Ground Rules</div><div class="card-sub">Non-negotiable for every interview</div></div></div>
+            <div class="card-body">
+              <div class="gr-list">
+                <div class="gr-item"><span class="gr-ok">✓</span> Ask the same core questions to every candidate for the same role</div>
+                <div class="gr-item"><span class="gr-ok">✓</span> Score DURING the interview — do not rely on memory after</div>
+                <div class="gr-item"><span class="gr-ok">✓</span> Never share your score before the other interviewer finishes independently</div>
+                <div class="gr-item"><span class="gr-ok">✓</span> Use probe questions when answers are vague — push for specifics</div>
+                <div class="gr-item"><span class="gr-no">✗</span> Do not ask about age, marital status, religion, or family plans</div>
+                <div class="gr-item"><span class="gr-no">✗</span> Do not make decisions on gut feel alone — score must support decision</div>
+                <div class="gr-item"><span class="gr-no">✗</span> Do not discuss salary in Round 1 — HR handles this after shortlisting</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:var(--plum-bg);color:var(--plum);">▸</div><div><div class="card-title">Universal Opening & Closing Questions</div><div class="card-sub">Use for every role — adapt wording to context</div></div></div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--slate);margin-bottom:10px;">Opening Questions</div>
+                <div class="q-items">
+                  <div class="q-item"><div class="q-text">"What specifically attracted you to this role — not a generic answer, what about this opportunity?"</div></div>
+                  <div class="q-item"><div class="q-text">"Tell me about a career decision that didn't work out and what you learned."</div></div>
+                  <div class="q-item"><div class="q-text">"What does working in a remote SEA site mean to you practically — what's your honest experience with that?"</div></div>
+                </div>
+              </div>
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--forest);margin-bottom:10px;">Closing Questions</div>
+                <div class="q-items">
+                  <div class="q-item"><div class="q-text">"Is there anything about your experience you haven't had the chance to share that's relevant?"</div></div>
+                  <div class="q-item"><div class="q-text">"What's your notice period and are there any constraints on your start date?"</div></div>
+                  <div class="q-item"><div class="q-text">"On a scale of 1–10, how interested are you right now — and what would make it a 10?"</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fn">For senior roles (Site Manager, Drilling Supervisor), add a second round with a technical case or scenario. For all roles, reference checks are mandatory before any offer is made.</div>
+      </div>
+
+      <!-- PANEL -->
+      <div id="iv-panel" class="tab-panel">
+        <div class="sl">When to use panel vs solo · and role split guidance</div>
+        <div class="panel-trio">
+          <div class="panel-card">
+            <div class="pc-type">Solo Interview</div>
+            <div class="pc-when">1 interviewer · HR or Hiring Manager</div>
+            <div style="font-size:11px;font-weight:700;color:var(--forest);margin-bottom:4px;">Best for:</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.5;">Initial screening calls. Support and admin roles. Low-risk hires. Round 1 pre-screen before committing panel time.</div>
+            <div style="font-size:11px;font-weight:700;color:var(--rust);margin-top:8px;margin-bottom:4px;">Risks:</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.5;">Single perspective. Higher bias risk. Not defensible for senior hires alone.</div>
+            <span class="rec-tag rec-d">Round 1 screening only</span>
+          </div>
+          <div class="panel-card">
+            <div class="pc-type">2-Person Panel</div>
+            <div class="pc-when">HR + Hiring Manager</div>
+            <div style="font-size:11px;font-weight:700;color:var(--forest);margin-bottom:4px;">Best for:</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.5;">Most standard hires. Ops roles (Driller, Supervisor). Balances HR and technical lens. Manageable to coordinate.</div>
+            <div style="font-size:11px;font-weight:700;color:var(--rust);margin-top:8px;margin-bottom:4px;">Risks:</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.5;">Groupthink if both agree before interviewing. Need clear role split or one person dominates.</div>
+            <span class="rec-tag rec-y">Recommended for most roles</span>
+          </div>
+          <div class="panel-card">
+            <div class="pc-type">3-Person Panel</div>
+            <div class="pc-when">HR + Hiring Mgr + COO/CEO</div>
+            <div style="font-size:11px;font-weight:700;color:var(--forest);margin-bottom:4px;">Best for:</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.5;">Senior-only (Site Manager, Country HR). Roles reporting direct to C-suite. Where culture fit is a deciding factor.</div>
+            <div style="font-size:11px;font-weight:700;color:var(--rust);margin-top:8px;margin-bottom:4px;">Risks:</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.5;">Can intimidate candidate. Scheduling complex. CEO influence can override structured scoring.</div>
+            <span class="rec-tag rec-n">Senior roles · Round 2 only</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:var(--slate-bg);color:var(--slate);">◉</div><div><div class="card-title">Role Split in a 2-Person Panel</div><div class="card-sub">Clear ownership prevents duplication and gaps</div></div></div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div style="background:var(--slate-bg);border:1px solid var(--slate-bd);border-radius:9px;padding:15px;">
+                <div style="font-size:12px;font-weight:700;color:var(--slate);margin-bottom:9px;">HR Interviewer Owns:</div>
+                <div style="display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--ink2);">
+                  <div>• Opening, structure, and closing</div>
+                  <div>• Behavioural / competency questions</div>
+                  <div>• Culture and values fit assessment</div>
+                  <div>• Red flag monitoring (conduct, stability)</div>
+                  <div>• Logistics: notice period, availability, location</div>
+                  <div>• Communication of next steps</div>
+                </div>
+              </div>
+              <div style="background:var(--forest-bg);border:1px solid var(--forest-bd);border-radius:9px;padding:15px;">
+                <div style="font-size:12px;font-weight:700;color:var(--forest);margin-bottom:9px;">Hiring Manager Owns:</div>
+                <div style="display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--ink2);">
+                  <div>• Technical competency questions</div>
+                  <div>• Role-specific scenarios and problems</div>
+                  <div>• Equipment or process knowledge depth</div>
+                  <div>• Team dynamics and site environment fit</div>
+                  <div>• Operational expectations and deliverables</div>
+                  <div>• Technical red flags (credibility of claims)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fn">Never brief the Hiring Manager on your impressions before they score independently. Discuss and compare ONLY after both have completed individual scorecards. This is the single most important anti-bias practice in structured interviewing.</div>
+      </div>
+
+      <!-- RUBRIC -->
+      <div id="iv-rubric" class="tab-panel">
+        <div class="sl">Universal scoring rubric · 1–5 scale · apply to every competency</div>
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card-body" style="padding:0;">
+            <div class="scroll-x">
+              <table class="rubric-tbl">
+                <thead><tr><th>Score</th><th>Label</th><th style="min-width:200px;">Evidence Quality</th><th style="min-width:180px;">Answer Structure</th><th>Signal</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="score-badge s5">5</span></td><td style="font-weight:700;color:var(--forest);">Outstanding</td><td>Exceeds role requirement. Specific, quantified, directly relevant. Depth beyond what role demands.</td><td>Full STAR. Numbers and timeframes. Clear personal ownership. Proactively says what they'd do differently.</td><td style="font-weight:700;color:var(--forest);">Strong hire</td></tr>
+                  <tr><td><span class="score-badge s4">4</span></td><td style="font-weight:700;color:var(--slate);">Strong</td><td>Clearly meets requirements. Relevant and credible. Minor gaps in depth but overall compelling.</td><td>Mostly complete STAR. Some specifics. Clear contribution. Outcome described but may lack numbers.</td><td style="font-weight:700;color:var(--slate);">Recommend</td></tr>
+                  <tr><td><span class="score-badge s3">3</span></td><td style="font-weight:700;color:var(--amber);">Acceptable</td><td>Meets basics. Somewhat generic. Raise this competency in Round 2 before deciding.</td><td>Partial STAR. Relevant but vague. Personal contribution unclear. High-level outcome only.</td><td style="font-weight:700;color:var(--amber);">Probe further</td></tr>
+                  <tr><td><span class="score-badge s2">2</span></td><td style="font-weight:700;color:var(--sienna);">Weak</td><td>Below requirement. Limited or hypothetical evidence. Primarily team-based, not individual.</td><td>Vague or theoretical. Uses "we" more than "I." Cannot give specifics when probed.</td><td style="font-weight:700;color:var(--sienna);">Concern</td></tr>
+                  <tr><td><span class="score-badge s1">1</span></td><td style="font-weight:700;color:var(--rust);">Unacceptable</td><td>No credible evidence. Contradictory, implausible, or fundamental misunderstanding of requirement.</td><td>Cannot give an example. Contradicts earlier statements. Shows incompatible values or behaviours.</td><td style="font-weight:700;color:var(--rust);">Do not proceed</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="card">
+            <div class="card-head"><div class="card-icon" style="background:var(--slate-bg);color:var(--slate);">◎</div><div><div class="card-title">Minimum Score Thresholds</div><div class="card-sub">By role seniority</div></div></div>
+            <div class="card-body"><div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);"><span style="font-size:12.5px;font-weight:600;">Site Manager / Country HR</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--slate);">Avg ≥ 4.0</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);"><span style="font-size:12.5px;font-weight:600;">Drilling Supervisor / HSE</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--forest);">Avg ≥ 3.5</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);"><span style="font-size:12.5px;font-weight:600;">Senior Driller / Payroll</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--amber);">Avg ≥ 3.0</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);"><span style="font-size:12.5px;font-weight:600;">Support / Admin</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--sienna);">Avg ≥ 2.8</span></div>
+              <div style="font-size:11.5px;color:var(--rust);background:var(--rust-bg);border:1px solid var(--rust-bd);border-radius:6px;padding:9px 12px;margin-top:2px;">Any single score of 1 = automatic disqualifier regardless of average</div>
+            </div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-icon" style="background:var(--amber-bg);color:var(--amber);">⚡</div><div><div class="card-title">Anti-Bias Reminders</div><div class="card-sub">Before scoring debrief</div></div></div>
+            <div class="card-body"><div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;padding:8px 10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--amber);"><strong>Halo Effect:</strong> Don't let one impressive answer inflate all scores. Score each competency independently.</div>
+              <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;padding:8px 10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--amber);"><strong>Similarity Bias:</strong> Don't score higher because someone reminds you of yourself or a past top performer.</div>
+              <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;padding:8px 10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--amber);"><strong>Recency Bias:</strong> Don't let the final answer dominate your overall impression. All answers are equal weight.</div>
+              <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;padding:8px 10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--rust);"><strong>Seniority Deference:</strong> In panel settings, score independently before the COO/CEO shares their view.</div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLAGS -->
+      <div id="iv-flags" class="tab-panel">
+        <div class="sl">Green flags · strong positive signals</div>
+        <div class="flag-grid" style="margin-bottom:24px;">
+          <div class="gf-card"><div class="gf-title">✓ Quantifies everything</div><div class="gf-desc">Gives numbers naturally — headcount, budget, timelines. Doesn't wait to be asked. Specific data signals genuine ownership of outcomes.</div></div>
+          <div class="gf-card"><div class="gf-title">✓ Owns failures openly</div><div class="gf-desc">Describes genuine failures without deflecting blame. Articulates what they changed. Self-awareness is a stronger predictor of performance than perfect track records.</div></div>
+          <div class="gf-card"><div class="gf-title">✓ Asks sharp questions</div><div class="gf-desc">Questions reveal thinking quality. Strong candidates ask about scope, team structure, and success metrics — not just package and holidays in Round 1.</div></div>
+          <div class="gf-card"><div class="gf-title">✓ Researched Valentis</div><div class="gf-desc">Knows the company, operating countries, and has specific observations. Shows genuine interest, not desperation for any job.</div></div>
+          <div class="gf-card"><div class="gf-title">✓ Pushes back respectfully</div><div class="gf-desc">Disagrees with framing or corrects a factual error politely. Confidence and integrity — critical for operational leadership roles in remote SEA environments.</div></div>
+          <div class="gf-card"><div class="gf-title">✓ Proactive in process</div><div class="gf-desc">On time. Acknowledged invite. Followed up. Behaviour during recruitment is a preview of behaviour on the job.</div></div>
+        </div>
+
+        <div class="sl">Red flags · disqualifying and concerning signals</div>
+        <div class="flag-grid">
+          <div class="rf-card"><div class="rf-title">🚩 Vague on headcount claims</div><div class="rf-desc">Claims large workforce experience but can't name the org structure, direct reports, or specific challenges. "Around 500 people" with no detail is a credibility flag.</div><div class="rf-action">Action: "Who were your direct reports? Describe the org chart." Push until specific or expose the gap.</div></div>
+          <div class="rf-card"><div class="rf-title">🚩 Always "we," never "I"</div><div class="rf-desc">Uses "we" for every achievement, "I" only for failures. Individual contribution is invisible. May be overstating personal role in team outcomes.</div><div class="rf-action">Action: "What specifically did YOU do — not the team?"</div></div>
+          <div class="rf-card"><div class="rf-title">🚩 Badmouths past employers</div><div class="rf-desc">Describes previous employers or managers very negatively without self-reflection. This is a preview of how they'll speak about Valentis when they leave.</div><div class="rf-action">Action: "What did you take from that experience?" — see if any self-awareness emerges.</div></div>
+          <div class="rf-card"><div class="rf-title">🚩 Safety culture dismissal</div><div class="rf-desc">Describes safety requirements as "box-ticking" or hints productivity sometimes comes before safety procedures. Automatic disqualifier for Site Manager and HSE roles.</div><div class="rf-action">Action: Do not proceed for any ops role. Document reasoning clearly.</div></div>
+          <div class="rf-card"><div class="rf-title">🚩 Evasive on departures</div><div class="rf-desc">Inconsistencies in why they left roles. "Mutual agreement" that sounds like termination. Stories that don't align on dates or sequence.</div><div class="rf-action">Action: "Walk me through exactly how that transition happened." Reference check is critical here.</div></div>
+          <div class="rf-card"><div class="rf-title">🚩 Inflexible on location reality</div><div class="rf-desc">For site-based roles — shows real hesitation about remote conditions but hasn't disclosed it clearly. Will accept the offer and leave within 90 days.</div><div class="rf-action">Action: "This is genuinely remote with no city access. Describe your last remote posting." Do not proceed if hesitation remains.</div></div>
+        </div>
+        <div class="fn">Red flags are indicators, not automatic disqualifiers (except safety culture dismissal for ops roles). One flag with strong answers is different from three flags with weak answers. Document all observations — they are legally relevant if a hire fails probation.</div>
+      </div>
+
+      <!-- SCORECARD -->
+      <div id="iv-scorecard" class="tab-panel">
+        <div class="sl">Live scorecard · complete independently during the interview</div>
+        <div class="sc-wrap">
+          <div class="sc-hd">
+            <div class="sc-hd-title">Interview Scorecard</div>
+            <div class="sc-hd-sub">Complete independently · Do not share scores until both interviewers have finished</div>
+          </div>
+          <div class="sc-meta">
+            <div class="sc-meta-cell"><div class="sc-meta-lbl">Candidate Name</div><div class="sc-meta-val"><input placeholder="Enter name…"/></div></div>
+            <div class="sc-meta-cell"><div class="sc-meta-lbl">Role Applied For</div><div class="sc-meta-val"><input placeholder="Role…"/></div></div>
+            <div class="sc-meta-cell"><div class="sc-meta-lbl">Interviewer</div><div class="sc-meta-val"><input placeholder="Your name…"/></div></div>
+            <div class="sc-meta-cell"><div class="sc-meta-lbl">Date</div><div class="sc-meta-val"><input type="date"/></div></div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-rows" id="sc-rows"></div>
+            <div class="sc-total">
+              <div class="sc-total-lbl">Total Score <span style="font-size:11px;color:var(--ink3);font-weight:400;">(Max 35)</span></div>
+              <div class="sc-total-val" id="sc-total">—</div>
+            </div>
+            <div class="sc-verdict" id="sc-verdict"></div>
+            <textarea class="sc-notes" placeholder="Overall observations · key strengths · concerns · recommended next step…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUESTION BANKS -->
+      <div id="iv-q-sm" class="tab-panel">
+        <div class="sl">Site Manager · question bank · Laos operations</div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-ops">Site Operations Leadership</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Tell me about the largest workforce you have personally managed. What was your org structure and what were the biggest people challenges?</div></div><div class="q-lf"><strong>Look for:</strong> Specific headcount (need 300+). Clear structure described. Concrete people challenges. Evidence of proactive — not reactive — management. Quantified outcomes.</div></div>
+          <div class="q-item"><div class="q-top"><span class="q-type qt-probe">PROBE</span><div class="q-text">Who were your direct reports specifically and how did you cascade accountability below you?</div></div><div class="q-lf"><strong>Look for:</strong> Can name people and structure. Understands delegation vs micromanagement. Can explain accountability frameworks.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-safe">HSE Leadership</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Describe a serious safety incident or near-miss on your site. Walk through your immediate response, investigation, and what systemic changes resulted.</div></div><div class="q-lf"><strong>Look for:</strong> Structured investigation methodology. Takes accountability — doesn't blame crew. Systemic fix, not individual reprimand. Most important: what changed permanently after?</div></div>
+          <div class="q-item"><div class="q-top"><span class="q-type qt-hypo">HYPO</span><div class="q-text">You find your most experienced, productive driller operating without required PPE — not the first time. What do you do?</div></div><div class="q-lf"><strong>Look for:</strong> Zero tolerance framing. Acts immediately. Does NOT make an exception for productivity. Understands this is a culture signal to the whole site.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-lead">Decision Making Under Pressure</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Tell me about a time operations on your site were at serious risk — equipment failure, supply crisis, or personnel emergency. How did you manage it?</div></div><div class="q-lf"><strong>Look for:</strong> Prioritises correctly (people safety first, ops continuity second). Makes decisions with incomplete information. Communicates up while managing the situation.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-comm">Stakeholder & Government Relations</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Describe your experience managing government authorities or regulatory bodies at site level. What was the most challenging interaction?</div></div><div class="q-lf"><strong>Look for:</strong> Direct experience — not "my team handled it." Understands SEA government relationship dynamics. Diplomatic but firm. Does not describe avoidance.</div></div>
+          <div class="q-item"><div class="q-top"><span class="q-type qt-probe">PROBE</span><div class="q-text">What do you know about operating in Laos specifically — regulatory environment, labour practices, cultural norms?</div></div><div class="q-lf"><strong>Look for:</strong> Genuine research or experience. If no Laos experience, acknowledges the gap and has a plan. Red flag: "It's similar to everywhere I've worked."</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-tech">Budget & Cost Control</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Tell me about the largest operational budget you personally managed. How did you track spend, identify variances, and report to leadership?</div></div><div class="q-lf"><strong>Look for:</strong> Owns budget accountability — not just "had visibility." Specific dollar amounts. Variance analysis process. Proactively escalated budget issues before they became problems.</div></div>
+        </div></div>
+        <div class="fn">Site Manager is Tier 1 critical. Use all 8 questions across two rounds. Round 1 (HR): competency + culture. Round 2 (HR + COO): technical depth, budget, government relations. Reference checks mandatory before offer.</div>
+      </div>
+
+      <div id="iv-q-ds" class="tab-panel">
+        <div class="sl">Drilling Supervisor · question bank · Myanmar (overdue)</div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-ops">Drilling Operations Expertise</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Walk me through the most technically complex drilling program you have supervised. What were the geological challenges and how did you manage them?</div></div><div class="q-lf"><strong>Look for:</strong> Specific technical knowledge — parameters, formation challenges, deviation control. Understands the gap between a written program and execution reality.</div></div>
+          <div class="q-item"><div class="q-top"><span class="q-type qt-hypo">HYPO</span><div class="q-text">You're 200m into a hole and suddenly lose circulation — mud not returning. You can't reach the Geologist. What do you do in the next 30 minutes?</div></div><div class="q-lf"><strong>Look for:</strong> Stops drilling immediately. Documents depth and parameters. Follows emergency protocol. Knows when to pull out vs attempt remediation. Communicates up immediately — doesn't sit on the problem.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-safe">HSE on the Rig Floor</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">A crew member refuses to follow a safety instruction during active drilling. What was the situation and how did you handle it?</div></div><div class="q-lf"><strong>Look for:</strong> Acts immediately — not "after shift." Consistent application. Does not use physical intimidation (red flag). Documents the incident.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-lead">Crew Leadership</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Serious performance problem with a crew member on a remote site — what steps did you take?</div></div><div class="q-lf"><strong>Look for:</strong> Follows process — verbal, documented, escalation. Understands isolation challenges of remote site discipline. Involves HR/Site Manager at the right point.</div></div>
+          <div class="q-item"><div class="q-top"><span class="q-type qt-probe">PROBE</span><div class="q-text">How do you manage a mixed crew of local nationals and expats where language and cultural differences create friction?</div></div><div class="q-lf"><strong>Look for:</strong> Specific strategies — visual SOPs, buddy systems, daily briefings, translators. Has done this. Understands cultural hierarchy dynamics in SEA drilling crews.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-tech">Equipment & Downtime</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Major equipment breakdown during an active drilling program. How did you minimise downtime and what was the business impact?</div></div><div class="q-lf"><strong>Look for:</strong> Quantifies downtime and recovery time. Clear escalation path. Understands cost of unplanned downtime. Strong candidates describe what they changed in maintenance practice afterward.</div></div>
+        </div></div>
+        <div class="fn">OVERDUE role — compress to a single combined round (HR + Ops Manager) to save time. Technical questions more important than behavioural for this role. Verify certifications before the interview, not after. Contact agencies for Myanmar Supervisor TODAY.</div>
+      </div>
+
+      <div id="iv-q-dr" class="tab-panel">
+        <div class="sl">Senior Driller · question bank · Indonesia / Myanmar</div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-ops">Rig Operation</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Which rig types have you operated and what are the key operational differences? Which do you prefer and why?</div></div><div class="q-lf"><strong>Look for:</strong> Specific models and manufacturers. Can articulate technical differences. Preference backed by operational rationale, not just habit.</div></div>
+          <div class="q-item"><div class="q-top"><span class="q-type qt-hypo">HYPO</span><div class="q-text">Drill string vibrating abnormally, penetration rate dropped. Supervisor is off-site. What do you do?</div></div><div class="q-lf"><strong>Look for:</strong> Stops drilling. Checks parameters. Diagnoses possible cause methodically. Does not just push through. Contacts Supervisor. Documents findings.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-lead">Crew & Mentoring</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">How have you developed a junior driller or helper into a competent operator?</div></div><div class="q-lf"><strong>Look for:</strong> Show-don't-tell method. Patient but holds standards. Genuine investment in others. This is what separates a Senior Driller from someone who only does their own job.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-safe">Safety Ownership</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Tell me about a time you identified a safety hazard on the rig before an incident occurred. What did you do?</div></div><div class="q-lf"><strong>Look for:</strong> Proactively identifies — not just responds. Reports it formally. Follows up to confirm it was fixed. Best candidates describe a non-obvious hazard.</div></div>
+        </div></div>
+        <div class="fn">Senior Driller can be assessed in a single 45-minute round with HR + Drilling Supervisor or Ops Manager. Weight 60% of time on technical competency. Verify certifications and check reference from most recent Drilling Supervisor before offer.</div>
+      </div>
+
+      <div id="iv-q-hse" class="tab-panel">
+        <div class="sl">HSE Officer · question bank · Laos</div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-safe">HSE Management System</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Tell me about a site where you built or significantly improved the HSE management system. What was the baseline, what did you do, what changed?</div></div><div class="q-lf"><strong>Look for:</strong> Systematic approach — risk register, permit to work, training regime. Quantifies improvement (incident rate, near-miss frequency). Understands the difference between a paper system and a live one.</div></div>
+          <div class="q-item"><div class="q-top"><span class="q-type qt-probe">PROBE</span><div class="q-text">If the local regulatory standard is below your company standard — which do you apply?</div></div><div class="q-lf"><strong>Look for:</strong> Always applies the higher standard. Can articulate why. Does not take the easy path to avoid friction with local authorities.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-tech">Incident Investigation</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Walk me through an incident investigation you personally led. What methodology, and what was the most important finding?</div></div><div class="q-lf"><strong>Look for:</strong> Named methodology (5-Why, ICAM, Bowtie). Root cause is rarely "operator error." Findings led to systemic change, not just retraining one person.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-lead">Safety Culture Influence</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-hypo">HYPO</span><div class="q-text">New site — near-miss reporting is near zero because workers fear punishment for reporting. What's your first 30 days approach?</div></div><div class="q-lf"><strong>Look for:</strong> Does NOT mandate reporting from day one. Builds trust first. Separates reporting from blame. Works with Site Manager on visible leadership commitment. Understands this is cultural, not procedural.</div></div>
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Describe a time you challenged a senior manager on a safety decision. How did you handle it?</div></div><div class="q-lf"><strong>Look for:</strong> Does it — does not back down on safety. Uses data and standards, not emotion. Escalates if necessary. Red flag: has never had to do this. Safety compliance depends on this willingness.</div></div>
+        </div></div>
+        <div class="fn">Must verify NEBOSH or equivalent certificate before interview — not after. This role has functional authority over all site personnel on safety matters. Assess confidence and assertiveness as strongly as technical knowledge.</div>
+      </div>
+
+      <div id="iv-q-hr" class="tab-panel">
+        <div class="sl">HRBP / HR Manager · question bank · Thailand</div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-hr">HR Generalist Depth</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Manage me through a complex ER case — disciplinary, grievance, or termination — from start to resolution. Walk through your process.</div></div><div class="q-lf"><strong>Look for:</strong> Follows process rigorously. Documents every step. Consults labour law. Reaches a defensible conclusion. Does not cut corners to resolve quickly.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-hr">Thai Labour Law</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-hypo">HYPO</span><div class="q-text">A manager wants to terminate a 3-year employee for "poor performance" — but there are no documented reviews. What do you advise?</div></div><div class="q-lf"><strong>Look for:</strong> Flags legal risk immediately (Thailand LPA severance exposure). Does not just comply. Advises on PIP and documentation path. Strong candidates cite specific LPA provisions.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-lead">Solo HR Function</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Describe a time you were the only HR person for a large or complex operation. What did you prioritise, what did you let go, how did you manage your time?</div></div><div class="q-lf"><strong>Look for:</strong> Can triage effectively. Knows what has legal or operational urgency vs nice-to-have. Communicates workload limitations upward. Critical for Valentis context — this is the reality they'll walk into.</div></div>
+          <div class="q-item"><div class="q-top"><span class="q-type qt-hypo">HYPO</span><div class="q-text">In your first 90 days, you find payroll compliance gaps in two countries AND have three urgent hires to fill. You can't do both simultaneously. How do you decide?</div></div><div class="q-lf"><strong>Look for:</strong> Compliance first — legal exposure outweighs recruitment delay. Communicates the triage to leadership. Seeks temporary support for the deprioritised workstream.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-comm">Stakeholder Management</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">A senior manager pushed back hard on your HR recommendation. How did you handle it?</div></div><div class="q-lf"><strong>Look for:</strong> Holds position when backed by policy or law. Adjusts when the manager has a valid point. Does not simply capitulate. Red flag: "I always deferred to the business."</div></div>
+        </div></div>
+        <div class="fn">Assess self-direction heavily — this person needs to run Thailand HR with minimal supervision while you manage SEA operations. Prior solo HR function experience is the single most important qualifier for this role.</div>
+      </div>
+
+      <div id="iv-q-sup" class="tab-panel">
+        <div class="sl">Support & Admin roles · universal question bank</div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-ops">Organisation & Reliability</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Tell me about a time you were managing multiple urgent tasks simultaneously and something fell through the cracks. What happened and what did you do?</div></div><div class="q-lf"><strong>Look for:</strong> Owns the mistake. Does not blame volume alone. Describes a specific recovery action. Most importantly — describes the system or habit they changed afterward.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-lead">Remote Environment Fit</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-hypo">HYPO</span><div class="q-text">This role is on a remote drill site — limited internet, no city amenities, mostly male workforce. What's your honest reaction to that and what would be your biggest adjustment?</div></div><div class="q-lf"><strong>Look for:</strong> Has actually thought about it. Honest about the adjustment. Red flag: "That's no problem" with zero reflection. Green flag: specific coping mechanisms and practical questions about facilities.</div></div>
+        </div></div>
+        <div class="q-block"><div class="q-comp-bar"><span class="comp-pill cp-comm">Discretion & Communication</span></div><div class="q-items">
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Tell me about a time you handled sensitive or confidential information. Was there ever a moment where you were pressured to share it?</div></div><div class="q-lf"><strong>Look for:</strong> Takes confidentiality as a principle, not just a rule. Was not swayed by social pressure. Critical for EA roles — discretion failure directly affects C-suite operations.</div></div>
+          <div class="q-item"><div class="q-top"><span class="q-type qt-star">STAR</span><div class="q-text">Describe the most complex logistics or coordination challenge you've managed. How did you track everything and what happened when something went wrong mid-process?</div></div><div class="q-lf"><strong>Look for:</strong> Uses systems — checklists, trackers — not memory alone. Proactively communicates when issues arise. Does not wait to be asked for a status update.</div></div>
+        </div></div>
+        <div class="fn">Support roles can be assessed in a single 35-minute interview with HR only. Use a practical task — ask an Admin candidate to demonstrate a filing system or tracker setup. Behaviour in practical tasks is more predictive than verbal answers alone.</div>
+      </div>
+
+    </div><!-- end module-iv -->
+
+    <!-- ════════════════════════
+         SOURCING MODULE
+    ════════════════════════ -->
+    <div id="module-ss" class="module">
+
+      <!-- OVERVIEW -->
+      <div id="ss-overview" class="tab-panel active">
+        <div class="sl">Sourcing philosophy · channel mix by role type</div>
+        <div class="kpi-bar">
+          <div class="kpi-cell"><div class="kpi-lbl">Active Open Roles</div><div class="kpi-val" style="color:var(--rust);">5</div><div class="kpi-sub">2 critical · 3 high/med</div></div>
+          <div class="kpi-cell"><div class="kpi-lbl">Avg Lead Time (Ops)</div><div class="kpi-val" style="color:var(--sienna);">90d</div><div class="kpi-sub">Sourcing to offer accepted</div></div>
+          <div class="kpi-cell"><div class="kpi-lbl">Active Channels</div><div class="kpi-val" style="color:var(--forest);">8</div><div class="kpi-sub">In this strategy</div></div>
+          <div class="kpi-cell"><div class="kpi-lbl">LinkedIn Response Rate</div><div class="kpi-val" style="color:var(--amber);">25%</div><div class="kpi-sub">With personalisation</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+          <div class="card">
+            <div class="card-head"><div class="card-icon" style="background:var(--amber-bg);color:var(--amber);">◈</div><div><div class="card-title">The 3 Core Rules</div><div class="card-sub">Applied to every role, every time</div></div></div>
+            <div class="card-body"><div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="padding:11px 13px;background:var(--surface);border-radius:7px;border-left:3px solid var(--amber);"><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;">Source before you need</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;">For every critical role, maintain 2–3 warm candidates at all times — even when there's no vacancy. The Myanmar Supervisor crisis exists precisely because sourcing only started when the vacancy opened.</div></div>
+              <div style="padding:11px 13px;background:var(--surface);border-radius:7px;border-left:3px solid var(--forest);"><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;">The 3-channel minimum</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;">For any active role, always run at least 3 sourcing channels simultaneously. LinkedIn + referral + specialist channel is the floor. Never rely on one job post alone.</div></div>
+              <div style="padding:11px 13px;background:var(--surface);border-radius:7px;border-left:3px solid var(--slate);"><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;">Referral is the best channel</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;">In SEA drilling, the best candidates don't apply to job ads. They are referred. Activate your network FIRST — especially for Supervisor and Manager roles.</div></div>
+            </div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-icon" style="background:var(--slate-bg);color:var(--slate);">◎</div><div><div class="card-title">Channel Mix by Role Type</div><div class="card-sub">Where to spend sourcing time</div></div></div>
+            <div class="card-body">
+              <div class="ch-mix">
+                <div class="ch-row"><div><div class="ch-label">Ops / Technical (Senior)</div><div style="font-size:11px;color:var(--ink3);">Site Mgr · Drilling Supervisor</div></div><div class="ch-pills"><span class="pill p-forest">Referral 40%</span><span class="pill p-slate">LinkedIn 35%</span><span class="pill p-amber">Agency 25%</span></div></div>
+                <div class="ch-row"><div><div class="ch-label">Field / Ops (Mid)</div><div style="font-size:11px;color:var(--ink3);">Driller · HSE · Geologist</div></div><div class="ch-pills"><span class="pill p-forest">Referral 35%</span><span class="pill p-slate">LinkedIn 25%</span><span class="pill p-sienna">Mining Boards 40%</span></div></div>
+                <div class="ch-row"><div><div class="ch-label">HR / Finance</div><div style="font-size:11px;color:var(--ink3);">HRBP · Payroll · Compliance</div></div><div class="ch-pills"><span class="pill p-slate">LinkedIn 50%</span><span class="pill p-plum">Local Boards 30%</span><span class="pill p-forest">Referral 20%</span></div></div>
+                <div class="ch-row"><div><div class="ch-label">Support / Admin</div><div style="font-size:11px;color:var(--ink3);">Coordinator · EA · Logistics</div></div><div class="ch-pills"><span class="pill p-plum">Local Boards 50%</span><span class="pill p-slate">LinkedIn 30%</span><span class="pill p-forest">Referral 20%</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fn">Effectiveness varies by country. LinkedIn works strongly for regional SEA professional roles. For Myanmar and Laos field roles, Facebook groups and referral outperform any job board. Match the channel to the candidate, not to what's most familiar.</div>
+      </div>
+
+      <!-- TIMELINE -->
+      <div id="ss-timeline" class="tab-panel">
+        <div class="sl">Sourcing lead times · working backwards from target fill date</div>
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card-body" style="padding:0;">
+            <div class="scroll-x">
+              <table class="tl-tbl">
+                <thead><tr><th>Role Category</th><th>Sourcing Start</th><th>Screen + Shortlist</th><th>Interviews</th><th>Offer</th><th>Notice Period</th><th>Mobilisation</th><th>Total</th></tr></thead>
+                <tbody>
+                  <tr><td style="font-weight:600;">Site Manager / Country Head</td><td>Day 0</td><td>Day 14–21</td><td>Day 21–35</td><td>Day 35–42</td><td>30–60d</td><td>7–14d</td><td><span class="pill p-rust">75–130 days</span></td></tr>
+                  <tr><td style="font-weight:600;">Drilling Supervisor</td><td>Day 0</td><td>Day 10–14</td><td>Day 14–21</td><td>Day 21–28</td><td>30–60d</td><td>7–14d</td><td><span class="pill p-rust">65–115 days</span></td></tr>
+                  <tr><td style="font-weight:600;">Senior Driller / HSE Officer</td><td>Day 0</td><td>Day 7–10</td><td>Day 10–17</td><td>Day 17–24</td><td>14–30d</td><td>3–7d</td><td><span class="pill p-sienna">45–75 days</span></td></tr>
+                  <tr><td style="font-weight:600;">HRBP / Finance / Compliance</td><td>Day 0</td><td>Day 7–10</td><td>Day 10–17</td><td>Day 17–24</td><td>30–45d</td><td>N/A</td><td><span class="pill p-amber">55–80 days</span></td></tr>
+                  <tr><td style="font-weight:600;">Support / Admin</td><td>Day 0</td><td>Day 5–7</td><td>Day 7–10</td><td>Day 10–14</td><td>14–30d</td><td>N/A</td><td><span class="pill p-forest">30–55 days</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="fn">Mobilisation time (work permit + physical relocation) applies to expat hires only — Laos permits take 4–8 weeks, Myanmar 4–6 weeks. For locally-based candidates mobilisation is near zero. These timelines assume active, prioritised sourcing from Day 0. Passive job posting adds 2–4 weeks minimum to every phase.</div>
+      </div>
+
+      <!-- OPS ROLES -->
+      <div id="ss-r-ops" class="tab-panel">
+        <div class="sl">Operations roles · Site Manager · Drilling Supervisor · Driller · Geologist</div>
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card-head"><div class="card-icon" style="background:var(--rust-bg);color:var(--rust);">⚑</div><div><div class="card-title">Why Ops Roles Are Hard in SEA</div></div></div>
+          <div class="card-body"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <div style="padding:12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--ink2);line-height:1.5;"><strong style="color:var(--rust);">Thin local pool.</strong> Myanmar and Laos have very limited qualified drilling professionals at Supervisor level. Most qualified candidates are Central Asian (KZ, UZ) or Australian expats.</div>
+            <div style="padding:12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--ink2);line-height:1.5;"><strong style="color:var(--sienna);">They don't job-hunt.</strong> Experienced drilling supervisors are almost always employed. They move via referral, direct approach from colleagues, or headhunter contact — not job boards.</div>
+            <div style="padding:12px;background:var(--surface);border-radius:8px;border:1px solid var(--amber);">
+            <strong style="color:var(--amber);">Myanmar premium.</strong> Political environment makes Myanmar less attractive. Expect 15–25% premium over comparable roles in stable markets and higher rejection rates at offer stage.</div>
+          </div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:var(--forest-bg);color:var(--forest);">◉</div><div><div class="card-title">Priority Sourcing Channels — Ops Roles</div><div class="card-sub">Ranked by effectiveness for SEA drilling talent</div></div></div>
+          <div class="card-body">
+            <div class="role-strat">
+              <div class="rs-item"><div class="rs-num">01</div><div><div class="rs-name">Direct Referral — Your Own Network</div><div class="rs-desc">Ask your Site Manager candidates who else they know. Ask the Group COO. Ask current site staff. One referral from Arsen Tulebayev could source your Myanmar Supervisor immediately — the drilling community in SEA is small and they all know each other.</div></div><span class="pill p-forest">Best ROI</span></div>
+              <div class="rs-item"><div class="rs-num">02</div><div><div class="rs-name">LinkedIn — Direct Boolean Outreach</div><div class="rs-desc">Targeted search for specific titles and experience. Highly effective for Central Asian expat drillers who maintain LinkedIn profiles. No Recruiter license required for manual outreach — use InMail or personalised connection requests.</div></div><span class="pill p-slate">High value</span></div>
+              <div class="rs-item"><div class="rs-num">03</div><div><div class="rs-name">CatalistJobs / Rigzone / Careermine</div><div class="rs-desc">SEA mining and drilling specialist boards. Post JD and capture active job seekers. Not effective for passive candidates but supplements active sourcing. CatalistJobs has the strongest SEA coverage.</div></div><span class="pill p-sienna">Supplementary</span></div>
+              <div class="rs-item"><div class="rs-num">04</div><div><div class="rs-name">Specialist Mining Agency — Use Now for Myanmar</div><div class="rs-desc">Drilling Supervisor is overdue with no pipeline. Engage Mining People International and Antal International today. Typical fee 15–18% first year salary. Cost of agency is less than one week of operational downtime at a drill site.</div></div><span class="pill p-rust">Deploy now — MM</span></div>
+              <div class="rs-item"><div class="rs-num">05</div><div><div class="rs-name">Facebook Groups — SEA Mining & Drilling</div><div class="rs-desc">Underrated but effective. Myanmar, Laos, and Indonesian mining workers use Facebook heavily. Groups like "Myanmar Mining Jobs", "SEA Drilling Professionals" reach workers who don't use LinkedIn at all.</div></div><span class="pill p-plum">SEA-specific</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="fn">For Drilling Supervisor Myanmar: deploy channels 1, 2, and 4 simultaneously right now. Do not wait for one to fail before trying another. Also brief the Site Manager candidate in Round 1 — ask if he knows anyone suitable for the Myanmar role. Best ops talent knows other ops talent.</div>
+      </div>
+
+      <!-- HR ROLES -->
+      <div id="ss-r-hr" class="tab-panel">
+        <div class="sl">HR & Finance roles · HRBP Thailand · Payroll Officer · Compliance Indonesia</div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:var(--amber-bg);color:var(--amber);">◉</div><div><div class="card-title">Channels by Country</div></div></div>
+          <div class="card-body"><div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="padding:13px;background:var(--surface);border-radius:9px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;">🇹🇭 Thailand — HRBP and Payroll Officer</div>
+              <div style="font-size:12px;color:var(--ink2);line-height:1.5;margin-bottom:9px;">Bangkok HR market is competitive and candidate-driven. LinkedIn is the strongest channel. Post on JobsDB Thailand and JobThai.com for local reach. Thai HR Association (THRA) LinkedIn group has active senior candidates. Multi-country payroll candidates are rare — pay the premium when you find one.</div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;"><span class="pill p-slate">LinkedIn</span><span class="pill p-plum">JobsDB TH</span><span class="pill p-amber">THRA Network</span><span class="pill p-forest">JobThai.com</span></div>
+            </div>
+            <div style="padding:13px;background:var(--surface);border-radius:9px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;">🇮🇩 Indonesia — Compliance Officer</div>
+              <div style="font-size:12px;color:var(--ink2);line-height:1.5;margin-bottom:9px;">Indonesian labour law specialists are found through LinkedIn and Kalimantan mining networks. JobStreet Indonesia for professional roles. PMSM (Indonesian HR Association) network. KITAS/IMTA keywords in LinkedIn search self-select for work permit experienced candidates.</div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;"><span class="pill p-slate">LinkedIn</span><span class="pill p-plum">JobStreet ID</span><span class="pill p-amber">PMSM Network</span><span class="pill p-sienna">Kalimantan Mining Groups</span></div>
+            </div>
+            <div style="padding:13px;background:var(--amber-bg);border:1px solid var(--amber-bd);border-radius:9px;">
+              <div style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:4px;">Strategic note — HR roles are budget-pending</div>
+              <div style="font-size:12px;color:var(--ink2);line-height:1.5;">Do not invest heavy sourcing effort until Finance and COO budget approval is confirmed. However, you can begin building a warm LinkedIn pipeline now — connect with 5–10 relevant profiles and tag them in the candidate database. When approval comes, you have a 2–3 week head start.</div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- SUPPORT ROLES -->
+      <div id="ss-r-sup" class="tab-panel">
+        <div class="sl">Support & Admin roles · Site Admin Laos · Logistics Indonesia · EA Bangkok</div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:var(--slate-bg);color:var(--slate);">◷</div><div><div class="card-title">Local-First Strategy</div><div class="card-sub">All support roles should be local hires wherever possible</div></div></div>
+          <div class="card-body"><div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="padding:13px;background:var(--surface);border-radius:9px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;">🇱🇦 Laos — Site Admin / Coordinator</div>
+              <div style="font-size:12px;color:var(--ink2);line-height:1.5;margin-bottom:8px;">Local Lao hire strongly preferred. laosjob.com, expat community boards in Vientiane, Facebook groups ("Jobs in Laos"). English + Lao requirement filters well. University of Vientiane and NUOL notice boards for junior candidates. Other mining companies in Laos sometimes refer outgoing local admin staff.</div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;"><span class="pill p-plum">laosjob.com</span><span class="pill p-sienna">Facebook Groups</span><span class="pill p-forest">University Boards</span></div>
+            </div>
+            <div style="padding:13px;background:var(--surface);border-radius:9px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;">🇮🇩 Indonesia — Logistics Coordinator</div>
+              <div style="font-size:12px;color:var(--ink2);line-height:1.5;margin-bottom:8px;">Kalimantan local hire preferred. JobStreet Indonesia. East/South Kalimantan Facebook mining groups are active. Coordinate with current site vendors — they often know candidates already familiar with the Kalimantan operating environment.</div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;"><span class="pill p-plum">JobStreet ID</span><span class="pill p-sienna">Kalimantan FB Groups</span><span class="pill p-forest">Vendor Referrals</span></div>
+            </div>
+            <div style="padding:13px;background:var(--surface);border-radius:9px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;">🇹🇭 Thailand — Executive Assistant / Office Manager</div>
+              <div style="font-size:12px;color:var(--ink2);line-height:1.5;margin-bottom:8px;">Bangkok-based, English + Thai essential. LinkedIn for mid-senior EA candidates. JobsDB Thailand for broader reach. "Executive Assistants Thailand" Facebook communities. Never hire an EA without CEO face-to-face — discretion is non-negotiable and only a personal interaction can assess it.</div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;"><span class="pill p-slate">LinkedIn</span><span class="pill p-plum">JobsDB TH</span><span class="pill p-amber">Bangkok EA Networks</span></div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- JOB BOARDS -->
+      <div id="ss-platforms" class="tab-panel">
+        <div class="sl">Job boards & platforms · effectiveness ratings for SEA drilling sector</div>
+        <div class="platform-grid">
+          <div class="plat-card"><div class="plat-top"><div class="plat-name">LinkedIn</div><span class="eff eff-h">HIGH</span></div><div class="plat-desc">Best for all professional and senior roles. Direct outreach to passive candidates. Strong for Central Asian expat drillers. Works across all 4 countries.</div><div class="plat-best">Best for: Site Manager, Drilling Supervisor, HRBP, Compliance</div><div class="plat-cost">Free (manual) / Recruiter Lite ~$170/mo</div></div>
+          <div class="plat-card"><div class="plat-top"><div class="plat-name">CatalistJobs</div><span class="eff eff-h">HIGH</span></div><div class="plat-desc">SEA mining specialist board. High quality candidates already filtered to the sector. Used by operators across Laos, Myanmar, Indonesia.</div><div class="plat-best">Best for: Senior Driller, Equipment Tech, Geologist, HSE</div><div class="plat-cost">~$150–250/post</div></div>
+          <div class="plat-card"><div class="plat-top"><div class="plat-name">Rigzone</div><span class="eff eff-h">HIGH</span></div><div class="plat-desc">Global drilling professional network. Strong database of drilling supervisors and site managers. Good for expat candidates from Central Asia and ANZ.</div><div class="plat-best">Best for: Drilling Supervisor, Site Manager, Senior Driller</div><div class="plat-cost">~$300–500/post or subscription</div></div>
+          <div class="plat-card"><div class="plat-top"><div class="plat-name">JobsDB Thailand</div><span class="eff eff-m">MED</span></div><div class="plat-desc">Dominant job board in Thailand. Essential for Bangkok-based roles. Good for HRBP, Finance, and EA roles. Less effective for ops or field roles.</div><div class="plat-best">Best for: HRBP TH, Payroll Officer, EA Bangkok</div><div class="plat-cost">~$100–200/post</div></div>
+          <div class="plat-card"><div class="plat-top"><div class="plat-name">JobStreet Indonesia</div><span class="eff eff-m">MED</span></div><div class="plat-desc">Primary job board for Indonesia. Strong for support and compliance roles. Has good reach into Kalimantan for local candidates.</div><div class="plat-best">Best for: Compliance Officer, Logistics Coordinator, Driller ID</div><div class="plat-cost">~$100–200/post</div></div>
+          <div class="plat-card"><div class="plat-top"><div class="plat-name">Mining People Intl</div><span class="eff eff-h">HIGH</span></div><div class="plat-desc">Australian-based mining specialist agency. Strong SEA network. Particularly good for technical roles and expat candidates for remote postings.</div><div class="plat-best">Best for: Senior technical ops roles, expat placements</div><div class="plat-cost">Agency fee 15–18% first year salary</div></div>
+          <div class="plat-card"><div class="plat-top"><div class="plat-name">Facebook Groups</div><span class="eff eff-m">MED</span></div><div class="plat-desc">Underrated in SEA. Myanmar and Laos mining workers heavily use Facebook. "Myanmar Mining Jobs", "SEA Drilling Professionals" reach workers who don't use LinkedIn.</div><div class="plat-best">Best for: Mid-level ops roles, local Myanmar/Laos hires</div><div class="plat-cost">Free</div></div>
+          <div class="plat-card"><div class="plat-top"><div class="plat-name">laosjob.com</div><span class="eff eff-m">MED</span></div><div class="plat-desc">Primary local job portal in Laos. Good for local admin and coordination roles in Vientiane. English/Lao bilingual candidates use this platform.</div><div class="plat-best">Best for: Site Admin, Laos-based local support hires</div><div class="plat-cost">~$30–80/post</div></div>
+          <div class="plat-card"><div class="plat-top"><div class="plat-name">Careermine / InfoMine</div><span class="eff eff-l">LOW-MED</span></div><div class="plat-desc">Global mining job board. Less SEA-specific than CatalistJobs but worth posting for senior technical roles needing global expat reach (ANZ, Canada, Africa).</div><div class="plat-best">Best for: Global expat ops talent for senior roles only</div><div class="plat-cost">~$150–300/post</div></div>
+        </div>
+        <div class="fn">For any active role: LinkedIn + 1 specialist board simultaneously is the minimum. For critical ops roles, add agency as a third channel immediately. "HIGH" effectiveness is specific to SEA drilling sector — results will differ for other industries.</div>
+      </div>
+
+      <!-- LINKEDIN STRINGS -->
+      <div id="ss-linkedin" class="tab-panel">
+        <div class="sl">LinkedIn Boolean search strings · click to copy · paste directly into LinkedIn search</div>
+        <div class="ss-block">
+          <div class="ss-lbl">🔴 Site Manager — SEA Operations</div>
+          <div class="ss-box" onclick="copyStr(this)"><span class="ss-copy-hint">click to copy</span>("Site Manager" OR "Operations Manager") AND ("drilling" OR "mineral exploration" OR "mining") AND ("Laos" OR "Myanmar" OR "Southeast Asia") AND ("500" OR "remote site" OR "field operations")</div>
+          <div class="ss-notes">Add Kazakhstan, Uzbekistan, or Australia as location filters to find expat candidates with relevant backgrounds. Filter by "Active past 2 years" to exclude dormant profiles.</div>
+        </div>
+        <div class="ss-block">
+          <div class="ss-lbl">🔴 Drilling Supervisor — Myanmar (Urgent)</div>
+          <div class="ss-box" onclick="copyStr(this)"><span class="ss-copy-hint">click to copy</span>("Drilling Supervisor" OR "Drill Supervisor" OR "Senior Driller") AND ("mineral exploration" OR "diamond core" OR "rotary drilling" OR "RC drilling") AND ("Myanmar" OR "Southeast Asia" OR "remote site") NOT "oil" NOT "petroleum"</div>
+          <div class="ss-notes">Remove NOT operators if you want to include O&G drillers — many rotary drilling supervisors can transfer skills to mineral exploration with brief upskilling.</div>
+        </div>
+        <div class="ss-block">
+          <div class="ss-lbl">🟠 Senior Driller — Indonesia / Kalimantan</div>
+          <div class="ss-box" onclick="copyStr(this)"><span class="ss-copy-hint">click to copy</span>("Senior Driller" OR "Diamond Core Driller" OR "Exploration Driller") AND ("Kalimantan" OR "Indonesia" OR "mineral exploration") AND ("gold" OR "nickel" OR "copper" OR "mineral")</div>
+          <div class="ss-notes">Filter by Indonesia location for local hires. Add Bahasa Indonesia language filter. For expat candidates, remove location filter and add "willing to relocate."</div>
+        </div>
+        <div class="ss-block">
+          <div class="ss-lbl">🟢 HSE Officer — Thailand / SEA</div>
+          <div class="ss-box" onclick="copyStr(this)"><span class="ss-copy-hint">click to copy</span>("HSE Officer" OR "Safety Officer" OR "Health Safety Environment") AND ("NEBOSH" OR "IOSH" OR "safety certification") AND ("mining" OR "construction" OR "drilling") AND ("Thailand" OR "Laos" OR "Southeast Asia") AND ("site" OR "remote" OR "field")</div>
+          <div class="ss-notes">Thai HSE professionals are particularly good targets — cultural proximity to Laos, often cross-border experience, larger qualified pool than Laos directly.</div>
+        </div>
+        <div class="ss-block">
+          <div class="ss-lbl">🟡 HRBP / HR Manager — Thailand</div>
+          <div class="ss-box" onclick="copyStr(this)"><span class="ss-copy-hint">click to copy</span>("HRBP" OR "HR Business Partner" OR "HR Manager") AND ("Thailand" OR "Bangkok") AND ("labor law" OR "Thai labor" OR "multi-country" OR "regional HR") AND ("mining" OR "construction" OR "manufacturing")</div>
+          <div class="ss-notes">Prioritise candidates who mention Thai Labour Protection Act or multi-country payroll in their summary — these are rare and genuinely differentiating qualifiers.</div>
+        </div>
+        <div class="ss-block">
+          <div class="ss-lbl">🔵 Indonesia Compliance Officer</div>
+          <div class="ss-box" onclick="copyStr(this)"><span class="ss-copy-hint">click to copy</span>("HR Compliance" OR "Labor Compliance" OR "Industrial Relations") AND ("Indonesia" OR "Kalimantan") AND ("KITAS" OR "work permit" OR "IMTA" OR "Manpower Law") AND ("mining" OR "extractive")</div>
+          <div class="ss-notes">KITAS and IMTA keywords are highly specific — anyone with these in their profile has direct work permit management experience. Filter by Indonesia location.</div>
+        </div>
+        <div class="fn">Personalise every connection request — generic requests get ~10% acceptance vs 35%+ for personalised notes. At minimum, reference one specific thing from their profile. In a tight-knit drilling community, a spam-style approach damages employer brand permanently.</div>
+      </div>
+
+      <!-- AGENCIES -->
+      <div id="ss-agencies" class="tab-panel">
+        <div class="sl">Specialist agencies · SEA mining and drilling sector · fees and approach</div>
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card-head"><div class="card-icon" style="background:var(--amber-bg);color:var(--amber);">◷</div><div><div class="card-title">When to Use an Agency</div></div></div>
+          <div class="card-body"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <div style="padding:11px 13px;background:var(--rust-bg);border-radius:8px;border-left:3px solid var(--rust);font-size:12px;color:var(--ink2);line-height:1.5;"><strong style="color:var(--rust);display:block;margin-bottom:3px;">Use immediately when:</strong>Role is overdue with no pipeline. Ops-critical role that cannot stay vacant. You have zero bandwidth for active sourcing.</div>
+            <div style="padding:11px 13px;background:var(--amber-bg);border-radius:8px;border-left:3px solid var(--amber);font-size:12px;color:var(--ink2);line-height:1.5;"><strong style="color:var(--amber);display:block;margin-bottom:3px;">Consider using when:</strong>Thin local talent pool (all ops roles in MM/LA). Confidential search. Requires specific technical credentialing you can't verify independently.</div>
+            <div style="padding:11px 13px;background:var(--forest-bg);border-radius:8px;border-left:3px solid var(--forest);font-size:12px;color:var(--ink2);line-height:1.5;"><strong style="color:var(--forest);display:block;margin-bottom:3px;">Don't use agency for:</strong>Support or admin roles. Roles with warm bench candidates. Roles where the JD is unclear — fix the JD first or you waste everyone's time.</div>
+          </div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:var(--slate-bg);color:var(--slate);">◉</div><div><div class="card-title">Recommended Agencies — SEA Mining & Drilling</div></div></div>
+          <div class="card-body scroll-x">
+            <table class="ag-tbl">
+              <thead><tr><th>Agency</th><th>Speciality</th><th>Coverage</th><th>Fee</th><th>Best For</th></tr></thead>
+              <tbody>
+                <tr><td><div style="font-weight:700;color:var(--ink);">Mining People International</div><div style="font-size:10.5px;color:var(--ink3);">miningpeople.com.au</div></td><td>Mining ops, technical, management</td><td><span class="pill p-forest">SEA · ANZ · Global</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">15–18% yr1</td><td>Site Manager, Drilling Supervisor, Senior Driller</td></tr>
+                <tr><td><div style="font-weight:700;color:var(--ink);">Hays Mining</div><div style="font-size:10.5px;color:var(--ink3);">hays.com.au/mining</div></td><td>Mining, resources, engineering</td><td><span class="pill p-slate">SEA · ANZ · Asia</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">15–20% yr1</td><td>Technical ops roles, geologists, project managers</td></tr>
+                <tr><td><div style="font-weight:700;color:var(--ink);">Antal International</div><div style="font-size:10.5px;color:var(--ink3);">antal.com</div></td><td>Oil & gas, mining, energy, HR</td><td><span class="pill p-plum">SEA · Middle East · CIS</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">15–18% yr1</td><td>Central Asian expats, HR roles, ops management</td></tr>
+                <tr><td><div style="font-weight:700;color:var(--ink);">Monroe Consulting (SEA)</div><div style="font-size:10.5px;color:var(--ink3);">monroeconsulting.com</div></td><td>Professional services, HR, finance</td><td><span class="pill p-forest">TH · ID · MM · PH</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">15–18% yr1</td><td>HRBP Thailand, Finance Officer, Compliance Officer</td></tr>
+                <tr><td><div style="font-weight:700;color:var(--ink);">Links International</div><div style="font-size:10.5px;color:var(--ink3);">linksinternational.com</div></td><td>HR, finance, professional SEA roles</td><td><span class="pill p-slate">TH · SG · HK · SEA</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">15–18% yr1</td><td>HR Manager, Payroll, EA Bangkok</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;padding:15px 18px;background:var(--amber-bg);border:1px solid var(--amber-bd);border-radius:10px;">
+          <div style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;">⚡ Immediate Action — Myanmar Drilling Supervisor</div>
+          <div style="font-size:12.5px;color:var(--ink2);line-height:1.6;">Contact Mining People International and Antal International today with the Drilling Supervisor JD. Brief both on: Myanmar posting, hardship premium available, rotation schedule, technical requirements. Request CVs within 7–10 days. Running two agencies simultaneously on this role is fully justified given the operational risk.</div>
+        </div>
+        <div class="fn">Always negotiate: (1) guarantee period — if hire leaves within 3–6 months, agency replaces at no cost; (2) staged payment — 50% on start date, 50% at 3-month confirmation; (3) non-exclusive — for urgent roles, multiple agencies speeds delivery but may reduce individual effort per agency.</div>
+      </div>
+
+      <!-- COMMUNITIES -->
+      <div id="ss-communities" class="tab-panel">
+        <div class="sl">Mining & drilling talent communities · networks · associations</div>
+        <div class="comm-grid">
+          <div class="comm-card"><div class="comm-name">AusIMM — Australasian Institute of Mining & Metallurgy</div><div class="comm-type">Professional Association · Global</div><div class="comm-desc">50,000+ mining professionals globally. Strong SEA chapter. Job board, events, and direct community access. Many drilling and exploration professionals are members.</div><div class="comm-action">→ Post in AusIMM job board. Join LinkedIn AusIMM group. Attend virtual events to network.</div></div>
+          <div class="comm-card"><div class="comm-name">Myanmar Mining & Resources Network</div><div class="comm-type">Facebook / LinkedIn · Regional</div><div class="comm-desc">Active community of mining professionals operating in Myanmar. Mix of local and expat professionals. Good for direct outreach to Drilling Supervisor candidates already comfortable with Myanmar context.</div><div class="comm-action">→ Join group. Post role. Direct message relevant profiles with personalised approach.</div></div>
+          <div class="comm-card"><div class="comm-name">SEA Drilling Professionals (LinkedIn)</div><div class="comm-type">LinkedIn Group · Regional</div><div class="comm-desc">LinkedIn group for drilling professionals in Southeast Asia. Active posting community. Post content about Valentis operations to attract inbound interest from passive candidates.</div><div class="comm-action">→ Join and post role. Engage with active contributors who match target profile.</div></div>
+          <div class="comm-card"><div class="comm-name">Kazakhstan / CIS Drilling Network</div><div class="comm-type">LinkedIn + Facebook · Expat Pool</div><div class="comm-desc">Central Asian (KZ, UZ, AZ) drilling professionals form a specific expat community in SEA. They work across Laos, Myanmar, Indonesia. Arsen Tulebayev is your entry point into this network.</div><div class="comm-action">→ Ask Arsen in Round 1 to refer or introduce contacts. This community runs on personal trust — warm intro is essential.</div></div>
+          <div class="comm-card"><div class="comm-name">THRA — Thai HR Association</div><div class="comm-type">Professional Association · Thailand</div><div class="comm-desc">Thai HR professionals association. LinkedIn group and Bangkok events. Good for sourcing HRBP and HR Manager candidates who are actively engaged with the profession.</div><div class="comm-action">→ Post HRBP role in THRA job board and LinkedIn group once budget is confirmed.</div></div>
+          <div class="comm-card"><div class="comm-name">Kalimantan Mining Workers — Facebook</div><div class="comm-type">Facebook Group · Indonesia</div><div class="comm-desc">Indonesian-language group for Kalimantan mining workers. Reaches local Indonesian drillers and technicians who don't use LinkedIn. High volume — post in Bahasa Indonesia with a WhatsApp contact number.</div><div class="comm-action">→ Post in Indonesian. Simple, direct language. Provide WhatsApp for applications — email alone will be ignored.</div></div>
+        </div>
+        <div class="fn">Community sourcing is a long-term investment. Start building presence before you need to hire from them. Post about Valentis operations and team culture. Candidates who follow your presence before applying are higher quality and more committed than cold applicants.</div>
+      </div>
+
+    </div><!-- end module-ss -->
+
+  </div><!-- content -->
+</div><!-- main -->
+</div><!-- shell -->
+
+<div class="toast" id="toast">✓ Copied to clipboard</div>
+
+<script>
+// ── MODULE SWITCH ──
+let currentModule = 'iv';
+const moduleTabs = { iv: 'iv-flow', ss: 'ss-overview' };
+const moduleActiveTab = { iv: null, ss: null };
+
+function switchModule(mod, btn) {
+  currentModule = mod;
+  document.querySelectorAll('.mod-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.getElementById('nav-iv').style.display = mod === 'iv' ? 'block' : 'none';
+  document.getElementById('nav-ss').style.display = mod === 'ss' ? 'block' : 'none';
+
+  document.getElementById('module-iv').classList.toggle('active', mod === 'iv');
+  document.getElementById('module-ss').classList.toggle('active', mod === 'ss');
+
+  // Reset all nav btns in hidden module, activate first in shown module
+  document.querySelectorAll('#nav-iv .nav-btn, #nav-ss .nav-btn').forEach(b => b.classList.remove('active'));
+
+  const defaultTab = mod === 'iv' ? 'flow' : 'overview';
+  const defaultBtn = document.querySelector(`#nav-${mod} .nav-btn`);
+  if (defaultBtn) {
+    defaultBtn.classList.add('active');
+    showTab(mod, defaultTab);
+  }
+
+  updateTopbar(mod, defaultTab);
+}
+
+// ── TAB SWITCH ──
+function switchTab(mod, id, btn) {
+  document.querySelectorAll(`#nav-${mod} .nav-btn`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  showTab(mod, id);
+  updateTopbar(mod, id);
+}
+
+function showTab(mod, id) {
+  const prefix = mod + '-';
+  document.querySelectorAll(`#module-${mod} .tab-panel`).forEach(p => p.classList.remove('active'));
+  const el = document.getElementById(prefix + id);
+  if (el) el.classList.add('active');
+}
+
+const topbarMeta = {
+  'flow':        ['Interview Framework', 'FLOW GUIDE'],
+  'panel':       ['Interview Framework', 'PANEL VS SOLO'],
+  'rubric':      ['Interview Framework', 'SCORING RUBRIC'],
+  'flags':       ['Interview Framework', 'RED & GREEN FLAGS'],
+  'scorecard':   ['Interview Framework', 'LIVE SCORECARD'],
+  'q-sm':        ['Question Bank', 'SITE MANAGER · 8 QUESTIONS'],
+  'q-ds':        ['Question Bank', 'DRILLING SUPERVISOR · 7 QUESTIONS'],
+  'q-dr':        ['Question Bank', 'SENIOR DRILLER · 6 QUESTIONS'],
+  'q-hse':       ['Question Bank', 'HSE OFFICER · 6 QUESTIONS'],
+  'q-hr':        ['Question Bank', 'HRBP / HR MANAGER · 7 QUESTIONS'],
+  'q-sup':       ['Question Bank', 'SUPPORT ROLES · 5 QUESTIONS'],
+  'overview':    ['Sourcing Strategy', 'OVERVIEW'],
+  'timeline':    ['Sourcing Strategy', 'LEAD TIMES'],
+  'r-ops':       ['Sourcing Strategy', 'OPERATIONS ROLES'],
+  'r-hr':        ['Sourcing Strategy', 'HR & FINANCE ROLES'],
+  'r-sup':       ['Sourcing Strategy', 'SUPPORT & ADMIN ROLES'],
+  'platforms':   ['Sourcing Strategy', 'JOB BOARDS & PLATFORMS'],
+  'linkedin':    ['Sourcing Strategy', 'LINKEDIN SEARCH STRINGS'],
+  'agencies':    ['Sourcing Strategy', 'AGENCIES & FEES'],
+  'communities': ['Sourcing Strategy', 'MINING NETWORKS'],
+};
+
+function updateTopbar(mod, id) {
+  const meta = topbarMeta[id] || ['TA Toolkit', id.toUpperCase()];
+  document.getElementById('tb-title').textContent = meta[0];
+  document.getElementById('tb-crumb').textContent = meta[1];
+}
+
+// ── LIVE SCORECARD ──
+const scCriteria = [
+  { name: 'Relevant Experience & Technical Fit', desc: 'Quality and relevance of experience to this specific role' },
+  { name: 'Leadership & People Management', desc: 'Evidence of leading teams, managing performance, developing others' },
+  { name: 'HSE Mindset & Safety Culture', desc: 'Genuine safety culture ownership — not just compliance' },
+  { name: 'Communication & Stakeholder Clarity', desc: 'Ability to communicate with different audiences and levels' },
+  { name: 'Problem Solving & Decision Making', desc: 'Quality of reasoning under pressure or in ambiguous situations' },
+  { name: 'SEA / Remote Environment Fit', desc: 'Genuine readiness for remote site, SEA context, cultural fit' },
+  { name: 'Integrity & Self-Awareness', desc: 'Honesty about failures, limitations, and development areas' },
+];
+const scScores = {};
+
+function buildScorecard() {
+  const wrap = document.getElementById('sc-rows');
+  scCriteria.forEach((c, i) => {
+    scScores[i] = 0;
+    const row = document.createElement('div');
+    row.className = 'sc-row';
+    row.innerHTML = `
+      <div>
+        <div class="sc-crit-name">${c.name}</div>
+        <div class="sc-crit-desc">${c.desc}</div>
+      </div>
+      <div class="sc-score-btns" id="sbg-${i}"></div>`;
+    wrap.appendChild(row);
+    const bg = document.getElementById('sbg-' + i);
+    [1,2,3,4,5].forEach(v => {
+      const b = document.createElement('button');
+      b.className = 'sc-score-btn';
+      b.textContent = v;
+      b.onclick = () => selectScore(i, v, b, bg);
+      bg.appendChild(b);
+    });
+  });
+}
+
+function selectScore(crit, val, btn, bg) {
+  bg.querySelectorAll('.sc-score-btn').forEach(b => b.className = 'sc-score-btn');
+  btn.classList.add('sel-' + val);
+  scScores[crit] = val;
+  updateScTotal();
+}
+
+function updateScTotal() {
+  const vals = Object.values(scScores).filter(v => v > 0);
+  const el = document.getElementById('sc-total');
+  if (!vals.length) { el.textContent = '—'; return; }
+  const total = vals.reduce((a,b) => a+b, 0);
+  el.textContent = `${total} / ${vals.length * 5}`;
+  const pct = total / (vals.length * 5);
+  const v = document.getElementById('sc-verdict');
+  v.style.display = 'block';
+  if (pct >= 0.8) {
+    v.style.cssText = 'display:block;background:var(--forest-bg);color:var(--forest);border:1px solid var(--forest-bd);';
+    v.textContent = '✓ Strong Recommend — proceed to next round or offer';
+  } else if (pct >= 0.65) {
+    v.style.cssText = 'display:block;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd);';
+    v.textContent = '→ Proceed with caution — probe key gaps in Round 2';
+  } else if (pct >= 0.5) {
+    v.style.cssText = 'display:block;background:var(--sienna-bg);color:var(--sienna);border:1px solid var(--sienna-bd);';
+    v.textContent = '⚠ Borderline — significant concerns, discuss before proceeding';
+  } else {
+    v.style.cssText = 'display:block;background:var(--rust-bg);color:var(--rust);border:1px solid var(--rust-bd);';
+    v.textContent = '✗ Do Not Proceed — insufficient evidence of required competencies';
+  }
+}
+
+// ── COPY SEARCH STRING ──
+function copyStr(el) {
+  const text = el.innerText.replace('click to copy','').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    el.style.borderColor = 'rgba(45,106,79,0.6)';
+    showToast('Search string copied');
+    setTimeout(() => el.style.borderColor = '', 2000);
+  });
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = '✓ ' + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── INIT ──
+buildScorecard();
+</script>
+</body>
+</html>

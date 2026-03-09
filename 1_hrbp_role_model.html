@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRBP Role & Model Guide — Valentis HRBP Tool 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#1c1c1e;--surface:#242426;--surface2:#2c2c2e;--surface3:#323234;--surface4:#3a3a3c;
+  --border:#333335;--border2:#444446;--border3:#555558;
+  --copper:#c4793a;--copper2:#d4894a;--copper3:#e09a60;--copper-dim:rgba(196,121,58,0.09);--copper-border:rgba(196,121,58,0.25);
+  --slate:#8eb4c8;--slate-dim:rgba(142,180,200,0.08);--slate-border:rgba(142,180,200,0.22);
+  --sage:#7a9e7e;--sage-dim:rgba(122,158,126,0.09);--sage-border:rgba(122,158,126,0.22);
+  --rose:#c47a7a;--rose-dim:rgba(196,122,122,0.08);--rose-border:rgba(196,122,122,0.22);
+  --text:#e2ddd6;--text2:#a09890;--text3:#6a6460;--text4:#3e3c38;
+  --sidebar-w:268px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-accent{height:3px;background:linear-gradient(90deg,var(--copper),var(--copper3),rgba(196,121,58,0.2),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid var(--border)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--copper);background:var(--copper-dim);border:1px solid var(--copper-border);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:600;color:var(--text);line-height:1.15;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--copper3)}
+.sb-sub{font-size:11px;color:var(--text3);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text4);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:var(--text3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:var(--surface2);color:var(--text2)}
+.nav-item.active{background:var(--copper-dim);border-color:var(--copper-border);color:var(--copper3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:var(--text4);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--copper)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid var(--border)}
+.sb-note{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:12px;font-size:11px;color:var(--text3);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--copper);display:block;margin-bottom:3px}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1060px}
+.page.active{display:block}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--copper);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:56px;font-weight:300;color:var(--text);line-height:.95;margin-bottom:14px;letter-spacing:-1px}
+.page-title em{font-style:italic;font-weight:600;color:var(--copper3)}
+.page-title strong{font-weight:700}
+.page-desc{font-size:14px;color:var(--text2);max-width:560px;line-height:1.9;font-weight:300}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:26px;margin-bottom:14px;transition:border-color .13s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.2}
+.card-title em{font-style:italic;color:var(--copper3)}
+.card-body{font-size:13.5px;color:var(--text2);line-height:1.9;font-weight:300}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-copper{background:var(--copper-dim);color:var(--copper);border:1px solid var(--copper-border)}
+.chip-slate{background:var(--slate-dim);color:var(--slate);border:1px solid var(--slate-border)}
+.chip-sage{background:var(--sage-dim);color:var(--sage);border:1px solid var(--sage-border)}
+.chip-rose{background:var(--rose-dim);color:var(--rose);border:1px solid var(--rose-border)}
+.chip-muted{background:var(--surface3);color:var(--text3);border:1px solid var(--border2)}
+
+/* INFO */
+.info{border-radius:4px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.copper{background:var(--copper-dim);border-color:var(--copper);color:var(--copper3)}
+.info.slate{background:var(--slate-dim);border-color:var(--slate);color:var(--slate)}
+.info.sage{background:var(--sage-dim);border-color:var(--sage);color:var(--sage)}
+.info.rose{background:var(--rose-dim);border-color:var(--rose);color:var(--rose)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--surface2);color:var(--text3);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border2)}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+
+/* PILLAR BLOCK */
+.pillar{border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:10px}
+.pillar-header{padding:16px 20px;display:flex;align-items:center;gap:14px}
+.pillar-icon{width:40px;height:40px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pillar-title{font-family:var(--fd);font-size:20px;font-weight:600;color:var(--text);line-height:1.1}
+.pillar-sub{font-size:12px;color:var(--text3);margin-top:2px;font-family:var(--fm)}
+.pillar-body{padding:0 20px 18px;font-size:13.5px;color:var(--text2);line-height:1.85;font-weight:300}
+
+/* MATURITY */
+.maturity-track{display:flex;gap:0;margin:14px 0;border-radius:5px;overflow:hidden;border:1px solid var(--border)}
+.maturity-level{flex:1;padding:14px 12px;text-align:center;border-right:1px solid var(--border);transition:background .13s}
+.maturity-level:last-child{border-right:none}
+.maturity-num{font-family:var(--fd);font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
+.maturity-name{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.maturity-desc{font-size:11.5px;color:var(--text3);line-height:1.6;font-weight:300}
+
+/* COMPARISON */
+.vs-grid{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:stretch;margin:14px 0}
+.vs-col{background:var(--surface2);border:1px solid var(--border);padding:20px}
+.vs-col:first-child{border-radius:6px 0 0 6px;border-right:none}
+.vs-col:last-child{border-radius:0 6px 6px 0;border-left:none}
+.vs-divider{display:flex;align-items:center;justify-content:center;background:var(--surface3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-family:var(--fd);font-size:18px;font-weight:700;color:var(--text3)}
+.vs-col-title{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
+.vs-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;font-size:13px;color:var(--text2);font-weight:300;line-height:1.6}
+.vs-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:7px}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .28s ease both}
+.page.active .card:nth-child(2){animation-delay:.06s}
+.page.active .card:nth-child(3){animation-delay:.12s}
+.page.active .card:nth-child(4){animation-delay:.18s}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--surface4);border-radius:2px}
+
+/* PRINT */
+@media print{.sidebar{display:none}.main{margin-left:0}.page.active{padding:20px}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-accent"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">HRBP Tool 1 / 10</div>
+    <div class="sb-title">HRBP Role &amp;<br><em>Model Guide</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>What is an HRBP?</div>
+    <div class="nav-item" onclick="showPage('ulrich',this)"><span class="nav-num">02</span>The Ulrich Model</div>
+    <div class="nav-item" onclick="showPage('vs',this)"><span class="nav-num">03</span>HRBP vs HR Generalist</div>
+    <div class="nav-item" onclick="showPage('pillars',this)"><span class="nav-num">04</span>The Three Pillars</div>
+    <div class="nav-item" onclick="showPage('maturity',this)"><span class="nav-num">05</span>HRBP Maturity Model</div>
+    <div class="nav-item" onclick="showPage('competencies',this)"><span class="nav-num">06</span>Core Competencies</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">07</span>HRBP at Valentis</div>
+    <div class="nav-item" onclick="showPage('charter',this)"><span class="nav-num">08</span>HRBP Charter</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>HRBP Department</strong>
+      Tool 1 of 10 · Role &amp; Model<br>
+      <span style="color:var(--text4)">Foundation for all HRBP work</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 WHAT IS AN HRBP -->
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">HRBP Tool 1 — Role &amp; Model Guide</div>
+    <h1 class="page-title">What is an<br><em>HRBP?</em></h1>
+    <p class="page-desc">The HR Business Partner is the most strategically significant role in a modern HR function. Understanding it clearly — what it is, what it is not, and how it operates — is the starting point for everything else in this toolkit.</p>
+  </div>
+
+  <div class="info copper"><strong>The One-Line Definition</strong>An HR Business Partner is an HR professional who works directly alongside business leaders — not behind them — to align people strategy with business strategy. The HRBP does not administer HR. The HRBP advises, challenges, and co-creates.</div>
+
+  <div class="card">
+    <div class="card-title">The Origin of the Role</div>
+    <div class="card-body">
+      The HRBP concept was introduced by Dave Ulrich in 1997 in his book <em>Human Resource Champions</em>. Ulrich argued that HR was spending too much time on administrative and transactional work, and not enough time on the strategic work that actually creates business value.<br><br>
+      His proposition was simple but radical: <strong>separate the strategic HR work from the transactional HR work</strong>. Create a role — the HR Business Partner — that sits close to the business, understands its goals, and acts as a strategic advisor on all people matters. Let Shared Services handle the transactions. Let Centres of Expertise handle the specialist design. Free the HRBP to do the work that actually moves the needle.<br><br>
+      Nearly thirty years later, the HRBP model is used in the majority of large organisations globally. It remains the primary architecture for world-class HR functions — and the most common pathway to the CHRO role.
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What the HRBP <em>Does</em></div>
+      <div style="display:grid;gap:7px;margin-top:8px">
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--copper);border-radius:0 4px 4px 0"><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Partners with business unit leaders on people strategy</div><div style="font-size:12px;color:var(--text3);font-weight:300">Understands the business plan and translates it into talent needs</div></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--copper);border-radius:0 4px 4px 0"><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Diagnoses organisational health</div><div style="font-size:12px;color:var(--text3);font-weight:300">Assesses team effectiveness, leadership quality, and culture signals</div></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--copper);border-radius:0 4px 4px 0"><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Leads workforce planning conversations</div><div style="font-size:12px;color:var(--text3);font-weight:300">Connects headcount decisions to business growth or contraction</div></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--copper);border-radius:0 4px 4px 0"><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Advises on talent decisions</div><div style="font-size:12px;color:var(--text3);font-weight:300">Supports hiring, promotion, succession, and exit decisions</div></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--copper);border-radius:0 4px 4px 0"><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Leads change and restructure</div><div style="font-size:12px;color:var(--text3);font-weight:300">Designs and manages transitions, reorganisations, and culture shifts</div></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--copper);border-radius:0 4px 4px 0"><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Coaches leaders</div><div style="font-size:12px;color:var(--text3);font-weight:300">Builds leadership capability — directly and through challenge</div></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--copper);border-radius:0 4px 4px 0"><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Brings HR intelligence to business reviews</div><div style="font-size:12px;color:var(--text3);font-weight:300">Presents people metrics, risks, and recommendations at leadership level</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">What the HRBP Does <em>Not</em> Do</div>
+      <div class="card-body" style="margin-bottom:12px">The most common failure mode for an HRBP is being pulled back into transactional work. These are the tasks that belong elsewhere.</div>
+      <div style="display:grid;gap:7px">
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="font-size:13px;color:var(--text2);font-weight:300">Process payroll or answer payroll queries</div><span class="chip chip-muted" style="flex-shrink:0">Shared Services</span></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="font-size:13px;color:var(--text2);font-weight:300">Manage leave records or attendance</div><span class="chip chip-muted" style="flex-shrink:0">Shared Services</span></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="font-size:13px;color:var(--text2);font-weight:300">Write job descriptions from scratch</div><span class="chip chip-muted" style="flex-shrink:0">TA COE</span></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="font-size:13px;color:var(--text2);font-weight:300">Design training programmes</div><span class="chip chip-muted" style="flex-shrink:0">L&amp;D COE</span></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="font-size:13px;color:var(--text2);font-weight:300">Administer statutory compliance filings</div><span class="chip chip-muted" style="flex-shrink:0">HR Ops</span></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="font-size:13px;color:var(--text2);font-weight:300">Run exit interviews as an administrative exercise</div><span class="chip chip-muted" style="flex-shrink:0">HR Ops</span></div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="font-size:13px;color:var(--text2);font-weight:300">Manage HRIS data entry</div><span class="chip chip-muted" style="flex-shrink:0">HR Tech / Shared Services</span></div>
+      </div>
+      <div class="info rose" style="margin-top:14px;margin-bottom:0"><strong>The HRBP Trap</strong>If your calendar is full of transactional requests, you are not functioning as an HRBP. You are functioning as an HR administrator with a different title. The toolkit in this series exists to give you the tools to operate at the right level.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The HRBP Value Proposition — In Three Questions</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">
+      <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;text-align:center">
+        <div style="font-family:var(--fd);font-size:42px;font-style:italic;color:var(--copper3);margin-bottom:8px">What</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.75">What are the business's strategic goals for the next 12–36 months? What does success look like for the COO and CEO?</div>
+      </div>
+      <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;text-align:center">
+        <div style="font-family:var(--fd);font-size:42px;font-style:italic;color:var(--copper3);margin-bottom:8px">Who</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.75">Do we have the right people, in the right roles, with the right capabilities to achieve those goals? Where are the gaps?</div>
+      </div>
+      <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;text-align:center">
+        <div style="font-family:var(--fd);font-size:42px;font-style:italic;color:var(--copper3);margin-bottom:8px">How</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.75">How do we close the gap? What HR interventions — hiring, development, restructure, rewards — will get us from where we are to where we need to be?</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.85">These three questions are the HRBP's core operating framework. Every meeting, every piece of advice, every tool in this toolkit ultimately serves one of these three questions. When you walk into a leadership conversation, you are there to help the business answer them.</div>
+  </div>
+</div>
+
+<!-- 02 ULRICH MODEL -->
+<div id="page-ulrich" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — The Ulrich Model</div>
+    <h1 class="page-title">The <em>Ulrich</em><br>Model</h1>
+    <p class="page-desc">The architectural framework behind every world-class HR function. Understanding it is not optional for an HRBP — it defines your role, your relationships, and your mandate.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Original 1997 Model — Four Roles</div>
+    <div class="card-body" style="margin-bottom:16px">Ulrich originally proposed that HR needed to operate in four distinct roles simultaneously. Most HR functions at the time were collapsing all four into one generalist role — which meant none of them were being done well.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="padding:18px;background:var(--copper-dim);border:1px solid var(--copper-border);border-radius:5px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--copper);margin-bottom:6px">Strategic Partner</div>
+        <div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Aligning HR with Business Strategy</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.75">Works with senior leaders to identify and implement the people strategies required to execute business goals. Long-term focus. Future-oriented. This is the HRBP's primary role.</div>
+      </div>
+      <div style="padding:18px;background:var(--slate-dim);border:1px solid var(--slate-border);border-radius:5px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate);margin-bottom:6px">Change Agent</div>
+        <div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Building the Capacity to Change</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.75">Manages the human side of transformation — restructures, culture shifts, new ways of working. The HRBP leads change, does not just communicate it.</div>
+      </div>
+      <div style="padding:18px;background:var(--sage-dim);border:1px solid var(--sage-border);border-radius:5px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sage);margin-bottom:6px">Administrative Expert</div>
+        <div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Building Efficient HR Infrastructure</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.75">Ensures HR processes are efficient, compliant, and well-designed. In the modern model, this role belongs to <strong>Shared Services</strong> — not the HRBP.</div>
+      </div>
+      <div style="padding:18px;background:var(--rose-dim);border:1px solid var(--rose-border);border-radius:5px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);margin-bottom:6px">Employee Champion</div>
+        <div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Listening and Responding to Employees</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.75">Represents employee needs and wellbeing in business decisions. The HRBP must balance being the business's HR advisor with being an honest voice for the workforce.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The 2016 Update — HR From the Outside In</div>
+    <div class="card-body" style="margin-bottom:16px">Ulrich updated his model in 2016 to reflect the shift from internal HR focus to external business impact. The key insight: <strong>HR creates value not by improving HR practices but by improving business outcomes.</strong> The updated model added three elements:</div>
+    <div style="display:grid;gap:8px">
+      <div style="display:grid;grid-template-columns:180px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:10px;font-weight:600;color:var(--copper)">Credible Activist</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.75">HR must earn credibility by delivering results — and then use that credibility to challenge the business, not just serve it. An HRBP who only says yes is not a partner. A partner pushes back with data and a point of view.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:180px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:10px;font-weight:600;color:var(--copper)">Technology Proponent</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.75">HR must leverage data, analytics, and technology to improve decision-making. An HRBP who cannot read a people dashboard or articulate a data-driven recommendation is operating below the standard the model requires.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:180px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:10px;font-weight:600;color:var(--copper)">Paradox Navigator</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.75">The HRBP must hold tensions simultaneously — efficiency and employee experience, business agility and workforce stability, short-term results and long-term capability. The ability to navigate these paradoxes is what separates a senior HRBP from a junior one.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Where Valentis Is Today — Ulrich Lens</div>
+    <div class="card-body" style="margin-bottom:14px">Mapping Valentis's current HR function against the Ulrich model reveals both progress and gaps.</div>
+    <table class="dtable">
+      <thead><tr><th>Ulrich Element</th><th>Current State at Valentis</th><th>Gap</th><th>Tool That Addresses It</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--text)">Strategic Partner</td><td>Group HR Manager operates partially in this role but is excluded from business planning</td><td style="color:var(--rose)">High — structural exclusion</td><td><span class="chip chip-copper">HRBP Tools 3, 7, 9</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--text)">Change Agent</td><td>No formal change management capability — changes are managed ad hoc</td><td style="color:var(--rose)">High</td><td><span class="chip chip-copper">HRBP Tool 8</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--text)">Administrative Expert</td><td>Strong — payroll expertise, multi-country compliance, HR processes well managed</td><td style="color:var(--sage)">Low — strength area</td><td><span class="chip chip-muted">HR Ops Toolkit</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--text)">Employee Champion</td><td>Informal — no structured engagement or voice mechanism</td><td style="color:var(--copper)">Medium</td><td><span class="chip chip-muted">EX Toolkit</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--text)">Credible Activist</td><td>Credibility exists from payroll depth — not yet activated as a strategic voice</td><td style="color:var(--copper)">Medium — leverage not yet used</td><td><span class="chip chip-copper">HRBP Tools 2, 5, 7</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--text)">Technology Proponent</td><td>C&amp;B analytics dashboard built — people analytics capability nascent</td><td style="color:var(--copper)">Medium</td><td><span class="chip chip-muted">People Analytics Toolkit</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 HRBP VS GENERALIST -->
+<div id="page-vs" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — HRBP vs HR Generalist</div>
+    <h1 class="page-title">HRBP vs<br><em>HR Generalist</em></h1>
+    <p class="page-desc">The most misunderstood distinction in HR. Many organisations give their HR generalists the title of HRBP without changing the role. This section clarifies the genuine difference.</p>
+  </div>
+
+  <div class="info copper"><strong>The Test</strong>Ask yourself: does the business leader see me as someone who processes their HR requests — or as someone who helps them solve their business problems? The answer tells you which role you are actually in, regardless of your title.</div>
+
+  <div class="vs-grid">
+    <div class="vs-col">
+      <div class="vs-col-title" style="color:var(--text3)">HR Generalist — Reactive Mode</div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--rose)"></div><div>Responds to requests from managers and employees</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--rose)"></div><div>Agenda is set by what lands in the inbox</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--rose)"></div><div>Measured on process completion — were the forms filed, were the letters sent</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--rose)"></div><div>Sits in the HR department and waits to be consulted</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--rose)"></div><div>Knows HR policy well — applies it consistently</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--rose)"></div><div>Reports HR metrics — headcount, turnover, leave balances</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--rose)"></div><div>Involvement in business decisions: after the fact</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--rose)"></div><div>Value delivered: compliance and administration</div></div>
+    </div>
+    <div class="vs-divider">vs</div>
+    <div class="vs-col" style="border-radius:0 6px 6px 0">
+      <div class="vs-col-title" style="color:var(--copper)">HR Business Partner — Strategic Mode</div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--copper)"></div><div>Proactively brings HR insights and challenges to the business</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--copper)"></div><div>Agenda is set by the business plan and talent risks</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--copper)"></div><div>Measured on business outcomes — retention of critical talent, leadership quality, org effectiveness</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--copper)"></div><div>Sits alongside the business — in their meetings, not in the HR room</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--copper)"></div><div>Knows the business's P&amp;L, strategic goals, and competitive pressures</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--copper)"></div><div>Interprets HR data as business intelligence — what does turnover mean for project delivery?</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--copper)"></div><div>Involvement in business decisions: at the table, before the decision</div></div>
+      <div class="vs-item"><div class="vs-dot" style="background:var(--copper)"></div><div>Value delivered: business performance through people</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Transition — From Generalist to HRBP</div>
+    <div class="card-body" style="margin-bottom:14px">The transition is not a title change. It is a fundamental shift in how you spend your time, what you prepare, and how you show up in leadership conversations. It requires three specific behaviour changes:</div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:16px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:var(--copper);line-height:1">01</div>
+          <div style="font-family:var(--fm);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--copper)">Stop waiting to be asked</div>
+        </div>
+        <div style="font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.85">An HRBP does not wait for the COO to raise a people concern. The HRBP brings the concern first — with data, context, and a recommendation. This requires proactively scanning for talent risks, leadership gaps, and organisational friction before they become crises. The tools in this toolkit are designed to support exactly this behaviour.</div>
+      </div>
+      <div style="padding:16px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:var(--copper);line-height:1">02</div>
+          <div style="font-family:var(--fm);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--copper)">Learn the business, not just the HR policy</div>
+        </div>
+        <div style="font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.85">An HRBP who cannot explain what a drilling programme delivers, what the cost of a driller shortage is, or how Myanmar's operational environment differs from Laos cannot be a genuine business partner. You do not need to be an engineer. You need to understand what drives the business — revenue, cost, risk, and the people decisions that affect each one. Tool 2 in this series — Business Acumen — builds this directly.</div>
+      </div>
+      <div style="padding:16px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:var(--copper);line-height:1">03</div>
+          <div style="font-family:var(--fm);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--copper)">Have a point of view and defend it</div>
+        </div>
+        <div style="font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.85">Business leaders do not need an HR professional who reflects their opinions back at them. They need a partner who will say: here is what the data shows, here is my recommendation, and here is why I believe it is the right decision even if it is uncomfortable. The ability to hold a position under pressure is a defining HRBP competency — and the hardest one to develop.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 04 THREE PILLARS -->
+<div id="page-pillars" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — The Three Pillars</div>
+    <h1 class="page-title">The Three<br><em>Pillars</em></h1>
+    <p class="page-desc">The HRBP does not operate alone. The Ulrich model divides HR into three pillars that must work together. Understanding how they interact is essential for any HRBP to be effective.</p>
+  </div>
+
+  <div class="pillar" style="border-color:var(--copper-border)">
+    <div class="pillar-header" style="background:var(--copper-dim)">
+      <div class="pillar-icon" style="background:rgba(196,121,58,0.15)">🎯</div>
+      <div>
+        <div class="pillar-title">HR Business Partners</div>
+        <div class="pillar-sub">Strategic · Advisory · Business-facing</div>
+      </div>
+      <span class="chip chip-copper" style="margin-left:auto">Your Role</span>
+    </div>
+    <div class="pillar-body">
+      The HRBP is embedded with specific business units or leadership teams. They understand the strategic direction of their assigned business area and translate it into people priorities. They do not design the HR programmes — they advise the business on which programmes to deploy, when, and for whom. They surface organisational risks. They coach leaders. They influence decisions before they are made.<br><br>
+      <strong style="color:var(--text);font-weight:600">At Valentis:</strong> The Group HR Manager currently acts as the sole HRBP for the entire organisation — partnering across all four countries, all business units, and all leadership levels simultaneously. As Valentis grows, this will need to evolve into dedicated HRBPs per country or function.
+    </div>
+  </div>
+
+  <div class="pillar" style="border-color:var(--slate-border)">
+    <div class="pillar-header" style="background:var(--slate-dim)">
+      <div class="pillar-icon" style="background:rgba(142,180,200,0.12)">🏛</div>
+      <div>
+        <div class="pillar-title">Centres of Expertise (COE)</div>
+        <div class="pillar-sub">Specialist · Design · Programme-facing</div>
+      </div>
+      <span class="chip chip-slate" style="margin-left:auto">Specialist Arm</span>
+    </div>
+    <div class="pillar-body">
+      COEs are the specialist design houses of HR. Each COE owns deep expertise in one domain — Talent Acquisition, Compensation and Benefits, Learning and Development, People Analytics. They design the frameworks, programmes, and tools that the HRBP deploys.<br><br>
+      The relationship between the HRBP and the COE is a client-consultant dynamic. The HRBP identifies the business need. The COE designs the solution. The HRBP deploys and manages it in the business context.<br><br>
+      <strong style="color:var(--text);font-weight:600">At Valentis:</strong> The C&amp;B, TA, and PM toolkits already built represent COE-level work. You are already building COE capability. The HRBP toolkit now builds your ability to deploy and leverage that COE work strategically.
+    </div>
+  </div>
+
+  <div class="pillar" style="border-color:var(--sage-border)">
+    <div class="pillar-header" style="background:var(--sage-dim)">
+      <div class="pillar-icon" style="background:rgba(122,158,126,0.12)">⚙️</div>
+      <div>
+        <div class="pillar-title">HR Shared Services</div>
+        <div class="pillar-sub">Transactional · Efficient · Process-facing</div>
+      </div>
+      <span class="chip chip-sage" style="margin-left:auto">Operations Arm</span>
+    </div>
+    <div class="pillar-body">
+      Shared Services handles the transactional volume of HR — payroll processing, leave management, onboarding administration, benefits enrolment, compliance filing. In most organisations, Shared Services is the largest HR team by headcount. Their value is consistency, efficiency, and compliance.<br><br>
+      The HRBP should not be doing Shared Services work. If the HRBP is answering payroll queries, processing leave forms, or managing HRIS data, the three-pillar model is broken — and the HRBP is being under-utilised.<br><br>
+      <strong style="color:var(--text);font-weight:600">At Valentis:</strong> Payroll processing is Valentis's strongest HR capability — your nine years of multi-country payroll depth. This is Shared Services excellence. It is a foundation to build on, not a role to stay in. The HRBP toolkit is the vehicle for that transition.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How the Three Pillars Work Together — A Practical Example</div>
+    <div class="card-body" style="margin-bottom:14px">Using the Valentis driller shortage as a live case study:</div>
+    <div style="display:grid;gap:3px">
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:14px;padding:12px 16px;background:var(--copper-dim);border:1px solid var(--copper-border);border-radius:4px 4px 0 0;align-items:center">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--copper)">HRBP identifies</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300">Drilling programme at risk — insufficient qualified drillers in pipeline. Flags to COO: "If we do not solve this within 60 days, the Laos Q3 programme will be delayed. Here is the business cost of that delay."</div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:14px;padding:12px 16px;background:var(--slate-dim);border:1px solid var(--slate-border);align-items:center">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--slate)">COE designs</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300">TA COE activates the driller sourcing strategy — regional sourcing playbook, competitive offer package from C&amp;B COE, fast-track assessment process. L&amp;D COE designs a trainee driller accelerated pathway.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:14px;padding:12px 16px;background:var(--sage-dim);border:1px solid var(--sage-border);border-radius:0 0 4px 4px;align-items:center">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sage)">Shared Services executes</div>
+        <div style="font-size:13px;color:var(--text2);font-weight:300">Shared Services processes the new hire documentation, contracts, work permits, payroll enrolment, and onboarding administration for each driller placed.</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.85">The HRBP created the strategic imperative. The COE designed the solution. Shared Services delivered the execution. Each pillar did its job. This is how the model works when it is functioning correctly.</div>
+  </div>
+</div>
+
+<!-- 05 MATURITY -->
+<div id="page-maturity" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — HRBP Maturity Model</div>
+    <h1 class="page-title">HRBP<br><em>Maturity Model</em></h1>
+    <p class="page-desc">Not all HRBPs operate at the same level. The maturity model defines five levels of HRBP effectiveness — from reactive administrator to CHRO-level strategic advisor. Knowing where you are is the first step to moving forward.</p>
+  </div>
+
+  <div class="maturity-track">
+    <div class="maturity-level" style="background:var(--rose-dim)">
+      <div class="maturity-num" style="color:var(--rose)">1</div>
+      <div class="maturity-name" style="color:var(--rose)">Reactive</div>
+      <div class="maturity-desc">Responds to requests. No proactive agenda. Measured on task completion.</div>
+    </div>
+    <div class="maturity-level" style="background:var(--surface2)">
+      <div class="maturity-num" style="color:var(--text2)">2</div>
+      <div class="maturity-name" style="color:var(--text3)">Functional</div>
+      <div class="maturity-desc">Knows HR policy well. Consistent. Reliable. Still primarily order-taking.</div>
+    </div>
+    <div class="maturity-level" style="background:var(--copper-dim)">
+      <div class="maturity-num" style="color:var(--copper)">3</div>
+      <div class="maturity-name" style="color:var(--copper)">Consultative</div>
+      <div class="maturity-desc">Advises on people decisions. Brings HR intelligence to business conversations. Has a point of view.</div>
+    </div>
+    <div class="maturity-level" style="background:var(--slate-dim)">
+      <div class="maturity-num" style="color:var(--slate)">4</div>
+      <div class="maturity-name" style="color:var(--slate)">Strategic</div>
+      <div class="maturity-desc">Drives talent strategy. Influences business decisions before they are made. Trusted by leadership.</div>
+    </div>
+    <div class="maturity-level" style="background:var(--sage-dim)">
+      <div class="maturity-num" style="color:var(--sage)">5</div>
+      <div class="maturity-name" style="color:var(--sage)">Executive</div>
+      <div class="maturity-desc">CHRO-level. Co-owns the business agenda. People strategy IS business strategy.</div>
+    </div>
+  </div>
+
+  <div style="display:grid;gap:10px;margin-top:4px">
+    <div class="card" style="border-color:var(--copper-border)">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+        <div style="font-family:var(--fd);font-size:40px;font-weight:700;color:var(--copper)">3</div>
+        <div>
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--copper);margin-bottom:3px">Your Target Level — HRBP Toolkit</div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:var(--text)">Consultative HRBP</div>
+        </div>
+        <span class="chip chip-copper" style="margin-left:auto">Build to this</span>
+      </div>
+      <div style="font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.85">At Level 3, you are advising on people decisions, not just processing them. You walk into a leadership meeting with a prepared point of view. You use data to make your case. You challenge decisions that you believe are wrong — constructively, with evidence. This is the level that this toolkit is designed to establish. You currently operate between Level 2 and Level 3 at Valentis — strong administrative foundation, emerging strategic presence. The 10 tools in this series will move you firmly to Level 3 and begin building Level 4 capability.</div>
+    </div>
+    <div class="card" style="border-color:var(--slate-border)">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+        <div style="font-family:var(--fd);font-size:40px;font-weight:700;color:var(--slate)">4→5</div>
+        <div>
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate);margin-bottom:3px">Your CHRO Target — Full Toolkit</div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:var(--text)">Strategic to Executive</div>
+        </div>
+        <span class="chip chip-slate" style="margin-left:auto">2–3 year horizon</span>
+      </div>
+      <div style="font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.85">The CHRO sits at Level 4 to 5. They do not just respond to the CEO — they challenge them. They do not just report on turnover — they explain what it means for the three-year growth plan and what to do about it. Levels 4 and 5 are built by completing all 10 HR toolkits in this series — particularly HRBP, OD, and People Analytics — and by applying them in real leadership conversations at Valentis over the next two to three years.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 06 COMPETENCIES -->
+<div id="page-competencies" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Core Competencies</div>
+    <h1 class="page-title">Core<br><em>Competencies</em></h1>
+    <p class="page-desc">The eight competencies every world-class HRBP must develop. Based on Cornell CAHRS, AIHR, and SHRM research. These are the capabilities you are building — not just the knowledge.</p>
+  </div>
+
+  <div style="display:grid;gap:10px">
+
+    <div style="padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:5px;display:grid;grid-template-columns:50px 1fr auto;gap:14px;align-items:flex-start" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-family:var(--fd);font-size:36px;font-weight:700;color:var(--copper3);line-height:1;opacity:.7">01</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Business Acumen</div><div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.8">Understanding how the business makes money, what drives its costs and risks, and how people decisions affect financial outcomes. An HRBP who cannot read a P&amp;L or explain what a delayed drilling programme costs is not yet business-ready. This is addressed directly in HRBP Tool 2.</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end"><span class="chip chip-copper">Foundation</span><span class="chip chip-muted">Tool 2</span></div>
+    </div>
+
+    <div style="padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:5px;display:grid;grid-template-columns:50px 1fr auto;gap:14px;align-items:flex-start" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-family:var(--fd);font-size:36px;font-weight:700;color:var(--slate);line-height:1;opacity:.7">02</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Strategic Thinking</div><div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.8">The ability to connect current people decisions to future business consequences. Strategic thinking means asking: if we do not solve the driller shortage now, what does Valentis look like in 18 months? Where are we vulnerable? What is the cost of inaction?</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end"><span class="chip chip-slate">Core</span><span class="chip chip-muted">Tool 9</span></div>
+    </div>
+
+    <div style="padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:5px;display:grid;grid-template-columns:50px 1fr auto;gap:14px;align-items:flex-start" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-family:var(--fd);font-size:36px;font-weight:700;color:var(--copper3);line-height:1;opacity:.7">03</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Data Literacy</div><div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.8">Using HR data to make and support business arguments. An HRBP presents people metrics as business intelligence — not HR reports. Turnover is not a percentage. It is a cost, a risk, and a signal about something that is not working. The HR Scorecard in Tool 5 builds this directly.</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end"><span class="chip chip-copper">Core</span><span class="chip chip-muted">Tool 5</span></div>
+    </div>
+
+    <div style="padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:5px;display:grid;grid-template-columns:50px 1fr auto;gap:14px;align-items:flex-start" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-family:var(--fd);font-size:36px;font-weight:700;color:var(--sage);line-height:1;opacity:.7">04</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Stakeholder Influence</div><div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.8">The ability to build trusted relationships with business leaders and influence their decisions without formal authority. HRBPs do not have line authority over the managers they advise. Their influence comes entirely from credibility, relationship quality, and the quality of their advice. Tool 3 builds this systematically.</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end"><span class="chip chip-sage">Core</span><span class="chip chip-muted">Tool 3</span></div>
+    </div>
+
+    <div style="padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:5px;display:grid;grid-template-columns:50px 1fr auto;gap:14px;align-items:flex-start" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-family:var(--fd);font-size:36px;font-weight:700;color:var(--slate);line-height:1;opacity:.7">05</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Diagnostic Capability</div><div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.8">The ability to assess an organisation's health — identifying root causes of underperformance, culture problems, and talent gaps before they become crises. A good HRBP can walk into a business unit, spend two hours with the team and the leader, and identify the core issue. Tool 4 provides the diagnostic framework.</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end"><span class="chip chip-slate">Advanced</span><span class="chip chip-muted">Tool 4</span></div>
+    </div>
+
+    <div style="padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:5px;display:grid;grid-template-columns:50px 1fr auto;gap:14px;align-items:flex-start" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-family:var(--fd);font-size:36px;font-weight:700;color:var(--rose);line-height:1;opacity:.7">06</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Change Leadership</div><div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.8">Leading the human side of organisational change — restructures, leadership transitions, culture shifts, new operating models. Change leadership is different from change management. Management is the plan. Leadership is getting people to follow it. Tool 8 covers both.</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end"><span class="chip chip-rose">Advanced</span><span class="chip chip-muted">Tool 8</span></div>
+    </div>
+
+    <div style="padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:5px;display:grid;grid-template-columns:50px 1fr auto;gap:14px;align-items:flex-start" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-family:var(--fd);font-size:36px;font-weight:700;color:var(--copper3);line-height:1;opacity:.7">07</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Coaching and Advisory</div><div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.8">The ability to coach leaders — helping them see their own blind spots, develop their people management skills, and make better decisions. A great HRBP is part strategic advisor, part executive coach. This is one of the highest-value things an HRBP can do, and it is addressed in Tool 10.</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end"><span class="chip chip-copper">Advanced</span><span class="chip chip-muted">Tool 10</span></div>
+    </div>
+
+    <div style="padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:5px;display:grid;grid-template-columns:50px 1fr auto;gap:14px;align-items:flex-start" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="font-family:var(--fd);font-size:36px;font-weight:700;color:var(--sage);line-height:1;opacity:.7">08</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">Credible Activism</div><div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.8">The courage to challenge business leaders when their decisions will create people or organisational risk — with evidence, with alternatives, and with respect. An HRBP who never pushes back is not a partner. They are a yes-person with an HR badge. Credible activism is what turns an HRBP into a trusted advisor.</div></div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end"><span class="chip chip-sage">Master</span><span class="chip chip-muted">All tools</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 07 VALENTIS -->
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — HRBP at Valentis</div>
+    <h1 class="page-title">HRBP at<br><em>Valentis</em></h1>
+    <p class="page-desc">What the HRBP role looks like specifically at Valentis Group — the unique context, the current constraints, and the near-term opportunities for the Group HR Manager to operate as a genuine strategic partner.</p>
+  </div>
+
+  <div class="info slate"><strong>The Valentis HRBP Context</strong>Valentis is a 28-person, 4-country mineral exploration business in a high-risk, operationally demanding industry. The HRBP operating environment here is not a corporate headquarters with a hundred HRBPs. It is a single HR leader who must be simultaneously COE specialist, HRBP, and shared services operator — while building the strategic credibility to eventually hand off the transactional layer.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Current Strengths to Leverage</div>
+      <div style="display:grid;gap:7px;margin-top:8px">
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--sage);border-radius:0 4px 4px 0">
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">9 years multi-country payroll depth</div>
+          <div style="font-size:12px;color:var(--text3);font-weight:300">Cross-country cost knowledge gives immediate HRBP credibility with the COO on headcount and compensation decisions</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--sage);border-radius:0 4px 4px 0">
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Complete C&amp;B toolkit built</div>
+          <div style="font-size:12px;color:var(--text3);font-weight:300">You own the most complete compensation intelligence in the business — a powerful HRBP currency</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--sage);border-radius:0 4px 4px 0">
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Operational context knowledge</div>
+          <div style="font-size:12px;color:var(--text3);font-weight:300">You understand the driller shortage, the Myanmar environment, the trainee attrition problem — real business issues, not HR abstractions</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--sage);border-radius:0 4px 4px 0">
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Cross-cultural working experience</div>
+          <div style="font-size:12px;color:var(--text3);font-weight:300">4-country operational HR experience is rare — it is a significant differentiator for a CHRO in a regional business</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Current Constraints to Address</div>
+      <div style="display:grid;gap:7px;margin-top:8px">
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0">
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Excluded from business planning</div>
+          <div style="font-size:12px;color:var(--text3);font-weight:300">HR is currently consulted after decisions are made — not before. The HRBP Business Review Deck (Tool 7) directly addresses this</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0">
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Transactional pull</div>
+          <div style="font-size:12px;color:var(--text3);font-weight:300">The demands of multi-country payroll and compliance create a gravitational pull back to transactional work — actively managed through toolkit systematisation</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0">
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">No formal HRBP mandate</div>
+          <div style="font-size:12px;color:var(--text3);font-weight:300">The HRBP role is not yet formally chartered at Valentis — Tool 8 in this section produces the charter that creates the mandate</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:2px solid var(--rose);border-radius:0 4px 4px 0">
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Strategic language gap</div>
+          <div style="font-size:12px;color:var(--text3);font-weight:300">Business acumen — P&amp;L literacy, financial drivers, operational KPIs — needs to be explicitly developed. Tool 2 addresses this directly</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Three HRBP Opportunities at Valentis — Right Now</div>
+    <div style="display:grid;gap:8px;margin-top:8px">
+      <div style="padding:16px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text)">The Driller Pipeline — Workforce Planning Entry Point</div>
+          <span class="chip chip-copper">Immediate</span>
+        </div>
+        <div style="font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.85">The persistent driller shortage is not a recruitment problem. It is a workforce planning problem. An HRBP frames this for the COO as: "We need X drillers for our 2026–2028 programme. Our current pipeline produces Y. The gap is Z. Here are three options and their cost and risk profiles." This is the conversation that gets HR into the room. Use HRBP Tools 2, 6, and 7 to prepare and deliver it.</div>
+      </div>
+      <div style="padding:16px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text)">Myanmar Succession Gap — Organisational Risk Flag</div>
+          <span class="chip chip-copper">High Priority</span>
+        </div>
+        <div style="font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.85">Myo H. is the Myanmar Site Manager with no internal successor and a retention bonus expiring in April 2027. An HRBP raises this with the COO as a business risk — not an HR issue. What is the cost if Myo leaves? What is the operational continuity plan? Who is being developed as a potential successor externally? This is already flagged in the succession tool — now it needs to be escalated as an HRBP business risk conversation.</div>
+      </div>
+      <div style="padding:16px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--text)">Trainee Attrition — Culture and Rewards Diagnosis</div>
+          <span class="chip chip-slate">Near-Term</span>
+        </div>
+        <div style="font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.85">The trainee programme is losing people. The HRBP diagnostic question is: why? Is it total rewards? Is it the rotation environment? Is it the quality of supervision? Is it unrealistic expectations at hire? An HRBP does not wait to be asked. They investigate, diagnose, and bring a recommendation to the COO. This is Tool 4 — Organisational Diagnostic — applied to a live Valentis problem.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 08 CHARTER -->
+<div id="page-charter" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — HRBP Charter</div>
+    <h1 class="page-title">HRBP<br><em>Charter</em></h1>
+    <p class="page-desc">The formal document that defines the HRBP mandate at Valentis. This charter is the foundation for every strategic conversation the Group HR Manager seeks to initiate with the COO and CEO. It creates the mandate before the conversation starts.</p>
+  </div>
+
+  <div class="info copper"><strong>How to Use This Charter</strong>Present this charter to the COO as a one-page framing document at the start of your next leadership conversation. It does not ask for permission — it articulates what the HRBP role does and invites the business to engage with it at that level. It changes the conversation from "HR is here to help" to "HR is here as a strategic partner — and here is what that means in practice."</div>
+
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:6px;overflow:hidden;margin-top:4px">
+    <div style="background:linear-gradient(135deg,var(--surface2),var(--surface3));padding:32px 40px;border-bottom:1px solid var(--border2)">
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--copper);margin-bottom:10px">Valentis Group — Strictly Confidential</div>
+      <div style="font-family:var(--fd);font-size:38px;font-weight:300;color:var(--text);margin-bottom:4px;letter-spacing:-1px">HR Business Partner <em style="font-weight:600;color:var(--copper3)">Charter</em></div>
+      <div style="font-size:14px;color:var(--text3);font-weight:300">Valentis Group · Effective 2026 · Group HR Manager</div>
+    </div>
+    <div style="padding:32px 40px">
+      <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--copper);margin-bottom:10px">Purpose</div>
+        <div style="font-size:14px;color:var(--text2);font-weight:300;line-height:1.9">The HR Business Partner function exists to ensure that Valentis Group's people strategy is aligned with its business strategy at all times. The HRBP is the strategic interface between the HR function and the business — advising leadership on talent decisions, diagnosing organisational risks, and co-creating solutions that enable the business to achieve its goals through its people.</div>
+      </div>
+      <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--copper);margin-bottom:10px">Mandate</div>
+        <div style="display:grid;gap:6px">
+          <div style="display:flex;gap:10px;font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.75"><span style="color:var(--copper);font-weight:600;flex-shrink:0">1.</span><span>Participate in quarterly and annual business planning — providing people intelligence, workforce capacity assessments, and talent risk analysis before operational decisions are made</span></div>
+          <div style="display:flex;gap:10px;font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.75"><span style="color:var(--copper);font-weight:600;flex-shrink:0">2.</span><span>Conduct monthly HRBP business review meetings with the COO and country leadership teams — presenting the HR Scorecard, flagging risks, and recommending actions</span></div>
+          <div style="display:flex;gap:10px;font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.75"><span style="color:var(--copper);font-weight:600;flex-shrink:0">3.</span><span>Lead all organisational diagnostic work — assessing team health, leadership effectiveness, and culture signals across all four Valentis countries</span></div>
+          <div style="display:flex;gap:10px;font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.75"><span style="color:var(--copper);font-weight:600;flex-shrink:0">4.</span><span>Advise on all critical talent decisions — including promotions, succession moves, high-performer retention, and leadership appointments — before decisions are finalised</span></div>
+          <div style="display:flex;gap:10px;font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.75"><span style="color:var(--copper);font-weight:600;flex-shrink:0">5.</span><span>Lead the people dimension of any significant organisational change — restructures, country expansions, operating model shifts, and leadership transitions</span></div>
+        </div>
+      </div>
+      <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--copper);margin-bottom:10px">Success Metrics</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:13px;color:var(--text2);font-weight:300">Critical talent retention rate at or above 90%</div>
+          <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:13px;color:var(--text2);font-weight:300">HRBP included in quarterly business planning cycle</div>
+          <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:13px;color:var(--text2);font-weight:300">All critical roles with identified successors or active pipeline</div>
+          <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:13px;color:var(--text2);font-weight:300">Monthly HR Business Review conducted and documented</div>
+          <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:13px;color:var(--text2);font-weight:300">Zero below-band minimum employees for more than one quarter</div>
+          <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:13px;color:var(--text2);font-weight:300">COO satisfaction score with HRBP advisory quality: 4/5 or above</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+        <div style="border-top:1px solid var(--border2);padding-top:10px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text3)">Group HR Manager</div>
+        </div>
+        <div style="border-top:1px solid var(--border2);padding-top:10px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text3)">Chief Operating Officer</div>
+        </div>
+        <div style="border-top:1px solid var(--border2);padding-top:10px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text3)">Date</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:14px">
+    <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:1px solid var(--copper-border);background:var(--copper-dim);color:var(--copper3);font-family:var(--fm);font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-weight:600">Print Charter</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

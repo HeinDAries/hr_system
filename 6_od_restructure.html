@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restructure Playbook — Valentis OD Tool 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3ef;--surface:#ffffff;--surface2:#f0ede7;--surface3:#e8e4dc;
+  --border:#ddd9d0;--border2:#ccc7bb;
+  --ink:#1c1a16;--ink2:#2e2c27;--ink3:#57534a;--ink4:#8a8478;--ink5:#b8b2a8;
+  --sienna:#9b3a1a;--sienna2:#b44420;--sienna3:#c44e28;
+  --sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.22);
+  --slate:#2c3e50;--slate-dim:rgba(44,62,80,0.07);--slate-border:rgba(44,62,80,0.2);
+  --gold:#8a6914;--gold-dim:rgba(138,105,20,0.07);--gold-border:rgba(138,105,20,0.22);
+  --green:#2d6a4f;--green-dim:rgba(45,106,79,0.07);--green-border:rgba(45,106,79,0.22);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--sienna3),var(--sienna),rgba(155,58,26,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sienna3);background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--sienna3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(155,58,26,0.15);border-color:rgba(155,58,26,0.35);color:#e8a07a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--sienna)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#e8a07a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--sienna);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--sienna)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--sienna);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-slate{background:var(--slate-dim);color:var(--slate);border:1px solid var(--slate-border)}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.sienna{background:var(--sienna-dim);border-color:var(--sienna);color:var(--ink2)}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--sienna);padding:16px 20px;margin:16px 0;background:var(--sienna-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6;font-weight:400}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px;color:#f5f0e8}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:0;flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--sienna);border-bottom-color:var(--sienna);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* PHASE STEPPER */
+.phase-row{display:flex;gap:0;margin-bottom:14px;flex-wrap:nowrap;overflow-x:auto}
+.phase-step{flex:1;min-width:110px;padding:14px 12px;background:var(--surface2);border:1px solid var(--border);border-right:none;text-align:center;cursor:pointer;transition:all .13s;position:relative}
+.phase-step:last-child{border-right:1px solid var(--border)}
+.phase-step.active{background:var(--slate);border-color:var(--sienna);z-index:1}
+.phase-step-num{font-family:var(--fm);font-size:9px;color:var(--ink5);margin-bottom:4px;letter-spacing:.5px}
+.phase-step.active .phase-step-num{color:var(--sienna3)}
+.phase-step-label{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--ink3);line-height:1.2}
+.phase-step.active .phase-step-label{color:#f5f0e8}
+.phase-content{display:none}
+.phase-content.active{display:block}
+/* CHECKLIST */
+.ck-item{display:flex;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;margin-bottom:5px;cursor:pointer;transition:all .13s;align-items:flex-start}
+.ck-item:hover{border-color:var(--sienna-border)}
+.ck-item.done{background:var(--green-dim);border-color:var(--green-border)}
+.ck-box{width:16px;height:16px;border:2px solid var(--border2);border-radius:2px;flex-shrink:0;margin-top:2px;transition:all .13s;display:flex;align-items:center;justify-content:center}
+.ck-item.done .ck-box{background:var(--green);border-color:var(--green)}
+.ck-check{font-size:10px;color:#fff;display:none}
+.ck-item.done .ck-check{display:block}
+.ck-text{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7}
+.ck-item.done .ck-text{color:var(--green);text-decoration:line-through;text-decoration-color:rgba(45,106,79,0.4)}
+/* READINESS TOOL */
+.rt-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px}
+.rt-q{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:14px 16px;margin-bottom:8px}
+.rt-qtext{font-size:13.5px;color:rgba(255,255,255,0.75);font-weight:300;line-height:1.7;margin-bottom:8px}
+.rt-opts{display:flex;gap:8px;flex-wrap:wrap}
+.rt-opt{padding:5px 14px;border-radius:2px;border:1px solid rgba(255,255,255,0.12);font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.4);cursor:pointer;transition:all .13s}
+.rt-opt:hover{border-color:rgba(155,58,26,0.4);color:#e8a07a}
+.rt-opt.sel{background:rgba(155,58,26,0.15);border-color:var(--sienna);color:#e8a07a;font-weight:700}
+.rt-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-sienna{background:var(--sienna);color:#fff}
+.btn-sienna:hover{background:var(--sienna2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:var(--sienna3);color:#e8a07a}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">OD Tool 6 / 9</div>
+    <div class="sb-title">Restructure<br><em>Playbook</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>When to Restructure</div>
+    <div class="nav-item" onclick="showPage('principles',this)"><span class="nav-num">02</span>Restructure Principles</div>
+    <div class="nav-item" onclick="showPage('phases',this)"><span class="nav-num">03</span>The 5-Phase Model</div>
+    <div class="nav-item" onclick="showPage('checklist',this)"><span class="nav-num">04</span>HRBP Readiness Checklist</div>
+    <div class="nav-item" onclick="showPage('people',this)"><span class="nav-num">05</span>Managing the People Impact</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">06</span>Valentis Restructure — 2026</div>
+    <div class="nav-item" onclick="showPage('readiness',this)"><span class="nav-num">07</span>Readiness Assessment Tool</div>
+    <div class="nav-item" onclick="showPage('comms',this)"><span class="nav-num">08</span>Communication Templates</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Organisation Design &amp; Development</strong>
+      Tool 6 of 9 · Restructure Playbook<br>
+      <span style="color:rgba(255,255,255,0.12)">Restructuring without a playbook is improvisation at scale</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">OD Tool 6 / 9 — Restructure Playbook</div>
+    <h1 class="page-title">Restructure<br><em>Playbook</em></h1>
+    <p class="page-desc">Restructuring is the most disruptive intervention available to an HRBP. Used well, it unlocks organisational capability that no amount of coaching or process improvement can reach. Used poorly — or at the wrong time — it consumes enormous energy, damages trust, and leaves the organisation worse than before. The playbook makes the difference.</p>
+  </div>
+  <div class="pull-quote">
+    <p>"Restructuring should be the last intervention, not the first. Most organisations restructure when they should be clarifying accountability. Most people problems are role problems. Most role problems are clarity problems."</p>
+    <cite>OD Practice Principle</cite>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Valid Reasons to Restructure</div>
+      <div class="card-body" style="margin-bottom:14px">A restructure is warranted when the current structure is genuinely incompatible with strategic need — and when no lighter-touch intervention (role design, accountability clarification, process change) can close the gap.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--green)">Scale change.</strong> The organisation is growing or contracting significantly enough that the current structure cannot handle the new headcount, span, or coordination demand. Valentis at 65 FTE with Country 5 requires a different structure than Valentis at 42 FTE today.</div>
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--green)">Strategy shift.</strong> The business is entering a new market, product, or delivery model that the current structure is not designed to serve. Adding a new country to a structure designed for four is a valid restructure trigger.</div>
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--green)">Coordination failure.</strong> The organisation consistently cannot coordinate across units — despite capability, effort, and role clarity — because the structure itself creates the barriers. No process change will fix a structural coordination problem.</div>
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--green)">Span breaking point.</strong> A critical leader's span of control has reached the point where the organisation is losing management quality — decisions slow, development stops, strategy does not reach the field. The COO-at-Country-5 scenario.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Invalid Reasons to Restructure</div>
+      <div class="card-body" style="margin-bottom:14px">These are the most common reasons organisations restructure — and nearly all of them are wrong. The HRBP's role is to name the real problem before the restructure consumes the organisation's energy.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">Performance problem.</strong> "The structure is broken" usually means "we have accountability gaps and poor role design." Fix the roles before restructuring. A restructure moves the accountability gaps to new boxes — it does not eliminate them.</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">People problem.</strong> Restructuring to manage out a difficult employee, to remove someone from a reporting line, or to solve a personal conflict is not restructuring — it is restructuring as cover for a people management failure.</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">New leader's instinct.</strong> A new COO or CEO who restructures in their first 90 days to "put their stamp on it" destroys more value than they create. The instinct to redesign before understanding the system is one of the most destructive leadership patterns in organisations.</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">Culture problem.</strong> If trust is low, accountability is diffuse, and coordination is poor, restructuring will not fix any of it. These are health problems (Tool 5). The same people, same culture, and same behaviours will reproduce the same patterns in the new structure.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">The Decision Test — Is This a Restructure or Something Else?</div>
+    <table class="dtable">
+      <thead><tr><th>Presenting symptom</th><th>Real diagnosis</th><th>Correct intervention</th><th>Restructure needed?</th></tr></thead>
+      <tbody>
+        <tr><td>Programme delivery dropping in Indonesia</td><td>3 G3 vacancies creating SM span stress; accountability boundaries unclear</td><td>Emergency recruitment + role profile update (Tools 3, 4)</td><td><span class="chip chip-green">No</span></td></tr>
+        <tr><td>COO overwhelmed, decisions bottlenecking</td><td>Span at ceiling; Country 5 will break it further</td><td>Create Group Ops Lead role — structural span relief</td><td><span class="chip chip-sienna">Yes — targeted</span></td></tr>
+        <tr><td>SMs not sharing practices across countries</td><td>No coordination mechanism; no accountability for cross-country standards</td><td>SM peer forum + Group Ops Lead coordination function</td><td><span class="chip chip-sienna">Partial — role addition</span></td></tr>
+        <tr><td>Myanmar trainee attrition at month 3</td><td>Ghost accountability (no G4 owner); weak total rewards at G1</td><td>G4 role profile update + rewards review (Tools 3, C&amp;B)</td><td><span class="chip chip-green">No</span></td></tr>
+        <tr><td>Country 5 entry — COO span untenable</td><td>Structural: 4 SMs + group functions + Country 5 SM = 8 COO reports at executive complexity level</td><td>Pre-Country-5 structural redesign: Group Ops Lead + HR Coordinator</td><td><span class="chip chip-red">Yes — required</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="page-principles" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Restructure Principles</div>
+    <h1 class="page-title">Restructure<br><em>Principles</em></h1>
+    <p class="page-desc">These are the non-negotiable principles the HRBP applies to every restructure — regardless of scale, urgency, or executive pressure. Violating any of them increases the probability of a failed restructure.</p>
+  </div>
+  <div style="display:grid;gap:8px">
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:60px 1fr 1fr;gap:18px">
+      <div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">P1</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Strategy first, structure follows</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Structure is the answer to a strategic question. Before designing a new structure, the strategic question must be explicitly stated: "What does this structure need to enable that the current structure cannot?" If the question cannot be answered clearly, the restructure is not ready to proceed.</div>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px"><strong style="color:var(--sienna)">Valentis application:</strong> The Group Ops Lead restructure is answering a specific strategic question: "How does Valentis coordinate across 5 countries without increasing management layers or breaking the COO's span?" That question is answerable — the restructure is valid.</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:60px 1fr 1fr;gap:18px">
+      <div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">P2</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Design for the future, not for the current people</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The structure is designed for what the organisation needs to become — not to fit the capabilities or preferences of the people currently in it. People are then assessed against the structure. If a current role holder does not fit the new structure, that is a people decision — not a reason to compromise the design.</div>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px"><strong style="color:var(--sienna)">Common failure:</strong> The Group Ops Lead role is designed around the most available internal candidate rather than the strategic need. The role then becomes a consolation prize rather than a structural solution. Design the role first; find the person second.</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:60px 1fr 1fr;gap:18px">
+      <div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">P3</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Minimum necessary change</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The restructure changes only what needs to change to close the specific structural gap identified. It does not redesign the entire organisation to solve one problem. Every unnecessary change carries disruption cost — uncertainty, distraction, transition risk — that must be justified by a corresponding structural benefit.</div>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px"><strong style="color:var(--sienna)">Valentis application:</strong> The 2026 restructure adds two roles (Group Ops Lead, HR Coordinator). It does not redesign the country structure, change the SM reporting lines, or alter the G1–G4 driller pipeline architecture. Minimum necessary change.</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:60px 1fr 1fr;gap:18px">
+      <div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">P4</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Sequence matters more than speed</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The order in which restructure steps happen determines whether the change lands well or creates new problems. The most common sequencing failure: announcing a new structure before the roles within it have been defined. People are told they have a new reporting line but no one can explain what their new role is.</div>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px"><strong style="color:var(--sienna)">Critical sequence:</strong> Group Ops Lead role profile complete → COO approves → Role advertised → Person in post → Country 5 SM appointed. Not: Country 5 SM appointed → Group Ops Lead hired to manage the chaos that follows.</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:60px 1fr 1fr;gap:18px">
+      <div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">P5</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">Communication is a structural act, not a PR exercise</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">How people find out about a restructure, in what order, and through which channels determines whether they experience it as a managed change or a shock. Communication planning is not the last step in restructure design — it is embedded throughout. Every decision about structure has a corresponding communication implication.</div>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px"><strong style="color:var(--sienna)">Indonesia risk:</strong> If Wirawan S. learns about the Group Ops Lead role from a source other than the COO, with no prior context, his resistance will harden significantly. He must hear about this from the COO directly — with the authority boundary explicitly stated in the same conversation.</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:60px 1fr 1fr;gap:18px">
+      <div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">P6</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:5px">The HRBP is designer, not just implementer</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The HRBP's role is to design the restructure process — not simply execute what the COO or CEO has decided. This means challenging inadequate rationale, naming sequencing risks, identifying people impacts before they become surprises, and ensuring the structure being created is actually capable of doing what it is intended to do.</div>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px"><strong style="color:var(--sienna)">In practice:</strong> If the COO proposes a Group Ops Lead role with full SM management authority, the HRBP's job is to explain why that creates a fourth management layer, why the Indonesia SM will resist it, and what a better design looks like — before the role is created.</div>
+    </div>
+
+  </div>
+</div>
+<div id="page-phases" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — The 5-Phase Model</div>
+    <h1 class="page-title">The 5-Phase<br><em>Model</em></h1>
+    <p class="page-desc">Every restructure — from adding a single role to a full organisational redesign — follows the same five phases. The phases do not change; the depth and duration of each phase scales with the complexity of the change.</p>
+  </div>
+  <div class="phase-row" id="phase-stepper">
+    <div class="phase-step active" onclick="showPhase(0)"><div class="phase-step-num">Phase 1</div><div class="phase-step-label">Diagnose</div></div>
+    <div class="phase-step" onclick="showPhase(1)"><div class="phase-step-num">Phase 2</div><div class="phase-step-label">Design</div></div>
+    <div class="phase-step" onclick="showPhase(2)"><div class="phase-step-num">Phase 3</div><div class="phase-step-label">Decide</div></div>
+    <div class="phase-step" onclick="showPhase(3)"><div class="phase-step-num">Phase 4</div><div class="phase-step-label">Implement</div></div>
+    <div class="phase-step" onclick="showPhase(4)"><div class="phase-step-num">Phase 5</div><div class="phase-step-label">Embed</div></div>
+  </div>
+
+  <div class="phase-content active">
+    <div class="card" style="border-top:3px solid var(--sienna)">
+      <div class="card-title">Phase 1 — Diagnose <em>(Is restructuring the right intervention?)</em></div>
+      <div class="card-body" style="margin-bottom:16px">The diagnosis phase establishes whether restructuring is genuinely needed — and if so, what specific structural problem it is solving. Most restructures that fail do so because Phase 1 was skipped or rushed.</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">What the HRBP does in Phase 1</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Runs the health diagnostic (Tool 5) — is this a health problem or a structural problem?</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Analyses spans and layers (Tool 4) — is the structure itself creating the problem?</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Audits current role profiles (Tool 3) — are role design gaps the real issue?</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">States the structural gap explicitly: "The current structure cannot do X, which the strategy requires."</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Presents diagnosis to COO with a recommendation: restructure OR lighter-touch intervention.</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Phase 1 outputs</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">Written diagnosis — one page: current state, structural gap, strategic requirement</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">COO decision: proceed to design OR address through role/health intervention</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">Scope agreed: which parts of the organisation are in scope for redesign</div>
+          </div>
+          <div style="margin-top:10px;padding:10px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--gold)">Valentis timing:</strong> Phase 1 is complete. The diagnosis (Tools 3–5) has established that the COO span requires structural relief before Country 5 entry. Phase 2 — design — is the current live phase.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-content">
+    <div class="card" style="border-top:3px solid var(--sienna)">
+      <div class="card-title">Phase 2 — Design <em>(What should the new structure look like?)</em></div>
+      <div class="card-body" style="margin-bottom:16px">Design is the creative and analytical core of restructuring. The HRBP produces design options — not a single answer — and presents them with the trade-offs clearly articulated. The COO decides; the HRBP designs.</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Design activities</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Model 2–3 structural options. Each option is defined by: reporting lines, role profiles, spans, layers, and authority boundaries — not just an org chart box.</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Test each option against the structural gap: does this design solve the problem identified in Phase 1?</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Model the people impact: which roles change, which are new, who is affected and how?</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Cost each option: salary cost, transition cost, redundancy cost if applicable.</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Draft role profiles for all new or significantly changed roles before presenting to COO.</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Design quality tests</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">Does the design solve the specific structural gap — or a different problem?</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">Does every role in the new structure have a clear, non-duplicated accountability?</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">Are authority boundaries between new and existing roles explicitly defined?</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">Does the design comply with minimum necessary change (P3)?</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">Have the highest-risk stakeholders (Indonesia SM) been factored into the design?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-content">
+    <div class="card" style="border-top:3px solid var(--sienna)">
+      <div class="card-title">Phase 3 — Decide <em>(Which option, who is affected, and in what sequence?)</em></div>
+      <div class="card-body" style="margin-bottom:16px">The decision phase is where the chosen design becomes a commitment. The HRBP is responsible for ensuring the decision is made with full information — including the people impact, the risks, and the sequencing requirements.</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Decision requirements</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">COO formally selects design option. Decision is documented — not just communicated verbally.</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Implementation sequence agreed: who hears what, in what order, on what timeline.</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">HRBP identifies any legal obligations: consultation requirements, notice periods, redundancy entitlements by country.</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Confirm budget: new role costs approved before roles are advertised or announced.</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Communication sequence — critical</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="font-family:var(--fm);font-size:9px">Step 1 — COO + CEO</strong> — aligned before anyone else hears anything</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="font-family:var(--fm);font-size:9px">Step 2 — Affected role holders</strong> — individually, before group announcement</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="font-family:var(--fm);font-size:9px">Step 3 — Group announcement</strong> — after all individually affected have been spoken to</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="font-family:var(--fm);font-size:9px">Step 4 — Wider team</strong> — site-level communication from SMs with consistent message</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-content">
+    <div class="card" style="border-top:3px solid var(--sienna)">
+      <div class="card-title">Phase 4 — Implement <em>(Make the new structure operational)</em></div>
+      <div class="card-body" style="margin-bottom:16px">Implementation is where restructures most commonly fail — not because the design was wrong, but because the transition from old to new is managed as an administrative process rather than a people change. The structure is new on paper before the people, processes, and authority boundaries are actually operating in the new mode.</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Implementation tasks</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">All new role profiles published and communicated — before people start in new roles</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">New roles recruited or filled — no role vacant on day one of the new structure if avoidable</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Authority boundaries communicated by COO directly to all affected leaders — not by email</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">PM and reward implications updated — if a role changes grade or accountability, pay and performance metrics update simultaneously</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">30-day and 90-day check-ins scheduled for all role holders in significantly changed roles</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:8px">Common implementation failures</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:9px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)">New structure announced before new roles are defined — people in limbo</div>
+            <div style="padding:9px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)">Group Ops Lead hired but authority boundary not communicated to SMs — conflict follows immediately</div>
+            <div style="padding:9px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)">Pay and grade not updated alongside role change — creates perceived unfairness and compensation anomalies</div>
+            <div style="padding:9px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)">Transition support withdrawn after announcement — HRBP assumes implementation is complete when it has only just begun</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-content">
+    <div class="card" style="border-top:3px solid var(--sienna)">
+      <div class="card-title">Phase 5 — Embed <em>(Did the restructure actually work?)</em></div>
+      <div class="card-body" style="margin-bottom:16px">A restructure is not complete when the new org chart is published — it is complete when the new structure is operating as designed. Embedding is about ensuring the intended accountabilities, coordination mechanisms, and authority boundaries are actually functioning.</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Embedding activities</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">90-day structural review: is the new structure solving the problem it was designed to solve?</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Re-run the health diagnostic (Tool 5) for affected dimensions — has the health score improved?</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Check for proxy resistance: are people operating as if the old structure still exists? Re-brief if needed.</div>
+            <div style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300">Assess whether any unanticipated structural gaps have emerged — and address them before they become health issues.</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Valentis embed measures — Group Ops Lead</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">COO effective span reduced from 6 to 4 — confirmed by calendar analysis</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">SM peer forum established and meeting quarterly — documented outputs</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">At least 2 cross-country practice transfers documented within 6 months of Ops Lead start date</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">Indonesia SM operating within agreed authority boundary — no escalation incidents to COO</div>
+            <div style="padding:9px 12px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">D4 Coordination health score improves from 3/10 to ≥5/10 at next diagnostic (Tool 5)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-checklist" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — HRBP Readiness Checklist</div>
+    <h1 class="page-title">HRBP Readiness<br><em>Checklist</em></h1>
+    <p class="page-desc">An interactive pre-restructure checklist. Click each item to mark it complete. A restructure should not proceed to Phase 3 (Decide) until all Phase 1 and Phase 2 items are checked. Use this as the gate-review tool before presenting to the COO.</p>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('ck-p1',this)">Phase 1 — Diagnose</div>
+    <div class="tab" onclick="showTab('ck-p2',this)">Phase 2 — Design</div>
+    <div class="tab" onclick="showTab('ck-p3',this)">Phase 3 — Decide</div>
+    <div class="tab" onclick="showTab('ck-p4',this)">Phase 4 — Implement</div>
+    <div class="tab" onclick="showTab('ck-p5',this)">Phase 5 — Embed</div>
+  </div>
+  <div class="tab-body active" id="tab-ck-p1">
+    <div class="card">
+      <div class="card-title">Phase 1 Readiness — Diagnosis Complete?</div>
+      <div class="card-body" style="margin-bottom:14px">Do not proceed to Phase 2 until all items below are checked. Each unchecked item is a gap that will surface as a problem later — when it is more expensive to fix.</div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Health diagnostic (Tool 5) run for affected dimensions. Score documented. Problem is structural, not a health issue.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Spans and layers analysed (Tool 4). Current span position documented for every affected manager. Structural problem confirmed.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Current role profiles reviewed (Tool 3). Confirmed that role design alone cannot close the structural gap.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Strategic gap stated explicitly in one sentence: "The current structure cannot do [X], which the strategy requires by [date]."</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Lighter-touch interventions considered and ruled out with rationale. Restructure is the minimum necessary change.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Diagnosis presented to COO. COO has given verbal go-ahead to proceed to design phase.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Scope agreed: which parts of the organisation are in scope, which are not. Scope is documented and signed off.</div></div>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-ck-p2">
+    <div class="card">
+      <div class="card-title">Phase 2 Readiness — Design Sufficient?</div>
+      <div class="card-body" style="margin-bottom:14px">Do not proceed to Phase 3 (Decide) until all design items are complete. Presenting an incomplete design to the COO wastes time and undermines HRBP credibility.</div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">At least 2 structural options modelled, each with reporting lines, role definitions, spans, authority boundaries, and cost.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Each option tested against the strategic gap: does it solve the specific problem identified in Phase 1?</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Draft role profiles written for all new or significantly changed roles. Not just org chart boxes — full profiles with accountability, authority, capability.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">People impact mapped: which individuals are affected, in what way, and what are the likely reactions (especially high-risk stakeholders)?</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Cost model complete: salary cost of new/changed roles, any transition costs, confirmed budget availability.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Recommended option identified with clear rationale. Trade-offs of alternatives documented.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Authority boundary between new and existing roles explicitly defined — especially where resistance is anticipated.</div></div>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-ck-p3">
+    <div class="card">
+      <div class="card-title">Phase 3 Readiness — Decision Solid?</div>
+      <div class="card-body" style="margin-bottom:14px">Before moving to implementation, every item below must be in place. A half-decided restructure is more disruptive than a well-considered delay.</div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">COO has formally selected a design option. Decision is documented in writing — not just agreed verbally in a meeting.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Budget approved for all new roles before any announcement or recruitment begins.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Country-by-country legal obligations checked: consultation requirements, notice periods, redundancy entitlements, regulatory compliance for all four countries.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Communication sequence planned: who hears what, in what order, from whom, on what channel, on what date.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">High-risk stakeholder conversations planned individually — especially Indonesia SM, who must hear about Group Ops Lead scope directly from COO, not through announcement.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Implementation timeline agreed: milestones, owners, go-live date for new structure.</div></div>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-ck-p4">
+    <div class="card">
+      <div class="card-title">Phase 4 Readiness — Implementation Operational?</div>
+      <div class="card-body" style="margin-bottom:14px">Track implementation completion. The new structure is not "live" until every item below is checked.</div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">All new role profiles published and accessible to affected role holders before their first day in the new structure.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">All affected individuals had individual conversations with HRBP or COO before group announcement.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Group Ops Lead in role (or firm start date confirmed) before Country 5 SM is appointed.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">COO has communicated authority boundaries to all Site Managers directly — in a structured conversation, not an email.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Pay and grade implications updated in payroll and HR systems. No role holder in the new structure with an outdated compensation arrangement.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">30-day and 90-day check-ins scheduled for Group Ops Lead and any other significantly affected role holders.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">SM peer forum inaugural session scheduled and agenda confirmed.</div></div>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-ck-p5">
+    <div class="card">
+      <div class="card-title">Phase 5 Readiness — Embedded and Working?</div>
+      <div class="card-body" style="margin-bottom:14px">Run this checklist at 90 days post-implementation. A restructure is embedded when the new structure is operating as designed — not just when it has been announced.</div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">90-day structural review conducted. New structure is solving the problem it was designed to solve.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Health diagnostic (Tool 5) re-run for D4 Coordination. Score has improved from 3/10 baseline.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">COO span confirmed at 4 effective relationships. No evidence of creeping re-expansion.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">SM peer forum has met at least once. Output documented and distributed to all SMs.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">No authority boundary incidents involving Indonesia SM in first 90 days. Governance operating as designed.</div></div>
+      <div class="ck-item" onclick="toggleCk(this)"><div class="ck-box"><span class="ck-check">✓</span></div><div class="ck-text">Any unanticipated structural gaps identified and addressed — not left to become health problems.</div></div>
+    </div>
+  </div>
+</div>
+<div id="page-people" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Managing the People Impact</div>
+    <h1 class="page-title">Managing the<br><em>People Impact</em></h1>
+    <p class="page-desc">Every restructure affects people — even one that adds roles without removing any. The HRBP's people management responsibility does not start when redundancies are on the table. It starts the moment a structural change is being considered.</p>
+  </div>
+  <div class="info sienna"><strong>The people impact is not a separate workstream — it is embedded in every phase.</strong> Identifying who is affected, how, and what they need happens in Phase 1. Communication sequencing happens in Phase 3. Individual conversations happen before Phase 4 begins. Transition support continues through Phase 5. The HRBP who leaves people management until "after the design is done" is already behind.</div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('pi-roles',this)">Role Impact Types</div>
+    <div class="tab" onclick="showTab('pi-reactions',this)">Managing Reactions</div>
+    <div class="tab" onclick="showTab('pi-retain',this)">Retaining Key People</div>
+    <div class="tab" onclick="showTab('pi-legal',this)">Legal Obligations</div>
+  </div>
+  <div class="tab-body active" id="tab-pi-roles">
+    <div class="card">
+      <div class="card-title">Types of Role Impact — and What Each Requires</div>
+      <div class="card-body" style="margin-bottom:14px">A restructure rarely affects everyone in the same way. The HRBP maps each role to an impact type and manages each type differently.</div>
+      <table class="dtable">
+        <thead><tr><th>Impact type</th><th>Definition</th><th>What the person experiences</th><th>HRBP obligation</th><th>Valentis example</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:700;color:var(--sienna)">New role created</td>
+            <td>A role that did not previously exist is added to the structure</td>
+            <td>Opportunity — if communicated well. Ambiguity — if role profile is incomplete or authority boundary unclear.</td>
+            <td>Complete role profile before advertising. Be explicit about what the new role does and does not have authority over.</td>
+            <td>Group Ops Lead (G6); HR Coordinator (G4)</td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;color:var(--gold)">Role substantially changed</td>
+            <td>An existing role has its accountability, authority, or reporting line materially altered</td>
+            <td>Uncertainty, potential status anxiety. May feel like demotion even if grade is unchanged.</td>
+            <td>Individual conversation before announcement. Updated role profile. Confirm pay/grade implications in same conversation.</td>
+            <td>COO — reduced to 4 direct reports. Indonesia SM — Group Ops Lead introduced as peer-coordinator.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;color:var(--gold)">Role unaffected — context changes</td>
+            <td>The role itself does not change, but the structure around it does — new reporting relationships, new peer roles, new coordination requirements</td>
+            <td>Uncertainty about "what this means for me" even if nothing directly changes. Information vacuum fills with speculation.</td>
+            <td>Proactive communication: "Here is what is changing. Here is what this means for your role. Here is what is not changing."</td>
+            <td>Laos SM, Thailand SM, Myanmar SM — roles unchanged but Group Ops Lead changes their coordination context.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;color:var(--red)">Role at risk / redundancy</td>
+            <td>The role may no longer exist or may be significantly reduced in the new structure</td>
+            <td>High anxiety, potential resistance, reduced engagement during transition period.</td>
+            <td>Country-specific legal compliance. Formal consultation process where required. Individual 1:1 before any group announcement. Clear timeline.</td>
+            <td>Not applicable in current Valentis restructure — additive only.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-pi-reactions">
+    <div class="card">
+      <div class="card-title">Managing Reactions to Restructure</div>
+      <div class="card-body" style="margin-bottom:14px">People react to restructure based on what they believe it means for them — not what it actually means. The HRBP's job is to reduce the gap between perception and reality through timely, specific, and honest communication.</div>
+      <div style="display:grid;gap:8px">
+        <div style="padding:16px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-weight:700;color:var(--ink);margin-bottom:6px">Reaction: Resistance <span class="chip chip-red" style="margin-left:8px">Indonesia SM profile</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+            <div><strong style="display:block;color:var(--sienna);font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">What it looks like</strong>Challenges the rationale. Questions the need for the new role. Argues the current structure works fine. Escalates concerns to COO directly, bypassing the HRBP process.</div>
+            <div><strong style="display:block;color:var(--sienna);font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">Root cause</strong>Usually a perceived threat to authority, status, or control. The Indonesia SM's resistance to the Group Ops Lead is a sovereignty concern: "This role will reduce my autonomy." It is a rational response, not an irrational one.</div>
+            <div><strong style="display:block;color:var(--sienna);font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">HRBP response</strong>Address the concern directly, not generically. Name the authority boundary explicitly: "The Ops Lead coordinates standards. They do not manage you." Have the COO deliver this message — not the HRBP alone. Follow up in writing.</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-weight:700;color:var(--ink);margin-bottom:6px">Reaction: Anxiety <span class="chip chip-gold" style="margin-left:8px">typical — unaffected roles</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+            <div><strong style="display:block;color:var(--sienna);font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">What it looks like</strong>Increased informal communication and speculation. Questions about job security. Reduced focus on work while waiting for "the full picture." Performance dip during transition.</div>
+            <div><strong style="display:block;color:var(--sienna);font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">Root cause</strong>Information vacuum. People fill gaps in information with worst-case assumptions. Even people whose roles are completely unaffected will experience anxiety if they are not proactively told they are unaffected.</div>
+            <div><strong style="display:block;color:var(--sienna);font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">HRBP response</strong>Proactive and specific: "Your role is not changing. Here is what is changing and why. Here is what this means for you." Silence is not neutrality — it is a communication failure that creates anxiety.</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-weight:700;color:var(--ink);margin-bottom:6px">Reaction: Opportunity capture <span class="chip chip-green" style="margin-left:8px">Thailand SM profile</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+            <div><strong style="display:block;color:var(--sienna);font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">What it looks like</strong>Active engagement with the change. Asks questions about the new role and how to contribute. May informally position themselves as a candidate. Can become an internal advocate for the change if managed well.</div>
+            <div><strong style="display:block;color:var(--sienna);font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">Root cause</strong>High performers who see structural change as a development opportunity. Thailand SM is a confirmed change champion — the restructure expands coordination expectations and the SM peer forum gives them a visible platform.</div>
+            <div><strong style="display:block;color:var(--sienna);font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">HRBP response</strong>Channel the energy productively. Explicitly involve them in the SM peer forum setup. Use them as a reference case for Indonesia SM. Do not make promises about internal advancement that the restructure does not actually create.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-pi-retain">
+    <div class="card">
+      <div class="card-title">Retaining Key People Through Restructure</div>
+      <div class="card-body" style="margin-bottom:14px">Restructures create a retention risk window — even for people whose roles are not directly affected. The uncertainty of change prompts high performers to test the external market. The HRBP proactively identifies the retention risk and acts before exit conversations begin.</div>
+      <table class="dtable">
+        <thead><tr><th>Individual</th><th>Retention risk during restructure</th><th>Why the risk exists</th><th>HRBP action</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600">Myo H.<br><span style="font-family:var(--fm);font-size:9px;color:var(--ink4)">Myanmar SM G5</span></td>
+            <td><span class="chip chip-red">High</span></td>
+            <td>Retention bonus expires April 2027. Restructure may signal instability, prompting earlier external market test. If Group Ops Lead introduction is perceived as reduced autonomy, retention risk compounds.</td>
+            <td>Retention conversation deadline September 2026 — before any Group Ops Lead announcement in Myanmar. Frame the restructure as growth investment, not cost-cutting. Clarify the Ops Lead coordination role explicitly.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Wirawan S.<br><span style="font-family:var(--fm);font-size:9px;color:var(--ink4)">Indonesia SM G5</span></td>
+            <td><span class="chip chip-red">High</span></td>
+            <td>High-sceptic, high-power stakeholder. If the Group Ops Lead role is perceived as a threat to his autonomy, exit risk increases. Currently under retention bonus — but a perceived authority threat may override financial incentive.</td>
+            <td>COO conducts authority boundary conversation before restructure announcement to Indonesia. Explicit: "The Ops Lead does not manage you. They coordinate group standards." Follow up in writing. Renewal of retention arrangement October 2026 is a related but separate conversation.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Laos Senior Drillers (3 of 5)<br><span style="font-family:var(--fm);font-size:9px;color:var(--ink4)">G4, avg age 51</span></td>
+            <td><span class="chip chip-gold">Medium</span></td>
+            <td>Not directly affected by the 2026 restructure. But if restructure signals uncertainty, pre-retirement departure risk increases. The Laos cohort has limited visibility of their succession plan and their place in the future organisation.</td>
+            <td>Laos SM communicates the restructure as a growth investment story — "we are building the group that Laos needs for the next 10 years." Include senior drillers in the succession conversation: "We need you to develop the next G4. Here is what that looks like." Recognition as legacy builders, not just incumbents.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-pi-legal">
+    <div class="card">
+      <div class="card-title">Legal Obligations — Multi-Country Compliance</div>
+      <div class="card-body" style="margin-bottom:14px">Valentis operates across four jurisdictions. Each country has different legal requirements for restructuring, role changes, and redundancy. The HRBP must confirm the legal position in each country before any restructure announcement.</div>
+      <div class="info gold"><strong>Disclaimer</strong>This section provides a framework for identifying legal obligations — not legal advice. All country-specific restructure actions must be reviewed by local legal counsel or HR advisors before proceeding. Requirements change; always verify current law.</div>
+      <table class="dtable">
+        <thead><tr><th>Country</th><th>Restructure type in 2026</th><th>Key legal considerations</th><th>Action required</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600">Laos</td>
+            <td>Additive — no role removals</td>
+            <td>New roles require local employment contracts compliant with Lao Labour Law. Any changes to existing role conditions (reporting lines, responsibilities) may require contract variation.</td>
+            <td>Confirm with local advisor whether Group Ops Lead creates any contractual variation obligations for Laos SM role.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Myanmar</td>
+            <td>Additive — no role removals</td>
+            <td>Myanmar Labour Law governs contract variations. Any change to an employee's role, pay, or reporting line that was not contemplated in the original contract may require consent. Operating context: verify current labour law applicability given regulatory environment.</td>
+            <td>Confirm contract variation requirements for any role profile updates arising from restructure. Legal review of Group Ops Lead authority boundary in Myanmar context.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Indonesia</td>
+            <td>Additive — structural authority boundary change for SM</td>
+            <td>Indonesian Manpower Law (No. 13/2003 as amended) governs employment contracts. Changes to role conditions may require written consent. High sensitivity given Indonesia SM's resistance profile — any process misstep will be noticed and may be escalated.</td>
+            <td>Legal review: does introduction of Group Ops Lead coordination function constitute a unilateral change to Indonesia SM's employment conditions? If so, consent process required. Involve local counsel before announcement.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Thailand</td>
+            <td>Additive — no direct role changes</td>
+            <td>Thai Labour Protection Act governs employment conditions. Additive restructure with no role changes for Thailand SM has minimal legal implication. New roles hired in Thailand (if any) require Thai employment contracts.</td>
+            <td>Confirm Group Ops Lead employment base country. If based in Thailand, Thai contract and work permit requirements apply.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Valentis Restructure 2026</div>
+    <h1 class="page-title">Valentis<br><em>Restructure 2026</em></h1>
+    <p class="page-desc">The full playbook applied to Valentis. Two structural changes — Group Ops Lead and HR Coordinator — sequenced correctly across the five phases, with the people impact mapped and the risk of each step identified.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">Valentis Group — 2026 Structural Change Summary</div>
+    <div class="vx-title">Two additive roles. One sequencing requirement. Three risk points.</div>
+    <div class="vx-body">The 2026 Valentis restructure is minimal and additive — two new roles, no redundancies, no reporting line changes for existing roles. Its complexity lies not in scale but in sequencing (Ops Lead must precede Country 5 SM) and stakeholder management (Indonesia SM must be handled before the group announcement). Getting both right is the HRBP's primary execution challenge.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">The Two Structural Changes</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px">
+      <div style="padding:18px 20px;background:var(--sienna-dim);border:2px solid var(--sienna-border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Change 1 — Q3 2026</div>
+        <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px">Group Operations Lead</div>
+        <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div><strong style="color:var(--sienna)">Grade:</strong> G6</div>
+          <div><strong style="color:var(--sienna)">Reports to:</strong> COO</div>
+          <div><strong style="color:var(--sienna)">Primary purpose:</strong> Coordinate group-wide operational standards and enable cross-country knowledge transfer. Not a line manager of SMs.</div>
+          <div><strong style="color:var(--sienna)">Structural effect:</strong> COO effective span reduced from 6 to 4. SM peer forum established and chaired.</div>
+          <div><strong style="color:var(--sienna)">Critical authority boundary:</strong> Coordinates standards — does not manage SMs. Authority boundary must be explicitly stated by COO to all four SMs before Ops Lead starts.</div>
+          <div><strong style="color:var(--sienna)">Sequencing:</strong> Must be in post before Country 5 SM is appointed.</div>
+        </div>
+      </div>
+      <div style="padding:18px 20px;background:var(--sienna-dim);border:2px solid var(--sienna-border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Change 2 — Q4 2026</div>
+        <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px">HR Coordinator</div>
+        <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div><strong style="color:var(--sienna)">Grade:</strong> G4</div>
+          <div><strong style="color:var(--sienna)">Reports to:</strong> Group HR Manager (Ba)</div>
+          <div><strong style="color:var(--sienna)">Primary purpose:</strong> Operational HR support — payroll coordination, compliance tracking, onboarding administration — freeing Group HR Manager for strategic work.</div>
+          <div><strong style="color:var(--sienna)">Structural effect:</strong> Group HR capacity increases. Ba's time allocation shifts from 70% operational to 60% strategic by Q1 2027.</div>
+          <div><strong style="color:var(--sienna)">Sequencing:</strong> Hired after Ops Lead is in post and Country 5 entry confirmed. HR Coordinator workload will increase significantly with Country 5 headcount.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Valentis 2026 Restructure — Phase Timeline</div>
+    <table class="dtable">
+      <thead><tr><th>Phase</th><th>Status</th><th>Key deliverables</th><th>Timeline</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700;color:var(--sienna)">Phase 1 — Diagnose</td>
+          <td><span class="chip chip-green">Complete</span></td>
+          <td>OD Tools 2–5 establish structural gap. COO span at ceiling. Country 5 without redesign = span of 8+. Diagnosis documented.</td>
+          <td>Jan–Mar 2026</td>
+          <td>HRBP</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--sienna)">Phase 2 — Design</td>
+          <td><span class="chip chip-gold">Active</span></td>
+          <td>Group Ops Lead role profile drafted (Tool 3). HR Coordinator role profile drafted. Cost model complete. Options presented to COO.</td>
+          <td>Apr–May 2026</td>
+          <td>HRBP</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--sienna)">Phase 3 — Decide</td>
+          <td><span class="chip chip-muted">Upcoming</span></td>
+          <td>COO approves design and budget. Communication sequence agreed. Indonesia SM pre-briefing by COO scheduled. All SMs individually informed before group announcement.</td>
+          <td>May–Jun 2026</td>
+          <td>COO + HRBP</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--sienna)">Phase 4 — Implement</td>
+          <td><span class="chip chip-muted">Upcoming</span></td>
+          <td>Group Ops Lead advertised and recruited. Role profiles published. Authority boundary communicated by COO to all SMs. SM peer forum inaugural session held. HR Coordinator recruited Q4.</td>
+          <td>Jun–Oct 2026</td>
+          <td>HRBP + COO</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700;color:var(--sienna)">Phase 5 — Embed</td>
+          <td><span class="chip chip-muted">Upcoming</span></td>
+          <td>90-day structural review. D4 Coordination health re-scored. COO span confirmed at 4. SM peer forum operating. Country 5 SM appointment proceeds.</td>
+          <td>Nov 2026–Q1 2027</td>
+          <td>HRBP</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">Three Risk Points — and How to Manage Each</div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:16px 18px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap"><span class="chip chip-red">Risk 1 — High</span><span style="font-weight:700;color:var(--ink)">Indonesia SM resistance hardens before authority boundary is established</span></div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">If Wirawan S. hears about the Group Ops Lead role through informal channels — or from a group announcement — before the COO has an individual conversation with him, the resistance will be significantly harder to manage. His interpretation will be: "A new layer is being inserted above me." That interpretation, once formed, is difficult to correct.<br><br><strong style="color:var(--red)">Mitigation:</strong> COO conducts individual conversation with Indonesia SM before any group announcement. Message: "This role coordinates group standards. It does not manage you. Your reporting line does not change. Here is what changes — and what does not." In writing within 24 hours of the conversation.</div>
+      </div>
+      <div style="padding:16px 18px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:4px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap"><span class="chip chip-gold">Risk 2 — Medium</span><span style="font-weight:700;color:var(--ink)">Group Ops Lead authority boundary is ambiguous and creates conflict at start</span></div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">If the Group Ops Lead role profile does not explicitly define where coordination authority ends, the role holder will naturally push boundaries — and SMs (especially Indonesia) will push back hard. Ambiguity at role level creates structural conflict at day one.<br><br><strong style="color:var(--gold)">Mitigation:</strong> Role profile includes an explicit "Authority boundary" section: "The Group Ops Lead has authority to set group standards and facilitate the SM peer forum. The Group Ops Lead does not have authority to direct, performance manage, or override decisions of Site Managers." This language is non-negotiable in the role design.</div>
+      </div>
+      <div style="padding:16px 18px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:4px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap"><span class="chip chip-gold">Risk 3 — Medium</span><span style="font-weight:700;color:var(--ink)">Ops Lead recruitment takes longer than expected — Country 5 timeline compresses</span></div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">The Group Ops Lead is a specialist hire — G6 with cross-country minerals operations experience and coordination capability. If recruitment takes 4–5 months, the Q3 2026 target slips into Q4, compressing the Country 5 preparation window.<br><br><strong style="color:var(--gold)">Mitigation:</strong> Recruitment commences June 2026 at latest. If no suitable internal candidate, external search begins immediately — not after internal process is exhausted. Interim: COO personally chairs SM peer forum until Ops Lead is in post. The forum does not wait for the role to be filled.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="page-readiness" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Readiness Assessment Tool</div>
+    <h1 class="page-title">Readiness<br><em>Assessment</em></h1>
+    <p class="page-desc">An interactive 10-question readiness assessment for any proposed restructure. Answer each question to generate a readiness rating and a phase-by-phase gap analysis. Use before presenting a restructure proposal to the COO.</p>
+  </div>
+  <div class="rt-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f0e8;margin-bottom:4px">Restructure Readiness Assessment</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:20px">Answer all 10 questions to generate your readiness rating</div>
+
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:8px;margin-top:4px">Phase 1 — Diagnosis</div>
+
+    <div class="rt-q">
+      <div class="rt-qtext">Have you confirmed that this is a structural problem — not a health problem, role design gap, or performance issue?</div>
+      <div class="rt-opts">
+        <div class="rt-opt" onclick="selectRt(this,'ra1','yes')">Yes — confirmed structural</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra1','partial')">Partially — some uncertainty remains</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra1','no')">No — not yet assessed</div>
+      </div>
+    </div>
+    <div class="rt-q">
+      <div class="rt-qtext">Can you state the structural gap in one clear sentence: "The current structure cannot do X, which the strategy requires"?</div>
+      <div class="rt-opts">
+        <div class="rt-opt" onclick="selectRt(this,'ra2','yes')">Yes — clearly articulated</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra2','partial')">Partially — still being refined</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra2','no')">No — cannot state it yet</div>
+      </div>
+    </div>
+    <div class="rt-q">
+      <div class="rt-qtext">Has the COO given go-ahead to proceed to design (Phase 2)?</div>
+      <div class="rt-opts">
+        <div class="rt-opt" onclick="selectRt(this,'ra3','yes')">Yes — formal go-ahead given</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra3','partial')">Informally — not formally confirmed</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra3','no')">No — not yet presented</div>
+      </div>
+    </div>
+
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:8px;margin-top:14px">Phase 2 — Design</div>
+
+    <div class="rt-q">
+      <div class="rt-qtext">Have you drafted complete role profiles (not just org chart boxes) for all new or significantly changed roles?</div>
+      <div class="rt-opts">
+        <div class="rt-opt" onclick="selectRt(this,'ra4','yes')">Yes — full profiles complete</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra4','partial')">Partially — in draft</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra4','no')">No — not yet started</div>
+      </div>
+    </div>
+    <div class="rt-q">
+      <div class="rt-qtext">Have you mapped the people impact — who is affected, how, and what the high-risk stakeholder reactions are likely to be?</div>
+      <div class="rt-opts">
+        <div class="rt-opt" onclick="selectRt(this,'ra5','yes')">Yes — impact fully mapped</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra5','partial')">Partially — some roles mapped</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra5','no')">No — not yet done</div>
+      </div>
+    </div>
+    <div class="rt-q">
+      <div class="rt-qtext">Is the cost of the restructure known and has budget approval been confirmed?</div>
+      <div class="rt-opts">
+        <div class="rt-opt" onclick="selectRt(this,'ra6','yes')">Yes — costed and approved</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra6','partial')">Costed but not yet approved</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra6','no')">No — not yet costed</div>
+      </div>
+    </div>
+
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:8px;margin-top:14px">Phase 3 — Decision &amp; Communication</div>
+
+    <div class="rt-q">
+      <div class="rt-qtext">Has the communication sequence been planned — who hears what, in what order, and from whom?</div>
+      <div class="rt-opts">
+        <div class="rt-opt" onclick="selectRt(this,'ra7','yes')">Yes — fully planned</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra7','partial')">Partially — group plan but no individual sequencing</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra7','no')">No — not yet planned</div>
+      </div>
+    </div>
+    <div class="rt-q">
+      <div class="rt-qtext">Have individual conversations been planned for all high-risk stakeholders before the group announcement?</div>
+      <div class="rt-opts">
+        <div class="rt-opt" onclick="selectRt(this,'ra8','yes')">Yes — conversations scheduled</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra8','partial')">Identified but not scheduled</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra8','no')">No — not yet identified</div>
+      </div>
+    </div>
+
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:8px;margin-top:14px">Legal &amp; Implementation</div>
+
+    <div class="rt-q">
+      <div class="rt-qtext">Have country-specific legal obligations been reviewed by local counsel for all affected countries?</div>
+      <div class="rt-opts">
+        <div class="rt-opt" onclick="selectRt(this,'ra9','yes')">Yes — reviewed and clear</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra9','partial')">Some countries reviewed</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra9','no')">No — not yet reviewed</div>
+      </div>
+    </div>
+    <div class="rt-q">
+      <div class="rt-qtext">Has an implementation sequence been agreed — including go-live date, milestones, and 90-day embed review?</div>
+      <div class="rt-opts">
+        <div class="rt-opt" onclick="selectRt(this,'ra10','yes')">Yes — full implementation plan</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra10','partial')">Timeline agreed but milestones not defined</div>
+        <div class="rt-opt" onclick="selectRt(this,'ra10','no')">No — not yet planned</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn btn-sienna" onclick="scoreReadiness()">Generate Readiness Report →</button>
+      <button class="btn btn-ghost" onclick="clearReadiness()">Reset</button>
+    </div>
+    <div class="rt-result" id="rt-result">
+      <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;margin-bottom:14px">Readiness Report</div>
+      <div id="rt-score-display" style="margin-bottom:14px"></div>
+      <div id="rt-gaps" style="display:grid;gap:6px"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-comms" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Communication Templates</div>
+    <h1 class="page-title">Communication<br><em>Templates</em></h1>
+    <p class="page-desc">Ready-to-use communication frameworks for the four critical restructure conversations at Valentis. Each template is structured around the principle: state what is changing, why, what it means for this person, and what is not changing. Adapt tone and specific detail before use.</p>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('ct-coo',this)">COO → Indonesia SM</div>
+    <div class="tab" onclick="showTab('ct-allsm',this)">COO → All SMs</div>
+    <div class="tab" onclick="showTab('ct-group',this)">Group Announcement</div>
+    <div class="tab" onclick="showTab('ct-hrbp',this)">HRBP Briefing Guide</div>
+  </div>
+
+  <div class="tab-body active" id="tab-ct-coo">
+    <div class="card">
+      <div class="card-title">COO → Indonesia SM — Individual Pre-Briefing</div>
+      <div class="card-body" style="margin-bottom:14px">This conversation must happen before any group announcement. It is a 1:1 conversation — not an email. The COO delivers it. The HRBP prepares the COO and may be present if appropriate. Duration: 20–30 minutes.</div>
+      <div style="background:var(--slate);border-radius:4px;padding:22px 26px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:14px">Conversation structure — COO talking points</div>
+        <div style="display:grid;gap:10px">
+          <div style="padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Opening — context</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.85">"I want to talk to you before I brief the wider team, because what I'm about to share affects the group structure — and I want to make sure you hear it from me first and have a chance to ask questions."</div>
+          </div>
+          <div style="padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">The change — what is happening</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.85">"We're adding a Group Operations Lead role to the group structure. The purpose of this role is to coordinate standards across all four countries — and five once we enter the next market — and to run the Site Manager peer forum. It's a coordination role, not a management role."</div>
+          </div>
+          <div style="padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">The authority boundary — explicit and direct</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.85">"I want to be very clear about what this role does and does not mean for you. The Ops Lead does not manage you. Your reporting line to me does not change. The Ops Lead has no authority to direct your team or override your operational decisions. What they will do is work with you — and all the SMs — on group-wide standards and practices. You will still run Indonesia."</div>
+          </div>
+          <div style="padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Why now — the rationale</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.85">"With Country 5 coming, my direct span would reach eight — which is not sustainable. This role protects the quality of my engagement with you and the other SMs. It's a growth investment, not a cost-cutting exercise. No roles are being removed."</div>
+          </div>
+          <div style="padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Close — invitation for questions</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.85">"I'd like to hear your reaction. What questions do you have? Is there anything about this that concerns you that I haven't addressed?" [Pause — allow silence.] "I'll also send you a written summary of what we've discussed today so we're both clear on the scope."</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:12px 16px;background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.25);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna3);margin-bottom:4px">HRBP prep note</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7">Prepare COO for the likely pushback: "This is just a management layer in disguise." The COO must be ready to repeat the authority boundary clearly and without defensiveness. If the SM says "I'm not comfortable with this", the COO response is: "I hear that. I want to understand specifically what concerns you." Do not argue. Do not explain at length. Ask and listen.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-ct-allsm">
+    <div class="card">
+      <div class="card-title">COO → All SMs — Structured Briefing</div>
+      <div class="card-body" style="margin-bottom:14px">After all individual conversations are complete — Indonesia SM first — the COO briefs all four SMs together. This can be a video call. It should not be an email. Duration: 45–60 minutes including Q&amp;A.</div>
+      <div style="background:var(--slate);border-radius:4px;padding:22px 26px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:14px">Group SM briefing — agenda and talking points</div>
+        <div style="display:grid;gap:10px">
+          <div style="padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">1. Context (5 min)</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.85">"We are growing. By Q2 2027 we will be at 65 people across five countries. The structure that got us to where we are today is not the right structure for where we're going. We're making two targeted additions to the group structure to prepare for that growth. No roles are being removed. No reporting lines are changing."</div>
+          </div>
+          <div style="padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">2. The changes (15 min)</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.85">"We are adding two roles. First: a Group Operations Lead — G6, reports to me, focused on coordinating group standards and running the SM peer forum. This role does not manage any of you. Second: an HR Coordinator, reporting to Ba, supporting the group HR workload as we scale." [Distribute one-page role summary for each new role.]</div>
+          </div>
+          <div style="padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">3. What this means for you (10 min)</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.85">"Your roles as Site Managers are unchanged. You still report directly to me. The Group Ops Lead is a resource for you — they will help us share what's working across countries, set group standards more consistently, and run a quarterly forum where we can all learn from each other. [Thailand SM] has already shown us what's possible when best practice travels across the group."</div>
+          </div>
+          <div style="padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">4. Timeline and next steps (5 min)</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.85">"We are recruiting for the Ops Lead role from [month]. Ba will be in touch with each of you individually as the process moves forward. The HR Coordinator role follows in Q4. Any questions on timeline or process — come to Ba or to me directly."</div>
+          </div>
+          <div style="padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">5. Q&amp;A (20 min)</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.85">Hold space for questions. Do not rush this. The quality of the Q&amp;A determines whether SMs leave the briefing with clarity or with speculation. HRBP takes notes. Any questions that cannot be answered immediately are responded to in writing within 48 hours.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-ct-group">
+    <div class="card">
+      <div class="card-title">Group-Wide Announcement — Written Communication</div>
+      <div class="card-body" style="margin-bottom:14px">After all SMs have been individually briefed, a written announcement is distributed to all group staff. Drafted by HRBP, reviewed and approved by COO, sent from COO. Clear, brief, and specific.</div>
+      <div style="background:var(--slate);border-radius:4px;padding:22px 26px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:12px">Draft announcement — from COO to all staff</div>
+        <div style="font-size:13.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:2;font-family:var(--fb)">
+          <p style="margin-bottom:10px"><strong style="color:#f5f0e8">Subject: Valentis Group — Structural Update</strong></p>
+          <p style="margin-bottom:10px">Team,</p>
+          <p style="margin-bottom:10px">Valentis is growing. We are on track for Country 5 entry in 2027 and a team of 65 people across our operations. To prepare for that growth, we are making two targeted additions to the group structure.</p>
+          <p style="margin-bottom:10px"><strong style="color:#f5f0e8">Group Operations Lead (G6)</strong> — A new role reporting to me, responsible for coordinating group-wide operational standards and facilitating the Site Manager peer forum. This is a coordination role. Site Manager reporting lines are unchanged. We are recruiting for this role from [month].</p>
+          <p style="margin-bottom:10px"><strong style="color:#f5f0e8">HR Coordinator (G4)</strong> — A new role reporting to Ba, providing operational HR support as our team grows. We expect to recruit for this role in Q4 2026.</p>
+          <p style="margin-bottom:10px">No existing roles are being removed or significantly changed. If you have questions about what this means for your role, please speak to your Site Manager or to Ba directly.</p>
+          <p>This is a strong period for Valentis. These additions are an investment in the infrastructure we need to operate well across a larger, more complex group.</p>
+          <p style="margin-top:10px">[COO name]</p>
+        </div>
+        <div style="margin-top:14px;padding:12px 16px;background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.25);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna3);margin-bottom:4px">HRBP note</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7">Send in the local language where possible — or with a local language translation note. Ensure all SMs have been briefed before this is distributed. Confirm with COO the exact send date. Do not send on a Friday — allows no time for questions before the weekend.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-ct-hrbp">
+    <div class="card">
+      <div class="card-title">HRBP Briefing Guide — Questions to Prepare For</div>
+      <div class="card-body" style="margin-bottom:14px">The HRBP must be prepared to field questions from any role holder at any point in the process. These are the most common questions — with the recommended response framework.</div>
+      <table class="dtable">
+        <thead><tr><th>Question</th><th>Who asks it</th><th>HRBP response framework</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">"Is my job safe?"</td><td>Most commonly G3/G4 site staff who hear about structural change without full context</td><td>Answer directly and immediately: "Yes. This change adds two new roles. No existing roles are being removed. Your role is not affected." Do not qualify this answer unnecessarily.</td></tr>
+          <tr><td style="font-weight:600">"Does the Ops Lead manage us now?"</td><td>Any Site Manager — but especially Indonesia</td><td>"No. The Group Ops Lead does not manage Site Managers. You continue to report to the COO. The Ops Lead coordinates group standards and runs the peer forum — they have no authority over your team or your operations."</td></tr>
+          <tr><td style="font-weight:600">"Why wasn't I consulted?"</td><td>Higher-risk stakeholders who feel they should have had input into the design</td><td>"The design decision sits with the COO. Your input on how the role works in practice is valuable — and the Ops Lead's first order of business will be to work with each of you on how the coordination function should operate. That is where your expertise is most relevant."</td></tr>
+          <tr><td style="font-weight:600">"When will this happen?"</td><td>Any staff member</td><td>Give the honest timeline. "We are recruiting for the Ops Lead from [month]. We expect to have someone in role by [Q3 target]. The HR Coordinator follows in Q4."</td></tr>
+          <tr><td style="font-weight:600">"What does this mean for my career?"</td><td>G4 drillers, G5 SMs — especially high performers assessing whether Valentis has room for their development</td><td>"This restructure creates two new roles — one of which is G6. That expands the pathway within the group. Your development plan is not changing as a result of this. Let's talk about your specific situation."</td></tr>
+          <tr><td style="font-weight:600">"Is this about the Indonesia performance?"</td><td>Indonesia SM or team members</td><td>"No. This is a group-wide structural investment driven by our growth trajectory. The decision would be the same regardless of any individual country's current performance."</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showTab(id,el){
+  document.querySelectorAll('.tab-body').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');
+  if(el)el.classList.add('active');
+}
+function showPhase(n){
+  document.querySelectorAll('.phase-step').forEach(function(s,i){s.classList.toggle('active',i===n);});
+  document.querySelectorAll('.phase-content').forEach(function(c,i){c.classList.toggle('active',i===n);});
+}
+function toggleCk(el){el.classList.toggle('done');}
+function selectRt(el,name,val){
+  el.closest('.rt-opts').querySelectorAll('.rt-opt').forEach(function(o){o.classList.remove('sel');});
+  el.classList.add('sel');
+  el.dataset.val=val;
+  el.dataset.name=name;
+}
+function scoreReadiness(){
+  var questions=[
+    {id:'ra1',label:'Structural problem confirmed',phase:'P1 — Diagnosis'},
+    {id:'ra2',label:'Structural gap clearly stated',phase:'P1 — Diagnosis'},
+    {id:'ra3',label:'COO go-ahead received',phase:'P1 — Diagnosis'},
+    {id:'ra4',label:'Role profiles drafted',phase:'P2 — Design'},
+    {id:'ra5',label:'People impact mapped',phase:'P2 — Design'},
+    {id:'ra6',label:'Cost approved',phase:'P2 — Design'},
+    {id:'ra7',label:'Communication sequence planned',phase:'P3 — Decision'},
+    {id:'ra8',label:'Individual conversations planned',phase:'P3 — Decision'},
+    {id:'ra9',label:'Legal obligations reviewed',phase:'Legal'},
+    {id:'ra10',label:'Implementation plan agreed',phase:'Implementation'}
+  ];
+  var totalScore=0;var gaps=[];var allAnswered=true;
+  for(var i=0;i<questions.length;i++){
+    var q=questions[i];
+    var sel=document.querySelector('.rt-opt[data-name="'+q.id+'"]');
+    if(!sel){allAnswered=false;break;}
+    var v=sel.dataset.val;
+    if(v==='yes'){totalScore+=2;}
+    else if(v==='partial'){totalScore+=1;gaps.push({label:q.label,phase:q.phase,status:'partial'});}
+    else{gaps.push({label:q.label,phase:q.phase,status:'no'});}
+  }
+  if(!allAnswered){alert('Please answer all 10 questions.');return;}
+  var maxScore=20;var pct=Math.round((totalScore/maxScore)*100);
+  var readyLabel=pct>=80?'Ready to proceed to next phase':pct>=50?'Partially ready — address gaps before proceeding':'Not ready — significant preparation required';
+  var readyColor=pct>=80?'#2d6a4f':pct>=50?'#8a6914':'#9b1a1a';
+  var sdEl=document.getElementById('rt-score-display');
+  sdEl.innerHTML='<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px"><span style="font-family:var(--fd);font-size:42px;font-weight:800;color:'+readyColor+';line-height:1">'+pct+'%</span><span style="font-family:var(--fm);font-size:10px;color:'+readyColor+'">'+readyLabel+'</span></div><div style="height:6px;border-radius:3px;background:rgba(255,255,255,0.06);overflow:hidden;margin-bottom:8px"><div style="height:100%;border-radius:3px;width:'+pct+'%;background:'+readyColor+'"></div></div>';
+  var gapsEl=document.getElementById('rt-gaps');
+  gapsEl.innerHTML='';
+  if(gaps.length===0){
+    gapsEl.innerHTML='<div style="padding:12px 16px;background:rgba(45,106,79,0.12);border:1px solid rgba(45,106,79,0.25);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.6);font-weight:300">All readiness checks passed. You are ready to proceed to the next phase. Proceed with confidence — but continue to apply the 5-phase model rigorously.</div>';
+  } else {
+    gapsEl.innerHTML='<div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px">Gaps requiring attention before proceeding</div>';
+    for(var j=0;j<gaps.length;j++){
+      var g=gaps[j];
+      var c=g.status==='partial'?'rgba(138,105,20,0.15)':'rgba(155,26,26,0.12)';
+      var bc=g.status==='partial'?'rgba(138,105,20,0.3)':'rgba(155,26,26,0.25)';
+      var lc=g.status==='partial'?'#c9a227':'#c44e28';
+      gapsEl.innerHTML+='<div style="padding:10px 14px;background:'+c+';border:1px solid '+bc+';border-radius:3px;display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:13px;color:rgba(255,255,255,0.65);font-weight:300">'+g.label+'</span><div style="display:flex;align-items:center;gap:8px"><span style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3)">'+g.phase+'</span><span style="font-family:var(--fm);font-size:8px;color:'+lc+'">'+g.status.toUpperCase()+'</span></div></div>';
+    }
+  }
+  var res=document.getElementById('rt-result');res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearReadiness(){
+  document.querySelectorAll('.rt-opt').forEach(function(o){o.classList.remove('sel');delete o.dataset.val;delete o.dataset.name;});
+  document.getElementById('rt-result').style.display='none';
+}
+</script>
+</body>
+</html>

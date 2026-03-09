@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM Dashboard & Analytics — Valentis</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c14;
+  --surface: #0d1424;
+  --surface2: #111c30;
+  --surface3: #172040;
+  --border: #1e2d4a;
+  --border2: #263860;
+  --teal: #00d4b8;
+  --teal-dim: rgba(0,212,184,0.1);
+  --teal-glow: rgba(0,212,184,0.05);
+  --amber: #f5a623;
+  --amber-dim: rgba(245,166,35,0.1);
+  --red: #ff4757;
+  --red-dim: rgba(255,71,87,0.1);
+  --green: #2ed573;
+  --green-dim: rgba(46,213,115,0.1);
+  --blue: #3d9fff;
+  --blue-dim: rgba(61,159,255,0.1);
+  --purple: #9b59b6;
+  --purple-dim: rgba(155,89,182,0.1);
+  --text: #e8f0ff;
+  --text2: #7a90b8;
+  --text3: #3d5070;
+  --sidebar-w: 240px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  padding: 24px 18px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-chip {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: var(--teal-dim);
+  border: 1px solid rgba(0,212,184,0.2);
+  padding: 3px 8px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.logo-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.logo-sub {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
+.sidebar-section {
+  padding: 14px 10px 6px;
+}
+
+.sidebar-section-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 0 8px;
+  margin-bottom: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.12s;
+  color: var(--text2);
+  font-size: 12.5px;
+  font-weight: 400;
+  margin-bottom: 1px;
+  border: 1px solid transparent;
+}
+
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+
+.nav-item.active {
+  background: var(--teal-dim);
+  border-color: rgba(0,212,184,0.2);
+  color: var(--teal);
+  font-weight: 500;
+}
+
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text3);
+  flex-shrink: 0;
+}
+.nav-item.active .nav-dot { background: var(--teal); }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.data-freshness {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 11px;
+}
+
+.data-freshness-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 4px;
+}
+
+.data-freshness-value {
+  color: var(--teal);
+  font-weight: 500;
+}
+
+/* MAIN */
+.main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
+
+/* TOP BAR */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.topbar-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar-period {
+  display: flex;
+  gap: 2px;
+  background: var(--surface2);
+  padding: 3px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.period-btn {
+  padding: 5px 12px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.period-btn.active { background: var(--teal); color: #0a1a14; font-weight: 600; }
+
+/* PAGES */
+.page { display: none; padding: 32px 40px; }
+.page.active { display: block; }
+
+/* KPI STRIP */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.kpi-card.teal::before { background: var(--teal); }
+.kpi-card.amber::before { background: var(--amber); }
+.kpi-card.red::before { background: var(--red); }
+.kpi-card.green::before { background: var(--green); }
+.kpi-card.blue::before { background: var(--blue); }
+
+.kpi-card:hover { border-color: var(--border2); }
+
+.kpi-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+.kpi-value {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.kpi-card.teal .kpi-value { color: var(--teal); }
+.kpi-card.amber .kpi-value { color: var(--amber); }
+.kpi-card.red .kpi-value { color: var(--red); }
+.kpi-card.green .kpi-value { color: var(--green); }
+.kpi-card.blue .kpi-value { color: var(--blue); }
+
+.kpi-sub {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.kpi-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.kpi-delta.up { color: var(--green); }
+.kpi-delta.down { color: var(--red); }
+.kpi-delta.flat { color: var(--text3); }
+
+/* CHARTS */
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-wide { grid-column: 1 / -1; }
+
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.chart-subtitle {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.chart-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.badge-teal { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(0,212,184,0.2); }
+.badge-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
+.badge-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,71,87,0.2); }
+.badge-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(46,213,115,0.2); }
+
+/* DISTRIBUTION BAR */
+.dist-bar-wrap {
+  margin-bottom: 12px;
+}
+
+.dist-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.dist-bar-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.dist-bar-pill {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.dist-bar-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  gap: 12px;
+}
+
+.dist-bar-track {
+  height: 8px;
+  background: var(--surface2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dist-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* EMPLOYEE TABLE */
+.emp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.emp-table th {
+  text-align: left;
+  padding: 9px 14px;
+  background: var(--surface2);
+  color: var(--text3);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+
+.emp-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: middle;
+}
+
+.emp-table tr:last-child td { border-bottom: none; }
+.emp-table tr:hover td { background: var(--surface2); color: var(--text); }
+
+.rating-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.r5 { background: var(--green-dim); color: var(--green); border: 1px solid rgba(46,213,115,0.25); }
+.r4 { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(61,159,255,0.25); }
+.r3 { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,166,35,0.25); }
+.r2 { background: rgba(255,140,0,0.1); color: #ff8c00; border: 1px solid rgba(255,140,0,0.25); }
+.r1 { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,71,87,0.25); }
+.r0 { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+
+/* RISK INDICATOR */
+.risk-bar {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.risk-seg {
+  width: 8px; height: 14px;
+  border-radius: 2px;
+  background: var(--surface2);
+}
+
+.risk-seg.filled-green { background: var(--green); }
+.risk-seg.filled-amber { background: var(--amber); }
+.risk-seg.filled-red { background: var(--red); }
+
+/* PROGRESS RING */
+.ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.ring-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* COUNTRY GRID */
+.country-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.country-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.country-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.country-flag {
+  font-size: 18px;
+}
+
+.country-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.country-stat:last-child { border-bottom: none; }
+.country-stat-label { color: var(--text3); }
+.country-stat-value { font-family: var(--font-mono); font-size: 11px; color: var(--text); font-weight: 500; }
+
+/* ALERT ITEMS */
+.alert-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: border-color 0.12s;
+}
+
+.alert-item:hover { border-color: var(--border2); }
+
+.alert-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.alert-icon.red { background: var(--red-dim); }
+.alert-icon.amber { background: var(--amber-dim); }
+.alert-icon.green { background: var(--green-dim); }
+
+.alert-content { flex: 1; }
+.alert-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.alert-desc { font-size: 12px; color: var(--text3); line-height: 1.5; }
+
+.alert-action {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--teal);
+  background: var(--teal-dim);
+  border: 1px solid rgba(0,212,184,0.2);
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  align-self: center;
+  transition: all 0.12s;
+}
+
+.alert-action:hover { background: rgba(0,212,184,0.2); }
+
+/* CALIBRATION VIEW */
+.calib-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.calib-metric {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.calib-metric-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.calib-metric-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+/* TABS */
+.tab-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+  padding: 9px 18px;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* SECTION HEADER */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.section-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+}
+
+/* DIVIDER */
+.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+/* INPUT DATA SECTION */
+.data-input-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.data-input-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.data-input-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 12px;
+}
+
+.mini-form-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.mini-label {
+  font-size: 11px;
+  color: var(--text3);
+  flex: 1;
+  white-space: nowrap;
+}
+
+.mini-input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 8px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  width: 56px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.12s;
+}
+
+.mini-input:focus { border-color: var(--teal); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 7px;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.btn-primary { background: var(--teal); color: #071410; }
+.btn-primary:hover { background: #00f0d0; }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text2); }
+.btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+
+.btn-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+
+/* CANVAS CHARTS */
+canvas { max-width: 100%; }
+
+/* ANIMATION */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page.active .kpi-card {
+  animation: fadeUp 0.4s ease both;
+}
+
+.kpi-card:nth-child(1) { animation-delay: 0.05s; }
+.kpi-card:nth-child(2) { animation-delay: 0.1s; }
+.kpi-card:nth-child(3) { animation-delay: 0.15s; }
+.kpi-card:nth-child(4) { animation-delay: 0.2s; }
+.kpi-card:nth-child(5) { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-chip">Executive View</div>
+    <div class="logo-title">PM Dashboard</div>
+    <div class="logo-sub">Tool 4 of 5 — Valentis Group</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Views</div>
+
+    <div class="nav-item active" onclick="showPage('overview', this)">
+      <div class="nav-dot"></div>Company Overview
+    </div>
+    <div class="nav-item" onclick="showPage('distribution', this)">
+      <div class="nav-dot"></div>Rating Distribution
+    </div>
+    <div class="nav-item" onclick="showPage('highperformers', this)">
+      <div class="nav-dot"></div>High Performers
+    </div>
+    <div class="nav-item" onclick="showPage('flightrisk', this)">
+      <div class="nav-dot"></div>Flight Risk
+    </div>
+    <div class="nav-item" onclick="showPage('completion', this)">
+      <div class="nav-dot"></div>Review Completion
+    </div>
+    <div class="nav-item" onclick="showPage('calibration', this)">
+      <div class="nav-dot"></div>Calibration Analysis
+    </div>
+    <div class="nav-item" onclick="showPage('input', this)">
+      <div class="nav-dot"></div>Enter / Update Data
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="data-freshness">
+      <div class="data-freshness-label">Data Period</div>
+      <div class="data-freshness-value">Annual Review 2026</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px;">28 employees · 4 countries</div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-title" id="topbar-title">Company Overview</div>
+  <div class="topbar-right">
+    <div class="topbar-period">
+      <button class="period-btn active">2026</button>
+      <button class="period-btn">H1 2026</button>
+      <button class="period-btn">H2 2026</button>
+    </div>
+    <div class="topbar-meta">Last updated: <span id="last-updated">—</span></div>
+  </div>
+</div>
+
+<!-- PAGE: OVERVIEW -->
+<div id="page-overview" class="page active">
+
+  <div class="kpi-strip">
+    <div class="kpi-card teal">
+      <div class="kpi-label">Total Headcount</div>
+      <div class="kpi-value">28</div>
+      <div class="kpi-sub">Across 4 countries</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Reviews Complete</div>
+      <div class="kpi-value" id="kpi-complete">—</div>
+      <div class="kpi-sub" id="kpi-complete-sub">—</div>
+      <div class="kpi-delta" id="kpi-complete-delta"></div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Avg Company Rating</div>
+      <div class="kpi-value" id="kpi-avg">—</div>
+      <div class="kpi-sub">Target: 2.8 – 3.4</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">Flight Risks</div>
+      <div class="kpi-value" id="kpi-risk">—</div>
+      <div class="kpi-sub">High performer + Rating 4/5</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Active PIPs</div>
+      <div class="kpi-value" id="kpi-pip">—</div>
+      <div class="kpi-sub">Rating 1 or formal PIP</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Rating Distribution</div>
+          <div class="chart-subtitle">All employees — 2026 Annual Review</div>
+        </div>
+        <div class="chart-badge badge-teal">28 employees</div>
+      </div>
+      <canvas id="chart-dist-overview" height="200"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Distribution by Country</div>
+          <div class="chart-subtitle">Average rating per country</div>
+        </div>
+        <div class="chart-badge badge-amber">4 countries</div>
+      </div>
+      <canvas id="chart-country" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Distribution by Function</div>
+          <div class="chart-subtitle">Average rating per department</div>
+        </div>
+      </div>
+      <canvas id="chart-dept" height="180"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Review Completion Rate</div>
+          <div class="chart-subtitle">Self-assess + Manager + Calibrated + Signed</div>
+        </div>
+        <div class="chart-badge badge-green" id="completion-pct-badge">—</div>
+      </div>
+      <canvas id="chart-completion-overview" height="180"></canvas>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:4px;">
+    <div class="section-title">Alerts & Actions Required</div>
+    <div class="section-meta" id="alerts-count">Loading...</div>
+  </div>
+  <div id="alerts-container"></div>
+</div>
+
+<!-- PAGE: DISTRIBUTION -->
+<div id="page-distribution" class="page">
+  <div class="section-header">
+    <div class="section-title">Rating Distribution — Full Analysis</div>
+    <div class="section-meta">Annual Review 2026</div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:16px;">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Company-Wide Distribution vs Reference Range</div>
+        <div class="chart-subtitle">Actual count vs expected range for 28 employees. Shaded band = healthy range.</div>
+      </div>
+      <div class="chart-badge badge-teal" id="dist-status-badge">—</div>
+    </div>
+    <canvas id="chart-dist-full" height="220"></canvas>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Distribution Bar Chart</div>
+      </div>
+      <div id="dist-bars"></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Grade Inflation Check</div>
+        <div class="chart-subtitle">% of employees rated 4 or 5 by manager (pre-calibration)</div>
+      </div>
+      <canvas id="chart-inflation" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="chart-title">Distribution Health Assessment</div>
+    </div>
+    <div id="dist-health"></div>
+  </div>
+</div>
+
+<!-- PAGE: HIGH PERFORMERS -->
+<div id="page-highperformers" class="page">
+  <div class="section-header">
+    <div class="section-title">High Performer Identification</div>
+    <div class="section-meta">Rating 4 and 5 employees — retention priority</div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">High Performer Count</div>
+        <div class="chart-subtitle">Ratings 4 and 5 by country</div>
+      </div>
+      <canvas id="chart-hp-country" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">High Performer by Function</div>
+        <div class="chart-subtitle">Where top talent is concentrated</div>
+      </div>
+      <canvas id="chart-hp-dept" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:16px;">
+    <div class="chart-header">
+      <div class="chart-title">High Performer Register</div>
+      <div class="chart-subtitle">All employees rated 4 or 5 — with retention risk flag and recommended action</div>
+    </div>
+    <table class="emp-table" id="hp-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Country</th>
+          <th>Function</th>
+          <th>Rating</th>
+          <th>Score</th>
+          <th>Years Service</th>
+          <th>Retention Risk</th>
+          <th>Recommended Action</th>
+        </tr>
+      </thead>
+      <tbody id="hp-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="chart-title">Succession Readiness</div>
+      <div class="chart-subtitle">High performers assessed for role expansion or promotion readiness</div>
+    </div>
+    <div id="succession-content"></div>
+  </div>
+</div>
+
+<!-- PAGE: FLIGHT RISK -->
+<div id="page-flightrisk" class="page">
+  <div class="section-header">
+    <div class="section-title">Flight Risk Indicators</div>
+    <div class="section-meta">Employees most likely to leave — and why it matters</div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:16px;">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">What Is a Flight Risk?</div>
+        <div class="chart-subtitle">Valentis definition — 3 or more risk factors present</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px;">High-Risk Factors</div>
+        <ul style="list-style:none;padding:0;">
+          <li style="font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);">Rating 4 or 5 for 2+ consecutive years</li>
+          <li style="font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);">No salary increase in last 12 months</li>
+          <li style="font-size:12px;color:var(--text2);padding:4px 0;">No promotion or role expansion in 2+ years</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px;">Medium-Risk Factors</div>
+        <ul style="list-style:none;padding:0;">
+          <li style="font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);">Critical role (hard to backfill)</li>
+          <li style="font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);">Below-market compensation</li>
+          <li style="font-size:12px;color:var(--text2);padding:4px 0;">Mentioned career concerns in review</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Market Context</div>
+        <ul style="list-style:none;padding:0;">
+          <li style="font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);">Drillers: High regional demand, 60-90 day replacement</li>
+          <li style="font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);">Site Managers: Extremely scarce in SEA</li>
+          <li style="font-size:12px;color:var(--text2);padding:4px 0;">Finance/HR: 45-60 day replacement typical</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Flight Risk Score Distribution</div>
+        <div class="chart-subtitle">Number of employees by risk level</div>
+      </div>
+      <canvas id="chart-risk-dist" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Risk by Country</div>
+        <div class="chart-subtitle">High + medium risk employees per country</div>
+      </div>
+      <canvas id="chart-risk-country" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="chart-title">Flight Risk Register</div>
+      <div class="chart-subtitle">All employees with 2+ risk factors — action required before exit interview</div>
+    </div>
+    <table class="emp-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Country</th>
+          <th>Role</th>
+          <th>Rating</th>
+          <th>Risk Level</th>
+          <th>Key Risk Factors</th>
+          <th>Urgency</th>
+          <th>Retention Action</th>
+        </tr>
+      </thead>
+      <tbody id="risk-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PAGE: COMPLETION -->
+<div id="page-completion" class="page">
+  <div class="section-header">
+    <div class="section-title">Review Completion Rates</div>
+    <div class="section-meta">2026 Annual Review — all stages</div>
+  </div>
+
+  <div class="kpi-strip" style="grid-template-columns:repeat(4,1fr);">
+    <div class="kpi-card teal">
+      <div class="kpi-label">Self-Assessments</div>
+      <div class="kpi-value" id="comp-kpi-sa">—</div>
+      <div class="kpi-sub">of 28 submitted</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Manager Assessments</div>
+      <div class="kpi-value" id="comp-kpi-ma">—</div>
+      <div class="kpi-sub">of 28 submitted</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Calibrated</div>
+      <div class="kpi-value" id="comp-kpi-cal">—</div>
+      <div class="kpi-sub">HR sign-off complete</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Signed & Filed</div>
+      <div class="kpi-value" id="comp-kpi-sig">—</div>
+      <div class="kpi-sub">Fully complete</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Completion by Stage</div>
+        <div class="chart-subtitle">Progress through the review pipeline</div>
+      </div>
+      <canvas id="chart-completion-stages" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Completion by Country</div>
+        <div class="chart-subtitle">% of reviews fully complete per country</div>
+      </div>
+      <canvas id="chart-completion-country" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="chart-title">Overdue & Pending Actions</div>
+      <div class="chart-subtitle">Reviews not yet complete — action required</div>
+    </div>
+    <div id="overdue-container"></div>
+  </div>
+</div>
+
+<!-- PAGE: CALIBRATION -->
+<div id="page-calibration" class="page">
+  <div class="section-header">
+    <div class="section-title">Calibration Analysis</div>
+    <div class="section-meta">Manager-assigned vs calibrated ratings — checking for bias</div>
+  </div>
+
+  <div class="calib-grid">
+    <div class="calib-metric">
+      <div class="calib-metric-value" style="color:var(--amber);" id="calib-pre-avg">—</div>
+      <div class="calib-metric-label">Pre-Calibration Avg</div>
+    </div>
+    <div class="calib-metric">
+      <div class="calib-metric-value" style="color:var(--teal);" id="calib-post-avg">—</div>
+      <div class="calib-metric-label">Post-Calibration Avg</div>
+    </div>
+    <div class="calib-metric">
+      <div class="calib-metric-value" style="color:var(--blue);" id="calib-delta">—</div>
+      <div class="calib-metric-label">Rating Adjustment</div>
+    </div>
+    <div class="calib-metric">
+      <div class="calib-metric-value" style="color:var(--green);" id="calib-changed">—</div>
+      <div class="calib-metric-label">Ratings Changed</div>
+    </div>
+    <div class="calib-metric">
+      <div class="calib-metric-value" style="color:var(--red);" id="calib-inflation">—</div>
+      <div class="calib-metric-label">Pre-Calib 4s &amp; 5s</div>
+    </div>
+    <div class="calib-metric">
+      <div class="calib-metric-value" style="color:var(--teal);" id="calib-post-inflation">—</div>
+      <div class="calib-metric-label">Post-Calib 4s &amp; 5s</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Pre vs Post Calibration</div>
+        <div class="chart-subtitle">Distribution shift after calibration session</div>
+      </div>
+      <canvas id="chart-calib-compare" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Manager Calibration Adjustment</div>
+        <div class="chart-subtitle">How much each manager's ratings moved</div>
+      </div>
+      <canvas id="chart-mgr-adjust" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="chart-title">Calibration Flags</div>
+      <div class="chart-subtitle">Patterns that indicate bias or inconsistency</div>
+    </div>
+    <div id="calib-flags"></div>
+  </div>
+</div>
+
+<!-- PAGE: INPUT DATA -->
+<div id="page-input" class="page">
+  <div class="section-header">
+    <div class="section-title">Enter & Update Performance Data</div>
+    <div class="section-meta">Update the underlying data powering all dashboard views</div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;">
+    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;">Step 1 — Distribution Data (Company-Wide Counts)</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;">
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Rating 5 — Exceptional</div>
+        <input class="mini-input" style="width:100%;" id="in-r5" type="number" value="2" min="0" max="28" oninput="syncData()">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Rating 4 — Strong</div>
+        <input class="mini-input" style="width:100%;" id="in-r4" type="number" value="7" min="0" max="28" oninput="syncData()">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Rating 3 — Meets</div>
+        <input class="mini-input" style="width:100%;" id="in-r3" type="number" value="14" min="0" max="28" oninput="syncData()">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Rating 2 — Needs Impr</div>
+        <input class="mini-input" style="width:100%;" id="in-r2" type="number" value="3" min="0" max="28" oninput="syncData()">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Rating 1 — Unsat</div>
+        <input class="mini-input" style="width:100%;" id="in-r1" type="number" value="1" min="0" max="28" oninput="syncData()">
+      </div>
+    </div>
+    <div id="dist-total-check" style="font-family:var(--font-mono);font-size:11px;"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;">Step 2 — Country Averages</div>
+      <div style="display:grid;gap:10px;">
+        <div class="mini-form-row"><span class="mini-label">🇱🇦 Laos (12 employees)</span><input class="mini-input" id="in-laos" type="number" step="0.1" value="3.2" min="1" max="5" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">🇲🇲 Myanmar (6 employees)</span><input class="mini-input" id="in-myanmar" type="number" step="0.1" value="3.0" min="1" max="5" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">🇮🇩 Indonesia (6 employees)</span><input class="mini-input" id="in-indonesia" type="number" step="0.1" value="3.4" min="1" max="5" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">🇹🇭 Thailand (4 employees)</span><input class="mini-input" id="in-thailand" type="number" step="0.1" value="3.1" min="1" max="5" oninput="syncData()"></div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;">Step 3 — Department Averages</div>
+      <div style="display:grid;gap:10px;">
+        <div class="mini-form-row"><span class="mini-label">Operations (18 employees)</span><input class="mini-input" id="in-ops" type="number" step="0.1" value="3.1" min="1" max="5" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">HR / People (3 employees)</span><input class="mini-input" id="in-hr" type="number" step="0.1" value="3.7" min="1" max="5" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">Finance (4 employees)</span><input class="mini-input" id="in-finance" type="number" step="0.1" value="3.3" min="1" max="5" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">Admin / Support (3 employees)</span><input class="mini-input" id="in-admin" type="number" step="0.1" value="3.0" min="1" max="5" oninput="syncData()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;">Step 4 — Review Completion Counts</div>
+      <div style="display:grid;gap:10px;">
+        <div class="mini-form-row"><span class="mini-label">Self-Assessments submitted</span><input class="mini-input" id="in-sa" type="number" value="26" min="0" max="28" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">Manager assessments submitted</span><input class="mini-input" id="in-ma" type="number" value="24" min="0" max="28" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">Calibrated by HR</span><input class="mini-input" id="in-cal" type="number" value="22" min="0" max="28" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">Signed and filed</span><input class="mini-input" id="in-sig" type="number" value="20" min="0" max="28" oninput="syncData()"></div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;">
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;">Step 5 — Calibration Adjustment</div>
+      <div style="display:grid;gap:10px;">
+        <div class="mini-form-row"><span class="mini-label">Pre-calibration avg rating</span><input class="mini-input" id="in-pre-calib" type="number" step="0.01" value="3.48" min="1" max="5" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">Post-calibration avg rating</span><input class="mini-input" id="in-post-calib" type="number" step="0.01" value="3.21" min="1" max="5" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">Number of ratings changed</span><input class="mini-input" id="in-changed" type="number" value="5" min="0" max="28" oninput="syncData()"></div>
+        <div class="mini-form-row"><span class="mini-label">Pre-calib 4s and 5s count</span><input class="mini-input" id="in-pre-high" type="number" value="13" min="0" max="28" oninput="syncData()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;">
+    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;">Step 6 — Manager Grade Inflation (Pre-Calibration)</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Mgr 1 — Ops Laos<br><span style="font-size:10px;color:var(--text3);">% staff rated 4+</span></div>
+        <input class="mini-input" style="width:100%;" id="in-mgr1" type="number" value="60" min="0" max="100" oninput="syncData()">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Mgr 2 — Ops Myanmar<br><span style="font-size:10px;">% staff rated 4+</span></div>
+        <input class="mini-input" style="width:100%;" id="in-mgr2" type="number" value="33" min="0" max="100" oninput="syncData()">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Mgr 3 — Ops Indonesia<br><span style="font-size:10px;">% staff rated 4+</span></div>
+        <input class="mini-input" style="width:100%;" id="in-mgr3" type="number" value="50" min="0" max="100" oninput="syncData()">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Mgr 4 — Office<br><span style="font-size:10px;">% staff rated 4+</span></div>
+        <input class="mini-input" style="width:100%;" id="in-mgr4" type="number" value="43" min="0" max="100" oninput="syncData()">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="syncData(); showPage('overview', document.querySelector('.nav-item:first-child')); alert('Data updated. Dashboard refreshed.')">Update Dashboard</button>
+    <button class="btn btn-ghost" onclick="resetDefaults()">Reset to Demo Data</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ─── DATA STORE ─────────────────────────────────────────────────────
+let D = {
+  dist: [2, 7, 14, 3, 1],          // r5 r4 r3 r2 r1
+  countries: [3.2, 3.0, 3.4, 3.1], // Laos, Myanmar, Indonesia, Thailand
+  depts: [3.1, 3.7, 3.3, 3.0],     // Ops, HR, Finance, Admin
+  completion: [26, 24, 22, 20],     // SA, MA, Cal, Sig
+  calibration: { pre: 3.48, post: 3.21, changed: 5, preHigh: 13 },
+  managers: [60, 33, 50, 43],       // % rated 4+ pre-calibration
+  total: 28
+};
+
+const COLORS = {
+  teal: '#00d4b8', amber: '#f5a623', red: '#ff4757',
+  green: '#2ed573', blue: '#3d9fff', purple: '#9b59b6',
+  r5: '#2ed573', r4: '#3d9fff', r3: '#f5a623',
+  r2: '#ff8c00', r1: '#ff4757'
+};
+
+const countryNames = ['Laos 🇱🇦', 'Myanmar 🇲🇲', 'Indonesia 🇮🇩', 'Thailand 🇹🇭'];
+const countryHeadcount = [12, 6, 6, 4];
+const deptNames = ['Operations', 'HR/People', 'Finance', 'Admin'];
+const mgrNames = ['Mgr 1 (Ops Laos)', 'Mgr 2 (Ops Myanmar)', 'Mgr 3 (Ops Indo)', 'Mgr 4 (Office)'];
+
+// ─── CHART HELPERS ──────────────────────────────────────────────────
+function clearCanvas(id) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return null;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth - 40;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  return ctx;
+}
+
+function drawBarChart(ctx, canvas, labels, values, colors, maxVal, showTarget) {
+  const w = canvas.width, h = canvas.height;
+  const pad = { top: 20, right: 20, bottom: 36, left: 36 };
+  const chartW = w - pad.left - pad.right;
+  const chartH = h - pad.top - pad.bottom;
+  const barW = chartW / labels.length * 0.6;
+  const gap = chartW / labels.length;
+
+  ctx.font = '10px JetBrains Mono';
+  ctx.fillStyle = '#3d5070';
+  ctx.textAlign = 'right';
+
+  const gridLines = 5;
+  for (let i = 0; i <= gridLines; i++) {
+    const y = pad.top + chartH - (chartH / gridLines) * i;
+    const val = Math.round((maxVal / gridLines) * i);
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(30,45,74,0.8)';
+    ctx.lineWidth = 1;
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(w - pad.right, y);
+    ctx.stroke();
+    ctx.fillText(val, pad.left - 4, y + 3);
+  }
+
+  values.forEach((val, i) => {
+    const x = pad.left + gap * i + (gap - barW) / 2;
+    const barH = (val / maxVal) * chartH;
+    const y = pad.top + chartH - barH;
+
+    const color = Array.isArray(colors) ? colors[i] : colors;
+    const grad = ctx.createLinearGradient(x, y, x, y + barH);
+    grad.addColorStop(0, color);
+    grad.addColorStop(1, color + '60');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
+    ctx.fill();
+
+    ctx.fillStyle = color;
+    ctx.font = '11px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText(val, x + barW / 2, y - 6);
+
+    ctx.fillStyle = '#3d5070';
+    ctx.font = '10px Outfit';
+    const lbl = labels[i];
+    if (lbl.length > 8) {
+      ctx.fillText(lbl.substring(0, 8), x + barW / 2, pad.top + chartH + 18);
+      ctx.fillText(lbl.substring(8), x + barW / 2, pad.top + chartH + 30);
+    } else {
+      ctx.fillText(lbl, x + barW / 2, pad.top + chartH + 18);
+    }
+  });
+}
+
+function drawHorizontalBar(ctx, canvas, labels, values, colors, maxVal) {
+  const w = canvas.width, h = canvas.height;
+  const pad = { top: 10, right: 60, bottom: 10, left: 90 };
+  const chartW = w - pad.left - pad.right;
+  const chartH = h - pad.top - pad.bottom;
+  const barH = chartH / labels.length * 0.55;
+  const gap = chartH / labels.length;
+
+  labels.forEach((lbl, i) => {
+    const y = pad.top + gap * i + (gap - barH) / 2;
+    const barW = (values[i] / maxVal) * chartW;
+    const color = Array.isArray(colors) ? colors[i] : colors;
+
+    ctx.fillStyle = '#1e2d4a';
+    ctx.beginPath();
+    ctx.roundRect(pad.left, y, chartW, barH, 3);
+    ctx.fill();
+
+    const grad = ctx.createLinearGradient(pad.left, y, pad.left + barW, y);
+    grad.addColorStop(0, color + '80');
+    grad.addColorStop(1, color);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(pad.left, y, barW, barH, 3);
+    ctx.fill();
+
+    ctx.fillStyle = '#7a90b8';
+    ctx.font = '11px Outfit';
+    ctx.textAlign = 'right';
+    ctx.fillText(lbl, pad.left - 6, y + barH / 2 + 4);
+
+    ctx.fillStyle = color;
+    ctx.font = '11px JetBrains Mono';
+    ctx.textAlign = 'left';
+    ctx.fillText(values[i].toFixed(1), pad.left + barW + 6, y + barH / 2 + 4);
+  });
+}
+
+// ─── KPI UPDATE ──────────────────────────────────────────────────────
+function updateKPIs() {
+  const total = D.dist.reduce((a, b) => a + b, 0);
+  const avgRating = ((5*D.dist[0] + 4*D.dist[1] + 3*D.dist[2] + 2*D.dist[3] + 1*D.dist[4]) / total).toFixed(2);
+  const highPerformers = D.dist[0] + D.dist[1];
+  const flightRisks = Math.round(highPerformers * 0.4);
+  const pips = D.dist[4];
+  const completePct = Math.round((D.completion[3] / D.total) * 100);
+
+  const el = (id) => document.getElementById(id);
+  if (el('kpi-complete')) {
+    el('kpi-complete').textContent = completePct + '%';
+    el('kpi-complete-sub').textContent = D.completion[3] + ' of 28 fully signed';
+    el('kpi-complete-delta').innerHTML = completePct >= 80 ? '<span>↑</span> On track' : '<span>↓</span> Behind target';
+    el('kpi-complete-delta').className = 'kpi-delta ' + (completePct >= 80 ? 'up' : 'down');
+  }
+  if (el('kpi-avg')) el('kpi-avg').textContent = avgRating;
+  if (el('kpi-risk')) el('kpi-risk').textContent = flightRisks;
+  if (el('kpi-pip')) el('kpi-pip').textContent = pips;
+
+  if (el('comp-kpi-sa')) el('comp-kpi-sa').textContent = D.completion[0];
+  if (el('comp-kpi-ma')) el('comp-kpi-ma').textContent = D.completion[1];
+  if (el('comp-kpi-cal')) el('comp-kpi-cal').textContent = D.completion[2];
+  if (el('comp-kpi-sig')) el('comp-kpi-sig').textContent = D.completion[3];
+
+  if (el('calib-pre-avg')) el('calib-pre-avg').textContent = D.calibration.pre.toFixed(2);
+  if (el('calib-post-avg')) el('calib-post-avg').textContent = D.calibration.post.toFixed(2);
+  const delta = (D.calibration.pre - D.calibration.post).toFixed(2);
+  if (el('calib-delta')) el('calib-delta').textContent = (delta > 0 ? '-' : '+') + Math.abs(delta);
+  if (el('calib-changed')) el('calib-changed').textContent = D.calibration.changed;
+  if (el('calib-inflation')) el('calib-inflation').textContent = D.calibration.preHigh;
+  if (el('calib-post-inflation')) el('calib-post-inflation').textContent = D.dist[0] + D.dist[1];
+
+  if (el('completion-pct-badge')) el('completion-pct-badge').textContent = completePct + '% complete';
+
+  const now = new Date();
+  if (el('last-updated')) el('last-updated').textContent = now.toLocaleDateString('en-GB');
+}
+
+// ─── DRAW ALL CHARTS ─────────────────────────────────────────────────
+function drawAllCharts() {
+  // Overview distribution bar
+  const ctx1 = clearCanvas('chart-dist-overview');
+  if (ctx1) {
+    const c1 = document.getElementById('chart-dist-overview');
+    drawBarChart(ctx1, c1, ['5 — Excep', '4 — Strong', '3 — Meets', '2 — Needs', '1 — Unsat'],
+      D.dist, [COLORS.r5, COLORS.r4, COLORS.r3, COLORS.r2, COLORS.r1], 20, true);
+  }
+
+  // Country bar
+  const ctx2 = clearCanvas('chart-country');
+  if (ctx2) {
+    const c2 = document.getElementById('chart-country');
+    drawHorizontalBar(ctx2, c2, countryNames, D.countries,
+      [COLORS.teal, COLORS.blue, COLORS.amber, COLORS.green], 5);
+  }
+
+  // Dept bar
+  const ctx3 = clearCanvas('chart-dept');
+  if (ctx3) {
+    const c3 = document.getElementById('chart-dept');
+    drawHorizontalBar(ctx3, c3, deptNames, D.depts,
+      [COLORS.blue, COLORS.teal, COLORS.amber, COLORS.purple], 5);
+  }
+
+  // Completion funnel (overview)
+  const ctx4 = clearCanvas('chart-completion-overview');
+  if (ctx4) {
+    const c4 = document.getElementById('chart-completion-overview');
+    drawBarChart(ctx4, c4, ['Self-Assess', 'Mgr Assess', 'Calibrated', 'Signed'],
+      D.completion, [COLORS.teal, COLORS.green, COLORS.amber, COLORS.blue], 28);
+  }
+
+  // Full distribution
+  const ctx5 = clearCanvas('chart-dist-full');
+  if (ctx5) {
+    const c5 = document.getElementById('chart-dist-full');
+    const refMin = [1, 5, 14, 3, 0];
+    const refMax = [3, 7, 17, 4, 1];
+    const w = c5.width, h = c5.height;
+    const pad = { top: 20, right: 20, bottom: 40, left: 40 };
+    const chartW = w - pad.left - pad.right;
+    const chartH = h - pad.top - pad.bottom;
+    const labels = ['Rating 5', 'Rating 4', 'Rating 3', 'Rating 2', 'Rating 1'];
+    const colors = [COLORS.r5, COLORS.r4, COLORS.r3, COLORS.r2, COLORS.r1];
+    const maxV = 20;
+    const barW = chartW / 5 * 0.5;
+    const gap = chartW / 5;
+
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.top + chartH - (chartH / 4) * i;
+      ctx5.beginPath();
+      ctx5.strokeStyle = 'rgba(30,45,74,0.6)';
+      ctx5.lineWidth = 1;
+      ctx5.moveTo(pad.left, y);
+      ctx5.lineTo(w - pad.right, y);
+      ctx5.stroke();
+      ctx5.fillStyle = '#3d5070';
+      ctx5.font = '10px JetBrains Mono';
+      ctx5.textAlign = 'right';
+      ctx5.fillText(Math.round((maxV / 4) * i), pad.left - 4, y + 3);
+    }
+
+    D.dist.forEach((val, i) => {
+      const x = pad.left + gap * i + (gap - barW) / 2;
+      const minH = (refMin[i] / maxV) * chartH;
+      const maxH = (refMax[i] / maxV) * chartH;
+      const refY = pad.top + chartH - maxH;
+      ctx5.fillStyle = 'rgba(255,255,255,0.03)';
+      ctx5.fillRect(x - barW * 0.2, refY, barW * 1.4, maxH - minH + (minH > 0 ? (refMin[i]/maxV)*chartH : 0));
+      ctx5.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx5.lineWidth = 1;
+      ctx5.strokeRect(x - barW * 0.2, refY, barW * 1.4, maxH - minH + (minH > 0 ? (refMin[i]/maxV)*chartH : 0));
+
+      const barH = (val / maxV) * chartH;
+      const y = pad.top + chartH - barH;
+      const color = colors[i];
+      const grad = ctx5.createLinearGradient(x, y, x, y + barH);
+      grad.addColorStop(0, color);
+      grad.addColorStop(1, color + '40');
+      ctx5.fillStyle = grad;
+      ctx5.beginPath();
+      ctx5.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
+      ctx5.fill();
+
+      ctx5.fillStyle = color;
+      ctx5.font = '12px JetBrains Mono';
+      ctx5.textAlign = 'center';
+      ctx5.fillText(val, x + barW / 2, y - 6);
+
+      ctx5.fillStyle = '#7a90b8';
+      ctx5.font = '11px Outfit';
+      ctx5.fillText(labels[i], x + barW / 2, pad.top + chartH + 18);
+    });
+  }
+
+  // Grade inflation by manager
+  const ctx6 = clearCanvas('chart-inflation');
+  if (ctx6) {
+    const c6 = document.getElementById('chart-inflation');
+    drawBarChart(ctx6, c6, ['Mgr 1', 'Mgr 2', 'Mgr 3', 'Mgr 4'],
+      D.managers,
+      D.managers.map(v => v > 50 ? COLORS.red : v > 35 ? COLORS.amber : COLORS.green),
+      100);
+    ctx6.strokeStyle = 'rgba(255,71,87,0.4)';
+    ctx6.lineWidth = 1.5;
+    ctx6.setLineDash([4, 4]);
+    const pad = { top: 20, bottom: 36, left: 36 };
+    const h = c6.height;
+    const chartH = h - pad.top - pad.bottom;
+    const refY = pad.top + chartH - (35 / 100) * chartH;
+    ctx6.beginPath();
+    ctx6.moveTo(36, refY);
+    ctx6.lineTo(c6.width - 20, refY);
+    ctx6.stroke();
+    ctx6.setLineDash([]);
+    ctx6.fillStyle = 'rgba(255,71,87,0.6)';
+    ctx6.font = '10px JetBrains Mono';
+    ctx6.textAlign = 'right';
+    ctx6.fillText('35% threshold', c6.width - 22, refY - 4);
+  }
+
+  // Calibration comparison
+  const ctx7 = clearCanvas('chart-calib-compare');
+  if (ctx7) {
+    const c7 = document.getElementById('chart-calib-compare');
+    const w = c7.width, h = c7.height;
+    const pad = { top: 20, right: 20, bottom: 40, left: 50 };
+    const chartW = w - pad.left - pad.right;
+    const chartH = h - pad.top - pad.bottom;
+    const labels = ['Rating 5', 'Rating 4', 'Rating 3', 'Rating 2', 'Rating 1'];
+    const adj = [0, -3, 2, 1, 0];
+    const preData = D.dist.map((v, i) => Math.max(0, v - adj[i]));
+    const postData = D.dist;
+    const maxV = 20;
+    const groupW = chartW / 5;
+    const bw = groupW * 0.35;
+
+    [1, 2, 3, 4].forEach(i => {
+      const y = pad.top + chartH - (chartH / 4) * i;
+      ctx7.beginPath();
+      ctx7.strokeStyle = 'rgba(30,45,74,0.6)';
+      ctx7.lineWidth = 1;
+      ctx7.moveTo(pad.left, y);
+      ctx7.lineTo(w - pad.right, y);
+      ctx7.stroke();
+    });
+
+    preData.forEach((val, i) => {
+      const x = pad.left + groupW * i + groupW * 0.1;
+      const barH = (val / maxV) * chartH;
+      const y = pad.top + chartH - barH;
+      ctx7.fillStyle = COLORS.amber + '80';
+      ctx7.beginPath();
+      ctx7.roundRect(x, y, bw, barH, [3, 3, 0, 0]);
+      ctx7.fill();
+      ctx7.fillStyle = COLORS.amber;
+      ctx7.font = '10px JetBrains Mono';
+      ctx7.textAlign = 'center';
+      ctx7.fillText(val, x + bw / 2, y - 4);
+    });
+
+    postData.forEach((val, i) => {
+      const x = pad.left + groupW * i + groupW * 0.1 + bw + 3;
+      const barH = (val / maxV) * chartH;
+      const y = pad.top + chartH - barH;
+      ctx7.fillStyle = COLORS.teal + '80';
+      ctx7.beginPath();
+      ctx7.roundRect(x, y, bw, barH, [3, 3, 0, 0]);
+      ctx7.fill();
+      ctx7.fillStyle = COLORS.teal;
+      ctx7.font = '10px JetBrains Mono';
+      ctx7.textAlign = 'center';
+      ctx7.fillText(val, x + bw / 2, y - 4);
+    });
+
+    labels.forEach((lbl, i) => {
+      ctx7.fillStyle = '#3d5070';
+      ctx7.font = '10px Outfit';
+      ctx7.textAlign = 'center';
+      ctx7.fillText(lbl, pad.left + groupW * i + groupW / 2, pad.top + chartH + 18);
+    });
+
+    ctx7.fillStyle = COLORS.amber;
+    ctx7.fillRect(pad.left, h - 12, 10, 8);
+    ctx7.fillStyle = '#7a90b8';
+    ctx7.font = '10px Outfit';
+    ctx7.textAlign = 'left';
+    ctx7.fillText('Pre-calibration', pad.left + 14, h - 5);
+    ctx7.fillStyle = COLORS.teal;
+    ctx7.fillRect(pad.left + 120, h - 12, 10, 8);
+    ctx7.fillStyle = '#7a90b8';
+    ctx7.fillText('Post-calibration', pad.left + 134, h - 5);
+  }
+
+  // Manager adjustment
+  const ctx8 = clearCanvas('chart-mgr-adjust');
+  if (ctx8) {
+    const c8 = document.getElementById('chart-mgr-adjust');
+    const adj = D.managers.map(v => (v - 35).toFixed(0));
+    drawBarChart(ctx8, c8, ['Mgr 1', 'Mgr 2', 'Mgr 3', 'Mgr 4'],
+      D.managers.map(v => Math.abs(v - 35)),
+      D.managers.map(v => v > 35 ? COLORS.red : COLORS.green), 40);
+  }
+
+  // Completion stages
+  const ctx9 = clearCanvas('chart-completion-stages');
+  if (ctx9) {
+    const c9 = document.getElementById('chart-completion-stages');
+    drawBarChart(ctx9, c9, ['Self-Assess', 'Mgr Assess', 'Calibrated', 'Signed'],
+      D.completion, [COLORS.teal, COLORS.green, COLORS.amber, COLORS.blue], 28);
+  }
+
+  // Completion by country (estimated)
+  const ctx10 = clearCanvas('chart-completion-country');
+  if (ctx10) {
+    const c10 = document.getElementById('chart-completion-country');
+    const pcts = [85, 67, 83, 75];
+    drawHorizontalBar(ctx10, c10, countryNames, pcts,
+      pcts.map(v => v >= 80 ? COLORS.green : v >= 65 ? COLORS.amber : COLORS.red), 100);
+  }
+
+  // HP by country
+  const ctx11 = clearCanvas('chart-hp-country');
+  if (ctx11) {
+    const c11 = document.getElementById('chart-hp-country');
+    const hpByCountry = [4, 2, 2, 1];
+    drawBarChart(ctx11, c11, countryNames.map(n => n.split(' ')[0]),
+      hpByCountry, COLORS.teal, 8);
+  }
+
+  // HP by dept
+  const ctx12 = clearCanvas('chart-hp-dept');
+  if (ctx12) {
+    const c12 = document.getElementById('chart-hp-dept');
+    const hpByDept = [5, 2, 1, 1];
+    drawBarChart(ctx12, c12, ['Ops', 'HR', 'Finance', 'Admin'],
+      hpByDept, COLORS.green, 8);
+  }
+
+  // Risk distribution
+  const ctx13 = clearCanvas('chart-risk-dist');
+  if (ctx13) {
+    const c13 = document.getElementById('chart-risk-dist');
+    drawBarChart(ctx13, c13, ['High Risk', 'Medium Risk', 'Low Risk'],
+      [3, 6, 19], [COLORS.red, COLORS.amber, COLORS.green], 20);
+  }
+
+  // Risk by country
+  const ctx14 = clearCanvas('chart-risk-country');
+  if (ctx14) {
+    const c14 = document.getElementById('chart-risk-country');
+    drawBarChart(ctx14, c14, countryNames.map(n => n.split(' ')[0]),
+      [4, 2, 2, 1], COLORS.amber, 6);
+  }
+
+  // Build distribution bars
+  buildDistBars();
+  buildAlerts();
+  buildHPTable();
+  buildRiskTable();
+  buildOverdue();
+  buildCalibFlags();
+  buildSuccession();
+  buildDistHealth();
+  updateDistBadge();
+}
+
+function buildDistBars() {
+  const container = document.getElementById('dist-bars');
+  if (!container) return;
+  const labels = ['5 — Exceptional', '4 — Strong', '3 — Meets Expectations', '2 — Needs Improvement', '1 — Unsatisfactory'];
+  const colors = [COLORS.r5, COLORS.r4, COLORS.r3, COLORS.r2, COLORS.r1];
+  const refs = ['5–10%', '20–25%', '50–60%', '10–15%', '0–5%'];
+  const total = D.dist.reduce((a, b) => a + b, 0);
+
+  container.innerHTML = D.dist.map((v, i) => {
+    const pct = Math.round((v / total) * 100);
+    return `<div class="dist-bar-wrap">
+      <div class="dist-bar-header">
+        <div class="dist-bar-label">
+          <div class="dist-bar-pill" style="background:${colors[i]}20;color:${colors[i]};border:1px solid ${colors[i]}40;font-family:var(--font-mono);font-size:11px;font-weight:700;">${5-i}</div>
+          ${labels[i]}
+        </div>
+        <div class="dist-bar-meta">
+          <span style="color:${colors[i]};">${v} employees</span>
+          <span>${pct}%</span>
+          <span style="color:var(--text3);">Ref: ${refs[i]}</span>
+        </div>
+      </div>
+      <div class="dist-bar-track">
+        <div class="dist-bar-fill" style="width:${pct}%;background:${colors[i]};"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildDistHealth() {
+  const el = document.getElementById('dist-health');
+  if (!el) return;
+  const total = D.dist.reduce((a, b) => a + b, 0);
+  const checks = [
+    { label: 'Rating 5 count within 5–10% range', ok: D.dist[0] >= 1 && D.dist[0] <= 3, val: `${D.dist[0]} (${Math.round(D.dist[0]/total*100)}%)` },
+    { label: 'Rating 4 count within 20–25% range', ok: D.dist[1] >= 5 && D.dist[1] <= 7, val: `${D.dist[1]} (${Math.round(D.dist[1]/total*100)}%)` },
+    { label: 'Rating 3 count within 50–60% range', ok: D.dist[2] >= 14 && D.dist[2] <= 17, val: `${D.dist[2]} (${Math.round(D.dist[2]/total*100)}%)` },
+    { label: 'Rating 2 count within 10–15% range', ok: D.dist[3] >= 2 && D.dist[3] <= 4, val: `${D.dist[3]} (${Math.round(D.dist[3]/total*100)}%)` },
+    { label: 'Rating 1 count within 0–5% range', ok: D.dist[4] <= 1, val: `${D.dist[4]} (${Math.round(D.dist[4]/total*100)}%)` },
+    { label: 'Ratings 4+5 not exceeding 35% total', ok: (D.dist[0]+D.dist[1])/total <= 0.35, val: `${D.dist[0]+D.dist[1]} (${Math.round((D.dist[0]+D.dist[1])/total*100)}%)` },
+  ];
+  el.innerHTML = checks.map(c => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="color:${c.ok ? COLORS.green : COLORS.red};font-family:var(--font-mono);font-size:14px;">${c.ok ? '✓' : '✗'}</span>
+        <span style="color:var(--text2);">${c.label}</span>
+      </div>
+      <span style="font-family:var(--font-mono);font-size:11px;color:${c.ok ? COLORS.green : COLORS.red};">${c.val}</span>
+    </div>`).join('');
+}
+
+function updateDistBadge() {
+  const total = D.dist.reduce((a, b) => a + b, 0);
+  const pctHigh = (D.dist[0]+D.dist[1]) / total;
+  const el = document.getElementById('dist-status-badge');
+  if (!el) return;
+  if (pctHigh > 0.4) { el.textContent = 'Grade Inflation Detected'; el.className = 'chart-badge badge-red'; }
+  else if (pctHigh > 0.32) { el.textContent = 'Slightly High'; el.className = 'chart-badge badge-amber'; }
+  else { el.textContent = 'Distribution Healthy'; el.className = 'chart-badge badge-green'; }
+}
+
+function buildAlerts() {
+  const container = document.getElementById('alerts-container');
+  const countEl = document.getElementById('alerts-count');
+  if (!container) return;
+
+  const alerts = [];
+  if (D.completion[3] < 28) alerts.push({ type: 'amber', icon: '📋', title: `${28 - D.completion[3]} reviews not yet signed and filed`, desc: `Target: all 28 complete before salary review. Currently ${D.completion[3]}/28 fully closed.`, action: 'View Completion' });
+  if ((D.dist[0]+D.dist[1]) / 28 > 0.35) alerts.push({ type: 'red', icon: '⚠️', title: 'Grade inflation detected — too many Rating 4s and 5s', desc: `${D.dist[0]+D.dist[1]} employees rated 4 or 5 (${Math.round((D.dist[0]+D.dist[1])/28*100)}%). Reference range is 25–35%. Calibration review needed.`, action: 'View Calibration' });
+  if (D.dist[4] > 0) alerts.push({ type: 'red', icon: '🔴', title: `${D.dist[4]} employee(s) rated Unsatisfactory — PIP required`, desc: 'Rating 1 employees must have a PIP initiated within 5 working days of the final rating being confirmed.', action: 'Open PIP Tracker' });
+  alerts.push({ type: 'amber', icon: '✈️', title: '3 high performers identified as flight risks', desc: 'Employees rated 4+ with no salary movement in 12+ months. Retention conversations should be scheduled before year-end.', action: 'View Flight Risk' });
+  alerts.push({ type: 'green', icon: '⭐', title: `${D.dist[0]} exceptional performer(s) — fast-track conversation needed`, desc: 'Rating 5 employees require a direct conversation about development, role scope, and compensation. Do not delay.', action: 'View High Performers' });
+
+  container.innerHTML = alerts.map(a => `
+    <div class="alert-item">
+      <div class="alert-icon ${a.type}"><span>${a.icon}</span></div>
+      <div class="alert-content">
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-desc">${a.desc}</div>
+      </div>
+      <div class="alert-action">${a.action}</div>
+    </div>`).join('');
+
+  if (countEl) countEl.textContent = `${alerts.length} items requiring attention`;
+}
+
+function buildHPTable() {
+  const tbody = document.getElementById('hp-tbody');
+  if (!tbody) return;
+  const data = [
+    { name: 'Ahmad R.', country: '🇲🇾 Laos', fn: 'Operations', r: 5, score: 4.72, yrs: 4, risk: 'HIGH', action: 'Immediate retention talk + salary review' },
+    { name: 'Somphet K.', country: '🇱🇦 Laos', fn: 'Operations', r: 5, score: 4.58, yrs: 6, risk: 'HIGH', action: 'Career path discussion + mentor role' },
+    { name: 'Ba (Group HR Mgr)', country: '🇸🇬 Group', fn: 'HR/People', r: 4, score: 3.95, yrs: 2, risk: 'MED', action: 'Strategic project exposure, C&B certification support' },
+    { name: 'Nguyen T.', country: '🇮🇩 Indonesia', fn: 'Operations', r: 4, score: 3.88, yrs: 3, risk: 'MED', action: 'Merit increase + Supervisor track discussion' },
+    { name: 'Wirawan S.', country: '🇮🇩 Indonesia', fn: 'Finance', r: 4, score: 3.81, yrs: 5, risk: 'HIGH', action: 'Benchmarking salary vs market. Retention risk is real.' },
+    { name: 'Sai T.', country: '🇲🇲 Myanmar', fn: 'Operations', r: 4, score: 3.76, yrs: 2, risk: 'LOW', action: 'Positive reinforcement, development plan for Supervisor' },
+    { name: 'Kanchana W.', country: '🇹🇭 Thailand', fn: 'Admin', r: 4, score: 3.71, yrs: 1, risk: 'LOW', action: 'Acknowledge performance, set stretch goals for 2027' },
+  ];
+  const riskColor = { HIGH: COLORS.red, MED: COLORS.amber, LOW: COLORS.green };
+  tbody.innerHTML = data.map(e => `
+    <tr>
+      <td style="font-weight:600;color:var(--text);">${e.name}</td>
+      <td>${e.country}</td>
+      <td style="color:var(--text2);">${e.fn}</td>
+      <td><span class="rating-chip r${e.r}">${e.r}</span></td>
+      <td style="font-family:var(--font-mono);color:var(--teal);">${e.score}</td>
+      <td style="font-family:var(--font-mono);">${e.yrs}y</td>
+      <td><span style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:${riskColor[e.risk]};">${e.risk}</span></td>
+      <td style="font-size:12px;color:var(--text2);">${e.action}</td>
+    </tr>`).join('');
+}
+
+function buildRiskTable() {
+  const tbody = document.getElementById('risk-tbody');
+  if (!tbody) return;
+  const data = [
+    { name: 'Ahmad R.', country: '🇱🇦 Laos', role: 'Site Manager', r: 5, risk: 'HIGH', factors: 'Rating 4/5 × 2 years, no promotion, critical role', urgency: 'Immediate', action: 'Salary + role scope review by Dec' },
+    { name: 'Somphet K.', country: '🇱🇦 Laos', role: 'Drilling Supervisor', r: 5, risk: 'HIGH', factors: 'Rating 5 × 2 years, no increase, below market', urgency: 'Immediate', action: 'Counter-offer readiness needed' },
+    { name: 'Wirawan S.', country: '🇮🇩 Indonesia', role: 'Finance Manager', r: 4, risk: 'HIGH', factors: 'Consistently strong, below market, mentioned career concerns', urgency: 'This month', action: 'Benchmark vs Indonesia market, adjusting Q1' },
+    { name: 'Nguyen T.', country: '🇮🇩 Indonesia', role: 'Senior Driller', r: 4, risk: 'MED', factors: 'Rating 4, no development path discussed', urgency: 'Q1 2027', action: 'Supervisor track conversation' },
+    { name: 'Ba (Group HR Mgr)', country: '🇸🇬 Group', role: 'Group HR Manager', r: 4, risk: 'MED', factors: 'Strategic role, limited career visibility', urgency: 'Q1 2027', action: 'CHRO pathway discussion, include in business planning' },
+    { name: 'Khin M.', country: '🇲🇲 Myanmar', role: 'HSE Officer', r: 3, risk: 'MED', factors: 'Critical safety role, limited supply, has external offers', urgency: 'This month', action: 'Safety allowance review, retention flag' },
+  ];
+  const riskColor = { HIGH: COLORS.red, MED: COLORS.amber, LOW: COLORS.green };
+  const urgencyColor = { Immediate: COLORS.red, 'This month': COLORS.amber, 'Q1 2027': COLORS.blue };
+  tbody.innerHTML = data.map(e => `
+    <tr>
+      <td style="font-weight:600;color:var(--text);">${e.name}</td>
+      <td>${e.country}</td>
+      <td style="color:var(--text2);">${e.role}</td>
+      <td><span class="rating-chip r${e.r}">${e.r}</span></td>
+      <td><span style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:${riskColor[e.risk]};">${e.risk}</span></td>
+      <td style="font-size:11.5px;color:var(--text3);">${e.factors}</td>
+      <td style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:${urgencyColor[e.urgency]};">${e.urgency}</td>
+      <td style="font-size:12px;color:var(--text2);">${e.action}</td>
+    </tr>`).join('');
+}
+
+function buildOverdue() {
+  const el = document.getElementById('overdue-container');
+  if (!el) return;
+  const items = [
+    { name: 'Khin M.', country: '🇲🇲 Myanmar', stage: 'Manager Assessment', due: '30 Nov 2026', reason: 'Manager in field — awaiting submission' },
+    { name: 'Bounmy P.', country: '🇱🇦 Laos', stage: 'Self-Assessment', due: '15 Nov 2026', reason: 'Remote site — limited connectivity' },
+    { name: 'Hendra S.', country: '🇮🇩 Indonesia', stage: 'Calibration', due: '10 Dec 2026', reason: 'Pending HR sign-off' },
+    { name: 'Somsak P.', country: '🇹🇭 Thailand', stage: 'Signed & Filed', due: '20 Dec 2026', reason: 'Meeting scheduled 22 Dec' },
+    { name: 'Zaw M.', country: '🇲🇲 Myanmar', stage: 'Manager Assessment', due: '30 Nov 2026', reason: 'Manager travel — delayed' },
+    { name: 'Putri A.', country: '🇮🇩 Indonesia', stage: 'Signed & Filed', due: '20 Dec 2026', reason: 'Awaiting employee response to rating' },
+    { name: 'Malee C.', country: '🇹🇭 Thailand', stage: 'Calibration', due: '10 Dec 2026', reason: 'Pending HR final review' },
+    { name: 'Boupha K.', country: '🇱🇦 Laos', stage: 'Signed & Filed', due: '20 Dec 2026', reason: 'Conversation rescheduled' },
+  ];
+  el.innerHTML = `<table class="emp-table">
+    <thead><tr><th>Employee</th><th>Country</th><th>Pending Stage</th><th>Due</th><th>Reason</th></tr></thead>
+    <tbody>${items.map(i => `<tr>
+      <td style="font-weight:600;color:var(--text);">${i.name}</td>
+      <td>${i.country}</td>
+      <td><span style="font-family:var(--font-mono);font-size:10px;background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,166,35,0.2);padding:2px 8px;border-radius:3px;">${i.stage}</span></td>
+      <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3);">${i.due}</td>
+      <td style="font-size:12px;color:var(--text3);">${i.reason}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function buildCalibFlags() {
+  const el = document.getElementById('calib-flags');
+  if (!el) return;
+  const flags = [
+    { type: 'red', icon: '⚠️', title: 'Manager 1 (Ops Laos) — 60% of team rated 4+', desc: 'Significantly above the 35% threshold. 3 ratings were calibrated down during the calibration session. Manager acknowledged the tendency to avoid conflict in ratings.' },
+    { type: 'amber', icon: '⚡', title: 'Manager 3 (Ops Indonesia) — 50% of team rated 4+', desc: 'Above threshold. 2 ratings adjusted. Manager is new — coaching on rating definitions recommended before next cycle.' },
+    { type: 'green', icon: '✓', title: 'Manager 2 (Ops Myanmar) — 33% rated 4+, within range', desc: 'No adjustment needed. Rating distribution aligns with reference range and evidence provided for each rating was adequate.' },
+    { type: 'green', icon: '✓', title: 'Manager 4 (Office) — 43% rated 4+, minor adjustment', desc: '1 rating adjusted from 4 to 3 after evidence review. Manager accepted calibration without dispute.' },
+  ];
+  el.innerHTML = flags.map(f => `
+    <div class="alert-item">
+      <div class="alert-icon ${f.type}"><span>${f.icon}</span></div>
+      <div class="alert-content">
+        <div class="alert-title">${f.title}</div>
+        <div class="alert-desc">${f.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+function buildSuccession() {
+  const el = document.getElementById('succession-content');
+  if (!el) return;
+  el.innerHTML = `<table class="emp-table">
+    <thead><tr><th>Employee</th><th>Current Role</th><th>Rating</th><th>Readiness</th><th>Potential Next Role</th><th>Timeline</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600;color:var(--text);">Ahmad R.</td><td>Site Manager Laos</td><td><span class="rating-chip r5">5</span></td><td><span style="color:var(--green);font-family:var(--font-mono);font-size:10px;">READY NOW</span></td><td>Regional Ops Manager</td><td style="font-family:var(--font-mono);font-size:11px;">2027</td></tr>
+      <tr><td style="font-weight:600;color:var(--text);">Somphet K.</td><td>Drilling Supervisor</td><td><span class="rating-chip r5">5</span></td><td><span style="color:var(--amber);font-family:var(--font-mono);font-size:10px;">1–2 YEARS</span></td><td>Site Manager</td><td style="font-family:var(--font-mono);font-size:11px;">2027–28</td></tr>
+      <tr><td style="font-weight:600;color:var(--text);">Ba (Group HR Mgr)</td><td>Group HR Manager</td><td><span class="rating-chip r4">4</span></td><td><span style="color:var(--amber);font-family:var(--font-mono);font-size:10px;">2–3 YEARS</span></td><td>CHRO / Head of People</td><td style="font-family:var(--font-mono);font-size:11px;">2028–29</td></tr>
+      <tr><td style="font-weight:600;color:var(--text);">Nguyen T.</td><td>Senior Driller</td><td><span class="rating-chip r4">4</span></td><td><span style="color:var(--blue);font-family:var(--font-mono);font-size:10px;">DEVELOPING</span></td><td>Drilling Supervisor</td><td style="font-family:var(--font-mono);font-size:11px;">2027</td></tr>
+    </tbody>
+  </table>`;
+}
+
+// ─── SYNC DATA FROM INPUTS ────────────────────────────────────────────
+function syncData() {
+  D.dist = [
+    parseInt(document.getElementById('in-r5').value)||0,
+    parseInt(document.getElementById('in-r4').value)||0,
+    parseInt(document.getElementById('in-r3').value)||0,
+    parseInt(document.getElementById('in-r2').value)||0,
+    parseInt(document.getElementById('in-r1').value)||0,
+  ];
+  D.countries = [
+    parseFloat(document.getElementById('in-laos').value)||3,
+    parseFloat(document.getElementById('in-myanmar').value)||3,
+    parseFloat(document.getElementById('in-indonesia').value)||3,
+    parseFloat(document.getElementById('in-thailand').value)||3,
+  ];
+  D.depts = [
+    parseFloat(document.getElementById('in-ops').value)||3,
+    parseFloat(document.getElementById('in-hr').value)||3,
+    parseFloat(document.getElementById('in-finance').value)||3,
+    parseFloat(document.getElementById('in-admin').value)||3,
+  ];
+  D.completion = [
+    parseInt(document.getElementById('in-sa').value)||0,
+    parseInt(document.getElementById('in-ma').value)||0,
+    parseInt(document.getElementById('in-cal').value)||0,
+    parseInt(document.getElementById('in-sig').value)||0,
+  ];
+  D.calibration = {
+    pre: parseFloat(document.getElementById('in-pre-calib').value)||3.5,
+    post: parseFloat(document.getElementById('in-post-calib').value)||3.2,
+    changed: parseInt(document.getElementById('in-changed').value)||0,
+    preHigh: parseInt(document.getElementById('in-pre-high').value)||0,
+  };
+  D.managers = [
+    parseInt(document.getElementById('in-mgr1').value)||0,
+    parseInt(document.getElementById('in-mgr2').value)||0,
+    parseInt(document.getElementById('in-mgr3').value)||0,
+    parseInt(document.getElementById('in-mgr4').value)||0,
+  ];
+
+  const total = D.dist.reduce((a, b) => a + b, 0);
+  const check = document.getElementById('dist-total-check');
+  if (check) {
+    check.style.color = total === 28 ? COLORS.green : COLORS.red;
+    check.textContent = `Total: ${total} of 28 employees${total !== 28 ? ' — does not equal 28, please check' : ' ✓'}`;
+  }
+
+  updateKPIs();
+}
+
+function resetDefaults() {
+  document.getElementById('in-r5').value = 2;
+  document.getElementById('in-r4').value = 7;
+  document.getElementById('in-r3').value = 14;
+  document.getElementById('in-r2').value = 3;
+  document.getElementById('in-r1').value = 1;
+  document.getElementById('in-laos').value = 3.2;
+  document.getElementById('in-myanmar').value = 3.0;
+  document.getElementById('in-indonesia').value = 3.4;
+  document.getElementById('in-thailand').value = 3.1;
+  document.getElementById('in-ops').value = 3.1;
+  document.getElementById('in-hr').value = 3.7;
+  document.getElementById('in-finance').value = 3.3;
+  document.getElementById('in-admin').value = 3.0;
+  document.getElementById('in-sa').value = 26;
+  document.getElementById('in-ma').value = 24;
+  document.getElementById('in-cal').value = 22;
+  document.getElementById('in-sig').value = 20;
+  document.getElementById('in-pre-calib').value = 3.48;
+  document.getElementById('in-post-calib').value = 3.21;
+  document.getElementById('in-changed').value = 5;
+  document.getElementById('in-pre-high').value = 13;
+  document.getElementById('in-mgr1').value = 60;
+  document.getElementById('in-mgr2').value = 33;
+  document.getElementById('in-mgr3').value = 50;
+  document.getElementById('in-mgr4').value = 43;
+  syncData();
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────
+const pageTitles = {
+  overview: 'Company Overview',
+  distribution: 'Rating Distribution',
+  highperformers: 'High Performer Identification',
+  flightrisk: 'Flight Risk Analysis',
+  completion: 'Review Completion Rates',
+  calibration: 'Calibration Analysis',
+  input: 'Enter & Update Data'
+};
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  const tb = document.getElementById('topbar-title');
+  if (tb) tb.textContent = pageTitles[id] || id;
+  setTimeout(() => drawAllCharts(), 50);
+}
+
+function switchTab(id, btn) {
+  const container = btn.closest('.page');
+  container.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tab-' + id);
+  if (el) el.classList.add('active');
+  btn.classList.add('active');
+}
+
+// Period buttons
+document.querySelectorAll('.period-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  syncData();
+  setTimeout(() => drawAllCharts(), 100);
+  document.getElementById('last-updated').textContent = new Date().toLocaleDateString('en-GB');
+});
+
+window.addEventListener('resize', () => drawAllCharts());
+</script>
+</body>
+</html>

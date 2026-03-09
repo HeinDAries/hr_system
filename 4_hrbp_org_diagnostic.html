@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organisational Diagnostic Tool — Valentis HRBP Tool 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=IBM+Plex+Sans:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f7f5;--surface:#ffffff;--surface2:#f2f2ef;--surface3:#e8e8e4;--surface4:#ddddd8;
+  --border:#e0e0db;--border2:#c8c8c2;--border3:#a8a8a0;
+  --ink:#0f0f0e;--ink2:#2a2a28;--ink3:#555550;--ink4:#888880;--ink5:#b8b8b0;
+  --teal:#0d7a6e;--teal2:#0e8f82;--teal3:#10a494;--teal-dim:rgba(13,122,110,0.07);--teal-border:rgba(13,122,110,0.22);
+  --amber:#b8720a;--amber-dim:rgba(184,114,10,0.07);--amber-border:rgba(184,114,10,0.22);
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --navy:#1a3a5c;--navy-dim:rgba(26,58,92,0.07);--navy-border:rgba(26,58,92,0.2);
+  --green:#1a7a3c;--green-dim:rgba(26,122,60,0.07);--green-border:rgba(26,122,60,0.22);
+  --sidebar-w:272px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--teal3),var(--teal),rgba(13,122,110,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal3);background:rgba(13,122,110,0.12);border:1px solid rgba(13,122,110,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#f5f5f2;line-height:1.15;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--teal3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(13,122,110,0.15);border-color:rgba(13,122,110,0.35);color:var(--teal3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--teal)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--teal3);display:block;margin-bottom:3px}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1080px}
+.page.active{display:block}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:54px;font-weight:800;color:var(--ink);line-height:.95;margin-bottom:14px;letter-spacing:-1px}
+.page-title em{font-style:italic;font-weight:400;color:var(--teal)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:border-color .13s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.2}
+.card-title em{font-style:italic;color:var(--teal);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-teal{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border)}
+.chip-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-navy{background:var(--navy-dim);color:var(--navy);border:1px solid var(--navy-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+
+/* INFO */
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.teal{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+.info.amber{background:var(--amber-dim);border-color:var(--amber);color:var(--amber)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--red)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--ink);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+
+/* DIAGNOSTIC SCORING */
+.diag-setup{background:var(--ink);border-radius:4px;padding:24px;margin-bottom:14px;color:#f5f5f2}
+.diag-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:5px;display:block}
+.diag-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:9px 12px;color:#f5f5f2;font-family:var(--fb);font-size:13px;outline:none;width:100%;transition:border-color .13s}
+.diag-input:focus{border-color:var(--teal)}
+.diag-select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 10px;color:#f5f5f2;font-family:var(--fm);font-size:12px;outline:none;width:100%}
+.diag-select option{background:#1a1a18}
+.diag-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.diag-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+
+/* DIMENSION CARD */
+.dim-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.dim-header{padding:14px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background .13s;border-bottom:1px solid transparent}
+.dim-header:hover{background:var(--surface2)}
+.dim-header.open{border-bottom-color:var(--border)}
+.dim-num{font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);line-height:1;flex-shrink:0;width:40px}
+.dim-name{font-family:var(--fd);font-size:18px;font-weight:700;color:var(--ink);flex:1}
+.dim-score-display{font-family:var(--fm);font-size:22px;font-weight:600;line-height:1;min-width:48px;text-align:right}
+.dim-body{display:none;padding:20px}
+.dim-body.open{display:block}
+
+/* QUESTION ROWS */
+.q-row{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.q-row:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.q-text{font-size:13.5px;color:var(--ink2);font-weight:400;margin-bottom:10px;line-height:1.7}
+.q-scale{display:flex;gap:6px;align-items:center}
+.q-btn{width:38px;height:38px;border-radius:3px;border:1px solid var(--border2);background:var(--surface2);color:var(--ink4);font-family:var(--fm);font-size:13px;font-weight:600;cursor:pointer;transition:all .13s;display:flex;align-items:center;justify-content:center}
+.q-btn:hover{border-color:var(--teal);color:var(--teal)}
+.q-btn.selected{background:var(--teal);border-color:var(--teal);color:#fff}
+.q-scale-label{font-family:var(--fm);font-size:9px;color:var(--ink5);margin:0 4px}
+.q-note{margin-top:8px}
+.q-note-input{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:7px 10px;font-family:var(--fb);font-size:12px;color:var(--ink3);width:100%;outline:none;resize:none;min-height:48px}
+.q-note-input:focus{border-color:var(--teal)}
+
+/* SCORE BAR */
+.score-bar{height:8px;border-radius:4px;background:var(--surface3);overflow:hidden;margin:8px 0}
+.score-fill{height:100%;border-radius:4px;transition:width .5s ease}
+
+/* RESULTS PANEL */
+.results-wrap{background:var(--ink);border-radius:4px;padding:28px;color:#f5f5f2;margin-bottom:14px}
+.result-dim-row{display:grid;grid-template-columns:180px 1fr 60px;gap:14px;align-items:center;margin-bottom:10px}
+.result-bar-bg{height:10px;background:rgba(255,255,255,0.08);border-radius:5px;overflow:hidden}
+.result-bar-fill{height:100%;border-radius:5px;transition:width .6s ease}
+.result-score{font-family:var(--fm);font-size:14px;font-weight:600;text-align:right}
+
+/* HEAT CELL */
+.heat-cell{padding:10px 12px;border-radius:3px;font-size:12.5px;font-weight:300;line-height:1.6;border:1px solid}
+
+/* PROTOCOL STEP */
+.proto-step{display:grid;grid-template-columns:48px 1fr;gap:14px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;margin-bottom:8px}
+.proto-num{font-family:var(--fd);font-size:32px;font-weight:800;color:var(--teal);line-height:1}
+.proto-title{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.proto-body{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8}
+
+/* SIGNAL TABLE */
+.signal-row{display:grid;grid-template-columns:220px 1fr 1fr;gap:0;border-bottom:1px solid var(--border)}
+.signal-row:last-child{border-bottom:none}
+.signal-cell{padding:11px 14px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6}
+.signal-cell:not(:last-child){border-right:1px solid var(--border)}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:var(--teal2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink3)}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+.btn-ink{background:var(--ink);color:#f5f5f2;border:none}
+.btn-ink:hover{background:var(--ink2)}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .dim-card{animation:fadeUp .28s ease both}
+.page.active .card:nth-child(2),.page.active .dim-card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3),.page.active .dim-card:nth-child(3){animation-delay:.09s}
+.page.active .card:nth-child(4),.page.active .dim-card:nth-child(4){animation-delay:.13s}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+@media print{.sidebar{display:none}.main{margin-left:0}.page.active{padding:20px}.dim-body{display:block!important}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">HRBP Tool 4 / 10</div>
+    <div class="sb-title">Organisational<br><em>Diagnostic</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>What is Org Diagnostic?</div>
+    <div class="nav-item" onclick="showPage('framework',this)"><span class="nav-num">02</span>The 6-D Framework</div>
+    <div class="nav-item" onclick="showPage('signals',this)"><span class="nav-num">03</span>Early Warning Signals</div>
+    <div class="nav-item" onclick="showPage('protocol',this)"><span class="nav-num">04</span>Diagnostic Protocol</div>
+    <div class="nav-item" onclick="showPage('diagnostic',this)"><span class="nav-num">05</span>Run a Diagnostic</div>
+    <div class="nav-item" onclick="showPage('results',this)"><span class="nav-num">06</span>Results &amp; Heatmap</div>
+    <div class="nav-item" onclick="showPage('interventions',this)"><span class="nav-num">07</span>Interventions Library</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">08</span>Valentis Live Cases</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>HRBP Department</strong>
+      Tool 4 of 10 · Org Diagnostic<br>
+      <span style="color:rgba(255,255,255,0.12)">See problems before they become crises</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 WHAT -->
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">HRBP Tool 4 — Organisational Diagnostic Tool</div>
+    <h1 class="page-title">Organisational<br><em>Diagnostic</em></h1>
+    <p class="page-desc">The ability to walk into a business unit, assess its organisational health, identify root causes of underperformance, and present a credible recommendation — is one of the most powerful things an HRBP can do. This tool makes that assessment systematic.</p>
+  </div>
+
+  <div class="info teal"><strong>The Core Principle</strong>Most organisational problems are visible long before they become crises — if you know what to look for. The HRBP's diagnostic role is not to wait for the COO to flag a problem. It is to detect the signal before it becomes noise, and act on it while the intervention is still manageable.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What an Org Diagnostic Actually Is</div>
+      <div class="card-body">
+        An organisational diagnostic is a structured assessment of a business unit's people health — examining six dimensions that determine whether a team can perform at the level the business requires.<br><br>
+        It is not a survey. It is not a performance review. It is not an audit. It is a diagnostic — the same way a doctor assesses a patient's health before prescribing treatment. You gather data from multiple sources, identify patterns, form a hypothesis about the root cause, and test it before recommending an intervention.<br><br>
+        Done well, an organisational diagnostic is one of the most credibility-building things an HRBP can deliver. Done poorly — with conclusions formed before the data is gathered — it destroys trust and confirms every sceptic's view of HR.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">When to Run a Diagnostic</div>
+      <div class="card-body" style="margin-bottom:12px">A diagnostic is warranted when one or more of these conditions are present:</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:9px 14px;background:var(--red-dim);border-left:3px solid var(--red);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">Performance signal:</strong> KPIs dropping — programme delivery, metres drilled, rig utilisation below target for two or more consecutive periods</div>
+        <div style="padding:9px 14px;background:var(--red-dim);border-left:3px solid var(--red);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">Attrition signal:</strong> Turnover exceeds 15% annualised in a single business unit or country</div>
+        <div style="padding:9px 14px;background:var(--amber-dim);border-left:3px solid var(--amber);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--amber)">Safety signal:</strong> LTIFR rising or near-miss frequency increasing in a specific site</div>
+        <div style="padding:9px 14px;background:var(--amber-dim);border-left:3px solid var(--amber);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--amber)">Leadership signal:</strong> Manager departure, promotion, or change — assess team health within 30 days</div>
+        <div style="padding:9px 14px;background:var(--amber-dim);border-left:3px solid var(--amber);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--amber)">Proactive:</strong> Quarterly health check on all business units — not just ones showing problems</div>
+        <div style="padding:9px 14px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--teal)">Pre-change:</strong> Before any restructure, country expansion, or operating model change</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Diagnostic Mindset — Five Rules</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px">
+      <div style="padding:16px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);margin-bottom:6px">01</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Hypothesis First</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">Form a working hypothesis from early signals — but hold it loosely. Let the data confirm or disconfirm it.</div>
+      </div>
+      <div style="padding:16px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);margin-bottom:6px">02</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Multiple Sources</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">Never rely on a single data source. Triangulate: quantitative data, manager perspective, team observation, exit data.</div>
+      </div>
+      <div style="padding:16px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);margin-bottom:6px">03</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Root Cause Only</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">High attrition is a symptom, not a diagnosis. What is causing it? Keep asking why until you reach the root cause.</div>
+      </div>
+      <div style="padding:16px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);margin-bottom:6px">04</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">No Pre-Judging</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">If you walk into a diagnostic certain of the answer, you will find evidence to confirm it and miss the real issue.</div>
+      </div>
+      <div style="padding:16px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);margin-bottom:6px">05</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Always Recommend</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">A diagnostic without a recommendation is analysis for its own sake. Every finding must connect to an action.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 FRAMEWORK -->
+<div id="page-framework" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — The 6-D Framework</div>
+    <h1 class="page-title">The 6-D<br><em>Framework</em></h1>
+    <p class="page-desc">The six dimensions of organisational health that every HRBP diagnostic must assess. Each dimension has specific indicators, root-cause patterns, and intervention options. Together they give a complete picture of any team or business unit.</p>
+  </div>
+
+  <div style="display:grid;gap:10px">
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+      <div style="display:grid;grid-template-columns:56px 1fr 1fr 1fr;background:var(--ink)">
+        <div style="padding:10px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35)">#</div>
+        <div style="padding:10px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);border-left:1px solid rgba(255,255,255,0.08)">Dimension</div>
+        <div style="padding:10px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);border-left:1px solid rgba(255,255,255,0.08)">Key Indicators</div>
+        <div style="padding:10px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal3);border-left:1px solid rgba(255,255,255,0.08)">If Score is Low →</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:56px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px;background:var(--teal-dim);border-right:1px solid var(--teal-border);display:flex;align-items:center;justify-content:center"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--teal)">D1</span></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)"><div style="font-weight:700;color:var(--ink);margin-bottom:3px">Direction &amp; Clarity</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Does the team understand where the business is going and what their role in it is?</div></div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;border-right:1px solid var(--border);line-height:1.7">Goal clarity, priority alignment, role definition, decision-making speed</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7">Confusion, conflicting priorities, reactive rather than planned work, high effort with low output</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:56px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px;background:var(--navy-dim);border-right:1px solid var(--navy-border);display:flex;align-items:center;justify-content:center"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--navy)">D2</span></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)"><div style="font-weight:700;color:var(--ink);margin-bottom:3px">Leadership Quality</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Is the leadership of this unit capable, trusted, and effective in its specific context?</div></div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;border-right:1px solid var(--border);line-height:1.7">Team trust in manager, feedback quality, development investment, decision quality</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7">Disengagement, attrition of high performers, poor problem-solving, team working around the manager</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:56px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px;background:var(--amber-dim);border-right:1px solid var(--amber-border);display:flex;align-items:center;justify-content:center"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--amber)">D3</span></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)"><div style="font-weight:700;color:var(--ink);margin-bottom:3px">Capability &amp; Fit</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Does the team have the skills, experience, and role-fit needed to deliver the business objectives?</div></div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;border-right:1px solid var(--border);line-height:1.7">Technical competency levels, performance distribution, skill gap frequency, training uptake</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7">Quality errors, frequent rework, reliance on workarounds, low confidence from team members</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:56px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px;background:var(--red-dim);border-right:1px solid var(--red-border);display:flex;align-items:center;justify-content:center"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--red)">D4</span></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)"><div style="font-weight:700;color:var(--ink);margin-bottom:3px">Culture &amp; Climate</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Is the working environment psychologically safe, collaborative, and aligned with the values the business requires?</div></div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;border-right:1px solid var(--border);line-height:1.7">Psychological safety, candour in team, inter-team collaboration, values alignment, retention of mid-performers</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7">Silent teams, blame culture, cliques, information hoarding, safety shortcuts, voluntary exits cluster in a single team</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:56px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px;background:var(--green-dim);border-right:1px solid var(--green-border);display:flex;align-items:center;justify-content:center"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--green)">D5</span></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)"><div style="font-weight:700;color:var(--ink);margin-bottom:3px">Motivation &amp; Engagement</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Are people intrinsically motivated to perform, and do they feel their contribution is recognised?</div></div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;border-right:1px solid var(--border);line-height:1.7">Discretionary effort, absenteeism rate, internal transfer requests, recognition frequency, motivation verbalisations</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7">Minimum viable effort, clock-watching, passive job-searching, cynicism about the company direction</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:56px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px;background:var(--surface2);border-right:1px solid var(--border);display:flex;align-items:center;justify-content:center"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--ink3)">D6</span></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)"><div style="font-weight:700;color:var(--ink);margin-bottom:3px">Talent &amp; Succession</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Does the unit have the talent depth to sustain performance through change, growth, or departure?</div></div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;border-right:1px solid var(--border);line-height:1.7">Succession cover ratio, high-performer retention, pipeline depth, internal promotion rate, 9-box distribution</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--teal);font-weight:300;line-height:1.7">Single points of failure, knowledge concentration, high performer departures not anticipated, shallow bench</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 SIGNALS -->
+<div id="page-signals" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Early Warning Signals</div>
+    <h1 class="page-title">Early Warning<br><em>Signals</em></h1>
+    <p class="page-desc">The observable indicators that something is wrong in an organisation before the data confirms it. An experienced HRBP reads these signals in meetings, site visits, conversations, and data trends — and acts before the problem becomes a crisis.</p>
+  </div>
+
+  <div class="info amber"><strong>The Signal Principle</strong>Every organisational problem broadcasts early warning signals for weeks or months before it becomes visible in KPI data. The HRBP's advantage is seeing these signals earlier than anyone else — because you are watching for them, and you know what they mean.</div>
+
+  <div class="card">
+    <div style="display:grid;grid-template-columns:220px 1fr 1fr;background:var(--ink);border-radius:3px;margin-bottom:3px">
+      <div style="padding:9px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4)">Signal Type</div>
+      <div style="padding:9px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);border-left:1px solid rgba(255,255,255,0.08)">Observable Behaviour or Data</div>
+      <div style="padding:9px 14px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal3);border-left:1px solid rgba(255,255,255,0.08)">Most Likely Diagnosis</div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden">
+      <div class="signal-row" style="background:var(--red-dim)">
+        <div class="signal-cell" style="font-weight:600;color:var(--red)">High-performer exits cluster</div>
+        <div class="signal-cell">Two or more strong performers resign from the same team within one quarter. Especially significant if they cite similar reasons or go to competitors.</div>
+        <div class="signal-cell" style="color:var(--ink2)"><strong>D2 Leadership Quality</strong> — high performers leave managers, not companies. Almost always a direct supervisor issue before anything else.</div>
+      </div>
+      <div class="signal-row">
+        <div class="signal-cell" style="font-weight:600;color:var(--amber)">Team meetings go silent</div>
+        <div class="signal-cell">In meetings, team members stop offering opinions, challenging ideas, or raising concerns. Responses become short and non-committal.</div>
+        <div class="signal-cell"><strong>D4 Culture / Climate</strong> — psychological safety has collapsed. The team has learned that speaking up has a cost.</div>
+      </div>
+      <div class="signal-row" style="background:var(--red-dim)">
+        <div class="signal-cell" style="font-weight:600;color:var(--red)">Manager escalates everything</div>
+        <div class="signal-cell">A site manager begins escalating decisions they would previously have made independently. Smaller and smaller decisions are being referred upward.</div>
+        <div class="signal-cell"><strong>D1 Direction</strong> and/or <strong>D2 Leadership</strong> — either the manager lacks confidence, or the direction from above has become unclear or contradictory.</div>
+      </div>
+      <div class="signal-row">
+        <div class="signal-cell" style="font-weight:600;color:var(--amber)">Leave spikes before programme end</div>
+        <div class="signal-cell">Unplanned sick leave or compassionate leave requests concentrate in the final weeks of a drilling programme — especially from experienced drillers.</div>
+        <div class="signal-cell"><strong>D5 Motivation / D4 Climate</strong> — programme fatigue, relationship breakdown with supervisor, or disengagement from the organisation. Cross-check with R&amp;R data.</div>
+      </div>
+      <div class="signal-row" style="background:var(--red-dim)">
+        <div class="signal-cell" style="font-weight:600;color:var(--red)">Near-miss frequency rises</div>
+        <div class="signal-cell">Safety near-misses increase in frequency even without a recorded LTI. Teams begin normalising risk or skipping safety steps under time pressure.</div>
+        <div class="signal-cell"><strong>D4 Culture</strong> and <strong>D3 Capability</strong> — production pressure overriding safety norms, combined with insufficient supervisor capability to hold the line.</div>
+      </div>
+      <div class="signal-row">
+        <div class="signal-cell" style="font-weight:600;color:var(--amber)">Internal transfer requests rise</div>
+        <div class="signal-cell">Employees begin requesting transfers to other countries or programmes without an obvious career logic behind the request.</div>
+        <div class="signal-cell"><strong>D2 Leadership or D4 Culture</strong> — people are moving away from something, not toward something. Investigate the specific environment they are leaving.</div>
+      </div>
+      <div class="signal-row" style="background:var(--amber-dim)">
+        <div class="signal-cell" style="font-weight:600;color:var(--amber)">Trainee dropout spikes at same point</div>
+        <div class="signal-cell">Trainees consistently leave at the same phase of the programme — e.g., after 3 months, or after the first site rotation.</div>
+        <div class="signal-cell"><strong>D3 Capability / D4 Culture</strong> — a specific experience in the programme is creating an attrition pinch point. Investigate that phase specifically, not the programme as a whole.</div>
+      </div>
+      <div class="signal-row">
+        <div class="signal-cell" style="font-weight:600;color:var(--ink3)">Information stops flowing upward</div>
+        <div class="signal-cell">Senior leaders begin receiving surprises — problems they were not pre-warned about, decisions made without consultation, issues that were apparently common knowledge at the team level.</div>
+        <div class="signal-cell"><strong>D1 Direction / D4 Culture</strong> — either the upward communication channels are broken, or people do not feel safe reporting bad news. A significant governance and culture risk.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 04 PROTOCOL -->
+<div id="page-protocol" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Diagnostic Protocol</div>
+    <h1 class="page-title">Diagnostic<br><em>Protocol</em></h1>
+    <p class="page-desc">The step-by-step process for conducting a rigorous organisational diagnostic. From pre-brief to final recommendation — this is how a credible HRBP approaches every structured assessment.</p>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:4px">
+    <div>
+      <div class="proto-step">
+        <div class="proto-num">01</div>
+        <div>
+          <div class="proto-title">Commission and Scope</div>
+          <div class="proto-body">Define clearly: which business unit, which time period, which trigger, and what question you are trying to answer. Get explicit agreement from the COO or site manager on the scope. An unsanctioned diagnostic will be perceived as HR snooping — and the findings will be dismissed regardless of their quality.</div>
+        </div>
+      </div>
+      <div class="proto-step">
+        <div class="proto-num">02</div>
+        <div>
+          <div class="proto-title">Gather Quantitative Data First</div>
+          <div class="proto-body">Before speaking to anyone, pull all available data: turnover rates, absenteeism, performance ratings, safety metrics, programme delivery data, compa-ratios, time-to-fill. Build your baseline picture from the numbers. This prevents the qualitative data (which comes from people) from being distorted by early impressions.</div>
+        </div>
+      </div>
+      <div class="proto-step">
+        <div class="proto-num">03</div>
+        <div>
+          <div class="proto-title">Form a Working Hypothesis</div>
+          <div class="proto-body">Based on the quantitative data, form a working hypothesis about the most likely root cause. Hold this loosely. It is a starting point for structured inquiry — not a conclusion. Write it down. It forces rigour in your thinking and helps you design the right qualitative questions.</div>
+        </div>
+      </div>
+      <div class="proto-step">
+        <div class="proto-num">04</div>
+        <div>
+          <div class="proto-title">Conduct Qualitative Conversations</div>
+          <div class="proto-body">Interview the site manager, two to three team members, and if possible one person who has recently left the team. Use open questions. Listen for what is not being said as much as what is. Look for: where does energy change? Where does language become careful or vague? What gets consistent agreement across conversations?</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="proto-step">
+        <div class="proto-num">05</div>
+        <div>
+          <div class="proto-title">Observe if Possible</div>
+          <div class="proto-body">For site-based diagnostics, a site visit is worth more than any number of remote interviews. Observe a team briefing. Eat with the team. Watch how the manager interacts with people. The dynamic in a room tells you more in thirty minutes than three hours of structured interviews. Not always possible across four countries — but prioritise when the stakes are high.</div>
+        </div>
+      </div>
+      <div class="proto-step">
+        <div class="proto-num">06</div>
+        <div>
+          <div class="proto-title">Triangulate and Score</div>
+          <div class="proto-body">Use the 6-D Framework (Section 02) and the diagnostic tool (Section 05) to score each dimension based on the full data picture. Where multiple sources point to the same weakness, the signal is strong. Where only one source flags a problem, treat it as a hypothesis to investigate further — not a finding to report.</div>
+        </div>
+      </div>
+      <div class="proto-step">
+        <div class="proto-num">07</div>
+        <div>
+          <div class="proto-title">Identify Root Cause</div>
+          <div class="proto-body">Use the Five Whys technique on the weakest dimension. Keep asking why until you reach a root cause that is actionable. "Low engagement" is not a root cause. "Low engagement because the team supervisor provides no performance feedback and new drillers do not know whether they are on track" is a root cause.</div>
+        </div>
+      </div>
+      <div class="proto-step">
+        <div class="proto-num">08</div>
+        <div>
+          <div class="proto-title">Present Findings and Recommend</div>
+          <div class="proto-body">Present to the COO: three key findings, the root cause, and two to three specific interventions with estimated impact and timeline. Do not present the full diagnostic process — present the conclusions it produced. One page plus a conversation. Invite challenge. Adjust if the COO has context you were missing.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 05 DIAGNOSTIC TOOL -->
+<div id="page-diagnostic" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Run a Diagnostic</div>
+    <h1 class="page-title">Run a<br><em>Diagnostic</em></h1>
+    <p class="page-desc">Score each of the six dimensions across five questions. Use your combined view from quantitative data, interviews, and observation. Scores generate an organisational health heatmap in Section 06.</p>
+  </div>
+
+  <div class="diag-setup">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f5f2;margin-bottom:16px">Diagnostic Setup</div>
+    <div class="diag-row">
+      <div class="diag-group"><label class="diag-label">Business Unit / Country</label><input class="diag-input" id="d-unit" placeholder="e.g. Myanmar Site Operations"></div>
+      <div class="diag-group"><label class="diag-label">Diagnostic Date</label><input class="diag-input" type="date" id="d-date"></div>
+      <div class="diag-group"><label class="diag-label">Trigger</label>
+        <select class="diag-select" id="d-trigger">
+          <option value="">Select trigger</option>
+          <option>Performance signal — KPIs below target</option>
+          <option>Attrition signal — turnover above 15%</option>
+          <option>Safety signal — LTIFR rising</option>
+          <option>Leadership change — manager departure or promotion</option>
+          <option>Proactive quarterly health check</option>
+          <option>Pre-change assessment</option>
+        </select>
+      </div>
+    </div>
+    <div class="diag-group"><label class="diag-label">Working Hypothesis (initial root cause theory)</label><input class="diag-input" id="d-hypothesis" placeholder="e.g. Attrition is driven by supervisor quality gap rather than rewards — early exit data points to manager relationship as primary reason"></div>
+  </div>
+
+  <div id="dimensions-container"></div>
+
+  <div style="display:flex;gap:10px;margin-top:4px">
+    <button class="btn btn-teal" onclick="showPage('results', document.querySelector('.nav-item:nth-child(7)'))">View Results &amp; Heatmap →</button>
+    <button class="btn btn-ghost" onclick="resetDiagnostic()">Reset Scores</button>
+  </div>
+</div>
+
+<!-- 06 RESULTS -->
+<div id="page-results" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Results &amp; Heatmap</div>
+    <h1 class="page-title">Results &amp;<br><em>Heatmap</em></h1>
+    <p class="page-desc">Your scored diagnostic results — overall health score, dimension breakdown, and a heatmap of the weakest areas. Use this to identify the one or two dimensions that need immediate intervention.</p>
+  </div>
+
+  <div class="results-wrap" id="results-panel">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.1)">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px">Organisational Health Score</div>
+        <div style="font-family:var(--fd);font-size:64px;font-weight:800;line-height:1" id="r-overall-score">—</div>
+        <div style="font-family:var(--fm);font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px">/100 · <span id="r-health-label">Complete diagnostic to see results</span></div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px">Unit</div>
+        <div style="font-size:14px;color:#f5f5f2;font-weight:300" id="r-unit">—</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:8px;margin-bottom:4px">Hypothesis</div>
+        <div style="font-size:12.5px;color:rgba(255,255,255,0.45);font-weight:300;max-width:320px;text-align:right" id="r-hypothesis">—</div>
+      </div>
+    </div>
+
+    <div id="r-dimensions"></div>
+
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1)">
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px">Priority Actions</div>
+      <div id="r-priorities"></div>
+    </div>
+  </div>
+
+  <div class="card" id="heatmap-card">
+    <div class="card-title">Dimension Heatmap</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px" id="heatmap-grid"></div>
+    <div style="display:flex;gap:12px;margin-top:12px;align-items:center">
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4)">Score legend:</div>
+      <div style="display:flex;gap:8px">
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:var(--green)"></div><span style="font-size:11px;color:var(--ink4);font-family:var(--fm)">80–100 Strong</span></div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:var(--teal)"></div><span style="font-size:11px;color:var(--ink4);font-family:var(--fm)">60–79 Adequate</span></div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:var(--amber)"></div><span style="font-size:11px;color:var(--ink4);font-family:var(--fm)">40–59 Needs Attention</span></div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:var(--red)"></div><span style="font-size:11px;color:var(--ink4);font-family:var(--fm)">&lt;40 Critical</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07 INTERVENTIONS -->
+<div id="page-interventions" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Interventions Library</div>
+    <h1 class="page-title">Interventions<br><em>Library</em></h1>
+    <p class="page-desc">The standard HR interventions for each of the six diagnostic dimensions. Every intervention listed here is a real action, not a process. Each one has a time to impact, an owner, and a success measure.</p>
+  </div>
+
+  <div style="display:grid;gap:10px">
+
+    <div class="card" style="border-left:4px solid var(--teal)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--teal)">D1</span>
+        <div class="card-title" style="margin-bottom:0">Direction &amp; Clarity Interventions</div>
+      </div>
+      <table class="dtable">
+        <thead><tr><th>Intervention</th><th>When to Use</th><th>Time to Impact</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500;color:var(--ink)">Team goal-setting workshop</td><td>Role confusion, conflicting priorities, low output relative to effort</td><td><span class="chip chip-teal">2–4 weeks</span></td><td>HRBP + Site Manager</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">RACI matrix clarification</td><td>Decisions delayed, accountability gaps, tasks falling through</td><td><span class="chip chip-teal">1–2 weeks</span></td><td>HRBP</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Cascade of business plan to team</td><td>Team disconnected from company direction, low strategic alignment</td><td><span class="chip chip-amber">4–8 weeks</span></td><td>COO + Site Manager</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Operating rhythm reset</td><td>Reactive work, no regular planning cadence, ad hoc prioritisation</td><td><span class="chip chip-amber">4–6 weeks</span></td><td>Site Manager + HRBP</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--navy)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--navy)">D2</span>
+        <div class="card-title" style="margin-bottom:0">Leadership Quality Interventions</div>
+      </div>
+      <table class="dtable">
+        <thead><tr><th>Intervention</th><th>When to Use</th><th>Time to Impact</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500;color:var(--ink)">HRBP leadership coaching</td><td>Manager capable but lacks self-awareness or communication skills</td><td><span class="chip chip-amber">6–12 weeks</span></td><td>HRBP</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">360 feedback process</td><td>Manager perception gap — they believe performance is fine, team does not</td><td><span class="chip chip-amber">4–6 weeks</span></td><td>HRBP</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Leadership capability assessment</td><td>Suspected competency gap — before escalating to performance management</td><td><span class="chip chip-teal">2–3 weeks</span></td><td>HRBP</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">PIP for manager (Tool 3 — PM)</td><td>Coaching exhausted, documented performance gap, business risk is clear</td><td><span class="chip chip-red">12–16 weeks</span></td><td>HRBP + COO</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Leadership transition planning</td><td>Manager clearly wrong fit, exit being managed — protect team continuity</td><td><span class="chip chip-red">8–16 weeks</span></td><td>HRBP + COO</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--amber)">D3</span>
+        <div class="card-title" style="margin-bottom:0">Capability &amp; Fit Interventions</div>
+      </div>
+      <table class="dtable">
+        <thead><tr><th>Intervention</th><th>When to Use</th><th>Time to Impact</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500;color:var(--ink)">Skills gap analysis and training plan</td><td>Technical errors, quality issues, consistent rework across the team</td><td><span class="chip chip-amber">4–8 weeks</span></td><td>HRBP + L&amp;D COE</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Accelerated onboarding review</td><td>New hires underperforming in first 90 days disproportionately</td><td><span class="chip chip-teal">2–4 weeks</span></td><td>HRBP + TA COE</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Role redesign or restructure</td><td>People capable but in roles that do not use their strengths</td><td><span class="chip chip-red">8–16 weeks</span></td><td>HRBP + Site Manager</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Mentoring programme activation</td><td>Skill gap addressable through peer learning, not formal training</td><td><span class="chip chip-amber">6–10 weeks</span></td><td>HRBP</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--red)">D4</span>
+        <div class="card-title" style="margin-bottom:0">Culture &amp; Climate Interventions</div>
+      </div>
+      <table class="dtable">
+        <thead><tr><th>Intervention</th><th>When to Use</th><th>Time to Impact</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500;color:var(--ink)">Psychological safety intervention</td><td>Silent teams, blame culture, surface-level compliance without genuine candour</td><td><span class="chip chip-red">8–16 weeks</span></td><td>HRBP + Site Manager</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Team reset workshop</td><td>Relationship breakdown, unresolved conflict, team not functioning as a unit</td><td><span class="chip chip-amber">2–4 weeks</span></td><td>HRBP</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Values reinforcement with leadership</td><td>Behaviours visible in team contradict company values — led from the top</td><td><span class="chip chip-red">12–20 weeks</span></td><td>HRBP + COO</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Safety culture diagnostic + reset</td><td>Near-miss frequency rising, safety shortcuts normalised</td><td><span class="chip chip-amber">4–8 weeks</span></td><td>HRBP + Site Manager</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--green)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--green)">D5</span>
+        <div class="card-title" style="margin-bottom:0">Motivation &amp; Engagement Interventions</div>
+      </div>
+      <table class="dtable">
+        <thead><tr><th>Intervention</th><th>When to Use</th><th>Time to Impact</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500;color:var(--ink)">Stay interview programme</td><td>Attrition risk elevated — understand intent before people resign</td><td><span class="chip chip-teal">2–3 weeks</span></td><td>HRBP</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Total Rewards Statement (TRS)</td><td>People undervaluing their package — visibility gap, not rewards gap</td><td><span class="chip chip-teal">1–2 weeks</span></td><td>HRBP + C&amp;B COE</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Recognition programme design</td><td>High effort, low recognition — discretionary effort declining</td><td><span class="chip chip-amber">4–6 weeks</span></td><td>HRBP + Site Manager</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Career pathway clarification</td><td>Capable people with no visible future — development plan conversations absent</td><td><span class="chip chip-amber">4–8 weeks</span></td><td>HRBP</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--ink3)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--ink3)">D6</span>
+        <div class="card-title" style="margin-bottom:0">Talent &amp; Succession Interventions</div>
+      </div>
+      <table class="dtable">
+        <thead><tr><th>Intervention</th><th>When to Use</th><th>Time to Impact</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500;color:var(--ink)">9-box review and action planning</td><td>Succession cover ratio below 0.5, pipeline visibility low</td><td><span class="chip chip-amber">4–6 weeks</span></td><td>HRBP + PM COE</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Individual development plan activation</td><td>High-potential employees with no active development plan</td><td><span class="chip chip-teal">2–3 weeks</span></td><td>HRBP + Manager</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">Emergency succession plan</td><td>Single point of failure in critical role, no internal successor, short timeline</td><td><span class="chip chip-amber">4–8 weeks</span></td><td>HRBP + COO</td></tr>
+          <tr><td style="font-weight:500;color:var(--ink)">External succession pipeline</td><td>Internal pipeline insufficient — build external bench proactively</td><td><span class="chip chip-red">3–6 months</span></td><td>HRBP + TA COE</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 08 VALENTIS CASES -->
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Valentis Live Cases</div>
+    <h1 class="page-title">Valentis<br><em>Live Cases</em></h1>
+    <p class="page-desc">Three real diagnostic scenarios drawn from Valentis Group's current organisational context. Each demonstrates how the 6-D framework applies to an actual business problem — and what the HRBP should do about it.</p>
+  </div>
+
+  <div style="display:grid;gap:14px">
+
+    <div class="card" style="border-top:3px solid var(--red)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Case 01 — Myanmar Site</div>
+          <div class="card-title" style="margin-bottom:4px">Trainee Attrition &amp; Site Culture</div>
+          <div style="font-size:13px;color:var(--ink4);font-weight:300">Trigger: Trainee conversion rate dropped to 58% — below the 70% target. Three trainees resigned in Q1, all citing "environment" as primary reason.</div>
+        </div>
+        <span class="chip chip-red">Critical Risk</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Quantitative Signals</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Attrition at month 3 (end of first site rotation) — all three exits at the same programme phase. Exit interviews: "supervisors don't communicate expectations," "felt isolated." LTIFR stable but near-miss frequency up 18%.</div>
+        </div>
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">6-D Assessment</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75"><strong>D4 Culture/Climate: LOW</strong> — trainees feel unsafe raising concerns. <strong>D2 Leadership: MEDIUM-LOW</strong> — supervisors technically competent but weak on communication and mentoring. <strong>D3 Capability: MEDIUM</strong> — trainee skills adequate, support insufficient.</div>
+        </div>
+        <div style="padding:14px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">HRBP Recommendation</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">1. Supervisor communication coaching — targeted at the three supervisors managing trainee rotations. 2. Structured trainee check-in at 30/60/90 days with HRBP. 3. Revise trainee induction to set explicit expectations for the site environment. Timeline: 6 weeks. Success measure: zero exits at month 3 in next cohort.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--amber)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:4px">Case 02 — Indonesia Site</div>
+          <div class="card-title" style="margin-bottom:4px">Programme Delivery Slippage</div>
+          <div style="font-size:13px;color:var(--ink4);font-weight:300">Trigger: Indonesia programme delivery rate fell from 93% to 84% over two quarters. COO flagged it as an operational concern — HRBP requested permission to conduct a people diagnostic.</div>
+        </div>
+        <span class="chip chip-amber">Moderate Risk</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Quantitative Signals</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Metres drilled per day down from 21 to 17.5. Three G3 driller vacancies open for 40+ days. Overtime hours up 22%. No new hires in Indonesia for six months. Site manager has not escalated vacancies through formal channels.</div>
+        </div>
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">6-D Assessment</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75"><strong>D6 Talent/Succession: LOW</strong> — three vacancies, no internal pipeline. <strong>D5 Motivation: MEDIUM-LOW</strong> — remaining team overloaded. <strong>D1 Direction: MEDIUM</strong> — site manager managing around the problem rather than escalating it through HR channels.</div>
+        </div>
+        <div style="padding:14px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">HRBP Recommendation</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">1. Activate emergency driller sourcing for Indonesia — TA COE, regional market. 2. Interim deployment: identify any cross-country G3 driller who can mobilise within 21 days. 3. Stay interview with remaining Indonesia team — assess flight risk before someone else leaves. 4. Address non-escalation with site manager — establish early warning process. Timeline: 30 days for first hire.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--navy)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--navy);margin-bottom:4px">Case 03 — Laos Site</div>
+          <div class="card-title" style="margin-bottom:4px">Succession Gap — Senior Driller Cohort</div>
+          <div style="font-size:13px;color:var(--ink4);font-weight:300">Trigger: Proactive quarterly health check revealed that four of five G4 senior drillers in Laos have 18+ years experience and no G3 employees are being developed toward G4 competency.</div>
+        </div>
+        <span class="chip chip-navy">Strategic Risk</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:6px">Quantitative Signals</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Average age of G4 driller cohort in Laos: 51. Retirement risk within 3 years: 3 of 5. G3 driller count in Laos: 2. Average G3-to-G4 development time: 24 months. Gap: 3 retirements — 24-month development cycle — 2 G3 candidates. Exposure: net -1 senior driller by 2027.</div>
+        </div>
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:6px">6-D Assessment</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75"><strong>D6 Talent/Succession: CRITICAL</strong> — no succession cover for a critical technical cohort. <strong>D3 Capability: MEDIUM</strong> — G3 pool exists but development not structured. <strong>D1 Direction: MEDIUM</strong> — Laos manager not yet flagging this as a 3-year planning risk.</div>
+        </div>
+        <div style="padding:14px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">HRBP Recommendation</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">1. Activate G3-to-G4 development plan for both current G3 Laos drillers immediately. 2. Hire one additional G3 driller in Laos within Q2 2026 to build pipeline redundancy. 3. Brief COO: Laos senior driller succession is a 2027 programme continuity risk — present the numbers. 4. Consider structured knowledge transfer programme while senior drillers are still in role. Timeline: G3 dev plans within 30 days.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── NAV ───────────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'results') renderResults();
+}
+
+// ── DIMENSION DATA ────────────────────────────────────────────────────
+const DIMS = [
+  {
+    id:'d1', code:'D1', label:'Direction & Clarity', color:'var(--teal)',
+    questions:[
+      'Team members can clearly articulate the business unit\'s top three priorities for the next 90 days',
+      'Decisions are made at the right level — neither escalated unnecessarily nor made without appropriate input',
+      'Roles and responsibilities are clearly defined with minimal overlap or ambiguity',
+      'The team has a regular operating rhythm — planning, review, and communication cadence is in place',
+      'Strategic changes from leadership are communicated clearly and translated into team-level actions'
+    ]
+  },
+  {
+    id:'d2', code:'D2', label:'Leadership Quality', color:'var(--navy)',
+    questions:[
+      'The team leader is trusted and respected by their direct reports — this is visible in how they interact',
+      'The leader provides clear, timely, and constructive feedback to team members',
+      'The leader actively develops their people — IDPs exist and are being worked on',
+      'The leader makes sound decisions under pressure and in ambiguous situations',
+      'High performers in this team are retained — the leader creates reasons to stay, not reasons to leave'
+    ]
+  },
+  {
+    id:'d3', code:'D3', label:'Capability & Fit', color:'var(--amber)',
+    questions:[
+      'Team members have the technical skills required to perform their roles at the expected standard',
+      'New team members reach full productivity within the expected onboarding timeframe',
+      'There are no persistent quality or output issues attributable to skills gaps',
+      'People are deployed in roles that leverage their strengths — fit is evident in performance',
+      'The team accesses training and development when skill gaps are identified'
+    ]
+  },
+  {
+    id:'d4', code:'D4', label:'Culture & Climate', color:'var(--red)',
+    questions:[
+      'Team members feel safe raising concerns, bad news, or dissenting views without fear of consequence',
+      'Collaboration across the team is genuine — people help each other and share information freely',
+      'The team\'s observable behaviours align with Valentis\'s values — especially around safety',
+      'Interpersonal conflict is handled constructively and does not persist underground',
+      'The overall climate of the team is one that would attract and retain good people'
+    ]
+  },
+  {
+    id:'d5', code:'D5', label:'Motivation & Engagement', color:'var(--green)',
+    questions:[
+      'Team members demonstrate discretionary effort — they go beyond the minimum requirements of their role',
+      'Absenteeism and unplanned leave in this unit is within acceptable norms',
+      'People speak positively about their work and about Valentis when given the opportunity',
+      'Recognition and appreciation are visible — people feel their contribution is noticed',
+      'Team members have a clear sense of growth and future opportunity within the organisation'
+    ]
+  },
+  {
+    id:'d6', code:'D6', label:'Talent & Succession', color:'var(--ink3)',
+    questions:[
+      'Every critical role in this unit has at least one identified successor or development candidate',
+      'High performers in this unit are identified and actively managed with tailored retention plans',
+      'The talent pipeline is deep enough to sustain performance through a leadership departure',
+      'Knowledge is distributed — the departure of any single individual would not cause a critical capability loss',
+      'The 9-box distribution of this team is healthy — adequate representation across performance and potential bands'
+    ]
+  }
+];
+
+// Store scores: dimId -> questionIndex -> score (1-5)
+const scores = {};
+const notes  = {};
+
+DIMS.forEach(d => { scores[d.id] = {}; notes[d.id] = {}; });
+
+function buildDimensions() {
+  const container = document.getElementById('dimensions-container');
+  if (!container) return;
+  container.innerHTML = DIMS.map((dim, di) => `
+    <div class="dim-card">
+      <div class="dim-header" onclick="toggleDim('${dim.id}')" id="hdr-${dim.id}">
+        <div class="dim-num" style="color:${dim.color}">${dim.code}</div>
+        <div class="dim-name">${dim.label}</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="score-bar" style="width:80px;margin:0"><div class="score-fill" id="bar-${dim.id}" style="width:0%;background:${dim.color}"></div></div>
+          <div class="dim-score-display" id="score-${dim.id}" style="color:${dim.color}">—</div>
+        </div>
+        <div style="font-family:var(--fm);font-size:18px;color:var(--ink5);margin-left:8px" id="toggle-${dim.id}">+</div>
+      </div>
+      <div class="dim-body" id="body-${dim.id}">
+        ${dim.questions.map((q, qi) => `
+          <div class="q-row">
+            <div class="q-text">${qi + 1}. ${q}</div>
+            <div class="q-scale">
+              <span class="q-scale-label">Never</span>
+              ${[1,2,3,4,5].map(v => `<button class="q-btn" id="btn-${dim.id}-${qi}-${v}" onclick="setScore('${dim.id}',${qi},${v})">${v}</button>`).join('')}
+              <span class="q-scale-label">Always</span>
+            </div>
+            <div class="q-note">
+              <textarea class="q-note-input" rows="2" placeholder="Optional: observation or evidence..." id="note-${dim.id}-${qi}" onchange="saveNote('${dim.id}',${qi},this.value)"></textarea>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleDim(id) {
+  const body = document.getElementById('body-' + id);
+  const hdr  = document.getElementById('hdr-' + id);
+  const tog  = document.getElementById('toggle-' + id);
+  const open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  hdr.classList.toggle('open', !open);
+  tog.textContent = open ? '+' : '−';
+}
+
+function setScore(dimId, qi, val) {
+  scores[dimId][qi] = val;
+  [1,2,3,4,5].forEach(v => {
+    const btn = document.getElementById(`btn-${dimId}-${qi}-${v}`);
+    if (btn) btn.classList.toggle('selected', v === val);
+  });
+  updateDimScore(dimId);
+}
+
+function saveNote(dimId, qi, val) {
+  notes[dimId][qi] = val;
+}
+
+function updateDimScore(dimId) {
+  const dim = DIMS.find(d => d.id === dimId);
+  const vals = Object.values(scores[dimId]);
+  if (!vals.length) return;
+  const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+  const pct = Math.round((avg / 5) * 100);
+  const el = document.getElementById('score-' + dimId);
+  const bar = document.getElementById('bar-' + dimId);
+  if (el) el.textContent = pct;
+  if (bar) bar.style.width = pct + '%';
+}
+
+function getDimScore(dimId) {
+  const vals = Object.values(scores[dimId]);
+  if (!vals.length) return null;
+  const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+  return Math.round((avg / 5) * 100);
+}
+
+function resetDiagnostic() {
+  DIMS.forEach(d => { scores[d.id] = {}; notes[d.id] = {}; });
+  DIMS.forEach(d => {
+    d.questions.forEach((q, qi) => {
+      [1,2,3,4,5].forEach(v => {
+        const btn = document.getElementById(`btn-${d.id}-${qi}-${v}`);
+        if (btn) btn.classList.remove('selected');
+      });
+      const note = document.getElementById(`note-${d.id}-${qi}`);
+      if (note) note.value = '';
+    });
+    const el = document.getElementById('score-' + d.id);
+    const bar = document.getElementById('bar-' + d.id);
+    if (el) el.textContent = '—';
+    if (bar) bar.style.width = '0%';
+  });
+}
+
+function scoreColor(pct) {
+  if (pct === null) return '#b8b8b0';
+  if (pct >= 80) return 'var(--green)';
+  if (pct >= 60) return 'var(--teal)';
+  if (pct >= 40) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+function scoreLabel(pct) {
+  if (pct === null) return 'No data';
+  if (pct >= 80) return 'Strong';
+  if (pct >= 60) return 'Adequate';
+  if (pct >= 40) return 'Needs Attention';
+  return 'Critical';
+}
+
+function renderResults() {
+  const unit = document.getElementById('d-unit')?.value || '—';
+  const hyp  = document.getElementById('d-hypothesis')?.value || '—';
+
+  document.getElementById('r-unit').textContent      = unit;
+  document.getElementById('r-hypothesis').textContent = hyp;
+
+  const dimScores = DIMS.map(d => ({ ...d, score: getDimScore(d.id) }));
+  const valid = dimScores.filter(d => d.score !== null);
+  const overall = valid.length
+    ? Math.round(valid.reduce((a, d) => a + d.score, 0) / valid.length)
+    : null;
+
+  const oEl = document.getElementById('r-overall-score');
+  const lEl = document.getElementById('r-health-label');
+  if (oEl) {
+    oEl.textContent = overall !== null ? overall : '—';
+    oEl.style.color = scoreColor(overall);
+  }
+  if (lEl) lEl.textContent = overall !== null ? scoreLabel(overall) : 'Complete diagnostic to see results';
+
+  // Dimension bars
+  const rDims = document.getElementById('r-dimensions');
+  if (rDims) {
+    rDims.innerHTML = dimScores.map(d => {
+      const pct = d.score;
+      const col = scoreColor(pct);
+      return `<div class="result-dim-row">
+        <div style="font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.5)">${d.code} — ${d.label}</div>
+        <div class="result-bar-bg"><div class="result-bar-fill" style="width:${pct || 0}%;background:${col}"></div></div>
+        <div class="result-score" style="color:${col}">${pct !== null ? pct : '—'}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Priority actions
+  const sorted = [...dimScores].filter(d => d.score !== null).sort((a, b) => a.score - b.score);
+  const rPrio = document.getElementById('r-priorities');
+  if (rPrio) {
+    if (!sorted.length) {
+      rPrio.innerHTML = '<div style="font-size:13px;color:rgba(255,255,255,0.3);font-weight:300">Complete the diagnostic to generate priority actions.</div>';
+    } else {
+      rPrio.innerHTML = sorted.slice(0, 3).map((d, i) => `
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);width:20px">0${i+1}</div>
+          <div style="font-family:var(--fm);font-size:10px;font-weight:600;color:${scoreColor(d.score)};width:30px">${d.code}</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.65);font-weight:300;flex:1">${d.label} — score ${d.score}/100 · ${scoreLabel(d.score)} → see Interventions Library (Section 07)</div>
+        </div>`).join('');
+    }
+  }
+
+  // Heatmap
+  const hGrid = document.getElementById('heatmap-grid');
+  if (hGrid) {
+    hGrid.innerHTML = dimScores.map(d => {
+      const pct = d.score;
+      const col = scoreColor(pct);
+      const bg = pct === null ? 'var(--surface2)' :
+                 pct >= 80 ? 'var(--green-dim)' :
+                 pct >= 60 ? 'var(--teal-dim)' :
+                 pct >= 40 ? 'var(--amber-dim)' : 'var(--red-dim)';
+      const bdr = pct === null ? 'var(--border)' :
+                  pct >= 80 ? 'var(--green-border)' :
+                  pct >= 60 ? 'var(--teal-border)' :
+                  pct >= 40 ? 'var(--amber-border)' : 'var(--red-border)';
+      return `<div class="heat-cell" style="background:${bg};border-color:${bdr}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <span style="font-family:var(--fm);font-size:9px;font-weight:600;color:${col}">${d.code}</span>
+          <span style="font-family:var(--fm);font-size:14px;font-weight:700;color:${col}">${pct !== null ? pct : '—'}</span>
+        </div>
+        <div style="font-size:12px;color:var(--ink2);font-weight:500;margin-bottom:2px">${d.label}</div>
+        <div style="font-size:11px;color:var(--ink4);font-weight:300">${scoreLabel(pct)}</div>
+        <div class="score-bar" style="margin-top:6px"><div class="score-fill" style="width:${pct || 0}%;background:${col}"></div></div>
+      </div>`;
+    }).join('');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildDimensions();
+  const today = new Date().toISOString().split('T')[0];
+  const dateEl = document.getElementById('d-date');
+  if (dateEl) dateEl.value = today;
+});
+</script>
+</body>
+</html>

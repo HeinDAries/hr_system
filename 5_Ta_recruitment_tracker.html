@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recruitment Tracker | Valentis Laos</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Epilogue:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0ede8;
+  --bg2: #e8e4de;
+  --white: #fdfcfa;
+  --ink: #1c1917;
+  --ink2: #44403c;
+  --ink3: #78716c;
+  --ink4: #a8a29e;
+  --border: #ddd8d1;
+  --border2: #c8c2ba;
+
+  --gold: #b45309;
+  --gold-bg: #fffbeb;
+  --gold-bd: #fcd34d;
+
+  --green: #15803d;
+  --green-bg: #f0fdf4;
+  --green-bd: #86efac;
+
+  --blue: #1d4ed8;
+  --blue-bg: #eff6ff;
+  --blue-bd: #93c5fd;
+
+  --red: #b91c1c;
+  --red-bg: #fef2f2;
+  --red-bd: #fca5a5;
+
+  --purple: #6d28d9;
+  --purple-bg: #f5f3ff;
+  --purple-bd: #c4b5fd;
+
+  --slate: #334155;
+  --slate-bg: #f1f5f9;
+  --slate-bd: #94a3b8;
+
+  --orange: #c2410c;
+  --orange-bg: #fff7ed;
+  --orange-bd: #fdba74;
+
+  /* Pipeline stage colors */
+  --s-sourced:    #6d28d9;
+  --s-screened:   #1d4ed8;
+  --s-interview:  #b45309;
+  --s-offer:      #15803d;
+  --s-hired:      #166534;
+  --s-rejected:   #b91c1c;
+  --s-withdrawn:  #78716c;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Epilogue', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+/* LAYOUT */
+.layout { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px; min-width: 260px;
+  background: var(--ink);
+  position: fixed; inset-y: 0; left: 0;
+  display: flex; flex-direction: column;
+  overflow-y: auto; z-index: 30;
+}
+.sb-brand { padding: 26px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.sb-ey { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 9px; }
+.sb-title { font-family: 'Fraunces', serif; font-size: 19px; color: #fff; line-height: 1.2; }
+.sb-title em { color: #fbbf24; font-style: italic; }
+.sb-sub { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 5px; }
+
+.sb-sec { padding: 14px 12px 4px; }
+.sb-sec-lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.18); padding: 0 8px; margin-bottom: 6px; }
+.sb-nav { display: flex; flex-direction: column; gap: 2px; }
+.nb {
+  display: flex; align-items: center; gap: 9px;
+  width: 100%; padding: 8px 10px; border-radius: 7px;
+  background: transparent; border: none;
+  color: rgba(255,255,255,0.42);
+  font-family: 'Epilogue', sans-serif;
+  font-size: 12.5px; font-weight: 500;
+  cursor: pointer; transition: all 0.14s; text-align: left;
+}
+.nb:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.72); }
+.nb.active { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.nb-ic { font-size: 12px; width: 16px; text-align: center; flex-shrink: 0; opacity: 0.7; }
+.nb-badge { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 1px 6px; border-radius: 8px; background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.3); }
+.nb.active .nb-badge { background: rgba(251,191,36,0.2); color: #fbbf24; }
+
+.sb-footer { margin-top: auto; padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.06); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.15); line-height: 1.8; }
+
+/* MAIN */
+.main { margin-left: 260px; flex: 1; display: flex; flex-direction: column; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 14px 36px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 20;
+}
+.tb-l { }
+.tb-title { font-family: 'Fraunces', serif; font-size: 16px; color: var(--ink); }
+.tb-sub { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink4); margin-top: 2px; }
+.tb-r { display: flex; gap: 8px; align-items: center; }
+.conf-pill { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; background: var(--red-bg); color: var(--red); border: 1px solid var(--red-bd); }
+
+/* CONTENT */
+.content { padding: 32px 36px; flex: 1; }
+.tab-panel { display: none; animation: up 0.2s ease; }
+.tab-panel.active { display: block; }
+@keyframes up { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* SECTION LABEL */
+.sl { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ink4); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+.sl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* CARDS */
+.card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+.card-head { padding: 13px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 11px; }
+.card-ic { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.card-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.card-sub { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+.card-body { padding: 16px 18px; }
+
+/* PILL */
+.pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace; border: 1px solid; white-space: nowrap; }
+.p-gold   { background: var(--gold-bg); color: var(--gold); border-color: var(--gold-bd); }
+.p-green  { background: var(--green-bg); color: var(--green); border-color: var(--green-bd); }
+.p-blue   { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-bd); }
+.p-red    { background: var(--red-bg); color: var(--red); border-color: var(--red-bd); }
+.p-purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-bd); }
+.p-slate  { background: var(--slate-bg); color: var(--slate); border-color: var(--slate-bd); }
+.p-orange { background: var(--orange-bg); color: var(--orange); border-color: var(--orange-bd); }
+
+/* STAGE BADGES */
+.stage { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.st-sourced   { background: var(--purple-bg); color: var(--s-sourced); border: 1px solid var(--purple-bd); }
+.st-screened  { background: var(--blue-bg); color: var(--s-screened); border: 1px solid var(--blue-bd); }
+.st-interview { background: var(--gold-bg); color: var(--s-interview); border: 1px solid var(--gold-bd); }
+.st-offer     { background: var(--green-bg); color: var(--s-offer); border: 1px solid var(--green-bd); }
+.st-hired     { background: #dcfce7; color: var(--s-hired); border: 1px solid #86efac; }
+.st-rejected  { background: var(--red-bg); color: var(--s-rejected); border: 1px solid var(--red-bd); }
+.st-withdrawn { background: var(--slate-bg); color: var(--s-withdrawn); border: 1px solid var(--slate-bd); }
+
+/* PRIORITY BADGES */
+.prio { display: inline-flex; padding: 2px 7px; border-radius: 4px; font-size: 9.5px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.pr-critical { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-bd); }
+.pr-high     { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-bd); }
+.pr-medium   { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-bd); }
+.pr-low      { background: var(--slate-bg); color: var(--slate); border: 1px solid var(--slate-bd); }
+
+/* FOOTNOTE */
+.fn { font-size: 11px; color: var(--ink3); font-style: italic; padding: 9px 13px; background: var(--bg); border-radius: 7px; border-left: 2px solid var(--border2); margin-top: 10px; line-height: 1.6; }
+
+/* KPI BAR */
+.kpi-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 22px; }
+.kpi-c { background: var(--white); padding: 15px 16px; }
+.kpi-l { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink4); margin-bottom: 6px; }
+.kpi-v { font-family: 'Fraunces', serif; font-size: 26px; line-height: 1; }
+.kpi-s { font-size: 10.5px; color: var(--ink3); margin-top: 4px; }
+
+/* SCROLL */
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ════════ PIPELINE BOARD ════════ */
+.pipeline-board { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 20px; align-items: flex-start; }
+.pipeline-col { min-width: 200px; flex-shrink: 0; }
+.pipeline-col-head {
+  padding: 10px 12px; border-radius: 8px 8px 0 0;
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+}
+.pcol-label { font-size: 11px; font-weight: 700; }
+.pcol-count { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; }
+.pipeline-cards { display: flex; flex-direction: column; gap: 7px; }
+.pc-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 9px; padding: 12px 13px; cursor: pointer;
+  transition: box-shadow 0.14s, border-color 0.14s;
+}
+.pc-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-color: var(--border2); }
+.pc-role { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.pc-cand { font-size: 11px; color: var(--ink3); margin-bottom: 5px; }
+.pc-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+.pc-country { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--ink4); }
+.pc-days { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--ink4); margin-left: auto; }
+.overdue-card { border-color: var(--red-bd) !important; }
+.overdue-flag { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--red); font-weight: 700; margin-top: 5px; }
+
+/* PIPELINE COLUMN COLORS */
+.col-sourced   .pipeline-col-head { background: var(--purple-bg); }
+.col-sourced   .pcol-label { color: var(--s-sourced); }
+.col-sourced   .pcol-count { background: var(--purple-bd); color: var(--s-sourced); }
+.col-screened  .pipeline-col-head { background: var(--blue-bg); }
+.col-screened  .pcol-label { color: var(--s-screened); }
+.col-screened  .pcol-count { background: var(--blue-bd); color: var(--s-screened); }
+.col-interview .pipeline-col-head { background: var(--gold-bg); }
+.col-interview .pcol-label { color: var(--s-interview); }
+.col-interview .pcol-count { background: var(--gold-bd); color: var(--s-interview); }
+.col-offer     .pipeline-col-head { background: var(--green-bg); }
+.col-offer     .pcol-label { color: var(--s-offer); }
+.col-offer     .pcol-count { background: var(--green-bd); color: var(--s-offer); }
+.col-hired     .pipeline-col-head { background: #dcfce7; }
+.col-hired     .pcol-label { color: var(--s-hired); }
+.col-hired     .pcol-count { background: #86efac; color: var(--s-hired); }
+
+/* TRACKER TABLE */
+.tracker-tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tracker-tbl thead tr { background: var(--ink); }
+.tracker-tbl thead th {
+  padding: 11px 13px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; color: rgba(255,255,255,0.65);
+  text-align: left; border-right: 1px solid rgba(255,255,255,0.08);
+  white-space: nowrap;
+}
+.tracker-tbl thead th:last-child { border-right: none; }
+.tracker-tbl tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+.tracker-tbl tbody tr:last-child { border-bottom: none; }
+.tracker-tbl tbody tr:hover { background: var(--bg); }
+.tracker-tbl tbody td {
+  padding: 11px 13px;
+  color: var(--ink2); border-right: 1px solid var(--border);
+  vertical-align: middle; line-height: 1.4;
+}
+.tracker-tbl tbody td:last-child { border-right: none; }
+.td-role { font-weight: 700; color: var(--ink); font-size: 12.5px; }
+.td-actions { display: flex; gap: 6px; }
+.tbl-btn {
+  padding: 4px 9px; border-radius: 5px; border: 1px solid var(--border2);
+  background: var(--white); font-size: 10.5px; font-weight: 600;
+  cursor: pointer; transition: all 0.13s; color: var(--ink3);
+  font-family: 'Epilogue', sans-serif;
+}
+.tbl-btn:hover { border-color: var(--ink3); color: var(--ink); }
+.tbl-btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tbl-btn.primary:hover { background: var(--ink2); }
+
+/* ADD CANDIDATE FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.form-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg label { font-size: 11px; font-weight: 700; color: var(--ink3); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; text-transform: uppercase; }
+.fg input, .fg select, .fg textarea {
+  padding: 9px 11px;
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  font-family: 'Epilogue', sans-serif;
+  font-size: 12.5px; color: var(--ink);
+  background: var(--white); outline: none;
+  transition: border-color 0.14s;
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--gold); }
+.fg textarea { resize: vertical; min-height: 70px; }
+.form-actions { display: flex; gap: 10px; }
+.btn { padding: 9px 18px; border-radius: 8px; font-family: 'Epilogue', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.14s; border: 1px solid; }
+.btn-primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+.btn-primary:hover { background: var(--ink2); }
+.btn-ghost { background: transparent; color: var(--ink3); border-color: var(--border2); }
+.btn-ghost:hover { border-color: var(--ink3); color: var(--ink); }
+
+/* OFFER PANEL */
+.offer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+.offer-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 11px; overflow: hidden;
+}
+.offer-card-head {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.offer-card-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.offer-card-sub { font-size: 11px; color: var(--ink3); }
+.offer-card-body { padding: 14px 16px; }
+
+.offer-item { padding: 10px 12px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; }
+.offer-role { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.offer-cand { font-size: 11.5px; color: var(--ink3); margin-bottom: 6px; }
+.offer-detail { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.offer-salary { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--ink2); font-weight: 600; }
+
+/* NEGOTIATION LOG */
+.neg-log { display: flex; flex-direction: column; gap: 8px; }
+.neg-entry { padding: 11px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; position: relative; padding-left: 20px; }
+.neg-entry::before { content: ''; position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 4px; height: 4px; border-radius: 50%; }
+.neg-initial::before { background: var(--purple); }
+.neg-counter::before  { background: var(--gold); }
+.neg-accepted::before { background: var(--green); }
+.neg-rejected::before { background: var(--red); }
+.neg-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; }
+.neg-initial  .neg-label { color: var(--purple); }
+.neg-counter  .neg-label { color: var(--gold); }
+.neg-accepted .neg-label { color: var(--green); }
+.neg-rejected .neg-label { color: var(--red); }
+.neg-body { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+
+/* TEMPLATE BOX */
+.tmpl { background: var(--ink); border-radius: 10px; padding: 18px; margin-bottom: 16px; position: relative; }
+.tmpl-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+.tmpl-body { font-size: 12.5px; color: rgba(255,255,255,0.8); line-height: 1.8; white-space: pre-wrap; }
+.tmpl-body b { color: #fbbf24; font-weight: 600; }
+.tmpl-copy { position: absolute; top: 12px; right: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.4); font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: all 0.14s; }
+.tmpl-copy:hover { color: #fbbf24; border-color: rgba(251,191,36,0.4); }
+
+/* COUNTER-OFFER GUIDE */
+.co-steps { display: flex; flex-direction: column; gap: 10px; }
+.co-step { display: grid; grid-template-columns: 32px 1fr; gap: 12px; padding: 12px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 9px; }
+.co-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--gold); width: 32px; height: 32px; background: var(--gold-bg); border: 1px solid var(--gold-bd); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.co-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.co-desc { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--white); border-radius: 14px; width: 640px; max-width: 95vw; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.modal-head { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-family: 'Fraunces', serif; font-size: 16px; color: var(--ink); }
+.modal-close { width: 30px; height: 30px; border-radius: 6px; background: var(--bg); border: 1px solid var(--border); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; color: var(--ink3); }
+.modal-body { padding: 20px 22px; }
+.modal-stage-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.modal-stage-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border2); background: var(--white); font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.13s; color: var(--ink3); font-family: 'JetBrains Mono', monospace; }
+.modal-stage-btn.active { border-color: var(--gold); background: var(--gold-bg); color: var(--gold); }
+
+/* TOAST */
+.toast { position: fixed; bottom: 22px; right: 24px; background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 600; opacity: 0; transform: translateY(6px); transition: all 0.2s; pointer-events: none; z-index: 999; }
+.toast.show { opacity: 1; transform: none; }
+
+@media (max-width: 900px) {
+  .sidebar { width: 220px; min-width: 220px; }
+  .main { margin-left: 220px; }
+  .form-grid { grid-template-columns: 1fr 1fr; }
+  .offer-grid { grid-template-columns: 1fr; }
+  .kpi-bar { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-ey">Valentis Laos · HR</div>
+    <div class="sb-title">Recruitment <em>Tracker</em></div>
+    <div class="sb-sub">Pipeline · Offers · Communication</div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Overview</div>
+    <div class="sb-nav">
+      <button class="nb active" onclick="sw('dashboard',this)"><span class="nb-ic">◈</span> Dashboard</button>
+      <button class="nb" onclick="sw('pipeline',this)"><span class="nb-ic">◷</span> Pipeline Board</button>
+      <button class="nb" onclick="sw('tracker',this)"><span class="nb-ic">☰</span> All Candidates</button>
+    </div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Offer Management</div>
+    <div class="sb-nav">
+      <button class="nb" onclick="sw('offers',this)"><span class="nb-ic">◎</span> Active Offers</button>
+      <button class="nb" onclick="sw('counter',this)"><span class="nb-ic">⇄</span> Counter-Offer Guide</button>
+      <button class="nb" onclick="sw('salary',this)"><span class="nb-ic">$</span> Salary Benchmarks</button>
+    </div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Communication</div>
+    <div class="sb-nav">
+      <button class="nb" onclick="sw('tmpl-invite',this)"><span class="nb-ic">✉</span> Interview Invites</button>
+      <button class="nb" onclick="sw('tmpl-offer',this)"><span class="nb-ic">✉</span> Offer Letters</button>
+      <button class="nb" onclick="sw('tmpl-reject',this)"><span class="nb-ic">✉</span> Rejections</button>
+      <button class="nb" onclick="sw('tmpl-ack',this)"><span class="nb-ic">✉</span> Acknowledgements</button>
+    </div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Add New</div>
+    <div class="sb-nav">
+      <button class="nb" onclick="sw('add',this)"><span class="nb-ic">＋</span> Add Candidate</button>
+    </div>
+  </div>
+
+  <div class="sb-footer">
+    Valentis Laos · Group HR<br>
+    Recruitment Tracker v1.0<br>
+    March 2026 · Confidential
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-l">
+      <div class="tb-title" id="tb-title">Dashboard</div>
+      <div class="tb-sub" id="tb-sub">RECRUITMENT OVERVIEW · 2026</div>
+    </div>
+    <div class="tb-r">
+      <span class="conf-pill">Confidential · HR Only</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div id="tab-dashboard" class="tab-panel active">
+      <div class="sl">Live pipeline summary · 2026</div>
+      <div class="kpi-bar">
+        <div class="kpi-c"><div class="kpi-l">Open Roles</div><div class="kpi-v" style="color:var(--red);" id="kpi-open">—</div><div class="kpi-s">Active requisitions</div></div>
+        <div class="kpi-c"><div class="kpi-l">Total Candidates</div><div class="kpi-v" style="color:var(--blue);" id="kpi-total">—</div><div class="kpi-s">In pipeline</div></div>
+        <div class="kpi-c"><div class="kpi-l">Active Offers</div><div class="kpi-v" style="color:var(--gold);" id="kpi-offers">—</div><div class="kpi-s">Pending response</div></div>
+        <div class="kpi-c"><div class="kpi-l">Hired YTD</div><div class="kpi-v" style="color:var(--green);" id="kpi-hired">—</div><div class="kpi-s">2026 confirmed</div></div>
+        <div class="kpi-c"><div class="kpi-l">Avg Days Open</div><div class="kpi-v" style="color:var(--orange);" id="kpi-days">—</div><div class="kpi-s">Per open role</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;">
+        <div class="card">
+          <div class="card-head"><div class="card-ic" style="background:var(--red-bg);color:var(--red);">⚑</div><div><div class="card-title">Critical Actions Required</div><div class="card-sub">Roles needing immediate attention</div></div></div>
+          <div class="card-body" id="critical-actions">
+            <div style="font-size:12px;color:var(--ink3);font-style:italic;">Loading…</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-ic" style="background:var(--gold-bg);color:var(--gold);">◈</div><div><div class="card-title">Pipeline by Stage</div><div class="card-sub">Current candidate distribution</div></div></div>
+          <div class="card-body" id="stage-summary">
+            <div style="font-size:12px;color:var(--ink3);font-style:italic;">Loading…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-ic" style="background:var(--blue-bg);color:var(--blue);">☰</div><div><div class="card-title">Role Status Overview</div><div class="card-sub">All active requisitions</div></div></div>
+        <div class="card-body" style="padding:0;">
+          <div class="scroll-x">
+            <table class="tracker-tbl" id="role-overview-tbl">
+              <thead><tr><th>Role</th><th>Country</th><th>Priority</th><th>Stage</th><th>Candidates</th><th>Days Open</th><th>Target Fill</th><th>Status</th></tr></thead>
+              <tbody id="role-overview-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PIPELINE BOARD ══ -->
+    <div id="tab-pipeline" class="tab-panel">
+      <div class="sl">Visual pipeline · drag view by stage</div>
+      <div class="pipeline-board" id="pipeline-board"></div>
+      <div class="fn">Pipeline shows all active candidates. Click a card to view candidate details and update stage. Overdue candidates (in stage longer than expected) are highlighted in red.</div>
+    </div>
+
+    <!-- ══ ALL CANDIDATES ══ -->
+    <div id="tab-tracker" class="tab-panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <div class="sl" style="margin:0;flex:1;">All candidates · filterable</div>
+        <div style="display:flex;gap:8px;margin-left:16px;">
+          <select id="filter-stage" onchange="renderTrackerTable()" style="padding:6px 10px;border:1px solid var(--border2);border-radius:7px;font-family:'Epilogue',sans-serif;font-size:12px;background:var(--white);color:var(--ink);outline:none;">
+            <option value="">All Stages</option>
+            <option value="Sourced">Sourced</option>
+            <option value="Screened">Screened</option>
+            <option value="Interview">Interview</option>
+            <option value="Offer">Offer</option>
+            <option value="Hired">Hired</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Withdrawn">Withdrawn</option>
+          </select>
+          <select id="filter-role" onchange="renderTrackerTable()" style="padding:6px 10px;border:1px solid var(--border2);border-radius:7px;font-family:'Epilogue',sans-serif;font-size:12px;background:var(--white);color:var(--ink);outline:none;">
+            <option value="">All Roles</option>
+          </select>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <div class="scroll-x">
+            <table class="tracker-tbl">
+              <thead><tr><th>Candidate</th><th>Role</th><th>Country</th><th>Source</th><th>Stage</th><th>Days in Stage</th><th>Last Action</th><th>Next Action</th><th>Actions</th></tr></thead>
+              <tbody id="tracker-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ACTIVE OFFERS ══ -->
+    <div id="tab-offers" class="tab-panel">
+      <div class="sl">Active offers · pending responses</div>
+      <div class="offer-grid" id="offer-grid">
+        <div style="font-size:12px;color:var(--ink3);font-style:italic;">No active offers. Add candidates and move them to Offer stage.</div>
+      </div>
+
+      <div class="sl">Offer negotiation log</div>
+      <div class="card">
+        <div class="card-head"><div class="card-ic" style="background:var(--gold-bg);color:var(--gold);">⇄</div><div><div class="card-title">Negotiation History</div><div class="card-sub">All offer rounds logged for reference</div></div></div>
+        <div class="card-body">
+          <div class="neg-log" id="neg-log">
+            <div class="neg-entry neg-initial"><div class="neg-label">Initial Offer</div><div class="neg-body">Arsen Tulebayev · Site Manager · $3,200/mo + expat package + rotation · Issued 04 Mar 2026</div></div>
+            <div class="neg-entry neg-counter"><div class="neg-label">Counter Offer</div><div class="neg-body">Candidate counter: $3,600/mo + additional R&R flights. Rationale: competing offer from Mongolian project at $3,500.</div></div>
+            <div class="neg-entry neg-accepted"><div class="neg-label">Agreed</div><div class="neg-body">Final: $3,400/mo + standard expat package + 1 additional R&R flight per 6-month rotation. Start date TBC pending visa.</div></div>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:12px;font-size:12px;" onclick="addNegEntry()">+ Add negotiation entry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ COUNTER-OFFER GUIDE ══ -->
+    <div id="tab-counter" class="tab-panel">
+      <div class="sl">Counter-offer handling · step-by-step protocol</div>
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-head"><div class="card-ic" style="background:var(--gold-bg);color:var(--gold);">⇄</div><div><div class="card-title">When a Candidate Counter-Offers</div><div class="card-sub">What to do immediately and what to avoid</div></div></div>
+        <div class="card-body">
+          <div class="co-steps">
+            <div class="co-step"><div class="co-num">01</div><div><div class="co-name">Acknowledge, don't react</div><div class="co-desc">Say: "Thank you for sharing that — let me take this back and get back to you by [specific date, max 2 business days]." Never negotiate live in the first call. You need time to consult the Hiring Manager and COO on the upper limit.</div></div></div>
+            <div class="co-step"><div class="co-num">02</div><div><div class="co-name">Understand the real objection</div><div class="co-desc">Before going back, call the candidate back informally: "Beyond salary, is there anything else about the offer or the role that you'd want us to address?" Sometimes counter-offers are about non-monetary terms (rotation schedule, R&R, title) — which are cheaper to fix.</div></div></div>
+            <div class="co-step"><div class="co-num">03</div><div><div class="co-name">Know your BATNA before negotiating</div><div class="co-desc">What is the maximum you can offer? Is there flexibility on non-cash terms (extra flights, housing allowance, start date)? What happens if this candidate says no — do you have a backup? If no backup, your negotiating position is weak. Be honest about that internally.</div></div></div>
+            <div class="co-step"><div class="co-num">04</div><div><div class="co-name">Make one counter — not an auction</div><div class="co-desc">Come back with your best and final offer. Say: "We've reviewed and this is our best offer: [X]. We're not able to go further on base but we can offer [Y non-cash term]." Multiple small increments invite repeated counters. One clear final offer forces a decision.</div></div></div>
+            <div class="co-step"><div class="co-num">05</div><div><div class="co-name">Give a deadline — and enforce it</div><div class="co-desc">"We need your decision by [specific date] as we have other candidates progressing." This is real — you should have another candidate in reserve for all critical roles. Without a deadline, candidates stall indefinitely while shopping competing offers.</div></div></div>
+            <div class="co-step"><div class="co-num">06</div><div><div class="co-name">If they decline — process cleanly</div><div class="co-desc">Thank them, document in the tracker, and return to your pipeline. Do not burn the relationship — they may come back in 6–12 months, or refer someone. The SEA drilling community is small. How you handle rejection is part of your employer brand.</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-ic" style="background:var(--red-bg);color:var(--red);">⚑</div><div><div class="card-title">When NOT to Counter-Counter</div><div class="card-sub">Know when to walk away</div></div></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="padding:11px 13px;background:var(--red-bg);border-radius:8px;border-left:3px solid var(--red);font-size:12px;color:var(--ink2);line-height:1.5;"><strong style="color:var(--red);display:block;margin-bottom:3px;">Counter exceeds salary band by >20%</strong>If accepting would create internal equity issues or set an unsustainable precedent, decline. Compromising compensation structure for one hire costs more over time.</div>
+            <div style="padding:11px 13px;background:var(--red-bg);border-radius:8px;border-left:3px solid var(--red);font-size:12px;color:var(--ink2);line-height:1.5;"><strong style="color:var(--red);display:block;margin-bottom:3px;">Third round of negotiation</strong>If you're on the third exchange, the candidate is either genuinely misaligned or using your offer to lever another company. Both are bad. Make one final offer and mean it.</div>
+            <div style="padding:11px 13px;background:var(--red-bg);border-radius:8px;border-left:3px solid var(--red);font-size:12px;color:var(--ink2);line-height:1.5;"><strong style="color:var(--red);display:block;margin-bottom:3px;">Candidate has missed their own deadline</strong>If they asked for time and haven't responded by their own stated date, chase once. If still no response, withdraw the offer professionally. This behaviour predicts unreliability on site.</div>
+            <div style="padding:11px 13px;background:var(--red-bg);border-radius:8px;border-left:3px solid var(--red);font-size:12px;color:var(--ink2);line-height:1.5;"><strong style="color:var(--red);display:block;margin-bottom:3px;">Terms requested are non-negotiable (location, rotation)</strong>If a candidate's counter involves changing fundamental role parameters — they're not the right fit. Better to know now than after mobilisation.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SALARY BENCHMARKS ══ -->
+    <div id="tab-salary" class="tab-panel">
+      <div class="sl">SEA drilling & exploration · salary benchmarks · USD/month</div>
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <div class="scroll-x">
+            <table class="tracker-tbl">
+              <thead><tr><th>Role</th><th>Country</th><th>Employment Type</th><th>Min (USD/mo)</th><th>Mid (USD/mo)</th><th>Max (USD/mo)</th><th>Hardship Premium</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td class="td-role">Site Manager</td><td>Laos</td><td>Expat</td><td style="font-family:'JetBrains Mono',monospace;">$2,500</td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">$3,200</td><td style="font-family:'JetBrains Mono',monospace;">$4,500</td><td><span class="pill p-orange">+15–20%</span></td><td style="font-size:11px;">+ expat package: housing, R&R flights, visa</td></tr>
+                <tr><td class="td-role">Drilling Supervisor</td><td>Myanmar</td><td>Expat</td><td style="font-family:'JetBrains Mono',monospace;">$1,800</td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">$2,500</td><td style="font-family:'JetBrains Mono',monospace;">$3,500</td><td><span class="pill p-red">+20–25%</span></td><td style="font-size:11px;">Myanmar premium applies. Higher rejection rate at offer.</td></tr>
+                <tr><td class="td-role">Senior Driller</td><td>Indonesia</td><td>Local/Expat</td><td style="font-family:'JetBrains Mono',monospace;">$1,200</td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">$1,700</td><td style="font-family:'JetBrains Mono',monospace;">$2,200</td><td><span class="pill p-gold">+10–15%</span></td><td style="font-size:11px;">Local Indonesian hire range is lower end. Expat: upper band.</td></tr>
+                <tr><td class="td-role">Senior Driller</td><td>Myanmar</td><td>Local/Expat</td><td style="font-family:'JetBrains Mono',monospace;">$1,100</td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">$1,500</td><td style="font-family:'JetBrains Mono',monospace;">$2,000</td><td><span class="pill p-red">+20%</span></td><td style="font-size:11px;">Myanmar political risk premium required to attract candidates.</td></tr>
+                <tr><td class="td-role">HSE Officer</td><td>Laos</td><td>Local/Regional</td><td style="font-family:'JetBrains Mono',monospace;">$900</td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">$1,300</td><td style="font-family:'JetBrains Mono',monospace;">$1,800</td><td><span class="pill p-gold">+10%</span></td><td style="font-size:11px;">NEBOSH-certified candidates command upper band.</td></tr>
+                <tr><td class="td-role">HRBP / HR Manager</td><td>Thailand</td><td>Local</td><td style="font-family:'JetBrains Mono',monospace;">$1,400</td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">$1,900</td><td style="font-family:'JetBrains Mono',monospace;">$2,600</td><td><span class="pill p-slate">None</span></td><td style="font-size:11px;">Bangkok market. Multi-country HR experience at upper band.</td></tr>
+                <tr><td class="td-role">Payroll / Finance Officer</td><td>Thailand</td><td>Local</td><td style="font-family:'JetBrains Mono',monospace;">$900</td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">$1,300</td><td style="font-family:'JetBrains Mono',monospace;">$1,800</td><td><span class="pill p-slate">None</span></td><td style="font-size:11px;">Multi-country payroll rare — pay upper band to secure.</td></tr>
+                <tr><td class="td-role">Compliance Officer</td><td>Indonesia</td><td>Local</td><td style="font-family:'JetBrains Mono',monospace;">$900</td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">$1,200</td><td style="font-family:'JetBrains Mono',monospace;">$1,700</td><td><span class="pill p-slate">None</span></td><td style="font-size:11px;">KITAS/IMTA experience commands premium within band.</td></tr>
+                <tr><td class="td-role">Site Admin / Coordinator</td><td>Laos</td><td>Local</td><td style="font-family:'JetBrains Mono',monospace;">$500</td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">$750</td><td style="font-family:'JetBrains Mono',monospace;">$1,100</td><td><span class="pill p-gold">+10%</span></td><td style="font-size:11px;">Site-based allowance applies. English proficiency at upper band.</td></tr>
+                <tr><td class="td-role">EA / Office Manager</td><td>Thailand</td><td>Local</td><td style="font-family:'JetBrains Mono',monospace;">$900</td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">$1,300</td><td style="font-family:'JetBrains Mono',monospace;">$1,800</td><td><span class="pill p-slate">None</span></td><td style="font-size:11px;">Bangkok-based. English fluency required. CEO-facing role.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="fn">Benchmarks are indicative based on SEA mining and exploration market data, March 2026. Expat packages are separate from base salary and typically include: housing allowance, R&R flights (1 per rotation), visa and permit costs, medical insurance. Hardship premium is applied on top of base for Myanmar and remote Laos postings. Review annually — SEA mining market tightened significantly in 2024–2025.</div>
+    </div>
+
+    <!-- ══ TEMPLATES ══ -->
+    <div id="tab-tmpl-invite" class="tab-panel">
+      <div class="sl">Interview invitation templates · email + WhatsApp</div>
+      <div class="tmpl">
+        <button class="tmpl-copy" onclick="copyTmpl(this)">copy</button>
+        <div class="tmpl-title">Email — Interview Invitation (Formal · Round 1)</div>
+        <div class="tmpl-body"><b>Subject: Interview Invitation — [Role Title] · Valentis Laos</b>
+
+Dear [Candidate Name],
+
+Thank you for your interest in the [Role Title] position with Valentis. We have reviewed your background and would like to invite you to a first-round interview.
+
+Details:
+• Date & Time: [Day, Date] at [Time] ([Timezone])
+• Format: [Video call / Phone / In person at [location]]
+• Duration: Approximately [45–60] minutes
+• Interviewer(s): [Your Name], Group HR Manager[, and Name, Role]
+
+The conversation will cover your professional background, relevant experience, and some specific situations from your career. There is nothing you need to prepare in advance.
+
+Please confirm your availability by replying to this email or contacting me at [phone/WhatsApp].
+
+If the proposed time does not work, please suggest two alternative slots and we will accommodate.
+
+We look forward to speaking with you.
+
+Warm regards,
+[Your Name]
+Group HR Manager, Valentis Laos
+[Phone] | [Email]</div>
+      </div>
+
+      <div class="tmpl">
+        <button class="tmpl-copy" onclick="copyTmpl(this)">copy</button>
+        <div class="tmpl-title">Email — Interview Invitation (Round 2 · Panel)</div>
+        <div class="tmpl-body"><b>Subject: Round 2 Interview — [Role Title] · Valentis Laos</b>
+
+Dear [Candidate Name],
+
+Following our first conversation, we would like to invite you to a second-round interview with the hiring panel.
+
+Details:
+• Date & Time: [Day, Date] at [Time] ([Timezone])
+• Format: [Video / In person]
+• Duration: Approximately 60–75 minutes
+• Panel: [Your Name] (HR), [Hiring Manager Name] ([Title]), [COO/CEO if applicable]
+
+This round will go deeper into [technical areas / site experience / specific scenarios]. You may wish to review your experience with [relevant topic area — e.g. large crew management, budget oversight].
+
+Please confirm your availability at your earliest convenience.
+
+[Your Name]
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl">
+        <button class="tmpl-copy" onclick="copyTmpl(this)">copy</button>
+        <div class="tmpl-title">WhatsApp — Interview Confirmation (Short)</div>
+        <div class="tmpl-body">Hi [Name], this is [Your Name] from Valentis HR. Confirming your interview for [Role] on [Date] at [Time] via [Zoom/call]. I'll send the link/dial-in shortly. Please save this number for any updates. Looking forward to speaking with you.</div>
+      </div>
+    </div>
+
+    <div id="tab-tmpl-offer" class="tab-panel">
+      <div class="sl">Offer communication templates</div>
+      <div class="tmpl">
+        <button class="tmpl-copy" onclick="copyTmpl(this)">copy</button>
+        <div class="tmpl-title">Email — Verbal Offer (Before Formal Letter)</div>
+        <div class="tmpl-body"><b>Subject: Offer — [Role Title] · Valentis Laos</b>
+
+Dear [Candidate Name],
+
+I'm pleased to share that following your interviews, we would like to offer you the position of [Role Title] with Valentis.
+
+The key terms of our offer are:
+
+• Role: [Role Title]
+• Location: [Site / City / Country]
+• Start Date: [Proposed start date — or TBD subject to permit]
+• Base Salary: USD [amount]/month
+• [Package items: housing allowance / R&R flights / medical / visa support as applicable]
+• Contract type: [Fixed-term / Permanent] — [duration if FT]
+• Rotation: [If applicable — e.g. 8 weeks on / 3 weeks off]
+
+A formal offer letter and employment contract will follow once you confirm your acceptance of these terms in principle.
+
+Please let me know your thoughts by [date — 3–5 business days]. I'm happy to answer any questions by call or message.
+
+We're very much looking forward to having you on the team.
+
+[Your Name]
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl">
+        <button class="tmpl-copy" onclick="copyTmpl(this)">copy</button>
+        <div class="tmpl-title">Email — Offer Accepted Confirmation</div>
+        <div class="tmpl-body"><b>Subject: Offer Acceptance Confirmed — Welcome to Valentis</b>
+
+Dear [Candidate Name],
+
+Thank you for confirming your acceptance — we're delighted to have you joining Valentis.
+
+Next steps from our side:
+1. We will prepare your formal employment contract and send it within [3–5] business days
+2. [If applicable] Our team will begin the work permit / visa application process
+3. Your onboarding details and first-day instructions will follow closer to your start date
+
+From your side, please:
+• Formally notify your current employer of your resignation
+• Share your expected last day and confirmed availability date
+• Forward a copy of your passport and [relevant certifications] to this email
+
+Please don't hesitate to reach out with any questions between now and your start date.
+
+Welcome aboard.
+
+[Your Name]
+Group HR Manager, Valentis Laos</div>
+      </div>
+    </div>
+
+    <div id="tab-tmpl-reject" class="tab-panel">
+      <div class="sl">Rejection templates · after screening · after interview</div>
+
+      <div class="tmpl">
+        <button class="tmpl-copy" onclick="copyTmpl(this)">copy</button>
+        <div class="tmpl-title">Email — Post-Screen Rejection (No Interview)</div>
+        <div class="tmpl-body"><b>Subject: Your Application — [Role Title] · Valentis Laos</b>
+
+Dear [Candidate Name],
+
+Thank you for your interest in the [Role Title] position at Valentis and for taking the time to share your background with us.
+
+After careful review, we have decided to progress with other candidates whose experience more closely matches our requirements at this time.
+
+We appreciate you reaching out and wish you the best in your search.
+
+[Your Name]
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl">
+        <button class="tmpl-copy" onclick="copyTmpl(this)">copy</button>
+        <div class="tmpl-title">Email — Post-Interview Rejection (With Feedback Option)</div>
+        <div class="tmpl-body"><b>Subject: [Role Title] Update — Valentis Laos</b>
+
+Dear [Candidate Name],
+
+Thank you for the time you invested in the interview process for the [Role Title] position. We valued the conversation and learning more about your background.
+
+After thorough consideration, we have decided to move forward with another candidate whose experience is a closer match to our specific requirements for this role at this stage.
+
+This was a competitive process and the decision was not easy. We would like to stay in touch as our operations expand across the region, and we hope you will keep us in mind for future roles as well.
+
+If you would find it helpful, I am happy to share brief feedback from the interview. Please let me know if that would be useful.
+
+We wish you every success.
+
+[Your Name]
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl">
+        <button class="tmpl-copy" onclick="copyTmpl(this)">copy</button>
+        <div class="tmpl-title">WhatsApp — Quick Rejection (Post-Screen)</div>
+        <div class="tmpl-body">Hi [Name], thank you again for your time. After reviewing all applications for the [Role] position, we've decided to move forward with other candidates at this stage. We appreciate your interest and will keep your details on file for future opportunities. Best wishes.</div>
+      </div>
+
+      <div class="fn">Never ghost a candidate — even a short rejection message is better than silence. In the SEA drilling community, word travels fast. How you reject people is part of your employer brand and affects future referrals and applications.</div>
+    </div>
+
+    <div id="tab-tmpl-ack" class="tab-panel">
+      <div class="sl">Acknowledgement templates · application received</div>
+
+      <div class="tmpl">
+        <button class="tmpl-copy" onclick="copyTmpl(this)">copy</button>
+        <div class="tmpl-title">Email — Application Acknowledgement (Inbound)</div>
+        <div class="tmpl-body"><b>Subject: Application Received — [Role Title] · Valentis Laos</b>
+
+Dear [Candidate Name],
+
+Thank you for your application for the [Role Title] position at Valentis.
+
+We have received your CV and will review it carefully. You can expect to hear back from us within [7–10] business days regarding next steps.
+
+If you have any questions in the meantime, you are welcome to reach me directly at [phone/email].
+
+Thank you again for your interest.
+
+[Your Name]
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl">
+        <button class="tmpl-copy" onclick="copyTmpl(this)">copy</button>
+        <div class="tmpl-title">WhatsApp — CV Received (Quick Ack)</div>
+        <div class="tmpl-body">Hi [Name], thank you for sending your CV for the [Role] position. We've received it and will review and come back to you within [5–7] days. Feel free to message me here if you have questions.</div>
+      </div>
+    </div>
+
+    <!-- ══ ADD CANDIDATE ══ -->
+    <div id="tab-add" class="tab-panel">
+      <div class="sl">Add candidate to pipeline</div>
+      <div class="card">
+        <div class="card-head"><div class="card-ic" style="background:var(--green-bg);color:var(--green);">＋</div><div><div class="card-title">New Candidate Entry</div><div class="card-sub">Fill in details and save to tracker</div></div></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="fg"><label>Candidate Name *</label><input id="f-name" placeholder="Full name"/></div>
+            <div class="fg"><label>Role Applied For *</label>
+              <select id="f-role">
+                <option value="">Select role…</option>
+                <option>Site Manager</option>
+                <option>Drilling Supervisor</option>
+                <option>Senior Driller</option>
+                <option>Equipment Technician</option>
+                <option>Geologist / Field Tech</option>
+                <option>HSE Officer</option>
+                <option>HRBP / HR Manager</option>
+                <option>Finance / Payroll Officer</option>
+                <option>Compliance Officer</option>
+                <option>Site Admin / Coordinator</option>
+                <option>Logistics Coordinator</option>
+                <option>Executive Assistant</option>
+              </select>
+            </div>
+            <div class="fg"><label>Country</label>
+              <select id="f-country">
+                <option value="">Select country…</option>
+                <option>Laos</option>
+                <option>Myanmar</option>
+                <option>Indonesia</option>
+                <option>Thailand</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="fg"><label>Source</label>
+              <select id="f-source">
+                <option value="">Select source…</option>
+                <option>LinkedIn Direct Outreach</option>
+                <option>LinkedIn Inbound</option>
+                <option>Referral</option>
+                <option>Agency — Mining People International</option>
+                <option>Agency — Hays Mining</option>
+                <option>Agency — Antal International</option>
+                <option>Agency — Monroe Consulting</option>
+                <option>Job Board — CatalistJobs</option>
+                <option>Job Board — Rigzone</option>
+                <option>Job Board — JobsDB</option>
+                <option>Job Board — JobStreet</option>
+                <option>Facebook Group</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="fg"><label>Current Stage *</label>
+              <select id="f-stage">
+                <option value="Sourced">Sourced</option>
+                <option value="Screened">Screened</option>
+                <option value="Interview">Interview</option>
+                <option value="Offer">Offer</option>
+                <option value="Hired">Hired</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Withdrawn">Withdrawn</option>
+              </select>
+            </div>
+            <div class="fg"><label>Date Added</label><input type="date" id="f-date"/></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Next Action</label><input id="f-next" placeholder="e.g. Schedule Round 2 by Mar 15"/></div>
+            <div class="fg"><label>Salary Expectation (USD/mo)</label><input id="f-salary" placeholder="e.g. 2,500"/></div>
+          </div>
+          <div class="fg" style="margin-bottom:14px;"><label>Notes</label><textarea id="f-notes" placeholder="Key observations, strengths, concerns, or next steps…"></textarea></div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="addCandidate()">Save Candidate</button>
+            <button class="btn btn-ghost" onclick="clearForm()">Clear Form</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</div><!-- main -->
+</div><!-- layout -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">Candidate Details</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ DATA ══
+let candidates = [
+  { id:1, name:'Arsen Tulebayev', role:'Site Manager', country:'Laos', source:'LinkedIn Direct Outreach', stage:'Offer', dateAdded:'2026-02-10', stageDate:'2026-03-01', salary:'3400', next:'Await contract signature', notes:'Strong candidate. Counter-offer settled at $3,400 + extra R&R flight. Pending visa processing.', priority:'Critical' },
+  { id:2, name:'Dr. Mehdizade', role:'Drilling Supervisor', country:'Myanmar', source:'LinkedIn Direct Outreach', stage:'Interview', dateAdded:'2026-02-20', stageDate:'2026-02-28', salary:'2800', next:'Round 2 with COO this week', notes:'Technical knowledge strong. Concerns about Myanmar posting willingness — clarify in Round 2.', priority:'Critical' },
+  { id:3, name:'Budi Santoso', role:'Senior Driller', country:'Indonesia', source:'Referral', stage:'Screened', dateAdded:'2026-02-25', stageDate:'2026-03-02', salary:'1500', next:'Schedule technical interview', notes:'Referred by Arsen. 12 years rotary drilling in Kalimantan. Good fit on paper.', priority:'High' },
+  { id:4, name:'Somchai Rattana', role:'HSE Officer', country:'Laos', source:'LinkedIn Inbound', stage:'Sourced', dateAdded:'2026-03-01', stageDate:'2026-03-01', salary:'1200', next:'Send role details and gauge interest', notes:'NEBOSH certified. Currently with a Thai construction company. Passive candidate.', priority:'Medium' },
+  { id:5, name:'Nattaya Wongchai', role:'HRBP / HR Manager', country:'Thailand', source:'LinkedIn Direct Outreach', stage:'Sourced', dateAdded:'2026-03-03', stageDate:'2026-03-03', salary:'2000', next:'Await budget approval before engaging', notes:'7 years HR in manufacturing, multi-country payroll experience. Budget pending.', priority:'Low' },
+  { id:6, name:'Kyaw Zin', role:'Drilling Supervisor', country:'Myanmar', source:'Agency — Mining People International', stage:'Screened', dateAdded:'2026-03-04', stageDate:'2026-03-04', salary:'2500', next:'Schedule technical round', notes:'Agency submission. Strong Myanmar site experience. Verify certifications before interview.', priority:'Critical' },
+];
+let nextId = 7;
+
+const roles = [...new Set(candidates.map(c => c.role))].sort();
+
+// ══ NAV ══
+const tabMeta = {
+  dashboard:    ['Dashboard', 'RECRUITMENT OVERVIEW · 2026'],
+  pipeline:     ['Pipeline Board', 'VISUAL CANDIDATE PIPELINE'],
+  tracker:      ['All Candidates', 'FULL PIPELINE VIEW'],
+  offers:       ['Active Offers', 'PENDING OFFER RESPONSES'],
+  counter:      ['Counter-Offer Guide', 'NEGOTIATION PROTOCOL'],
+  salary:       ['Salary Benchmarks', 'USD/MONTH · SEA OPERATIONS · 2026'],
+  'tmpl-invite':['Templates', 'INTERVIEW INVITATIONS'],
+  'tmpl-offer': ['Templates', 'OFFER COMMUNICATIONS'],
+  'tmpl-reject':['Templates', 'REJECTION MESSAGES'],
+  'tmpl-ack':   ['Templates', 'ACKNOWLEDGEMENTS'],
+  add:          ['Add Candidate', 'NEW PIPELINE ENTRY'],
+};
+
+function sw(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  const meta = tabMeta[id] || [id, ''];
+  document.getElementById('tb-title').textContent = meta[0];
+  document.getElementById('tb-sub').textContent = meta[1];
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'pipeline') renderPipeline();
+  if (id === 'tracker') renderTrackerTable();
+  if (id === 'offers') renderOffers();
+}
+
+// ══ UTILITIES ══
+function daysSince(dateStr) {
+  if (!dateStr) return 0;
+  return Math.floor((new Date() - new Date(dateStr)) / 86400000);
+}
+function stageClass(s) {
+  const m = { Sourced:'st-sourced', Screened:'st-screened', Interview:'st-interview', Offer:'st-offer', Hired:'st-hired', Rejected:'st-rejected', Withdrawn:'st-withdrawn' };
+  return m[s] || 'st-sourced';
+}
+function prioClass(p) {
+  const m = { Critical:'pr-critical', High:'pr-high', Medium:'pr-medium', Low:'pr-low' };
+  return m[p] || 'pr-low';
+}
+function countryFlag(c) {
+  const m = { Laos:'🇱🇦', Myanmar:'🇲🇲', Indonesia:'🇮🇩', Thailand:'🇹🇭' };
+  return (m[c] || '') + ' ' + c;
+}
+
+const activeStages = ['Sourced','Screened','Interview','Offer'];
+const stageExpected = { Sourced:7, Screened:10, Interview:14, Offer:7 };
+
+// ══ DASHBOARD ══
+function renderDashboard() {
+  const active = candidates.filter(c => activeStages.includes(c.stage));
+  const offers  = candidates.filter(c => c.stage === 'Offer');
+  const hired   = candidates.filter(c => c.stage === 'Hired');
+  const openRoles = [...new Set(active.map(c => c.role))];
+  const avgDays = active.length ? Math.round(active.reduce((s,c)=>s+daysSince(c.dateAdded),0)/active.length) : 0;
+
+  document.getElementById('kpi-open').textContent = openRoles.length;
+  document.getElementById('kpi-total').textContent = active.length;
+  document.getElementById('kpi-offers').textContent = offers.length;
+  document.getElementById('kpi-hired').textContent = hired.length;
+  document.getElementById('kpi-days').textContent = avgDays;
+
+  // Critical actions
+  const overdueOr = candidates.filter(c => activeStages.includes(c.stage) && daysSince(c.stageDate) > (stageExpected[c.stage]||7));
+  const ca = document.getElementById('critical-actions');
+  if (!overdueOr.length) {
+    ca.innerHTML = '<div style="font-size:12px;color:var(--green);font-weight:600;">✓ No overdue candidates right now</div>';
+  } else {
+    ca.innerHTML = overdueOr.map(c => `
+      <div style="padding:9px 11px;background:var(--red-bg);border:1px solid var(--red-bd);border-radius:7px;margin-bottom:7px;">
+        <div style="font-size:12.5px;font-weight:700;color:var(--red);">${c.name} · ${c.role}</div>
+        <div style="font-size:11.5px;color:var(--ink3);">In ${c.stage} stage for ${daysSince(c.stageDate)} days (expected ≤${stageExpected[c.stage]}d)</div>
+        <div style="font-size:11px;color:var(--ink2);margin-top:4px;">Next: ${c.next || '—'}</div>
+      </div>`).join('');
+  }
+
+  // Stage summary
+  const stageCounts = {};
+  activeStages.forEach(s => stageCounts[s] = candidates.filter(c=>c.stage===s).length);
+  const ss = document.getElementById('stage-summary');
+  ss.innerHTML = Object.entries(stageCounts).map(([s,n]) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg);border-radius:6px;border:1px solid var(--border);margin-bottom:6px;">
+      <span class="stage ${stageClass(s)}">${s}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--ink);">${n}</span>
+    </div>`).join('');
+
+  // Role overview table
+  const roleRows = {};
+  candidates.forEach(c => {
+    if (!roleRows[c.role]) roleRows[c.role] = { role:c.role, countries:new Set(), priority:c.priority, stages:{}, dateAdded:c.dateAdded, target:'' };
+    roleRows[c.role].countries.add(c.country);
+    roleRows[c.role].stages[c.stage] = (roleRows[c.role].stages[c.stage]||0)+1;
+  });
+  const tbody = document.getElementById('role-overview-body');
+  tbody.innerHTML = Object.values(roleRows).map(r => {
+    const totalCands = Object.values(r.stages).reduce((a,b)=>a+b,0);
+    const topStage = Object.keys(r.stages).sort((a,b)=>['Hired','Offer','Interview','Screened','Sourced'].indexOf(a)-['Hired','Offer','Interview','Screened','Sourced'].indexOf(b))[0];
+    const daysOpen = daysSince(r.dateAdded);
+    const isOverdue = daysOpen > 90;
+    return `<tr>
+      <td class="td-role">${r.role}</td>
+      <td style="font-size:11.5px;">${[...r.countries].map(countryFlag).join('<br>')}</td>
+      <td><span class="prio ${prioClass(r.priority)}">${r.priority}</span></td>
+      <td><span class="stage ${stageClass(topStage)}">${topStage}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">${totalCands}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:12px;${isOverdue?'color:var(--red);font-weight:700;':''}">${daysOpen}d${isOverdue?' ⚠':''}</td>
+      <td style="font-size:11.5px;color:var(--ink3);">—</td>
+      <td><span class="stage ${stageClass(topStage)}">${topStage}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ══ PIPELINE BOARD ══
+function renderPipeline() {
+  const stages = ['Sourced','Screened','Interview','Offer','Hired'];
+  const colClass = { Sourced:'col-sourced', Screened:'col-screened', Interview:'col-interview', Offer:'col-offer', Hired:'col-hired' };
+  const board = document.getElementById('pipeline-board');
+  board.innerHTML = stages.map(s => {
+    const cols = candidates.filter(c => c.stage === s);
+    return `
+    <div class="pipeline-col ${colClass[s]}">
+      <div class="pipeline-col-head">
+        <span class="pcol-label">${s}</span>
+        <span class="pcol-count">${cols.length}</span>
+      </div>
+      <div class="pipeline-cards">
+        ${cols.length ? cols.map(c => {
+          const d = daysSince(c.stageDate);
+          const exp = stageExpected[c.stage]||999;
+          const over = d > exp;
+          return `<div class="pc-card${over?' overdue-card':''}" onclick="openModal(${c.id})">
+            <div class="pc-role">${c.role}</div>
+            <div class="pc-cand">${c.name}</div>
+            <div class="pc-meta">
+              <span class="pc-country">${c.country}</span>
+              <span class="pc-days">${d}d</span>
+            </div>
+            ${over?`<div class="overdue-flag">⚠ ${d-exp}d overdue</div>`:''}
+          </div>`;
+        }).join('') : `<div style="font-size:11px;color:var(--ink4);font-style:italic;padding:10px 12px;">No candidates</div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══ TRACKER TABLE ══
+function renderTrackerTable() {
+  const stageF = document.getElementById('filter-stage').value;
+  const roleF  = document.getElementById('filter-role').value;
+  const sel = document.getElementById('filter-role');
+  if (sel.options.length <= 1) {
+    roles.forEach(r => { const o = document.createElement('option'); o.value=r; o.textContent=r; sel.appendChild(o); });
+  }
+  const filtered = candidates.filter(c =>
+    (!stageF || c.stage === stageF) &&
+    (!roleF  || c.role  === roleF)
+  );
+  document.getElementById('tracker-body').innerHTML = filtered.map(c => {
+    const d = daysSince(c.stageDate);
+    const over = d > (stageExpected[c.stage]||999);
+    return `<tr>
+      <td><div style="font-weight:700;font-size:12.5px;color:var(--ink);">${c.name}</div></td>
+      <td class="td-role" style="font-size:12px;">${c.role}</td>
+      <td style="font-size:12px;">${countryFlag(c.country)}</td>
+      <td style="font-size:11.5px;color:var(--ink3);">${c.source||'—'}</td>
+      <td><span class="stage ${stageClass(c.stage)}">${c.stage}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:12px;${over?'color:var(--red);font-weight:700;':''}">${d}d${over?' ⚠':''}</td>
+      <td style="font-size:11.5px;color:var(--ink3);">${c.stageDate||'—'}</td>
+      <td style="font-size:11.5px;color:var(--ink2);">${c.next||'—'}</td>
+      <td><div class="td-actions">
+        <button class="tbl-btn primary" onclick="openModal(${c.id})">View</button>
+        <button class="tbl-btn" onclick="advanceStage(${c.id})">Advance</button>
+      </div></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--ink4);font-style:italic;">No candidates match filter</td></tr>';
+}
+
+// ══ OFFERS ══
+function renderOffers() {
+  const offers = candidates.filter(c => c.stage === 'Offer');
+  const grid = document.getElementById('offer-grid');
+  if (!offers.length) {
+    grid.innerHTML = '<div style="font-size:12px;color:var(--ink3);font-style:italic;">No active offers. Move a candidate to Offer stage to see them here.</div>';
+    return;
+  }
+  grid.innerHTML = offers.map(c => `
+    <div class="offer-card">
+      <div class="offer-card-head">
+        <div><div class="offer-card-title">${c.name}</div><div class="offer-card-sub">${c.role} · ${c.country}</div></div>
+        <span class="stage st-offer">Offer Out</span>
+      </div>
+      <div class="offer-card-body">
+        <div class="offer-detail" style="margin-bottom:10px;">
+          <span style="font-size:11px;color:var(--ink3);">Salary expectation:</span>
+          <span class="offer-salary">${c.salary ? 'USD $'+c.salary+'/mo' : 'Not specified'}</span>
+        </div>
+        <div style="font-size:12px;color:var(--ink2);margin-bottom:10px;">${c.notes||'No notes.'}</div>
+        <div style="display:flex;gap:6px;">
+          <button class="tbl-btn primary" onclick="openModal(${c.id})">View Details</button>
+          <button class="tbl-btn" onclick="moveToHired(${c.id})">Mark Hired</button>
+          <button class="tbl-btn" style="color:var(--red);" onclick="moveToRejected(${c.id})">Withdraw</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ══ MODAL ══
+function openModal(id) {
+  const c = candidates.find(x=>x.id===id);
+  if (!c) return;
+  document.getElementById('modal-title').textContent = c.name + ' — ' + c.role;
+  const stages = ['Sourced','Screened','Interview','Offer','Hired','Rejected','Withdrawn'];
+  document.getElementById('modal-body').innerHTML = `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">Update Stage</div>
+      <div class="modal-stage-row">
+        ${stages.map(s=>`<button class="modal-stage-btn${c.stage===s?' active':''}" onclick="updateStage(${id},'${s}',this)">${s}</button>`).join('')}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div style="padding:10px 12px;background:var(--bg);border-radius:7px;border:1px solid var(--border);"><div style="font-size:9.5px;color:var(--ink4);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Country</div><div style="font-size:13px;font-weight:600;">${countryFlag(c.country)}</div></div>
+      <div style="padding:10px 12px;background:var(--bg);border-radius:7px;border:1px solid var(--border);"><div style="font-size:9.5px;color:var(--ink4);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Source</div><div style="font-size:12px;">${c.source||'—'}</div></div>
+      <div style="padding:10px 12px;background:var(--bg);border-radius:7px;border:1px solid var(--border);"><div style="font-size:9.5px;color:var(--ink4);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Salary Expectation</div><div style="font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;">${c.salary?'USD $'+c.salary+'/mo':'Not specified'}</div></div>
+      <div style="padding:10px 12px;background:var(--bg);border-radius:7px;border:1px solid var(--border);"><div style="font-size:9.5px;color:var(--ink4);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Days in Pipeline</div><div style="font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;">${daysSince(c.dateAdded)}d</div></div>
+    </div>
+    <div style="margin-bottom:12px;"><div style="font-size:9.5px;color:var(--ink4);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Next Action</div><div style="font-size:12.5px;color:var(--ink2);">${c.next||'—'}</div></div>
+    <div><div style="font-size:9.5px;color:var(--ink4);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Notes</div><div style="font-size:12.5px;color:var(--ink2);line-height:1.6;">${c.notes||'No notes.'}</div></div>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+function updateStage(id, stage, btn) {
+  const c = candidates.find(x=>x.id===id);
+  if (!c) return;
+  c.stage = stage;
+  c.stageDate = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('.modal-stage-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  toast('Stage updated to ' + stage);
+}
+
+function advanceStage(id) {
+  const order = ['Sourced','Screened','Interview','Offer','Hired'];
+  const c = candidates.find(x=>x.id===id);
+  if (!c) return;
+  const idx = order.indexOf(c.stage);
+  if (idx < order.length-1) {
+    c.stage = order[idx+1];
+    c.stageDate = new Date().toISOString().split('T')[0];
+    renderTrackerTable();
+    toast(c.name + ' → ' + c.stage);
+  }
+}
+function moveToHired(id) {
+  const c = candidates.find(x=>x.id===id);
+  if (c) { c.stage='Hired'; c.stageDate=new Date().toISOString().split('T')[0]; renderOffers(); toast(c.name + ' marked as Hired'); }
+}
+function moveToRejected(id) {
+  const c = candidates.find(x=>x.id===id);
+  if (c) { c.stage='Withdrawn'; c.stageDate=new Date().toISOString().split('T')[0]; renderOffers(); toast('Offer withdrawn for ' + c.name); }
+}
+
+// ══ ADD CANDIDATE ══
+function addCandidate() {
+  const name  = document.getElementById('f-name').value.trim();
+  const role  = document.getElementById('f-role').value;
+  const country = document.getElementById('f-country').value;
+  if (!name || !role) { toast('Name and Role are required'); return; }
+  const today = new Date().toISOString().split('T')[0];
+  candidates.push({
+    id: nextId++,
+    name, role, country,
+    source: document.getElementById('f-source').value,
+    stage:  document.getElementById('f-stage').value,
+    dateAdded: document.getElementById('f-date').value || today,
+    stageDate: today,
+    salary: document.getElementById('f-salary').value,
+    next:   document.getElementById('f-next').value,
+    notes:  document.getElementById('f-notes').value,
+    priority: 'Medium',
+  });
+  toast('Candidate added: ' + name);
+  clearForm();
+  renderDashboard();
+}
+function clearForm() {
+  ['f-name','f-salary','f-next','f-notes'].forEach(id => document.getElementById(id).value='');
+  ['f-role','f-country','f-source','f-stage'].forEach(id => document.getElementById(id).selectedIndex=0);
+  document.getElementById('f-date').value='';
+}
+
+// ══ NEGOTIATION ENTRY ══
+function addNegEntry() {
+  const type = prompt('Entry type: initial / counter / accepted / rejected');
+  if (!type) return;
+  const note = prompt('Entry details:');
+  if (!note) return;
+  const el = document.createElement('div');
+  el.className = 'neg-entry neg-' + type.toLowerCase().trim();
+  el.innerHTML = `<div class="neg-label">${type}</div><div class="neg-body">${note} · ${new Date().toLocaleDateString()}</div>`;
+  document.getElementById('neg-log').appendChild(el);
+}
+
+// ══ TEMPLATE COPY ══
+function copyTmpl(btn) {
+  const text = btn.nextElementSibling.nextElementSibling.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied ✓';
+    setTimeout(() => btn.textContent='copy', 2500);
+  });
+}
+
+// ══ TOAST ══
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══ INIT ══
+renderDashboard();
+</script>
+</body>
+</html>

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sourcing Strategy | Valentis Laos</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Literata:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e1117;
+  --bg2: #141820;
+  --bg3: #1a2030;
+  --bg4: #202840;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.13);
+  --text: #e2e8f2;
+  --text2: #94a3b8;
+  --text3: #546070;
+  --gold: #e8c050;
+  --gold2: #f5d878;
+  --gold-dim: rgba(232,192,80,0.12);
+  --gold-glow: rgba(232,192,80,0.06);
+  --teal: #34d399;
+  --teal-dim: rgba(52,211,153,0.1);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,0.1);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.1);
+  --purple: #a78bfa;
+  --purple-dim: rgba(167,139,250,0.1);
+  --orange: #fb923c;
+  --orange-dim: rgba(251,146,60,0.1);
+  --pink: #f472b6;
+  --pink-dim: rgba(244,114,182,0.1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Cabinet Grotesk', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* LAYOUT */
+.layout { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 256px; min-width: 256px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  position: fixed; top: 0; left: 0; bottom: 0;
+  overflow-y: auto; z-index: 20;
+  display: flex; flex-direction: column;
+}
+.s-head { padding: 28px 20px 22px; border-bottom: 1px solid var(--border); }
+.s-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.s-title { font-family: 'Cabinet Grotesk', sans-serif; font-size: 19px; font-weight: 800; color: var(--text); line-height: 1.2; }
+.s-title em { color: var(--gold); font-style: normal; }
+.s-sub { font-size: 11.5px; color: var(--text3); margin-top: 6px; line-height: 1.5; }
+
+.s-section { padding: 16px 12px 4px; }
+.s-sec-label { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); padding: 0 8px; margin-bottom: 6px; }
+
+.nav { display: flex; flex-direction: column; gap: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 7px;
+  background: transparent; border: none;
+  color: var(--text3); font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 12.5px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; text-align: left; width: 100%;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text2); }
+.nav-item.active { background: var(--gold-dim); color: var(--gold); }
+.nav-ic { font-size: 12px; width: 16px; text-align: center; flex-shrink: 0; opacity: 0.7; }
+.nav-badge { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; padding: 1px 6px; border-radius: 9px; background: rgba(255,255,255,0.07); color: var(--text3); }
+.nav-item.active .nav-badge { background: rgba(232,192,80,0.2); color: var(--gold); }
+
+.s-footer { margin-top: auto; padding: 14px 20px; border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text3); line-height: 1.7; }
+
+/* MAIN */
+.main { margin-left: 256px; flex: 1; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  padding: 16px 40px; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar-title { font-size: 15px; font-weight: 800; color: var(--text); }
+.topbar-sub { font-size: 11px; color: var(--text3); margin-top: 3px; font-family: 'JetBrains Mono', monospace; }
+.conf { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,113,113,0.2); font-size: 9.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; }
+
+/* CONTENT */
+.content { padding: 36px 40px; }
+.tab-panel { display: none; animation: up 0.2s ease; }
+.tab-panel.active { display: block; }
+@keyframes up { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* SECTION LABEL */
+.sl { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+.sl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* CARD */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 18px; }
+.ch { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+.ci { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.ct { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.cs { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.cb { padding: 18px; }
+
+/* PLATFORM GRID */
+.platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.platform-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px;
+  transition: border-color 0.15s;
+}
+.platform-card:hover { border-color: var(--border2); }
+.pc-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.pc-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.pc-eff { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 3px; }
+.eff-high  { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(52,211,153,0.2); }
+.eff-med   { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(232,192,80,0.2); }
+.eff-low   { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
+.pc-desc { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 8px; }
+.pc-best { font-size: 11px; color: var(--text3); font-style: italic; }
+.pc-cost { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text3); margin-top: 6px; }
+
+/* SEARCH STRING */
+.ss-block { margin-bottom: 20px; }
+.ss-label { font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.ss-box {
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 14px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--gold2); line-height: 1.7;
+  position: relative; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.ss-box:hover { border-color: var(--gold); }
+.ss-box::after { content: 'click to copy'; position: absolute; top: 8px; right: 12px; font-size: 9px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; }
+.ss-notes { font-size: 11.5px; color: var(--text3); margin-top: 6px; line-height: 1.5; font-style: italic; }
+
+/* AGENCY TABLE */
+.agency-table { width: 100%; border-collapse: collapse; }
+.agency-table thead tr { background: var(--bg4); }
+.agency-table thead th { padding: 11px 14px; font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text3); text-align: left; border-right: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
+.agency-table thead th:last-child { border-right: none; }
+.agency-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+.agency-table tbody tr:last-child { border-bottom: none; }
+.agency-table tbody tr:hover { background: var(--bg3); }
+.agency-table tbody td { padding: 12px 14px; font-size: 12px; color: var(--text2); border-right: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+.agency-table tbody td:last-child { border-right: none; }
+
+/* PILL */
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; border: 1px solid; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.p-teal   { background: var(--teal-dim); color: var(--teal); border-color: rgba(52,211,153,0.2); }
+.p-gold   { background: var(--gold-dim); color: var(--gold); border-color: rgba(232,192,80,0.2); }
+.p-red    { background: var(--red-dim); color: var(--red); border-color: rgba(248,113,113,0.2); }
+.p-blue   { background: var(--blue-dim); color: var(--blue); border-color: rgba(96,165,250,0.2); }
+.p-purple { background: var(--purple-dim); color: var(--purple); border-color: rgba(167,139,250,0.2); }
+.p-orange { background: var(--orange-dim); color: var(--orange); border-color: rgba(251,146,60,0.2); }
+
+/* COMMUNITY GRID */
+.community-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.comm-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+.comm-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.comm-type { font-size: 10px; color: var(--text3); margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; text-transform: uppercase; }
+.comm-desc { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 8px; }
+.comm-action { font-size: 11.5px; color: var(--gold); }
+
+/* OUTREACH TEMPLATES */
+.template-block { margin-bottom: 20px; }
+.tmpl-label { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.tmpl-box {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px; font-size: 12.5px;
+  color: var(--text2); line-height: 1.8; position: relative;
+  white-space: pre-wrap;
+}
+.tmpl-box b { color: var(--gold2); font-weight: 600; }
+.tmpl-copy { position: absolute; top: 12px; right: 14px; background: var(--bg4); border: 1px solid var(--border2); color: var(--text3); font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: all 0.15s; }
+.tmpl-copy:hover { color: var(--gold); border-color: var(--gold); }
+.tmpl-notes { font-size: 11px; color: var(--text3); margin-top: 6px; font-style: italic; line-height: 1.5; }
+
+/* STRATEGY MATRIX */
+.matrix-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 18px; }
+.matrix-table { width: 100%; border-collapse: collapse; }
+.matrix-table thead tr { background: var(--bg4); }
+.matrix-table thead th { padding: 12px 16px; font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text3); text-align: left; border-right: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.matrix-table thead th:last-child { border-right: none; }
+.matrix-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
+.matrix-table tbody tr:last-child { border-bottom: none; }
+.matrix-table tbody tr:hover { background: var(--bg3); }
+.matrix-table tbody td { padding: 13px 16px; font-size: 12px; color: var(--text2); border-right: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+.matrix-table tbody td:last-child { border-right: none; }
+
+/* FOOTNOTE */
+.fn { font-size: 11px; color: var(--text3); font-style: italic; padding: 10px 14px; background: var(--bg2); border-radius: 7px; border-left: 2px solid var(--border2); margin-top: 8px; line-height: 1.6; }
+
+/* CHECKLIST */
+.checklist { display: flex; flex-direction: column; gap: 8px; }
+.cl-item { display: flex; gap: 10px; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; font-size: 12.5px; color: var(--text2); line-height: 1.5; align-items: flex-start; }
+.cl-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); min-width: 20px; margin-top: 2px; }
+
+/* KPI GRID */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+.kpi-c { background: var(--bg2); padding: 18px; }
+.kpi-l { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+.kpi-v { font-size: 26px; font-weight: 800; line-height: 1; }
+.kpi-s { font-size: 11px; color: var(--text3); margin-top: 5px; }
+
+.scroll-x { overflow-x: auto; }
+
+@media (max-width: 1000px) {
+  .sidebar { width: 220px; min-width: 220px; }
+  .main { margin-left: 220px; }
+  .platform-grid { grid-template-columns: repeat(2, 1fr); }
+  .community-grid { grid-template-columns: 1fr; }
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .content { padding: 24px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="s-head">
+    <div class="s-eyebrow">Valentis Laos · HR</div>
+    <div class="s-title">Sourcing <em>Strategy</em></div>
+    <div class="s-sub">By role · by channel · by country. Find the right people before you need them.</div>
+  </div>
+
+  <div class="s-section">
+    <div class="s-sec-label">Overview</div>
+    <div class="nav">
+      <button class="nav-item active" onclick="sw('overview',this)"><span class="nav-ic">◈</span> Strategy Overview</button>
+    </div>
+  </div>
+
+  <div class="s-section">
+    <div class="s-sec-label">By Role</div>
+    <div class="nav">
+      <button class="nav-item" onclick="sw('ops',this)"><span class="nav-ic">▸</span> Operations Roles</button>
+      <button class="nav-item" onclick="sw('hse',this)"><span class="nav-ic">▸</span> HSE / Safety</button>
+      <button class="nav-item" onclick="sw('hr',this)"><span class="nav-ic">▸</span> HR & Finance</button>
+      <button class="nav-item" onclick="sw('sup',this)"><span class="nav-ic">▸</span> Support & Admin</button>
+    </div>
+  </div>
+
+  <div class="s-section">
+    <div class="s-sec-label">Channels & Tools</div>
+    <div class="nav">
+      <button class="nav-item" onclick="sw('platforms',this)"><span class="nav-ic">◎</span> Job Boards & Platforms</button>
+      <button class="nav-item" onclick="sw('linkedin',this)"><span class="nav-ic">◉</span> LinkedIn Search Strings</button>
+      <button class="nav-item" onclick="sw('agencies',this)"><span class="nav-ic">◷</span> Agencies & Headhunters</button>
+      <button class="nav-item" onclick="sw('communities',this)"><span class="nav-ic">◫</span> Mining Networks</button>
+      <button class="nav-item" onclick="sw('outreach',this)"><span class="nav-ic">✉</span> Outreach Templates</button>
+    </div>
+  </div>
+
+  <div class="s-footer">Valentis Laos · HR<br>Sourcing Strategy v1.0<br>March 2026 · Confidential</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Sourcing Strategy — Valentis Laos · SEA Operations</div>
+      <div class="topbar-sub">CHANNELS · SEARCH STRINGS · AGENCIES · NETWORKS · OUTREACH</div>
+    </div>
+    <span class="conf">Confidential</span>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="tab-panel active">
+      <div class="sl">Sourcing philosophy · key numbers · channel mix</div>
+
+      <div class="kpi-row">
+        <div class="kpi-c"><div class="kpi-l">Active Open Roles</div><div class="kpi-v" style="color:var(--red);">5</div><div class="kpi-s">2 critical · 3 high/med</div></div>
+        <div class="kpi-c"><div class="kpi-l">Avg Lead Time (Ops)</div><div class="kpi-v" style="color:var(--orange);">90d</div><div class="kpi-s">From sourcing to offer accepted</div></div>
+        <div class="kpi-c"><div class="kpi-l">Sourcing Channels</div><div class="kpi-v" style="color:var(--teal);">8</div><div class="kpi-s">Active in this strategy</div></div>
+        <div class="kpi-c"><div class="kpi-l">Target Response Rate</div><div class="kpi-v" style="color:var(--gold);">25%</div><div class="kpi-s">LinkedIn cold outreach</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+        <div class="card">
+          <div class="ch"><div class="ci" style="background:var(--gold-dim);color:var(--gold);">◈</div><div><div class="ct">The Core Sourcing Rule</div><div class="cs">Applied to every role, every time</div></div></div>
+          <div class="cb">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="padding:12px 14px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--gold);">
+                <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Source before you need</div>
+                <div style="font-size:12px;color:var(--text2);line-height:1.5;">For every critical role, maintain 2–3 warm candidates at all times — even when there's no vacancy. The Drilling Supervisor crisis exists because sourcing only started when the vacancy opened.</div>
+              </div>
+              <div style="padding:12px 14px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--teal);">
+                <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">The 3-channel rule</div>
+                <div style="font-size:12px;color:var(--text2);line-height:1.5;">For any active role, always run at least 3 sourcing channels simultaneously. Never rely on a single job post. LinkedIn + referral + specialist channel is the minimum.</div>
+              </div>
+              <div style="padding:12px 14px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--blue);">
+                <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Referral is the best channel</div>
+                <div style="font-size:12px;color:var(--text2);line-height:1.5;">In SEA drilling, the best candidates don't apply to job ads. They are referred. Activate your network FIRST before posting anywhere — especially for Supervisor and Manager roles.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ch"><div class="ci" style="background:var(--blue-dim);color:var(--blue);">◎</div><div><div class="ct">Channel Mix by Role Type</div><div class="cs">Where to spend time per category</div></div></div>
+          <div class="cb">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="padding:10px 12px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                  <span style="font-size:12.5px;font-weight:700;color:var(--text);">Ops / Technical (Site Mgr, Supervisor)</span>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <span class="pill p-teal">Referral 40%</span>
+                  <span class="pill p-blue">LinkedIn 35%</span>
+                  <span class="pill p-gold">Agency 25%</span>
+                </div>
+              </div>
+              <div style="padding:10px 12px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                  <span style="font-size:12.5px;font-weight:700;color:var(--text);">HSE / Driller / Field Tech</span>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <span class="pill p-teal">Referral 35%</span>
+                  <span class="pill p-blue">LinkedIn 25%</span>
+                  <span class="pill p-orange">Mining Boards 40%</span>
+                </div>
+              </div>
+              <div style="padding:10px 12px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                  <span style="font-size:12.5px;font-weight:700;color:var(--text);">HR / Finance / Compliance</span>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <span class="pill p-blue">LinkedIn 50%</span>
+                  <span class="pill p-purple">Local Boards 30%</span>
+                  <span class="pill p-teal">Referral 20%</span>
+                </div>
+              </div>
+              <div style="padding:10px 12px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                  <span style="font-size:12.5px;font-weight:700;color:var(--text);">Support / Admin</span>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <span class="pill p-purple">Local Boards 50%</span>
+                  <span class="pill p-blue">LinkedIn 30%</span>
+                  <span class="pill p-teal">Referral 20%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><div class="ci" style="background:var(--teal-dim);color:var(--teal);">◷</div><div><div class="ct">Sourcing Timeline by Role — Working Backwards</div><div class="cs">Start sourcing this many days before you need the person on site</div></div></div>
+        <div class="cb scroll-x">
+          <table class="matrix-table">
+            <thead><tr><th>Role Category</th><th>Start Date</th><th>Screen + Shortlist</th><th>Interview Rounds</th><th>Offer + Negotiate</th><th>Notice Period</th><th>Mobilization</th><th>Total Lead Time</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600;color:var(--text);">Site Manager / Country Head</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 0</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 14–21</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 21–35</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 35–42</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">30–60 days</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">7–14 days</td><td><span class="pill p-red">75–130 days</span></td></tr>
+              <tr><td style="font-weight:600;color:var(--text);">Drilling Supervisor</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 0</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 10–14</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 14–21</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 21–28</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">30–60 days</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">7–14 days</td><td><span class="pill p-red">65–115 days</span></td></tr>
+              <tr><td style="font-weight:600;color:var(--text);">Senior Driller / HSE Officer</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 0</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 7–10</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 10–17</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 17–24</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">14–30 days</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">3–7 days</td><td><span class="pill p-orange">45–75 days</span></td></tr>
+              <tr><td style="font-weight:600;color:var(--text);">HRBP / Finance / Compliance</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 0</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 7–10</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 10–17</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 17–24</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">30–45 days</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">N/A</td><td><span class="pill p-gold">55–80 days</span></td></tr>
+              <tr><td style="font-weight:600;color:var(--text);">Support / Admin</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 0</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 5–7</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 7–10</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">Day 10–14</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">14–30 days</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">N/A</td><td><span class="pill p-teal">30–55 days</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="fn">Mobilization time applies to expat hires only — includes work permit processing (Laos: 4–8 weeks, Myanmar: 4–6 weeks) and physical relocation. For locally-based candidates, mobilization time is near zero. These timelines assume active, prioritized sourcing from day one — passive job posting adds 2–4 weeks minimum.</div>
+    </div>
+
+    <!-- OPS ROLES -->
+    <div id="tab-ops" class="tab-panel">
+      <div class="sl">Operations roles · Site Manager · Drilling Supervisor · Senior Driller · Equipment Tech · Geologist</div>
+      <div class="card" style="margin-bottom:18px;">
+        <div class="ch"><div class="ci" style="background:var(--red-dim);color:var(--red);">⚑</div><div><div class="ct">Why Ops Roles Are Hard to Source in SEA</div></div></div>
+        <div class="cb">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <div style="padding:12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--text2);line-height:1.5;"><strong style="color:var(--red);">Thin local pool.</strong> Myanmar and Laos have very limited qualified local drilling professionals at Supervisor level and above. Most qualified candidates are Central Asian (Kazakhstan, Uzbekistan), Australian, or African expatriates.</div>
+            <div style="padding:12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--text2);line-height:1.5;"><strong style="color:var(--orange);">They don't job hunt.</strong> Experienced drilling supervisors are almost always employed. They don't scroll job boards. They move via referral, direct approach from previous colleagues, or headhunter contact.</div>
+            <div style="padding:12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--text2);line-height:1.5;"><strong style="color:var(--gold);">Myanmar context premium.</strong> The political environment makes Myanmar less attractive. Expect to pay a 15–25% premium over comparable roles in more stable markets and to face higher rejection rates at offer stage.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:18px;">
+        <div class="ch"><div class="ci" style="background:var(--teal-dim);color:var(--teal);">◉</div><div><div class="ct">Priority Sourcing Channels — Ops Roles</div><div class="cs">Ranked by effectiveness for SEA drilling and exploration talent</div></div></div>
+        <div class="cb">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--teal);min-width:24px;">01</div>
+              <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Direct Referral — Your Own Network</div><div style="font-size:12px;color:var(--text2);">Ask your current Site Manager candidates who else they know. Ask the Group COO and CEO for contacts. Ask current site staff. One good referral from Arsen Tulebayev (Site Manager candidate) could source your Myanmar Drilling Supervisor immediately.</div></div>
+              <span class="pill p-teal">Best ROI</span>
+            </div>
+            <div style="display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--blue);min-width:24px;">02</div>
+              <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">LinkedIn Recruiter — Direct Outreach</div><div style="font-size:12px;color:var(--text2);">Targeted Boolean search for specific titles and experience. Highly effective for Central Asian expat drillers who maintain LinkedIn profiles. Recruiter license not required for manual outreach — use InMail credits or connection requests with personalized notes.</div></div>
+              <span class="pill p-blue">High Value</span>
+            </div>
+            <div style="display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--orange);min-width:24px;">03</div>
+              <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Mining & Drilling Job Boards</div><div style="font-size:12px;color:var(--text2);">CatalistJobs (SEA mining), Mining People International, Careermine, Rigzone (for supervisor+). Post the JD and passively capture active job seekers. Not effective for passive candidates but good for supplementing active sourcing.</div></div>
+              <span class="pill p-orange">Supplementary</span>
+            </div>
+            <div style="display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--gold);min-width:24px;">04</div>
+              <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Specialist Mining Recruitment Agency</div><div style="font-size:12px;color:var(--text2);">For Myanmar Drilling Supervisor especially — the role is overdue and you have no candidates. Pay the fee (typically 15–18% of first year salary). Cost of agency is less than one week of operational downtime at a drill site.</div></div>
+              <span class="pill p-gold">Use Now for MM</span>
+            </div>
+            <div style="display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--purple);min-width:24px;">05</div>
+              <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Facebook Groups — SEA Mining & Drilling</div><div style="font-size:12px;color:var(--text2);">Counterintuitive but effective in SEA. Myanmar, Laos, and Indonesian mining workers use Facebook heavily. Groups like "Myanmar Mining Jobs", "SEA Drilling Professionals", and country-specific expat groups have active communities of field workers.</div></div>
+              <span class="pill p-purple">SEA-specific</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fn">For Drilling Supervisor Myanmar: deploy channels 1, 2, and 4 simultaneously right now. Do not wait for one channel to fail before trying another. Brief your Site Manager candidate (Arsen) in the first interview — ask if he knows anyone for the Myanmar Supervisor role. Best ops talent knows other ops talent.</div>
+    </div>
+
+    <!-- HSE -->
+    <div id="tab-hse" class="tab-panel">
+      <div class="sl">HSE / Safety Officer · Laos</div>
+      <div class="card" style="margin-bottom:18px;">
+        <div class="ch"><div class="ci" style="background:var(--teal-dim);color:var(--teal);">◎</div><div><div class="ct">HSE Sourcing Approach</div><div class="cs">Laos-based · NEBOSH/IOSH required · Site-ready</div></div></div>
+        <div class="cb">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">LinkedIn Search — Regional HSE Professionals</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px;">Search for HSE Officers with NEBOSH certification and mining/construction experience in SEA. Thai HSE professionals are particularly good fits — cultural proximity to Laos, often have cross-border SEA project experience.</div>
+              <span class="pill p-blue">Primary Channel</span>
+            </div>
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">IOSH / NEBOSH Alumni Communities</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px;">Post in IOSH LinkedIn groups and NEBOSH graduate communities. These have active members looking for site postings. Quality of candidates is higher than generic job boards because membership implies certification.</div>
+              <span class="pill p-teal">Certification-verified pool</span>
+            </div>
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">HSE-specific Job Boards</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px;">Safety-jobs.com, HSEjobs.com, and region-specific boards like JobsDB Thailand and JobStreet Indonesia. Post with NEBOSH requirement prominently — self-selects for qualified candidates.</div>
+              <span class="pill p-orange">Post + Wait</span>
+            </div>
+            <div style="padding:12px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Somchai Rattana (Existing Warm Lead)</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px;">Already in the talent bench database from a previous touchpoint. Re-engage now with a specific conversation — the Laos Safety Officer role is likely to open Q3. Don't wait until it's vacant to warm him up again.</div>
+              <span class="pill p-teal">Activate now</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fn">HSE role has a LOW priority rating but do not let that create a false sense of safety. A Laos site operating without a dedicated HSE Officer is a regulatory and liability exposure. Once the Site Manager is hired, this should move to their top 3 priorities for the site.</div>
+    </div>
+
+    <!-- HR ROLES -->
+    <div id="tab-hr" class="tab-panel">
+      <div class="sl">HR & Finance roles · HRBP Thailand · Payroll Officer · Indonesia Compliance</div>
+      <div class="card" style="margin-bottom:18px;">
+        <div class="ch"><div class="ci" style="background:var(--gold-dim);color:var(--gold);">◉</div><div><div class="ct">HR & Finance Sourcing Channels by Country</div></div></div>
+        <div class="cb">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="padding:14px;background:var(--bg3);border-radius:9px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">🇹🇭 Thailand — HRBP and Payroll Officer</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px;">Bangkok HR market is competitive and candidate-driven. LinkedIn is the strongest channel. Post on JobsDB Thailand and JobThai.com for local reach. Use HR networks — Thai HR Association (THRA) LinkedIn group has active job seekers. Typical notice period is 30–60 days. Multi-country payroll candidates are rare — pay the premium.</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="pill p-blue">LinkedIn</span><span class="pill p-purple">JobsDB TH</span><span class="pill p-gold">THRA Network</span><span class="pill p-teal">JobThai.com</span></div>
+            </div>
+            <div style="padding:14px;background:var(--bg3);border-radius:9px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">🇮🇩 Indonesia — Compliance Officer</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px;">Indonesian labor law specialists are commonly found through LinkedIn and Kalimantan-specific mining networks. JobStreet Indonesia has good reach for professional roles. PMSM (Indonesian HR Association) network for compliance specialists. Local law firms sometimes refer candidates. Notice periods are 30–60 days.</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="pill p-blue">LinkedIn</span><span class="pill p-purple">JobStreet ID</span><span class="pill p-gold">PMSM Network</span><span class="pill p-orange">Kalimantan Mining Groups</span></div>
+            </div>
+            <div style="padding:14px;background:var(--bg3);border-radius:9px;border-left:3px solid var(--gold);">
+              <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:3px;">Strategic Note — HR Roles</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5;">The HRBP Thailand role especially should be a collaborative hire — involve the Group HR Manager in all stages. This person will effectively be your deputy in Thailand. Cultural and communication fit with the Group HR Manager is as important as technical skills. Shortlist no more than 3 candidates and meet all of them personally.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fn">These roles are budget-pending. Do not invest significant sourcing effort until Finance and COO approval is confirmed. However, you CAN begin building a warm pipeline on LinkedIn now — connect with 5–10 relevant profiles, note them in the talent database, and when budget is approved you have a 2–3 week head start on the search.</div>
+    </div>
+
+    <!-- SUPPORT ROLES -->
+    <div id="tab-sup" class="tab-panel">
+      <div class="sl">Support & Admin roles · Site Admin · Logistics Coordinator · Executive Assistant</div>
+      <div class="card" style="margin-bottom:18px;">
+        <div class="ch"><div class="ci" style="background:var(--blue-dim);color:var(--blue);">◷</div><div><div class="ct">Support Role Sourcing — Local First Strategy</div><div class="cs">These roles should be local hires wherever possible</div></div></div>
+        <div class="cb">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="padding:14px;background:var(--bg3);border-radius:9px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">🇱🇦 Laos — Site Admin / Coordinator</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px;">Local Lao hire strongly preferred for regulatory and community relations reasons. Best channels: Laos Jobs (laosjob.com), expat community boards in Vientiane, Facebook groups ("Jobs in Laos", "Laos Expat Community"). English + Lao requirement filters candidates well. University of Vientiane and NUOL (National University of Laos) notice boards for junior candidates. Mining companies operating in Laos sometimes refer outgoing local admin staff.</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="pill p-purple">laosjob.com</span><span class="pill p-orange">Facebook Groups</span><span class="pill p-teal">University Boards</span><span class="pill p-blue">Expat Community</span></div>
+            </div>
+            <div style="padding:14px;background:var(--bg3);border-radius:9px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">🇮🇩 Indonesia — Logistics Coordinator</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px;">Kalimantan local hire preferred. JobStreet Indonesia is the dominant local platform. Facebook mining community groups in East/South Kalimantan are active. Coordinate with current site vendors or contractors — they often know candidates already familiar with the Kalimantan operating environment. Notice periods short (14–30 days) for this level.</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="pill p-purple">JobStreet ID</span><span class="pill p-orange">Kalimantan FB Groups</span><span class="pill p-teal">Vendor Referrals</span></div>
+            </div>
+            <div style="padding:14px;background:var(--bg3);border-radius:9px;border:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">🇹🇭 Thailand — Executive Assistant / Office Manager</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px;">Bangkok-based, English + Thai essential. LinkedIn for mid-senior EA candidates. JobsDB Thailand for broader reach. EA-specific communities: "Executive Assistants Thailand" Facebook groups, corporate EA networks in Bangkok MNC community. Discretion is non-negotiable — involve CEO directly in final interview. Never hire an EA without CEO face-to-face.</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="pill p-blue">LinkedIn</span><span class="pill p-purple">JobsDB TH</span><span class="pill p-gold">Bangkok EA Networks</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fn">Support roles are lower risk than operational roles but poor hires still cost time and cause disruption. For Site Admin especially — the remote site context means a bad hire cannot be managed daily. Invest in a thorough interview and practical test (e.g. draft a sample report, set up a sample tracker) before making an offer.</div>
+    </div>
+
+    <!-- JOB BOARDS -->
+    <div id="tab-platforms" class="tab-panel">
+      <div class="sl">Job boards & platforms · by country and role category</div>
+      <div class="platform-grid">
+        <div class="platform-card"><div class="pc-top"><div class="pc-name">LinkedIn</div><span class="pc-eff eff-high">HIGH</span></div><div class="pc-desc">Best for all professional and senior roles. Direct outreach to passive candidates. Strong for Central Asian expat drillers. Works across all 4 countries.</div><div class="pc-best">Best for: Site Manager, Drilling Supervisor, HRBP, Compliance Officer</div><div class="pc-cost">Cost: Free (manual) / Recruiter Lite ~$170/mo</div></div>
+        <div class="platform-card"><div class="pc-top"><div class="pc-name">CatalistJobs</div><span class="pc-eff eff-high">HIGH</span></div><div class="pc-desc">SEA mining sector specialist board. High quality candidates already filtered to mining/exploration sector. Used by operators across Laos, Myanmar, Indonesia.</div><div class="pc-best">Best for: Senior Driller, Equipment Tech, Geologist, HSE Officer</div><div class="pc-cost">Cost: ~$150–250/post depending on package</div></div>
+        <div class="platform-card"><div class="pc-top"><div class="pc-name">Rigzone</div><span class="pc-eff eff-high">HIGH</span></div><div class="pc-desc">Global oil, gas, and drilling professional network. Strong database of drilling supervisors and site managers. Good for expat candidates from Central Asia and ANZ region.</div><div class="pc-best">Best for: Drilling Supervisor, Site Manager, Senior Driller</div><div class="pc-cost">Cost: ~$300–500/post or subscription</div></div>
+        <div class="platform-card"><div class="pc-top"><div class="pc-name">JobsDB Thailand</div><span class="pc-eff eff-med">MED</span></div><div class="pc-desc">Dominant job board in Thailand. Essential for Bangkok-based roles. Good for HRBP, Finance, and EA roles in Thailand entity. Less effective for ops or field roles.</div><div class="pc-best">Best for: HRBP TH, Payroll Officer, Executive Assistant</div><div class="pc-cost">Cost: ~$100–200/post</div></div>
+        <div class="platform-card"><div class="pc-top"><div class="pc-name">JobStreet Indonesia</div><span class="pc-eff eff-med">MED</span></div><div class="pc-desc">Primary job board for Indonesia. Strong for professional support and compliance roles. Has good reach into Kalimantan province for local candidates.</div><div class="pc-best">Best for: Compliance Officer ID, Logistics Coord, Senior Driller ID</div><div class="pc-cost">Cost: ~$100–200/post</div></div>
+        <div class="platform-card"><div class="pc-top"><div class="pc-name">Mining People Intl</div><span class="pc-eff eff-high">HIGH</span></div><div class="pc-desc">Australian-based specialist mining recruitment agency with strong SEA network. Particularly good for technical mining roles and expat candidates for remote postings.</div><div class="pc-best">Best for: Senior technical ops roles, expat placements</div><div class="pc-cost">Cost: Agency fee 15–18% first year salary</div></div>
+        <div class="platform-card"><div class="pc-top"><div class="pc-name">Facebook Groups</div><span class="pc-eff eff-med">MED</span></div><div class="pc-desc">Underrated in SEA. Myanmar and Laos mining workers heavily use Facebook. "Myanmar Mining Jobs", "Laos Expat Community Jobs", "SEA Drilling Professionals" groups reach workers who don't use LinkedIn.</div><div class="pc-best">Best for: Mid-level ops roles, local Myanmar/Laos hires</div><div class="pc-cost">Cost: Free</div></div>
+        <div class="platform-card"><div class="pc-top"><div class="pc-name">laosjob.com</div><span class="pc-eff eff-med">MED</span></div><div class="pc-desc">Primary local job portal in Laos. Limited professional reach but good for local admin and coordination roles in Vientiane and provinces. English/Lao bilingual candidates use this platform.</div><div class="pc-best">Best for: Site Admin, Laos-based local support hires</div><div class="pc-cost">Cost: Low ~$30–80/post</div></div>
+        <div class="platform-card"><div class="pc-top"><div class="pc-name">Careermine / InfoMine</div><span class="pc-eff eff-low">LOW-MED</span></div><div class="pc-desc">Global mining job board. Broad reach but less SEA-specific than CatalistJobs. Worth posting for senior technical roles where you want global expat reach (Australia, Canada, Africa).</div><div class="pc-best">Best for: Global expat ops talent for senior roles</div><div class="pc-cost">Cost: ~$150–300/post</div></div>
+      </div>
+      <div class="fn">Effectiveness ratings are specific to SEA drilling and exploration sector. A "LOW" rating doesn't mean don't use it — it means calibrate time investment accordingly. For any role, run LinkedIn + 1 specialist board simultaneously as a minimum. For critical ops roles, add agency as a third channel immediately.</div>
+    </div>
+
+    <!-- LINKEDIN SEARCH STRINGS -->
+    <div id="tab-linkedin" class="tab-panel">
+      <div class="sl">LinkedIn Boolean search strings · copy and paste into LinkedIn search</div>
+
+      <div class="ss-block">
+        <div class="ss-label">🔴 Site Manager — SEA Operations</div>
+        <div class="ss-box" onclick="copyText(this)">("Site Manager" OR "Operations Manager" OR "Project Manager") AND ("drilling" OR "mineral exploration" OR "mining") AND ("Laos" OR "Myanmar" OR "Southeast Asia" OR "SEA") AND ("500" OR "headcount" OR "remote site" OR "field operations")</div>
+        <div class="ss-notes">Tip: Filter by "Past 2 years" activity to exclude inactive profiles. Add Kazakhstan, Uzbekistan, or Australia as location filters to find expat candidates with relevant backgrounds.</div>
+      </div>
+
+      <div class="ss-block">
+        <div class="ss-label">🔴 Drilling Supervisor — Myanmar (Urgent)</div>
+        <div class="ss-box" onclick="copyText(this)">("Drilling Supervisor" OR "Drill Supervisor" OR "Senior Driller") AND ("mineral exploration" OR "diamond core" OR "rotary drilling" OR "RC drilling") AND ("Myanmar" OR "Southeast Asia" OR "remote site" OR "Mandalay") NOT "oil" NOT "petroleum"</div>
+        <div class="ss-notes">Remove "NOT oil NOT petroleum" if expanding to oil & gas drillers who can transfer skills. Many rotary drilling supervisors from O&G can adapt to mineral exploration with brief upskilling.</div>
+      </div>
+
+      <div class="ss-block">
+        <div class="ss-label">🟠 Senior Driller — Indonesia/Kalimantan</div>
+        <div class="ss-box" onclick="copyText(this)">("Senior Driller" OR "Diamond Core Driller" OR "Exploration Driller") AND ("Kalimantan" OR "Indonesia" OR "mineral exploration") AND ("gold" OR "nickel" OR "copper" OR "mineral") AND ("10 years" OR "experienced")</div>
+        <div class="ss-notes">Filter by Indonesia location. Add Bahasa Indonesia language filter for local hires. For expat candidates, remove location filter and add "willing to relocate" as a keyword.</div>
+      </div>
+
+      <div class="ss-block">
+        <div class="ss-label">🟢 HSE Officer — SEA / Laos</div>
+        <div class="ss-box" onclick="copyText(this)">("HSE Officer" OR "Safety Officer" OR "Health Safety Environment") AND ("NEBOSH" OR "IOSH" OR "safety certification") AND ("mining" OR "construction" OR "drilling" OR "oil gas") AND ("Thailand" OR "Laos" OR "Southeast Asia") AND ("site" OR "remote" OR "field")</div>
+        <div class="ss-notes">Thai HSE professionals are particularly good targets — cultural proximity to Laos, often have cross-border experience, and there's a larger qualified pool than in Laos directly.</div>
+      </div>
+
+      <div class="ss-block">
+        <div class="ss-label">🟡 HRBP / HR Manager — Thailand</div>
+        <div class="ss-box" onclick="copyText(this)">("HRBP" OR "HR Business Partner" OR "HR Manager") AND ("Thailand" OR "Bangkok") AND ("labor law" OR "Thai labor" OR "multi-country" OR "regional HR") AND ("mining" OR "construction" OR "manufacturing" OR "international company")</div>
+        <div class="ss-notes">Filter by Bangkok location. Look for 5+ years experience in profile summary. Prioritize candidates who mention Thai Labor Protection Act or multi-country payroll — these are rare differentiators.</div>
+      </div>
+
+      <div class="ss-block">
+        <div class="ss-label">🔵 Payroll Officer — Multi-country SEA</div>
+        <div class="ss-box" onclick="copyText(this)">("Payroll" OR "Payroll Officer" OR "Payroll Manager" OR "Compensation") AND ("multi-country" OR "regional payroll" OR "SEA payroll" OR "cross-border") AND ("Thailand" OR "Southeast Asia") AND ("SSO" OR "statutory" OR "labor compliance")</div>
+        <div class="ss-notes">Multi-country payroll experience is rare. Cast a wider net — accept candidates with strong single-country payroll who show ability to learn. SSO and statutory compliance keywords help filter for Thai payroll practitioners.</div>
+      </div>
+
+      <div class="ss-block">
+        <div class="ss-label">🔵 Indonesia Compliance Officer</div>
+        <div class="ss-box" onclick="copyText(this)">("HR Compliance" OR "Labor Compliance" OR "Legal HR" OR "Industrial Relations") AND ("Indonesia" OR "Kalimantan" OR "Jakarta") AND ("KITAS" OR "work permit" OR "IMTA" OR "Manpower Law" OR "UU Ketenagakerjaan") AND ("mining" OR "extractive" OR "plantation" OR "oil gas")</div>
+        <div class="ss-notes">KITAS and IMTA keywords are highly specific — anyone with these in their profile has direct work permit experience. Filter by Indonesia location. Kalimantan-based candidates will have relevant site compliance experience.</div>
+      </div>
+
+      <div class="fn">Copy strings directly into LinkedIn search bar. Refine by: Connection degree (2nd and 3rd for broader reach), Location (per role), Industry (Mining & Metals, Oil & Gas for ops roles), and Activity (Past 30 days to avoid inactive profiles). Always personalize connection requests — generic requests get ~10% acceptance vs 35%+ for personalized notes.</div>
+    </div>
+
+    <!-- AGENCIES -->
+    <div id="tab-agencies" class="tab-panel">
+      <div class="sl">Specialist agencies & headhunters · SEA mining and drilling sector</div>
+      <div class="card" style="margin-bottom:18px;">
+        <div class="ch"><div class="ci" style="background:var(--gold-dim);color:var(--gold);">◷</div><div><div class="ct">When to Use an Agency</div><div class="cs">Agency fees are an investment, not a cost</div></div></div>
+        <div class="cb">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--red);font-size:12px;color:var(--text2);line-height:1.5;"><strong style="color:var(--red);display:block;margin-bottom:4px;">Use immediately when:</strong>Role is overdue with no pipeline (Myanmar Supervisor). Critical operations role that cannot stay vacant. You have zero bandwidth for active sourcing.</div>
+            <div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--gold);font-size:12px;color:var(--text2);line-height:1.5;"><strong style="color:var(--gold);display:block;margin-bottom:4px;">Consider using when:</strong>Thin local talent pool (all ops roles in MM/LA). Confidential search. Role requires specific technical credentialing you can't verify independently.</div>
+            <div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--teal);font-size:12px;color:var(--text2);line-height:1.5;"><strong style="color:var(--teal);display:block;margin-bottom:4px;">Don't use agency for:</strong>Support/admin roles. Roles where you have warm bench candidates. Roles where the JD is unclear — fix the JD first or you'll waste the agency's time and yours.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><div class="ci" style="background:var(--blue-dim);color:var(--blue);">◉</div><div><div class="ct">Recommended Agencies — SEA Mining & Drilling</div></div></div>
+        <div class="cb scroll-x">
+          <table class="agency-table">
+            <thead><tr><th>Agency</th><th>Speciality</th><th>SEA Coverage</th><th>Typical Fee</th><th>Best For</th><th>Approach</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div style="font-weight:700;color:var(--text);">Mining People International</div><div style="font-size:10.5px;color:var(--text3);">miningpeople.com.au</div></td>
+                <td>Mining & exploration ops, technical, management</td>
+                <td><span class="pill p-teal">SEA · ANZ · Global</span></td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">15–18% yr1 salary</td>
+                <td>Site Manager, Drilling Supervisor, Senior Driller</td>
+                <td style="font-size:11.5px;">Send JD + brief on site conditions, salary range, timeline. Request shortlist of 3 CVs within 2 weeks.</td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:700;color:var(--text);">Hays Mining</div><div style="font-size:10.5px;color:var(--text3);">hays.com.au/mining</div></td>
+                <td>Mining, resources, engineering</td>
+                <td><span class="pill p-blue">SEA · ANZ · Asia</span></td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">15–20% yr1 salary</td>
+                <td>Technical ops roles, geologists, project managers</td>
+                <td style="font-size:11.5px;">Larger agency — good for expat placements from Australia into SEA. Request a dedicated consultant for the role, not a generic submission.</td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:700;color:var(--text);">Antal International</div><div style="font-size:10.5px;color:var(--text3);">antal.com</div></td>
+                <td>Oil & gas, mining, energy, HR</td>
+                <td><span class="pill p-purple">SEA · Middle East · CIS</span></td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">15–18% yr1 salary</td>
+                <td>Central Asian expats, HR roles, ops management</td>
+                <td style="font-size:11.5px;">Strong network in CIS (Kazakhstan, Uzbekistan) region — useful for sourcing Central Asian drilling expats. Also has HR specialisation.</td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:700;color:var(--text);">Monroe Consulting (SEA)</div><div style="font-size:10.5px;color:var(--text3);">monroeconsulting.com</div></td>
+                <td>Professional services, engineering, HR, finance</td>
+                <td><span class="pill p-teal">TH · ID · MM · PH</span></td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">15–18% yr1 salary</td>
+                <td>HRBP Thailand, Finance Officer, Compliance Officer</td>
+                <td style="font-size:11.5px;">Strong Bangkok and Jakarta networks. Use for HR and Finance roles where you need local Thai/Indonesian market knowledge.</td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:700;color:var(--text);">Links International</div><div style="font-size:10.5px;color:var(--text3);">linksinternational.com</div></td>
+                <td>HR, finance, professional roles in SEA</td>
+                <td><span class="pill p-blue">TH · SG · HK · SEA</span></td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">15–18% yr1 salary</td>
+                <td>HR Manager, Payroll, EA / Office Manager Bangkok</td>
+                <td style="font-size:11.5px;">SEA-specialized HR and professional roles. Good for EA and support roles in Bangkok. Strong local Thai market knowledge.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:16px;background:var(--gold-dim);border:1px solid rgba(232,192,80,0.2);border-radius:10px;">
+        <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;">⚡ Immediate Action — Myanmar Drilling Supervisor</div>
+        <div style="font-size:12.5px;color:var(--text2);line-height:1.6;">Contact Mining People International and Antal International TODAY with the Drilling Supervisor JD. The role is already overdue. Brief both agencies on: Myanmar posting, hardship premium available, rotation schedule, technical requirements. Request CVs within 7–10 business days. Running two agencies simultaneously on this role is justified given the urgency and operational risk.</div>
+      </div>
+      <div class="fn">Always negotiate: (1) guarantee period — if the hire leaves within 3–6 months, agency replaces at no cost; (2) staged payment — 50% on start date, 50% at 3-month confirmation; (3) exclusive vs non-exclusive — for urgent roles, non-exclusive (multiple agencies) speeds up delivery but may reduce quality of agency effort.</div>
+    </div>
+
+    <!-- COMMUNITIES -->
+    <div id="tab-communities" class="tab-panel">
+      <div class="sl">Mining & drilling talent communities · networks · associations</div>
+      <div class="community-grid" style="margin-bottom:20px;">
+        <div class="comm-card">
+          <div class="comm-name">Australasian Institute of Mining & Metallurgy (AusIMM)</div>
+          <div class="comm-type">Professional Association · Global</div>
+          <div class="comm-desc">50,000+ mining professionals globally. Strong SEA chapter. Job board, events, and direct community access. Many drilling and exploration professionals are members.</div>
+          <div class="comm-action">→ Post in AusIMM job board. Join LinkedIn AusIMM group. Attend virtual events to network.</div>
+        </div>
+        <div class="comm-card">
+          <div class="comm-name">Society of Exploration Geophysicists (SEG)</div>
+          <div class="comm-type">Professional Association · Technical</div>
+          <div class="comm-desc">Strong geoscience and exploration community. Good for Geologist / Field Tech roles in Indonesia. SEA chapter active in Indonesia and Thailand.</div>
+          <div class="comm-action">→ Post in SEG job board. Target Indonesia chapter for Kalimantan roles.</div>
+        </div>
+        <div class="comm-card">
+          <div class="comm-name">Myanmar Mining & Resources Network</div>
+          <div class="comm-type">Facebook / LinkedIn Group · Regional</div>
+          <div class="comm-desc">Active community of mining professionals operating in Myanmar. Mix of local and expat professionals. Good for direct outreach to Drilling Supervisor candidates already comfortable with Myanmar context.</div>
+          <div class="comm-action">→ Join group. Post role. Direct message relevant-looking profiles with personalized approach.</div>
+        </div>
+        <div class="comm-card">
+          <div class="comm-name">Mineral Council of Laos / LICA Network</div>
+          <div class="comm-type">Industry Association · Laos</div>
+          <div class="comm-desc">Laos mining industry association. Good for regulatory intelligence AND for building relationships with other operators who may know available talent locally.</div>
+          <div class="comm-action">→ Become a member or attend events. Build relationships with HR counterparts at other Laos mining companies.</div>
+        </div>
+        <div class="comm-card">
+          <div class="comm-name">SEA Drilling Professionals (LinkedIn)</div>
+          <div class="comm-type">LinkedIn Group · Regional</div>
+          <div class="comm-desc">LinkedIn group for drilling professionals working in Southeast Asia. Active posting community. Good for passive sourcing and brand building — post content about Valentis operations to attract inbound interest.</div>
+          <div class="comm-action">→ Join and post role. Engage with active contributors who match target profile.</div>
+        </div>
+        <div class="comm-card">
+          <div class="comm-name">Kalimantan Mining Workers — Facebook</div>
+          <div class="comm-type">Facebook Group · Indonesia</div>
+          <div class="comm-desc">Indonesian-language group for Kalimantan mining workers. Reaches local Indonesian drillers and technicians who don't use LinkedIn. High volume, lower filter — but genuine candidates for Driller and Tech roles.</div>
+          <div class="comm-action">→ Post in Indonesian. Use simple, direct language. Provide WhatsApp contact for applications.</div>
+        </div>
+        <div class="comm-card">
+          <div class="comm-name">THRA — Thai HR Association</div>
+          <div class="comm-type">Professional Association · Thailand</div>
+          <div class="comm-desc">Thai HR professionals association. LinkedIn group and events. Good for sourcing HRBP and HR Manager candidates in Bangkok who are actively engaged with the profession.</div>
+          <div class="comm-action">→ Post HRBP role in THRA job board and LinkedIn group when budget confirmed.</div>
+        </div>
+        <div class="comm-card">
+          <div class="comm-name">Kazakhstan / CIS Drilling Network</div>
+          <div class="comm-type">LinkedIn + Facebook · Expat Pool</div>
+          <div class="comm-desc">Central Asian (Kazakhstan, Uzbekistan, Azerbaijan) drilling professionals form a specific expat community in SEA. They work across Laos, Myanmar, Indonesia. Your Arsen Tulebayev and Dr. Mehdizade connection is an entry point into this network.</div>
+          <div class="comm-action">→ Ask Arsen directly to refer or introduce relevant contacts. This community operates on personal trust — warm intro is essential.</div>
+        </div>
+      </div>
+      <div class="fn">Community sourcing is a long-term investment, not a quick fix. Start building presence in these communities before you need to hire from them. Post about Valentis operations, SEA mining context, and team culture. Candidates who follow your company's presence before applying are higher quality and more committed than cold applicants.</div>
+    </div>
+
+    <!-- OUTREACH TEMPLATES -->
+    <div id="tab-outreach" class="tab-panel">
+      <div class="sl">Outreach message templates · LinkedIn + WhatsApp + email · copy and personalize</div>
+
+      <div class="template-block">
+        <div class="tmpl-label">🔴 LinkedIn InMail — Drilling Supervisor (Urgent · Myanmar)</div>
+        <div class="tmpl-box"><button class="tmpl-copy" onclick="copyTemplate(this)">copy</button><b>Subject: Drilling Supervisor — Myanmar Site · Competitive Package</b>
+
+Hi [Name],
+
+Your background in [specific experience from profile] caught my attention. We're looking for a Drilling Supervisor for an active mineral exploration site in Mandalay Region, Myanmar.
+
+The role: Leading a rig crew of 15–30 in a rotary/diamond core drilling program. Reporting to Site Manager. Competitive base of $1,800–$3,000/mo + hardship premium + rotation schedule.
+
+You'd be working with a team that operates across SEA — Laos, Myanmar, Indonesia. The environment is remote and operationally demanding, which I suspect suits your background.
+
+Would a 15-minute call this week make sense? Happy to share full details.
+
+[Your name]
+Group HR Manager, Valentis Laos</div>
+        <div class="tmpl-notes">Keep it short. Lead with their specific background, not a generic pitch. Mention the hardship premium upfront for Myanmar roles — it signals you understand the market. Never attach the JD in a first message — it kills response rate.</div>
+      </div>
+
+      <div class="template-block">
+        <div class="tmpl-label">🔵 LinkedIn Connection Request — Site Manager (Passive Outreach)</div>
+        <div class="tmpl-box"><button class="tmpl-copy" onclick="copyTemplate(this)">copy</button>Hi [Name], your [X years] in site ops management across [region] is exactly the background we're building our leadership team around. I'm Group HR at Valentis — we operate across SEA (Laos, Myanmar, Indonesia). Would value connecting for a conversation when the timing is right.</div>
+        <div class="tmpl-notes">This is a connection request, not a pitch. Keep under 300 characters. Do not mention the role or salary — just open the door. Once they accept, follow up within 48 hours with a more detailed message.</div>
+      </div>
+
+      <div class="template-block">
+        <div class="tmpl-label">📧 Email / Follow-up — Post Connection (Any Ops Role)</div>
+        <div class="tmpl-box"><button class="tmpl-copy" onclick="copyTemplate(this)">copy</button><b>Subject: [Role] Opportunity — Valentis Laos · SEA Operations</b>
+
+Hi [Name],
+
+Thanks for connecting. I wanted to share a bit more context on why I reached out.
+
+We're Valentis — a drilling and mineral exploration company operating across Laos, Myanmar, Indonesia, and Thailand. We're building out our operational leadership team and [Site Manager / Drilling Supervisor / Senior Driller] is a role where I think your background could be a genuine fit.
+
+What I noticed in your profile: [specific observation — company, title, scale, geography].
+
+What we're offering: [Role title] based in [Location]. [Headcount/scope]. Package range: [salary range]. [Rotation schedule if applicable].
+
+I'm not asking you to apply — I'm asking if you'd be open to a 20-minute conversation to see if there's a fit worth exploring further. No obligation, no pressure.
+
+If now isn't the right time, I'd welcome the chance to stay in touch for future conversations.
+
+[Your name]
+Group HR Manager, Valentis Laos
+[Phone / Email]</div>
+        <div class="tmpl-notes">This is the follow-up after they accept your connection. Be specific about what you observed — it shows you actually read their profile. The "I'm not asking you to apply" framing removes defensiveness and increases response rate from passive candidates significantly.</div>
+      </div>
+
+      <div class="template-block">
+        <div class="tmpl-label">📱 WhatsApp / Facebook Message — Local SEA Ops / Field Roles</div>
+        <div class="tmpl-box"><button class="tmpl-copy" onclick="copyTemplate(this)">copy</button>Hello [Name], I'm the HR Manager at Valentis — we run drilling operations in [Myanmar/Laos/Indonesia]. We're looking for a [Drilling Supervisor / Senior Driller] for our [location] site. 
+
+Package: USD [range]/month + [rotation / site allowance]. 
+Start: [month].
+Requirements: [2–3 key requirements only].
+
+If you or someone you know might be interested, please contact me at [number] or send your CV to [email].
+
+Thank you.</div>
+        <div class="tmpl-notes">For Facebook groups and WhatsApp — keep it plain, direct, short. Local field workers respond better to simple language and a phone number than corporate-style messages. Always include a WhatsApp number, not just email. Post in local language (Burmese, Bahasa) where possible — use Google Translate and have a local contact review before posting.</div>
+      </div>
+
+      <div class="template-block">
+        <div class="tmpl-label">🤝 Referral Request — To Existing Candidates or Network Contacts</div>
+        <div class="tmpl-box"><button class="tmpl-copy" onclick="copyTemplate(this)">copy</button>Hi [Name],
+
+As we progress with your candidacy for the [Site Manager] role, I wanted to ask — do you know anyone in your network who might be a good fit for our Drilling Supervisor role in Myanmar?
+
+We're looking for someone with [8+ years drilling ops, supervisor experience, comfortable with remote SEA posting]. Package is $1,800–$3,000/mo + hardship premium.
+
+If you can connect us with someone suitable, I'd be grateful. The drilling community in SEA is small and referrals from people who know the work are the best signal we have.
+
+Thanks,
+[Your name]</div>
+        <div class="tmpl-notes">Ask during the active interview process — candidates are most engaged and want to help. Arsen Tulebayev (Site Manager candidate) is your best referral source for the Myanmar Supervisor role. A referral from him carries instant credibility with his drilling network.</div>
+      </div>
+
+      <div class="fn">Personalization is not optional — it's the difference between 10% and 35% response rates. At minimum, reference one specific thing from their profile. Batch outreach with zero personalization is spam and damages Valentis's employer brand in a tight-knit drilling community where everyone knows everyone.</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+function sw(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function copyText(el) {
+  const text = el.innerText.replace('click to copy', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = el.style.borderColor;
+    el.style.borderColor = '#34d399';
+    el.style.color = '#34d399';
+    setTimeout(() => { el.style.borderColor = ''; el.style.color = ''; }, 2000);
+  });
+}
+
+function copyTemplate(btn) {
+  const box = btn.parentElement;
+  const text = box.innerText.replace('copy', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied ✓';
+    btn.style.color = '#34d399';
+    setTimeout(() => { btn.textContent = 'copy'; btn.style.color = ''; }, 2500);
+  });
+}
+</script>
+</body>
+</html>

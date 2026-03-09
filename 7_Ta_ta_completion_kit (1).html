@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TA Completion Kit | Valentis Laos</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Karla:wght@300;400;500;600;700&family=Inconsolata:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:   #f6f1e9;
+  --paper2:  #ede8de;
+  --paper3:  #e4ddd1;
+  --white:   #fdfaf5;
+  --ink:     #1e1a14;
+  --ink2:    #3d3628;
+  --ink3:    #7a6e5a;
+  --ink4:    #b0a48e;
+  --rule:    #d8cfc0;
+  --rule2:   #c8bfae;
+
+  --terra:   #8b3a1a;
+  --terra-l: #fdf0eb;
+  --terra-b: #e8b8a0;
+
+  --moss:    #2d5a3d;
+  --moss-l:  #edf5f0;
+  --moss-b:  #90c8a8;
+
+  --slate:   #2a3f5a;
+  --slate-l: #edf1f8;
+  --slate-b: #90a8c8;
+
+  --ochre:   #7a5a10;
+  --ochre-l: #fdf8eb;
+  --ochre-b: #d8c070;
+
+  --wine:    #5a1a38;
+  --wine-l:  #f8edf3;
+  --wine-b:  #c890a8;
+
+  --r: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Karla', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* subtle paper texture via repeating gradient */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 24px,
+    rgba(180,160,120,0.04) 24px,
+    rgba(180,160,120,0.04) 25px
+  );
+  pointer-events: none; z-index: 0;
+}
+
+.shell { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+
+/* ── RAIL ── */
+.rail {
+  width: 256px; min-width: 256px;
+  background: var(--ink);
+  position: fixed; inset-y: 0; left: 0;
+  display: flex; flex-direction: column;
+  overflow-y: auto; z-index: 40;
+}
+
+.rail-top {
+  padding: 26px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.rt-ey {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(255,255,255,0.25); margin-bottom: 11px;
+}
+.rt-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 21px; font-weight: 700; color: #fff;
+  line-height: 1.2;
+}
+.rt-title em { color: #d4a870; font-style: italic; }
+.rt-sub { font-size: 11px; color: rgba(255,255,255,0.28); margin-top: 6px; }
+
+/* MODULE TABS */
+.mod-tabs {
+  display: flex; flex-direction: column; gap: 0;
+  margin: 14px 14px 0;
+}
+.mod-tab {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px;
+  background: transparent; border: none;
+  color: rgba(255,255,255,0.35);
+  font-family: 'Karla', sans-serif;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+  text-align: left; margin-bottom: 2px;
+}
+.mod-tab:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.65); }
+.mod-tab.active { background: rgba(212,168,112,0.15); color: #d4a870; }
+.mod-ic {
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+  background: rgba(255,255,255,0.05);
+}
+.mod-tab.active .mod-ic { background: rgba(212,168,112,0.2); }
+
+/* SUB NAV */
+.sub-nav-wrap { padding: 6px 14px; display: none; }
+.sub-nav-wrap.open { display: block; }
+.sn-label {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7.5px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: rgba(255,255,255,0.18);
+  padding: 0 6px; margin-bottom: 5px;
+}
+.sn-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 7px 8px; border-radius: 6px;
+  background: transparent; border: none;
+  color: rgba(255,255,255,0.38);
+  font-family: 'Karla', sans-serif;
+  font-size: 11.5px; font-weight: 500;
+  cursor: pointer; transition: all 0.14s;
+  text-align: left; margin-bottom: 1px;
+}
+.sn-btn:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.65); }
+.sn-btn.active { background: rgba(212,168,112,0.12); color: #d4a870; }
+.sn-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+.rail-foot {
+  margin-top: auto;
+  padding: 13px 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-family: 'Inconsolata', monospace;
+  font-size: 8.5px; color: rgba(255,255,255,0.15); line-height: 1.9;
+}
+
+/* ── MAIN ── */
+.main { margin-left: 256px; flex: 1; display: flex; flex-direction: column; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--rule);
+  padding: 13px 36px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 20;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+}
+.tb-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 700; color: var(--ink);
+}
+.tb-sub {
+  font-family: 'Inconsolata', monospace;
+  font-size: 10px; color: var(--ink4); margin-top: 2px;
+}
+.conf-tag {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8.5px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 4px;
+  background: var(--terra-l); color: var(--terra); border: 1px solid var(--terra-b);
+}
+
+/* CONTENT */
+.content { padding: 32px 36px; flex: 1; }
+.tab-panel { display: none; animation: up 0.2s ease; }
+.tab-panel.active { display: block; }
+@keyframes up { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;} }
+
+/* SECTION LABEL */
+.sl {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--ink4);
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.sl::after { content:''; flex:1; height:1px; background:var(--rule); }
+
+/* CARD */
+.card {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: var(--r); overflow: hidden; margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.card-head {
+  padding: 13px 18px; border-bottom: 1px solid var(--rule);
+  display: flex; align-items: center; gap: 11px;
+}
+.card-ic {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.card-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.card-sub   { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+.card-body  { padding: 16px 18px; }
+
+/* PILL */
+.pill {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px; border-radius: 20px;
+  font-size: 10px; font-weight: 700;
+  font-family: 'Inconsolata', monospace; border: 1px solid; white-space: nowrap;
+}
+.p-terra  { background: var(--terra-l);  color: var(--terra);  border-color: var(--terra-b); }
+.p-moss   { background: var(--moss-l);   color: var(--moss);   border-color: var(--moss-b); }
+.p-slate  { background: var(--slate-l);  color: var(--slate);  border-color: var(--slate-b); }
+.p-ochre  { background: var(--ochre-l);  color: var(--ochre);  border-color: var(--ochre-b); }
+.p-wine   { background: var(--wine-l);   color: var(--wine);   border-color: var(--wine-b); }
+
+/* NOTE */
+.note {
+  font-size: 11.5px; color: var(--ink3); font-style: italic;
+  padding: 10px 14px; background: var(--paper2);
+  border-radius: 7px; border-left: 3px solid var(--rule2);
+  margin-top: 10px; line-height: 1.65;
+}
+.warn {
+  font-size: 11.5px; color: var(--terra);
+  padding: 10px 14px; background: var(--terra-l);
+  border-radius: 7px; border-left: 3px solid var(--terra-b);
+  margin-top: 10px; line-height: 1.65;
+}
+
+/* GRIDS */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 16px; }
+
+/* SCROLL */
+.sx { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ══════════════════════════════════
+   COMPLIANCE MODULE
+══════════════════════════════════ */
+
+/* CONTRACT CLAUSE BLOCKS */
+.clause-block { margin-bottom: 18px; }
+.cb-head {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px;
+}
+.cb-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700; color: var(--rule2);
+  line-height: 1; width: 32px; flex-shrink: 0;
+}
+.cb-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.cb-sub   { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+.clause-items { display: flex; flex-direction: column; gap: 7px; }
+.clause-item {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px; padding: 12px 14px;
+}
+.ci-label {
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--ink4); margin-bottom: 5px;
+}
+.ci-text { font-size: 12.5px; color: var(--ink2); line-height: 1.6; }
+.ci-vary { font-size: 11.5px; color: var(--terra); margin-top: 5px; font-style: italic; }
+
+/* COUNTRY COMPARISON TABLE */
+.ctbl { width: 100%; border-collapse: collapse; }
+.ctbl thead tr { background: var(--ink); }
+.ctbl thead th {
+  padding: 10px 13px;
+  font-family: 'Inconsolata', monospace;
+  font-size: 8.5px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: rgba(255,255,255,0.6);
+  text-align: left; border-right: 1px solid rgba(255,255,255,0.08);
+  white-space: nowrap;
+}
+.ctbl thead th:last-child { border-right: none; }
+.ctbl tbody tr { border-bottom: 1px solid var(--rule); transition: background 0.12s; }
+.ctbl tbody tr:last-child { border-bottom: none; }
+.ctbl tbody tr:hover { background: var(--paper); }
+.ctbl tbody td {
+  padding: 11px 13px;
+  font-size: 12px; color: var(--ink2);
+  border-right: 1px solid var(--rule);
+  vertical-align: top; line-height: 1.5;
+}
+.ctbl tbody td:first-child { font-weight: 700; color: var(--ink); }
+.ctbl tbody td:last-child { border-right: none; }
+
+/* PERMIT TRACKER */
+.permit-grid { display: flex; flex-direction: column; gap: 10px; }
+.permit-card {
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: 9px; padding: 14px 16px;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 12px; align-items: center;
+  transition: border-color 0.14s;
+}
+.permit-card:hover { border-color: var(--rule2); }
+.permit-card.overdue { border-color: var(--terra-b); background: var(--terra-l); }
+.permit-card.expiring { border-color: var(--ochre-b); background: var(--ochre-l); }
+.pm-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.pm-role { font-size: 11.5px; color: var(--ink3); margin-bottom: 6px; }
+.pm-details { display: flex; gap: 10px; flex-wrap: wrap; }
+.pm-d { font-family: 'Inconsolata', monospace; font-size: 10.5px; color: var(--ink4); }
+.pm-status { text-align: right; }
+.pm-days {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 700; line-height: 1;
+}
+.pm-dlabel { font-size: 10px; color: var(--ink3); font-family: 'Inconsolata', monospace; }
+
+/* ADD PERMIT FORM */
+.perm-form {
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  border-radius: var(--r); padding: 18px;
+  margin-bottom: 16px;
+}
+
+/* REF CHECK */
+.ref-q { margin-bottom: 14px; }
+.rq-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-weight: 700; color: var(--ink4);
+  margin-bottom: 4px;
+}
+.rq-text { font-size: 13px; color: var(--ink); font-weight: 500; line-height: 1.5; margin-bottom: 5px; }
+.rq-note { font-size: 11.5px; color: var(--ink3); font-style: italic; line-height: 1.5; }
+
+/* ══════════════════════════════════
+   ONBOARDING MODULE
+══════════════════════════════════ */
+
+.checklist { display: flex; flex-direction: column; gap: 6px; }
+.cl-item {
+  display: flex; align-items: flex-start; gap: 11px;
+  padding: 10px 13px;
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 8px; cursor: pointer;
+  transition: all 0.14s;
+}
+.cl-item:hover { border-color: var(--rule2); }
+.cl-item.done { background: var(--moss-l); border-color: var(--moss-b); }
+.cl-cb {
+  width: 18px; height: 18px; border-radius: 4px;
+  border: 1.5px solid var(--rule2);
+  background: var(--white); flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.14s; font-size: 11px; color: var(--moss);
+}
+.cl-item.done .cl-cb { background: var(--moss); border-color: var(--moss); color: #fff; }
+.cl-text { flex: 1; }
+.cl-title { font-size: 12.5px; font-weight: 600; color: var(--ink); line-height: 1.4; }
+.cl-item.done .cl-title { text-decoration: line-through; color: var(--ink3); }
+.cl-detail { font-size: 11px; color: var(--ink3); margin-top: 2px; line-height: 1.5; }
+.cl-tag { margin-left: auto; flex-shrink: 0; margin-top: 1px; }
+
+.cl-section-head {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8.5px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ink4);
+  padding: 10px 0 6px; display: flex; align-items: center; gap: 10px;
+}
+.cl-section-head::after { content:''; flex:1; height:1px; background:var(--rule); }
+
+/* 90-DAY PLAN */
+.plan-cols { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 16px; }
+.plan-col {
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: var(--r); overflow: hidden;
+}
+.plan-col-head {
+  padding: 12px 14px; border-bottom: 1px solid var(--rule);
+  display: flex; align-items: center; gap: 8px;
+}
+.plan-period {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-weight: 700;
+}
+.plan-body { padding: 13px 14px; }
+.plan-items { display: flex; flex-direction: column; gap: 6px; }
+.plan-item {
+  padding: 8px 10px;
+  background: var(--paper); border-radius: 6px;
+  border: 1px solid var(--rule);
+  font-size: 12px; color: var(--ink2); line-height: 1.5;
+}
+.plan-item strong { color: var(--ink); display: block; font-weight: 600; margin-bottom: 1px; }
+
+/* COUNTRY ONBOARDING TABS */
+.ctry-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.ctry-tab {
+  padding: 7px 14px; border-radius: 20px;
+  border: 1px solid var(--rule2); background: var(--white);
+  font-family: 'Inconsolata', monospace;
+  font-size: 11px; font-weight: 700; cursor: pointer;
+  transition: all 0.14s; color: var(--ink3);
+}
+.ctry-tab:hover { border-color: var(--ink3); color: var(--ink); }
+.ctry-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.ctry-panel { display: none; }
+.ctry-panel.active { display: block; }
+
+/* ══════════════════════════════════
+   EMPLOYER BRAND MODULE
+══════════════════════════════════ */
+
+.evp-pillars { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.evp-pillar {
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: var(--r); padding: 16px 14px;
+  text-align: center;
+  transition: box-shadow 0.15s;
+}
+.evp-pillar:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.evp-icon { font-size: 24px; margin-bottom: 10px; }
+.evp-name { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.evp-desc { font-size: 11.5px; color: var(--ink3); line-height: 1.55; }
+.evp-tag  { font-family: 'Inconsolata', monospace; font-size: 9px; color: var(--ink4); margin-top: 8px; }
+
+/* LINKEDIN PLAYBOOK */
+.li-step {
+  display: grid; grid-template-columns: 36px 1fr;
+  gap: 12px; padding: 13px 14px;
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 9px; margin-bottom: 9px;
+}
+.li-n {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 700; color: var(--ochre);
+  width: 36px; height: 36px;
+  background: var(--ochre-l); border: 1px solid var(--ochre-b);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.li-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.li-desc { font-size: 12px; color: var(--ink2); line-height: 1.6; }
+.li-ex {
+  margin-top: 7px; padding: 9px 11px;
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: 6px;
+  font-size: 12px; color: var(--ink3); font-style: italic; line-height: 1.6;
+}
+.li-ex strong { color: var(--slate); font-style: normal; }
+
+/* CONTENT CALENDAR */
+.cal-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 16px; }
+.cal-week {
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: 9px; padding: 13px;
+}
+.cw-head {
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--ink4); margin-bottom: 9px;
+}
+.cw-items { display: flex; flex-direction: column; gap: 5px; }
+.cw-item {
+  padding: 7px 9px; border-radius: 6px;
+  font-size: 11.5px; color: var(--ink2); line-height: 1.4;
+  border-left: 3px solid;
+}
+
+/* COPY BOX */
+.copy-box {
+  background: var(--ink); border-radius: 9px;
+  padding: 16px 18px; margin-bottom: 14px;
+  position: relative;
+}
+.copy-box-label {
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: rgba(255,255,255,0.35);
+  margin-bottom: 10px;
+}
+.copy-box-text {
+  font-size: 12.5px; color: rgba(255,255,255,0.78);
+  line-height: 1.75; white-space: pre-wrap;
+}
+.copy-box-text b { color: #d4a870; font-weight: 600; }
+.copy-box-btn {
+  position: absolute; top: 12px; right: 14px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.35);
+  font-family: 'Inconsolata', monospace;
+  font-size: 9.5px; padding: 3px 8px; border-radius: 4px;
+  cursor: pointer; transition: all 0.14s;
+}
+.copy-box-btn:hover { color: #d4a870; border-color: rgba(212,168,112,0.4); }
+
+/* FORM ELEMENTS */
+.fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.fg label { font-family: 'Inconsolata', monospace; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); }
+.fg input, .fg select, .fg textarea {
+  padding: 9px 11px; border: 1px solid var(--rule2);
+  border-radius: 7px; font-family: 'Karla', sans-serif;
+  font-size: 12.5px; color: var(--ink); background: var(--white); outline: none;
+  transition: border-color 0.14s;
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--ochre); }
+.fg textarea { resize: vertical; min-height: 65px; }
+
+.fg-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.fg-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.btn { padding: 9px 18px; border-radius: 8px; font-family: 'Karla', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.14s; border: 1px solid; }
+.btn-dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+.btn-dark:hover { background: var(--ink2); }
+.btn-outline { background: transparent; color: var(--ink3); border-color: var(--rule2); }
+.btn-outline:hover { border-color: var(--ink3); color: var(--ink); }
+
+/* TOAST */
+.toast { position: fixed; bottom: 22px; right: 24px; background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 600; opacity: 0; transform: translateY(6px); transition: all 0.2s; pointer-events: none; z-index: 999; font-family: 'Inconsolata', monospace; }
+.toast.show { opacity: 1; transform: none; }
+
+@media (max-width: 1000px) {
+  .rail { width: 220px; min-width: 220px; }
+  .main { margin-left: 220px; }
+  .plan-cols, .evp-pillars, .cal-grid { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══ RAIL ══ -->
+<aside class="rail">
+  <div class="rail-top">
+    <div class="rt-ey">Valentis Laos · HR</div>
+    <div class="rt-title">TA <em>Completion</em> Kit</div>
+    <div class="rt-sub">Compliance · Onboarding · Employer Brand</div>
+  </div>
+
+  <!-- COMPLIANCE -->
+  <div style="padding:10px 14px 0;">
+    <button class="mod-tab active" onclick="openMod('comp',this)">
+      <span class="mod-ic">⚖</span>Compliance & Legal
+    </button>
+  </div>
+  <div class="sub-nav-wrap open" id="subnav-comp">
+    <div class="sn-label">Sections</div>
+    <div class="rnav">
+      <button class="sn-btn active" onclick="sw('comp-contracts',this,'comp')"><span class="sn-dot" style="background:var(--terra);"></span>Contract Clauses</button>
+      <button class="sn-btn" onclick="sw('comp-country',this,'comp')"><span class="sn-dot" style="background:var(--terra);"></span>Country Law Guide</button>
+      <button class="sn-btn" onclick="sw('comp-permits',this,'comp')"><span class="sn-dot" style="background:var(--terra);"></span>Work Permit Tracker</button>
+      <button class="sn-btn" onclick="sw('comp-refcheck',this,'comp')"><span class="sn-dot" style="background:var(--terra);"></span>Reference Check Guide</button>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div style="padding:4px 14px 0;">
+    <button class="mod-tab" onclick="openMod('onboard',this)">
+      <span class="mod-ic">◈</span>Onboarding
+    </button>
+  </div>
+  <div class="sub-nav-wrap" id="subnav-onboard">
+    <div class="sn-label">Sections</div>
+    <div class="rnav">
+      <button class="sn-btn" onclick="sw('ob-checklist',this,'onboard')"><span class="sn-dot" style="background:var(--moss);"></span>Pre-Start Checklist</button>
+      <button class="sn-btn" onclick="sw('ob-country',this,'onboard')"><span class="sn-dot" style="background:var(--moss);"></span>Country Checklists</button>
+      <button class="sn-btn" onclick="sw('ob-90day',this,'onboard')"><span class="sn-dot" style="background:var(--moss);"></span>First 90 Days Plan</button>
+      <button class="sn-btn" onclick="sw('ob-probation',this,'onboard')"><span class="sn-dot" style="background:var(--moss);"></span>Probation Framework</button>
+    </div>
+  </div>
+
+  <!-- EMPLOYER BRAND -->
+  <div style="padding:4px 14px 0;">
+    <button class="mod-tab" onclick="openMod('brand',this)">
+      <span class="mod-ic">◉</span>Employer Brand
+    </button>
+  </div>
+  <div class="sub-nav-wrap" id="subnav-brand">
+    <div class="sn-label">Sections</div>
+    <div class="rnav">
+      <button class="sn-btn" onclick="sw('eb-evp',this,'brand')"><span class="sn-dot" style="background:var(--ochre);"></span>EVP Framework</button>
+      <button class="sn-btn" onclick="sw('eb-linkedin',this,'brand')"><span class="sn-dot" style="background:var(--ochre);"></span>LinkedIn Playbook</button>
+      <button class="sn-btn" onclick="sw('eb-content',this,'brand')"><span class="sn-dot" style="background:var(--ochre);"></span>Content Calendar</button>
+      <button class="sn-btn" onclick="sw('eb-messaging',this,'brand')"><span class="sn-dot" style="background:var(--ochre);"></span>Messaging Guide</button>
+    </div>
+  </div>
+
+  <div class="rail-foot">
+    Valentis Laos · Group HR<br>
+    TA Completion Kit v1.0<br>
+    March 2026 · Confidential
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-title" id="tb-title">Compliance & Legal — Contract Clauses</div>
+      <div class="tb-sub" id="tb-sub">EMPLOYMENT CONTRACT FRAMEWORK · ALL COUNTRIES</div>
+    </div>
+    <span class="conf-tag">Confidential · HR Only</span>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══════════════════════════════
+         COMPLIANCE MODULE
+    ═══════════════════════════════ -->
+
+    <!-- CONTRACT CLAUSES -->
+    <div id="tab-comp-contracts" class="tab-panel active">
+      <div class="sl">Universal contract clauses · customise per country below</div>
+
+      <div class="warn">These are framework clauses — not final legal text. All employment contracts must be reviewed by a qualified labour lawyer in each operating country before signing. Valentis currently operates under 4 different national labour law regimes.</div>
+
+      <div class="g2" style="margin-top:14px;">
+
+        <div class="card">
+          <div class="card-head"><div class="card-ic" style="background:var(--terra-l);color:var(--terra);">§</div><div><div class="card-title">Core Clauses — All Contracts</div><div class="card-sub">Required in every employment contract regardless of country</div></div></div>
+          <div class="card-body">
+            <div class="clause-block">
+              <div class="clause-items">
+                <div class="clause-item"><div class="ci-label">Parties & Commencement</div><div class="ci-text">Full legal name of employing entity, employee full name and national ID/passport number, and confirmed start date. <strong>Critical:</strong> the employing entity must be the legal entity registered in the country of work — not the Laos parent company.</div></div>
+                <div class="clause-item"><div class="ci-label">Role & Reporting Line</div><div class="ci-text">Job title, primary duties summary, reporting line, and work location (including "or such other location as the Company may reasonably require"). Do not over-specify duties — leaves room for operational flexibility.</div></div>
+                <div class="clause-item"><div class="ci-label">Compensation</div><div class="ci-text">Base salary (state currency), payment date, method (bank transfer), and breakdown of any allowances as separate line items. Do not bundle allowances into base — this affects statutory calculations.</div></div>
+                <div class="clause-item"><div class="ci-label">Working Hours & Rotation</div><div class="ci-text">For site-based roles: state the rotation schedule explicitly (e.g. "8 weeks on site / 3 weeks off"). Failure to document rotation has created successful overtime claims in SEA jurisdictions.</div></div>
+                <div class="clause-item"><div class="ci-label">Probation Period</div><div class="ci-text">Length of probation per country statute. Company's right to terminate during probation with shortened notice. Confirmation of employment process at end of probation.</div></div>
+                <div class="clause-item"><div class="ci-label">Confidentiality</div><div class="ci-text">Covers: operational data, client/government relationships, compensation information, and all proprietary methods. Survives termination. Critical for a small-team SEA exploration company where staff have access to site coordinates and mineralisation data.</div></div>
+                <div class="clause-item"><div class="ci-label">Termination & Notice</div><div class="ci-text">Notice periods per country statute (see Country Law Guide). Grounds for summary dismissal: gross misconduct, safety violation, dishonesty, breach of confidentiality. Garden leave rights for senior roles.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-head"><div class="card-ic" style="background:var(--slate-l);color:var(--slate);">+</div><div><div class="card-title">Expat-Only Additional Clauses</div><div class="card-sub">Required for non-local national employees</div></div></div>
+            <div class="card-body">
+              <div class="clause-items">
+                <div class="clause-item"><div class="ci-label">Work Permit Condition</div><div class="ci-text">Employment is conditional upon the Company obtaining and maintaining a valid work permit. If permit is refused or revoked through no fault of the Company, the contract terminates without liability.</div></div>
+                <div class="clause-item"><div class="ci-label">Expat Package Details</div><div class="ci-text">Housing allowance (monthly amount or Company-provided), R&R flights (number, class, routing entitlement per rotation), visa fees (fully Company-borne), medical insurance (coverage scope).</div></div>
+                <div class="clause-item"><div class="ci-label">Tax Equalisation</div><div class="ci-text">Specify whether package is gross or net of local tax. For Myanmar and Laos where expat tax treatment varies — get written tax advice before issuing contract. Many companies state "employer assumes withholding tax obligations."</div></div>
+                <div class="clause-item"><div class="ci-label">Repatriation</div><div class="ci-text">On contract end or termination (except gross misconduct), Company covers one-way economy repatriation flight to country of origin or last place of hire.</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="card-ic" style="background:var(--moss-l);color:var(--moss);">!</div><div><div class="card-title">High-Risk Clauses to Watch</div><div class="card-sub">Common mistakes that create legal exposure</div></div></div>
+            <div class="card-body">
+              <div class="clause-items">
+                <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-label" style="color:var(--terra);">Non-Compete Clauses</div><div class="ci-text">Not enforceable in Thailand or Indonesia for most roles. Use carefully — a broad non-compete may be unenforceable and signals poor drafting to candidates.</div></div>
+                <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-label" style="color:var(--terra);">Fixed-Term Contracts</div><div class="ci-text">Repeated renewal of fixed-term contracts can trigger permanent employment status under Thai and Indonesian law. Track renewal count — third renewal typically creates permanent status.</div></div>
+                <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-label" style="color:var(--terra);">Salary in USD (Myanmar)</div><div class="ci-text">Myanmar law requires salary stated in MMK. USD can be referenced as a benchmark but official contract must show MMK equivalent. USD-only contracts are non-compliant.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COUNTRY LAW GUIDE -->
+    <div id="tab-comp-country" class="tab-panel">
+      <div class="sl">Country-by-country labour law requirements · key statutory obligations</div>
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <div class="sx">
+            <table class="ctbl">
+              <thead>
+                <tr><th>Requirement</th><th>🇱🇦 Laos</th><th>🇲🇲 Myanmar</th><th>🇮🇩 Indonesia</th><th>🇹🇭 Thailand</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Governing Law</td><td>Labour Law No.43/2013</td><td>Employment and Skill Development Law 2013</td><td>Manpower Law No.13/2003</td><td>Labour Protection Act 1998 (amended 2019)</td></tr>
+                <tr><td>Probation Period</td><td>Up to 2 months</td><td>Up to 3 months</td><td>Up to 3 months (one time only)</td><td>No statutory limit — typically 90–119 days</td></tr>
+                <tr><td>Standard Notice</td><td>30 days (both parties)</td><td>30 days</td><td>Based on service length — 1–4 months</td><td>1 pay period (min 30 days)</td></tr>
+                <tr><td>Severance Pay</td><td>Based on years of service</td><td>Based on years of service</td><td>Statutory: 1–9 months base salary depending on tenure</td><td>Statutory: 30 days–300 days based on tenure</td></tr>
+                <tr><td>Annual Leave</td><td>15 days/year minimum</td><td>10 days/year minimum</td><td>12 days/year minimum</td><td>6 days/year minimum (after 1 year)</td></tr>
+                <tr><td>Overtime Rate</td><td>150% weekdays, 200% weekends/holidays</td><td>150% weekdays, 200% holidays</td><td>150% first hour, 200% subsequent</td><td>150% weekdays, 200% rest/holidays</td></tr>
+                <tr><td>Social Security</td><td>NSSF: 4.5% employer + 4.5% employee</td><td>SSB: employer + employee contributions required</td><td>BPJS: multi-component (health + employment)</td><td>SSF: 5% employer + 5% employee (capped)</td></tr>
+                <tr><td>Minimum Wage</td><td>1,100,000 LAK/month (~$55)</td><td>4,800 MMK/day (~$2.30)</td><td>Varies by province — Jakarta: ~IDR 5.1M/mo</td><td>337–400 THB/day by province</td></tr>
+                <tr><td>Work Permit Required</td><td>Yes — all foreign nationals</td><td>Yes — MIC/DICA permit required</td><td>Yes — KITAS + IMTA (Manpower permit)</td><td>Yes — Work Permit from Dept of Employment</td></tr>
+                <tr><td>Work Permit Lead Time</td><td>4–8 weeks</td><td>4–6 weeks (political risk: delays possible)</td><td>KITAS: 4–8 weeks. IMTA quota: 4–6 weeks</td><td>2–4 weeks (fastest of the four)</td></tr>
+                <tr><td>Fixed Term Limit</td><td>Max 2 years + 1 extension</td><td>Max 2 years</td><td>Max 2 years + 1-year extension (risk of permanent conversion)</td><td>No explicit limit but permanent conversion risk after extended renewal</td></tr>
+                <tr><td>Termination Process</td><td>Written notice + DOLSW notification for collective</td><td>Written notice + labour tribunal for disputes</td><td>Bipartite negotiation → Tripartite → PHI Court. Cannot simply dismiss.</td><td>Written notice. 5-stage disciplinary for misconduct required before termination.</td></tr>
+                <tr><td>Key Risk</td><td>Thin regulatory enforcement — but government is tightening. Document everything.</td><td>Political instability creates legal unpredictability. Keep contracts simple and local-law compliant.</td><td>Strongest employee protections of the four. Termination is costly and slow. PIP before any dismissal.</td><td>LPA severance is substantial. 300 days for 20yr employees. Never terminate without documented process.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="note">This table is a reference guide only. Labour law changes frequently in all four countries. Engage a local labour lawyer in each country for contract drafting and any contested termination. Valentis should have on-call labour counsel in Thailand and Indonesia at minimum given the regulatory complexity.</div>
+    </div>
+
+    <!-- PERMIT TRACKER -->
+    <div id="tab-comp-permits" class="tab-panel">
+      <div class="sl">Work permit tracker · expiry alerts · renewal pipeline</div>
+
+      <div class="perm-form">
+        <div class="card-title" style="margin-bottom:14px;">Add / Update Permit Record</div>
+        <div class="fg-row">
+          <div class="fg"><label>Employee Name *</label><input id="pm-name" placeholder="Full name"/></div>
+          <div class="fg"><label>Role</label><input id="pm-role" placeholder="e.g. Drilling Supervisor"/></div>
+          <div class="fg"><label>Country *</label>
+            <select id="pm-country">
+              <option value="">Select…</option>
+              <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg-row">
+          <div class="fg"><label>Permit Type</label>
+            <select id="pm-type">
+              <option>Work Permit (Laos)</option>
+              <option>MIC Work Permit (Myanmar)</option>
+              <option>KITAS (Indonesia)</option>
+              <option>IMTA (Indonesia)</option>
+              <option>Work Permit (Thailand)</option>
+            </select>
+          </div>
+          <div class="fg"><label>Issue Date</label><input type="date" id="pm-issue"/></div>
+          <div class="fg"><label>Expiry Date *</label><input type="date" id="pm-expiry"/></div>
+        </div>
+        <div class="fg"><label>Notes</label><input id="pm-notes" placeholder="e.g. Renewal submitted 01 Feb, awaiting response"/></div>
+        <div style="display:flex;gap:10px;margin-top:4px;">
+          <button class="btn btn-dark" onclick="addPermit()">Save Record</button>
+          <button class="btn btn-outline" onclick="clearPermit()">Clear</button>
+        </div>
+      </div>
+
+      <div class="permit-grid" id="permit-grid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- REFERENCE CHECK -->
+    <div id="tab-comp-refcheck" class="tab-panel">
+      <div class="sl">Reference check guide · structured questions · documentation</div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-head"><div class="card-ic" style="background:var(--slate-l);color:var(--slate);">◎</div><div><div class="card-title">Process — Before You Call</div></div></div>
+          <div class="card-body">
+            <div class="clause-items">
+              <div class="clause-item"><div class="ci-label">Candidate Permission</div><div class="ci-text">Always get written consent before contacting references. Include in offer letter: "This offer is conditional upon satisfactory reference checks. By accepting, you consent to us contacting your nominated referees."</div></div>
+              <div class="clause-item"><div class="ci-label">Who to Call</div><div class="ci-text">Minimum 2 references. At least one must be a direct line manager (not peer or subordinate). For Site Manager and Drilling Supervisor — require a reference from their most recent site operations role specifically.</div></div>
+              <div class="clause-item"><div class="ci-label">When to Call</div><div class="ci-text">After Round 2 interview, before verbal offer. Never after written offer — you have no leverage if the reference is negative.</div></div>
+              <div class="clause-item"><div class="ci-label">Document Everything</div><div class="ci-text">Notes from every reference call. Date, time, referee name and title, verbatim responses to key questions. Store in candidate file. This is legal protection if a hire fails probation.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div class="card-ic" style="background:var(--terra-l);color:var(--terra);">⚑</div><div><div class="card-title">Red Flags in Reference Calls</div></div></div>
+          <div class="card-body">
+            <div class="clause-items">
+              <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-text">Referee is very brief, non-specific, or hedges constantly — "He was… fine." This is a managed response. Push for specifics.</div></div>
+              <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-text">Referee will not confirm dates or title accurately — discrepancy with what candidate told you. Verify before proceeding.</div></div>
+              <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-text">Long pause before answering "Would you rehire?" — often signals a managed exit or performance issue. Probe: "What would need to be different for you to rehire them?"</div></div>
+              <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-text">Referee is the candidate's peer or friend, not a manager. Insist on a direct line manager reference. Peer references are character references, not performance references.</div></div>
+              <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-text">Referee cannot speak to the candidate's specific role on site — suggests the candidate overstated their scope of responsibility.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-ic" style="background:var(--moss-l);color:var(--moss);">◈</div><div><div class="card-title">Reference Check Question Bank</div><div class="card-sub">Use for all roles — adapt depth for seniority</div></div></div>
+        <div class="card-body">
+          <div class="g2">
+            <div>
+              <div class="cl-section-head">Opening — Establish Context</div>
+              <div class="ref-q"><div class="rq-num">01</div><div class="rq-text">"Can you confirm [Candidate's] exact title, reporting line, and employment dates?"</div><div class="rq-note">Cross-reference against CV. Discrepancies here are disqualifying.</div></div>
+              <div class="ref-q"><div class="rq-num">02</div><div class="rq-text">"What was the nature of your working relationship — were you their direct manager?"</div><div class="rq-note">Ensure this is actually a line manager, not a friendly peer.</div></div>
+              <div class="ref-q"><div class="rq-num">03</div><div class="rq-text">"In the role they held, what were their primary responsibilities?"</div><div class="rq-note">Listen for any narrowing of scope vs what the candidate claimed.</div></div>
+
+              <div class="cl-section-head" style="margin-top:12px;">Performance</div>
+              <div class="ref-q"><div class="rq-num">04</div><div class="rq-text">"How would you describe their performance overall — what stood out positively?"</div></div>
+              <div class="ref-q"><div class="rq-num">05</div><div class="rq-text">"Were there areas where they struggled or received developmental feedback?"</div><div class="rq-note">Silence here is a signal. Press gently: "Everyone has areas to grow — what was theirs?"</div></div>
+              <div class="ref-q"><div class="rq-num">06</div><div class="rq-text">"Can you give me an example of a challenging situation they handled well?"</div></div>
+            </div>
+            <div>
+              <div class="cl-section-head">Role-Specific (Ops)</div>
+              <div class="ref-q"><div class="rq-num">07</div><div class="rq-text">"How did they manage their team on site — what was their leadership style?"</div><div class="rq-note">For Site Manager and Supervisor only. Listen for crew relationship quality.</div></div>
+              <div class="ref-q"><div class="rq-num">08</div><div class="rq-text">"Were there any HSE incidents or near-misses during their tenure? How did they handle them?"</div><div class="rq-note">Non-negotiable question for any ops role. Any evasion here is a disqualifier.</div></div>
+
+              <div class="cl-section-head" style="margin-top:12px;">Close</div>
+              <div class="ref-q"><div class="rq-num">09</div><div class="rq-text">"Why did they leave — and what were the circumstances?"</div><div class="rq-note">Confirm the story matches what the candidate told you. Minor variances are normal; major ones are not.</div></div>
+              <div class="ref-q"><div class="rq-num">10</div><div class="rq-text">"Would you rehire them if you had the opportunity — and in what type of role?"</div><div class="rq-note">The most predictive question in any reference call. A hesitation or qualified answer is as informative as a direct no.</div></div>
+              <div class="ref-q"><div class="rq-num">11</div><div class="rq-text">"Is there anything else you'd want me to know as we consider them for a senior site role?"</div><div class="rq-note">Open-ended close. Occasionally surfaces critical information not covered by specific questions.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         ONBOARDING MODULE
+    ═══════════════════════════════ -->
+
+    <!-- PRE-START CHECKLIST -->
+    <div id="tab-ob-checklist" class="tab-panel">
+      <div class="sl">Universal pre-start checklist · HR responsibilities</div>
+      <div class="g2">
+        <div>
+          <div class="card-title" style="font-family:'Cormorant Garamond',serif;font-size:16px;margin-bottom:14px;">Week 1–2 Before Start Date</div>
+          <div class="checklist" id="pre-cl-1"></div>
+        </div>
+        <div>
+          <div class="card-title" style="font-family:'Cormorant Garamond',serif;font-size:16px;margin-bottom:14px;">Day Before & Day One</div>
+          <div class="checklist" id="pre-cl-2"></div>
+        </div>
+      </div>
+      <div class="note">Mark items as complete as you progress through the pre-start phase. Checklists reset if the page is refreshed — use the print function or export to a PDF to share with the hiring manager as a formal record.</div>
+      <div style="margin-top:12px;display:flex;gap:10px;">
+        <button class="btn btn-dark" onclick="window.print()">Print Checklist</button>
+        <button class="btn btn-outline" onclick="resetChecklist('pre')">Reset All</button>
+      </div>
+    </div>
+
+    <!-- COUNTRY CHECKLISTS -->
+    <div id="tab-ob-country" class="tab-panel">
+      <div class="sl">Country-specific onboarding requirements</div>
+      <div class="ctry-tabs">
+        <button class="ctry-tab active" onclick="switchCtry('laos',this)">🇱🇦 Laos</button>
+        <button class="ctry-tab" onclick="switchCtry('myanmar',this)">🇲🇲 Myanmar</button>
+        <button class="ctry-tab" onclick="switchCtry('indonesia',this)">🇮🇩 Indonesia</button>
+        <button class="ctry-tab" onclick="switchCtry('thailand',this)">🇹🇭 Thailand</button>
+      </div>
+      <div id="ctry-laos" class="ctry-panel active"></div>
+      <div id="ctry-myanmar" class="ctry-panel"></div>
+      <div id="ctry-indonesia" class="ctry-panel"></div>
+      <div id="ctry-thailand" class="ctry-panel"></div>
+    </div>
+
+    <!-- 90 DAY PLAN -->
+    <div id="tab-ob-90day" class="tab-panel">
+      <div class="sl">First 90 days plan · by role seniority</div>
+      <div class="ctry-tabs" style="margin-bottom:16px;">
+        <button class="ctry-tab active" onclick="switch90('ops',this)">Operations (Site Manager / Supervisor)</button>
+        <button class="ctry-tab" onclick="switch90('hr',this)">HR / Finance / Compliance</button>
+        <button class="ctry-tab" onclick="switch90('support',this)">Support / Admin</button>
+      </div>
+      <div id="plan-ops" class="ctry-panel active"></div>
+      <div id="plan-hr" class="ctry-panel"></div>
+      <div id="plan-support" class="ctry-panel"></div>
+    </div>
+
+    <!-- PROBATION FRAMEWORK -->
+    <div id="tab-ob-probation" class="tab-panel">
+      <div class="sl">Probation framework · check-ins · confirmation · underperformance</div>
+      <div class="g2" style="margin-bottom:0;">
+        <div class="card">
+          <div class="card-head"><div class="card-ic" style="background:var(--moss-l);color:var(--moss);">◷</div><div><div class="card-title">Probation Check-In Schedule</div><div class="card-sub">HR-led · documented · mandatory</div></div></div>
+          <div class="card-body">
+            <div class="clause-items">
+              <div class="clause-item"><div class="ci-label">Day 30 — Settling-In Check</div><div class="ci-text">Led by: HR Manager. Format: 30-min informal call or in-person. Focus: Is the employee settling in? Any blockers — access, equipment, team integration? Log any concerns now. This is the earliest useful data point.</div><div class="ci-vary">Document: Brief summary email to file. Not a formal review.</div></div>
+              <div class="clause-item"><div class="ci-label">Day 60 — Mid-Probation Review</div><div class="ci-text">Led by: HR + Hiring Manager together. Format: structured conversation against role expectations. If performance concerns exist — raise them NOW in writing. This is the decision point. Continuing to probation end without raising issues means you cannot terminate for those issues.</div><div class="ci-vary">Document: Signed mid-probation review form. Copy to employee. Copy to file.</div></div>
+              <div class="clause-item"><div class="ci-label">Day 85–90 — Confirmation Decision</div><div class="ci-text">HR drafts confirmation letter or extension/termination letter. Decision must be communicated BEFORE probation end — not on the last day. Decision options: (1) Confirm employment, (2) Extend probation up to statutory maximum, (3) Terminate with probation notice.</div><div class="ci-vary">Document: Signed confirmation or termination letter. Labour authority notification if required by country.</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-head"><div class="card-ic" style="background:var(--terra-l);color:var(--terra);">⚑</div><div><div class="card-title">Underperformance During Probation</div></div></div>
+            <div class="card-body">
+              <div class="clause-items">
+                <div class="clause-item"><div class="ci-label">Step 1 — Verbal Conversation</div><div class="ci-text">Specific, documented conversation about the performance gap. "Here is what we expected. Here is what we're seeing. Here is what needs to change and by when."</div></div>
+                <div class="clause-item"><div class="ci-label">Step 2 — Written Warning</div><div class="ci-text">If no improvement after verbal: written warning with specific improvement targets and a defined improvement window (usually 2–4 weeks within probation).</div></div>
+                <div class="clause-item"><div class="ci-label">Step 3 — Termination (if warranted)</div><div class="ci-text">With documented evidence trail from Steps 1–2, terminate with probation notice period. This is legally defensible. Terminating at Day 89 with zero documentation is not.</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-ic" style="background:var(--slate-l);color:var(--slate);">✓</div><div><div class="card-title">Probation Confirmation Letter Key Elements</div></div></div>
+            <div class="card-body" style="font-size:12.5px;color:var(--ink2);line-height:1.75;">
+              ✓ Confirmation of permanent employment status<br>
+              ✓ Date of confirmation (= end of probation period)<br>
+              ✓ Any salary review or title change effective on confirmation<br>
+              ✓ Reference to full employment contract still in force<br>
+              ✓ Signed by authorised company signatory<br>
+              ✓ Employee signature copy for file
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         EMPLOYER BRAND MODULE
+    ═══════════════════════════════ -->
+
+    <!-- EVP -->
+    <div id="tab-eb-evp" class="tab-panel">
+      <div class="sl">Employer Value Proposition · why join Valentis</div>
+      <div class="evp-pillars">
+        <div class="evp-pillar">
+          <div class="evp-icon">🌏</div>
+          <div class="evp-name">Frontier Operations</div>
+          <div class="evp-desc">Work on active exploration sites across Southeast Asia — Laos, Myanmar, Indonesia, Thailand. Real operations, real stakes, not desk-bound corporate roles.</div>
+          <div class="evp-tag">For ops / field talent</div>
+        </div>
+        <div class="evp-pillar">
+          <div class="evp-icon">📈</div>
+          <div class="evp-name">Career Acceleration</div>
+          <div class="evp-desc">Small leadership team means direct access to COO and CEO. Decisions get made fast. Performers get scope and promotion that a large corporate would take 5 years to give.</div>
+          <div class="evp-tag">For all roles</div>
+        </div>
+        <div class="evp-pillar">
+          <div class="evp-icon">🤝</div>
+          <div class="evp-name">Lean Team, Real Impact</div>
+          <div class="evp-desc">No bureaucracy, no silos. Every person in the team has visible, measurable impact. What you build here stays — you aren't a cog in a machine.</div>
+          <div class="evp-tag">For HR / Finance / Support</div>
+        </div>
+        <div class="evp-pillar">
+          <div class="evp-icon">💰</div>
+          <div class="evp-name">Competitive Package</div>
+          <div class="evp-desc">Market-rate base salary with hardship premium for remote postings, R&R flights, medical coverage, visa support, and a rotation schedule that protects work-life balance.</div>
+          <div class="evp-tag">For expat / site roles</div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-head"><div class="card-ic" style="background:var(--ochre-l);color:var(--ochre);">◈</div><div><div class="card-title">EVP by Candidate Segment</div><div class="card-sub">Lead with the right message for the right audience</div></div></div>
+          <div class="card-body">
+            <div class="clause-items">
+              <div class="clause-item"><div class="ci-label">Central Asian Expat Drillers (KZ/UZ/AZ)</div><div class="ci-text">Lead with: <strong>site scope + rotation + package.</strong> This community values clear rotation schedules, reputable operators, and salary that compensates for distance from home. Mention the multinational team and SEA experience they'll gain.</div></div>
+              <div class="clause-item"><div class="ci-label">Australian / ANZ Technical Ops</div><div class="ci-text">Lead with: <strong>frontier operations + career breadth.</strong> ANZ ops candidates are often attracted by the novelty of SEA exploration and the autonomy of working outside a large corporation. Emphasise the decision-making freedom.</div></div>
+              <div class="clause-item"><div class="ci-label">Local SEA Professionals (HR, Finance)</div><div class="ci-text">Lead with: <strong>career acceleration + COO/CEO access.</strong> For Bangkok and Jakarta HR/Finance candidates, the draw is exposure to a multi-country operation at a level they wouldn't get in a large MNC for 5–7 years.</div></div>
+              <div class="clause-item"><div class="ci-label">Local Site/Admin (Laos, Myanmar)</div><div class="ci-text">Lead with: <strong>stability + competitive local wage + development.</strong> For Lao and Myanmar local hires, a stable employer with above-market wages and respectful management is the primary motivator.</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-ic" style="background:var(--wine-l);color:var(--wine);">!</div><div><div class="card-title">What NOT to Over-Promise</div><div class="card-sub">Employer brand requires honesty — over-promise now = early attrition later</div></div></div>
+          <div class="card-body">
+            <div class="clause-items">
+              <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-text"><strong>Don't over-romanticise remote site life.</strong> Candidates who didn't understand what remote SEA operations actually meant are the ones who leave in the first 90 days. Be clear: limited connectivity, shared facilities, mostly male workforce.</div></div>
+              <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-text"><strong>Don't promise rapid promotion without clarity.</strong> "Growth opportunities" without a specific path is a cliché. Either define what advancement looks like at Valentis or don't mention it.</div></div>
+              <div class="clause-item" style="border-left:3px solid var(--terra);"><div class="ci-text"><strong>Don't misrepresent the HR function maturity.</strong> For HRBP/HR Manager candidates — be honest that the function is in build mode. The right person will be attracted by that. The wrong person will leave disappointed.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINKEDIN PLAYBOOK -->
+    <div id="tab-eb-linkedin" class="tab-panel">
+      <div class="sl">LinkedIn presence playbook · 6-step build for Valentis</div>
+
+      <div class="li-step"><div class="li-n">1</div><div>
+        <div class="li-name">Optimise the Company Page</div>
+        <div class="li-desc">Valentis needs a complete, professional LinkedIn company page before any outreach. Incomplete pages undermine credibility — candidates check before responding. Required: high-res logo, banner image (site operations photo works well), tagline, about section, and website link.</div>
+        <div class="li-ex"><strong>About section formula:</strong> "Valentis is an active mineral exploration company operating across Southeast Asia — [countries]. We run [X] drill sites across [Y] countries with a multinational team of [Z] professionals. We're building the infrastructure and talent base for the next phase of regional exploration."</div>
+      </div></div>
+
+      <div class="li-step"><div class="li-n">2</div><div>
+        <div class="li-name">Establish Your Personal HR Brand Profile</div>
+        <div class="li-desc">As Group HR Manager, your personal LinkedIn profile is the face of Valentis talent acquisition. Candidates research who reached out to them. A sparse or generic profile reduces response rates significantly.</div>
+        <div class="li-ex"><strong>Headline:</strong> "Group HR Manager · Valentis · Mineral Exploration · SEA Operations · Building the team behind Southeast Asia's next generation of exploration sites."</div>
+      </div></div>
+
+      <div class="li-step"><div class="li-n">3</div><div>
+        <div class="li-name">Post Content 2–3× Per Month (Company Page)</div>
+        <div class="li-desc">Consistent content builds passive awareness in the drilling and mining community. Candidates who follow your content before you approach them respond at 2–3× higher rates. You don't need high production quality — authenticity works better in this sector.</div>
+        <div class="li-ex"><strong>Content types that work for mining/exploration:</strong> Site operations updates (with permission), team culture moments, industry insights on SEA exploration, career opportunity posts with real context about the role and lifestyle.</div>
+      </div></div>
+
+      <div class="li-step"><div class="li-n">4</div><div>
+        <div class="li-name">Activate the Internal Network First</div>
+        <div class="li-desc">Before external outreach: ask current staff to follow the company page, like posts, and share when relevant. A company page with 3 followers looks inactive. 50 followers from the internal team gives immediate social proof to candidates who check.</div>
+      </div></div>
+
+      <div class="li-step"><div class="li-n">5</div><div>
+        <div class="li-name">Personalised Outreach — Non-Negotiable</div>
+        <div class="li-desc">Template outreach with zero personalisation gets ~10% response rates. Personalised outreach that references something specific from the candidate's profile gets 30–40%. In the tight-knit drilling community, generic messages also damage reputation.</div>
+        <div class="li-ex"><strong>Personalisation minimum:</strong> Reference one specific thing — a project they worked on, a certification they hold, a company they've worked for in a relevant region. "I came across your profile and noticed your work on rotary drilling programs in Cambodia — that's exactly the operational context we're building for in Laos."</div>
+      </div></div>
+
+      <div class="li-step"><div class="li-n">6</div><div>
+        <div class="li-name">Track Engagement — What's Working</div>
+        <div class="li-desc">Monthly: review which posts drove the most profile views and follower growth. Quarterly: count inbound connection requests from relevant profiles — this is passive brand-building working. Any inbound candidate who followed Valentis before applying should be fast-tracked through screening — they're already bought in.</div>
+      </div></div>
+    </div>
+
+    <!-- CONTENT CALENDAR -->
+    <div id="tab-eb-content" class="tab-panel">
+      <div class="sl">Monthly content calendar · LinkedIn posts · 4-week rolling plan</div>
+      <div class="cal-grid">
+        <div class="cal-week">
+          <div class="cw-head">Week 1</div>
+          <div class="cw-items">
+            <div class="cw-item" style="border-color:var(--slate);background:var(--slate-l);"><strong style="font-size:10px;font-family:'Inconsolata',monospace;color:var(--slate);">COMPANY PAGE</strong><br>Valentis operations update — site progress, country context, or industry news relevant to SEA exploration.</div>
+            <div class="cw-item" style="border-color:var(--moss);background:var(--moss-l);"><strong style="font-size:10px;font-family:'Inconsolata',monospace;color:var(--moss);">PERSONAL (YOUR PROFILE)</strong><br>Share a recruiting insight or HR perspective — what you look for in drilling professionals, or a reflection on building HR in SEA.</div>
+          </div>
+        </div>
+        <div class="cal-week">
+          <div class="cw-head">Week 2</div>
+          <div class="cw-items">
+            <div class="cw-item" style="border-color:var(--ochre);background:var(--ochre-l);"><strong style="font-size:10px;font-family:'Inconsolata',monospace;color:var(--ochre);">JOB POST</strong><br>Active role highlight — one specific role, written to attract the right person. Not a generic JD dump — lead with the lifestyle and scope, end with a call to connect.</div>
+            <div class="cw-item" style="border-color:var(--slate);background:var(--slate-l);"><strong style="font-size:10px;font-family:'Inconsolata',monospace;color:var(--slate);">ENGAGEMENT</strong><br>Comment on 3–5 posts from relevant mining/drilling professionals. Comment adds more brand visibility than most posts.</div>
+          </div>
+        </div>
+        <div class="cal-week">
+          <div class="cw-head">Week 3</div>
+          <div class="cw-items">
+            <div class="cw-item" style="border-color:var(--wine);background:var(--wine-l);"><strong style="font-size:10px;font-family:'Inconsolata',monospace;color:var(--wine);">TEAM CULTURE</strong><br>Team moment — site team photo, a welcome post for a new hire, or a recognition post for a team milestone. Humanises the company.</div>
+            <div class="cw-item" style="border-color:var(--moss);background:var(--moss-l);"><strong style="font-size:10px;font-family:'Inconsolata',monospace;color:var(--moss);">OUTREACH BATCH</strong><br>Send 10–15 personalised LinkedIn connection requests to passive candidates in target roles. This week: focus on Myanmar Drilling Supervisor pool.</div>
+          </div>
+        </div>
+        <div class="cal-week">
+          <div class="cw-head">Week 4</div>
+          <div class="cw-items">
+            <div class="cw-item" style="border-color:var(--terra);background:var(--terra-l);"><strong style="font-size:10px;font-family:'Inconsolata',monospace;color:var(--terra);">INDUSTRY INSIGHT</strong><br>Short perspective on SEA mineral exploration, labour market, or HR in mining. Positions Valentis as a thoughtful operator, not just a job poster.</div>
+            <div class="cw-item" style="border-color:var(--ochre);background:var(--ochre-l);"><strong style="font-size:10px;font-family:'Inconsolata',monospace;color:var(--ochre);">REVIEW & ADJUST</strong><br>Check analytics: top post this month, follower growth, profile views. Adjust next month's plan to double down on what worked.</div>
+          </div>
+        </div>
+      </div>
+      <div class="note">2–3 posts per month is sustainable for one person managing full TA. Quality beats frequency — one specific, honest post about Valentis operations outperforms five generic "we're hiring!" posts every time.</div>
+    </div>
+
+    <!-- MESSAGING GUIDE -->
+    <div id="tab-eb-messaging" class="tab-panel">
+      <div class="sl">Employer brand messaging · tone guide · ready-to-use copy</div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-head"><div class="card-ic" style="background:var(--ochre-l);color:var(--ochre);">◎</div><div><div class="card-title">Tone of Voice — Valentis Employer Brand</div></div></div>
+        <div class="card-body">
+          <div class="g3">
+            <div style="padding:13px;background:var(--paper);border-radius:8px;border:1px solid var(--rule);"><div style="font-size:12px;font-weight:700;color:var(--moss);margin-bottom:5px;">✓ Direct and specific</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;">Say what the job actually is. Say where the site actually is. Say what the package actually includes. Vague employer branding wastes everyone's time.</div></div>
+            <div style="padding:13px;background:var(--paper);border-radius:8px;border:1px solid var(--rule);"><div style="font-size:12px;font-weight:700;color:var(--moss);margin-bottom:5px;">✓ Honest about the challenge</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;">Remote. Southeast Asia. Small team. High accountability. Say these things. The right candidates are attracted by challenge, not despite it.</div></div>
+            <div style="padding:13px;background:var(--paper);border-radius:8px;border:1px solid var(--rule);"><div style="font-size:12px;font-weight:700;color:var(--moss);margin-bottom:5px;">✓ Human, not corporate</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;">No "synergies", "dynamic environments", or "passionate teams". Real language. The drilling community has a low tolerance for corporate speak.</div></div>
+            <div style="padding:13px;background:var(--paper);border-radius:8px;border:1px solid var(--rule);"><div style="font-size:12px;font-weight:700;color:var(--terra);margin-bottom:5px;">✗ Avoid: generic claims</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;">"We value our people." Everyone says this. If you value your people, show it with specifics: how you structure rotation, how you handle welfare on remote sites, what development looks like.</div></div>
+            <div style="padding:13px;background:var(--paper);border-radius:8px;border:1px solid var(--rule);"><div style="font-size:12px;font-weight:700;color:var(--terra);margin-bottom:5px;">✗ Avoid: overselling</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;">Don't promise what Valentis can't yet deliver. Employer brand integrity is built over time — one overpromise that a candidate discovers after joining costs more than not attracting them.</div></div>
+            <div style="padding:13px;background:var(--paper);border-radius:8px;border:1px solid var(--rule);"><div style="font-size:12px;font-weight:700;color:var(--terra);margin-bottom:5px;">✗ Avoid: passive job postings</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;">"Send your CV to hr@valentis.com" with nothing else is not an employer brand. A job post is a pitch. The candidate is evaluating you as much as you are evaluating them.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="copy-box">
+        <button class="copy-box-btn" onclick="copyBox(this)">copy</button>
+        <div class="copy-box-label">LinkedIn Job Post — Drilling Supervisor (Template)</div>
+        <div class="copy-box-text">🔴 <b>We're looking for a Drilling Supervisor — Myanmar operations.</b>
+
+This is a site-based role on an active mineral exploration program in Mandalay region, Myanmar. If you know rotary and diamond core drilling in remote SEA conditions — read on.
+
+<b>What the role actually involves:</b>
+→ Supervising a crew of 15–30 across active drilling programs
+→ Managing HSE compliance on site — no shortcuts, high bar
+→ Reporting to the Site Manager and working with international geologists
+→ Rotation-based schedule (details available on application)
+
+<b>What we offer:</b>
+→ USD $1,800–2,800/month base (negotiable for strong candidates)
+→ Myanmar hardship allowance on top of base
+→ R&R flights, medical coverage, visa support
+→ A company that makes decisions fast and values technical expertise
+
+<b>What we need from you:</b>
+→ 5+ years as Drilling Supervisor in mineral exploration (not O&G only)
+→ Experience in challenging remote environments — preferably SEA
+→ Strong HSE culture — this is non-negotiable
+→ Available to deploy within 60 days
+
+If this matches your background, connect with me here or message directly. I respond to everyone personally.
+
+<b>[Your Name] — Group HR Manager, Valentis Laos</b></div>
+      </div>
+
+      <div class="copy-box">
+        <button class="copy-box-btn" onclick="copyBox(this)">copy</button>
+        <div class="copy-box-label">LinkedIn Company Post — Operations Culture (Template)</div>
+        <div class="copy-box-text"><b>What it's actually like to work in mineral exploration in Southeast Asia.</b>
+
+Remote sites. Multinational crews. No two days the same.
+
+At Valentis, our teams operate across Laos, Myanmar, Indonesia, and Thailand — on active drill programs that most professionals in the industry never get to work on.
+
+It's not for everyone. The environments are demanding. The logistics are real. The accountability is high.
+
+But if you're the kind of professional who wants direct impact, visible results, and access to leadership without five layers of management between you — this is a different kind of company.
+
+We're growing. We're hiring. And we're building an HR function, finance capability, and operational leadership team that matches the scale of what we're doing.
+
+Interested in what that looks like? Follow our page or reach out directly.
+
+<b>#MineralExploration #SEAMining #DrillingJobs #ExplorationCareers</b></div>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</div><!-- main -->
+</div><!-- shell -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── NAV ──
+const topMeta = {
+  'comp-contracts': ['Compliance & Legal — Contract Clauses','EMPLOYMENT CONTRACT FRAMEWORK'],
+  'comp-country':   ['Compliance & Legal — Country Law Guide','STATUTORY REQUIREMENTS · ALL COUNTRIES'],
+  'comp-permits':   ['Compliance & Legal — Work Permit Tracker','EXPIRY ALERTS · RENEWAL PIPELINE'],
+  'comp-refcheck':  ['Compliance & Legal — Reference Check Guide','STRUCTURED REFERENCE FRAMEWORK'],
+  'ob-checklist':   ['Onboarding — Pre-Start Checklist','UNIVERSAL HR RESPONSIBILITIES'],
+  'ob-country':     ['Onboarding — Country Checklists','LAOS · MYANMAR · INDONESIA · THAILAND'],
+  'ob-90day':       ['Onboarding — First 90 Days Plan','BY ROLE SENIORITY'],
+  'ob-probation':   ['Onboarding — Probation Framework','CHECK-INS · CONFIRMATION · UNDERPERFORMANCE'],
+  'eb-evp':         ['Employer Brand — EVP Framework','WHY JOIN VALENTIS'],
+  'eb-linkedin':    ['Employer Brand — LinkedIn Playbook','6-STEP PRESENCE BUILD'],
+  'eb-content':     ['Employer Brand — Content Calendar','MONTHLY ROLLING PLAN'],
+  'eb-messaging':   ['Employer Brand — Messaging Guide','TONE · COPY · TEMPLATES'],
+};
+
+function openMod(mod, btn) {
+  document.querySelectorAll('.mod-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sub-nav-wrap').forEach(w => w.classList.remove('open'));
+  btn.classList.add('active');
+  document.getElementById('subnav-' + mod).classList.add('open');
+  // auto-activate first sub
+  const firstBtn = document.querySelector(`#subnav-${mod} .sn-btn`);
+  if (firstBtn) firstBtn.click();
+}
+
+function sw(id, btn, mod) {
+  document.querySelectorAll(`#subnav-${mod} .sn-btn`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const m = topMeta[id] || [id, ''];
+  document.getElementById('tb-title').textContent = m[0];
+  document.getElementById('tb-sub').textContent = m[1];
+  if (id === 'comp-permits') renderPermits();
+  if (id === 'ob-checklist') renderPreChecklist();
+  if (id === 'ob-country')   renderCountryChecklists();
+  if (id === 'ob-90day')     render90Days();
+}
+
+// ── PERMIT TRACKER ──
+let permits = [
+  {id:1, name:'Arsen Tulebayev', role:'Site Manager', country:'Laos', type:'Work Permit (Laos)', issue:'2026-02-01', expiry:'2027-01-31', notes:'New hire — permit application submitted 01 Mar 2026'},
+  {id:2, name:'Viktor Semenov', role:'Drilling Supervisor', country:'Indonesia', type:'KITAS', issue:'2025-06-15', expiry:'2026-06-14', notes:'Renewal window opens April 2026'},
+  {id:3, name:'Ahmad Hassan', role:'Equipment Technician', country:'Myanmar', type:'MIC Work Permit (Myanmar)', issue:'2025-03-01', expiry:'2026-04-30', notes:'Expiring soon — initiate renewal NOW'},
+];
+let pmNextId = 4;
+
+function daysUntil(dateStr) {
+  return Math.floor((new Date(dateStr) - new Date()) / 86400000);
+}
+function addPermit() {
+  const name=document.getElementById('pm-name').value.trim();
+  const expiry=document.getElementById('pm-expiry').value;
+  if (!name||!expiry) { showToast('Name and Expiry Date required'); return; }
+  permits.push({
+    id: pmNextId++,
+    name, expiry,
+    role:    document.getElementById('pm-role').value,
+    country: document.getElementById('pm-country').value,
+    type:    document.getElementById('pm-type').value,
+    issue:   document.getElementById('pm-issue').value,
+    notes:   document.getElementById('pm-notes').value,
+  });
+  clearPermit();
+  renderPermits();
+  showToast('Permit record saved');
+}
+function clearPermit() {
+  ['pm-name','pm-role','pm-notes'].forEach(id => document.getElementById(id).value='');
+  ['pm-country','pm-type'].forEach(id => document.getElementById(id).selectedIndex=0);
+  ['pm-issue','pm-expiry'].forEach(id => document.getElementById(id).value='');
+}
+function renderPermits() {
+  const wrap = document.getElementById('permit-grid'); if (!wrap) return;
+  const sorted = [...permits].sort((a,b) => daysUntil(a.expiry)-daysUntil(b.expiry));
+  wrap.innerHTML = sorted.map(p => {
+    const d = daysUntil(p.expiry);
+    const cls = d < 0 ? 'overdue' : d < 60 ? 'expiring' : '';
+    const dColor = d < 0 ? 'var(--terra)' : d < 60 ? 'var(--ochre)' : 'var(--moss)';
+    const dLabel = d < 0 ? `${Math.abs(d)}d overdue` : `${d}d remaining`;
+    return `<div class="permit-card ${cls}">
+      <div>
+        <div class="pm-name">${p.name}</div>
+        <div class="pm-role">${p.role} · ${p.country}</div>
+        <div class="pm-details">
+          <span class="pm-d">${p.type}</span>
+          ${p.issue ? `<span class="pm-d">Issued: ${p.issue}</span>` : ''}
+          <span class="pm-d">Expires: ${p.expiry}</span>
+        </div>
+        ${p.notes ? `<div style="font-size:11.5px;color:var(--ink3);margin-top:6px;font-style:italic;">${p.notes}</div>` : ''}
+      </div>
+      <div class="pm-status">
+        <div class="pm-days" style="color:${dColor};">${Math.abs(d)}</div>
+        <div class="pm-dlabel">${dLabel}</div>
+      </div>
+    </div>`;
+  }).join('') || '<div style="font-size:12px;color:var(--ink3);font-style:italic;">No permit records. Add one above.</div>';
+}
+
+// ── PRE-START CHECKLIST ──
+const preItems1 = [
+  {t:'Issue formal offer letter and contract',d:'Country-specific contract signed and returned before start date',tag:'Legal'},
+  {t:'Initiate work permit application',d:'For expat hires — start immediately on verbal acceptance. Do not wait for signed contract.',tag:'Compliance'},
+  {t:'Set up payroll record',d:'Employee bank details, tax ID, social security enrolment. Coordinate with Finance.',tag:'Payroll'},
+  {t:'Notify IT / Systems access',d:'Email account, company systems, VPN if applicable. Confirm what access the role needs.',tag:'IT'},
+  {t:'Prepare equipment list',d:'PPE for site roles (specify standard), laptop/devices, tools, safety gear, site-specific kit.',tag:'Equipment'},
+  {t:'Brief direct manager',d:'Share start date, first week plan, and any pre-onboarding context. Manager must be ready to receive them.',tag:'Manager'},
+  {t:'Send welcome email to new hire',d:'Confirm start date, time, location, who to ask for, dress code if relevant. Include any pre-reading.',tag:'Comms'},
+];
+const preItems2 = [
+  {t:'Prepare welcome pack',d:'Company overview, org chart, key contacts, country-specific HR policies, site rules if applicable.',tag:'HR'},
+  {t:'Confirm accommodation (site roles)',d:'Site-based staff must have confirmed accommodation before arrival — not on arrival day.',tag:'Site'},
+  {t:'Schedule Day 1 induction session',d:'HR-led: company overview, policies, safety briefing, payroll/benefits walkthrough. 2–3 hours minimum.',tag:'HR'},
+  {t:'Arrange site/office tour',d:'Physical orientation — site layout, safety zones, emergency procedures, facilities.',tag:'Site'},
+  {t:'Introduce to team',d:'Formal introduction to team and key stakeholders. For site roles: introduce to entire crew on Day 1.',tag:'People'},
+  {t:'Complete ID verification',d:'Verify passport, work permit, certifications (NEBOSH, drilling certs etc.) — copy to file.',tag:'Compliance'},
+  {t:'30-day check-in booked in calendar',d:'Set the reminder now — not when you remember.',tag:'HR'},
+];
+
+let clState = {};
+function renderPreChecklist() {
+  buildCL('pre-cl-1', preItems1, 'pre1');
+  buildCL('pre-cl-2', preItems2, 'pre2');
+}
+function buildCL(wrpId, items, prefix) {
+  const w = document.getElementById(wrpId); if (!w) return; w.innerHTML='';
+  items.forEach((item, i) => {
+    const key = prefix+i;
+    const done = clState[key] || false;
+    const div = document.createElement('div');
+    div.className = 'cl-item' + (done?' done':'');
+    div.onclick = () => { clState[key]=!clState[key]; div.classList.toggle('done'); div.querySelector('.cl-cb').textContent=clState[key]?'✓':''; };
+    div.innerHTML=`<div class="cl-cb">${done?'✓':''}</div><div class="cl-text"><div class="cl-title">${item.t}</div><div class="cl-detail">${item.d}</div></div><div class="cl-tag"><span class="pill p-slate">${item.tag}</span></div>`;
+    w.appendChild(div);
+  });
+}
+function resetChecklist(prefix) { Object.keys(clState).filter(k=>k.startsWith(prefix)).forEach(k=>delete clState[k]); renderPreChecklist(); }
+
+// ── COUNTRY CHECKLISTS ──
+const countryData = {
+  laos: {
+    flag:'🇱🇦', name:'Laos',
+    items:[
+      {t:'Register employment with DOLSW (Department of Labour and Social Welfare)',d:'Required for all employees. Must be done within 30 days of start.'},
+      {t:'Enrol in NSSF (National Social Security Fund)',d:'4.5% employer + 4.5% employee. Register employee and begin deductions from first payroll.'},
+      {t:'Obtain work permit for foreign nationals',d:'Apply to DOLSW. Lead time 4–8 weeks. Employment cannot commence without valid permit.'},
+      {t:'Issue Lao-language employment contract',d:'Required by law. Dual-language (Lao + English) recommended. One copy to employee, one to file.'},
+      {t:'Site safety briefing in Lao language',d:'For local Lao hires on site — safety briefing must be in Lao. Provide written summary.'},
+      {t:'Register with local tax authority',d:'Employee personal income tax registration. Withheld and remitted monthly by employer.'},
+      {t:'Confirm community liaison protocol',d:'Local Lao hires in community-facing roles should understand Valentis community engagement position.'},
+    ]
+  },
+  myanmar: {
+    flag:'🇲🇲', name:'Myanmar',
+    items:[
+      {t:'Obtain MIC/DICA work permit',d:'Required for all foreign nationals. Apply through Myanmar Investment Commission. Lead time 4–6 weeks — start on verbal acceptance.'},
+      {t:'Register with Social Security Board (SSB)',d:'Mandatory contributions for employer and employee. Register within first month.'},
+      {t:'Issue Myanmar-language contract',d:'Contract must be in Burmese (Myanmar language) or dual-language. Salary stated in MMK.'},
+      {t:'Register with Internal Revenue Department (IRD)',d:'Employee income tax registration and monthly withholding obligation.'},
+      {t:'Site security and emergency protocol briefing',d:'Myanmar political context — brief all new hires on company emergency protocols and communication channels.'},
+      {t:'Confirm communication plan for political disruption',d:'All Myanmar staff must know the escalation protocol in case of civil unrest affecting site access.'},
+      {t:'Expat — confirm bank account setup',d:'Some Myanmar banks have restrictions on foreign national accounts. Coordinate early to avoid payroll delays.'},
+    ]
+  },
+  indonesia: {
+    flag:'🇮🇩', name:'Indonesia',
+    items:[
+      {t:'Register KITAS (Limited Stay Permit) and IMTA (Manpower Work Permit)',d:'Both required for foreign nationals. KITAS from Immigration, IMTA from Ministry of Manpower. Start immediately on offer acceptance.'},
+      {t:'Enrol in BPJS Kesehatan (Health) and BPJS Ketenagakerjaan (Employment)',d:'Mandatory for all employees. Multi-component — includes JHT, JKK, JKM, JP. Complex — engage payroll specialist if first Indonesian hire.'},
+      {t:'Register with local tax office (NPWP)',d:'Employee tax ID. Required for payroll. If candidate does not have one — assist them to register.'},
+      {t:'Issue Indonesian-language employment contract',d:'Contracts must be in Bahasa Indonesia or dual-language. If English-only, it may be unenforceable.'},
+      {t:'Brief on Indonesian labour law rights',d:'Indonesian employees have strong statutory rights. Brief HR on termination procedures — cannot terminate without bipartite/tripartite process.'},
+      {t:'Domicile letter (Surat Domisili)',d:'Required for KITAS application. Ensure Valentis legal entity in Indonesia can issue this.'},
+      {t:'Confirm probation terms comply with Law No.13/2003',d:'Only ONE probation period allowed — if it was used before, cannot apply again for same employee.'},
+    ]
+  },
+  thailand: {
+    flag:'🇹🇭', name:'Thailand',
+    items:[
+      {t:'Obtain Work Permit from Department of Employment',d:'Foreign nationals must have valid work permit before starting. Work permit tied to specific employer and job title.'},
+      {t:'Enrol in Social Security Fund (SSF)',d:'5% employer + 5% employee, capped at 750 THB each. Register within 30 days of start.'},
+      {t:'Register with Revenue Department for personal income tax',d:'Thailand income tax withheld monthly. Rates are progressive. File annual return by March of following year.'},
+      {t:'Issue Thai Labour Protection Act compliant contract',d:'Reference LPA 1998 (amended 2019). Ensure all statutory benefits (leave, severance entitlements) are referenced.'},
+      {t:'Brief on Thai working culture and hierarchy norms',d:'For foreign hires joining Bangkok office — Thai workplace hierarchy is significant. Brief on communication expectations.'},
+      {t:'Confirm office access and building registration',d:'Bangkok offices often require building visitor registration. Arrange permanent access card from Day 1.'},
+      {t:'5-stage disciplinary process brief (for managers)',d:'Thai LPA requires a documented 5-stage disciplinary process before any termination for misconduct. Brief all managers with direct reports.'},
+    ]
+  }
+};
+function renderCountryChecklists() {
+  Object.entries(countryData).forEach(([key, data]) => {
+    const wrap = document.getElementById('ctry-' + key); if (!wrap) return;
+    wrap.innerHTML = `
+      <div class="sl">${data.flag} ${data.name} — Onboarding Requirements</div>
+      <div class="checklist" id="cc-${key}"></div>`;
+    buildCL('cc-'+key, data.items, 'cc'+key);
+  });
+}
+function switchCtry(id, btn) {
+  document.querySelectorAll('.ctry-tabs .ctry-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[id^="ctry-"]').forEach(p=>p.classList.remove('active'));
+  document.getElementById('ctry-'+id).classList.add('active');
+}
+
+// ── 90-DAY PLANS ──
+const plans = {
+  ops: [
+    { period:'Days 1–30', color:'var(--terra)', items:[
+      {t:'Site orientation & safety induction',d:'HSE systems, emergency protocols, site layout, crew introduction. This is not optional — no operational activity until induction is complete.'},
+      {t:'Learn the drill program',d:'Understand current targets, geology, hole depths, program objectives. Read available site reports.'},
+      {t:'Observe, do not change',d:'The first 30 days: watch, learn, build credibility with crew. Changes before trust = resistance.'},
+      {t:'Meet key stakeholders',d:'Site Manager, Geologist, HSE Officer, government liaison (if applicable). Understand the political dynamics on site.'},
+      {t:'Identify immediate safety or operational risks',d:'Whats the most urgent thing thats wrong? Report to Site Manager by Day 21.'},
+    ]},
+    { period:'Days 31–60', color:'var(--ochre)', items:[
+      {t:'Assess team capability',d:'What is the skill level of the crew? Who are the high performers? Who needs development? Who is a risk?'},
+      {t:'Propose first operational improvements',d:'Based on observation — present 2–3 specific, implementable improvements with rationale. This demonstrates value without overstepping.'},
+      {t:'Own first full shift cycle independently',d:'Site Manager or COO should reduce oversight at this point. New hire is operating semi-independently.'},
+      {t:'Mid-probation check-in with HR',d:'Formal structured conversation. Document any performance concerns or outstanding blockers.'},
+    ]},
+    { period:'Days 61–90', color:'var(--moss)', items:[
+      {t:'Full operational ownership',d:'Running the site or shift with minimal intervention. Accountable for all output, safety, and crew management.'},
+      {t:'Build relationships with government/community liaisons',d:'For Site Manager: establish your relationship with local authorities. This takes time — start early.'},
+      {t:'Deliver first formal performance report',d:'Written report to COO/Group HR: site status, crew assessment, operational priorities for next quarter.'},
+      {t:'Probation confirmation or action plan',d:'Based on 90-day performance, HR issues confirmation letter or documents underperformance plan.'},
+    ]},
+  ],
+  hr: [
+    { period:'Days 1–30', color:'var(--slate)', items:[
+      {t:'Audit existing HR documentation and compliance',d:'What exists? What is missing? What is non-compliant? Produce a gap analysis by end of Week 3.'},
+      {t:'Map the workforce',d:'Who is employed, on what contract, in which country, with what permit status? This is your starting inventory.'},
+      {t:'Meet all direct stakeholders',d:'Hiring managers, Finance, Country Leads, COO. Understand what HR problems they are living with right now.'},
+      {t:'Understand payroll process end-to-end',d:'How does payroll run currently? Who touches it? What are the known errors or risks?'},
+    ]},
+    { period:'Days 31–60', color:'var(--ochre)', items:[
+      {t:'Prioritise compliance gaps and fix the highest-risk items',d:'Payroll compliance > TA > HR documentation > Employer Brand, in that order.'},
+      {t:'Own first full payroll cycle independently',d:'Run payroll with minimal support. Document the process as you go.'},
+      {t:'Build the TA pipeline for the role(s) assigned',d:'Source, screen, and advance candidates. Demonstrate TA capability, not just administration.'},
+    ]},
+    { period:'Days 61–90', color:'var(--moss)', items:[
+      {t:'Produce first HR report for COO',d:'Workforce snapshot, open roles status, compliance status, key risks. 1-page summary maximum.'},
+      {t:'Define your 6-month HR roadmap',d:'What are you building and in what order? Present to Group HR Manager for alignment.'},
+      {t:'Probation review and confirmation',d:'HR-led with Group HR Manager. Confirm or address any performance gaps.'},
+    ]},
+  ],
+  support: [
+    { period:'Days 1–30', color:'var(--wine)', items:[
+      {t:'Learn the filing and documentation system',d:'Where is everything? How is it organised? Ask before you change anything.'},
+      {t:'Shadow existing process for 2 weeks before taking ownership',d:'Even if the current process is broken — understand why it exists before you fix it.'},
+      {t:'Deliver first task independently by Day 14',d:'Something specific, visible, and measurable. Demonstrates reliability early.'},
+    ]},
+    { period:'Days 31–60', color:'var(--ochre)', items:[
+      {t:'Own primary responsibilities independently',d:'No more shadowing. Full ownership of the role scope with check-ins as needed.'},
+      {t:'Identify one process improvement',d:'Small, practical, implementable. Present it to manager for approval before doing it.'},
+    ]},
+    { period:'Days 61–90', color:'var(--moss)', items:[
+      {t:'Operating at full capacity',d:'Role fully owned. No gaps in coverage. Manager has confidence to delegate without follow-up.'},
+      {t:'Probation confirmation',d:'HR confirms employment if probation performance is satisfactory.'},
+    ]},
+  ],
+};
+function render90Days() {
+  Object.entries(plans).forEach(([key, phases]) => {
+    const wrap = document.getElementById('plan-'+key); if(!wrap) return;
+    wrap.innerHTML = `<div class="plan-cols">${phases.map(p=>`
+      <div class="plan-col">
+        <div class="plan-col-head">
+          <div class="plan-period" style="color:${p.color};">${p.period}</div>
+        </div>
+        <div class="plan-body">
+          <div class="plan-items">
+            ${p.items.map(i=>`<div class="plan-item"><strong>${i.t}</strong>${i.d}</div>`).join('')}
+          </div>
+        </div>
+      </div>`).join('')}</div>`;
+  });
+}
+function switch90(id, btn) {
+  document.querySelectorAll('#tab-ob-90day .ctry-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[id^="plan-"]').forEach(p=>p.classList.remove('active'));
+  document.getElementById('plan-'+id).classList.add('active');
+}
+
+// ── COPY BOX ──
+function copyBox(btn) {
+  const text = btn.nextElementSibling.nextElementSibling.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='copied ✓';
+    setTimeout(()=>btn.textContent='copy',2500);
+  });
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ── INIT ──
+renderPermits();
+renderPreChecklist();
+renderCountryChecklists();
+render90Days();
+</script>
+</body>
+</html>

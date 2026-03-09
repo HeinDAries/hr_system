@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM Framework & Goal-Setting | Valentis Laos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:  #1a3a2a;
+  --forest2: #234d38;
+  --forest3: #2d6347;
+  --sage:    #4a8c68;
+  --sage-l:  #7ab899;
+  --mint:    #c8e8d8;
+  --paper:   #f4f7f5;
+  --paper2:  #eaf0ec;
+  --paper3:  #dce8e0;
+  --rule:    #c4d8cc;
+  --rule2:   #b0c8b8;
+  --white:   #ffffff;
+
+  --ink:     #0d1f16;
+  --ink2:    #1e3828;
+  --ink3:    #4a6858;
+  --ink4:    #7a9888;
+  --ink5:    #a8c0b0;
+
+  --gold:    #8a6a10;
+  --gold-l:  #fdf8eb;
+  --gold-b:  #d4b060;
+
+  --red:     #8a1a1a;
+  --red-l:   #fdf0f0;
+  --red-b:   #d48080;
+
+  --blue:    #1a3a8a;
+  --blue-l:  #f0f4fd;
+  --blue-b:  #80a0d4;
+
+  --r: 10px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+
+/* subtle grid texture */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(26,58,42,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(26,58,42,0.025) 1px,transparent 1px);
+  background-size:32px 32px;
+  pointer-events:none;z-index:0;
+}
+
+.shell{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── RAIL ── */
+.rail{
+  width:252px;min-width:252px;
+  background:var(--forest);
+  position:fixed;inset-y:0;left:0;
+  display:flex;flex-direction:column;
+  overflow-y:auto;z-index:40;
+}
+
+.rail-brand{
+  padding:26px 20px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.rb-ey{
+  font-family:'DM Mono',monospace;
+  font-size:7.5px;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,0.2);margin-bottom:12px;
+}
+.rb-title{
+  font-family:'DM Serif Display',serif;
+  font-size:20px;color:#fff;line-height:1.2;
+}
+.rb-title em{color:var(--sage-l);font-style:italic;}
+.rb-sub{font-size:10.5px;color:rgba(255,255,255,0.25);margin-top:6px;}
+
+/* cycle indicator */
+.cycle-box{
+  margin:14px 14px 0;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px;padding:11px 13px;
+}
+.cy-label{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:6px;}
+.cy-val{font-family:'DM Serif Display',serif;font-size:14px;color:var(--sage-l);}
+.cy-sub{font-size:10px;color:rgba(255,255,255,0.2);margin-top:3px;}
+
+.rail-sec{padding:14px 14px 4px;}
+.rs-lbl{
+  font-family:'DM Mono',monospace;
+  font-size:7px;font-weight:600;letter-spacing:2.5px;
+  text-transform:uppercase;color:rgba(255,255,255,0.15);
+  padding:0 6px;margin-bottom:7px;
+}
+.rnav{display:flex;flex-direction:column;gap:2px;}
+.nb{
+  display:flex;align-items:center;gap:9px;
+  width:100%;padding:8px 9px;border-radius:7px;
+  background:transparent;border:none;
+  color:rgba(255,255,255,0.3);
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:500;
+  cursor:pointer;transition:all 0.13s;text-align:left;
+}
+.nb:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);}
+.nb.active{background:rgba(122,184,153,0.2);color:var(--sage-l);}
+.nb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.nb-chip{margin-left:auto;font-family:'DM Mono',monospace;font-size:8.5px;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.2);}
+.nb.active .nb-chip{background:rgba(122,184,153,0.2);color:var(--sage-l);}
+
+.rail-foot{
+  margin-top:auto;padding:13px 20px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  font-family:'DM Mono',monospace;
+  font-size:8px;color:rgba(255,255,255,0.12);line-height:2;
+}
+
+/* ── MAIN ── */
+.main{margin-left:252px;flex:1;display:flex;flex-direction:column;}
+
+.topbar{
+  background:var(--white);border-bottom:1px solid var(--rule);
+  padding:13px 36px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:20;
+  box-shadow:0 1px 4px rgba(0,0,0,0.04);
+}
+.tb-title{font-family:'DM Serif Display',serif;font-size:16px;color:var(--ink);}
+.tb-sub{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--ink4);margin-top:2px;}
+.tb-tag{
+  font-family:'DM Mono',monospace;font-size:8px;font-weight:600;
+  letter-spacing:1px;text-transform:uppercase;
+  padding:4px 11px;border-radius:4px;
+  background:var(--mint);color:var(--forest2);
+  border:1px solid var(--rule2);
+}
+
+.content{padding:30px 36px;flex:1;}
+.tab{display:none;animation:up .18s ease;}
+.tab.active{display:block;}
+@keyframes up{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+
+/* SECTION LABEL */
+.sl{
+  font-family:'DM Mono',monospace;font-size:7.5px;font-weight:600;
+  letter-spacing:3px;text-transform:uppercase;color:var(--ink4);
+  margin-bottom:18px;display:flex;align-items:center;gap:12px;
+}
+.sl::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+/* CARD */
+.card{background:var(--white);border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.03);}
+.card-hd{padding:13px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px;}
+.card-ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.card-tt{font-size:13px;font-weight:700;color:var(--ink);}
+.card-st{font-size:11px;color:var(--ink3);margin-top:1px;}
+.card-bd{padding:16px 18px;}
+
+/* PILL */
+.pill{display:inline-flex;padding:2px 8px;border-radius:3px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;border:1px solid;white-space:nowrap;}
+.p-forest{background:var(--mint);color:var(--forest2);border-color:var(--rule2);}
+.p-gold{background:var(--gold-l);color:var(--gold);border-color:var(--gold-b);}
+.p-red{background:var(--red-l);color:var(--red);border-color:var(--red-b);}
+.p-blue{background:var(--blue-l);color:var(--blue);border-color:var(--blue-b);}
+.p-grey{background:var(--paper2);color:var(--ink3);border-color:var(--rule);}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.sx{overflow-x:auto;}
+
+/* NOTE / WARN */
+.note{font-size:11.5px;color:var(--ink3);padding:10px 14px;background:var(--paper2);border-radius:7px;border-left:3px solid var(--rule2);margin:10px 0;line-height:1.65;}
+.insight{font-size:11.5px;color:var(--forest2);padding:10px 14px;background:var(--mint);border-radius:7px;border-left:3px solid var(--sage);margin:10px 0;line-height:1.65;}
+.insight strong{font-weight:700;}
+
+/* ══════════════════════════════════
+   TAB 1 — FRAMEWORK OVERVIEW
+══════════════════════════════════ */
+
+.framework-map{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:var(--r);
+  overflow:hidden;margin-bottom:20px;
+}
+.fm-col{background:var(--white);padding:18px 16px;}
+.fm-col:hover{background:var(--paper);}
+.fm-num{
+  font-family:'DM Serif Display',serif;
+  font-size:32px;color:var(--rule2);line-height:1;
+  margin-bottom:10px;
+}
+.fm-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.fm-desc{font-size:11.5px;color:var(--ink3);line-height:1.6;}
+.fm-tag{margin-top:10px;}
+
+.principle-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.pg-item{
+  padding:14px 15px;background:var(--white);
+  border:1px solid var(--rule);border-radius:9px;
+}
+.pg-icon{font-size:20px;margin-bottom:9px;}
+.pg-title{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:5px;}
+.pg-desc{font-size:11.5px;color:var(--ink3);line-height:1.55;}
+
+/* ══════════════════════════════════
+   TAB 2 — GOAL-SETTING
+══════════════════════════════════ */
+
+.role-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.rt-btn{
+  padding:7px 16px;border-radius:20px;
+  border:1px solid var(--rule2);background:var(--white);
+  font-family:'DM Mono',monospace;font-size:10px;font-weight:600;
+  cursor:pointer;transition:all .13s;color:var(--ink3);
+}
+.rt-btn:hover{border-color:var(--ink3);color:var(--ink);}
+.rt-btn.active{background:var(--forest);color:#fff;border-color:var(--forest);}
+.role-panel{display:none;}
+.role-panel.active{display:block;}
+
+.kpi-table{width:100%;border-collapse:collapse;}
+.kpi-table thead tr{background:var(--forest);}
+.kpi-table thead th{
+  padding:10px 14px;
+  font-family:'DM Mono',monospace;font-size:8px;font-weight:600;
+  letter-spacing:1px;text-transform:uppercase;
+  color:rgba(255,255,255,0.55);text-align:left;
+  border-right:1px solid rgba(255,255,255,0.07);white-space:nowrap;
+}
+.kpi-table thead th:last-child{border-right:none;}
+.kpi-table tbody tr{border-bottom:1px solid var(--rule);transition:background .12s;}
+.kpi-table tbody tr:last-child{border-bottom:none;}
+.kpi-table tbody tr:hover{background:var(--paper);}
+.kpi-table tbody td{
+  padding:11px 14px;font-size:12px;color:var(--ink2);
+  border-right:1px solid var(--rule);vertical-align:top;line-height:1.5;
+}
+.kpi-table tbody td:first-child{font-weight:600;color:var(--ink);}
+.kpi-table tbody td:last-child{border-right:none;}
+
+/* ══════════════════════════════════
+   TAB 3 — SMART GOAL BUILDER
+══════════════════════════════════ */
+
+.smart-builder{
+  background:var(--white);border:1px solid var(--rule);
+  border-radius:var(--r);overflow:hidden;margin-bottom:16px;
+}
+.sb-head{
+  background:var(--forest);padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sb-title{font-family:'DM Serif Display',serif;font-size:16px;color:#fff;}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;}
+.sb-body{padding:20px;}
+
+.smart-letters{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.sl-card{
+  background:var(--paper);border:1px solid var(--rule);
+  border-radius:9px;padding:14px 13px;
+}
+.sl-letter{
+  font-family:'DM Serif Display',serif;
+  font-size:28px;color:var(--forest);line-height:1;margin-bottom:6px;
+}
+.sl-word{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+.sl-desc{font-size:11px;color:var(--ink3);line-height:1.55;}
+.sl-ex{font-size:10.5px;color:var(--sage);margin-top:6px;font-style:italic;}
+
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:13px;}
+.fg label{font-family:'DM Mono',monospace;font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);}
+.fg input,.fg select,.fg textarea{
+  padding:9px 11px;border:1px solid var(--rule2);
+  border-radius:7px;font-family:'DM Sans',sans-serif;
+  font-size:12.5px;color:var(--ink);background:var(--white);
+  outline:none;transition:border-color .13s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--sage);}
+.fg textarea{resize:vertical;min-height:65px;}
+
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.fr4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+
+.btn{padding:9px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .13s;border:1px solid;}
+.btn-forest{background:var(--forest);color:#fff;border-color:var(--forest);}
+.btn-forest:hover{background:var(--forest2);}
+.btn-out{background:transparent;color:var(--ink3);border-color:var(--rule2);}
+.btn-out:hover{border-color:var(--ink3);color:var(--ink);}
+
+/* GOAL OUTPUT */
+.goal-output{
+  background:var(--forest);border-radius:var(--r);
+  padding:18px 20px;margin-top:16px;display:none;
+}
+.go-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;}
+.go-text{font-size:13.5px;color:#fff;line-height:1.8;font-family:'DM Serif Display',serif;}
+.go-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;}
+.gm-item{background:rgba(255,255,255,0.06);border-radius:7px;padding:9px 10px;}
+.gm-lbl{font-family:'DM Mono',monospace;font-size:8px;color:rgba(255,255,255,0.25);margin-bottom:4px;}
+.gm-val{font-size:12px;font-weight:600;color:var(--sage-l);}
+.copy-goal-btn{
+  margin-top:12px;background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);
+  font-family:'DM Mono',monospace;font-size:10px;
+  padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .13s;
+}
+.copy-goal-btn:hover{color:var(--sage-l);border-color:rgba(122,184,153,.4);}
+
+/* ══════════════════════════════════
+   TAB 4 — CASCADE FRAMEWORK
+══════════════════════════════════ */
+
+.cascade-diagram{
+  background:var(--white);border:1px solid var(--rule);
+  border-radius:var(--r);overflow:hidden;margin-bottom:16px;
+}
+.cd-head{
+  background:var(--forest);padding:15px 20px;
+}
+.cd-title{font-family:'DM Serif Display',serif;font-size:16px;color:#fff;}
+.cd-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px;}
+.cd-body{padding:20px;}
+
+.cascade-level{
+  display:flex;flex-direction:column;align-items:center;
+  margin-bottom:0;
+}
+.cl-row{
+  display:flex;align-items:stretch;
+  width:100%;gap:0;
+}
+.cl-node{
+  flex:1;
+  background:var(--paper);border:1px solid var(--rule);
+  border-radius:9px;padding:14px 15px;margin:0 5px;
+  text-align:center;position:relative;
+}
+.cl-node.primary{
+  background:var(--forest);color:#fff;
+  border-color:var(--forest);max-width:340px;margin:0 auto;
+}
+.cl-node.secondary{background:var(--paper2);border-color:var(--rule2);}
+.cln-level{
+  font-family:'DM Mono',monospace;font-size:8px;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,0.3);margin-bottom:5px;
+}
+.cl-node:not(.primary) .cln-level{color:var(--ink4);}
+.cln-title{font-size:13px;font-weight:700;margin-bottom:5px;}
+.cl-node.primary .cln-title{color:#fff;}
+.cln-desc{font-size:11px;color:var(--ink3);line-height:1.5;}
+.cl-node.primary .cln-desc{color:rgba(255,255,255,0.5);}
+
+.cascade-arrow{
+  text-align:center;font-size:18px;color:var(--rule2);
+  padding:8px 0;line-height:1;
+}
+
+.cascade-examples{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;}
+.ce-col{background:var(--paper);border:1px solid var(--rule);border-radius:9px;overflow:hidden;}
+.ce-head{
+  padding:10px 13px;border-bottom:1px solid var(--rule);
+  font-size:12px;font-weight:700;color:var(--ink);
+}
+.ce-body{padding:12px 13px;}
+.ce-item{
+  padding:8px 10px;background:var(--white);border:1px solid var(--rule);
+  border-radius:6px;margin-bottom:6px;
+  font-size:11.5px;color:var(--ink2);line-height:1.5;
+}
+.ce-item:last-child{margin-bottom:0;}
+.ce-item strong{display:block;font-weight:700;color:var(--ink);font-size:12px;margin-bottom:1px;}
+
+/* ══════════════════════════════════
+   TAB 5 — WEIGHTING SYSTEM
+══════════════════════════════════ */
+
+.weight-tbl{width:100%;border-collapse:collapse;}
+.weight-tbl thead tr{background:var(--ink2);}
+.weight-tbl thead th{padding:10px 14px;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.55);text-align:left;border-right:1px solid rgba(255,255,255,0.07);}
+.weight-tbl thead th:last-child{border-right:none;}
+.weight-tbl tbody tr{border-bottom:1px solid var(--rule);transition:background .12s;}
+.weight-tbl tbody tr:last-child{border-bottom:none;}
+.weight-tbl tbody tr:hover{background:var(--paper);}
+.weight-tbl tbody td{padding:12px 14px;font-size:12px;color:var(--ink2);border-right:1px solid var(--rule);vertical-align:middle;line-height:1.5;}
+.weight-tbl tbody td:first-child{font-weight:700;color:var(--ink);}
+.weight-tbl tbody td:last-child{border-right:none;}
+
+.wbar-wrap{height:7px;background:var(--paper2);border-radius:4px;overflow:hidden;min-width:80px;}
+.wbar{height:100%;border-radius:4px;background:var(--forest3);}
+
+/* ══════════════════════════════════
+   TAB 6 — REVIEW CYCLE
+══════════════════════════════════ */
+
+.timeline{position:relative;padding-left:28px;margin-bottom:20px;}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--rule);}
+.tl-item{position:relative;margin-bottom:20px;}
+.tl-dot{
+  position:absolute;left:-24px;top:3px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--forest);border:2px solid var(--white);
+  box-shadow:0 0 0 2px var(--forest);
+}
+.tl-dot.upcoming{background:var(--rule2);box-shadow:0 0 0 2px var(--rule2);}
+.tl-dot.now{background:var(--gold-b);box-shadow:0 0 0 2px var(--gold-b);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 2px var(--gold-b);}50%{box-shadow:0 0 0 5px rgba(212,176,96,0.3);}}
+.tl-month{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px;}
+.tl-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px;}
+.tl-desc{font-size:12px;color:var(--ink3);line-height:1.6;}
+.tl-chip{display:inline-flex;margin-top:6px;font-family:'DM Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;font-weight:600;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:22px;background:var(--forest);color:#fff;padding:9px 15px;border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;opacity:0;transform:translateY(5px);transition:all .2s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;transform:none;}
+
+@media(max-width:1050px){
+  .rail{width:220px;min-width:220px;}
+  .main{margin-left:220px;}
+  .framework-map,.principle-grid,.smart-letters,.fr4,.g4,.cascade-examples{grid-template-columns:1fr 1fr;}
+  .go-meta{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══ RAIL ══ -->
+<aside class="rail">
+  <div class="rail-brand">
+    <div class="rb-ey">Valentis Laos · Group HR</div>
+    <div class="rb-title">Performance<br><em>Framework</em></div>
+    <div class="rb-sub">PM Tool 1 of 5 · Goal-Setting & Framework</div>
+  </div>
+
+  <div class="cycle-box">
+    <div class="cy-label">Active Review Cycle</div>
+    <div class="cy-val">2026 Annual</div>
+    <div class="cy-sub">Mid-year: July 2026 · Annual: Dec 2026</div>
+  </div>
+
+  <div class="rail-sec">
+    <div class="rs-lbl">Sections</div>
+    <div class="rnav">
+      <button class="nb active" onclick="sw('overview',this)"><span class="nb-dot" style="background:var(--sage-l);"></span>Framework Overview <span class="nb-chip">Start here</span></button>
+      <button class="nb" onclick="sw('goalsetting',this)"><span class="nb-dot" style="background:var(--sage-l);"></span>KPIs by Role Type</button>
+      <button class="nb" onclick="sw('smartbuilder',this)"><span class="nb-dot" style="background:var(--sage-l);"></span>SMART Goal Builder</button>
+      <button class="nb" onclick="sw('cascade',this)"><span class="nb-dot" style="background:var(--sage-l);"></span>Goal Cascade</button>
+      <button class="nb" onclick="sw('weighting',this)"><span class="nb-dot" style="background:var(--sage-l);"></span>Weighting System</button>
+      <button class="nb" onclick="sw('cycle',this)"><span class="nb-dot" style="background:var(--sage-l);"></span>Review Cycle Calendar</button>
+    </div>
+  </div>
+
+  <div class="rail-foot">
+    Valentis Laos · Group HR<br>
+    PM Framework v1.0 · 2026<br>
+    Confidential · HR Use Only
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-title" id="tb-title">Performance Management — Framework Overview</div>
+      <div class="tb-sub" id="tb-sub">PM TOOL 1 OF 5 · GOAL-SETTING & FRAMEWORK DESIGN</div>
+    </div>
+    <span class="tb-tag">2026 Cycle · Active</span>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════════════
+         FRAMEWORK OVERVIEW
+    ══════════════════════ -->
+    <div id="tab-overview" class="tab active">
+      <div class="sl">What is the PM framework · how it works at Valentis</div>
+
+      <div class="insight"><strong>Design principle:</strong> Valentis runs multi-country, mixed operations and office workforce. One rigid PM system fails both. This framework uses a common structure — goal-setting, mid-year review, annual review — but adapts the KPIs, language, and depth per role category. Operations managers use different metrics than HR or Finance staff. The process is the same. The content is not.</div>
+
+      <div class="framework-map" style="margin-top:14px;">
+        <div class="fm-col">
+          <div class="fm-num">01</div>
+          <div class="fm-title">Set Goals</div>
+          <div class="fm-desc">Employee and manager agree on 3–5 goals at the start of the cycle. Goals are SMART, weighted, and linked to business objectives.</div>
+          <div class="fm-tag"><span class="pill p-forest">Jan / Jul</span></div>
+        </div>
+        <div class="fm-col">
+          <div class="fm-num">02</div>
+          <div class="fm-title">Track Progress</div>
+          <div class="fm-desc">Ongoing — manager provides feedback quarterly. Informal check-ins are not optional. Performance issues raised early, not saved for review.</div>
+          <div class="fm-tag"><span class="pill p-gold">Ongoing</span></div>
+        </div>
+        <div class="fm-col">
+          <div class="fm-num">03</div>
+          <div class="fm-title">Mid-Year Review</div>
+          <div class="fm-desc">Structured conversation at 6 months. Progress against goals, development needs, updated priorities for H2. Rating not required at mid-year.</div>
+          <div class="fm-tag"><span class="pill p-blue">July</span></div>
+        </div>
+        <div class="fm-col">
+          <div class="fm-num">04</div>
+          <div class="fm-title">Annual Review</div>
+          <div class="fm-desc">Full assessment of year performance. Rating 1–5. Salary review input. Promotion or development plan. Career conversation for high performers.</div>
+          <div class="fm-tag"><span class="pill p-forest">December</span></div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--mint);color:var(--forest2);">◈</div><div><div class="card-tt">The 5-Point Rating Scale</div><div class="card-st">Used at annual review only · consistent definitions across all roles</div></div></div>
+          <div class="card-bd">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:grid;grid-template-columns:32px 1fr;gap:12px;padding:10px 12px;background:var(--forest);border-radius:8px;align-items:start;">
+                <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--sage-l);line-height:1;">5</div>
+                <div><div style="font-size:12.5px;font-weight:700;color:#fff;margin-bottom:3px;">Exceptional</div><div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5;">Significantly exceeded all goals. Demonstrated outstanding impact beyond the scope of the role. Top 5–10% of performers.</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:32px 1fr;gap:12px;padding:10px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;align-items:start;">
+                <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--sage);line-height:1;">4</div>
+                <div><div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:3px;">Strong</div><div style="font-size:11px;color:var(--ink3);line-height:1.5;">Exceeded most goals. Delivered more than expected in key areas. Recognised by peers and stakeholders as high performer.</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:32px 1fr;gap:12px;padding:10px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;align-items:start;">
+                <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink3);line-height:1;">3</div>
+                <div><div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:3px;">Meets Expectations</div><div style="font-size:11px;color:var(--ink3);line-height:1.5;">Met most goals. Performed reliably in all core areas. This is a good rating — it means the employee is doing their job well.</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:32px 1fr;gap:12px;padding:10px 12px;background:var(--gold-l);border:1px solid var(--gold-b);border-radius:8px;align-items:start;">
+                <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--gold);line-height:1;">2</div>
+                <div><div style="font-size:12.5px;font-weight:700;color:var(--gold);margin-bottom:3px;">Needs Improvement</div><div style="font-size:11px;color:var(--ink3);line-height:1.5;">Partially met goals. Clear gaps in one or more areas. Development plan required. PIP may be initiated if pattern continues.</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:32px 1fr;gap:12px;padding:10px 12px;background:var(--red-l);border:1px solid var(--red-b);border-radius:8px;align-items:start;">
+                <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--red);line-height:1;">1</div>
+                <div><div style="font-size:12.5px;font-weight:700;color:var(--red);margin-bottom:3px;">Unsatisfactory</div><div style="font-size:11px;color:var(--ink3);line-height:1.5;">Did not meet goals. Significant gaps across multiple areas. PIP initiated. Employment at risk if no sustained improvement.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-ic" style="background:var(--gold-l);color:var(--gold);">◷</div><div><div class="card-tt">Valentis PM Principles</div><div class="card-st">Design decisions and why</div></div></div>
+            <div class="card-bd">
+              <div class="principle-grid" style="grid-template-columns:1fr;gap:8px;margin-bottom:0;">
+                <div class="pg-item"><div class="pg-title">No forced distribution</div><div class="pg-desc">We do not mandate that X% of people receive a 3 and Y% receive a 5. If the team performs well, ratings reflect that. Forced distribution destroys trust and encourages gaming.</div></div>
+                <div class="pg-item"><div class="pg-title">No surprise at annual review</div><div class="pg-desc">Performance issues raised at annual review that were not raised during the year are HR failures, not employee failures. Feedback is continuous, not stored for December.</div></div>
+                <div class="pg-item"><div class="pg-title">3 is explicitly a good rating</div><div class="pg-desc">In many companies, employees fear a 3. We name it clearly: Meets Expectations means doing the job well. It is not a warning. This language must be consistent across all managers.</div></div>
+                <div class="pg-item"><div class="pg-title">Goals agreed, not handed down</div><div class="pg-desc">Manager proposes, employee discusses and agrees. A goal handed without conversation is a target, not a commitment. Ownership requires participation in setting.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--blue-l);color:var(--blue);">☰</div><div><div class="card-tt">Role Categories in Scope</div><div class="card-st">All Valentis employees · different KPI sets per category</div></div></div>
+        <div class="card-bd">
+          <div class="g4">
+            <div style="padding:13px 14px;background:var(--paper);border:1px solid var(--rule);border-radius:9px;">
+              <div style="font-size:18px;margin-bottom:7px;">⛏</div>
+              <div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:4px;">Operations</div>
+              <div style="font-size:11px;color:var(--ink3);line-height:1.5;">Site Manager, Drilling Supervisor, Senior Driller, HSE Officer, Equipment Tech, Geologist</div>
+              <div style="margin-top:8px;"><span class="pill p-forest">KPIs: Safety, Output, Team</span></div>
+            </div>
+            <div style="padding:13px 14px;background:var(--paper);border:1px solid var(--rule);border-radius:9px;">
+              <div style="font-size:18px;margin-bottom:7px;">👥</div>
+              <div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:4px;">HR / People</div>
+              <div style="font-size:11px;color:var(--ink3);line-height:1.5;">Group HR Manager, HRBP, HR Coordinator, Payroll Officer, TA Coordinator</div>
+              <div style="margin-top:8px;"><span class="pill p-blue">KPIs: TA, Compliance, Engagement</span></div>
+            </div>
+            <div style="padding:13px 14px;background:var(--paper);border:1px solid var(--rule);border-radius:9px;">
+              <div style="font-size:18px;margin-bottom:7px;">💰</div>
+              <div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:4px;">Finance</div>
+              <div style="font-size:11px;color:var(--ink3);line-height:1.5;">Finance Officer, Payroll Officer, Compliance Officer, Country Finance Lead</div>
+              <div style="margin-top:8px;"><span class="pill p-gold">KPIs: Accuracy, Compliance, Timeliness</span></div>
+            </div>
+            <div style="padding:13px 14px;background:var(--paper);border:1px solid var(--rule);border-radius:9px;">
+              <div style="font-size:18px;margin-bottom:7px;">🗂</div>
+              <div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:4px;">Admin / Support</div>
+              <div style="font-size:11px;color:var(--ink3);line-height:1.5;">Site Admin, EA, Logistics Coordinator, Office Manager</div>
+              <div style="margin-top:8px;"><span class="pill p-grey">KPIs: Reliability, Quality, Speed</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         KPIS BY ROLE TYPE
+    ══════════════════════ -->
+    <div id="tab-goalsetting" class="tab">
+      <div class="sl">KPI library · by role category · select a category below</div>
+
+      <div class="role-tabs">
+        <button class="rt-btn active" onclick="switchRole('ops',this)">⛏ Operations</button>
+        <button class="rt-btn" onclick="switchRole('hr',this)">👥 HR / People</button>
+        <button class="rt-btn" onclick="switchRole('fin',this)">💰 Finance</button>
+        <button class="rt-btn" onclick="switchRole('admin',this)">🗂 Admin / Support</button>
+      </div>
+
+      <!-- OPS KPIs -->
+      <div id="role-ops" class="role-panel active">
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--mint);color:var(--forest2);">⛏</div><div><div class="card-tt">Operations KPI Library</div><div class="card-st">Site Manager · Drilling Supervisor · Senior Driller · HSE Officer</div></div></div>
+          <div class="card-bd" style="padding:0;"><div class="sx">
+            <table class="kpi-table">
+              <thead><tr><th>KPI</th><th>Applies To</th><th>How Measured</th><th>Target (Typical)</th><th>Weight</th><th>Category</th></tr></thead>
+              <tbody>
+                <tr><td>HSE — Zero LTI (Lost Time Injuries)</td><td>All ops roles</td><td>Site incident log — zero LTI recorded in review period</td><td>0 LTI per year</td><td style="font-family:'DM Mono',monospace;">25%</td><td><span class="pill p-red">Safety</span></td></tr>
+                <tr><td>HSE — Near-Miss Reporting Rate</td><td>All ops roles</td><td>Number of near-misses reported vs industry baseline. Higher = better safety culture.</td><td>100% reported</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-red">Safety</span></td></tr>
+                <tr><td>Drilling Meterage vs Program Target</td><td>Drilling Supervisor, Senior Driller</td><td>Actual metres drilled vs program target. Monthly tracking.</td><td>≥90% of target</td><td style="font-family:'DM Mono',monospace;">20%</td><td><span class="pill p-forest">Output</span></td></tr>
+                <tr><td>Drill Rig Uptime / Availability</td><td>Drilling Supervisor, Equipment Tech</td><td>% of scheduled operating hours the rig was available and operational</td><td>≥85% availability</td><td style="font-family:'DM Mono',monospace;">15%</td><td><span class="pill p-forest">Output</span></td></tr>
+                <tr><td>Core Recovery Rate</td><td>Senior Driller, Drilling Supervisor</td><td>% of core recovered vs hole depth. Quality metric.</td><td>≥90% recovery</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-forest">Quality</span></td></tr>
+                <tr><td>Site Compliance — Permits and Licences</td><td>Site Manager</td><td>All required site permits current and valid throughout year. Binary pass/fail.</td><td>100% compliant</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-blue">Compliance</span></td></tr>
+                <tr><td>Crew Retention Rate</td><td>Site Manager, Drilling Supervisor</td><td>% of crew who remained employed at site through review period vs attrition</td><td>≥80% retention</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-gold">People</span></td></tr>
+                <tr><td>Budget Adherence — Site Operating Cost</td><td>Site Manager</td><td>Actual vs budgeted site operating costs. Variance within tolerance.</td><td>Within ±10%</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-gold">Commercial</span></td></tr>
+                <tr><td>HSE Training Completion</td><td>HSE Officer</td><td>% of site crew completing mandatory HSE training by due date</td><td>100% on time</td><td style="font-family:'DM Mono',monospace;">15%</td><td><span class="pill p-red">Safety</span></td></tr>
+                <tr><td>Incident Investigation Quality</td><td>HSE Officer</td><td>% of incidents with completed RCA (Root Cause Analysis) within 5 business days</td><td>100% within 5d</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-red">Safety</span></td></tr>
+              </tbody>
+            </table>
+          </div></div>
+        </div>
+        <div class="note">For a Site Manager, a typical goal set is: (1) Zero LTI — 25%, (2) Drilling program meterage — 20%, (3) Rig availability — 15%, (4) Permit compliance — 10%, (5) Crew retention — 10%, plus one development goal — 20%. Always include at least one safety KPI weighted at 20%+ for any site role. Safety is non-negotiable.</div>
+      </div>
+
+      <!-- HR KPIs -->
+      <div id="role-hr" class="role-panel">
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--blue-l);color:var(--blue);">👥</div><div><div class="card-tt">HR / People KPI Library</div><div class="card-st">Group HR Manager · HRBP · Payroll Officer · TA Coordinator</div></div></div>
+          <div class="card-bd" style="padding:0;"><div class="sx">
+            <table class="kpi-table">
+              <thead><tr><th>KPI</th><th>Applies To</th><th>How Measured</th><th>Target (Typical)</th><th>Weight</th><th>Category</th></tr></thead>
+              <tbody>
+                <tr><td>Time to Fill — Critical Roles</td><td>HR Manager, TA Coordinator</td><td>Average days from requisition open to offer accepted for Priority Critical roles</td><td>≤70 days</td><td style="font-family:'DM Mono',monospace;">20%</td><td><span class="pill p-forest">TA</span></td></tr>
+                <tr><td>Offer Accept Rate</td><td>HR Manager, TA Coordinator</td><td>% of verbal offers accepted by candidates</td><td>≥75%</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-forest">TA</span></td></tr>
+                <tr><td>Payroll Accuracy Rate</td><td>HR Manager, Payroll Officer</td><td>% of payroll cycles processed with zero errors requiring correction</td><td>≥99%</td><td style="font-family:'DM Mono',monospace;">20%</td><td><span class="pill p-blue">Payroll</span></td></tr>
+                <tr><td>Payroll On-Time Rate</td><td>Payroll Officer</td><td>% of payroll cycles paid on or before the scheduled date</td><td>100%</td><td style="font-family:'DM Mono',monospace;">15%</td><td><span class="pill p-blue">Payroll</span></td></tr>
+                <tr><td>Work Permit — Zero Lapses</td><td>HR Manager</td><td>No employee permit expiry without renewal in progress at least 60 days prior</td><td>0 lapses</td><td style="font-family:'DM Mono',monospace;">15%</td><td><span class="pill p-red">Compliance</span></td></tr>
+                <tr><td>HR Policy Compliance Rate</td><td>HR Manager, HRBP</td><td>% of employees with signed employment contracts, correct statutory enrolments, complete files</td><td>100%</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-red">Compliance</span></td></tr>
+                <tr><td>Probation Completion Rate</td><td>HR Manager</td><td>% of new hire probations confirmed, extended, or terminated with documented process before end of probation period</td><td>100% on time</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-gold">Process</span></td></tr>
+                <tr><td>Employee Retention Rate (non-ops)</td><td>HR Manager, HRBP</td><td>% of non-ops employees who remained employed through the review period</td><td>≥85%</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-gold">Retention</span></td></tr>
+                <tr><td>HR Strategic Project Delivery</td><td>HR Manager</td><td>Number of strategic HR projects (PM system, C&amp;B framework, policy manual etc.) delivered on plan</td><td>Per plan</td><td style="font-family:'DM Mono',monospace;">15%</td><td><span class="pill p-blue">Strategic</span></td></tr>
+              </tbody>
+            </table>
+          </div></div>
+        </div>
+        <div class="insight"><strong>For your own review (Group HR Manager):</strong> A strong goal set for CHRO positioning should include at least one strategic HR project goal (not just transactional) — e.g. "Design and implement PM Framework for all Valentis employees by Q3 2026." This signals you are operating at strategic level, not just payroll and TA administration.</div>
+      </div>
+
+      <!-- FINANCE KPIs -->
+      <div id="role-fin" class="role-panel">
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--gold-l);color:var(--gold);">💰</div><div><div class="card-tt">Finance KPI Library</div><div class="card-st">Finance Officer · Compliance Officer · Country Finance Lead</div></div></div>
+          <div class="card-bd" style="padding:0;"><div class="sx">
+            <table class="kpi-table">
+              <thead><tr><th>KPI</th><th>Applies To</th><th>How Measured</th><th>Target</th><th>Weight</th><th>Category</th></tr></thead>
+              <tbody>
+                <tr><td>Month-End Close On Time</td><td>Finance Officer, Country Finance Lead</td><td>% of monthly close cycles completed by day 5 of following month</td><td>100% by D+5</td><td style="font-family:'DM Mono',monospace;">20%</td><td><span class="pill p-forest">Timeliness</span></td></tr>
+                <tr><td>Financial Reporting Accuracy</td><td>Finance Officer, Country Finance Lead</td><td>% of reports issued with no material errors requiring restatement</td><td>≥99%</td><td style="font-family:'DM Mono',monospace;">20%</td><td><span class="pill p-blue">Accuracy</span></td></tr>
+                <tr><td>Tax Filing Compliance</td><td>Finance Officer, Compliance Officer</td><td>All statutory tax filings submitted on time with no penalties incurred</td><td>100% on time</td><td style="font-family:'DM Mono',monospace;">20%</td><td><span class="pill p-red">Compliance</span></td></tr>
+                <tr><td>Vendor Payment On Time</td><td>Finance Officer</td><td>% of approved invoices paid within agreed terms</td><td>≥95%</td><td style="font-family:'DM Mono',monospace;">15%</td><td><span class="pill p-gold">Process</span></td></tr>
+                <tr><td>Budget vs Actual Variance Reporting</td><td>Country Finance Lead</td><td>Monthly budget vs actual reports issued with variance commentary on time</td><td>By D+7 monthly</td><td style="font-family:'DM Mono',monospace;">15%</td><td><span class="pill p-forest">Reporting</span></td></tr>
+                <tr><td>Audit Readiness</td><td>Compliance Officer, Country Finance Lead</td><td>% of audit requests fulfilled within agreed turnaround. No qualified audit opinion.</td><td>Unqualified audit</td><td style="font-family:'DM Mono',monospace;">10%</td><td><span class="pill p-red">Compliance</span></td></tr>
+              </tbody>
+            </table>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- ADMIN KPIs -->
+      <div id="role-admin" class="role-panel">
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--paper2);color:var(--ink3);">🗂</div><div><div class="card-tt">Admin / Support KPI Library</div><div class="card-st">Site Admin · EA · Logistics Coordinator · Office Manager</div></div></div>
+          <div class="card-bd" style="padding:0;"><div class="sx">
+            <table class="kpi-table">
+              <thead><tr><th>KPI</th><th>Applies To</th><th>How Measured</th><th>Target</th><th>Weight</th><th>Category</th></tr></thead>
+              <tbody>
+                <tr><td>Request Turnaround Time</td><td>EA, Site Admin, Office Manager</td><td>% of internal requests acknowledged within 4 hours and completed within agreed timeframe</td><td>≥95% on time</td><td style="font-family:'DM Mono',monospace;">25%</td><td><span class="pill p-forest">Responsiveness</span></td></tr>
+                <tr><td>Document / Filing Accuracy</td><td>Site Admin, EA</td><td>% of documents filed, tracked, or processed without errors requiring correction</td><td>≥98%</td><td style="font-family:'DM Mono',monospace;">20%</td><td><span class="pill p-blue">Accuracy</span></td></tr>
+                <tr><td>Logistics — On-Time Delivery</td><td>Logistics Coordinator</td><td>% of site supply deliveries arriving on or before scheduled date</td><td>≥90%</td><td style="font-family:'DM Mono',monospace;">25%</td><td><span class="pill p-forest">Output</span></td></tr>
+                <tr><td>Travel and Accommodation Booking Accuracy</td><td>EA, Site Admin</td><td>% of bookings made correctly first time (no rebooking due to error)</td><td>≥98%</td><td style="font-family:'DM Mono',monospace;">15%</td><td><span class="pill p-blue">Accuracy</span></td></tr>
+                <tr><td>Stakeholder Satisfaction</td><td>All admin roles</td><td>Rating from direct manager and 2–3 key internal stakeholders at review. Scale 1–5.</td><td>≥4/5</td><td style="font-family:'DM Mono',monospace;">15%</td><td><span class="pill p-gold">Quality</span></td></tr>
+              </tbody>
+            </table>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         SMART GOAL BUILDER
+    ══════════════════════ -->
+    <div id="tab-smartbuilder" class="tab">
+      <div class="sl">SMART goal builder · generate properly structured goals</div>
+
+      <div class="smart-builder">
+        <div class="sb-head">
+          <div>
+            <div class="sb-title">SMART Goal Framework</div>
+            <div class="sb-sub">Every goal at Valentis must pass the SMART test before being agreed and logged</div>
+          </div>
+        </div>
+        <div class="sb-body">
+          <div class="smart-letters">
+            <div class="sl-card"><div class="sl-letter">S</div><div class="sl-word">Specific</div><div class="sl-desc">Clear, unambiguous description of what will be achieved and how it will be done.</div><div class="sl-ex">Bad: "Improve safety." Good: "Reduce near-miss incidents by 20% through weekly toolbox talks."</div></div>
+            <div class="sl-card"><div class="sl-letter">M</div><div class="sl-word">Measurable</div><div class="sl-desc">Quantifiable outcome — a number, percentage, or binary yes/no that cannot be disputed.</div><div class="sl-ex">Bad: "Process payroll well." Good: "Achieve 99% payroll accuracy across all 4 countries."</div></div>
+            <div class="sl-card"><div class="sl-letter">A</div><div class="sl-word">Achievable</div><div class="sl-desc">Stretching but realistic given the employee's role, resources, and context. Not a guaranteed pass.</div><div class="sl-ex">Bad: "Fill all 13 vacancies in Q1." Good: "Fill 4 critical roles by end of Q2 2026."</div></div>
+            <div class="sl-card"><div class="sl-letter">R</div><div class="sl-word">Relevant</div><div class="sl-desc">Connected to business objectives and the employee's actual scope of influence.</div><div class="sl-ex">Bad: "Learn a new software." Good: "Implement PM system that covers all 28 Valentis employees."</div></div>
+            <div class="sl-card"><div class="sl-letter">T</div><div class="sl-word">Time-bound</div><div class="sl-desc">Specific deadline or milestones. Not "this year" — a concrete date or review point.</div><div class="sl-ex">Bad: "Complete HR audit eventually." Good: "Complete HR compliance audit by 31 March 2026."</div></div>
+          </div>
+
+          <div style="background:var(--paper);border:1px solid var(--rule);border-radius:var(--r);padding:18px;margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:14px;">Build a Goal</div>
+            <div class="fr3">
+              <div class="fg"><label>Employee Name</label><input id="g-name" placeholder="e.g. Arsen Tulebayev"/></div>
+              <div class="fg"><label>Role</label><input id="g-role" placeholder="e.g. Site Manager"/></div>
+              <div class="fg"><label>Goal Category</label>
+                <select id="g-cat">
+                  <option value="">Select…</option>
+                  <option>Safety</option><option>Output / Delivery</option><option>Quality</option>
+                  <option>Compliance</option><option>People / Team</option><option>Commercial</option>
+                  <option>TA / Recruitment</option><option>Strategic Project</option><option>Development</option>
+                </select>
+              </div>
+            </div>
+            <div class="fg"><label>What will be achieved? (Specific)</label><textarea id="g-what" placeholder="Describe clearly what this person will accomplish. Avoid vague language."></textarea></div>
+            <div class="fr2">
+              <div class="fg"><label>How will it be measured? (Measurable)</label><input id="g-measure" placeholder="e.g. %, number, binary pass/fail, rating score"/></div>
+              <div class="fg"><label>Target / Threshold</label><input id="g-target" placeholder="e.g. ≥90%, 0 incidents, 100% on time"/></div>
+            </div>
+            <div class="fr2">
+              <div class="fg"><label>Deadline or Key Milestones (Time-bound)</label><input id="g-deadline" placeholder="e.g. 31 December 2026 / Q2 milestone: draft complete"/></div>
+              <div class="fg"><label>Weighting (% of total review)</label>
+                <select id="g-weight">
+                  <option value="5">5%</option><option value="10">10%</option><option value="15">15%</option>
+                  <option value="20" selected>20%</option><option value="25">25%</option><option value="30">30%</option>
+                </select>
+              </div>
+            </div>
+            <div class="fg"><label>Resources / Support Required (Achievable context)</label><input id="g-resources" placeholder="e.g. Budget approved, team support from Ops Manager, system access required"/></div>
+            <div style="display:flex;gap:10px;margin-top:4px;">
+              <button class="btn btn-forest" onclick="buildGoal()">Generate Goal Statement</button>
+              <button class="btn btn-out" onclick="clearGoal()">Clear</button>
+            </div>
+          </div>
+
+          <div class="goal-output" id="goal-output">
+            <div class="go-label">Generated SMART Goal Statement</div>
+            <div class="go-text" id="go-text"></div>
+            <div class="go-meta" id="go-meta"></div>
+            <button class="copy-goal-btn" onclick="copyGoal()">Copy Goal Statement</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--mint);color:var(--forest2);">◈</div><div><div class="card-tt">Goal-Setting Rules at Valentis</div><div class="card-sub">Non-negotiable standards for all managers</div></div></div>
+        <div class="card-bd">
+          <div class="g2">
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="padding:10px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;border-left:3px solid var(--forest3);"><strong style="color:var(--ink);">3–5 goals maximum.</strong> More than 5 goals means no priorities. Fewer than 3 means insufficient accountability. The sweet spot is 4.</div>
+              <div style="padding:10px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;border-left:3px solid var(--forest3);"><strong style="color:var(--ink);">Weights must add to 100%.</strong> If a manager sets 4 goals and weights are 25/25/25/25 — fine. If weights add to 90% — incomplete. HR reviews all goal sheets before cycle is locked.</div>
+              <div style="padding:10px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;border-left:3px solid var(--forest3);"><strong style="color:var(--ink);">At least one development goal.</strong> Every employee's goal set must include at least one goal related to their own development — not just deliverables.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="padding:10px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;border-left:3px solid var(--forest3);"><strong style="color:var(--ink);">Safety always weighted ≥20% for ops roles.</strong> No site or drilling role may have a goal set where HSE/safety accounts for less than 20% of the total review score.</div>
+              <div style="padding:10px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;border-left:3px solid var(--forest3);"><strong style="color:var(--ink);">Goals signed by both parties.</strong> A goal is not a goal until the employee has signed the Goal Agreement Form. Manager cannot score against unsigned goals.</div>
+              <div style="padding:10px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;border-left:3px solid var(--forest3);"><strong style="color:var(--ink);">Goals may be updated mid-cycle.</strong> If business context changes significantly (new project, role change, site disruption), goals may be amended with HR approval. Both parties re-sign.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         GOAL CASCADE
+    ══════════════════════ -->
+    <div id="tab-cascade" class="tab">
+      <div class="sl">How goals cascade from company to individual</div>
+
+      <div class="cascade-diagram">
+        <div class="cd-head">
+          <div class="cd-title">Valentis Goal Cascade — 2026</div>
+          <div class="cd-sub">Company strategy → department → individual · 3-level alignment</div>
+        </div>
+        <div class="cd-body">
+          <!-- Level 1: Company -->
+          <div class="cascade-level">
+            <div style="max-width:500px;width:100%;">
+              <div class="cl-node primary">
+                <div class="cln-level">Level 1 · Company</div>
+                <div class="cln-title">Valentis 2026 Strategic Goals</div>
+                <div class="cln-desc">Expand drilling programs across 4 SEA countries · Build operational and corporate infrastructure for scale · Achieve ESG and regulatory compliance baseline</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cascade-arrow">↓</div>
+
+          <!-- Level 2: Department -->
+          <div class="cascade-level">
+            <div class="cl-row">
+              <div class="cl-node secondary">
+                <div class="cln-level">Operations</div>
+                <div class="cln-title" style="color:var(--forest2);">Deliver drilling program targets safely across all sites</div>
+                <div class="cln-desc">90%+ program meterage · Zero LTI · Site compliance · Crew retention</div>
+              </div>
+              <div class="cl-node secondary">
+                <div class="cln-level">HR / People</div>
+                <div class="cln-title" style="color:var(--forest2);">Build the HR foundation and fill critical vacancies</div>
+                <div class="cln-desc">TA: fill 8 roles by Q3 · PM system live · Payroll 99%+ accuracy · Zero permit lapses</div>
+              </div>
+              <div class="cl-node secondary">
+                <div class="cln-level">Finance</div>
+                <div class="cln-title" style="color:var(--forest2);">Accurate, compliant, on-time financial operations</div>
+                <div class="cln-desc">D+5 close · Tax compliance · Budget vs actual reporting · Audit readiness</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cascade-arrow">↓</div>
+
+          <!-- Level 3: Individual examples -->
+          <div style="margin-bottom:8px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);text-align:center;">Level 3 · Individual Goal Examples</div>
+          <div class="cascade-examples">
+            <div class="ce-col">
+              <div class="ce-head">Site Manager — Laos</div>
+              <div class="ce-body">
+                <div class="ce-item"><strong>Safety (25%)</strong>Zero LTI. 100% near-miss reported. Monthly HSE drill completed.</div>
+                <div class="ce-item"><strong>Drilling Output (20%)</strong>Achieve 90% of program meterage target for Laos operations.</div>
+                <div class="ce-item"><strong>Crew Retention (15%)</strong>Retain 80%+ of core site crew through H1 2026.</div>
+                <div class="ce-item"><strong>Permit Compliance (15%)</strong>All site permits current with zero lapses.</div>
+                <div class="ce-item"><strong>Development (25%)</strong>Complete Site Operations Leadership programme by Q3.</div>
+              </div>
+            </div>
+            <div class="ce-col">
+              <div class="ce-head">Group HR Manager</div>
+              <div class="ce-body">
+                <div class="ce-item"><strong>TA Delivery (20%)</strong>Fill 8 approved roles by Q3 2026. TTF for critical roles ≤70 days.</div>
+                <div class="ce-item"><strong>Payroll (20%)</strong>99%+ accuracy. 100% on-time across all 4 countries.</div>
+                <div class="ce-item"><strong>Compliance (15%)</strong>Zero permit lapses. 100% employment contracts signed.</div>
+                <div class="ce-item"><strong>Strategic (25%)</strong>PM system designed and live for all employees by Q3.</div>
+                <div class="ce-item"><strong>Development (20%)</strong>Complete AIHR C&amp;B certification by Q4.</div>
+              </div>
+            </div>
+            <div class="ce-col">
+              <div class="ce-head">Finance Officer — Thailand</div>
+              <div class="ce-body">
+                <div class="ce-item"><strong>Close Process (20%)</strong>Month-end close completed by D+5 for all 12 months.</div>
+                <div class="ce-item"><strong>Tax Compliance (25%)</strong>All Thai statutory filings on time. Zero penalties.</div>
+                <div class="ce-item"><strong>Accuracy (20%)</strong>Financial reports with zero material errors requiring restatement.</div>
+                <div class="ce-item"><strong>Vendor Payments (15%)</strong>95%+ invoices paid within agreed terms.</div>
+                <div class="ce-item"><strong>Development (20%)</strong>Obtain CPA Thailand certification by end of 2026.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">Goal cascade does not mean every individual goal must copy department language verbatim. It means individual goals, when aggregated, should drive department objectives — which in turn drive company strategy. HR reviews all goal sets at the start of each cycle to check alignment before locking.</div>
+    </div>
+
+    <!-- ══════════════════════
+         WEIGHTING SYSTEM
+    ══════════════════════ -->
+    <div id="tab-weighting" class="tab">
+      <div class="sl">Goal weighting framework · how to allocate weight by role</div>
+
+      <div class="g2" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--mint);color:var(--forest2);">%</div><div><div class="card-tt">Weighting Principles</div><div class="card-sub">How to assign weight — the reasoning behind the numbers</div></div></div>
+          <div class="card-bd">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="padding:10px 12px;background:var(--paper);border-radius:7px;border:1px solid var(--rule);font-size:12px;color:var(--ink2);line-height:1.55;"><strong style="color:var(--ink);display:block;margin-bottom:3px;">Weight = Importance to the business, not difficulty.</strong>A goal weighted at 25% should be the most critical outcome for that role this year — not necessarily the hardest to achieve.</div>
+              <div style="padding:10px 12px;background:var(--paper);border-radius:7px;border:1px solid var(--rule);font-size:12px;color:var(--ink2);line-height:1.55;"><strong style="color:var(--ink);display:block;margin-bottom:3px;">No single goal above 30%.</strong>If one goal carries more than 30% weight, it dominates the review. An employee who achieves everything else but misses one major goal can fail the review unfairly.</div>
+              <div style="padding:10px 12px;background:var(--paper);border-radius:7px;border:1px solid var(--rule);font-size:12px;color:var(--ink2);line-height:1.55;"><strong style="color:var(--ink);display:block;margin-bottom:3px;">Development goals should carry 15–25% weight.</strong>If development goals are weighted at 5%, the message is that development does not matter. Weight communicates priority.</div>
+              <div style="padding:10px 12px;background:var(--paper);border-radius:7px;border:1px solid var(--rule);font-size:12px;color:var(--ink2);line-height:1.55;"><strong style="color:var(--ink);display:block;margin-bottom:3px;">Weights must be agreed at the start, not assigned at review.</strong>Assigning weights after the fact is unfair. The employee must know what counts most before the year begins.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--gold-l);color:var(--gold);">◈</div><div><div class="card-tt">Scoring Calculation</div><div class="card-sub">How the final review score is calculated</div></div></div>
+          <div class="card-bd">
+            <div style="padding:14px;background:var(--forest);border-radius:9px;margin-bottom:12px;">
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:8px;">FORMULA</div>
+              <div style="font-family:'DM Serif Display',serif;font-size:17px;color:#fff;line-height:1.6;">Final Score = Σ (Goal Rating × Goal Weight)</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;">Sum of each goal's score (1–5) multiplied by its weight</div>
+            </div>
+            <div style="padding:12px 14px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;">
+              <div style="font-family:'DM Mono',monospace;font-size:8.5px;color:var(--ink4);margin-bottom:9px;letter-spacing:1px;text-transform:uppercase;">Example — Site Manager</div>
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:8px;font-size:11.5px;align-items:center;padding:5px 0;border-bottom:1px solid var(--rule);">
+                  <span style="color:var(--ink2);">Safety — Zero LTI</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">25%</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--forest);">Rating 5</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--ink);">= 1.25</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:8px;font-size:11.5px;align-items:center;padding:5px 0;border-bottom:1px solid var(--rule);">
+                  <span style="color:var(--ink2);">Drilling Output</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">20%</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--forest);">Rating 4</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--ink);">= 0.80</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:8px;font-size:11.5px;align-items:center;padding:5px 0;border-bottom:1px solid var(--rule);">
+                  <span style="color:var(--ink2);">Crew Retention</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">15%</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--forest);">Rating 3</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--ink);">= 0.45</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:8px;font-size:11.5px;align-items:center;padding:5px 0;border-bottom:1px solid var(--rule);">
+                  <span style="color:var(--ink2);">Permit Compliance</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">15%</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--forest);">Rating 5</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--ink);">= 0.75</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:8px;font-size:11.5px;align-items:center;padding:5px 0;">
+                  <span style="color:var(--ink2);">Development</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">25%</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);">Rating 4</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--ink);">= 1.00</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:8px;font-size:12px;font-weight:700;padding:8px 0 0;border-top:2px solid var(--rule);">
+                  <span style="color:var(--ink);">Final Score</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--forest);">100%</span>
+                  <span></span>
+                  <span style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--forest);">4.25</span>
+                </div>
+              </div>
+              <div style="margin-top:8px;font-size:11px;color:var(--ink3);">Score 4.25 = <strong>Strong</strong> rating. Salary review: eligible for merit increase.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--mint);color:var(--forest2);">☰</div><div><div class="card-tt">Recommended Weighting Templates by Role Type</div><div class="card-sub">Starting points — adjust to context but stay within guardrails</div></div></div>
+        <div class="card-bd" style="padding:0;"><div class="sx">
+          <table class="weight-tbl">
+            <thead><tr><th>Role Type</th><th>Safety / Compliance</th><th>Core Output / Delivery</th><th>Quality</th><th>People / Stakeholder</th><th>Development</th><th>Commercial</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Site Manager</td>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="wbar-wrap"><div class="wbar" style="width:70%;background:var(--red-b);"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;">25–35%</span></div></td>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="wbar-wrap"><div class="wbar" style="width:60%;"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;">20–25%</span></div></td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">10%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">10–15%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">15–20%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">10%</td>
+              </tr>
+              <tr>
+                <td>Drilling Supervisor</td>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="wbar-wrap"><div class="wbar" style="width:80%;background:var(--red-b);"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;">30–35%</span></div></td>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="wbar-wrap"><div class="wbar" style="width:60%;"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;">25–30%</span></div></td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">10–15%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">10%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">15%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">—</td>
+              </tr>
+              <tr>
+                <td>Group HR Manager</td>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="wbar-wrap"><div class="wbar" style="width:40%;background:var(--blue-b);"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;">15%</span></div></td>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="wbar-wrap"><div class="wbar" style="width:50%;"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;">20%</span></div></td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">15%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">10%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">20%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">20% (strategic)</td>
+              </tr>
+              <tr>
+                <td>Finance Officer</td>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="wbar-wrap"><div class="wbar" style="width:55%;background:var(--blue-b);"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;">20–25%</span></div></td>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="wbar-wrap"><div class="wbar" style="width:65%;"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;">25%</span></div></td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">20%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">—</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">15–20%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">—</td>
+              </tr>
+              <tr>
+                <td>Admin / Support</td>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="wbar-wrap"><div class="wbar" style="width:25%;background:var(--blue-b);"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;">10%</span></div></td>
+                <td><div style="display:flex;align-items:center;gap:8px;"><div class="wbar-wrap"><div class="wbar" style="width:70%;"></div></div><span style="font-family:'DM Mono',monospace;font-size:10px;">30%</span></div></td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">25%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">20%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">15%</td>
+                <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         REVIEW CYCLE CALENDAR
+    ══════════════════════ -->
+    <div id="tab-cycle" class="tab">
+      <div class="sl">2026 review cycle · full year calendar · key dates</div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--mint);color:var(--forest2);">◷</div><div><div class="card-tt">2026 PM Calendar — Key Dates</div><div class="card-sub">HR-led milestones · all managers must comply</div></div></div>
+          <div class="card-bd">
+            <div class="timeline">
+              <div class="tl-item">
+                <div class="tl-dot"></div>
+                <div class="tl-month">January 2026</div>
+                <div class="tl-title">Goal-Setting Window Opens</div>
+                <div class="tl-desc">HR distributes Goal Agreement Forms to all managers. Managers and employees agree 3–5 goals and sign off. Deadline: 31 January.</div>
+                <span class="tl-chip" style="background:var(--mint);color:var(--forest2);">HR Action: Distribute forms, follow up on late submissions</span>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot"></div>
+                <div class="tl-month">February 2026</div>
+                <div class="tl-title">Goal Sheets Locked</div>
+                <div class="tl-desc">HR reviews all submitted goal sheets for SMART compliance, correct weighting, and cascade alignment. Goals locked in system. Any amendments after this require HR approval.</div>
+                <span class="tl-chip" style="background:var(--mint);color:var(--forest2);">HR Action: Review, approve, file all goal sheets</span>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot now"></div>
+                <div class="tl-month">March 2026 ← Now</div>
+                <div class="tl-title">Q1 Informal Check-In</div>
+                <div class="tl-desc">Manager-led informal conversation — not scored, not documented formally. Purpose: early flag of any performance issues or goal changes. HR sends reminder to all managers.</div>
+                <span class="tl-chip" style="background:var(--gold-l);color:var(--gold);">Current Month — HR sends reminder this week</span>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot upcoming"></div>
+                <div class="tl-month">July 2026</div>
+                <div class="tl-title">Mid-Year Review</div>
+                <div class="tl-desc">Structured mid-year review for all employees. Progress against goals assessed. Development needs identified. No final rating — but performance concerns must be documented now if present.</div>
+                <span class="tl-chip" style="background:var(--paper2);color:var(--ink3);">Upcoming · HR sends forms in June</span>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot upcoming"></div>
+                <div class="tl-month">October 2026</div>
+                <div class="tl-title">Q3 Check-In + Annual Prep</div>
+                <div class="tl-desc">Final informal check-in before annual review. Manager begins collecting evidence against goals. HR circulates annual review forms and calibration guidance.</div>
+                <span class="tl-chip" style="background:var(--paper2);color:var(--ink3);">Upcoming</span>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot upcoming"></div>
+                <div class="tl-month">November–December 2026</div>
+                <div class="tl-title">Annual Review Window</div>
+                <div class="tl-desc">All annual reviews completed. Self-assessments submitted by employee (15 Nov), manager assessments completed (30 Nov), calibration session with HR (Dec 1–15), final ratings issued (15–31 Dec).</div>
+                <span class="tl-chip" style="background:var(--paper2);color:var(--ink3);">Upcoming · Biggest HR event of Q4</span>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot upcoming"></div>
+                <div class="tl-month">January 2027</div>
+                <div class="tl-title">Salary Review + New Cycle Begins</div>
+                <div class="tl-desc">Annual review ratings feed into salary review recommendations. COO/CEO approves merit increases. New goal-setting window opens for 2027 cycle.</div>
+                <span class="tl-chip" style="background:var(--paper2);color:var(--ink3);">Upcoming</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-hd"><div class="card-ic" style="background:var(--gold-l);color:var(--gold);">!</div><div><div class="card-tt">Manager Responsibilities</div><div class="card-sub">What every people manager must do in the PM cycle</div></div></div>
+            <div class="card-bd">
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="padding:9px 11px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;">✓ <strong>Set goals with each direct report by 31 Jan</strong> — not for them, with them</div>
+                <div style="padding:9px 11px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;">✓ <strong>Conduct quarterly informal check-ins</strong> — brief, documented in a line or two</div>
+                <div style="padding:9px 11px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;">✓ <strong>Raise performance concerns in writing before mid-year</strong> — not for the first time at annual</div>
+                <div style="padding:9px 11px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;">✓ <strong>Complete mid-year and annual reviews on time</strong> — late submissions are escalated to COO</div>
+                <div style="padding:9px 11px;background:var(--paper);border:1px solid var(--rule);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;">✓ <strong>Calibrate ratings with HR before finalising</strong> — no rating is issued without HR review</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><div class="card-ic" style="background:var(--red-l);color:var(--red);">⚑</div><div><div class="card-tt">Common PM Failures to Avoid</div></div></div>
+            <div class="card-bd">
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="padding:9px 11px;background:var(--red-l);border:1px solid var(--red-b);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;border-left:3px solid var(--red);">Saving all feedback for the annual review — then surprising the employee with a 2 rating</div>
+                <div style="padding:9px 11px;background:var(--red-l);border:1px solid var(--red-b);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;border-left:3px solid var(--red);">Rating everyone a 3 to avoid difficult conversations — "grade inflation" destroys system credibility</div>
+                <div style="padding:9px 11px;background:var(--red-l);border:1px solid var(--red-b);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;border-left:3px solid var(--red);">Setting goals so vague they cannot be measured — "improve team communication"</div>
+                <div style="padding:9px 11px;background:var(--red-l);border:1px solid var(--red-b);border-radius:7px;font-size:12px;color:var(--ink2);line-height:1.5;border-left:3px solid var(--red);">Giving a rating without evidence — manager must bring documented examples to calibration</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</div><!-- main -->
+</div><!-- shell -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── NAV ──
+const meta = {
+  overview:     ['Performance Management — Framework Overview','PM TOOL 1 OF 5 · DESIGN PRINCIPLES & RATING SCALE'],
+  goalsetting:  ['Goal-Setting — KPI Library by Role','SELECT A ROLE CATEGORY TO VIEW KPIs'],
+  smartbuilder: ['SMART Goal Builder','BUILD AND GENERATE PROPERLY STRUCTURED GOALS'],
+  cascade:      ['Goal Cascade Framework','COMPANY → DEPARTMENT → INDIVIDUAL ALIGNMENT'],
+  weighting:    ['Weighting System','HOW TO ALLOCATE GOAL WEIGHTS · SCORING FORMULA'],
+  cycle:        ['Review Cycle Calendar','2026 FULL YEAR PM CALENDAR · KEY DATES'],
+};
+function sw(id, btn) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  const m = meta[id]||[id,''];
+  document.getElementById('tb-title').textContent = m[0];
+  document.getElementById('tb-sub').textContent   = m[1];
+}
+
+// ── ROLE TABS ──
+function switchRole(id, btn) {
+  document.querySelectorAll('.rt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.role-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('role-'+id).classList.add('active');
+}
+
+// ── SMART GOAL BUILDER ──
+function buildGoal() {
+  const name     = document.getElementById('g-name').value.trim();
+  const role     = document.getElementById('g-role').value.trim();
+  const cat      = document.getElementById('g-cat').value;
+  const what     = document.getElementById('g-what').value.trim();
+  const measure  = document.getElementById('g-measure').value.trim();
+  const target   = document.getElementById('g-target').value.trim();
+  const deadline = document.getElementById('g-deadline').value.trim();
+  const weight   = document.getElementById('g-weight').value;
+  const resources= document.getElementById('g-resources').value.trim();
+
+  if (!what || !measure || !target || !deadline) {
+    showToast('Please complete: What, How measured, Target, and Deadline');
+    return;
+  }
+
+  const roleStr = role ? ` (${role})` : '';
+  const nameStr = name ? name + roleStr : 'Employee' + roleStr;
+  const catStr  = cat  ? ` [${cat}]` : '';
+
+  const statement = `${nameStr} will ${what}.\n\nThis goal will be considered met when ${measure} reaches ${target}. Progress will be tracked ${deadline.toLowerCase().includes('monthly')||deadline.toLowerCase().includes('quarterly') ? deadline : 'and the target must be achieved by ' + deadline}.\n\n${resources ? 'Resources / support required: ' + resources + '.' : ''}`;
+
+  document.getElementById('go-text').textContent = statement.trim();
+  document.getElementById('go-meta').innerHTML = `
+    <div class="gm-item"><div class="gm-lbl">Category</div><div class="gm-val">${cat||'—'}</div></div>
+    <div class="gm-item"><div class="gm-lbl">Measure</div><div class="gm-val">${measure}</div></div>
+    <div class="gm-item"><div class="gm-lbl">Target</div><div class="gm-val">${target}</div></div>
+    <div class="gm-item"><div class="gm-lbl">Weight</div><div class="gm-val">${weight}%</div></div>`;
+  document.getElementById('goal-output').style.display = 'block';
+  showToast('Goal statement generated');
+}
+
+function clearGoal() {
+  ['g-name','g-role','g-what','g-measure','g-target','g-deadline','g-resources']
+    .forEach(id=>document.getElementById(id).value='');
+  document.getElementById('g-cat').selectedIndex=0;
+  document.getElementById('g-weight').value='20';
+  document.getElementById('goal-output').style.display='none';
+}
+
+function copyGoal() {
+  const text = document.getElementById('go-text').textContent;
+  navigator.clipboard.writeText(text).then(()=>showToast('Goal statement copied'));
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>

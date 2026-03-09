@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Org Health Diagnostic — Valentis OD Tool 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3ef;--surface:#ffffff;--surface2:#f0ede7;--surface3:#e8e4dc;
+  --border:#ddd9d0;--border2:#ccc7bb;
+  --ink:#1c1a16;--ink2:#2e2c27;--ink3:#57534a;--ink4:#8a8478;--ink5:#b8b2a8;
+  --sienna:#9b3a1a;--sienna2:#b44420;--sienna3:#c44e28;
+  --sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.22);
+  --slate:#2c3e50;--slate-dim:rgba(44,62,80,0.07);--slate-border:rgba(44,62,80,0.2);
+  --gold:#8a6914;--gold-dim:rgba(138,105,20,0.07);--gold-border:rgba(138,105,20,0.22);
+  --green:#2d6a4f;--green-dim:rgba(45,106,79,0.07);--green-border:rgba(45,106,79,0.22);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--sienna3),var(--sienna),rgba(155,58,26,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sienna3);background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--sienna3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(155,58,26,0.15);border-color:rgba(155,58,26,0.35);color:#e8a07a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--sienna)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#e8a07a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--sienna);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--sienna)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--sienna);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-slate{background:var(--slate-dim);color:var(--slate);border:1px solid var(--slate-border)}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.sienna{background:var(--sienna-dim);border-color:var(--sienna);color:var(--ink2)}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--sienna);padding:16px 20px;margin:16px 0;background:var(--sienna-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6;font-weight:400}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px;color:#f5f0e8}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--sienna);border-bottom-color:var(--sienna);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* HEALTH SCORE BAR */
+.hbar-wrap{margin:6px 0 10px}
+.hbar-track{height:8px;border-radius:4px;background:var(--surface3);overflow:hidden}
+.hbar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.hbar-labels{display:flex;justify-content:space-between;font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:3px}
+/* SURVEY TOOL */
+.survey-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px}
+.sv-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:6px;display:block}
+.sv-q{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:16px 18px;margin-bottom:8px}
+.sv-qtext{font-size:13.5px;color:rgba(255,255,255,0.75);font-weight:300;line-height:1.7;margin-bottom:10px}
+.sv-scale{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.sv-opt{display:flex;align-items:center;gap:6px;cursor:pointer}
+.sv-opt input[type=radio]{accent-color:var(--sienna3);width:14px;height:14px;cursor:pointer}
+.sv-opt-label{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.4);cursor:pointer}
+.sv-opt input:checked+.sv-opt-label{color:#e8a07a;font-weight:600}
+.sv-scale-ends{display:flex;justify-content:space-between;font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.2);margin-top:4px;padding:0 2px}
+.sv-dim{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sienna3);margin-bottom:10px;margin-top:4px}
+.sv-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-sienna{background:var(--sienna);color:#fff}
+.btn-sienna:hover{background:var(--sienna2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:var(--sienna3);color:#e8a07a}
+/* SPIDER / RADAR labels */
+.radar-wrap{position:relative;width:320px;height:320px;margin:0 auto}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">OD Tool 5 / 9</div>
+    <div class="sb-title">Org Health<br><em>Diagnostic</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>What is Org Health?</div>
+    <div class="nav-item" onclick="showPage('framework',this)"><span class="nav-num">02</span>The 7-Dimension Framework</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">03</span>Valentis Health Profile</div>
+    <div class="nav-item" onclick="showPage('deepdive',this)"><span class="nav-num">04</span>Dimension Deep-Dives</div>
+    <div class="nav-item" onclick="showPage('risks',this)"><span class="nav-num">05</span>Health Risks &amp; Early Warnings</div>
+    <div class="nav-item" onclick="showPage('survey',this)"><span class="nav-num">06</span>Live Health Survey Tool</div>
+    <div class="nav-item" onclick="showPage('priorities',this)"><span class="nav-num">07</span>Priority Actions</div>
+    <div class="nav-item" onclick="showPage('tracking',this)"><span class="nav-num">08</span>Tracking &amp; Cadence</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Organisation Design &amp; Development</strong>
+      Tool 5 of 9 · Org Health Diagnostic<br>
+      <span style="color:rgba(255,255,255,0.12)">Structure enables; health determines whether it works</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">OD Tool 5 / 9 — Org Health Diagnostic</div>
+    <h1 class="page-title">Org Health<br><em>Diagnostic</em></h1>
+    <p class="page-desc">Structure defines how the organisation is designed to work. Health determines whether it actually does. An organisation can have the right structure and still be unhealthy — and a structurally imperfect organisation can be highly effective if its health is strong. The HRBP diagnoses both.</p>
+  </div>
+  <div class="pull-quote">
+    <p>"Organisational health is the ability of an organisation to align, execute, and renew itself faster than the competition. It is the ultimate competitive advantage."</p>
+    <cite>McKinsey Organizational Health Index</cite>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Structure vs Health — The Distinction</div>
+      <div class="card-body" style="margin-bottom:14px">Structure and health are related but different. Understanding the difference is the first diagnostic skill.</div>
+      <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr 1fr">
+          <div style="padding:14px 16px;border-right:1px solid var(--border)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--slate);margin-bottom:8px">Structure</div>
+            <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— How work is organised and divided</div>
+              <div>— Reporting lines and authority</div>
+              <div>— Spans, layers, role definitions</div>
+              <div>— Visible on the org chart</div>
+              <div>— Changed through redesign</div>
+              <div>— Tools 2, 3, 4 in this OD toolkit</div>
+            </div>
+          </div>
+          <div style="padding:14px 16px;background:var(--sienna-dim)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Health</div>
+            <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— How well the organisation functions</div>
+              <div>— Quality of decisions, communication, trust</div>
+              <div>— Capability, alignment, accountability</div>
+              <div>— Invisible on the org chart</div>
+              <div>— Changed through culture and leadership</div>
+              <div>— This tool: Tool 5</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why Health Matters More Than Structure</div>
+      <div class="card-body" style="margin-bottom:10px">McKinsey research across 1,500+ organisations found that companies in the top quartile of organisational health deliver three times the total shareholder return of bottom-quartile companies — and the effect is persistent over time.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Structure without health fails.</strong> A perfectly designed org chart with unclear accountability, low trust between the COO and SMs, and poor information flow will underperform a messier structure with strong alignment and capable execution.</div>
+        <div style="padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Health issues masquerade as performance issues.</strong> When programme delivery drops, the first instinct is to look at capability or effort. Often the root cause is health — unclear direction, accountability gaps, or coordination failure between layers.</div>
+        <div style="padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">At Valentis:</strong> The Indonesia programme delivery drop, Myanmar trainee attrition, and Laos succession risk all have structural components — and health components. Fixing the structure without diagnosing the health misses half the problem.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">The HRBP's Role in Org Health</div>
+    <table class="dtable">
+      <thead><tr><th>Health activity</th><th>What the HRBP does</th><th>What the HRBP does not do</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--sienna)">Diagnoses</td><td>Gathers data — formal (surveys, exit interviews, performance trends) and informal (site visits, stakeholder conversations) — to build an evidence-based picture of health</td><td>Does not rely on gut feel or anecdote alone. Does not accept "culture is fine" without evidence.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Translates</td><td>Connects health findings to business outcomes — "the low accountability score in Indonesia is a contributing factor to the programme delivery gap" — so the COO acts on health, not just operational metrics</td><td>Does not present health as a soft people issue. Does not separate health findings from business performance data.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Designs interventions</td><td>Proposes targeted health interventions — role design fixes, leadership coaching, process changes, communication improvements — that address the root cause, not the symptom</td><td>Does not jump to engagement surveys or away-days as the default response to every health signal.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Tracks progress</td><td>Builds a cadence of health measurement — quarterly check-ins, annual deep dives — so health trends are visible before they become crises</td><td>Does not measure health once and assume it stays constant.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="page-framework" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — The 7-Dimension Framework</div>
+    <h1 class="page-title">7-Dimension<br><em>Framework</em></h1>
+    <p class="page-desc">Valentis org health is assessed across seven dimensions — adapted from McKinsey OHI and Gallup Q12 research but calibrated for a small, multi-country, operations-led organisation. Each dimension has a definition, observable indicators, and a diagnostic question.</p>
+  </div>
+  <div style="display:grid;gap:8px">
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr 1fr 180px;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D1</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:4px">Direction &amp; Strategic Clarity</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Does every layer of the organisation understand where Valentis is going and why their role matters in getting there? From CEO to G1 trainee — clarity of direction is the foundation of aligned effort.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Observable indicators</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Can a G3 driller in Laos explain what Valentis is trying to achieve in the next 12 months? Do SMs make decisions that reflect group strategy, or only local priorities? Are growth and succession plans known at site level?</div>
+      </div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--sienna);padding:10px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;line-height:1.6">Diagnostic question: "If I asked five people at random across the org — including a G2 driller — to describe the company's direction, would they give consistent answers?"</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr 1fr 180px;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D2</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:4px">Accountability &amp; Ownership</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Do people own their outcomes — or do they own their effort? Accountability is healthy when individuals can clearly state what they are responsible for delivering, and when gaps are addressed, not explained away.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Observable indicators</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">When a programme section falls behind, does someone own the recovery — or does it diffuse across multiple roles? Are performance gaps addressed promptly or quietly tolerated? Do people raise risks proactively or wait to be asked?</div>
+      </div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--sienna);padding:10px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;line-height:1.6">"When something goes wrong at Valentis, is there a clear person who owns the recovery — or does it become a group conversation with no single driver?"</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr 1fr 180px;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D3</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:4px">Leadership Quality</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Does every level of leadership — COO, Site Manager, Senior Driller — have the capability and the motivation to develop their people, set clear direction, and make good decisions consistently? Leadership quality cascades — and so does leadership failure.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Observable indicators</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Do team members grow under their leaders — or stagnate? Are leaders making the right decisions for the organisation, or for their own country/team? Do leaders raise difficult conversations, or avoid them?</div>
+      </div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--sienna);padding:10px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;line-height:1.6">"If I observed each Site Manager for one week, would I see coaching conversations, or only task management?"</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr 1fr 180px;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D4</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:4px">Coordination &amp; Integration</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Do the different parts of the organisation work together effectively — or do they optimise individually at the expense of the group? Coordination is healthy when knowledge, people, and practices flow across boundaries without friction.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Observable indicators</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Do the four SMs share practices across countries — or does each country reinvent its own approach? Is the Group HR framework applied consistently — or differently in each country based on SM preference? Do group functions feel like enablers or constraints to site teams?</div>
+      </div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--sienna);padding:10px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;line-height:1.6">"When Thailand solves a safety problem effectively, how long before Laos knows about it — and applies it?"</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr 1fr 180px;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D5</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:4px">Talent Pipeline &amp; Capability</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Does the organisation have the people it needs — now and in 2–3 years? Talent pipeline health is about both supply (are we developing enough people) and capability (are the right skills present at every level).</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Observable indicators</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Is there a ready G4 candidate for every G5 vacancy that might arise in the next 18 months? Is the G1→G4 development cycle producing enough completions to meet operational demand? Are capability gaps addressed through development — or only through hiring?</div>
+      </div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--sienna);padding:10px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;line-height:1.6">"If Myo H. resigned tomorrow, could Valentis continue to operate Myanmar at the same quality level within 90 days?"</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr 1fr 180px;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D6</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:4px">Culture &amp; Psychological Safety</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Do people feel safe enough to raise problems, admit mistakes, and challenge decisions? Psychological safety is the most consistent predictor of team effectiveness — and the most consistently underestimated health variable in site-based operations.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Observable indicators</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Do trainees raise safety concerns to their G4 supervisor without fear? Are near-misses reported openly, or only when they become incidents? Do SMs tell the COO when things are going wrong — or do they filter the picture?</div>
+      </div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--sienna);padding:10px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;line-height:1.6">"When a G2 driller sees a safety risk on site, what is their first instinct — raise it, or stay quiet? And what does that tell us about culture?"</div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:52px 1fr 1fr 180px;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--sienna);line-height:1;text-align:center;padding-top:4px">D7</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:4px">Renewal &amp; Adaptability</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Can the organisation learn and change? Renewal health is about whether Valentis improves from experience — adopts new methods, responds to market shifts, incorporates what it learns from incidents and near-misses — rather than repeating the same approaches year after year.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Observable indicators</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Has the drilling methodology changed in the last 3 years? Does Valentis learn from country-to-country variation — or treat each country as an isolated operation? When a project fails to deliver, is there a structured after-action review?</div>
+      </div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--sienna);padding:10px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;line-height:1.6">"Can I name three things Valentis has changed in the last 18 months as a direct result of learning from experience — not just from external pressure?"</div>
+    </div>
+
+  </div>
+</div>
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Valentis Health Profile</div>
+    <h1 class="page-title">Valentis<br><em>Health Profile</em></h1>
+    <p class="page-desc">An evidence-based assessment of Valentis's current organisational health across all seven dimensions. Scores are derived from observable data — programme delivery trends, attrition patterns, stakeholder behaviour, and structural analysis — not from a survey. Each score is a hypothesis for the HRBP to test and refine.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">Valentis Group — Org Health Assessment · March 2026</div>
+    <div class="vx-title">Overall: Functionally Capable — Structurally Stressed</div>
+    <div class="vx-body">Valentis is operationally functional: drilling programmes are running, clients are being served, and the core business is intact. But three health dimensions are showing material stress signals — and all three are directly connected to the company's growth ambition and the HRBP's 2026 agenda. The health issues are not hidden — they are visible in the data.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Health Dimension Scores — March 2026</div>
+    <div class="card-body" style="margin-bottom:16px">Scored 1–10. Evidence basis noted for each. Red = requires immediate intervention. Amber = monitor and address within 2026. Green = maintain and protect.</div>
+    <div style="display:grid;gap:10px">
+
+      <div style="padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4)">D1</span><span style="font-weight:600;color:var(--ink)">Direction &amp; Strategic Clarity</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--gold)">6/10</span><span class="chip chip-gold">AMBER</span></div>
+        </div>
+        <div class="hbar-wrap"><div class="hbar-track"><div class="hbar-fill" style="width:60%;background:var(--gold)"></div></div><div class="hbar-labels"><span>0</span><span>5</span><span>10</span></div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Group strategy (Country 5, 65 FTE target, Group Ops Lead) is clear at COO/CEO level. Unclear whether it has reached site level in a meaningful way. G3/G4 drillers likely understand their programme targets but not the broader growth trajectory or their role in succession planning.</div>
+      </div>
+
+      <div style="padding:14px 18px;background:var(--surface2);border:2px solid var(--red-border);border-radius:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4)">D2</span><span style="font-weight:600;color:var(--ink)">Accountability &amp; Ownership</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--red)">4/10</span><span class="chip chip-red">RED — URGENT</span></div>
+        </div>
+        <div class="hbar-wrap"><div class="hbar-track"><div class="hbar-fill" style="width:40%;background:var(--red)"></div></div><div class="hbar-labels"><span>0</span><span>5</span><span>10</span></div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Multiple ghost accountabilities identified: trainee development (month-3 attrition — no owner), HR compliance coordination (SM vs Group HR tension), cross-country standards (no mechanism). The Indonesia programme delivery gap has had no single owner for recovery. Accountability is the most structurally actionable health gap at Valentis.</div>
+      </div>
+
+      <div style="padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4)">D3</span><span style="font-weight:600;color:var(--ink)">Leadership Quality</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--gold)">6/10</span><span class="chip chip-gold">AMBER</span></div>
+        </div>
+        <div class="hbar-wrap"><div class="hbar-track"><div class="hbar-fill" style="width:60%;background:var(--gold)"></div></div><div class="hbar-labels"><span>0</span><span>5</span><span>10</span></div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Thailand SM is a confirmed change champion — high-quality leader. Laos SM is reliable. Myanmar (Myo H.) is capable but at retention risk. Indonesia (Wirawan S.) shows scepticism and resistance patterns that indicate a leadership quality concern distinct from the operational stress. G4-level leadership is inconsistent — development conversations are informal and undocumented.</div>
+      </div>
+
+      <div style="padding:14px 18px;background:var(--surface2);border:2px solid var(--red-border);border-radius:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4)">D4</span><span style="font-weight:600;color:var(--ink)">Coordination &amp; Integration</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--red)">3/10</span><span class="chip chip-red">RED — URGENT</span></div>
+        </div>
+        <div class="hbar-wrap"><div class="hbar-track"><div class="hbar-fill" style="width:30%;background:var(--red)"></div></div><div class="hbar-labels"><span>0</span><span>5</span><span>10</span></div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The lowest-scoring dimension. No formal cross-country coordination mechanism exists. Thailand's superior performance is not being systematically transferred to other sites. Group HR, Finance, and HSE frameworks are applied differently across countries based on SM preference rather than group standard. This is the primary structural health risk for Country 5 entry.</div>
+      </div>
+
+      <div style="padding:14px 18px;background:var(--surface2);border:2px solid var(--red-border);border-radius:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4)">D5</span><span style="font-weight:600;color:var(--ink)">Talent Pipeline &amp; Capability</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--red)">4/10</span><span class="chip chip-red">RED — URGENT</span></div>
+        </div>
+        <div class="hbar-wrap"><div class="hbar-track"><div class="hbar-fill" style="width:40%;background:var(--red)"></div></div><div class="hbar-labels"><span>0</span><span>5</span><span>10</span></div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Zero succession cover for any G5 role. Laos senior driller cohort (avg age 51, 3 of 5 retirement risk within 3 years) with only 2 G3 candidates — net -1 G4 by 2027. Myanmar trainee conversion rate 58% vs target 70%. Indonesia G3 vacancies open 40+ days. The pipeline is running below the replacement rate required to sustain current operations, let alone grow to 65 FTE.</div>
+      </div>
+
+      <div style="padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4)">D6</span><span style="font-weight:600;color:var(--ink)">Culture &amp; Psychological Safety</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--gold)">6/10</span><span class="chip chip-gold">AMBER</span></div>
+        </div>
+        <div class="hbar-wrap"><div class="hbar-track"><div class="hbar-fill" style="width:60%;background:var(--gold)"></div></div><div class="hbar-labels"><span>0</span><span>5</span><span>10</span></div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">No major cultural incidents identified. However: high attrition at month 3 in Myanmar may signal that trainees do not feel safe enough to raise early concerns or ask for help — they simply leave. The Indonesia SM's resistance pattern may reflect a culture of escalation avoidance. Both are worth investigating before assuming culture is simply "fine".</div>
+      </div>
+
+      <div style="padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4)">D7</span><span style="font-weight:600;color:var(--ink)">Renewal &amp; Adaptability</span></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--gold)">5/10</span><span class="chip chip-gold">AMBER</span></div>
+        </div>
+        <div class="hbar-wrap"><div class="hbar-track"><div class="hbar-fill" style="width:50%;background:var(--gold)"></div></div><div class="hbar-labels"><span>0</span><span>5</span><span>10</span></div></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The OD toolkit itself is evidence of renewal appetite — the HRBP is building systems that did not previously exist. But at organisational level, the evidence of structured learning is limited: no cross-country after-action review process, no formal mechanism for translating site experience into improved group standards. Renewal is personality-dependent (strong COO and HRBP) rather than systemic.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="page-deepdive" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Dimension Deep-Dives</div>
+    <h1 class="page-title">Dimension<br><em>Deep-Dives</em></h1>
+    <p class="page-desc">The three red-rated dimensions — Accountability, Coordination, and Talent Pipeline — each receive a full diagnostic treatment: root causes, Valentis-specific evidence, and the intervention that addresses the structural health gap.</p>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('dd-acc',this)">D2 Accountability</div>
+    <div class="tab" onclick="showTab('dd-coord',this)">D4 Coordination</div>
+    <div class="tab" onclick="showTab('dd-talent',this)">D5 Talent Pipeline</div>
+    <div class="tab" onclick="showTab('dd-amber',this)">Amber Dimensions</div>
+  </div>
+
+  <div class="tab-body active" id="tab-dd-acc">
+    <div class="card">
+      <div class="card-title">D2 Accountability — Full Diagnostic <span class="chip chip-red" style="margin-left:8px;vertical-align:middle">4/10 Red</span></div>
+      <div class="card-body" style="margin-bottom:14px">Accountability at Valentis has three distinct failure patterns. Each has a different cause and a different fix. Treating them as a single "accountability problem" will produce a generic intervention that addresses none of them.</div>
+      <table class="dtable">
+        <thead><tr><th>Failure pattern</th><th>Root cause</th><th>Valentis evidence</th><th>Targeted fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;color:var(--red)">Ghost accountability — no owner</td>
+            <td>Role design gap. The accountability was never assigned to a specific role. Everyone assumes someone else owns it.</td>
+            <td>Trainee development at month 3. Programme delivery recovery in Indonesia. Cross-country standards compliance. All involve a gap with no single owner.</td>
+            <td>Role profile update (Tool 3). Explicitly assign the accountability to a named role with a measurable outcome. Do this before any performance conversation.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--red)">Diffuse accountability — multiple owners</td>
+            <td>Authority boundary not defined. Two roles both believe they own the same outcome — and neither acts decisively because they assume the other will.</td>
+            <td>HR compliance: Indonesia SM and Group HR each defer to the other. COO and SM on programme recovery: no single escalation decision.</td>
+            <td>RACI clarification (Tool 9 — Decision Rights). One Accountable. One Responsible. Clear in both role profiles. Communicated by COO.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--gold)">Consequence gap — accountability without teeth</td>
+            <td>Performance management system does not distinguish between activity and outcome. People can "look accountable" without delivering results.</td>
+            <td>G4 drillers who fail to develop trainees face no consequences under the current PM framework — because trainee development was never a defined accountability.</td>
+            <td>PM framework update (PM Tools 1–2). Include trainee conversion rate as a G4 performance metric. Link to merit decisions.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-dd-coord">
+    <div class="card">
+      <div class="card-title">D4 Coordination — Full Diagnostic <span class="chip chip-red" style="margin-left:8px;vertical-align:middle">3/10 Red</span></div>
+      <div class="card-body" style="margin-bottom:14px">Coordination is the lowest-scoring health dimension at Valentis. At 42 FTE across 4 countries with no formal cross-country mechanism, this is structurally expected — but it is becoming a competitive risk as the organisation scales.</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:8px">What low coordination costs Valentis today</div>
+          <div style="display:grid;gap:6px">
+            <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">Thailand best practices not transferred.</strong> The Thailand SM is a confirmed high performer and change champion. Their safety practices, training approaches, and programme management techniques are not being systematically shared with Laos, Myanmar, or Indonesia. This is an opportunity cost — each site reinvents what Thailand has already solved.</div>
+            <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">Group HR framework applied inconsistently.</strong> Each SM applies group HR standards to the degree they choose. Indonesia's resistance means that performance management, development conversations, and compliance reporting vary significantly by country — creating legal risk and making group-level data unreliable.</div>
+            <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">No group visibility on talent.</strong> The COO does not have a reliable cross-country picture of who the G3→G4 pipeline looks like, which G4 drillers are succession-ready for SM, or where the critical skill gaps are by country. Each SM holds their own picture. Group HR holds approximations.</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:8px">What improved coordination enables</div>
+          <div style="display:grid;gap:6px">
+            <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--green)">SM peer forum (Q2 2026).</strong> A quarterly structured forum where all SMs share performance data, pipeline status, and one practice that worked. Chaired initially by COO; transferred to Group Ops Lead when created. Cost: 1 day per quarter per SM. Value: best practice transfer, group talent visibility, SM peer accountability.</div>
+            <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--green)">Group Ops Lead coordination function.</strong> The primary purpose of the Group Ops Lead (Tool 3) is coordination — not management. A role with explicit accountability for cross-country standards transfer and the SM peer forum directly addresses the coordination health gap.</div>
+            <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--green)">Group talent database.</strong> A single source of truth for pipeline status across all countries. Managed by Group HR. Updated quarterly. Enables the COO to see the group talent picture — not four separate country pictures.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-dd-talent">
+    <div class="card">
+      <div class="card-title">D5 Talent Pipeline — Full Diagnostic <span class="chip chip-red" style="margin-left:8px;vertical-align:middle">4/10 Red</span></div>
+      <div class="card-body" style="margin-bottom:14px">The talent pipeline is the most quantifiable health risk at Valentis. The numbers are stark — and the lead time required to fix them means action must start now for outcomes to materialise by the time they are needed.</div>
+      <div style="display:grid;gap:8px;margin-bottom:14px">
+        <div style="padding:14px 18px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--red);margin-bottom:6px">G5 succession gap — existential risk level</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Zero internal succession candidates currently assessed as G5-ready. If Myo H. (Myanmar) or Wirawan S. (Indonesia) exit, Valentis must either recruit externally (6–12 month lead time, high cost, cultural integration risk) or promote an unready G4 (operational risk during transition).</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Deadlines: Myo H. retention conversation by Sep 2026. Wirawan S. by Oct 2026. If either leaves without a succession candidate in development, the operational impact extends 12–18 months into 2027 — coinciding with Country 5 activation and the 65 FTE target.</div>
+          </div>
+        </div>
+        <div style="padding:14px 18px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--red);margin-bottom:6px">Laos G4 retirement wave — quantified gap</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">5 senior drillers in Laos. Average age 51. 3 of 5 at retirement risk within 3 years. Only 2 G3 candidates currently in the pipeline. Net position by 2027: -1 senior driller in Laos without intervention. The G3→G4 development cycle takes 18–24 months — activation deadline June 2026.</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">If development plans activate June 2026 and take 24 months: G4-ready by June 2028. Retirement window opens 2027. Gap period: approximately 12 months with reduced G4 capacity in Laos. Mitigation: cross-country mobility (a healthy coordination score would enable this — another reason D4 and D5 are linked).</div>
+          </div>
+        </div>
+        <div style="padding:14px 18px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--gold);margin-bottom:6px">Myanmar trainee pipeline — conversion gap</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Conversion rate 58% vs target 70%. Root cause identified: weak total rewards at G1 level, month-3 attrition before trainees have built enough context to persist through early difficulty, and no formal G4 accountability for development outcomes. All three causes are addressable — with role design, rewards design, and PM framework updates already in progress across the toolkit.</div>
+        </div>
+      </div>
+      <table class="dtable">
+        <thead><tr><th>Pipeline metric</th><th>Current</th><th>Target</th><th>Gap</th><th>Intervention</th></tr></thead>
+        <tbody>
+          <tr><td>G5 succession cover</td><td style="color:var(--red);font-weight:600">0 ready</td><td>1 per country minimum</td><td>4 candidates needed</td><td>G4 succession identification + structured development plans Q2 2026</td></tr>
+          <tr><td>Myanmar trainee conversion</td><td style="color:var(--red);font-weight:600">58%</td><td>≥70%</td><td>12 percentage points</td><td>G4 development accountability formalised; rewards review at G1</td></tr>
+          <tr><td>Laos G3→G4 pipeline</td><td style="color:var(--red);font-weight:600">2 G3 candidates</td><td>3 minimum</td><td>-1 net G4 by 2027</td><td>Development plans active June 2026; assess cross-country mobility options</td></tr>
+          <tr><td>Indonesia G3 vacancies</td><td style="color:var(--red);font-weight:600">3 open, 40+ days</td><td>0 vacancies</td><td>3 roles</td><td>Emergency sourcing; widened geography if needed</td></tr>
+          <tr><td>Group-level talent visibility</td><td style="color:var(--gold);font-weight:600">Country-only silos</td><td>Group dashboard</td><td>No group view</td><td>Quarterly group talent review process from Q3 2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-dd-amber">
+    <div class="card">
+      <div class="card-title">Amber Dimensions — Watch &amp; Manage</div>
+      <div class="card-body" style="margin-bottom:14px">D1 Direction, D3 Leadership, D6 Culture, and D7 Renewal are all amber — functional but with specific signals that require monitoring and targeted attention in 2026.</div>
+      <table class="dtable">
+        <thead><tr><th>Dimension</th><th>Score</th><th>Specific signal requiring attention</th><th>Recommended 2026 action</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600">D1 Direction</td><td><span class="chip chip-gold">6/10</span></td>
+            <td>Strategy is clear at executive level but likely not at G3/G4 site level. Growth plans, Country 5, and succession expectations need to cascade to field teams in a form they can act on.</td>
+            <td>SM-led team communications: each SM briefs their team on the group direction at least once per half-year. Group HR provides a talking points template. Include in SM performance expectations.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">D3 Leadership</td><td><span class="chip chip-gold">6/10</span></td>
+            <td>Indonesia SM resistance is the primary leadership quality signal requiring active management. Myanmar supervisor team identified as Knowledge + Ability gap — coaching programme needed. G4 development conversations are informal and inconsistent.</td>
+            <td>Indonesia SM: authority boundary conversation after G3 vacancies filled. Myanmar supervisors: coaching programme Q1 2026. G4 leadership: include development conversation quality in SM performance review.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">D6 Culture</td><td><span class="chip chip-gold">6/10</span></td>
+            <td>Month-3 attrition pattern may signal that new trainees do not feel safe enough to ask for help before leaving. This is a psychological safety signal, not just a rewards signal. Indonesia escalation avoidance is also worth investigating.</td>
+            <td>Add month-3 check-in conversation as a structured point in the trainee induction process. G4 driller asks three questions: What is working? What is difficult? What support do you need? Documented. Not optional.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">D7 Renewal</td><td><span class="chip chip-gold">5/10</span></td>
+            <td>Renewal is currently person-dependent (COO and HRBP-driven) rather than systemic. When key individuals change, the renewal capacity could drop significantly. No structured after-action review process.</td>
+            <td>Establish a simple quarterly after-action review process for any programme that finished above or below budget/timeline. Output shared to all SMs. Group Ops Lead chairs once in role. Aim: 2 learnings per quarter reaching all sites.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div id="page-risks" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Health Risks &amp; Early Warnings</div>
+    <h1 class="page-title">Health Risks<br><em>&amp; Early Warnings</em></h1>
+    <p class="page-desc">The HRBP's early warning system. These are the leading indicators that a health dimension is deteriorating — detectable before the lagging indicator (programme delivery drop, resignation, grievance) appears. Catching health problems early is the highest-leverage HR activity.</p>
+  </div>
+  <div class="info sienna"><strong>Leading vs Lagging Indicators</strong>A programme delivery drop is a lagging indicator — it tells you health failed weeks or months ago. An early warning is a leading indicator — it tells you health is weakening now, while there is still time to intervene. The HRBP monitors both, but acts on the leading indicators.</div>
+  <div style="display:grid;gap:8px">
+
+    <div style="padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink)">D2 Accountability — Early Warnings</span>
+        <span class="chip chip-red">Red dimension</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="padding:10px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Leading indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Decisions escalate to COO that could have been made at SM level. Frequency of COO intervention in operational matters increases month-on-month.</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Leading indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Blame language increases in reporting — "the other team didn't…", "we were waiting for…", "it wasn't our responsibility to…". Any escalation that includes finger-pointing at another role.</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Lagging indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Programme delivery drops without a clear single owner of the recovery plan. Month-3 trainee exits continue despite awareness of the problem (no owner = no intervention).</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink)">D4 Coordination — Early Warnings</span>
+        <span class="chip chip-red">Red dimension</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="padding:10px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Leading indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">SMs solve the same problem independently that another site already solved. Duplicate effort — different solutions to identical problems appearing across countries.</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Leading indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Group HR reports data quality differences by country that cannot be explained by legitimate country-specific factors. Variation in how PM, payroll, or compliance data is reported.</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Lagging indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Group HR framework applied so differently by country that group-level reporting is unreliable. A new country (Country 5) receives no structured onboarding — reinvents its approach from scratch.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink)">D5 Talent Pipeline — Early Warnings</span>
+        <span class="chip chip-red">Red dimension</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="padding:10px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Leading indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">G3→G4 promotion rate drops below 1 per country per 24-month period. The pipeline is running slower than the replacement demand. Visible in quarterly talent reviews if the process exists.</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Leading indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">G4 drillers begin exploring external options — LinkedIn profile updates, increased awareness of competitor pay. A single unsolicited approach from a competitor to a G4 driller is an early warning for the whole cohort.</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Lagging indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">A G5 SM exits without a ready successor — Valentis must recruit externally, taking 6–12 months. Programme delivery in that country drops during transition. Revenue risk is directly measurable.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink)">D6 Culture / Psychological Safety — Early Warnings</span>
+        <span class="chip chip-gold">Amber dimension</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="padding:10px 12px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Leading indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Near-miss reporting rate drops below historical baseline. In safety-critical environments, fewer near-miss reports often means people are less willing to report — not that fewer near-misses are occurring.</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Leading indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Exit interview language shifts. If departing employees begin citing "not feeling heard" or "no point raising problems" as departure reasons — psychological safety is deteriorating, not just individual dissatisfaction.</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Lagging indicator</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">A preventable safety incident occurs in which it emerges that team members were aware of the risk but did not raise it. The cultural cost of silence becomes visible only after the incident.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="page-survey" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Live Health Survey Tool</div>
+    <h1 class="page-title">Health Survey<br><em>Tool</em></h1>
+    <p class="page-desc">A structured 21-question health pulse survey — 3 questions per dimension. Use for quarterly self-assessment, for structured SM conversations, or as the basis for a group-wide health check. Scores produce an overall health rating and dimension-level breakdown with recommended actions.</p>
+  </div>
+  <div class="survey-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f0e8;margin-bottom:6px">Valentis Org Health Survey</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:20px">Rate each statement 1 (strongly disagree) to 5 (strongly agree)</div>
+
+    <div class="sv-dim">D1 — Direction &amp; Strategic Clarity</div>
+    <div class="sv-q">
+      <div class="sv-qtext">People in this organisation understand where Valentis is heading in the next 12–24 months.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q1" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q1" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q1" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q1" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q1" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">The decisions leaders make are consistent with the stated strategic direction.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q2" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q2" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q2" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q2" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q2" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">I understand how my role contributes to the success of the organisation.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q3" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q3" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q3" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q3" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q3" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="sv-dim">D2 — Accountability &amp; Ownership</div>
+    <div class="sv-q">
+      <div class="sv-qtext">When something goes wrong here, there is always a clear person who owns the recovery.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q4" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q4" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q4" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q4" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q4" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">I know exactly what I am accountable for delivering — not just what tasks I am expected to do.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q5" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q5" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q5" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q5" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q5" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">Performance gaps are addressed promptly and directly — not left to quietly persist.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q6" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q6" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q6" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q6" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q6" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="sv-dim">D3 — Leadership Quality</div>
+    <div class="sv-q">
+      <div class="sv-qtext">My direct manager helps me develop and grow — not just manage my current tasks.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q7" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q7" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q7" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q7" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q7" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">Leaders here make decisions that are in the best interests of the organisation — not just their own team or country.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q8" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q8" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q8" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q8" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q8" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">Difficult conversations happen here — problems are named clearly rather than worked around.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q9" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q9" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q9" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q9" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q9" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="sv-dim">D4 — Coordination &amp; Integration</div>
+    <div class="sv-q">
+      <div class="sv-qtext">Good practices and solutions developed in one part of the organisation reach other parts effectively.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q10" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q10" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q10" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q10" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q10" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">Group functions (HR, Finance, HSE) feel like genuine enablers to site teams — not just compliance overhead.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q11" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q11" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q11" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q11" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q11" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">When I need something from another part of the organisation, the process is smooth — not a negotiation.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q12" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q12" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q12" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q12" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q12" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="sv-dim">D5 — Talent Pipeline &amp; Capability</div>
+    <div class="sv-q">
+      <div class="sv-qtext">This organisation develops people proactively — so that we are ready for growth, not scrambling to fill gaps.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q13" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q13" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q13" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q13" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q13" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">I have a clear picture of what I need to develop to progress to the next level in this organisation.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q14" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q14" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q14" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q14" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q14" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">The best people here are recognised and retained — this organisation does not let its high performers walk out the door.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q15" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q15" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q15" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q15" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q15" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="sv-dim">D6 — Culture &amp; Psychological Safety</div>
+    <div class="sv-q">
+      <div class="sv-qtext">I feel safe raising a problem or concern without worrying it will be used against me.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q16" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q16" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q16" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q16" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q16" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">Mistakes are treated as learning opportunities here — not primarily as failures to punish.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q17" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q17" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q17" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q17" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q17" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">The values and behaviours described in our culture are visible in how leaders actually behave day-to-day.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q18" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q18" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q18" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q18" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q18" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="sv-dim">D7 — Renewal &amp; Adaptability</div>
+    <div class="sv-q">
+      <div class="sv-qtext">This organisation learns from what it does and actively improves — it does not repeat the same approaches year after year.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q19" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q19" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q19" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q19" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q19" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">When things change externally (market, client, regulation), this organisation adapts quickly rather than resisting.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q20" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q20" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q20" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q20" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q20" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+    <div class="sv-q">
+      <div class="sv-qtext">Ideas and improvements from front-line staff reach decision-makers and get acted on here.</div>
+      <div class="sv-scale">
+        <label class="sv-opt"><input type="radio" name="q21" value="1"><span class="sv-opt-label">1</span></label>
+        <label class="sv-opt"><input type="radio" name="q21" value="2"><span class="sv-opt-label">2</span></label>
+        <label class="sv-opt"><input type="radio" name="q21" value="3"><span class="sv-opt-label">3</span></label>
+        <label class="sv-opt"><input type="radio" name="q21" value="4"><span class="sv-opt-label">4</span></label>
+        <label class="sv-opt"><input type="radio" name="q21" value="5"><span class="sv-opt-label">5</span></label>
+      </div>
+      <div class="sv-scale-ends"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn btn-sienna" onclick="scoreSurvey()">Calculate Health Score →</button>
+      <button class="btn btn-ghost" onclick="clearSurvey()">Reset</button>
+    </div>
+    <div class="sv-result" id="sv-result">
+      <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;margin-bottom:16px">Health Assessment Results</div>
+      <div id="sv-overall" style="margin-bottom:16px"></div>
+      <div id="sv-dims" style="display:grid;gap:6px"></div>
+      <div id="sv-actions" style="margin-top:14px;padding:14px 16px;background:rgba(155,58,26,0.1);border:1px solid rgba(155,58,26,0.25);border-radius:3px;display:none">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna3);margin-bottom:6px">Priority actions based on your scores</div>
+        <div id="sv-action-list" style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:300;line-height:2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="page-priorities" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Priority Actions</div>
+    <h1 class="page-title">Priority<br><em>Actions</em></h1>
+    <p class="page-desc">The health diagnostic produces a clear action sequence. Three red dimensions require structural intervention. Four amber dimensions require targeted monitoring and management. This is the HRBP's health improvement workplan for 2026.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">Valentis Health Improvement Workplan — 2026</div>
+    <div class="vx-title">Three red dimensions → structural fixes. Four amber → managed improvement.</div>
+    <div class="vx-body">All three red dimensions (Accountability D2, Coordination D4, Talent Pipeline D5) have structural root causes that are addressable through the OD toolkit. The interventions are not separate initiatives — they are the same set of structural fixes viewed through the health lens.</div>
+  </div>
+  <div style="display:grid;gap:8px">
+
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--red-border);border-radius:4px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Red dimension — D2 Accountability — Structural fix</div>
+          <div style="font-weight:700;color:var(--ink);font-size:15px">Assign ghost accountabilities — starting with G4 trainee development</div>
+        </div>
+        <span class="chip chip-red">Q2 2026</span>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">The root cause of Valentis's accountability gap is role design — accountabilities that exist in practice but not in any role profile. The fix starts with the highest-impact accountability gap: G4 trainee development. Update the G4 role profile (OD Tool 3) to include trainee conversion rate as a formal accountability. Update the PM framework (PM Tool 1) to include it as a performance metric. This is a structural intervention — not a conversation, a process, or a training course.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Owner:</strong> HRBP</div>
+        <div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Health measure:</strong> D2 score ≥6 at Q3 check-in</div>
+        <div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Business measure:</strong> Myanmar trainee conversion ≥65% within 2 cohorts</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--red-border);border-radius:4px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Red dimension — D4 Coordination — Structural fix</div>
+          <div style="font-weight:700;color:var(--ink);font-size:15px">Establish SM peer forum + create Group Ops Lead role</div>
+        </div>
+        <span class="chip chip-sienna">Q2–Q3 2026</span>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">Coordination is the lowest-scoring dimension because there is no structural mechanism for it. The two-part fix: (1) establish a quarterly SM peer forum immediately — COO-chaired, structured agenda, practice-sharing format. Cost: one day per quarter per SM. (2) Create Group Ops Lead role as the permanent coordination infrastructure. The peer forum is the interim solution; the Ops Lead is the durable one. Both must run in parallel.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Owner:</strong> COO (forum) + HRBP (Ops Lead design)</div>
+        <div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Health measure:</strong> D4 score ≥5 by Q4 2026</div>
+        <div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Business measure:</strong> At least 2 documented cross-country practice transfers by Q4 2026</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:2px solid var(--red-border);border-radius:4px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Red dimension — D5 Talent Pipeline — Structural fix</div>
+          <div style="font-weight:700;color:var(--ink);font-size:15px">Activate Laos G3→G4 development plans + succession identification for all G5 roles</div>
+        </div>
+        <span class="chip chip-sienna">Q2 2026</span>
+      </div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">The talent pipeline gap is the most time-sensitive health risk at Valentis. The 18–24 month G3→G4 development cycle means that a development plan not activated in Q2 2026 does not produce a G4-ready candidate until Q4 2027 — too late for the Laos retirement window. Two actions in parallel: (1) Activate Laos G3 development plans with named sponsors and milestone checkpoints. (2) Identify the best G4 succession candidate for every G5 role across all countries. Name them. Build their plan.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Owner:</strong> HRBP + each SM</div>
+        <div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Health measure:</strong> D5 score ≥6 by Q4 2026</div>
+        <div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Business measure:</strong> Named successor for each G5 role; Laos G3 plans active June 2026</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Amber dimensions — D1, D3, D6, D7 — Targeted management</div>
+          <div style="font-weight:700;color:var(--ink);font-size:15px">Four amber actions — integrated into existing leadership processes</div>
+        </div>
+        <span class="chip chip-gold">Q2–Q4 2026</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+        <div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><strong style="color:var(--gold)">D1 Direction:</strong> SM-led team briefings on group direction every half-year. HRBP provides talking points template. Included in SM performance expectations.</div>
+        <div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><strong style="color:var(--gold)">D3 Leadership:</strong> Indonesia SM authority conversation (post-vacancy fill). Myanmar supervisor coaching Q1 2026. G4 development conversation quality in SM reviews.</div>
+        <div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><strong style="color:var(--gold)">D6 Culture:</strong> Month-3 structured trainee check-in (three questions: working, difficult, support needed). Documented. Mandatory. Not optional.</div>
+        <div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><strong style="color:var(--gold)">D7 Renewal:</strong> Quarterly after-action review for programmes above/below plan. Two cross-site learnings per quarter as target. Group Ops Lead chairs when in post.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="page-tracking" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Tracking &amp; Cadence</div>
+    <h1 class="page-title">Tracking<br><em>&amp; Cadence</em></h1>
+    <p class="page-desc">Health deteriorates gradually and silently — it rarely announces itself. The HRBP's cadence of health monitoring is what separates proactive HR from reactive HR. This section defines what to measure, when, and how to present health data to the COO in a way that drives action.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">The Valentis Health Review Cadence</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>Frequency</th><th>Format</th><th>What is reviewed</th><th>Output</th><th>Audience</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">Monthly</td>
+          <td>5-minute data scan</td>
+          <td>Pipeline metrics (trainee intake, G3/G4 vacancies, conversion rates). Leading indicator flags (near-miss reporting rate, decision escalation frequency, exit interview themes). Indonesia programme delivery.</td>
+          <td>Red flag log — any metric outside threshold triggers HRBP attention within 5 working days</td>
+          <td>HRBP self-monitoring</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">Quarterly</td>
+          <td>30-minute structured review</td>
+          <td>All 7 health dimensions re-scored against leading indicators. SM peer forum output (coordination health). Succession plan milestone checks. Survey results if run that quarter.</td>
+          <td>Health scorecard — 7-dimension RAG rating with trend arrows (improving / stable / deteriorating). One-page summary for COO.</td>
+          <td>HRBP + COO</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">Semi-annual</td>
+          <td>Health pulse survey</td>
+          <td>21-question health survey (Tool 5 Section 06) distributed to all G3+ staff. Results analysed by country and dimension. Compared to previous period for trend.</td>
+          <td>Survey report with dimension scores, trend comparison, and top 3 actions by country. Presented to COO with recommended interventions.</td>
+          <td>HRBP presents to COO</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">Annual</td>
+          <td>Full diagnostic reset</td>
+          <td>Complete 7-dimension diagnostic (this tool). Update all dimension scores. Compare to prior year. Revise the health improvement workplan. Align with annual performance cycle and merit round.</td>
+          <td>Annual health report. Presented to COO and CEO. Inputs to business planning for following year.</td>
+          <td>HRBP presents to COO + CEO</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Presenting Health Data to the COO</div>
+      <div class="card-body" style="margin-bottom:12px">The COO is an operational leader. Health data must be translated into operational and commercial language to be acted on — not presented as an HR scorecard.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">Don't say:</strong> "D5 Talent Pipeline is scoring 4/10 — we have a health gap."</div>
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--green)">Do say:</strong> "We have zero succession cover for any SM role. If Myo H. exits, we face a 6–12 month external recruitment process during the period when we're trying to enter Country 5. The cost of that gap is estimated at [revenue impact]. Here's what we need to do before September."</div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">Don't say:</strong> "D4 Coordination is our weakest dimension."</div>
+        <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--green)">Do say:</strong> "Thailand solved the month-3 safety briefing problem 6 months ago. Laos had the same incident last week. We have no mechanism to transfer what works between sites. The Group Ops Lead role fixes this — and here's what it costs vs what it saves."</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Health Score Trend Framework</div>
+      <div class="card-body" style="margin-bottom:12px">Track each dimension's score and direction quarter-on-quarter. The trend matters as much as the score — a score of 5 improving is better than a score of 7 deteriorating.</div>
+      <table class="dtable">
+        <thead><tr><th>Score</th><th>Trend</th><th>Status</th><th>HRBP action</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:700;color:var(--green)">7–10</td><td>Any</td><td><span class="chip chip-green">Healthy</span></td><td>Maintain. Protect from structural changes that could erode. Share as positive practice with other dimensions.</td></tr>
+          <tr><td style="font-weight:700;color:var(--gold)">5–6</td><td>↑ Improving</td><td><span class="chip chip-green">Watch — improving</span></td><td>Monitor. Intervention is working. Continue current actions. Review next quarter.</td></tr>
+          <tr><td style="font-weight:700;color:var(--gold)">5–6</td><td>→ Stable</td><td><span class="chip chip-gold">Amber — stable</span></td><td>Maintain targeted intervention. If no improvement after 2 quarters, escalate to structural review.</td></tr>
+          <tr><td style="font-weight:700;color:var(--gold)">5–6</td><td>↓ Deteriorating</td><td><span class="chip chip-red">Amber — alert</span></td><td>Escalate to red-priority. Identify whether deterioration has a structural cause. Present to COO within 2 weeks.</td></tr>
+          <tr><td style="font-weight:700;color:var(--red)">1–4</td><td>Any</td><td><span class="chip chip-red">Red — act now</span></td><td>Structural intervention required. A score of 4 or below is not addressed by a programme or initiative — it requires a design change.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">The Health–Strategy Connection — How to Present This to the COO</div>
+    <div class="card-body" style="margin-bottom:14px">The HRBP's strategic positioning depends on connecting health findings directly to the business outcomes the COO cares about. This table is the translation layer.</div>
+    <table class="dtable">
+      <thead><tr><th>Business outcome at risk</th><th>Health dimension causing it</th><th>Leading indicator the HRBP tracks</th><th>HRBP intervention</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--sienna)">Country 5 entry delayed or poorly executed</td><td>D4 Coordination (3/10) — no transfer mechanism; D5 Pipeline (4/10) — no Country 5 SM candidate</td><td>Ops Lead role status; G4→G5 succession plan completion; SM peer forum establishment</td><td>Group Ops Lead role design + recruitment; SM succession identification Q2 2026</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Myanmar programme delivery drops below 85%</td><td>D5 Pipeline — trainee conversion at 58%; D2 Accountability — no G4 owner of trainee outcomes</td><td>Monthly trainee cohort tracking; G4 development conversation documentation rate</td><td>G4 role profile update; month-3 structured check-in; G4 performance metric inclusion</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Laos programme delivery compromised 2027–2028</td><td>D5 Pipeline — 3 of 5 G4s retirement risk, only 2 G3 candidates; D4 Coordination — no cross-country mobility mechanism</td><td>Laos G3 development plan activation (deadline June 2026); G3→G4 milestone tracking</td><td>Development plans active June 2026; cross-country mobility assessed; additional G3 sourcing if needed</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">SM retention failure (Myo H. or Wirawan S.)</td><td>D3 Leadership — retention risk unaddressed; D5 Pipeline — no succession cover</td><td>Retention conversation completion (Myo H. Sep 2026 deadline; Wirawan S. Oct 2026 deadline); succession candidate identification</td><td>Retention conversation framework; succession identification paired with retention offer</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">People cost exceeds 43% revenue share</td><td>D2 Accountability — cost accountabilities unclear at SM level; D4 Coordination — group standards not applied consistently</td><td>Country-level people cost trend; SM P&amp;L literacy assessment</td><td>Quarterly people cost review with each SM; Group HR framework compliance as SM performance expectation</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showTab(id,el){
+  document.querySelectorAll('.tab-body').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');
+  if(el)el.classList.add('active');
+}
+function scoreSurvey(){
+  var dims=[
+    {name:'D1 Direction & Strategic Clarity',qs:['q1','q2','q3'],action:'Cascade strategy to site level. SM-led team briefings every half-year. HRBP provides talking points template.'},
+    {name:'D2 Accountability & Ownership',qs:['q4','q5','q6'],action:'Update G4 and SM role profiles with explicit accountability statements. Include outcome metrics in PM framework. Assign every ghost accountability to a named role.'},
+    {name:'D3 Leadership Quality',qs:['q7','q8','q9'],action:'Indonesia SM authority conversation. Myanmar supervisor coaching programme. Include development conversation quality in SM performance review.'},
+    {name:'D4 Coordination & Integration',qs:['q10','q11','q12'],action:'Establish quarterly SM peer forum immediately. Create Group Ops Lead role (Q3 2026). Build group talent database.'},
+    {name:'D5 Talent Pipeline & Capability',qs:['q13','q14','q15'],action:'Activate Laos G3 development plans June 2026. Name a succession candidate for every G5 role. Investigate Myanmar month-3 attrition root causes.'},
+    {name:'D6 Culture & Psychological Safety',qs:['q16','q17','q18'],action:'Implement month-3 structured trainee check-in. Review near-miss reporting trends. Model psychological safety from SM level down.'},
+    {name:'D7 Renewal & Adaptability',qs:['q19','q20','q21'],action:'Establish quarterly after-action review process. Target 2 cross-site learnings per quarter. Group Ops Lead chairs once in post.'}
+  ];
+  var allScored=true;var totalScore=0;var dimResults=[];
+  for(var i=0;i<dims.length;i++){
+    var d=dims[i];var dimTotal=0;var dimAnswered=0;
+    for(var j=0;j<d.qs.length;j++){
+      var sel=document.querySelector('input[name="'+d.qs[j]+'"]:checked');
+      if(sel){dimTotal+=parseInt(sel.value);dimAnswered++;}
+    }
+    if(dimAnswered<d.qs.length){allScored=false;}
+    var avg=dimAnswered>0?dimTotal/dimAnswered:0;
+    var outOf10=Math.round(avg*2);
+    totalScore+=outOf10;
+    dimResults.push({name:d.name,score:outOf10,action:d.action});
+  }
+  if(!allScored){alert('Please answer all 21 questions before calculating your health score.');return;}
+  var overall=Math.round(totalScore/7);
+  var oColor=overall>=7?'#2d6a4f':overall>=5?'#8a6914':'#9b1a1a';
+  var oLabel=overall>=7?'Healthy Organisation':'Amber — targeted improvement needed';
+  if(overall<5)oLabel='Red — structural intervention required';
+  var ovEl=document.getElementById('sv-overall');
+  ovEl.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.35)">Overall health score</span></div><div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px"><span style="font-family:var(--fd);font-size:42px;font-weight:800;color:'+oColor+';line-height:1">'+overall+'</span><span style="font-family:var(--fd);font-size:20px;color:rgba(255,255,255,0.3)">/10</span><span style="font-family:var(--fm);font-size:10px;color:'+oColor+'">'+oLabel+'</span></div><div style="height:6px;border-radius:3px;background:rgba(255,255,255,0.06);overflow:hidden"><div style="height:100%;border-radius:3px;width:'+Math.round(overall*10)+'%;background:'+oColor+'"></div></div>';
+  var dimsEl=document.getElementById('sv-dims');
+  dimsEl.innerHTML='';
+  var lowDims=[];
+  for(var k=0;k<dimResults.length;k++){
+    var r=dimResults[k];
+    var c=r.score>=7?'#2d6a4f':r.score>=5?'#8a6914':'#9b1a1a';
+    var pct=Math.round(r.score*10);
+    dimsEl.innerHTML+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:3px;padding:10px 14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:12.5px;color:rgba(255,255,255,0.6);font-weight:300">'+r.name+'</span><span style="font-family:var(--fd);font-size:18px;font-weight:800;color:'+c+'">'+r.score+'/10</span></div><div style="height:4px;border-radius:2px;background:rgba(255,255,255,0.06);overflow:hidden"><div style="height:100%;border-radius:2px;width:'+pct+'%;background:'+c+'"></div></div></div>';
+    if(r.score<6)lowDims.push(r);
+  }
+  var actEl=document.getElementById('sv-actions');
+  var actList=document.getElementById('sv-action-list');
+  if(lowDims.length>0){
+    actEl.style.display='block';
+    actList.innerHTML=lowDims.map(function(d){return '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><strong style="color:#e8a07a">'+d.name+':</strong> '+d.action+'</div>';}).join('');
+  }
+  var res=document.getElementById('sv-result');res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearSurvey(){
+  for(var i=1;i<=21;i++){
+    var inputs=document.querySelectorAll('input[name="q'+i+'"]');
+    inputs.forEach(function(inp){inp.checked=false;});
+  }
+  document.getElementById('sv-result').style.display='none';
+}
+</script>
+</body>
+</html>

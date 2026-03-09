@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Role Design & Job Architecture — Valentis OD Tool 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3ef;--surface:#ffffff;--surface2:#f0ede7;--surface3:#e8e4dc;
+  --border:#ddd9d0;--border2:#ccc7bb;
+  --ink:#1c1a16;--ink2:#2e2c27;--ink3:#57534a;--ink4:#8a8478;--ink5:#b8b2a8;
+  --sienna:#9b3a1a;--sienna2:#b44420;--sienna3:#c44e28;
+  --sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.22);
+  --slate:#2c3e50;--slate-dim:rgba(44,62,80,0.07);--slate-border:rgba(44,62,80,0.2);
+  --gold:#8a6914;--gold-dim:rgba(138,105,20,0.07);--gold-border:rgba(138,105,20,0.22);
+  --green:#2d6a4f;--green-dim:rgba(45,106,79,0.07);--green-border:rgba(45,106,79,0.22);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--sienna3),var(--sienna),rgba(155,58,26,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sienna3);background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--sienna3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(155,58,26,0.15);border-color:rgba(155,58,26,0.35);color:#e8a07a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--sienna)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#e8a07a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--sienna);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--sienna)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:border-color .13s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--sienna);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-slate{background:var(--slate-dim);color:var(--slate);border:1px solid var(--slate-border)}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.sienna{background:var(--sienna-dim);border-color:var(--sienna);color:var(--sienna)}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--sienna);padding:16px 20px;margin:16px 0;background:var(--sienna-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6;font-weight:400}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px;color:#f5f0e8}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--sienna);border-bottom-color:var(--sienna);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+.acc-item{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:6px;overflow:hidden}
+.acc-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;transition:background .13s}
+.acc-hdr:hover{background:var(--surface2)}
+.acc-left{display:flex;align-items:center;gap:14px}
+.acc-grade{font-family:var(--fd);font-size:26px;font-weight:800;color:var(--sienna);line-height:1;width:44px;flex-shrink:0}
+.acc-info{display:flex;flex-direction:column;gap:2px}
+.acc-title{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink)}
+.acc-meta{font-family:var(--fm);font-size:9px;color:var(--ink5);letter-spacing:.5px}
+.acc-tog{font-family:var(--fm);font-size:16px;color:var(--ink5)}
+.acc-body{display:none;padding:20px;border-top:1px solid var(--border);background:var(--surface2)}
+.acc-body.open{display:block}
+.grade-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grade-col-title{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.grade-item{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7;padding:5px 0;border-bottom:1px solid var(--border)}
+.grade-item:last-child{border-bottom:none}
+.builder-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px;color:#f5f0e8}
+.b-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:5px;display:block}
+.b-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 12px;color:#f5f0e8;font-family:var(--fb);font-size:13px;outline:none;width:100%;transition:border-color .13s;resize:vertical}
+.b-input:focus{border-color:var(--sienna3)}
+.b-select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 10px;color:#f5f0e8;font-family:var(--fm);font-size:12px;outline:none;width:100%}
+.b-select option{background:#2c3e50}
+.b-row{display:grid;gap:10px;margin-bottom:10px}
+.b-row-3{grid-template-columns:1fr 1fr 1fr}
+.b-row-2{grid-template-columns:1fr 1fr}
+.b-group{display:flex;flex-direction:column;gap:4px}
+.b-section{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:18px;margin-bottom:10px}
+.b-section-title{font-family:var(--fd);font-size:15px;font-weight:600;color:#f5f0e8;margin-bottom:12px}
+.profile-out{background:var(--surface);border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-top:14px;display:none}
+.prof-cover{background:var(--slate);padding:36px 40px;position:relative;overflow:hidden}
+.prof-cover::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(155,58,26,0.07);pointer-events:none}
+.prof-body{padding:32px 40px}
+.prof-section{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.prof-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.prof-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--sienna);margin-bottom:6px}
+.prof-head{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.prof-text{font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.9}
+.prof-list-item{display:flex;gap:8px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7;padding:4px 0}
+.prof-list-dot{width:4px;height:4px;border-radius:50%;background:var(--sienna);flex-shrink:0;margin-top:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-sienna{background:var(--sienna);color:#fff}
+.btn-sienna:hover{background:var(--sienna2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink3)}
+.btn-ghost:hover{border-color:var(--sienna);color:var(--sienna)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+@media print{.sidebar{display:none}.main{margin-left:0}.page.active{padding:20px}.profile-out{display:block!important;border:none}}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">OD Tool 3 / 9</div>
+    <div class="sb-title">Role Design<br><em>&amp; Architecture</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>What is Role Design?</div>
+    <div class="nav-item" onclick="showPage('architecture',this)"><span class="nav-num">02</span>Job Architecture Principles</div>
+    <div class="nav-item" onclick="showPage('grades',this)"><span class="nav-num">03</span>G1–G8 Grade Profiles</div>
+    <div class="nav-item" onclick="showPage('anatomy',this)"><span class="nav-num">04</span>Anatomy of a Role Profile</div>
+    <div class="nav-item" onclick="showPage('common',this)"><span class="nav-num">05</span>Common Role Design Failures</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">06</span>Valentis Role Audit</div>
+    <div class="nav-item" onclick="showPage('builder',this)"><span class="nav-num">07</span>Role Profile Builder</div>
+    <div class="nav-item" onclick="showPage('maintenance',this)"><span class="nav-num">08</span>Keeping Roles Current</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Organisation Design &amp; Development</strong>
+      Tool 3 of 9 · Role Design<br>
+      <span style="color:rgba(255,255,255,0.12)">A well-designed role is the atom of a well-designed organisation</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+<!-- PAGES GO HERE -->
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">OD Tool 3 / 9 — Role Design &amp; Job Architecture</div>
+    <h1 class="page-title">Role Design<br><em>&amp; Architecture</em></h1>
+    <p class="page-desc">A well-designed role is the atom of a well-designed organisation. Get the role right and the structure follows. Get it wrong and no amount of structural redesign will fix the dysfunction that results.</p>
+  </div>
+  <div class="pull-quote">
+    <p>"Most organisational problems that look like people problems are actually role problems. The wrong work is assigned to the wrong grade — and everyone wonders why performance is inconsistent."</p>
+    <cite>Elliott Jaques — Requisite Organisation</cite>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What Role Design Actually Is</div>
+      <div class="card-body" style="margin-bottom:14px">Role design is the deliberate process of defining what a role exists to do, what authority it carries, what outputs it is accountable for, and what capability it requires. It is upstream of job descriptions, grade assignments, and performance frameworks — all of which should flow from a well-designed role, not precede it.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:11px 14px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Purpose.</strong> Why does this role exist? What would not happen — or would happen badly — if this role were vacant? If the answer is unclear, the role has not been designed; it has been inherited.</div>
+        <div style="padding:11px 14px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Accountability.</strong> What specific outputs is the role holder responsible for delivering? Accountability is not a list of tasks — it is a defined set of outcomes the role holder owns, regardless of how they achieve them.</div>
+        <div style="padding:11px 14px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Authority.</strong> What decisions can the role holder make without escalation? What requires approval? Where the authority boundary is unclear, decisions either stall or get made by the wrong person.</div>
+        <div style="padding:11px 14px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Capability.</strong> What knowledge, skill, and judgement does the role require to deliver its accountabilities? This determines both how the role is graded and how people are selected for it.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Role Design vs Job Description</div>
+      <div class="card-body" style="margin-bottom:14px">These are not the same thing. Most organisations produce job descriptions without ever doing role design. The difference matters.</div>
+      <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr">
+          <div style="padding:14px 16px;background:var(--red-dim);border-right:1px solid var(--border)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:8px">Job Description</div>
+            <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— A list of tasks and responsibilities</div>
+              <div>— Describes what the person does day-to-day</div>
+              <div>— Often written to justify existing pay</div>
+              <div>— Quickly becomes outdated</div>
+              <div>— Silent on authority and decision rights</div>
+              <div>— HR administrative document</div>
+            </div>
+          </div>
+          <div style="padding:14px 16px;background:var(--green-dim)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:8px">Role Profile (Well-Designed)</div>
+            <div style="display:grid;gap:4px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— Defines purpose, accountability, authority</div>
+              <div>— Describes what the role exists to deliver</div>
+              <div>— Anchored to organisational need</div>
+              <div>— Stable through strategy cycles</div>
+              <div>— Explicit on decision rights</div>
+              <div>— Strategic people management tool</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">At Valentis:</strong> Most current role documentation is task-list job descriptions. The OD agenda requires converting the G4+ critical roles to proper role profiles — starting with Site Manager and Group Ops Lead.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Why Role Design Is an OD Priority — Not an HR Admin Task</div>
+    <table class="dtable">
+      <thead><tr><th>When roles are poorly designed…</th><th>The organisational consequence</th><th>The Valentis example</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--red)">Accountabilities overlap between roles</td><td>Both role holders do partial work, assume the other is covering the gap, or compete for ownership. Neither is fully accountable.</td><td>G4 driller "mentors" trainees but has no formal accountability for their development outcomes. Trainee attrition at month 3 has no clear owner.</td></tr>
+        <tr><td style="font-weight:600;color:var(--red)">Authority is not defined</td><td>Decisions escalate unnecessarily. COO or SM becomes a bottleneck for decisions that should be made one level below.</td><td>Indonesia SM escalates routine HR decisions to COO — not because he lacks capability, but because his authority boundary has never been defined.</td></tr>
+        <tr><td style="font-weight:600;color:var(--red)">Role is graded below its actual complexity</td><td>The role attracts under-qualified candidates. Capable people leave because they feel undervalued. Salary compression builds across the team.</td><td>G3 drillers with informal supervisory responsibility are paid as individual contributors. The role has grown beyond its grade.</td></tr>
+        <tr><td style="font-weight:600;color:var(--red)">Role purpose is undefined</td><td>The role holder fills the void with whatever seems useful — often low-value activity. Manager time is consumed re-directing effort.</td><td>The proposed Group Ops Lead role has no profile yet. Without one, the first hire will define the role by personal preference rather than organisational need.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="page-architecture" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Job Architecture Principles</div>
+    <h1 class="page-title">Job Architecture<br><em>Principles</em></h1>
+    <p class="page-desc">Job architecture is the framework that organises all roles in the organisation into a coherent, comparable structure — so that grading, pay, career paths, and succession planning all operate from the same foundation.</p>
+  </div>
+  <div class="info sienna"><strong>Why Job Architecture Matters at Valentis</strong>Valentis operates across four countries with different labour markets, cultural norms, and regulatory contexts. Without a common job architecture, the G3 driller in Laos and the G3 driller in Indonesia are notionally the same grade but may have vastly different accountabilities, pay, and career expectations. A shared architecture creates the common language that enables cross-country equity, mobility, and succession planning.</div>
+  <div class="card">
+    <div class="card-title">The Four Pillars of Job Architecture</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px">
+      <div>
+        <div style="padding:18px;background:var(--slate);border-radius:4px;margin-bottom:8px">
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f5f0e8;margin-bottom:6px">1. Grade Structure</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.75">A defined set of levels (grades) that reflect increasing complexity, scope, and accountability. Each grade has a clear definition of the work complexity it represents — not just a pay band. At Valentis: G1–G8.</div>
+        </div>
+        <div style="padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px">2. Job Families</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Groups of roles that perform related work and follow similar career progressions. At Valentis: Operations/Drilling, Site Leadership, Group Functions (HR, Finance, HSE), Corporate Leadership. Each family has its own progression pathway within the grade structure.</div>
+        </div>
+      </div>
+      <div>
+        <div style="padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;margin-bottom:8px">
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px">3. Career Pathways</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The defined progression routes through the grade structure — vertical (promotion) and lateral (role rotation). A well-designed architecture makes progression legible to every employee. At Valentis, the G1→G4 driller pathway is the most critical and currently the least well-defined.</div>
+        </div>
+        <div style="padding:18px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px">4. Evaluation Criteria</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The factors used to assign roles to grades — consistently across job families and countries. At Valentis, the C&amp;B Job Evaluation tool (C&amp;B Tool 2) uses: Knowledge &amp; Skill, Problem Solving, Accountability, and Working Conditions. These four factors anchor the architecture.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">The Valentis Job Architecture — Design Principles</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>Principle</th><th>What it means in practice</th><th>The Valentis application</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--sienna)">Grade = complexity, not tenure</td><td>A role is graded by the complexity of work it requires, not by how long someone has been doing it. Tenure rewards belong in the pay range, not in the grade.</td><td>A G3 driller who has been at G3 for 8 years is not automatically G4. Grade change requires demonstrated G4 accountability — programme leadership and trainee oversight — not just time served.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">One role, one grade</td><td>A role has a single grade that reflects the work it was designed to do. If a person is doing work above their grade, the role should be regraded — not the person informally promoted.</td><td>G3 drillers currently doing informal supervision must either have their roles formally regraded to G4 (with the accountability defined), or the supervision expectation must be removed.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Architecture is country-neutral</td><td>The same grade means the same level of work complexity in all four countries. Pay ranges adjust for country-specific market data (country factors). The grade does not.</td><td>A G5 Site Manager in Laos and a G5 Site Manager in Thailand hold the same grade — the same scope and complexity of role. Their pay differs by country factor (LAO 85% vs THA 105%) but their grade and accountability are identical.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Architecture enables mobility</td><td>When roles across countries share a common architecture, moving a G4 driller from Myanmar to Indonesia is a straightforward lateral transfer — not a renegotiation of role, grade, and pay from scratch.</td><td>Currently Valentis cannot easily move talent between countries because role definitions differ by site. A common architecture directly enables the cross-country mobility the workforce plan requires.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Architecture is stable; roles evolve</td><td>The grade framework should be stable over 5+ years. Individual role profiles within it are reviewed annually and updated when strategy or structure changes.</td><td>The G1–G8 framework is the stable architecture. The Group Ops Lead role profile is a new entry in the framework — the architecture does not change, but a new role is added to it.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">The Valentis Job Families</div>
+    <div class="card-body" style="margin-bottom:14px">Four distinct job families at Valentis — each with its own career pathway through the grade structure. Cross-family moves are possible but require deliberate career planning and capability development.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
+      <div style="padding:16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Family A</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px">Operations &amp; Drilling</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:8px">The core technical pipeline. The organisation's primary value-creation engine.</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--sienna)">G1 Trainee → G2 → G3 Driller → G4 Senior Driller</div>
+      </div>
+      <div style="padding:16px;background:var(--slate-dim);border:1px solid var(--slate-border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--slate);margin-bottom:8px">Family B</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px">Site Leadership</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:8px">Country-level general management. Full P&amp;L and people accountability.</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--slate)">G4 Senior Driller → G5 Site Manager → (G6 Group Ops Lead)</div>
+      </div>
+      <div style="padding:16px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Family C</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px">Group Functions</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:8px">HR, Finance, HSE, and technical support at group level.</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--gold)">G3 Coordinator → G4 Specialist → G5 Manager → G6 Group Manager</div>
+      </div>
+      <div style="padding:16px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:8px">Family D</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px">Executive Leadership</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:8px">Group-level strategic leadership. External-facing and Board-accountable.</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--green)">G7 COO / CHRO → G8 CEO</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="page-grades" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — G1–G8 Grade Profiles</div>
+    <h1 class="page-title">G1–G8<br><em>Grade Profiles</em></h1>
+    <p class="page-desc">The definitive reference for what each grade level means at Valentis — the complexity of work, the accountability scope, the authority level, and the capability required. Every role in the organisation maps to one of these eight levels.</p>
+  </div>
+  <div class="info gold"><strong>How to Use This Reference</strong>Each grade profile defines the level of work — not a specific role title. Multiple roles can sit at the same grade. The grade is assigned based on the nature of the work the role does, not the title or the person holding it. When evaluating whether a role is correctly graded, compare its actual accountabilities against these profiles.</div>
+  <div style="display:grid;gap:6px">
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('g1')">
+        <div class="acc-left">
+          <div class="acc-grade">G1</div>
+          <div class="acc-info">
+            <div class="acc-title">Trainee / Entry-Level Operative</div>
+            <div class="acc-meta">Roles: Driller Trainee · Site Assistant · Admin Trainee</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="chip chip-muted">Entry</span><span class="acc-tog" id="at-g1">+</span></div>
+      </div>
+      <div class="acc-body" id="ab-g1">
+        <div class="grade-grid">
+          <div>
+            <div class="grade-col-title" style="color:var(--sienna)">Work Complexity</div>
+            <div class="grade-item">Performs defined, repetitive tasks under close supervision</div>
+            <div class="grade-item">Follows explicit instructions with limited independent judgement</div>
+            <div class="grade-item">Work is checked daily or continuously</div>
+            <div class="grade-item">Learning mode — developing foundational skills</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--slate)">Accountability &amp; Authority</div>
+            <div class="grade-item">Accountable for completing assigned tasks to standard</div>
+            <div class="grade-item">No direct reports; no budget authority</div>
+            <div class="grade-item">Decisions: limited to own task execution</div>
+            <div class="grade-item">Escalates any non-routine situation immediately</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--gold)">Capability Required</div>
+            <div class="grade-item">Basic literacy and numeracy</div>
+            <div class="grade-item">Physical fitness for site work (where applicable)</div>
+            <div class="grade-item">Willingness to learn and follow direction</div>
+            <div class="grade-item">No prior experience required — training provided</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Development milestone:</strong> G1→G2 transition requires: 12–18 months on-site, demonstrated basic drilling technique, safety record, and supervisor endorsement. This is the first pipeline gate — and the point at which early attrition (Myanmar month-3 issue) must be addressed.</div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('g2')">
+        <div class="acc-left">
+          <div class="acc-grade">G2</div>
+          <div class="acc-info">
+            <div class="acc-title">Developing Operative / Junior Driller</div>
+            <div class="acc-meta">Roles: Junior Driller · Field Technician · Admin Officer</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="chip chip-muted">Developing</span><span class="acc-tog" id="at-g2">+</span></div>
+      </div>
+      <div class="acc-body" id="ab-g2">
+        <div class="grade-grid">
+          <div>
+            <div class="grade-col-title" style="color:var(--sienna)">Work Complexity</div>
+            <div class="grade-item">Performs a range of technical tasks with developing independence</div>
+            <div class="grade-item">Applies learned procedures with some situational judgement</div>
+            <div class="grade-item">Work is reviewed periodically, not continuously</div>
+            <div class="grade-item">Beginning to develop technical specialisation</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--slate)">Accountability &amp; Authority</div>
+            <div class="grade-item">Accountable for quality and safety of own work</div>
+            <div class="grade-item">May assist in guiding G1 trainees informally</div>
+            <div class="grade-item">No formal supervisory authority</div>
+            <div class="grade-item">Decisions: routine work execution within defined parameters</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--gold)">Capability Required</div>
+            <div class="grade-item">Completed G1 training programme</div>
+            <div class="grade-item">Basic technical competency in core discipline</div>
+            <div class="grade-item">Safety certification (country-specific)</div>
+            <div class="grade-item">Demonstrates reliability and learning orientation</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Development milestone:</strong> G2→G3 requires 12–18 further months, demonstrated independent drilling capability, programme contribution, and G4 mentor endorsement. The supply chain: 8 G1 trainees → 5–6 G2 completions per 18-month cycle.</div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('g3')">
+        <div class="acc-left">
+          <div class="acc-grade">G3</div>
+          <div class="acc-info">
+            <div class="acc-title">Skilled Operative / Driller</div>
+            <div class="acc-meta">Roles: Driller · HSE Officer · Finance Officer · HR Coordinator</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="chip chip-sienna">Critical pipeline</span><span class="acc-tog" id="at-g3">+</span></div>
+      </div>
+      <div class="acc-body" id="ab-g3">
+        <div class="grade-grid">
+          <div>
+            <div class="grade-col-title" style="color:var(--sienna)">Work Complexity</div>
+            <div class="grade-item">Independently executes complex technical work</div>
+            <div class="grade-item">Applies professional judgement in non-routine situations</div>
+            <div class="grade-item">Work is reviewed by outcomes, not methods</div>
+            <div class="grade-item">Subject matter expert within own technical domain</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--slate)">Accountability &amp; Authority</div>
+            <div class="grade-item">Accountable for programme deliverables on assigned drilling sections</div>
+            <div class="grade-item">Responsible for own safety and immediate site safety</div>
+            <div class="grade-item">May informally guide G1–G2 colleagues (not formal authority)</div>
+            <div class="grade-item">Decisions: technical execution within programme parameters</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--gold)">Capability Required</div>
+            <div class="grade-item">Full technical drilling competency</div>
+            <div class="grade-item">Country-specific regulatory certification</div>
+            <div class="grade-item">Demonstrated programme delivery track record</div>
+            <div class="grade-item">Emerging people orientation (for G4 pathway)</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--red)">Live risk — Indonesia:</strong> 3 open G3 vacancies (40+ days). Programme delivery has dropped from 93%→84% directly as a result. Emergency sourcing in progress. This grade is the operational engine of Valentis — a G3 vacancy is a revenue risk, not just an HR gap.</div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('g4')">
+        <div class="acc-left">
+          <div class="acc-grade">G4</div>
+          <div class="acc-info">
+            <div class="acc-title">Senior Operative / Senior Driller</div>
+            <div class="acc-meta">Roles: Senior Driller · Senior HSE · Senior Finance Analyst · HR Specialist</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="chip chip-sienna">Bottleneck grade</span><span class="acc-tog" id="at-g4">+</span></div>
+      </div>
+      <div class="acc-body" id="ab-g4">
+        <div class="grade-grid">
+          <div>
+            <div class="grade-col-title" style="color:var(--sienna)">Work Complexity</div>
+            <div class="grade-item">Manages a programme section AND develops junior staff</div>
+            <div class="grade-item">Balances technical delivery with people leadership simultaneously</div>
+            <div class="grade-item">Handles ambiguous site conditions with independent judgement</div>
+            <div class="grade-item">Technical authority — others defer to their expertise</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--slate)">Accountability &amp; Authority</div>
+            <div class="grade-item">Accountable for section programme delivery metrics</div>
+            <div class="grade-item">Formally accountable for G1–G2 trainee development outcomes</div>
+            <div class="grade-item">Authority to direct G1–G3 work on site</div>
+            <div class="grade-item">Decisions: programme method, trainee assignments, daily safety calls</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--gold)">Capability Required</div>
+            <div class="grade-item">Advanced technical expertise — full programme leadership</div>
+            <div class="grade-item">Demonstrated people development capability</div>
+            <div class="grade-item">Programme planning and reporting competency</div>
+            <div class="grade-item">18–24 months G3 experience + SM endorsement</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">Architecture note:</strong> G4 is where the role fundamentally changes character — from technical contributor to technical leader. The G3→G4 transition takes 18–24 months and is the longest development cycle in the pipeline. Laos senior driller cohort: avg age 51, 3 of 5 at retirement risk within 3 years. G3 development plans must activate June 2026.</div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('g5')">
+        <div class="acc-left">
+          <div class="acc-grade">G5</div>
+          <div class="acc-info">
+            <div class="acc-title">Manager / Site Manager</div>
+            <div class="acc-meta">Roles: Site Manager · HSE Manager · Finance Manager · Senior HR Manager</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="chip chip-slate">Country P&amp;L</span><span class="acc-tog" id="at-g5">+</span></div>
+      </div>
+      <div class="acc-body" id="ab-g5">
+        <div class="grade-grid">
+          <div>
+            <div class="grade-col-title" style="color:var(--sienna)">Work Complexity</div>
+            <div class="grade-item">Full country-level general management</div>
+            <div class="grade-item">Multi-disciplinary responsibility — operations, people, client, HSE</div>
+            <div class="grade-item">Navigates complex stakeholder environments (client, government, group)</div>
+            <div class="grade-item">Manages the tension between local context and group standards</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--slate)">Accountability &amp; Authority</div>
+            <div class="grade-item">Accountable for country programme delivery and P&amp;L</div>
+            <div class="grade-item">Full people management authority for country team</div>
+            <div class="grade-item">Authority: hiring (within approved HC), pay within bands, disciplinary</div>
+            <div class="grade-item">Decisions: operational method, resource allocation, country HR</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--gold)">Capability Required</div>
+            <div class="grade-item">Proven programme delivery and people leadership</div>
+            <div class="grade-item">Commercial and financial literacy</div>
+            <div class="grade-item">Client relationship management</div>
+            <div class="grade-item">Cultural intelligence — multi-country context</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--red)">Succession risk:</strong> Myo H. (Myanmar G5) — retention bonus expires April 2027, retention conversation deadline September 2026. Wirawan S. (Indonesia G5) — retention bonus expires Q1 2027, renewal/succession deadline October 2026. Zero succession cover for any G5 role currently.</div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('g6')">
+        <div class="acc-left">
+          <div class="acc-grade">G6</div>
+          <div class="acc-info">
+            <div class="acc-title">Senior Manager / Group Function Head</div>
+            <div class="acc-meta">Roles: Group HR Manager · Group Finance Manager · Group Ops Lead (new)</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="chip chip-gold">Group scope</span><span class="acc-tog" id="at-g6">+</span></div>
+      </div>
+      <div class="acc-body" id="ab-g6">
+        <div class="grade-grid">
+          <div>
+            <div class="grade-col-title" style="color:var(--sienna)">Work Complexity</div>
+            <div class="grade-item">Group-level functional leadership across all countries</div>
+            <div class="grade-item">Designs and owns group-wide systems, frameworks, and standards</div>
+            <div class="grade-item">Advises COO and CEO on functional strategy</div>
+            <div class="grade-item">Manages the group–country tension in their functional domain</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--slate)">Accountability &amp; Authority</div>
+            <div class="grade-item">Accountable for group-level functional outcomes (not country delivery)</div>
+            <div class="grade-item">Authority to set group standards that all countries must follow</div>
+            <div class="grade-item">Functional authority over country-level equivalents (dotted line)</div>
+            <div class="grade-item">Decisions: group policy, framework design, functional investment</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--gold)">Capability Required</div>
+            <div class="grade-item">Deep functional expertise + strategic capability</div>
+            <div class="grade-item">Ability to influence without direct authority</div>
+            <div class="grade-item">Multi-country operating experience</div>
+            <div class="grade-item">Stakeholder management at COO/CEO level</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">New role note:</strong> The Group Ops Lead (G6) proposed in Tool 2 sits at this grade. The role profile must be written before recruitment begins — and must clearly define what "group standards authority" means in practice vs SM operational autonomy. This boundary definition is the most politically sensitive part of the role design.</div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('g7')">
+        <div class="acc-left">
+          <div class="acc-grade">G7</div>
+          <div class="acc-info">
+            <div class="acc-title">Executive / Functional Director</div>
+            <div class="acc-meta">Roles: COO · CHRO (future) · CFO</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="chip chip-slate">Executive</span><span class="acc-tog" id="at-g7">+</span></div>
+      </div>
+      <div class="acc-body" id="ab-g7">
+        <div class="grade-grid">
+          <div>
+            <div class="grade-col-title" style="color:var(--sienna)">Work Complexity</div>
+            <div class="grade-item">Group-wide strategic leadership of a major functional domain</div>
+            <div class="grade-item">Accountable for multi-year outcomes — 3–5 year time horizon</div>
+            <div class="grade-item">Operates across ambiguous, politically complex environments</div>
+            <div class="grade-item">Shapes organisational strategy, not just executes it</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--slate)">Accountability &amp; Authority</div>
+            <div class="grade-item">Accountable for group-level functional P&amp;L and strategic delivery</div>
+            <div class="grade-item">Full authority over all roles within functional domain</div>
+            <div class="grade-item">Member of Group Leadership Team — collective CEO advisory</div>
+            <div class="grade-item">Decisions: major organisational investments, leadership appointments</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--gold)">Capability Required</div>
+            <div class="grade-item">Proven executive leadership — multi-country, multi-year scope</div>
+            <div class="grade-item">Board and CEO-level credibility</div>
+            <div class="grade-item">Strategic thinking — connects functional domain to business strategy</div>
+            <div class="grade-item">External market perspective and competitive intelligence</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:12.5px;color:var(--ink3)"><strong style="color:var(--sienna)">CHRO pathway:</strong> The Group HR Manager role (G6, current) is on a trajectory toward G7 CHRO. The gap between G6 and G7 is strategic scope — moving from functional manager to executive shaper of organisational strategy. The HRBP toolkit and AIHR certification programme are the capability development vehicle for this transition.</div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('g8')">
+        <div class="acc-left">
+          <div class="acc-grade">G8</div>
+          <div class="acc-info">
+            <div class="acc-title">Chief Executive</div>
+            <div class="acc-meta">Roles: CEO</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="chip chip-slate">CEO</span><span class="acc-tog" id="at-g8">+</span></div>
+      </div>
+      <div class="acc-body" id="ab-g8">
+        <div class="grade-grid">
+          <div>
+            <div class="grade-col-title" style="color:var(--sienna)">Work Complexity</div>
+            <div class="grade-item">Whole-enterprise accountability — all functions, all countries</div>
+            <div class="grade-item">Sets organisational direction; accountable to shareholders and Board</div>
+            <div class="grade-item">Operates on a 5–10 year strategic time horizon</div>
+            <div class="grade-item">Represents the organisation to all external stakeholders</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--slate)">Accountability &amp; Authority</div>
+            <div class="grade-item">Accountable for total enterprise performance and value creation</div>
+            <div class="grade-item">Ultimate authority — constrained only by Board governance</div>
+            <div class="grade-item">Appoints all G7 and G6 roles</div>
+            <div class="grade-item">Decisions: strategy, major capital allocation, M&amp;A, market entry</div>
+          </div>
+          <div>
+            <div class="grade-col-title" style="color:var(--gold)">Capability Required</div>
+            <div class="grade-item">Track record of enterprise leadership</div>
+            <div class="grade-item">Board-level governance experience</div>
+            <div class="grade-item">Industry credibility — mineral exploration sector</div>
+            <div class="grade-item">Capital markets and investor relations capability</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div id="page-anatomy" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Anatomy of a Role Profile</div>
+    <h1 class="page-title">Anatomy of<br><em>a Role Profile</em></h1>
+    <p class="page-desc">A role profile is the definitive reference document for a role. It defines what the role exists to do, what it is accountable for, what authority it carries, and what capability it requires. Every element serves a specific purpose — and leaving any out creates a gap that performance management, recruitment, and pay equity will have to navigate around.</p>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('at-overview',this)">Role Profile Elements</div>
+    <div class="tab" onclick="showTab('at-sm',this)">Site Manager Example</div>
+    <div class="tab" onclick="showTab('at-g4',this)">Senior Driller Example</div>
+    <div class="tab" onclick="showTab('at-ops',this)">Group Ops Lead Example</div>
+  </div>
+  <div class="tab-body active" id="tab-at-overview">
+    <div class="card">
+      <div class="card-title">The Eight Elements of a Valentis Role Profile</div>
+      <table class="dtable" style="margin-top:8px">
+        <thead><tr><th>#</th><th>Element</th><th>What it defines</th><th>Why it matters</th><th>Common mistake</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:700;color:var(--sienna);font-family:var(--fm)">1</td><td style="font-weight:600">Role Purpose</td><td>One to two sentences: why this role exists and what the organisation would lose if it were vacant</td><td>Orients the role holder and their manager on what success actually looks like — before tasks and metrics are defined</td><td>Writing a purpose statement that describes the tasks ("responsible for drilling") rather than the contribution ("ensures safe programme delivery on assigned sections")</td></tr>
+          <tr><td style="font-weight:700;color:var(--sienna);font-family:var(--fm)">2</td><td style="font-weight:600">Grade &amp; Job Family</td><td>The grade (G1–G8) and which of the four job families the role belongs to</td><td>Determines pay band, career pathway, and the complexity level of work the role is expected to perform</td><td>Grading the role by the person currently in it, not by the work the role requires</td></tr>
+          <tr><td style="font-weight:700;color:var(--sienna);font-family:var(--fm)">3</td><td style="font-weight:600">Key Accountabilities</td><td>4–6 statements of what the role is responsible for delivering — outcomes, not tasks</td><td>The foundation for performance management. If the accountability is not in the profile, the person cannot be held to it</td><td>Writing task lists ("attends weekly meetings", "produces reports") instead of outcome statements ("delivers weekly programme metrics to COO within agreed timelines")</td></tr>
+          <tr><td style="font-weight:700;color:var(--sienna);font-family:var(--fm)">4</td><td style="font-weight:600">Authority Level</td><td>What decisions the role can make unilaterally vs what requires approval</td><td>Without this, every decision either escalates unnecessarily or gets made by the wrong person — both are costly</td><td>Leaving authority undefined ("exercises appropriate judgement") — which means nothing in practice</td></tr>
+          <tr><td style="font-weight:700;color:var(--sienna);font-family:var(--fm)">5</td><td style="font-weight:600">Reporting Structure</td><td>Who the role reports to; who reports to the role; key lateral relationships</td><td>Defines both the formal accountability chain and the coordination obligations — who the role must work with to deliver its accountabilities</td><td>Only capturing direct reports — missing the lateral relationships that are often where delivery actually happens</td></tr>
+          <tr><td style="font-weight:700;color:var(--sienna);font-family:var(--fm)">6</td><td style="font-weight:600">Capability Requirements</td><td>Knowledge, skills, and experience required to perform the role at grade — with must-have vs desirable distinction</td><td>The selection benchmark for recruitment and the development target for succession candidates</td><td>Writing aspirational requirements that exclude strong internal candidates, or writing requirements that describe the current person, not the role</td></tr>
+          <tr><td style="font-weight:700;color:var(--sienna);font-family:var(--fm)">7</td><td style="font-weight:600">Working Conditions</td><td>Location, travel requirements, physical demands, site-specific conditions</td><td>Legally important; practically essential for candidate self-selection. Site roles have conditions that office roles do not — and candidates should know before they accept</td><td>Generic language ("may be required to travel") that gives no useful guidance to the candidate or manager</td></tr>
+          <tr><td style="font-weight:700;color:var(--sienna);font-family:var(--fm)">8</td><td style="font-weight:600">Review Date</td><td>When the profile was last reviewed and when it is next due for review</td><td>Role profiles decay. Strategy changes, structures change, and the role profile must reflect the current design — not the design from three years ago</td><td>No review date — profile is written once and forgotten</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-at-sm">
+    <div style="background:var(--surface);border:2px solid var(--ink);border-radius:4px;overflow:hidden">
+      <div style="background:var(--slate);padding:30px 36px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(155,58,26,0.08);pointer-events:none"></div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--sienna3);margin-bottom:6px">Valentis Group — Role Profile</div>
+        <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:#f5f0e8;line-height:1;margin-bottom:6px">Site Manager</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <span class="chip" style="background:rgba(155,58,26,0.2);color:#e8a07a;border-color:rgba(155,58,26,0.4)">G5 · Site Leadership</span>
+          <span class="chip" style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);border-color:rgba(255,255,255,0.12)">Family B</span>
+          <span class="chip" style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);border-color:rgba(255,255,255,0.12)">All Countries</span>
+        </div>
+      </div>
+      <div style="padding:28px 36px">
+        <div class="prof-section">
+          <div class="prof-eyebrow">Role Purpose</div>
+          <div class="prof-text">The Site Manager is accountable for the safe, compliant, and profitable delivery of the Valentis drilling programme within their assigned country — ensuring programme targets are met, the team is developed, client relationships are maintained, and group standards are upheld in a culturally appropriate way.</div>
+        </div>
+        <div class="prof-section">
+          <div class="prof-eyebrow">Key Accountabilities</div>
+          <div style="display:grid;gap:5px;margin-top:4px">
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Programme delivery:</strong> Accountable for country programme completion to contracted timelines, quality standards, and safety requirements. Reports programme metrics weekly to COO.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>People leadership:</strong> Manages, develops, and retains the full country team (G1–G4). Accountable for driller pipeline health — trainee intake, development milestones, and G3→G4 progression rates.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Country P&amp;L:</strong> Manages country operating costs within approved budget. Identifies and escalates cost variances above 10% within the reporting period.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Client relationship:</strong> Maintains primary client contact within country. Owns client satisfaction and manages scope change negotiations within delegated authority.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Regulatory compliance:</strong> Ensures all country operations comply with local regulatory requirements, group HSE standards, and client specifications.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Group standards:</strong> Implements group HR, HSE, and operational frameworks within the country context. Provides feedback to Group Functions on framework fitness for country conditions.</div></div>
+          </div>
+        </div>
+        <div class="prof-section">
+          <div class="prof-eyebrow">Authority Level</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px">
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Decides Independently</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Operational method and daily resource allocation</div>
+                <div>— Disciplinary actions up to written warning</div>
+                <div>— Pay decisions within approved band and merit pool</div>
+                <div>— Country procurement below [threshold]</div>
+                <div>— Trainee intake and G1→G2 advancement</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Requires COO Approval</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— New headcount requests</div>
+                <div>— Terminations and redundancies</div>
+                <div>— Contract scope changes above [threshold]</div>
+                <div>— Off-programme capital expenditure</div>
+                <div>— G4+ promotions and grade changes</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="prof-section">
+          <div class="prof-eyebrow">Capability Requirements</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px">
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:6px">Must Have</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— 5+ years mineral exploration experience</div>
+                <div>— Demonstrated people leadership (team of 8+)</div>
+                <div>— Programme delivery track record at G4 or equivalent</div>
+                <div>— Financial literacy — budget management experience</div>
+                <div>— Country-specific regulatory knowledge</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Highly Desirable</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Multi-country or cross-cultural experience</div>
+                <div>— Client-facing relationship management</div>
+                <div>— HSE management qualification</div>
+                <div>— Language skills relevant to country context</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--ink5);text-align:right">Profile version: March 2026 · Next review: March 2027</div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-at-g4">
+    <div style="background:var(--surface);border:2px solid var(--ink);border-radius:4px;overflow:hidden">
+      <div style="background:var(--sienna);padding:30px 36px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:6px">Valentis Group — Role Profile</div>
+        <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:#fff;line-height:1;margin-bottom:6px">Senior Driller</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <span class="chip" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3)">G4 · Operations &amp; Drilling</span>
+          <span class="chip" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15)">Family A · All Countries</span>
+        </div>
+      </div>
+      <div style="padding:28px 36px">
+        <div class="prof-section">
+          <div class="prof-eyebrow">Role Purpose</div>
+          <div class="prof-text">The Senior Driller delivers the highest level of technical drilling performance on assigned programme sections while simultaneously developing the next generation of drillers. This role is the fulcrum of the Valentis pipeline — it is where technical excellence and people development meet in a single accountability.</div>
+        </div>
+        <div class="prof-section">
+          <div class="prof-eyebrow">Key Accountabilities</div>
+          <div style="display:grid;gap:5px;margin-top:4px">
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Programme section delivery:</strong> Accountable for technical quality, daily metreage targets, and safety compliance on assigned drilling sections. Reports progress to Site Manager daily.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Trainee development:</strong> Formally accountable for the development outcomes of assigned G1–G2 trainees. Conducts structured development conversations monthly and provides milestone assessments. Target: trainee-to-G2 conversion rate ≥70%.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Technical authority:</strong> First point of escalation for technical decisions on site. Makes independent judgement calls on drilling method within programme parameters.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Safety leadership:</strong> Models safety behaviour and holds all G1–G3 colleagues accountable for safety standards on section. Authority to stop work when safety is at risk.</div></div>
+          </div>
+        </div>
+        <div class="prof-section">
+          <div class="prof-eyebrow">Critical Note — Role Architecture</div>
+          <div style="padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)">The trainee development accountability is not optional — it is a core accountability of this grade. A G4 driller who delivers excellent technical results but does not develop their trainees is not performing their role. Performance management at G4 must assess both dimensions equally. This is the design correction that connects the reward framework (C&amp;B) to the pipeline strategy (TA).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-at-ops">
+    <div style="background:var(--surface);border:2px solid var(--ink);border-radius:4px;overflow:hidden">
+      <div style="background:var(--ink2);padding:30px 36px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(155,58,26,0.7);margin-bottom:6px">Valentis Group — New Role Profile · DRAFT</div>
+        <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:#f5f0e8;line-height:1;margin-bottom:6px">Group Operations Lead</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <span class="chip" style="background:rgba(155,58,26,0.2);color:#e8a07a;border-color:rgba(155,58,26,0.4)">G6 · Group Functions</span>
+          <span class="chip" style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.4);border-color:rgba(255,255,255,0.1)">NEW ROLE · 2026</span>
+        </div>
+      </div>
+      <div style="padding:28px 36px">
+        <div class="prof-section">
+          <div class="prof-eyebrow">Role Purpose</div>
+          <div class="prof-text">The Group Operations Lead ensures that Valentis's drilling programme standards, operational practices, and technical methodology are consistent, improving, and shared across all country sites — enabling the COO to hold a manageable span of control as the group expands to five countries.</div>
+        </div>
+        <div class="prof-section">
+          <div class="prof-eyebrow">Key Accountabilities</div>
+          <div style="display:grid;gap:5px;margin-top:4px">
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Group operational standards:</strong> Owns and maintains the group operational standards framework (drilling methodology, safety protocols, programme reporting format). Accountable for all sites operating to standard — not for how sites achieve their programme delivery.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Best practice transfer:</strong> Identifies high-performing practices at individual sites and facilitates their adoption across the group. Chairs the quarterly SM peer forum. Accountable for measurable improvement in the lagging sites' performance.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>COO advisory:</strong> Provides the COO with a consolidated operational picture across all countries — one source of truth for programme metrics, risk flags, and operational improvement initiatives.</div></div>
+            <div class="prof-list-item"><div class="prof-list-dot"></div><div><strong>Country 5 operational integration:</strong> Leads the operational onboarding of Country 5 — standards adoption, SM orientation, and programme reporting integration.</div></div>
+          </div>
+        </div>
+        <div class="prof-section">
+          <div class="prof-eyebrow">Authority Boundary — Critical Design Decision</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+            <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--green)">Group Ops Lead HAS authority to:</strong> Set and enforce group standards. Require reporting in the group format. Escalate standards non-compliance to COO. Chair the SM forum and set its agenda.</div>
+            <div style="padding:12px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">Group Ops Lead does NOT have authority to:</strong> Direct SMs on how to deliver their programme. Override SM operational decisions. Manage SM performance. Hire or fire country staff.</div>
+          </div>
+          <div style="margin-top:8px;padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Design rationale:</strong> This boundary is the difference between a coordination role and a management layer. If the authority boundary is not explicit, the Indonesia SM will perceive the Group Ops Lead as a threat to his autonomy — and resistance will follow. The boundary must be defined in the role profile, communicated directly to all SMs by the COO, and respected consistently.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-common" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Common Role Design Failures</div>
+    <h1 class="page-title">Common<br><em>Failures</em></h1>
+    <p class="page-desc">Most role design problems are not random — they follow recognisable patterns. Knowing these patterns is the HRBP's early warning system. If you can name the failure mode, you can prescribe the fix before it becomes a performance problem, a grievance, or a resignation.</p>
+  </div>
+  <div style="display:grid;gap:8px">
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:18px">
+        <div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--red);margin-bottom:6px">Role Inflation</div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">What it looks like</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Responsibilities accumulate in a role over time without a corresponding grade review. The role holder ends up doing G5 work at a G4 grade and pay.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Consequences</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The role holder feels undervalued and becomes a flight risk. If they leave, the replacement is hired at the higher grade — revealing the inflation that was always there. If they stay, compression builds as others are hired above or beside them at higher grades for the same complexity of work.</div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Valentis signal</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G3 drillers informally performing supervisory work without G4 authority or pay. The informal supervision expectation has grown beyond what the G3 role was designed to carry.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">The Fix</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Annual role profile review as part of the performance cycle. Any role that has gained new significant accountabilities in the previous year triggers an evaluation review — not an automatic grade change, but a deliberate assessment.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:18px">
+        <div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--red);margin-bottom:6px">The Ghost Accountability</div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">What it looks like</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">An important outcome exists — everyone knows it needs to happen — but it is not formally assigned to any role. It lives in the gap between roles.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Consequences</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The work either does not happen, happens inconsistently, or happens well below the quality it would receive if someone owned it formally. When it goes wrong, blame diffuses across several roles — no one is accountable, so no one improves.</div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Valentis signal</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Trainee development at month 3 — no one formally owns the attrition problem. The G4 driller has an informal mentoring role but no formal accountability for trainee outcomes. The SM sees it as a G4 responsibility. The G4 sees it as an informal add-on. The trainee has no structured support.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">The Fix</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Assign the accountability explicitly to a role — in the role profile, not in a side conversation. At Valentis: formally add trainee development accountability to the G4 role profile, with a measurable outcome (conversion rate ≥70%) and include it in performance review.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:18px">
+        <div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--red);margin-bottom:6px">Dual Accountability</div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">What it looks like</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Two roles share accountability for the same outcome — often without realising it. Both partially own it, so neither fully owns it.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Consequences</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The work happens twice (waste) or not at all (gap) depending on which role holder steps back first. Under stress, both roles assume the other is covering the critical task. This is the structural root cause of many "communication failures" that are actually accountability design failures.</div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Valentis signal</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Group HR and Site Manager both claim accountability for country HR compliance. The SM says "HR should handle that." HR says "the SM is the country lead." In the gap, a compliance obligation is missed.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">The Fix</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The RACI model (covered in Tool 9 — Decision Rights &amp; Governance). For each significant accountability, one role is Responsible (does the work) and one is Accountable (owns the outcome). These can be the same role — but only one role is Accountable.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--gold)">
+      <div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:18px">
+        <div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--gold);margin-bottom:6px">The Vanity Grade</div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">What it looks like</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">A role is over-graded relative to its actual complexity — usually to retain someone, reward loyalty, or make a title sound more impressive in a recruitment process.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Consequences</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">Pay compression for roles at the correct grade. The architecture loses its integrity — grades no longer mean what they say. Peers in comparable roles feel devalued. Future grading decisions become political rather than analytical.</div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Prevention</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Use the job evaluation methodology (C&amp;B Tool 2) consistently. When retention requires paying above band, use off-scale pay with a plan to address — not a grade change. Grade integrity is more valuable long-term than the short-term retention solution.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">The Fix</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Re-evaluate the role against the grade criteria without reference to the current role holder. If the grade should change, it changes — and pay is adjusted accordingly. The conversation with the role holder is a leadership challenge, not an architecture one.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Valentis Role Audit</div>
+    <h1 class="page-title">Valentis<br><em>Role Audit</em></h1>
+    <p class="page-desc">A structured assessment of where the Valentis role architecture is sound, where it has gaps, and what the HRBP must prioritise in 2026 to bring it to the standard the growth strategy requires.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">Role Architecture Audit — March 2026</div>
+    <div class="vx-title">Overall Assessment: Partially Fit for Purpose</div>
+    <div class="vx-body">The G1–G8 grade structure is sound and provides a good foundation. The critical gaps are at the role profile level — most roles have task-list job descriptions rather than accountability-based profiles, and the key roles that carry the highest strategic risk (G4 Senior Driller, G5 Site Manager succession candidates, the new G6 Group Ops Lead) are the least well-defined.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Role Profile Status — Critical Roles</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>Role</th><th>Grade</th><th>Current Profile Status</th><th>Gap</th><th>Priority</th><th>Deadline</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600">Group Ops Lead</td><td><span class="chip chip-sienna">G6</span></td>
+          <td style="color:var(--red)">Does not exist</td>
+          <td>Role has not been designed. Without a profile, recruitment and onboarding will be shaped by the first hire's preferences rather than organisational need. Authority boundary with SMs undefined — Indonesia conflict risk.</td>
+          <td><span class="chip chip-red">Critical</span></td>
+          <td><span class="chip chip-sienna">Q2 2026</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Site Manager</td><td><span class="chip chip-slate">G5</span></td>
+          <td style="color:var(--gold)">Task-list JD only</td>
+          <td>No authority definition — creates the SM autonomy vs group standards tension. No succession specification — impossible to objectively assess whether a G4 is ready for SM role without knowing what the SM role actually requires.</td>
+          <td><span class="chip chip-red">Critical</span></td>
+          <td><span class="chip chip-sienna">Q2 2026</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Senior Driller</td><td><span class="chip chip-sienna">G4</span></td>
+          <td style="color:var(--gold)">Task-list JD only</td>
+          <td>Trainee development accountability missing from current JD. This is the structural root cause of the Myanmar month-3 attrition — no one is formally accountable for trainee outcomes at G4 level.</td>
+          <td><span class="chip chip-red">Critical</span></td>
+          <td><span class="chip chip-sienna">Q2 2026</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Driller</td><td><span class="chip chip-muted">G3</span></td>
+          <td style="color:var(--gold)">Task-list JD only</td>
+          <td>Informal supervisory expectations not captured. Creates the role inflation risk identified in Section 05. G3→G4 development criteria are implicit, not defined — making the transition gate subjective and inconsistent across countries.</td>
+          <td><span class="chip chip-gold">High</span></td>
+          <td><span class="chip chip-gold">Q3 2026</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Group HR Manager</td><td><span class="chip chip-slate">G6</span></td>
+          <td style="color:var(--gold)">Partially documented</td>
+          <td>Strategic scope not fully articulated — role currently defined around operational HR delivery rather than strategic advisory. CHRO development pathway not mapped. Authority vis-à-vis SMs on HR compliance not defined.</td>
+          <td><span class="chip chip-gold">High</span></td>
+          <td><span class="chip chip-gold">Q3 2026</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Driller Trainee</td><td><span class="chip chip-muted">G1</span></td>
+          <td style="color:var(--green)">Adequate</td>
+          <td>Training programme specification exists. Development milestones defined. Month-3 attrition is not a profile problem — it is a total rewards and onboarding problem (addressed in C&amp;B toolkit).</td>
+          <td><span class="chip chip-green">Lower</span></td>
+          <td><span class="chip chip-muted">Q4 2026</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">The G4→G5 Succession Gap</div>
+      <div class="card-body" style="margin-bottom:12px">The most consequential role design failure at Valentis is not a documentation problem — it is a succession architecture problem. There is currently no defined specification for what a G4 needs to demonstrate to be considered ready for a G5 Site Manager role.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--red)">The gap:</strong> Myo H. and Wirawan S. retention risks are live. If either leaves, who is ready? Without a defined G5 specification, "readiness" is subjective — and the COO and HRBP may disagree on who qualifies.</div>
+        <div style="padding:11px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">The fix:</strong> Complete the Site Manager role profile by Q2 2026 — then use it as the specification for the succession assessment. Any G4 candidate is measured against the profile, not against the current SM's personal style.</div>
+        <div style="padding:11px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--gold)">Laos urgency:</strong> 3 of 5 senior drillers at retirement risk within 3 years. G3 development plans must activate June 2026 — but without a clear G4 profile specifying what G3→G4 requires, those development plans have no target to aim at.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">2026 Role Architecture Workplan</div>
+      <div style="display:grid;gap:6px;margin-top:6px">
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:12px">
+          <span class="chip chip-sienna" style="flex-shrink:0;margin-top:2px">Apr 2026</span>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Draft Site Manager role profile. Present to COO for review and sign-off. Use as input to Myo H. and Wirawan S. retention conversations — their role expectations need to be clarified alongside the retention negotiation.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:12px">
+          <span class="chip chip-sienna" style="flex-shrink:0;margin-top:2px">May 2026</span>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Draft Senior Driller role profile with trainee development accountability formalised. Present to all SMs. This is a structural intervention for Myanmar month-3 attrition — it assigns clear accountability.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:12px">
+          <span class="chip chip-sienna" style="flex-shrink:0;margin-top:2px">Jun 2026</span>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Activate Laos G3→G4 development plans using new Senior Driller profile as the specification. Each G3 candidate should have a named G4 sponsor and a 24-month development plan with milestone checkpoints.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:12px">
+          <span class="chip chip-gold" style="flex-shrink:0;margin-top:2px">Q3 2026</span>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Draft Group Ops Lead profile (ahead of recruitment). This must be completed and COO-approved before any recruitment begins — not after. The profile is the brief, not the job ad.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:12px">
+          <span class="chip chip-muted" style="flex-shrink:0;margin-top:2px">Q4 2026</span>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Review and update Group HR Manager profile to reflect strategic HRBP scope. Present updated profile to COO as part of the CHRO development conversation — the gap between current G6 and future G7 should be explicit.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-builder" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Role Profile Builder</div>
+    <h1 class="page-title">Role Profile<br><em>Builder</em></h1>
+    <p class="page-desc">An interactive tool for drafting Valentis role profiles. Complete the fields below and generate a formatted, print-ready profile for COO review and sign-off.</p>
+  </div>
+  <div class="builder-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f0e8;margin-bottom:18px">Build a Role Profile</div>
+    <div class="b-section">
+      <div class="b-section-title">1. Role Identity</div>
+      <div class="b-row b-row-3">
+        <div class="b-group"><label class="b-label">Role Title</label><input class="b-input" id="b-title" type="text" placeholder="e.g. Senior Driller"></div>
+        <div class="b-group"><label class="b-label">Grade</label>
+          <select class="b-select" id="b-grade">
+            <option value="">Select grade…</option>
+            <option value="G1">G1 — Trainee / Entry</option>
+            <option value="G2">G2 — Developing Operative</option>
+            <option value="G3">G3 — Skilled Operative / Driller</option>
+            <option value="G4">G4 — Senior Operative / Senior Driller</option>
+            <option value="G5">G5 — Manager / Site Manager</option>
+            <option value="G6">G6 — Senior Manager / Group Function Head</option>
+            <option value="G7">G7 — Executive / Director</option>
+            <option value="G8">G8 — Chief Executive</option>
+          </select>
+        </div>
+        <div class="b-group"><label class="b-label">Job Family</label>
+          <select class="b-select" id="b-family">
+            <option value="">Select family…</option>
+            <option value="Family A — Operations & Drilling">Family A — Operations &amp; Drilling</option>
+            <option value="Family B — Site Leadership">Family B — Site Leadership</option>
+            <option value="Family C — Group Functions">Family C — Group Functions</option>
+            <option value="Family D — Executive Leadership">Family D — Executive Leadership</option>
+          </select>
+        </div>
+      </div>
+      <div class="b-row b-row-2">
+        <div class="b-group"><label class="b-label">Location / Country</label><input class="b-input" id="b-location" type="text" placeholder="e.g. All Countries / Myanmar / Group"></div>
+        <div class="b-group"><label class="b-label">Reports To</label><input class="b-input" id="b-reports" type="text" placeholder="e.g. Site Manager / COO"></div>
+      </div>
+    </div>
+    <div class="b-section">
+      <div class="b-section-title">2. Role Purpose</div>
+      <div class="b-group"><label class="b-label">Purpose Statement (1–2 sentences: why does this role exist?)</label><textarea class="b-input" id="b-purpose" rows="3" placeholder="e.g. The Senior Driller delivers the highest level of technical drilling performance on assigned programme sections while developing the next generation of drillers…"></textarea></div>
+    </div>
+    <div class="b-section">
+      <div class="b-section-title">3. Key Accountabilities (outcomes, not tasks — 4–6 statements)</div>
+      <div class="b-group" style="margin-bottom:8px"><label class="b-label">Accountability 1</label><input class="b-input" id="b-a1" type="text" placeholder="e.g. Programme section delivery: Accountable for…"></div>
+      <div class="b-group" style="margin-bottom:8px"><label class="b-label">Accountability 2</label><input class="b-input" id="b-a2" type="text" placeholder="e.g. Trainee development: Formally accountable for…"></div>
+      <div class="b-group" style="margin-bottom:8px"><label class="b-label">Accountability 3</label><input class="b-input" id="b-a3" type="text" placeholder="e.g. Safety leadership: Models safety behaviour and…"></div>
+      <div class="b-group" style="margin-bottom:8px"><label class="b-label">Accountability 4</label><input class="b-input" id="b-a4" type="text" placeholder="e.g. Technical authority: First point of escalation for…"></div>
+      <div class="b-group" style="margin-bottom:8px"><label class="b-label">Accountability 5 (optional)</label><input class="b-input" id="b-a5" type="text" placeholder="Optional"></div>
+      <div class="b-group"><label class="b-label">Accountability 6 (optional)</label><input class="b-input" id="b-a6" type="text" placeholder="Optional"></div>
+    </div>
+    <div class="b-section">
+      <div class="b-section-title">4. Authority &amp; Capability</div>
+      <div class="b-row b-row-2" style="margin-bottom:8px">
+        <div class="b-group"><label class="b-label">Decides independently (list key decisions)</label><textarea class="b-input" id="b-auth-yes" rows="3" placeholder="e.g. Operational method and daily resource allocation&#10;Disciplinary actions up to written warning&#10;Pay within approved band"></textarea></div>
+        <div class="b-group"><label class="b-label">Requires approval (list escalations)</label><textarea class="b-input" id="b-auth-no" rows="3" placeholder="e.g. New headcount requests&#10;Terminations&#10;Contract scope changes above threshold"></textarea></div>
+      </div>
+      <div class="b-row b-row-2">
+        <div class="b-group"><label class="b-label">Must-have capabilities</label><textarea class="b-input" id="b-cap-req" rows="3" placeholder="e.g. 5+ years mineral exploration experience&#10;Demonstrated people leadership"></textarea></div>
+        <div class="b-group"><label class="b-label">Highly desirable capabilities</label><textarea class="b-input" id="b-cap-des" rows="3" placeholder="e.g. Multi-country experience&#10;HSE management qualification"></textarea></div>
+      </div>
+    </div>
+    <button class="btn btn-sienna" onclick="buildProfile()">Generate Role Profile →</button>
+    <button class="btn btn-ghost" onclick="clearBuilder()" style="margin-left:8px">Clear</button>
+  </div>
+  <div class="profile-out" id="profile-output">
+    <div class="prof-cover">
+      <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(155,58,26,0.07);pointer-events:none"></div>
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--sienna3);margin-bottom:6px;position:relative">Valentis Group — Role Profile · DRAFT</div>
+      <div id="out-title" style="font-family:var(--fd);font-size:36px;font-weight:700;color:#f5f0e8;line-height:1;margin-bottom:8px;position:relative"></div>
+      <div id="out-chips" style="display:flex;gap:8px;flex-wrap:wrap;position:relative"></div>
+    </div>
+    <div class="prof-body">
+      <div class="prof-section">
+        <div class="prof-eyebrow">Role Purpose</div>
+        <div id="out-purpose" class="prof-text"></div>
+      </div>
+      <div class="prof-section">
+        <div class="prof-eyebrow">Key Accountabilities</div>
+        <div id="out-accountabilities" style="display:grid;gap:5px;margin-top:4px"></div>
+      </div>
+      <div class="prof-section">
+        <div class="prof-eyebrow">Authority Level</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px">
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Decides Independently</div>
+            <div id="out-auth-yes" style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;white-space:pre-line"></div>
+          </div>
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Requires Approval</div>
+            <div id="out-auth-no" style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;white-space:pre-line"></div>
+          </div>
+        </div>
+      </div>
+      <div class="prof-section">
+        <div class="prof-eyebrow">Capability Requirements</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px">
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:6px">Must Have</div>
+            <div id="out-cap-req" style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;white-space:pre-line"></div>
+          </div>
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Highly Desirable</div>
+            <div id="out-cap-des" style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;white-space:pre-line"></div>
+          </div>
+        </div>
+      </div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--ink5)">Profile status: DRAFT · Generated <span id="out-date"></span> · Requires COO sign-off before use</div>
+    </div>
+  </div>
+</div>
+
+<div id="page-maintenance" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Keeping Roles Current</div>
+    <h1 class="page-title">Keeping<br><em>Roles Current</em></h1>
+    <p class="page-desc">A role profile written once and never reviewed is worse than no profile — it creates false certainty about a role that has since changed. Role profiles decay. The HRBP's discipline is building the review cadence that keeps them current.</p>
+  </div>
+  <div class="pull-quote">
+    <p>"The moment you finish designing a role, it starts to drift. Strategy changes. Work accumulates. People improvise. The discipline of role maintenance is not about documentation — it is about keeping accountability where it belongs."</p>
+    <cite>OD Practice — Role Maintenance Principle</cite>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">When Roles Must Be Reviewed</div>
+      <div style="display:grid;gap:6px;margin-top:6px">
+        <div style="padding:11px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Triggered review — Strategy change.</strong> When Valentis enters Country 5, the Site Manager profile must be reviewed — the role in a new country may have different client relationship or regulatory requirements. Review within 30 days of any structural change.</div>
+        <div style="padding:11px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Triggered review — Structural change.</strong> When the Group Ops Lead role is created, the Site Manager role must also be reviewed — because some former SM accountability may now be shared with or transferred to the new role. Never create a new role without reviewing adjacent roles.</div>
+        <div style="padding:11px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Triggered review — Performance gap.</strong> When a role consistently underperforms, check the role profile before assuming a capability problem. If the role has expanded beyond its defined scope, the gap may be a design problem — not a people problem.</div>
+        <div style="padding:11px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--gold)">Annual review — All G4+ roles.</strong> As part of the performance cycle (Q4 each year), all G4 and above roles are reviewed against their current profile. The line manager confirms the profile is still accurate — or flags for HRBP review. This takes 15 minutes per role and prevents silent drift.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The HRBP's Role Maintenance Checklist</div>
+      <div style="display:grid;gap:5px;margin-top:6px">
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:10px;align-items:flex-start">
+          <div style="width:18px;height:18px;border:2px solid var(--border2);border-radius:3px;flex-shrink:0;margin-top:1px"></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Complete G4 Senior Driller profile with trainee development accountability — <strong style="color:var(--sienna)">Q2 2026</strong></div>
+        </div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:10px;align-items:flex-start">
+          <div style="width:18px;height:18px;border:2px solid var(--border2);border-radius:3px;flex-shrink:0;margin-top:1px"></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Complete G5 Site Manager profile with authority definition and succession specification — <strong style="color:var(--sienna)">Q2 2026</strong></div>
+        </div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:10px;align-items:flex-start">
+          <div style="width:18px;height:18px;border:2px solid var(--border2);border-radius:3px;flex-shrink:0;margin-top:1px"></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Draft G6 Group Ops Lead profile ahead of recruitment — <strong style="color:var(--sienna)">Q3 2026</strong></div>
+        </div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:10px;align-items:flex-start">
+          <div style="width:18px;height:18px;border:2px solid var(--border2);border-radius:3px;flex-shrink:0;margin-top:1px"></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Establish annual review cadence for all G4+ roles linked to Q4 performance cycle — <strong style="color:var(--sienna)">Q4 2026</strong></div>
+        </div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:10px;align-items:flex-start">
+          <div style="width:18px;height:18px;border:2px solid var(--border2);border-radius:3px;flex-shrink:0;margin-top:1px"></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Review all Site Manager profiles when Group Ops Lead role is activated — confirm SM authority boundaries still accurate — <strong style="color:var(--sienna)">Q4 2026</strong></div>
+        </div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:10px;align-items:flex-start">
+          <div style="width:18px;height:18px;border:2px solid var(--border2);border-radius:3px;flex-shrink:0;margin-top:1px"></div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Update G3 Driller profile with explicit G3→G4 development criteria so Laos succession plans have a clear target — <strong style="color:var(--gold)">Q3 2026</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Role Design as a Leadership Conversation</div>
+    <div class="card-body" style="margin-bottom:14px">Role profiles are not HR documents — they are the foundation of the HRBP's most important leadership conversations. Each of the following conversations at Valentis in 2026 depends on having a current, well-designed role profile to anchor it.</div>
+    <table class="dtable">
+      <thead><tr><th>Conversation</th><th>Why the role profile is essential</th><th>Risk without it</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--sienna)">Myo H. retention conversation (deadline Sep 2026)</td><td>The Site Manager profile defines what Myo H. is being retained to do — and what the COO expects of the role. Without it, the retention conversation is about salary only, not about role clarity, career development, or succession.</td><td>Retention achieved at a cost but without addressing the underlying performance or succession question. Myo H. stays but the succession gap remains.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Indonesia SM authority dispute</td><td>The Site Manager and Group Ops Lead profiles, with explicit authority boundaries, give the HRBP a factual reference for the COO conversation about what the Indonesia SM is and is not entitled to decide independently.</td><td>The authority dispute continues to be managed politically rather than architecturally — each incident is a fresh negotiation.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Laos G3→G4 development plans (activate Jun 2026)</td><td>The Senior Driller profile defines exactly what the G3 candidates need to demonstrate to be assessed as G4-ready. Development plans can be specific, measurable, and consistent across candidates.</td><td>Development plans are vague ("show more leadership") and subjective. Progression decisions are made on gut feel and country-specific norms rather than a common standard.</td></tr>
+        <tr><td style="font-weight:600;color:var(--sienna)">Group Ops Lead recruitment (Q3 2026)</td><td>The role profile is the recruitment brief — it defines the capability and experience the right candidate must have. Without it, recruitment starts from "who could do this?" rather than "what does this role need?"</td><td>Hire is made based on availability and personal chemistry rather than role requirements. The first person to define the role in practice is the hire — not the HRBP or the COO.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);
+  if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function toggleAcc(id){
+  var body=document.getElementById('ab-'+id);
+  var tog=document.getElementById('at-'+id);
+  var open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  tog.textContent=open?'+':'−';
+}
+function showTab(id,el){
+  document.querySelectorAll('.tab-body').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  var tb=document.getElementById('tab-'+id);
+  if(tb)tb.classList.add('active');
+  if(el)el.classList.add('active');
+}
+function buildProfile(){
+  var title=document.getElementById('b-title').value.trim();
+  var grade=document.getElementById('b-grade').value;
+  var family=document.getElementById('b-family').value;
+  var location=document.getElementById('b-location').value.trim();
+  var reports=document.getElementById('b-reports').value.trim();
+  var purpose=document.getElementById('b-purpose').value.trim();
+  var accs=[
+    document.getElementById('b-a1').value.trim(),
+    document.getElementById('b-a2').value.trim(),
+    document.getElementById('b-a3').value.trim(),
+    document.getElementById('b-a4').value.trim(),
+    document.getElementById('b-a5').value.trim(),
+    document.getElementById('b-a6').value.trim()
+  ].filter(Boolean);
+  var authYes=document.getElementById('b-auth-yes').value.trim();
+  var authNo=document.getElementById('b-auth-no').value.trim();
+  var capReq=document.getElementById('b-cap-req').value.trim();
+  var capDes=document.getElementById('b-cap-des').value.trim();
+  if(!title||!grade||!purpose){alert('Please complete at minimum: Role Title, Grade, and Role Purpose.');return;}
+  document.getElementById('out-title').textContent=title;
+  var chips='';
+  if(grade)chips+='<span class="chip chip-sienna">'+grade+'</span>';
+  if(family)chips+='<span class="chip chip-muted" style="color:rgba(255,255,255,0.5);border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.07)">'+family+'</span>';
+  if(location)chips+='<span class="chip chip-muted" style="color:rgba(255,255,255,0.4);border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.04)">'+location+'</span>';
+  if(reports)chips+='<span class="chip chip-muted" style="color:rgba(255,255,255,0.4);border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.04)">Reports to: '+reports+'</span>';
+  document.getElementById('out-chips').innerHTML=chips;
+  document.getElementById('out-purpose').textContent=purpose;
+  var accHtml='';
+  accs.forEach(function(a){
+    var parts=a.split(':');
+    var bold=parts.length>1?'<strong>'+parts[0]+':</strong> '+parts.slice(1).join(':'):a;
+    accHtml+='<div class="prof-list-item"><div class="prof-list-dot"></div><div>'+bold+'</div></div>';
+  });
+  document.getElementById('out-accountabilities').innerHTML=accHtml||'<div class="prof-text" style="color:var(--ink5)">No accountabilities entered.</div>';
+  document.getElementById('out-auth-yes').textContent=authYes||'—';
+  document.getElementById('out-auth-no').textContent=authNo||'—';
+  document.getElementById('out-cap-req').textContent=capReq||'—';
+  document.getElementById('out-cap-des').textContent=capDes||'—';
+  document.getElementById('out-date').textContent=new Date().toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  var out=document.getElementById('profile-output');
+  out.style.display='block';
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearBuilder(){
+  ['b-title','b-location','b-reports','b-purpose','b-a1','b-a2','b-a3','b-a4','b-a5','b-a6','b-auth-yes','b-auth-no','b-cap-req','b-cap-des'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.value='';
+  });
+  document.getElementById('b-grade').value='';
+  document.getElementById('b-family').value='';
+  document.getElementById('profile-output').style.display='none';
+}
+</script>
+</body>
+</html>

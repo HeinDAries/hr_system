@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TA Metrics Dashboard | Valentis Laos</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ─────────────────────────────────────────
+   DESIGN DIRECTION: High-density editorial.
+   Think: Bloomberg terminal meets luxury
+   annual report. Dark ground, gold signal.
+   Every number earns its place.
+───────────────────────────────────────── */
+
+:root {
+  --void:    #080c10;
+  --deep:    #0d1318;
+  --surface: #111820;
+  --lift:    #18232e;
+  --ridge:   #1f2f3e;
+  --wire:    rgba(255,255,255,0.07);
+  --wire2:   rgba(255,255,255,0.12);
+
+  --text:    #dce8f0;
+  --text2:   #8ba0b0;
+  --text3:   #4a6070;
+  --text4:   #2a3a48;
+
+  --gold:    #e8b840;
+  --gold2:   #f5cc60;
+  --gold-d:  rgba(232,184,64,0.12);
+  --gold-g:  rgba(232,184,64,0.06);
+
+  --teal:    #2dd4a8;
+  --teal-d:  rgba(45,212,168,0.10);
+  --red:     #f05050;
+  --red-d:   rgba(240,80,80,0.10);
+  --blue:    #60a8f0;
+  --blue-d:  rgba(96,168,240,0.10);
+  --amber:   #f0a840;
+  --amber-d: rgba(240,168,64,0.10);
+  --violet:  #a880f0;
+  --violet-d:rgba(168,128,240,0.10);
+
+  --r: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--void);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ── SHELL ── */
+.shell { display: flex; min-height: 100vh; }
+
+/* ── RAIL ── */
+.rail {
+  width: 240px; min-width: 240px;
+  background: var(--deep);
+  border-right: 1px solid var(--wire);
+  position: fixed; inset-y: 0; left: 0;
+  display: flex; flex-direction: column;
+  overflow-y: auto; z-index: 40;
+}
+
+.rail-brand {
+  padding: 24px 18px 18px;
+  border-bottom: 1px solid var(--wire);
+}
+.rb-ey {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--text3);
+  margin-bottom: 10px;
+}
+.rb-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 900;
+  color: var(--text); line-height: 1.2;
+}
+.rb-title em { color: var(--gold); font-style: italic; }
+.rb-sub { font-size: 11px; color: var(--text3); margin-top: 5px; }
+
+.rail-period {
+  margin: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--wire2);
+  border-radius: 8px; padding: 10px 12px;
+}
+.rp-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+.rp-select {
+  width: 100%; background: transparent; border: none;
+  color: var(--gold); font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-weight: 600; outline: none; cursor: pointer;
+}
+.rp-select option { background: var(--deep); color: var(--text); }
+
+.rail-sec { padding: 14px 12px 4px; }
+.rs-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 7.5px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--text4);
+  padding: 0 6px; margin-bottom: 6px;
+}
+.rnav { display: flex; flex-direction: column; gap: 2px; }
+.rb {
+  display: flex; align-items: center; gap: 9px;
+  width: 100%; padding: 8px 8px; border-radius: 6px;
+  background: transparent; border: none;
+  color: var(--text3); font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; text-align: left;
+}
+.rb:hover { background: var(--wire); color: var(--text2); }
+.rb.active { background: var(--gold-d); color: var(--gold); }
+.rb-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.rb-tag {
+  margin-left: auto; font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; padding: 1px 5px; border-radius: 6px;
+  background: var(--wire); color: var(--text3);
+}
+.rb.active .rb-tag { background: var(--gold-d); color: var(--gold); }
+
+.rail-footer {
+  margin-top: auto;
+  padding: 12px 18px;
+  border-top: 1px solid var(--wire);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px; color: var(--text4); line-height: 1.8;
+}
+
+/* ── MAIN ── */
+.main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+
+/* ── HEADER ── */
+.hdr {
+  background: var(--deep);
+  border-bottom: 1px solid var(--wire);
+  padding: 14px 36px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 30;
+}
+.hdr-l { }
+.hdr-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text2);
+}
+.hdr-sub { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
+.hdr-r { display: flex; gap: 8px; align-items: center; }
+.hdr-btn {
+  padding: 6px 14px; border-radius: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; cursor: pointer;
+  transition: all 0.14s; border: 1px solid;
+}
+.hdr-btn-ghost { background: transparent; color: var(--text3); border-color: var(--wire2); }
+.hdr-btn-ghost:hover { color: var(--text2); border-color: var(--text3); }
+.hdr-btn-gold { background: var(--gold-d); color: var(--gold); border-color: rgba(232,184,64,0.3); }
+.hdr-btn-gold:hover { background: var(--gold); color: var(--void); }
+.live-dot { display: flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--teal); }
+.live-dot::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+/* ── CONTENT ── */
+.content { padding: 28px 36px; flex: 1; }
+.tab { display: none; animation: fadeUp 0.2s ease; }
+.tab.active { display: block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
+
+/* ── SECTION LABEL ── */
+.sl {
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px; font-weight: 600; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--text4);
+  margin-bottom: 18px;
+}
+.sl::after { content:''; flex:1; height:1px; background:var(--wire); }
+
+/* ── METRIC STRIP ── */
+.metric-strip {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px; background: var(--wire);
+  border: 1px solid var(--wire);
+  border-radius: var(--r); overflow: hidden;
+  margin-bottom: 22px;
+}
+.mc {
+  background: var(--surface);
+  padding: 16px 16px 14px;
+  position: relative; overflow: hidden;
+  transition: background 0.15s;
+}
+.mc:hover { background: var(--lift); }
+.mc::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.mc-gold::before   { background: var(--gold); }
+.mc-teal::before   { background: var(--teal); }
+.mc-red::before    { background: var(--red); }
+.mc-blue::before   { background: var(--blue); }
+.mc-amber::before  { background: var(--amber); }
+.mc-violet::before { background: var(--violet); }
+
+.mc-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px; font-weight: 500; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text3);
+  margin-bottom: 9px;
+}
+.mc-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px; font-weight: 900; line-height: 1;
+  margin-bottom: 5px;
+}
+.mc-gold   .mc-value { color: var(--gold); }
+.mc-teal   .mc-value { color: var(--teal); }
+.mc-red    .mc-value { color: var(--red); }
+.mc-blue   .mc-value { color: var(--blue); }
+.mc-amber  .mc-value { color: var(--amber); }
+.mc-violet .mc-value { color: var(--violet); }
+
+.mc-delta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; font-weight: 600;
+  display: flex; align-items: center; gap: 4px;
+}
+.delta-up   { color: var(--teal); }
+.delta-down { color: var(--red); }
+.delta-flat { color: var(--text3); }
+.mc-target { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text3); margin-top: 4px; }
+
+/* ── CHART CARD ── */
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--wire);
+  border-radius: var(--r);
+  overflow: hidden; margin-bottom: 16px;
+}
+.chart-head {
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--wire);
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.ch-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.ch-sub   { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.ch-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; padding: 3px 8px; border-radius: 4px;
+  font-weight: 600; letter-spacing: 0.5px; white-space: nowrap;
+}
+.tag-warn { background: var(--red-d); color: var(--red); border: 1px solid rgba(240,80,80,0.2); }
+.tag-ok   { background: var(--teal-d); color: var(--teal); border: 1px solid rgba(45,212,168,0.2); }
+.tag-watch{ background: var(--amber-d); color: var(--amber); border: 1px solid rgba(240,168,64,0.2); }
+.chart-body { padding: 18px; }
+
+/* ── DATA GRID ── */
+.data-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.data-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 16px; }
+
+/* ── SVG CHARTS ── */
+.chart-wrap { position: relative; }
+.chart-svg { width: 100%; overflow: visible; }
+.bar-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; fill: var(--text3); }
+.axis-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; fill: var(--text4); }
+.data-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; }
+.chart-line { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.chart-area { opacity: 0.15; }
+
+/* ── FUNNEL ── */
+.funnel { display: flex; flex-direction: column; gap: 4px; }
+.funnel-row {
+  display: flex; align-items: center; gap: 12px;
+}
+.funnel-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text3); width: 80px; text-align: right; flex-shrink: 0; }
+.funnel-bar-wrap { flex: 1; height: 28px; background: var(--lift); border-radius: 4px; overflow: hidden; position: relative; }
+.funnel-bar { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 10px; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+.funnel-count { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; color: var(--void); }
+.funnel-pct { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text3); width: 44px; text-align: right; flex-shrink: 0; }
+.funnel-arrow { font-size: 9px; color: var(--text4); width: 12px; text-align: center; flex-shrink: 0; }
+
+/* ── ROLE TABLE ── */
+.role-tbl { width: 100%; border-collapse: collapse; }
+.role-tbl thead tr { border-bottom: 1px solid var(--wire2); }
+.role-tbl thead th {
+  padding: 8px 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text3);
+  text-align: left; border-right: 1px solid var(--wire);
+}
+.role-tbl thead th:last-child { border-right: none; }
+.role-tbl tbody tr {
+  border-bottom: 1px solid var(--wire);
+  transition: background 0.12s;
+}
+.role-tbl tbody tr:last-child { border-bottom: none; }
+.role-tbl tbody tr:hover { background: var(--lift); }
+.role-tbl tbody td {
+  padding: 11px 12px;
+  font-size: 12px; color: var(--text2);
+  border-right: 1px solid var(--wire);
+  vertical-align: middle;
+}
+.role-tbl tbody td:first-child { color: var(--text); font-weight: 600; }
+.role-tbl tbody td:last-child { border-right: none; }
+
+/* ── PROGRESS BAR ── */
+.prog-wrap { height: 6px; background: var(--lift); border-radius: 3px; overflow: hidden; }
+.prog-bar  { height: 100%; border-radius: 3px; }
+
+/* ── SOURCE PIE LEGEND ── */
+.source-legend { display: flex; flex-direction: column; gap: 8px; }
+.sl-item { display: flex; align-items: center; gap: 10px; }
+.sl-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.sl-name { font-size: 12px; color: var(--text2); flex: 1; }
+.sl-val  { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; color: var(--text); }
+.sl-pct  { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text3); width: 36px; text-align: right; }
+
+/* ── MONTHLY REPORT ── */
+.report-wrap {
+  background: var(--surface);
+  border: 1px solid var(--wire);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.report-hd {
+  background: linear-gradient(135deg, var(--lift), var(--surface));
+  padding: 24px 30px;
+  border-bottom: 1px solid var(--wire);
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.rp-co { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+.rp-h1 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; color: var(--text); }
+.rp-h1 em { color: var(--gold); }
+.rp-date { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text3); margin-top: 5px; }
+.report-meta { display: flex; gap: 18px; }
+.rm-item { text-align: right; }
+.rm-val { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--gold); }
+.rm-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text3); margin-top: 2px; }
+
+.report-body { padding: 28px 30px; }
+
+.report-section { margin-bottom: 28px; }
+.rs-heading {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--wire2);
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.rs-heading::after { content:''; flex:1; height:1px; background: linear-gradient(to right, var(--wire2), transparent); }
+
+.report-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+.rk-cell {
+  background: var(--lift); border: 1px solid var(--wire);
+  border-radius: 8px; padding: 13px 14px;
+}
+.rk-label { font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.rk-value { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; line-height: 1; }
+.rk-sub   { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+.report-para { font-size: 13px; color: var(--text2); line-height: 1.75; margin-bottom: 14px; }
+.report-para strong { color: var(--text); font-weight: 600; }
+.report-para em { color: var(--gold); font-style: normal; }
+
+.risk-table { width: 100%; border-collapse: collapse; }
+.risk-table thead tr { border-bottom: 1px solid var(--wire2); }
+.risk-table thead th { padding: 8px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); text-align: left; }
+.risk-table tbody tr { border-bottom: 1px solid var(--wire); }
+.risk-table tbody tr:last-child { border-bottom: none; }
+.risk-table tbody td { padding: 10px 12px; font-size: 12px; color: var(--text2); line-height: 1.5; vertical-align: top; }
+.risk-table tbody td:first-child { color: var(--text); font-weight: 600; }
+
+.rbi { display: inline-flex; padding: 2px 8px; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 700; }
+.rbi-h { background: var(--red-d); color: var(--red); }
+.rbi-m { background: var(--amber-d); color: var(--amber); }
+.rbi-l { background: var(--teal-d); color: var(--teal); }
+
+.rec-list { display: flex; flex-direction: column; gap: 8px; }
+.rec-item { display: grid; grid-template-columns: 26px 1fr; gap: 10px; padding: 11px 13px; background: var(--lift); border: 1px solid var(--wire); border-radius: 7px; }
+.rec-n { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; color: var(--gold); }
+.rec-text { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+.rec-text strong { color: var(--text); }
+
+.print-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 9px 16px; border-radius: 7px;
+  background: var(--gold-d); color: var(--gold);
+  border: 1px solid rgba(232,184,64,0.3);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; cursor: pointer;
+  transition: all 0.15s; margin-bottom: 20px;
+}
+.print-btn:hover { background: var(--gold); color: var(--void); }
+
+/* ── TREND TAB ── */
+.trend-insight {
+  padding: 14px 16px;
+  background: var(--lift);
+  border: 1px solid var(--wire2);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 10px;
+  font-size: 12.5px; color: var(--text2); line-height: 1.6;
+}
+.trend-insight strong { color: var(--gold); }
+
+/* ── SOURCE EFFICIENCY TABLE ── */
+.eff-tbl { width: 100%; border-collapse: collapse; }
+.eff-tbl thead tr { border-bottom: 1px solid var(--wire2); }
+.eff-tbl thead th { padding: 8px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); text-align: left; border-right: 1px solid var(--wire); }
+.eff-tbl thead th:last-child { border-right: none; }
+.eff-tbl tbody tr { border-bottom: 1px solid var(--wire); }
+.eff-tbl tbody tr:last-child { border-bottom: none; }
+.eff-tbl tbody tr:hover { background: var(--lift); }
+.eff-tbl tbody td { padding: 11px 12px; font-size: 12px; color: var(--text2); border-right: 1px solid var(--wire); vertical-align: middle; }
+.eff-tbl tbody td:first-child { color: var(--text); font-weight: 600; }
+.eff-tbl tbody td:last-child { border-right: none; }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 22px; right: 24px; background: var(--surface); border: 1px solid var(--wire2); color: var(--text); padding: 10px 16px; border-radius: 8px; font-size: 12px; opacity: 0; transform: translateY(6px); transition: all 0.2s; pointer-events: none; z-index: 999; font-family: 'IBM Plex Mono', monospace; }
+.toast.show { opacity: 1; transform: none; }
+
+@media print {
+  .rail, .hdr { display: none !important; }
+  .main { margin-left: 0 !important; }
+  .content { padding: 0 !important; }
+  .tab { display: block !important; }
+  .print-btn { display: none !important; }
+}
+
+@media (max-width: 1100px) {
+  .metric-strip { grid-template-columns: repeat(3, 1fr); }
+  .data-grid-3 { grid-template-columns: 1fr 1fr; }
+  .report-kpis { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══ RAIL ═══ -->
+<aside class="rail">
+  <div class="rail-brand">
+    <div class="rb-ey">Valentis Laos · HR</div>
+    <div class="rb-title">TA <em>Metrics</em></div>
+    <div class="rb-sub">Talent Acquisition Intelligence</div>
+  </div>
+
+  <div class="rail-period">
+    <div class="rp-label">Reporting Period</div>
+    <select class="rp-select" onchange="changePeriod(this.value)">
+      <option value="mar26">March 2026</option>
+      <option value="feb26">February 2026</option>
+      <option value="jan26">January 2026</option>
+      <option value="q1_26">Q1 2026 (YTD)</option>
+    </select>
+  </div>
+
+  <div class="rail-sec">
+    <div class="rs-label">Dashboards</div>
+    <div class="rnav">
+      <button class="rb active" onclick="sw('overview',this)"><span class="rb-dot" style="background:var(--gold);"></span>Overview <span class="rb-tag">Live</span></button>
+      <button class="rb" onclick="sw('funnel',this)"><span class="rb-dot" style="background:var(--teal);"></span>Hiring Funnel</button>
+      <button class="rb" onclick="sw('roles',this)"><span class="rb-dot" style="background:var(--blue);"></span>By Role</button>
+      <button class="rb" onclick="sw('source',this)"><span class="rb-dot" style="background:var(--violet);"></span>Source Efficiency</button>
+      <button class="rb" onclick="sw('trends',this)"><span class="rb-dot" style="background:var(--amber);"></span>Trends</button>
+    </div>
+  </div>
+
+  <div class="rail-sec">
+    <div class="rs-label">Reports</div>
+    <div class="rnav">
+      <button class="rb" onclick="sw('monthly',this)"><span class="rb-dot" style="background:var(--red);"></span>Monthly COO Report</button>
+    </div>
+  </div>
+
+  <div class="rail-footer">
+    Valentis Laos · Group HR<br>
+    TA Metrics Dashboard v1.0<br>
+    March 2026 · Confidential
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="hdr">
+    <div class="hdr-l">
+      <div class="hdr-title" id="hdr-title">OVERVIEW DASHBOARD</div>
+      <div class="hdr-sub" id="hdr-sub">MARCH 2026 · ALL COUNTRIES</div>
+    </div>
+    <div class="hdr-r">
+      <span class="live-dot">Live data</span>
+      <button class="hdr-btn hdr-btn-ghost" onclick="window.print()">Print</button>
+      <button class="hdr-btn hdr-btn-gold" onclick="toast('Report copied to clipboard')">Export Report</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══ OVERVIEW ═══ -->
+    <div id="tab-overview" class="tab active">
+      <div class="sl">Key metrics · March 2026</div>
+
+      <div class="metric-strip">
+        <div class="mc mc-red">
+          <div class="mc-label">Time to Fill</div>
+          <div class="mc-value">78<span style="font-size:16px;font-family:'IBM Plex Mono',monospace;"> days</span></div>
+          <div class="mc-delta delta-down">▲ +8d vs target</div>
+          <div class="mc-target">Target: 70d</div>
+        </div>
+        <div class="mc mc-gold">
+          <div class="mc-label">Open Requisitions</div>
+          <div class="mc-value">13</div>
+          <div class="mc-delta delta-flat">── same as last month</div>
+          <div class="mc-target">5 critical priority</div>
+        </div>
+        <div class="mc mc-teal">
+          <div class="mc-label">Offer Accept Rate</div>
+          <div class="mc-value">67<span style="font-size:16px;font-family:'IBM Plex Mono',monospace;">%</span></div>
+          <div class="mc-delta delta-down">▼ -8pp vs target</div>
+          <div class="mc-target">Target: 75%</div>
+        </div>
+        <div class="mc mc-blue">
+          <div class="mc-label">Candidates Active</div>
+          <div class="mc-value">24</div>
+          <div class="mc-delta delta-up">▲ +6 vs Feb</div>
+          <div class="mc-target">6 in final stages</div>
+        </div>
+        <div class="mc mc-amber">
+          <div class="mc-label">Avg Cost per Hire</div>
+          <div class="mc-value">$3.2<span style="font-size:16px;font-family:'IBM Plex Mono',monospace;">k</span></div>
+          <div class="mc-delta delta-flat">── est. YTD avg</div>
+          <div class="mc-target">Agency: $8–18k</div>
+        </div>
+        <div class="mc mc-violet">
+          <div class="mc-label">Hired YTD</div>
+          <div class="mc-value">2</div>
+          <div class="mc-delta delta-down">▼ behind plan</div>
+          <div class="mc-target">Target: 6 by Q2</div>
+        </div>
+      </div>
+
+      <div class="data-grid-2">
+        <!-- TIME TO FILL CHART -->
+        <div class="chart-card">
+          <div class="chart-head">
+            <div><div class="ch-title">Time to Fill — by Role Category</div><div class="ch-sub">Days from requisition open to offer accepted</div></div>
+            <span class="ch-tag tag-warn">Above Target</span>
+          </div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="190" viewBox="0 0 380 190" id="svg-ttf"></svg>
+          </div>
+        </div>
+
+        <!-- PIPELINE HEALTH -->
+        <div class="chart-card">
+          <div class="chart-head">
+            <div><div class="ch-title">Pipeline Health by Country</div><div class="ch-sub">Active candidates per country · March 2026</div></div>
+            <span class="ch-tag tag-watch">Myanmar thin</span>
+          </div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="190" viewBox="0 0 380 190" id="svg-country"></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-grid-3">
+        <!-- STAGE DISTRIBUTION -->
+        <div class="chart-card">
+          <div class="chart-head">
+            <div><div class="ch-title">Stage Distribution</div><div class="ch-sub">All active candidates</div></div>
+          </div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="160" viewBox="0 0 260 160" id="svg-stage"></svg>
+          </div>
+        </div>
+
+        <!-- OFFER VELOCITY -->
+        <div class="chart-card">
+          <div class="chart-head">
+            <div><div class="ch-title">Offer Accept Rate</div><div class="ch-sub">Monthly trend 2026</div></div>
+            <span class="ch-tag tag-warn">Below Target</span>
+          </div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="160" viewBox="0 0 260 160" id="svg-offer"></svg>
+          </div>
+        </div>
+
+        <!-- CRITICAL ALERTS -->
+        <div class="chart-card">
+          <div class="chart-head">
+            <div><div class="ch-title">Critical Alerts</div><div class="ch-sub">Roles requiring immediate action</div></div>
+            <span class="ch-tag tag-warn">3 Overdue</span>
+          </div>
+          <div class="chart-body">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="padding:10px 12px;background:var(--red-d);border:1px solid rgba(240,80,80,0.2);border-radius:7px;">
+                <div style="font-size:12px;font-weight:700;color:var(--red);">Drilling Supervisor — Myanmar</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-top:3px;">92 days open · OVERDUE · Ops at risk</div>
+              </div>
+              <div style="padding:10px 12px;background:var(--red-d);border:1px solid rgba(240,80,80,0.2);border-radius:7px;">
+                <div style="font-size:12px;font-weight:700;color:var(--red);">Site Manager — Laos</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-top:3px;">85 days open · Offer stage · Awaiting signature</div>
+              </div>
+              <div style="padding:10px 12px;background:var(--amber-d);border:1px solid rgba(240,168,64,0.2);border-radius:7px;">
+                <div style="font-size:12px;font-weight:700;color:var(--amber);">Senior Driller — Indonesia</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-top:3px;">60 days open · Interview stage · 1 candidate</div>
+              </div>
+              <div style="padding:10px 12px;background:var(--teal-d);border:1px solid rgba(45,212,168,0.2);border-radius:7px;">
+                <div style="font-size:12px;font-weight:700;color:var(--teal);">EA / Office Manager — Bangkok</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-top:3px;">22 days open · Screening · 3 candidates</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FUNNEL ═══ -->
+    <div id="tab-funnel" class="tab">
+      <div class="sl">Hiring funnel · conversion rates · March 2026</div>
+      <div class="data-grid-2">
+        <div class="chart-card">
+          <div class="chart-head">
+            <div><div class="ch-title">Full Funnel — All Roles</div><div class="ch-sub">Sourced → Hired conversion · March 2026</div></div>
+            <span class="ch-tag tag-watch">8% hire rate</span>
+          </div>
+          <div class="chart-body">
+            <div class="funnel" id="funnel-main"></div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-head">
+            <div><div class="ch-title">Funnel by Role Category</div><div class="ch-sub">Where candidates drop — ops vs support</div></div>
+          </div>
+          <div class="chart-body">
+            <div style="margin-bottom:18px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Operations Roles</div>
+              <div class="funnel" id="funnel-ops"></div>
+            </div>
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Support / HR / Finance</div>
+              <div class="funnel" id="funnel-support"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-head">
+          <div><div class="ch-title">Drop-off Analysis</div><div class="ch-sub">Where candidates exit the pipeline and why</div></div>
+        </div>
+        <div class="chart-body">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+            <div style="padding:12px;background:var(--lift);border-radius:8px;border:1px solid var(--wire);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Sourced → Screened</div>
+              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:5px;">58%</div>
+              <div style="font-size:11.5px;color:var(--text2);line-height:1.5;">42% drop: No response to outreach, or CV doesn't meet minimum qualifications on review.</div>
+            </div>
+            <div style="padding:12px;background:var(--lift);border-radius:8px;border:1px solid var(--wire);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Screened → Interview</div>
+              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--amber);margin-bottom:5px;">52%</div>
+              <div style="font-size:11.5px;color:var(--text2);line-height:1.5;">48% drop: Candidate withdraws after learning remote conditions, or salary misalignment identified.</div>
+            </div>
+            <div style="padding:12px;background:var(--lift);border-radius:8px;border:1px solid var(--wire);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Interview → Offer</div>
+              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--teal);margin-bottom:5px;">38%</div>
+              <div style="font-size:11.5px;color:var(--text2);line-height:1.5;">62% drop: Doesn't meet technical bar, or ops manager rejects. High bar correct for these roles.</div>
+            </div>
+            <div style="padding:12px;background:var(--lift);border-radius:8px;border:1px solid var(--wire);">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Offer → Hired</div>
+              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--red);margin-bottom:5px;">67%</div>
+              <div style="font-size:11.5px;color:var(--text2);line-height:1.5;">33% decline offers. Myanmar hardship premium insufficiency is the primary driver of declined offers.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ BY ROLE ═══ -->
+    <div id="tab-roles" class="tab">
+      <div class="sl">Per-role metrics · time, cost, pipeline depth</div>
+      <div class="chart-card">
+        <div class="chart-head">
+          <div><div class="ch-title">Role-by-Role Tracker</div><div class="ch-sub">All active requisitions · status and velocity</div></div>
+        </div>
+        <div class="chart-body" style="padding:0;">
+          <div style="overflow-x:auto;">
+            <table class="role-tbl">
+              <thead>
+                <tr>
+                  <th>Role</th><th>Country</th><th>Priority</th>
+                  <th>Days Open</th><th>Target</th><th>Status</th>
+                  <th>Candidates</th><th>Pipeline</th>
+                  <th>Top Stage</th><th>Est. Cost</th>
+                </tr>
+              </thead>
+              <tbody id="role-tbl-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-grid-2">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="ch-title">Time to Fill vs Target</div><div class="ch-sub">Days open · red line = 90d danger zone</div></div></div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="200" viewBox="0 0 380 200" id="svg-ttf2"></svg>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="ch-title">Candidate Depth per Role</div><div class="ch-sub">Number of active candidates in pipeline</div></div></div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="200" viewBox="0 0 380 200" id="svg-depth"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SOURCE EFFICIENCY ═══ -->
+    <div id="tab-source" class="tab">
+      <div class="sl">Source efficiency · where hires come from · cost per source</div>
+      <div class="data-grid-2">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="ch-title">Hires by Source Channel</div><div class="ch-sub">2026 YTD · all confirmed hires</div></div></div>
+          <div class="chart-body">
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:20px;align-items:center;">
+              <svg class="chart-svg" height="140" viewBox="0 0 140 140" id="svg-pie"></svg>
+              <div class="source-legend" id="source-legend"></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="ch-title">Source → Stage Conversion</div><div class="ch-sub">Which channels produce interview-ready candidates</div></div></div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="190" viewBox="0 0 380 190" id="svg-source-conv"></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="ch-title">Channel Cost Efficiency</div><div class="ch-sub">Cost per hire · response rate · hire rate by source</div></div></div>
+        <div class="chart-body" style="padding:0;">
+          <table class="eff-tbl">
+            <thead>
+              <tr><th>Channel</th><th>Candidates Sourced</th><th>Screened</th><th>Interviewed</th><th>Hired</th><th>Hire Rate</th><th>Est. Cost/Hire</th><th>Recommendation</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>LinkedIn Outreach</td><td style="font-family:'IBM Plex Mono',monospace;">12</td><td style="font-family:'IBM Plex Mono',monospace;">7</td><td style="font-family:'IBM Plex Mono',monospace;">3</td><td style="font-family:'IBM Plex Mono',monospace;">1</td><td><span style="font-family:'IBM Plex Mono',monospace;color:var(--amber);">8.3%</span></td><td style="font-family:'IBM Plex Mono',monospace;color:var(--teal);">$200</td><td><span class="rbi rbi-l">PRIORITISE</span></td></tr>
+              <tr><td>Referral</td><td style="font-family:'IBM Plex Mono',monospace;">4</td><td style="font-family:'IBM Plex Mono',monospace;">4</td><td style="font-family:'IBM Plex Mono',monospace;">3</td><td style="font-family:'IBM Plex Mono',monospace;">1</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--teal);">25%</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--teal);">$0</td><td><span class="rbi rbi-l">BEST ROI</span></td></tr>
+              <tr><td>Agency — Mining People</td><td style="font-family:'IBM Plex Mono',monospace;">3</td><td style="font-family:'IBM Plex Mono',monospace;">3</td><td style="font-family:'IBM Plex Mono',monospace;">2</td><td style="font-family:'IBM Plex Mono',monospace;">0</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--amber);">0%</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--amber);">$7,200*</td><td><span class="rbi rbi-m">PENDING</span></td></tr>
+              <tr><td>CatalistJobs</td><td style="font-family:'IBM Plex Mono',monospace;">5</td><td style="font-family:'IBM Plex Mono',monospace;">2</td><td style="font-family:'IBM Plex Mono',monospace;">1</td><td style="font-family:'IBM Plex Mono',monospace;">0</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">0%</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--amber);">$180*</td><td><span class="rbi rbi-m">CONTINUE</span></td></tr>
+              <tr><td>Facebook Groups</td><td style="font-family:'IBM Plex Mono',monospace;">3</td><td style="font-family:'IBM Plex Mono',monospace;">1</td><td style="font-family:'IBM Plex Mono',monospace;">0</td><td style="font-family:'IBM Plex Mono',monospace;">0</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">0%</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--teal);">$0</td><td><span class="rbi rbi-m">LOW EFFORT</span></td></tr>
+              <tr><td>JobsDB Thailand</td><td style="font-family:'IBM Plex Mono',monospace;">2</td><td style="font-family:'IBM Plex Mono',monospace;">1</td><td style="font-family:'IBM Plex Mono',monospace;">1</td><td style="font-family:'IBM Plex Mono',monospace;">0</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">0%</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--amber);">$150*</td><td><span class="rbi rbi-m">MONITOR</span></td></tr>
+              <tr><td>Inbound / Unsolicited</td><td style="font-family:'IBM Plex Mono',monospace;">4</td><td style="font-family:'IBM Plex Mono',monospace;">1</td><td style="font-family:'IBM Plex Mono',monospace;">0</td><td style="font-family:'IBM Plex Mono',monospace;">0</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">0%</td><td style="font-family:'IBM Plex Mono',monospace;color:var(--teal);">$0</td><td><span class="rbi rbi-l">FREE SIGNAL</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);font-style:italic;padding:9px 13px;background:var(--surface);border-radius:7px;border-left:2px solid var(--wire2);margin-top:4px;line-height:1.6;">* Cost marked with asterisk is posting cost only — agency hire cost not yet incurred (contingent on placement). Referral cost is $0 direct but may warrant a future referral bonus scheme to incentivise volume.</div>
+    </div>
+
+    <!-- ═══ TRENDS ═══ -->
+    <div id="tab-trends" class="tab">
+      <div class="sl">Monthly trends · 2026 YTD</div>
+      <div class="data-grid-2">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="ch-title">Time to Fill — Monthly Trend</div><div class="ch-sub">Days · Jan–Mar 2026 vs 70-day target</div></div></div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="180" viewBox="0 0 380 180" id="svg-trend-ttf"></svg>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="ch-title">Pipeline Volume — Monthly</div><div class="ch-sub">Active candidates in pipeline end of month</div></div></div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="180" viewBox="0 0 380 180" id="svg-trend-vol"></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="trend-insight"><strong>Key trend:</strong> Time to fill is worsening (+8d above target in March vs +3d in January). Root cause: Myanmar operational roles take 90+ days due to thin talent pool and hardship hesitancy. Non-Myanmar roles average 52 days, within target. Fix Myanmar specifically, not the overall process.</div>
+      <div class="trend-insight"><strong>Pipeline volume:</strong> Grew from 11 candidates in January to 24 in March — sourcing activity is working. Conversion to hired has not kept pace, suggesting screening and offer stages are the bottleneck, not sourcing volume.</div>
+      <div class="trend-insight"><strong>Offer acceptance:</strong> Trending down (75% Jan → 67% Mar). Counter-offers are increasing — need to verify market rates for Myanmar roles are still competitive and consider adding non-cash perks to improve acceptance without exceeding budget.</div>
+
+      <div class="data-grid-2">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="ch-title">Offer Accept Rate — Trend</div><div class="ch-sub">% accepted · target 75%</div></div></div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="160" viewBox="0 0 380 160" id="svg-trend-accept"></svg>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="ch-title">Hires vs Plan — Cumulative</div><div class="ch-sub">YTD actual vs headcount plan</div></div></div>
+          <div class="chart-body">
+            <svg class="chart-svg" height="160" viewBox="0 0 380 160" id="svg-trend-hire"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MONTHLY REPORT ═══ -->
+    <div id="tab-monthly" class="tab">
+      <button class="print-btn" onclick="window.print()">⎙ Print / Export PDF</button>
+
+      <div class="report-wrap">
+        <div class="report-hd">
+          <div>
+            <div class="rp-co">Valentis Laos · Group HR · Confidential</div>
+            <div class="rp-h1">TA <em>Monthly Report</em></div>
+            <div class="rp-date" id="report-month-label">March 2026 · Prepared by: Group HR Manager</div>
+          </div>
+          <div class="report-meta">
+            <div class="rm-item"><div class="rm-val">13</div><div class="rm-lbl">Open Roles</div></div>
+            <div class="rm-item"><div class="rm-val">24</div><div class="rm-lbl">In Pipeline</div></div>
+            <div class="rm-item"><div class="rm-val">2</div><div class="rm-lbl">Hired YTD</div></div>
+          </div>
+        </div>
+
+        <div class="report-body">
+
+          <div class="report-section">
+            <div class="rs-heading">01 · Executive Summary</div>
+            <div class="report-kpis">
+              <div class="rk-cell"><div class="rk-label">Time to Fill</div><div class="rk-value" style="color:var(--red);">78d</div><div class="rk-sub">vs 70d target (+8d)</div></div>
+              <div class="rk-cell"><div class="rk-label">Offer Accept Rate</div><div class="rk-value" style="color:var(--amber);">67%</div><div class="rk-sub">vs 75% target (−8pp)</div></div>
+              <div class="rk-cell"><div class="rk-label">Pipeline Depth</div><div class="rk-value" style="color:var(--teal);">24</div><div class="rk-sub">active candidates</div></div>
+              <div class="rk-cell"><div class="rk-label">Critical Roles Overdue</div><div class="rk-value" style="color:var(--red);">2</div><div class="rk-sub">Myanmar Supervisor + Laos SM</div></div>
+            </div>
+            <div class="report-para">
+              Recruitment activity in <strong>March 2026</strong> remains behind plan on critical operational roles. The two highest-priority vacancies — <em>Drilling Supervisor (Myanmar)</em> and <em>Site Manager (Laos)</em> — are both past their target fill dates. The Site Manager role has an offer out (Arsen Tulebayev, pending contract signature). The Drilling Supervisor vacancy represents an active operational risk with no confirmed hire in sight.
+            </div>
+            <div class="report-para">
+              Overall pipeline health has improved — <strong>24 active candidates</strong> across all roles compared to 11 in January — but conversion from interview to offer remains the primary bottleneck for operational roles, driven by thin candidate pools and Myanmar posting hesitancy.
+            </div>
+          </div>
+
+          <div class="report-section">
+            <div class="rs-heading">02 · Critical Role Status</div>
+            <div style="overflow-x:auto;margin-bottom:16px;">
+              <table class="risk-table">
+                <thead><tr><th>Role</th><th>Country</th><th>Days Open</th><th>Status</th><th>Pipeline</th><th>Action Required</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>Drilling Supervisor</td>
+                    <td>🇲🇲 Myanmar</td>
+                    <td style="font-family:'IBM Plex Mono',monospace;color:var(--red);">92d</td>
+                    <td><span class="rbi rbi-h">OVERDUE</span></td>
+                    <td style="font-family:'IBM Plex Mono',monospace;">2 candidates — Screened</td>
+                    <td>Accelerate to interview this week. Engage second agency (Antal International). Consider hardship premium increase to $2,800 floor.</td>
+                  </tr>
+                  <tr>
+                    <td>Site Manager</td>
+                    <td>🇱🇦 Laos</td>
+                    <td style="font-family:'IBM Plex Mono',monospace;color:var(--amber);">85d</td>
+                    <td><span class="rbi rbi-m">OFFER OUT</span></td>
+                    <td style="font-family:'IBM Plex Mono',monospace;">1 candidate — Offer stage</td>
+                    <td>Await contract signature from Arsen Tulebayev. Confirm work permit application start date. Keep 1 backup candidate warm.</td>
+                  </tr>
+                  <tr>
+                    <td>Senior Driller</td>
+                    <td>🇮🇩 Indonesia</td>
+                    <td style="font-family:'IBM Plex Mono',monospace;color:var(--amber);">60d</td>
+                    <td><span class="rbi rbi-m">INTERVIEW</span></td>
+                    <td style="font-family:'IBM Plex Mono',monospace;">3 candidates — Interview</td>
+                    <td>Complete Round 1 for Budi Santoso this week. Good pipeline depth. Target offer by end of March.</td>
+                  </tr>
+                  <tr>
+                    <td>HSE Officer</td>
+                    <td>🇱🇦 Laos</td>
+                    <td style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">22d</td>
+                    <td><span class="rbi rbi-l">ON TRACK</span></td>
+                    <td style="font-family:'IBM Plex Mono',monospace;">2 candidates — Sourced</td>
+                    <td>Engage Somchai Rattana and second candidate this week. NEBOSH verification required before interview.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="report-section">
+            <div class="rs-heading">03 · Risk Register</div>
+            <div style="overflow-x:auto;margin-bottom:16px;">
+              <table class="risk-table">
+                <thead><tr><th>Risk</th><th>Level</th><th>Impact</th><th>Mitigation</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>Myanmar Drilling Supervisor vacancy — no hire in sight</td>
+                    <td><span class="rbi rbi-h">HIGH</span></td>
+                    <td>Operational shutdown risk at Myanmar site if vacancy extends beyond April</td>
+                    <td>Dual agency engagement. Consider interim/contract Supervisor at premium. Review hardship premium adequacy.</td>
+                  </tr>
+                  <tr>
+                    <td>Offer decline rate above target (33% declining)</td>
+                    <td><span class="rbi rbi-m">MEDIUM</span></td>
+                    <td>Extends time-to-fill. Damages employer brand if pattern continues.</td>
+                    <td>Exit-survey style call with declined candidates. Identify top objection. Non-cash perks review for Myanmar roles.</td>
+                  </tr>
+                  <tr>
+                    <td>TA function at capacity — 1 person managing 13 reqs</td>
+                    <td><span class="rbi rbi-h">HIGH</span></td>
+                    <td>Quality of process drops. Delays in screening. Compliance risk on payroll and documentation.</td>
+                    <td>Business case for TA Coordinator already drafted. Recommend approval by April. Interim: outsource payroll to free 5–6 hrs/week.</td>
+                  </tr>
+                  <tr>
+                    <td>Work permit processing delays (Laos, Myanmar)</td>
+                    <td><span class="rbi rbi-m">MEDIUM</span></td>
+                    <td>Hired candidate cannot mobilise on agreed start date. Ops still understaffed even after hire.</td>
+                    <td>Begin permit process immediately upon verbal offer acceptance. Do not wait for signed contract.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="report-section">
+            <div class="rs-heading">04 · Recommendations for COO / CEO</div>
+            <div class="rec-list">
+              <div class="rec-item"><div class="rec-n">R1</div><div class="rec-text"><strong>Approve agency engagement for Myanmar Drilling Supervisor immediately.</strong> Role is 92 days open and represents an active operational risk. Agency fee (~$7,500–12,000) is substantially less than one week of site downtime. Two agencies should be briefed this week.</div></div>
+              <div class="rec-item"><div class="rec-n">R2</div><div class="rec-text"><strong>Approve TA Coordinator headcount ($800–$1,200/mo).</strong> Group HR Manager is operating at 260% capacity across TA, payroll, and compliance. Each additional month of delay adds incremental risk across all three functions. Coordinator pays for itself in reduced agency spend within 6 months.</div></div>
+              <div class="rec-item"><div class="rec-n">R3</div><div class="rec-text"><strong>Review Myanmar hardship premium.</strong> 33% of offers are being declined, with Myanmar posting cited as the primary objection. Increasing base floor from $1,800 to $2,200 for Drilling Supervisor roles is estimated to reduce offer declines by 15–20% based on market feedback.</div></div>
+              <div class="rec-item"><div class="rec-n">R4</div><div class="rec-text"><strong>Confirm budget approval status for 7 pending-approval roles.</strong> 7 of 13 open requisitions are blocked from active sourcing due to budget approval not yet received. Each week of sourcing delay adds 1–2 weeks to time-to-fill. Recommend batch approval this month.</div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</div><!-- main -->
+</div><!-- shell -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── NAV ──
+const tabMeta = {
+  overview: ['OVERVIEW DASHBOARD', 'MARCH 2026 · ALL COUNTRIES'],
+  funnel:   ['HIRING FUNNEL', 'CONVERSION RATES · MARCH 2026'],
+  roles:    ['BY ROLE', 'PER-REQUISITION METRICS · MARCH 2026'],
+  source:   ['SOURCE EFFICIENCY', 'CHANNEL PERFORMANCE · 2026 YTD'],
+  trends:   ['MONTHLY TRENDS', 'JAN–MAR 2026'],
+  monthly:  ['MONTHLY COO REPORT', 'MARCH 2026 · READY TO PRINT'],
+};
+function sw(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.rb').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  const m = tabMeta[id] || [id.toUpperCase(), ''];
+  document.getElementById('hdr-title').textContent = m[0];
+  document.getElementById('hdr-sub').textContent = m[1];
+  // render on demand
+  if (id === 'funnel')  renderFunnel();
+  if (id === 'roles')   renderRoles();
+  if (id === 'source')  renderSource();
+  if (id === 'trends')  renderTrends();
+}
+function changePeriod(v) {
+  const labels = {mar26:'March 2026',feb26:'February 2026',jan26:'January 2026',q1_26:'Q1 2026 (YTD)'};
+  document.getElementById('report-month-label').textContent = labels[v] + ' · Prepared by: Group HR Manager';
+  toast('Period: ' + labels[v]);
+}
+
+// ── TOAST ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── HELPERS ──
+function hex2rgb(hex) {
+  const r = parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+// ── SVG HELPERS ──
+function makeSVGEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k,v));
+  return el;
+}
+function svgText(x,y,txt,cls,anchor='middle') {
+  const el = makeSVGEl('text',{x,y,'text-anchor':anchor,class:cls});
+  el.textContent = txt; return el;
+}
+function svgRect(x,y,w,h,rx,fill) {
+  return makeSVGEl('rect',{x,y,width:Math.max(0,w),height:Math.max(0,h),rx,fill});
+}
+function svgLine(x1,y1,x2,y2,stroke,sw=1,dash='') {
+  return makeSVGEl('line',{x1,y1,x2,y2,stroke,'stroke-width':sw,'stroke-dasharray':dash});
+}
+
+// ── TIME TO FILL CHART ──
+function drawTTF() {
+  const svg = document.getElementById('svg-ttf'); svg.innerHTML='';
+  const W=380, H=190, pad={t:20,r:20,b:40,l:60};
+  const data = [{cat:'Ops / Senior',days:91,color:'#f05050'},{cat:'HSE',days:62,color:'#f0a840'},{cat:'HR / Finance',days:58,color:'#60a8f0'},{cat:'Support',days:38,color:'#2dd4a8'}];
+  const target = 70;
+  const maxVal = 100;
+  const cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
+  const barW = Math.floor(cW/data.length*0.55);
+  const gap   = Math.floor(cW/data.length);
+  // grid lines
+  [0,25,50,75,100].forEach(v => {
+    const y = pad.t + cH - (v/maxVal)*cH;
+    svg.appendChild(svgLine(pad.l,y,W-pad.r,y,'rgba(255,255,255,0.05)'));
+    svg.appendChild(svgText(pad.l-6,y+3,v,'axis-label','end'));
+  });
+  // target line
+  const ty = pad.t + cH - (target/maxVal)*cH;
+  svg.appendChild(svgLine(pad.l,ty,W-pad.r,ty,'#e8b840',1,'4,3'));
+  const lbl = makeSVGEl('text',{x:W-pad.r+2,y:ty+3,'text-anchor':'start',fill:'#e8b840','font-size':'8','font-family':'IBM Plex Mono, monospace'});
+  lbl.textContent='Target'; svg.appendChild(lbl);
+  // bars
+  data.forEach((d,i) => {
+    const x = pad.l + i*gap + (gap-barW)/2;
+    const bH = (d.days/maxVal)*cH;
+    const y  = pad.t + cH - bH;
+    const rect = svgRect(x,y,barW,bH,4,d.color);
+    rect.style.opacity = '0.85';
+    svg.appendChild(rect);
+    svg.appendChild(svgText(x+barW/2,y-5,d.days+'d','data-label',undefined));
+    // overdue marker
+    if (d.days > target) {
+      const m = makeSVGEl('text',{x:x+barW/2, y:y-16,'text-anchor':'middle',fill:'#f05050','font-size':'9','font-family':'IBM Plex Mono, monospace','font-weight':'600'});
+      m.textContent='+' + (d.days-target)+'d'; svg.appendChild(m);
+    }
+    svg.appendChild(svgText(x+barW/2,H-pad.b+14,d.cat,'bar-label',undefined));
+  });
+  // axis
+  svg.appendChild(svgLine(pad.l,pad.t,pad.l,pad.t+cH,'rgba(255,255,255,0.15)'));
+  svg.appendChild(svgLine(pad.l,pad.t+cH,W-pad.r,pad.t+cH,'rgba(255,255,255,0.15)'));
+}
+
+// ── COUNTRY PIPELINE CHART ──
+function drawCountry() {
+  const svg = document.getElementById('svg-country'); svg.innerHTML='';
+  const W=380,H=190,pad={t:20,r:20,b:40,l:20};
+  const data=[{c:'Laos 🇱🇦',roles:3,cands:8,color:'#60a8f0'},{c:'Myanmar 🇲🇲',roles:3,cands:4,color:'#f05050'},{c:'Indonesia 🇮🇩',roles:4,cands:9,color:'#2dd4a8'},{c:'Thailand 🇹🇭',roles:3,cands:7,color:'#a880f0'}];
+  const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+  const maxR=5,maxC=12;
+  const gap = cW/data.length;
+  const rolesH = cH*0.45, candsH = cH*0.45, spacing = cH*0.1;
+  const rBarW = gap*0.35, cBarW = gap*0.28;
+  // legend
+  const leg1 = makeSVGEl('text',{x:pad.l,y:pad.t-6,fill:'rgba(255,255,255,0.3)','font-size':'8','font-family':'IBM Plex Mono, monospace'});
+  leg1.textContent='■ Open Roles'; svg.appendChild(leg1);
+  const leg2 = makeSVGEl('text',{x:pad.l+70,y:pad.t-6,fill:'rgba(255,255,255,0.2)','font-size':'8','font-family':'IBM Plex Mono, monospace'});
+  leg2.textContent='■ Candidates'; svg.appendChild(leg2);
+
+  data.forEach((d,i) => {
+    const cx = pad.l + i*gap + gap/2;
+    // role bar
+    const rH = (d.roles/maxR)*rolesH;
+    const rX = cx - rBarW/2 - rBarW*0.1;
+    svg.appendChild(svgRect(rX,pad.t+rolesH-rH,rBarW,rH,3,d.color));
+    // cands bar (lighter)
+    const ccH = (d.cands/maxC)*(candsH+spacing);
+    const cX  = cx + rBarW*0.1;
+    const cRect = svgRect(cX,pad.t+rolesH+spacing+candsH-ccH,cBarW,ccH,3,d.color);
+    cRect.style.opacity='0.4'; svg.appendChild(cRect);
+    // labels
+    svg.appendChild(svgText(cx,pad.t+rolesH-rH-5,d.roles,'data-label'));
+    svg.appendChild(svgText(cx,pad.t+rolesH+spacing+candsH-ccH-5,d.cands,'data-label'));
+    // x label
+    const xl = makeSVGEl('text',{x:cx,y:H-pad.b+14,'text-anchor':'middle',fill:'rgba(255,255,255,0.4)','font-size':'9','font-family':'IBM Plex Mono, monospace'});
+    xl.textContent=d.c; svg.appendChild(xl);
+    // Myanmar warning
+    if(d.c.includes('Myanmar')) {
+      const w=makeSVGEl('text',{x:cx,y:H-pad.b+25,'text-anchor':'middle',fill:'#f05050','font-size':'8','font-family':'IBM Plex Mono, monospace','font-weight':'700'});
+      w.textContent='⚠ Thin'; svg.appendChild(w);
+    }
+  });
+}
+
+// ── STAGE DONUT ──
+function drawStage() {
+  const svg = document.getElementById('svg-stage'); svg.innerHTML='';
+  const cx=80,cy=78,r=58,ir=36;
+  const data=[{l:'Sourced',n:8,c:'#a880f0'},{l:'Screened',n:5,c:'#60a8f0'},{l:'Interview',n:7,c:'#e8b840'},{l:'Offer',n:2,c:'#2dd4a8'},{l:'Hired',n:2,c:'#40d060'}];
+  const total=data.reduce((s,d)=>s+d.n,0);
+  let angle=-Math.PI/2;
+  data.forEach(d => {
+    const sweep=(d.n/total)*2*Math.PI;
+    const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle);
+    const x2=cx+r*Math.cos(angle+sweep),y2=cy+r*Math.sin(angle+sweep);
+    const xi=cx+ir*Math.cos(angle),yi=cy+ir*Math.sin(angle);
+    const xi2=cx+ir*Math.cos(angle+sweep),yi2=cy+ir*Math.sin(angle+sweep);
+    const large=sweep>Math.PI?1:0;
+    const path=makeSVGEl('path',{d:`M${xi},${yi} L${x1},${y1} A${r},${r},0,${large},1,${x2},${y2} L${xi2},${yi2} A${ir},${ir},0,${large},0,${xi},${yi} Z`,fill:d.c,opacity:'0.85'});
+    svg.appendChild(path);
+    angle+=sweep;
+  });
+  // total
+  const tot=makeSVGEl('text',{x:cx,y:cy-5,'text-anchor':'middle',fill:'#dce8f0','font-family':'Playfair Display, serif','font-size':'20','font-weight':'900'});
+  tot.textContent=total; svg.appendChild(tot);
+  const totl=makeSVGEl('text',{x:cx,y:cy+10,'text-anchor':'middle',fill:'rgba(255,255,255,0.3)','font-family':'IBM Plex Mono, monospace','font-size':'8'});
+  totl.textContent='ACTIVE'; svg.appendChild(totl);
+  // legend
+  let ly=10;
+  data.forEach(d => {
+    const dot=svgRect(160,ly,8,8,2,d.c); svg.appendChild(dot);
+    const lt=makeSVGEl('text',{x:172,y:ly+7,fill:'rgba(220,232,240,0.7)','font-family':'IBM Plex Mono, monospace','font-size':'9'});
+    lt.textContent=`${d.l} (${d.n})`; svg.appendChild(lt);
+    ly+=18;
+  });
+}
+
+// ── OFFER RATE LINE ──
+function drawOfferLine() {
+  const svg = document.getElementById('svg-offer'); svg.innerHTML='';
+  const W=260,H=160,pad={t:16,r:16,b:32,l:40};
+  const months=['Jan','Feb','Mar'];
+  const vals=[75,71,67];
+  const target=75;
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const minV=55,maxV=85;
+  const xs=months.map((_,i)=>pad.l+i*(cW/(months.length-1)));
+  const ys=vals.map(v=>pad.t+cH-(v-minV)/(maxV-minV)*cH);
+  // grid
+  [60,70,75,80].forEach(v=>{
+    const y=pad.t+cH-(v-minV)/(maxV-minV)*cH;
+    svg.appendChild(svgLine(pad.l,y,W-pad.r,y,'rgba(255,255,255,0.05)'));
+    svg.appendChild(svgText(pad.l-4,y+3,v+'%','axis-label','end'));
+  });
+  // target line
+  const ty=pad.t+cH-(target-minV)/(maxV-minV)*cH;
+  svg.appendChild(svgLine(pad.l,ty,W-pad.r,ty,'#e8b840',1,'4,3'));
+  // area
+  const pts=xs.map((x,i)=>`${x},${ys[i]}`).join(' ');
+  const area=makeSVGEl('polyline',{points:pts+` ${W-pad.r},${H-pad.b} ${pad.l},${H-pad.b}`,fill:'rgba(240,80,80,0.12)'});
+  svg.appendChild(area);
+  // line
+  const line=makeSVGEl('polyline',{points:pts,fill:'none',stroke:'#f05050','stroke-width':'2','stroke-linecap':'round','stroke-linejoin':'round'});
+  svg.appendChild(line);
+  // points
+  xs.forEach((x,i)=>{
+    svg.appendChild(makeSVGEl('circle',{cx:x,cy:ys[i],r:'4',fill:'#f05050'}));
+    svg.appendChild(svgText(x,ys[i]-10,vals[i]+'%','data-label'));
+    svg.appendChild(svgText(x,H-pad.b+14,months[i],'bar-label'));
+  });
+  svg.appendChild(svgLine(pad.l,pad.t,pad.l,pad.t+cH,'rgba(255,255,255,0.15)'));
+}
+
+// ── FUNNEL ──
+function renderFunnel() {
+  buildFunnel('funnel-main',[{l:'Sourced',n:33},{l:'Screened',n:19},{l:'Interviewed',n:9},{l:'Offered',n:4},{l:'Hired',n:2}],'#e8b840');
+  buildFunnel('funnel-ops',[{l:'Sourced',n:18},{l:'Screened',n:9},{l:'Interviewed',n:4},{l:'Offered',n:2},{l:'Hired',n:1}],'#f0a840');
+  buildFunnel('funnel-support',[{l:'Sourced',n:15},{l:'Screened',n:10},{l:'Interviewed',n:5},{l:'Offered',n:2},{l:'Hired',n:1}],'#2dd4a8');
+}
+function buildFunnel(id,data,color) {
+  const wrap=document.getElementById(id); if(!wrap) return;
+  wrap.innerHTML='';
+  const max=data[0].n;
+  data.forEach((d,i)=>{
+    const pct=Math.round((d.n/max)*100);
+    const convPct = i===0?100:Math.round((d.n/data[0].n)*100);
+    const row=document.createElement('div'); row.className='funnel-row';
+    row.innerHTML=`
+      <span class="funnel-label">${d.l}</span>
+      <div class="funnel-bar-wrap">
+        <div class="funnel-bar" style="width:${pct}%;background:${color};opacity:${0.4+0.6*(pct/100)}">
+          <span class="funnel-count">${d.n}</span>
+        </div>
+      </div>
+      <span class="funnel-pct">${convPct}%</span>
+      ${i<data.length-1?'<span class="funnel-arrow">↓</span>':'<span class="funnel-arrow"></span>'}`;
+    wrap.appendChild(row);
+  });
+}
+
+// ── ROLES TABLE ──
+function renderRoles() {
+  const roles=[
+    {role:'Drilling Supervisor',country:'Myanmar',prio:'Critical',days:92,target:70,cands:2,top:'Screened',cost:'$9,000*'},
+    {role:'Site Manager',country:'Laos',prio:'Critical',days:85,target:70,cands:1,top:'Offer',cost:'$8,500*'},
+    {role:'Senior Driller',country:'Indonesia',prio:'High',days:60,target:60,cands:3,top:'Interview',cost:'$300'},
+    {role:'Equipment Tech',country:'Indonesia',prio:'High',days:45,target:60,cands:2,top:'Screened',cost:'$200'},
+    {role:'Geologist',country:'Laos',prio:'High',days:38,target:60,cands:1,top:'Sourced',cost:'$0'},
+    {role:'HSE Officer',country:'Laos',prio:'Medium',days:22,target:60,cands:2,top:'Sourced',cost:'$0'},
+    {role:'HRBP',country:'Thailand',prio:'Low',days:12,target:60,cands:3,top:'Sourced',cost:'$0'},
+    {role:'Payroll Officer',country:'Thailand',prio:'Low',days:12,target:60,cands:1,top:'Sourced',cost:'$0'},
+    {role:'Compliance Officer',country:'Indonesia',prio:'Medium',days:12,target:60,cands:1,top:'Sourced',cost:'$0'},
+    {role:'Site Admin',country:'Laos',prio:'Medium',days:8,target:45,cands:4,top:'Screened',cost:'$0'},
+    {role:'Logistics Coord.',country:'Indonesia',prio:'Medium',days:8,target:45,cands:2,top:'Sourced',cost:'$0'},
+    {role:'EA / Office Mgr',country:'Thailand',prio:'Low',days:22,target:45,cands:3,top:'Screened',cost:'$150'},
+    {role:'Finance Officer',country:'Myanmar',prio:'High',days:30,target:60,cands:1,top:'Sourced',cost:'$0'},
+  ];
+  const prioColor={Critical:'#f05050',High:'#f0a840',Medium:'#e8b840',Low:'#2dd4a8'};
+  const stageColor={Offer:'#2dd4a8',Interview:'#e8b840',Screened:'#60a8f0',Sourced:'rgba(255,255,255,0.3)'};
+  const tbody=document.getElementById('role-tbl-body');
+  tbody.innerHTML=roles.map(r=>{
+    const over=r.days>r.target;
+    const barW=Math.min(100,Math.round(r.days/r.target*100));
+    const barColor=over?'#f05050':r.days>r.target*0.8?'#f0a840':'#2dd4a8';
+    return `<tr>
+      <td style="font-weight:700;font-size:12.5px;color:var(--text);">${r.role}</td>
+      <td style="font-size:12px;">${r.country}</td>
+      <td><span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:3px;background:rgba(${hex2rgb(prioColor[r.prio])},.1);color:${prioColor[r.prio]};border:1px solid rgba(${hex2rgb(prioColor[r.prio])},.25);">${r.prio}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;${over?'color:#f05050;font-weight:700;':'color:var(--text2);'}">${r.days}d${over?' ⚠':''}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text3);">${r.target}d</td>
+      <td>
+        <div class="prog-wrap" style="width:90px;">
+          <div class="prog-bar" style="width:${barW}%;background:${barColor};"></div>
+        </div>
+      </td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;">${r.cands}</td>
+      <td>
+        <div class="prog-wrap" style="width:60px;margin-bottom:0;">
+          <div class="prog-bar" style="width:${Math.min(100,r.cands/5*100)}%;background:#a880f0;"></div>
+        </div>
+      </td>
+      <td><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px;background:rgba(255,255,255,0.05);color:${stageColor[r.top]||'var(--text3)'};">${r.top}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);">${r.cost}</td>
+    </tr>`;
+  }).join('');
+
+  drawTTF2(roles);
+  drawDepth(roles);
+}
+function drawTTF2(roles) {
+  const svg=document.getElementById('svg-ttf2'); if(!svg) return; svg.innerHTML='';
+  const W=380,H=200,pad={t:16,r:20,b:70,l:16};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const maxD=100;
+  const barW=Math.floor(cW/roles.length*0.6);
+  const gap=cW/roles.length;
+  // danger zone
+  const dzY=pad.t+cH-(90/maxD)*cH;
+  const dz=svgRect(pad.l,pad.t,cW,dzY-pad.t,0,'rgba(240,80,80,0.04)');
+  svg.appendChild(dz);
+  svg.appendChild(svgLine(pad.l,dzY,W-pad.r,dzY,'rgba(240,80,80,0.3)',1,'3,2'));
+  const dzl=makeSVGEl('text',{x:W-pad.r,y:dzY-3,'text-anchor':'end',fill:'rgba(240,80,80,0.5)','font-size':'7.5','font-family':'IBM Plex Mono, monospace'});
+  dzl.textContent='90d DANGER'; svg.appendChild(dzl);
+  // target line
+  const ty=pad.t+cH-(70/maxD)*cH;
+  svg.appendChild(svgLine(pad.l,ty,W-pad.r,ty,'#e8b840',1,'4,3'));
+
+  roles.forEach((r,i)=>{
+    const x=pad.l+i*gap+(gap-barW)/2;
+    const bH=(r.days/maxD)*cH;
+    const y=pad.t+cH-bH;
+    const color=r.days>90?'#f05050':r.days>70?'#f0a840':'#2dd4a8';
+    svg.appendChild(svgRect(x,y,barW,bH,2,color));
+  });
+  svg.appendChild(svgLine(pad.l,pad.t+cH,W-pad.r,pad.t+cH,'rgba(255,255,255,0.1)'));
+}
+function drawDepth(roles) {
+  const svg=document.getElementById('svg-depth'); if(!svg) return; svg.innerHTML='';
+  const W=380,H=200,pad={t:16,r:20,b:70,l:16};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const maxD=6;
+  const barW=Math.floor(cW/roles.length*0.6);
+  const gap=cW/roles.length;
+  // target line (3 candidates min)
+  const ty=pad.t+cH-(3/maxD)*cH;
+  svg.appendChild(svgLine(pad.l,ty,W-pad.r,ty,'#e8b840',1,'4,3'));
+
+  roles.forEach((r,i)=>{
+    const x=pad.l+i*gap+(gap-barW)/2;
+    const bH=(r.cands/maxD)*cH;
+    const y=pad.t+cH-bH;
+    const color=r.cands<2?'#f05050':r.cands<3?'#f0a840':'#a880f0';
+    svg.appendChild(svgRect(x,y,barW,bH,2,color));
+    svg.appendChild(svgText(x+barW/2,y-5,r.cands,'data-label'));
+  });
+  svg.appendChild(svgLine(pad.l,pad.t+cH,W-pad.r,pad.t+cH,'rgba(255,255,255,0.1)'));
+}
+
+// ── SOURCE ──
+function renderSource() {
+  drawPie();
+  drawSourceConv();
+}
+function drawPie() {
+  const svg=document.getElementById('svg-pie'); svg.innerHTML='';
+  const lg=document.getElementById('source-legend'); lg.innerHTML='';
+  const cx=70,cy=70,r=60;
+  const data=[{l:'LinkedIn',n:12,c:'#60a8f0'},{l:'Referral',n:4,c:'#2dd4a8'},{l:'Agency',c:'#e8b840',n:6},{l:'Job Boards',c:'#a880f0',n:7},{l:'Facebook',c:'#f0a840',n:3},{l:'Inbound',c:'rgba(255,255,255,0.2)',n:4}];
+  const total=data.reduce((s,d)=>s+d.n,0);
+  let angle=-Math.PI/2;
+  data.forEach(d=>{
+    const sweep=(d.n/total)*2*Math.PI;
+    const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle);
+    const x2=cx+r*Math.cos(angle+sweep),y2=cy+r*Math.sin(angle+sweep);
+    const large=sweep>Math.PI?1:0;
+    svg.appendChild(makeSVGEl('path',{d:`M${cx},${cy} L${x1},${y1} A${r},${r},0,${large},1,${x2},${y2} Z`,fill:d.c,opacity:'0.85'}));
+    angle+=sweep;
+    // legend
+    const item=document.createElement('div'); item.className='sl-item';
+    item.innerHTML=`<div class="sl-dot" style="background:${d.c}"></div><span class="sl-name">${d.l}</span><span class="sl-val">${d.n}</span><span class="sl-pct">${Math.round(d.n/total*100)}%</span>`;
+    lg.appendChild(item);
+  });
+}
+function drawSourceConv() {
+  const svg=document.getElementById('svg-source-conv'); svg.innerHTML='';
+  const W=380,H=190,pad={t:20,r:20,b:40,l:60};
+  const sources=['LinkedIn','Referral','Agency','Job Boards','Facebook'];
+  const sourced=[12,4,6,7,3];
+  const hired=[1,1,0,0,0];
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const maxV=14;
+  const groupW=cW/sources.length;
+  const bW=Math.floor(groupW*0.3);
+  [0,4,8,12].forEach(v=>{
+    const y=pad.t+cH-(v/maxV)*cH;
+    svg.appendChild(svgLine(pad.l,y,W-pad.r,y,'rgba(255,255,255,0.05)'));
+    svg.appendChild(svgText(pad.l-5,y+3,v,'axis-label','end'));
+  });
+  sources.forEach((s,i)=>{
+    const cx=pad.l+i*groupW+groupW/2;
+    // sourced bar
+    const sH=(sourced[i]/maxV)*cH;
+    const sr=svgRect(cx-bW*1.05,pad.t+cH-sH,bW,sH,2,'#60a8f0');
+    sr.style.opacity='0.5'; svg.appendChild(sr);
+    svg.appendChild(svgText(cx-bW*0.55,pad.t+cH-sH-5,sourced[i],'axis-label'));
+    // hired bar
+    const hH=(hired[i]/maxV)*cH;
+    if (hH > 0) {
+      svg.appendChild(svgRect(cx+bW*0.05,pad.t+cH-hH,bW,hH,2,'#2dd4a8'));
+      svg.appendChild(svgText(cx+bW*0.55,pad.t+cH-hH-5,hired[i],'data-label'));
+    }
+    svg.appendChild(svgText(cx,H-pad.b+14,s,'bar-label'));
+  });
+  svg.appendChild(svgLine(pad.l,pad.t+cH,W-pad.r,pad.t+cH,'rgba(255,255,255,0.1)'));
+  // legend
+  const l1=makeSVGEl('text',{x:W-100,y:12,fill:'rgba(96,168,240,0.7)','font-family':'IBM Plex Mono,monospace','font-size':'8'});
+  l1.textContent='■ Sourced'; svg.appendChild(l1);
+  const l2=makeSVGEl('text',{x:W-50,y:12,fill:'rgba(45,212,168,0.9)','font-family':'IBM Plex Mono,monospace','font-size':'8'});
+  l2.textContent='■ Hired'; svg.appendChild(l2);
+}
+
+// ── TRENDS ──
+function renderTrends() {
+  drawTrendLine('svg-trend-ttf',[70,74,78],'Jan–Mar 2026','Days',70,'#f05050','Time to Fill','#e8b840');
+  drawTrendLine('svg-trend-vol',[11,18,24],'Jan–Mar 2026','Candidates',null,'#60a8f0','Pipeline Volume',null);
+  drawTrendLine('svg-trend-accept',[75,71,67],'Jan–Mar 2026','%',75,'#f05050','Offer Accept %','#e8b840',55,85);
+  drawHirePlan();
+}
+function drawTrendLine(id,vals,period,unit,target,color,title,tcolor,minV,maxV) {
+  const svg=document.getElementById(id); if(!svg) return; svg.innerHTML='';
+  const W=380,H=180,pad={t:20,r:20,b:32,l:40};
+  const months=['Jan','Feb','Mar'];
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  minV = minV ?? Math.min(...vals)*0.85;
+  maxV = maxV ?? Math.max(...vals)*1.15;
+  const range=maxV-minV;
+  const xs=months.map((_,i)=>pad.l+i*(cW/(months.length-1)));
+  const ys=vals.map(v=>pad.t+cH-(v-minV)/range*cH);
+  [0,1,2,3].forEach(i=>{
+    const v=minV+range*i/3;
+    const y=pad.t+cH-(v-minV)/range*cH;
+    svg.appendChild(svgLine(pad.l,y,W-pad.r,y,'rgba(255,255,255,0.05)'));
+    svg.appendChild(svgText(pad.l-4,y+3,Math.round(v),'axis-label','end'));
+  });
+  if(target!=null) {
+    const ty2=pad.t+cH-(target-minV)/range*cH;
+    svg.appendChild(svgLine(pad.l,ty2,W-pad.r,ty2,tcolor||'#e8b840',1,'4,3'));
+  }
+  // area
+  const pts=xs.map((x,i)=>`${x},${ys[i]}`).join(' ');
+  svg.appendChild(makeSVGEl('polyline',{points:pts+` ${W-pad.r},${H-pad.b} ${pad.l},${H-pad.b}`,fill:`rgba(${hex2rgb(color)},.1)`}));
+  svg.appendChild(makeSVGEl('polyline',{points:pts,fill:'none',stroke:color,'stroke-width':'2','stroke-linecap':'round','stroke-linejoin':'round'}));
+  xs.forEach((x,i)=>{
+    svg.appendChild(makeSVGEl('circle',{cx:x,cy:ys[i],r:'4',fill:color}));
+    svg.appendChild(svgText(x,ys[i]-10,vals[i]+unit,'data-label'));
+    svg.appendChild(svgText(x,H-pad.b+14,months[i],'bar-label'));
+  });
+  svg.appendChild(svgLine(pad.l,pad.t,pad.l,pad.t+cH,'rgba(255,255,255,0.1)'));
+}
+function drawHirePlan() {
+  const svg=document.getElementById('svg-trend-hire'); if(!svg) return; svg.innerHTML='';
+  const W=380,H=160,pad={t:16,r:24,b:32,l:40};
+  const months=['Jan','Feb','Mar'];
+  const actual=[0,1,2], plan=[2,4,6];
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const maxV=8;
+  const xs=months.map((_,i)=>pad.l+i*(cW/(months.length-1)));
+  const ysA=actual.map(v=>pad.t+cH-(v/maxV)*cH);
+  const ysP=plan.map(v=>pad.t+cH-(v/maxV)*cH);
+  [0,2,4,6,8].forEach(v=>{
+    const y=pad.t+cH-(v/maxV)*cH;
+    svg.appendChild(svgLine(pad.l,y,W-pad.r,y,'rgba(255,255,255,0.05)'));
+    svg.appendChild(svgText(pad.l-4,y+3,v,'axis-label','end'));
+  });
+  // plan line (dashed)
+  const ptsP=xs.map((x,i)=>`${x},${ysP[i]}`).join(' ');
+  svg.appendChild(makeSVGEl('polyline',{points:ptsP,fill:'none',stroke:'rgba(255,255,255,0.2)','stroke-width':'1.5','stroke-dasharray':'5,3','stroke-linecap':'round'}));
+  // actual area
+  const ptsA=xs.map((x,i)=>`${x},${ysA[i]}`).join(' ');
+  svg.appendChild(makeSVGEl('polyline',{points:ptsA+` ${W-pad.r},${H-pad.b} ${pad.l},${H-pad.b}`,fill:'rgba(45,212,168,0.1)'}));
+  svg.appendChild(makeSVGEl('polyline',{points:ptsA,fill:'none',stroke:'#2dd4a8','stroke-width':'2','stroke-linecap':'round','stroke-linejoin':'round'}));
+  xs.forEach((x,i)=>{
+    svg.appendChild(makeSVGEl('circle',{cx:x,cy:ysA[i],r:'4',fill:'#2dd4a8'}));
+    svg.appendChild(svgText(x,ysA[i]-8,actual[i],'data-label'));
+    svg.appendChild(svgText(x,H-pad.b+14,months[i],'bar-label'));
+  });
+  // legend
+  const la=makeSVGEl('text',{x:W-80,y:12,fill:'rgba(45,212,168,0.8)','font-size':'8','font-family':'IBM Plex Mono,monospace'});
+  la.textContent='── Actual'; svg.appendChild(la);
+  const lp=makeSVGEl('text',{x:W-30,y:12,fill:'rgba(255,255,255,0.3)','font-size':'8','font-family':'IBM Plex Mono,monospace'});
+  lp.textContent='- - Plan'; svg.appendChild(lp);
+  svg.appendChild(svgLine(pad.l,pad.t+cH,W-pad.r,pad.t+cH,'rgba(255,255,255,0.1)'));
+}
+
+// ── INIT ──
+drawTTF();
+drawCountry();
+drawStage();
+drawOfferLine();
+</script>
+</body>
+</html>

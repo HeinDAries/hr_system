@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OD Foundations & the HRBP's Role — Valentis OD Tool 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3ef;--surface:#ffffff;--surface2:#f0ede7;--surface3:#e8e4dc;
+  --border:#ddd9d0;--border2:#ccc7bb;
+  --ink:#1c1a16;--ink2:#2e2c27;--ink3:#57534a;--ink4:#8a8478;--ink5:#b8b2a8;
+  --sienna:#9b3a1a;--sienna2:#b44420;--sienna3:#c44e28;--sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.22);
+  --slate:#2c3e50;--slate2:#34495e;--slate-dim:rgba(44,62,80,0.07);--slate-border:rgba(44,62,80,0.2);
+  --gold:#8a6914;--gold-dim:rgba(138,105,20,0.07);--gold-border:rgba(138,105,20,0.22);
+  --green:#2d6a4f;--green-dim:rgba(45,106,79,0.07);--green-border:rgba(45,106,79,0.22);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--sienna3),var(--sienna),rgba(155,58,26,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sienna3);background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--sienna3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(155,58,26,0.15);border-color:rgba(155,58,26,0.35);color:#e8a07a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--sienna)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#e8a07a;display:block;margin-bottom:3px}
+
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--sienna);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--sienna)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:border-color .13s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--sienna);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-slate{background:var(--slate-dim);color:var(--slate);border:1px solid var(--slate-border)}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.sienna{background:var(--sienna-dim);border-color:var(--sienna);color:var(--sienna)}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+
+/* PULL QUOTE */
+.pull-quote{border-left:4px solid var(--sienna);padding:16px 20px;margin:16px 0;background:var(--sienna-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6;font-weight:400}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna)}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:32px;margin:14px 0}
+.timeline::before{content:'';position:absolute;left:10px;top:8px;bottom:8px;width:2px;background:var(--border2)}
+.tl-item{position:relative;margin-bottom:20px}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--border2);background:var(--surface)}
+.tl-item.active .tl-dot{background:var(--sienna);border-color:var(--sienna)}
+.tl-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:4px}
+.tl-item.active .tl-label{color:var(--sienna)}
+.tl-title{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.tl-body{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75}
+
+/* ORG TRIGGER CARDS */
+.trigger-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.trigger-card{padding:18px;border-radius:4px;border:1px solid;transition:all .15s;cursor:default}
+
+/* HRBP ROLE SPECTRUM */
+.spectrum{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin:14px 0}
+.spec-col{border-radius:3px;overflow:hidden}
+.spec-hdr{padding:10px 12px;font-family:var(--fm);font-size:7.5px;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-align:center}
+.spec-body{padding:12px;min-height:100px;font-size:12px;font-weight:300;line-height:1.6;color:var(--ink3)}
+
+/* MATURITY STEPS */
+.maturity-row{display:grid;grid-template-columns:40px 1fr auto;gap:14px;padding:14px 18px;border-bottom:1px solid var(--border);align-items:start}
+.maturity-row:last-child{border-bottom:none}
+.maturity-num{font-family:var(--fd);font-size:28px;font-weight:700;line-height:1}
+.maturity-title{font-weight:600;color:var(--ink);font-size:14px;margin-bottom:4px}
+.maturity-body{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75}
+
+/* VALENTIS CONTEXT BOX */
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px;color:#f5f0e8}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:10px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.85}
+
+/* ACCORDION */
+.acc-item{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:6px;overflow:hidden}
+.acc-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;transition:background .13s}
+.acc-hdr:hover{background:var(--surface2)}
+.acc-hdr-left{display:flex;align-items:center;gap:12px}
+.acc-icon{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--sienna);line-height:1;width:32px;flex-shrink:0}
+.acc-title{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink)}
+.acc-tog{font-family:var(--fm);font-size:16px;color:var(--ink5)}
+.acc-body{display:none;padding:16px 18px;border-top:1px solid var(--border);background:var(--surface2)}
+.acc-body.open{display:block}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-sienna{background:var(--sienna);color:#fff}
+.btn-sienna:hover{background:var(--sienna2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink3)}
+.btn-ghost:hover{border-color:var(--sienna);color:var(--sienna)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--sienna);border-bottom-color:var(--sienna);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">OD Tool 1 / 9</div>
+    <div class="sb-title">OD<br><em>Foundations</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>What is Org Design?</div>
+    <div class="nav-item" onclick="showPage('when',this)"><span class="nav-num">02</span>When OD is Needed</div>
+    <div class="nav-item" onclick="showPage('models',this)"><span class="nav-num">03</span>OD Frameworks</div>
+    <div class="nav-item" onclick="showPage('hrbp',this)"><span class="nav-num">04</span>The HRBP's Role in OD</div>
+    <div class="nav-item" onclick="showPage('vs',this)"><span class="nav-num">05</span>HRBP vs OD Consultant</div>
+    <div class="nav-item" onclick="showPage('maturity',this)"><span class="nav-num">06</span>OD Maturity at Valentis</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">07</span>Valentis Org Context</div>
+    <div class="nav-item" onclick="showPage('charter',this)"><span class="nav-num">08</span>OD Charter</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Organisation Design &amp; Development</strong>
+      Tool 1 of 9 · OD Foundations<br>
+      <span style="color:rgba(255,255,255,0.12)">Structure is strategy made visible</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 WHAT -->
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">Organisation Design & Development — Tool 1 / 9</div>
+    <h1 class="page-title">OD<br><em>Foundations</em></h1>
+    <p class="page-desc">Organisation Design is the deliberate process of shaping how an organisation is structured, how work flows through it, and how decisions are made — so that it can achieve its strategy. It is not an HR housekeeping task. It is one of the most powerful levers a business has.</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Every organisation is perfectly designed to get the results it gets. If you want different results, you need a different design."</p>
+    <cite>Arthur W. Jones — Organisation Design Principle</cite>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What Organisation Design Is</div>
+      <div class="card-body" style="margin-bottom:16px">Organisation design is the intentional configuration of four interconnected elements — structure, process, people, and rewards — to enable strategy execution. Change any one element without considering the others and the system compensates in unpredictable ways.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:13px 16px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0">
+          <div style="font-weight:700;color:var(--sienna);font-size:13.5px;margin-bottom:3px">Structure</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">How the organisation is divided — by function, geography, product, or customer. Who reports to whom. How many layers. How wide the spans.</div>
+        </div>
+        <div style="padding:13px 16px;border-left:3px solid var(--slate);background:var(--slate-dim);border-radius:0 3px 3px 0">
+          <div style="font-weight:700;color:var(--slate);font-size:13.5px;margin-bottom:3px">Process</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">How work flows through the organisation. How decisions are made. How information moves. Which processes are standardised and which are locally flexible.</div>
+        </div>
+        <div style="padding:13px 16px;border-left:3px solid var(--gold);background:var(--gold-dim);border-radius:0 3px 3px 0">
+          <div style="font-weight:700;color:var(--gold);font-size:13.5px;margin-bottom:3px">People</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">The capabilities, numbers, and types of people the structure requires. Job design. Role accountabilities. Skills and competency requirements by layer.</div>
+        </div>
+        <div style="padding:13px 16px;border-left:3px solid var(--green);background:var(--green-dim);border-radius:0 3px 3px 0">
+          <div style="font-weight:700;color:var(--green);font-size:13.5px;margin-bottom:3px">Rewards</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">How the organisation incentivises the behaviours the structure requires. Misaligned rewards sabotage well-designed structures — every time.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">What Organisation Design Is <em>Not</em></div>
+      <div class="card-body" style="margin-bottom:14px">The most common OD mistake is confusing organisation design with one of its components. Each of the following is a consequence of organisation design — not organisation design itself.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:12px;align-items:flex-start">
+          <span class="chip chip-red" style="flex-shrink:0;margin-top:2px">Not OD</span>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Drawing an org chart.</strong> An org chart is a snapshot of reporting lines. It captures one dimension of structure and none of process, people, or rewards. A well-designed org can have a confusing org chart. A badly designed org can have a clean one.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:12px;align-items:flex-start">
+          <span class="chip chip-red" style="flex-shrink:0;margin-top:2px">Not OD</span>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">A headcount exercise.</strong> Deciding how many people to hire or cut is a consequence of the design — not the design itself. Headcount decisions made without a design rationale almost always produce the wrong result.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:12px;align-items:flex-start">
+          <span class="chip chip-red" style="flex-shrink:0;margin-top:2px">Not OD</span>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">A restructure announcement.</strong> Announcing who now reports to whom is not the same as designing how the work will actually get done differently. Most restructures fail because they stop at the announcement.</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:flex;gap:12px;align-items:flex-start">
+          <span class="chip chip-red" style="flex-shrink:0;margin-top:2px">Not OD</span>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">A job evaluation exercise.</strong> Grading roles is an input to design — and an output of it — but it is not the design process itself.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Organisation Design vs Organisation <em>Development</em></div>
+    <div class="card-body" style="margin-bottom:16px">These two terms are often used interchangeably — and they are related but distinct. Understanding the difference shapes how the HRBP intervenes.</div>
+    <div style="display:grid;grid-template-columns:1fr 60px 1fr;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden">
+      <div style="padding:20px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--slate);margin-bottom:10px">Organisation Design</div>
+        <div style="display:grid;gap:6px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>— Concerned with structure, roles, and reporting</div>
+          <div>— Answers: "How should we be organised?"</div>
+          <div>— Typically triggered by strategy change or growth</div>
+          <div>— Has a defined endpoint — the new design</div>
+          <div>— Primarily analytical and structural work</div>
+          <div>— Examples: restructure, new country entry, role redesign</div>
+        </div>
+      </div>
+      <div style="background:var(--slate);display:flex;align-items:center;justify-content:center">
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:rgba(255,255,255,0.2);writing-mode:vertical-rl">vs</div>
+      </div>
+      <div style="padding:20px;background:var(--surface2)">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--sienna);margin-bottom:10px">Organisation Development</div>
+        <div style="display:grid;gap:6px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <div>— Concerned with capability, culture, and effectiveness</div>
+          <div>— Answers: "How well are we functioning as an organisation?"</div>
+          <div>— Triggered by performance gaps or cultural dysfunction</div>
+          <div>— An ongoing discipline — no fixed endpoint</div>
+          <div>— Primarily behavioural and relational work</div>
+          <div>— Examples: leadership development, culture change, team effectiveness</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">At Valentis:</strong> Both are needed simultaneously. The structure needs to be designed for 5-country growth (Organisation Design). The capability to lead that structure needs to be developed (Organisation Development). The HRBP holds both.</div>
+  </div>
+</div>
+
+<!-- 02 WHEN -->
+<div id="page-when" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — When OD is Needed</div>
+    <h1 class="page-title">When OD<br><em>is Needed</em></h1>
+    <p class="page-desc">Organisation design is not a scheduled activity — it is triggered by specific conditions. The HRBP who can recognise these triggers early, and initiate an OD conversation before the symptoms become acute, earns a qualitatively different level of strategic influence.</p>
+  </div>
+
+  <div class="info sienna"><strong>The HRBP as Early Warning System</strong>Most organisations begin an OD process after the pain becomes undeniable — when productivity has fallen, when the restructure is already decided, when the new country is already contracted. The HRBP who reads the early signals and raises the OD conversation six months earlier is the one who gets to shape the design, not react to it.</div>
+
+  <div class="trigger-grid">
+    <div class="trigger-card" style="background:var(--sienna-dim);border-color:var(--sienna-border)">
+      <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--sienna);margin-bottom:8px;line-height:1">Strategy Change</div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">When the business changes direction — new markets, new products, acquisition, divestiture — the existing structure was designed for the old strategy and will resist the new one.</div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--sienna);letter-spacing:.5px">Valentis signal: Country 5 entry announced</div>
+    </div>
+    <div class="trigger-card" style="background:var(--slate-dim);border-color:var(--slate-border)">
+      <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--slate);margin-bottom:8px;line-height:1">Significant Growth</div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">Organisations that grow beyond certain headcount thresholds need structural redesign. What works at 30 people breaks at 60. The informal coordination mechanisms of a small team cannot scale.</div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--slate);letter-spacing:.5px">Valentis signal: 42 → 65 FTE in 18 months</div>
+    </div>
+    <div class="trigger-card" style="background:var(--gold-dim);border-color:var(--gold-border)">
+      <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--gold);margin-bottom:8px;line-height:1">Performance Decline</div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">When delivery consistently underperforms and the root cause is not individual capability but structural — unclear accountabilities, duplicated work, slow decisions, coordination failures.</div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--gold);letter-spacing:.5px">Valentis signal: Indonesia programme at 84% — structural or capability?</div>
+    </div>
+    <div class="trigger-card" style="background:var(--green-dim);border-color:var(--green-border)">
+      <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--green);margin-bottom:8px;line-height:1">Leadership Transition</div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">A new leader — especially at CEO, COO, or Site Manager level — often requires a structural review. The design built around the previous leader's strengths may not fit the new one.</div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--green);letter-spacing:.5px">Valentis signal: Myo H. succession — Myanmar SM transition</div>
+    </div>
+    <div class="trigger-card" style="background:var(--red-dim);border-color:var(--red-border)">
+      <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--red);margin-bottom:8px;line-height:1">Structural Dysfunction</div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">Escalating conflict between teams, decisions that take too long, work that falls between roles, duplication of effort — these are structural symptoms. Leadership coaching will not fix a structural problem.</div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--red);letter-spacing:.5px">Valentis signal: cross-country resource allocation disputes</div>
+    </div>
+    <div class="trigger-card" style="background:var(--surface2);border-color:var(--border)">
+      <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink3);margin-bottom:8px;line-height:1">External Disruption</div>
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:10px">Regulatory change, market contraction, competitor entry, technology shift — external forces that make the current structure uncompetitive or non-compliant.</div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--ink4);letter-spacing:.5px">Valentis signal: operating country regulatory changes (Myanmar, Indonesia)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Cost of Late OD — The Valentis Illustration</div>
+    <div class="card-body" style="margin-bottom:16px">Valentis is growing from 42 to 65+ FTE across 5 countries in 18 months. This is a significant structural threshold — most of the coordination mechanisms that work at 42 people will start to fail between 50 and 65. The organisations that manage this transition well are the ones that design for it before they hit it, not after.</div>
+    <table class="dtable">
+      <thead><tr><th>What Breaks at 50–65 FTE Without OD</th><th>The Structural Cause</th><th>The Business Consequence</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--red)">COO span of control becomes unmanageable</td><td>Currently: COO directly manages 4 Site Managers + Group HR + Finance. Adding SM5 pushes direct reports to 7+ — beyond effective span for a complex multi-country operation.</td><td>COO becomes a bottleneck. Decisions slow. Site Managers start bypassing the COO informally — which erodes governance.</td></tr>
+        <tr><td style="font-weight:600;color:var(--red)">Cross-country coordination fails informally</td><td>At 42 FTE across 4 countries, informal coordination works — people know each other. At 65 FTE across 5 countries, informal networks are insufficient and formal coordination mechanisms are needed.</td><td>Duplicate effort. Conflicting decisions between countries on people, procurement, and programme methodology. No shared practice.</td></tr>
+        <tr><td style="font-weight:600;color:var(--red)">HR cannot serve 5 countries solo</td><td>One Group HR Manager currently serves 4 countries and ~42 staff. At 65 FTE across 5 countries, the same model produces inconsistent HR delivery and reactive-only support.</td><td>Sites revert to self-managing HR (which they already partly do in Indonesia). Group HR becomes irrelevant to daily operations.</td></tr>
+        <tr><td style="font-weight:600;color:var(--red)">Succession gap becomes acute</td><td>The current structure has zero succession cover for any leadership role. Growth to 5 countries requires 5 Site Managers — with no internal pipeline for the 5th.</td><td>Country 5 entry delayed or a high-risk external hire made under time pressure.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 MODELS -->
+<div id="page-models" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — OD Frameworks</div>
+    <h1 class="page-title">OD<br><em>Frameworks</em></h1>
+    <p class="page-desc">The three frameworks the HRBP uses to diagnose and design organisations. Each illuminates a different dimension — used together they give a complete picture of why an organisation is performing the way it is.</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('galbraith',this)">Galbraith Star</div>
+    <div class="tab" onclick="showTab('mckinsey',this)">McKinsey 7-S</div>
+    <div class="tab" onclick="showTab('nadler',this)">Nadler-Tushman</div>
+  </div>
+
+  <div class="tab-body active" id="tab-galbraith">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Galbraith's Star Model</div>
+        <div class="card-body" style="margin-bottom:16px">The Star Model is the most practically useful OD framework for the HRBP. It maps five interdependent design elements — Strategy, Structure, Processes, Rewards, and People — and shows that they must all be aligned. A misalignment in any element undermines the whole system.</div>
+        <div style="position:relative;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;margin-bottom:12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;text-align:center">
+            <div></div>
+            <div style="padding:12px;background:var(--sienna);border-radius:3px;color:#fff">
+              <div style="font-family:var(--fd);font-size:16px;font-weight:700">Strategy</div>
+              <div style="font-size:11px;font-weight:300;opacity:.8">Direction &amp; goals</div>
+            </div>
+            <div></div>
+            <div style="padding:12px;background:var(--slate);border-radius:3px;color:#fff">
+              <div style="font-family:var(--fd);font-size:16px;font-weight:700">People</div>
+              <div style="font-size:11px;font-weight:300;opacity:.8">Skills &amp; mindsets</div>
+            </div>
+            <div style="padding:12px;background:var(--surface3);border:1px solid var(--border2);border-radius:3px">
+              <div style="font-family:var(--fd);font-size:14px;font-weight:700;color:var(--ink3)">Aligned</div>
+              <div style="font-size:11px;color:var(--ink5)">= capability</div>
+            </div>
+            <div style="padding:12px;background:var(--slate);border-radius:3px;color:#fff">
+              <div style="font-family:var(--fd);font-size:16px;font-weight:700">Structure</div>
+              <div style="font-size:11px;font-weight:300;opacity:.8">Reporting &amp; roles</div>
+            </div>
+            <div></div>
+            <div style="padding:12px;background:var(--gold);border-radius:3px;color:#fff">
+              <div style="font-family:var(--fd);font-size:16px;font-weight:700">Rewards</div>
+              <div style="font-size:11px;font-weight:300;opacity:.8">Incentives &amp; recognition</div>
+            </div>
+            <div></div>
+          </div>
+          <div style="text-align:center;margin-top:8px;padding:10px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px">
+            <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--green)">Processes</div>
+            <div style="font-size:11px;color:var(--ink4)">Decision-making &amp; information flow</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Star Model — <em>Valentis Alignment Check</em></div>
+        <div style="display:grid;gap:6px;margin-top:4px">
+          <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:4px">Strategy ↔ Structure — Partial misalignment</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Strategy requires 5-country expansion. Structure currently has COO managing 4 SMs directly. Adding a 5th breaks the span. Structure needs redesign before Country 5 entry, not after.</div>
+          </div>
+          <div style="padding:12px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Structure ↔ People — Significant misalignment</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">The structure requires a Site Manager-calibre leader for each country. No succession cover exists for any SM role. The People element cannot support what the Structure requires.</div>
+          </div>
+          <div style="padding:12px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">People ↔ Rewards — Partial misalignment</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">G4 drillers who take on trainee mentoring responsibilities are not compensated differently from G4s who do not. The Rewards element does not reinforce the People development behaviour the strategy requires.</div>
+          </div>
+          <div style="padding:12px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Strategy ↔ Processes — Watch</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Decision-making processes at Valentis are largely informal. As the organisation grows, informal processes will slow down. A formal governance model (Tool 9 of this department) is needed before the 5th country adds complexity.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-mckinsey">
+    <div class="card">
+      <div class="card-title">McKinsey 7-S Framework</div>
+      <div class="card-body" style="margin-bottom:16px">The 7-S framework maps seven elements of an organisation — three "hard" (Strategy, Structure, Systems) and four "soft" (Shared Values, Skills, Style, Staff). All seven must be aligned for the organisation to perform effectively. The soft elements are often ignored in OD work — and are usually where the real problems live.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate);margin-bottom:8px">Hard Elements — Easier to Define</div>
+          <div style="display:grid;gap:6px">
+            <div style="padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+              <div style="font-weight:700;color:var(--ink);margin-bottom:3px">Strategy</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">The plan for competitive advantage. At Valentis: grow to 5 countries, build internal driller pipeline, protect margins.</div>
+            </div>
+            <div style="padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+              <div style="font-weight:700;color:var(--ink);margin-bottom:3px">Structure</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Current: COO → 4 SMs → Drillers. Flat, country-based. Works at current scale; will strain at 65 FTE.</div>
+            </div>
+            <div style="padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+              <div style="font-weight:700;color:var(--ink);margin-bottom:3px">Systems</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">HR processes, financial reporting, operational planning. Currently mostly informal — a known vulnerability as scale increases.</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Soft Elements — Where Change Actually Sticks</div>
+          <div style="display:grid;gap:6px">
+            <div style="padding:13px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+              <div style="font-weight:700;color:var(--ink);margin-bottom:3px">Shared Values</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">What Valentis actually stands for — safety, technical excellence, delivery. Currently implicit. Thailand site lives them; Indonesia site questions them in HR context.</div>
+            </div>
+            <div style="padding:13px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+              <div style="font-weight:700;color:var(--ink);margin-bottom:3px">Skills</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Technical drilling capability is strong. Leadership, people development, and cross-country management capability are the gaps identified in the HRBP toolkit.</div>
+            </div>
+            <div style="padding:13px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+              <div style="font-weight:700;color:var(--ink);margin-bottom:3px">Style + Staff</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Leadership style varies significantly by country — a risk when trying to establish consistent group standards. Staff calibre at the driller level is strong; leadership bench is thin.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-nadler">
+    <div class="card">
+      <div class="card-title">Nadler-Tushman Congruence Model</div>
+      <div class="card-body" style="margin-bottom:16px">The Congruence Model treats the organisation as a transformation system — inputs (environment, resources, history) are transformed by four organisational components (Work, People, Formal Organisation, Informal Organisation) into outputs (strategy execution). Performance problems arise from incongruence between these components.</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+        <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--slate);margin-bottom:8px">Work</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The tasks that must be performed to deliver the strategy. At Valentis: drilling programme execution, trainee development, site safety management, cross-country coordination.</div>
+        </div>
+        <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--slate);margin-bottom:8px">People</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The individuals who perform the work — their skills, knowledge, experience, needs, and expectations. The G4 driller as both a technical specialist and an emerging people leader.</div>
+        </div>
+        <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--slate);margin-bottom:8px">Formal Org</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The official structure — reporting lines, processes, HR policies, job descriptions, and governance frameworks. What is written down and officially sanctioned.</div>
+        </div>
+        <div style="padding:16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:4px">
+          <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:var(--sienna);margin-bottom:8px">Informal Org</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The unofficial structure — who actually makes decisions, which relationships matter, the cultural norms. Often more powerful than the formal organisation. The Indonesia SM situation is an informal org problem.</div>
+        </div>
+      </div>
+      <div style="padding:14px 18px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13.5px;color:var(--ink2)"><strong style="color:var(--sienna)">The Valentis Congruence Gap:</strong> The formal org says the COO decides people policy. The informal org says each Site Manager decides independently. This incongruence produces the Indonesia resistance dynamic — and it cannot be resolved through HR process alone. It requires a governance redesign (Tool 9 of this department) and a relationship strategy (HRBP Tool 3).</div>
+    </div>
+  </div>
+</div>
+
+<!-- 04 HRBP ROLE -->
+<div id="page-hrbp" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — The HRBP's Role in OD</div>
+    <h1 class="page-title">The HRBP's<br><em>Role in OD</em></h1>
+    <p class="page-desc">Organisation design is not owned by HR. But the HRBP is uniquely positioned to enable, challenge, and embed it — because the HRBP holds the intersection of business strategy and people reality that no other function occupies.</p>
+  </div>
+
+  <div class="spectrum">
+    <div class="spec-col">
+      <div class="spec-hdr" style="background:var(--red);color:#fff">Not the HRBP's Role</div>
+      <div class="spec-body" style="background:var(--red-dim);border:1px solid var(--red-border);border-top:none">
+        <div style="display:grid;gap:5px">
+          <div>Deciding the new structure</div>
+          <div>Owning the design project</div>
+          <div>Presenting the design to the Board</div>
+          <div>Making role redundancy decisions</div>
+        </div>
+      </div>
+    </div>
+    <div class="spec-col">
+      <div class="spec-hdr" style="background:var(--gold);color:#fff">Sometimes HRBP</div>
+      <div class="spec-body" style="background:var(--gold-dim);border:1px solid var(--gold-border);border-top:none">
+        <div style="display:grid;gap:5px">
+          <div>Facilitating design workshops</div>
+          <div>Drafting role profiles</div>
+          <div>Leading the communication plan</div>
+          <div>Project-managing the transition</div>
+        </div>
+      </div>
+    </div>
+    <div class="spec-col">
+      <div class="spec-hdr" style="background:var(--sienna);color:#fff">Always HRBP</div>
+      <div class="spec-body" style="background:var(--sienna-dim);border:1px solid var(--sienna-border);border-top:none">
+        <div style="display:grid;gap:5px">
+          <div>Diagnosing the people impact</div>
+          <div>Challenging the design on people grounds</div>
+          <div>Assessing capability fit</div>
+          <div>Managing the transition experience</div>
+          <div>Embedding the change in HR systems</div>
+        </div>
+      </div>
+    </div>
+    <div class="spec-col">
+      <div class="spec-hdr" style="background:var(--green);color:#fff">HRBP + COO</div>
+      <div class="spec-body" style="background:var(--green-dim);border:1px solid var(--green-border);border-top:none">
+        <div style="display:grid;gap:5px">
+          <div>Raising the OD agenda</div>
+          <div>Setting design principles</div>
+          <div>Making the workforce investment case</div>
+          <div>Confirming succession readiness</div>
+        </div>
+      </div>
+    </div>
+    <div class="spec-col">
+      <div class="spec-hdr" style="background:var(--slate);color:#fff">COO Owns</div>
+      <div class="spec-body" style="background:var(--slate-dim);border:1px solid var(--slate-border);border-top:none">
+        <div style="display:grid;gap:5px">
+          <div>Final structure decision</div>
+          <div>Business case to CEO/Board</div>
+          <div>Role elimination decisions</div>
+          <div>Country entry approval</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The HRBP's OD Contribution — In Practice</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>OD Phase</th><th>What the HRBP Does</th><th>What the HRBP Challenges</th><th>Valentis Application</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">Diagnosis</td>
+          <td>Runs the org diagnostic. Maps structural dysfunction against business performance data. Identifies whether performance gaps are structural, capability, or cultural.</td>
+          <td>Assumptions that performance problems are individual capability issues when they are actually structural. "We need to replace the Indonesia SM" vs "We need to redesign the Indonesia accountability structure."</td>
+          <td>Indonesia programme delivery at 84%: is this a vacancy problem, a leadership problem, or a structural accountability problem? The HRBP diagnoses before recommending.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">Design</td>
+          <td>Provides people data: capability maps, successor readiness, salary implications, headcount modelling. Translates structural options into talent consequences.</td>
+          <td>Designs that look clean on paper but cannot be staffed. "We need a Country Director layer" — but there is no one internal ready for that role, and external hire takes 6 months.</td>
+          <td>Country 5 structure: the proposed design must account for the fact that the SM candidate needs 15 months development. The structure cannot go live before the person is ready.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">Transition</td>
+          <td>Manages the human experience of the change. Applies the change management toolkit. Coaches leaders through the transition. Monitors attrition and engagement signals.</td>
+          <td>Plans that treat people as interchangeable units. "We'll just redeploy them" — without accounting for the transition experience or the capability mismatch.</td>
+          <td>Myanmar SM succession: if Myo H. leaves, the transition plan must address the team's psychological experience of that loss — not just the org chart change.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">Embedding</td>
+          <td>Updates job descriptions, grade structures, performance frameworks, and reward systems to reflect the new design. Without this, the organisation reverts.</td>
+          <td>Declarations of success before embedding is complete. "The restructure is done" — when the role profiles have not been updated and the rewards still reflect the old structure.</td>
+          <td>Any Valentis restructure must be reflected in updated grade profiles (C&B Tool 2), performance frameworks (PM Tool 1), and the HR scorecard (HRBP Tool 5) before it is considered embedded.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 05 VS CONSULTANT -->
+<div id="page-vs" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — HRBP vs OD Consultant</div>
+    <h1 class="page-title">HRBP vs<br><em>OD Consultant</em></h1>
+    <p class="page-desc">When should Valentis use an external OD consultant — and when should the HRBP lead? This is a boundary question that has significant implications for cost, quality, and the HRBP's own credibility and development.</p>
+  </div>
+
+  <div class="info sienna"><strong>The Default Position</strong>The HRBP should lead OD work unless there is a specific reason not to. Every OD engagement led by an external consultant is an opportunity the HRBP did not take — to develop their own capability, to build their internal reputation as a strategic advisor, and to demonstrate that the HR function can do more than transactional work.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">When the HRBP Leads</div>
+      <div style="display:grid;gap:6px;margin-top:8px">
+        <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.7"><strong style="color:var(--green)">Org diagnostic and design assessment.</strong> The HRBP has the deepest context on the organisation — relationships, history, informal dynamics. An external consultant takes weeks to acquire this. The HRBP already has it.</div>
+        <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.7"><strong style="color:var(--green)">Role and job design.</strong> Redesigning jobs, grade structures, and accountabilities is HRBP work — it requires knowledge of the people, the pay structures, and the capability requirements that an external consultant does not have.</div>
+        <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.7"><strong style="color:var(--green)">Change management and transition.</strong> The trust relationships the HRBP has built with site managers and the COO make the HRBP irreplaceable as the transition navigator. An external consultant is gone when the engagement ends.</div>
+        <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.7"><strong style="color:var(--green)">Ongoing OD capability building.</strong> Developing the organisation's own capacity to think about design is an HRBP role. Dependency on external consultants for every OD question signals that the HR function has not grown.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">When to Bring in a Consultant</div>
+      <div style="display:grid;gap:6px;margin-top:8px">
+        <div style="padding:12px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.7"><strong style="color:var(--gold)">Major enterprise-wide restructures.</strong> A group-level redesign involving 50+ roles, multiple functions, and Board-level governance requires specialised methodology and bandwidth the HRBP cannot provide solo. Use a consultant as a delivery partner — the HRBP retains strategy ownership.</div>
+        <div style="padding:12px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.7"><strong style="color:var(--gold)">When independent perspective is essential.</strong> If the HRBP is too close to the situation — or if leadership will not hear the same diagnosis from an internal voice — an external perspective can unlock the conversation. Use sparingly; overuse signals the HRBP is not trusted.</div>
+        <div style="padding:12px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.7"><strong style="color:var(--gold)">Specialist methodology the HRBP does not have.</strong> Process redesign (Lean, Six Sigma), large-scale culture transformation, or M&A integration require specialist skills. Bring the specialist in — and use the engagement to develop your own capability alongside them.</div>
+        <div style="padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.7"><strong style="color:var(--sienna)">Valentis verdict:</strong> At current scale and complexity, the HRBP should lead all OD work. The 9-tool OD department in this toolkit gives the HRBP the methodology to do exactly that — without an external consultant.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 06 MATURITY -->
+<div id="page-maturity" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — OD Maturity at Valentis</div>
+    <h1 class="page-title">OD Maturity<br><em>at Valentis</em></h1>
+    <p class="page-desc">Where does Valentis currently sit on the OD maturity curve — and what needs to happen to move it forward? An honest assessment is the starting point for a credible OD agenda.</p>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="padding:20px 26px;background:var(--slate);color:#f5f0e8">
+      <div style="font-family:var(--fd);font-size:20px;font-weight:600;margin-bottom:4px">Valentis OD Maturity Assessment</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);font-family:var(--fm)">Current position: Level 2 — Reactive</div>
+    </div>
+    <div class="maturity-row" style="background:var(--surface2)">
+      <div class="maturity-num" style="color:var(--ink5)">1</div>
+      <div>
+        <div class="maturity-title">Ad Hoc — "We restructure when we have to"</div>
+        <div class="maturity-body">No deliberate org design process. Structure evolves by accident — through hiring decisions, promotions, and the preferences of individual leaders. Design conversations only happen during a crisis.</div>
+      </div>
+      <span class="chip chip-muted">Not Valentis</span>
+    </div>
+    <div class="maturity-row" style="background:var(--sienna-dim);border-left:4px solid var(--sienna)">
+      <div class="maturity-num" style="color:var(--sienna)">2</div>
+      <div>
+        <div class="maturity-title" style="color:var(--sienna)">Reactive — "We fix structural problems when they surface" ← Current</div>
+        <div class="maturity-body">The organisation addresses structural problems when they become undeniable — a span of control that is clearly too wide, a role that is clearly duplicated. There is no proactive OD agenda. The HRBP is beginning to name structural issues but is not yet in the design conversation.</div>
+      </div>
+      <span class="chip chip-sienna">Current</span>
+    </div>
+    <div class="maturity-row">
+      <div class="maturity-num" style="color:var(--gold)">3</div>
+      <div>
+        <div class="maturity-title">Planned — "We design structure when strategy changes"</div>
+        <div class="maturity-body">OD is a planned activity triggered by strategy change. The HRBP is involved in business planning and initiates structural design conversations when new strategy is announced. Role design is deliberate and connected to capability planning.</div>
+      </div>
+      <span class="chip chip-gold">2026 Target</span>
+    </div>
+    <div class="maturity-row">
+      <div class="maturity-num" style="color:var(--green)">4</div>
+      <div>
+        <div class="maturity-title">Proactive — "We anticipate structural needs before they arise"</div>
+        <div class="maturity-body">The HRBP monitors structural health continuously through the org diagnostic and workforce planning tools. Design conversations happen in the business planning cycle — not in response to problems. Succession planning is structurally integrated.</div>
+      </div>
+      <span class="chip chip-green">2027 Target</span>
+    </div>
+    <div class="maturity-row" style="border-bottom:none">
+      <div class="maturity-num" style="color:var(--slate)">5</div>
+      <div>
+        <div class="maturity-title">Generative — "Structure is a continuous competitive advantage"</div>
+        <div class="maturity-body">The organisation treats design as an ongoing discipline. The CHRO is a member of the business strategy team. OD capability is embedded across the leadership population — not held only by HR. Design thinking is part of how every leader approaches their role.</div>
+      </div>
+      <span class="chip chip-slate">Future State</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Moving from Level 2 to Level 3 — The 2026 Agenda</div>
+    <div class="card-body" style="margin-bottom:14px">Three specific moves the HRBP makes in 2026 to advance Valentis from reactive to planned OD maturity.</div>
+    <div class="timeline">
+      <div class="tl-item active">
+        <div class="tl-dot"></div>
+        <div class="tl-label">Q1–Q2 2026</div>
+        <div class="tl-title">Complete the Valentis OD Diagnostic</div>
+        <div class="tl-body">Use the Spans & Layers Analyser (Tool 4) and Org Health Diagnostic (Tool 5) to produce the first structured assessment of the Valentis org design. Present findings to COO as part of the Q2 Business Review.</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-dot"></div>
+        <div class="tl-label">Q2 2026</div>
+        <div class="tl-title">Initiate Country 5 Design Conversation</div>
+        <div class="tl-body">Before the Country 5 contract is signed, present the structural implications — COO span, SM candidate readiness, HR model for the new country — as a pre-decision input, not a post-decision reaction. This is the move from reactive to planned.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label">Q3 2026</div>
+        <div class="tl-title">Secure OD Inclusion in 2027 Business Planning</div>
+        <div class="tl-body">The 2027 business plan is produced with structural design as a parallel workstream — not as an afterthought. The HRBP presents workforce and structure scenarios alongside the financial plan. This is Level 3 maturity.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07 VALENTIS CONTEXT -->
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Valentis Org Context</div>
+    <h1 class="page-title">Valentis<br><em>Org Context</em></h1>
+    <p class="page-desc">The current state of the Valentis organisation — structure, headcount, design strengths, structural tensions, and the inflection points approaching in the next 18 months that make an OD agenda urgent.</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">Current Org Snapshot — March 2026</div>
+    <div class="vx-title">42 FTE · 4 Countries · 1 Group HR · 3 Layers</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:16px">
+      <div style="text-align:center;padding:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:#e8a07a;line-height:1;margin-bottom:4px">42</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3)">Current FTE</div>
+      </div>
+      <div style="text-align:center;padding:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:#e8a07a;line-height:1;margin-bottom:4px">4</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3)">Countries</div>
+      </div>
+      <div style="text-align:center;padding:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:#e8a07a;line-height:1;margin-bottom:4px">3</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3)">Org Layers</div>
+      </div>
+      <div style="text-align:center;padding:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:3px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:#e8a07a;line-height:1;margin-bottom:4px">65+</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3)">Target FTE</div>
+      </div>
+      <div style="text-align:center;padding:14px;background:rgba(155,58,26,0.15);border:1px solid rgba(155,58,26,0.3);border-radius:3px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:#e8a07a;line-height:1;margin-bottom:4px">5</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3)">Target Countries</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Current Structure — What Works</div>
+      <div style="display:grid;gap:6px;margin-top:8px">
+        <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--green)">Flat = fast.</strong> Three layers (COO → SM → Driller) means decisions are close to the operational reality. No bureaucracy between the field and the decision-maker. Works well at current scale.</div>
+        <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--green)">Country-based structure matches the work.</strong> Mineral exploration is fundamentally site-specific. Each country has distinct regulatory, cultural, and operational requirements. Country-based SMs are the right model.</div>
+        <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--green)">Grade structure is functional.</strong> G1–G8 gives enough granularity to manage career progression and pay equity without excessive complexity. The grade architecture in the C&B toolkit is a solid foundation.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Current Structure — The Tensions</div>
+      <div style="display:grid;gap:6px;margin-top:8px">
+        <div style="padding:12px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--red)">COO span is approaching its limit.</strong> Currently: COO + 4 SMs + Group HR + Finance = 6 direct reports. Adding SM5 pushes this to 7. For a complex multi-country operation, this is the upper boundary of effective direct leadership.</div>
+        <div style="padding:12px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--red)">No cross-country coordination role.</strong> There is no formal mechanism for the 4 SMs to share practice, align on standards, or coordinate shared resources. This gap grows as the organisation adds a 5th country.</div>
+        <div style="padding:12px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--red)">HR model will not scale.</strong> One HR person for 65+ FTE across 5 countries and 5 sites is a structural gap. The business case for a second HR hire must be built and presented before the gap becomes acute.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The OD Agenda — 9 Tools, 18 Months</div>
+    <div class="card-body" style="margin-bottom:14px">Each of the nine tools in this department addresses a specific OD question that Valentis faces in 2026–2027. Together they give the HRBP the methodology to lead a complete OD programme without external support.</div>
+    <table class="dtable">
+      <thead><tr><th>#</th><th>Tool</th><th>Valentis Question it Answers</th><th>When Needed</th></tr></thead>
+      <tbody>
+        <tr><td class="chip chip-sienna" style="font-family:var(--fm);font-weight:700">T1</td><td>OD Foundations</td><td>What is OD and what is the HRBP's role? How mature is Valentis?</td><td>Now — foundation</td></tr>
+        <tr><td class="chip chip-sienna" style="font-family:var(--fm);font-weight:700">T2</td><td>Org Structure Models</td><td>What structure does Valentis need at 65 FTE / 5 countries?</td><td>Q2 2026</td></tr>
+        <tr><td class="chip chip-sienna" style="font-family:var(--fm);font-weight:700">T3</td><td>Role Design &amp; Job Architecture</td><td>Are the right roles, at the right grades, with the right accountabilities?</td><td>Q2 2026</td></tr>
+        <tr><td class="chip chip-sienna" style="font-family:var(--fm);font-weight:700">T4</td><td>Spans &amp; Layers Analyser</td><td>Is the COO span manageable? Where are the structural inefficiencies?</td><td>Q1 2026</td></tr>
+        <tr><td class="chip chip-sienna" style="font-family:var(--fm);font-weight:700">T5</td><td>Org Health Diagnostic</td><td>How healthy is the Valentis organisation as a system?</td><td>Q2 2026</td></tr>
+        <tr><td class="chip chip-sienna" style="font-family:var(--fm);font-weight:700">T6</td><td>Restructure Playbook</td><td>How to plan and execute the Country 5 structural change</td><td>Q3 2026</td></tr>
+        <tr><td class="chip chip-sienna" style="font-family:var(--fm);font-weight:700">T7</td><td>OD Intervention Builder</td><td>Given this org diagnosis — what is the right intervention?</td><td>Ongoing</td></tr>
+        <tr><td class="chip chip-sienna" style="font-family:var(--fm);font-weight:700">T8</td><td>Valentis Org Scenarios</td><td>What does the Valentis org look like in 3 scenarios — now, Country 5, full 65 FTE?</td><td>Q2 2026</td></tr>
+        <tr><td class="chip chip-sienna" style="font-family:var(--fm);font-weight:700">T9</td><td>Decision Rights &amp; Governance Map</td><td>Who decides what at Valentis? Where is authority unclear or contested?</td><td>Q3 2026</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 08 CHARTER -->
+<div id="page-charter" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — OD Charter</div>
+    <h1 class="page-title">Valentis<br><em>OD Charter</em></h1>
+    <p class="page-desc">The OD Charter is the HRBP's mandate document for organisation design work at Valentis. It defines the purpose, scope, principles, and authority of the OD function — and it is the document the HRBP presents to the COO to secure engagement for the work ahead.</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">Valentis Group · OD Charter · 2026–2027</div>
+    <div class="vx-title">Organisation Design &amp; Development Function</div>
+    <div class="vx-body" style="margin-top:8px">Authored by the Group HR Manager. Endorsed by the COO. Effective from Q2 2026.</div>
+  </div>
+
+  <div style="display:grid;gap:8px">
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('a1')">
+        <div class="acc-hdr-left"><div class="acc-icon">01</div><div class="acc-title">Purpose of the OD Function</div></div>
+        <div class="acc-tog" id="atog-a1">+</div>
+      </div>
+      <div class="acc-body" id="abody-a1">
+        <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.9">The OD function at Valentis exists to ensure that the organisation is always structured, staffed, and governed in a way that enables its strategy to be executed — now and in the future. It does this through proactive diagnosis, deliberate design, disciplined implementation, and continuous monitoring of organisational health. The OD function is led by the Group HR Manager and operates as a strategic advisory function to the COO and the Valentis leadership team.</div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('a2')">
+        <div class="acc-hdr-left"><div class="acc-icon">02</div><div class="acc-title">Scope</div></div>
+        <div class="acc-tog" id="atog-a2">+</div>
+      </div>
+      <div class="acc-body" id="abody-a2">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">
+          <div><strong style="color:var(--ink2);display:block;margin-bottom:6px">In Scope</strong>
+            <div style="display:grid;gap:4px">
+              <div>Organisation structure design and review</div>
+              <div>Role design and job architecture</div>
+              <div>Spans and layers analysis</div>
+              <div>Governance and decision rights mapping</div>
+              <div>Org health diagnostics</div>
+              <div>Restructure planning and execution</div>
+              <div>Leadership capability framework</div>
+              <div>Succession architecture</div>
+            </div>
+          </div>
+          <div><strong style="color:var(--red);display:block;margin-bottom:6px">Out of Scope (HRBP Advisory Only)</strong>
+            <div style="display:grid;gap:4px">
+              <div>Final structural decisions (COO)</div>
+              <div>Role elimination decisions (COO + Legal)</div>
+              <div>Board-level governance (CEO + Board)</div>
+              <div>Financial modelling of structural scenarios (Finance)</div>
+              <div>Major process redesign (Operations)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('a3')">
+        <div class="acc-hdr-left"><div class="acc-icon">03</div><div class="acc-title">Design Principles</div></div>
+        <div class="acc-tog" id="atog-a3">+</div>
+      </div>
+      <div class="acc-body" id="abody-a3">
+        <div style="display:grid;gap:8px">
+          <div style="padding:12px 16px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Strategy-first.</strong> Structure follows strategy — always. We never design a structure and then fit strategy to it.</div>
+          <div style="padding:12px 16px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Minimum necessary complexity.</strong> The simplest structure that can execute the strategy is always preferred. Complexity has a cost — in coordination, communication, and leadership bandwidth.</div>
+          <div style="padding:12px 16px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">People-grounded.</strong> No design is adopted without a clear view of whether it can be staffed with the people Valentis has or can realistically acquire. A structurally elegant design that cannot be staffed is not a design — it is a wish.</div>
+          <div style="padding:12px 16px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Designed for transition, not just destination.</strong> The best final-state design is worthless if the organisation cannot get there. Every design includes a transition plan.</div>
+          <div style="padding:12px 16px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Locally flexible, globally consistent.</strong> Valentis operates across four culturally distinct countries. Design standards must be consistent at the group level while allowing country-level adaptation where the operational or cultural context requires it.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-hdr" onclick="toggleAcc('a4')">
+        <div class="acc-hdr-left"><div class="acc-icon">04</div><div class="acc-title">2026–2027 OD Commitments</div></div>
+        <div class="acc-tog" id="atog-a4">+</div>
+      </div>
+      <div class="acc-body" id="abody-a4">
+        <table class="dtable">
+          <thead><tr><th>Commitment</th><th>Deliverable</th><th>Timeline</th><th>Success Measure</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;color:var(--sienna)">Org diagnostic completed</td><td>Spans & Layers report + Org Health Assessment presented to COO</td><td>Q2 2026</td><td>COO endorses findings and priorities</td></tr>
+            <tr><td style="font-weight:600;color:var(--sienna)">Country 5 structure designed</td><td>Three structural scenarios with people implications and recommendation</td><td>Q2 2026</td><td>Structural design approved before contract signed</td></tr>
+            <tr><td style="font-weight:600;color:var(--sienna)">Role architecture reviewed</td><td>All G5+ roles reviewed against strategy; updated profiles where needed</td><td>Q3 2026</td><td>Zero role profile gap for any leadership role</td></tr>
+            <tr><td style="font-weight:600;color:var(--sienna)">Governance map produced</td><td>Decision rights mapped for all key business decisions; endorsed by COO</td><td>Q3 2026</td><td>COO confirms governance clarity in Q3 Business Review</td></tr>
+            <tr><td style="font-weight:600;color:var(--sienna)">HR team expansion case</td><td>Business case for second HR hire presented to COO</td><td>Q3 2026</td><td>Decision confirmed — yes or no — before Q4</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  var pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function showTab(id, el) {
+  document.querySelectorAll('.tab-body').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  var tb = document.getElementById('tab-' + id);
+  if (tb) tb.classList.add('active');
+  if (el) el.classList.add('active');
+}
+function toggleAcc(id) {
+  var body = document.getElementById('abody-' + id);
+  var tog  = document.getElementById('atog-' + id);
+  var open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  tog.textContent = open ? '+' : '−';
+}
+</script>
+</body>
+</html>

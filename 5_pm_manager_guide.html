@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manager Enablement Guide — Valentis</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Nunito:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #faf7f2;
+  --cream2: #f3ede3;
+  --cream3: #ece5d8;
+  --rust: #c0432a;
+  --rust2: #d9563f;
+  --rust-dim: rgba(192,67,42,0.08);
+  --rust-dim2: rgba(192,67,42,0.14);
+  --rust-border: rgba(192,67,42,0.25);
+  --ink: #1e1a14;
+  --ink2: #3a3428;
+  --ink3: #6b6050;
+  --ink4: #9a907f;
+  --ink5: #c4bba8;
+  --sage: #4a6741;
+  --sage-dim: rgba(74,103,65,0.1);
+  --amber: #b07d2a;
+  --amber-dim: rgba(176,125,42,0.1);
+  --blue: #2a4a7f;
+  --blue-dim: rgba(42,74,127,0.08);
+  --border: #ddd5c4;
+  --border2: #ccc2ae;
+  --shadow: 0 2px 16px rgba(30,26,20,0.06);
+  --shadow-md: 0 4px 24px rgba(30,26,20,0.1);
+  --sidebar-w: 270px;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Nunito', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--cream2);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.65;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 28px 22px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.sidebar-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--rust2);
+  margin-bottom: 8px;
+}
+
+.sidebar-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.sidebar-sub {
+  font-size: 11.5px;
+  color: rgba(250,247,242,0.35);
+  line-height: 1.5;
+}
+
+.sidebar-section {
+  padding: 16px 12px 6px;
+}
+
+.sidebar-group-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(250,247,242,0.25);
+  padding: 0 10px;
+  margin-bottom: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: rgba(250,247,242,0.45);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 2px;
+  border: 1px solid transparent;
+  line-height: 1.3;
+}
+
+.nav-item:hover {
+  background: rgba(255,255,255,0.05);
+  color: rgba(250,247,242,0.75);
+}
+
+.nav-item.active {
+  background: var(--rust-dim2);
+  border-color: var(--rust-border);
+  color: var(--rust2);
+}
+
+.nav-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--rust2);
+  opacity: 0.6;
+  flex-shrink: 0;
+  width: 16px;
+}
+
+.nav-item.active .nav-num { opacity: 1; }
+
+.sidebar-quote {
+  margin: 12px;
+  padding: 14px 16px;
+  border-left: 2px solid var(--rust-border);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(250,247,242,0.35);
+  line-height: 1.6;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.tool-badge {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 7px;
+  padding: 10px 14px;
+  font-size: 11px;
+  color: rgba(250,247,242,0.4);
+}
+
+.tool-badge strong {
+  display: block;
+  color: rgba(250,247,242,0.6);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── PAGE LAYOUT ── */
+.page-hero {
+  background: var(--cream);
+  border-bottom: 2px solid var(--border);
+  padding: 48px 56px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: var(--rust-dim);
+  pointer-events: none;
+}
+
+.page-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 10px;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+
+.page-desc {
+  font-size: 15px;
+  color: var(--ink3);
+  max-width: 620px;
+  line-height: 1.75;
+  font-weight: 400;
+}
+
+.page-body {
+  padding: 40px 56px;
+  max-width: 900px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.card-desc {
+  font-size: 13.5px;
+  color: var(--ink3);
+  margin-bottom: 20px;
+  line-height: 1.7;
+}
+
+/* ── SECTION TYPOGRAPHY ── */
+.section-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+  margin-top: 36px;
+}
+
+.section-title:first-child { margin-top: 0; }
+
+.section-intro {
+  font-size: 14px;
+  color: var(--ink3);
+  margin-bottom: 20px;
+  line-height: 1.75;
+  max-width: 640px;
+}
+
+/* ── INFO BOXES ── */
+.info-box {
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  border-left: 3px solid;
+}
+
+.info-box.rust { background: var(--rust-dim); border-color: var(--rust); color: var(--rust); }
+.info-box.sage { background: var(--sage-dim); border-color: var(--sage); color: var(--sage); }
+.info-box.amber { background: var(--amber-dim); border-color: var(--amber); color: var(--amber); }
+.info-box.blue { background: var(--blue-dim); border-color: var(--blue); color: var(--blue); }
+.info-box.neutral { background: var(--cream3); border-color: var(--border2); color: var(--ink2); }
+
+.info-box strong { display: block; font-weight: 700; margin-bottom: 3px; }
+
+/* ── STEP CARDS ── */
+.step-card {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.step-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border2);
+}
+
+.step-num {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--rust);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.step-num.sage { background: var(--sage); }
+.step-num.amber { background: var(--amber); }
+.step-num.blue { background: var(--blue); }
+
+.step-content { flex: 1; }
+
+.step-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.step-time {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink4);
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.step-body {
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+/* ── DIALOGUE EXAMPLES ── */
+.dialogue {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 16px 0;
+}
+
+.dialogue-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.dialogue-label.do { color: var(--sage); }
+.dialogue-label.dont { color: var(--rust); }
+
+.dialogue-line {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-style: italic;
+  color: var(--ink2);
+  line-height: 1.6;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.dialogue-line:last-child { border-bottom: none; }
+
+.dialogue-line .speaker {
+  font-size: 10px;
+  font-style: normal;
+  font-family: var(--font-mono);
+  color: var(--ink4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* ── CHECKLIST ── */
+.checklist {
+  list-style: none;
+  padding: 0;
+}
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.55;
+}
+
+.checklist li:last-child { border-bottom: none; }
+
+.checklist-icon {
+  width: 20px; height: 20px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+.icon-rust { background: var(--rust-dim2); color: var(--rust); }
+.icon-sage { background: var(--sage-dim); color: var(--sage); }
+.icon-amber { background: var(--amber-dim); color: var(--amber); }
+
+/* ── SCENARIO CARDS ── */
+.scenario {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--rust);
+  border-radius: 0 0 12px 12px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.scenario-header {
+  background: var(--rust);
+  padding: 14px 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scenario-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  line-height: 1;
+}
+
+.scenario-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+}
+
+.scenario-body {
+  padding: 22px;
+}
+
+.scenario-context {
+  font-size: 13px;
+  color: var(--ink3);
+  margin-bottom: 16px;
+  font-style: italic;
+  line-height: 1.65;
+}
+
+/* ── DO/DONT GRID ── */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.do-box {
+  background: var(--sage-dim);
+  border: 1px solid rgba(74,103,65,0.2);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.dont-box {
+  background: var(--rust-dim);
+  border: 1px solid var(--rust-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.do-box-label, .dont-box-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.do-box-label { color: var(--sage); }
+.dont-box-label { color: var(--rust); }
+
+.do-box ul, .dont-box ul {
+  list-style: none;
+  padding: 0;
+}
+
+.do-box li, .dont-box li {
+  font-size: 13px;
+  padding: 5px 0 5px 16px;
+  position: relative;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.do-box li:last-child, .dont-box li:last-child { border-bottom: none; }
+
+.do-box li::before { content: '✓'; position: absolute; left: 0; color: var(--sage); font-size: 11px; }
+.dont-box li::before { content: '✗'; position: absolute; left: 0; color: var(--rust); font-size: 11px; }
+
+.do-box li { color: var(--ink2); }
+.dont-box li { color: var(--ink2); }
+
+/* ── PHRASE LIBRARY ── */
+.phrase-group {
+  margin-bottom: 20px;
+}
+
+.phrase-group-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.phrase {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--ink2);
+  line-height: 1.55;
+  cursor: pointer;
+  transition: all 0.12s;
+  position: relative;
+}
+
+.phrase:hover {
+  background: var(--cream3);
+  border-color: var(--rust-border);
+}
+
+.phrase-copy {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink5);
+  background: var(--cream3);
+  padding: 3px 7px;
+  border-radius: 3px;
+  transition: all 0.12s;
+}
+
+.phrase:hover .phrase-copy { color: var(--rust); background: var(--rust-dim2); }
+
+/* ── GOAL TEMPLATE ── */
+.goal-template {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 14px;
+}
+
+.goal-template-role {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 10px;
+}
+
+.goal-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.goal-item:last-child { border-bottom: none; }
+
+.goal-weight {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--cream3);
+  color: var(--ink3);
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.goal-text { color: var(--ink2); line-height: 1.5; }
+
+/* ── DOCUMENTATION TABLE ── */
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.doc-table th {
+  text-align: left;
+  padding: 9px 14px;
+  background: var(--cream3);
+  color: var(--ink3);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--border);
+  font-weight: 600;
+}
+
+.doc-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink2);
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+.doc-table tr:last-child td { border-bottom: none; }
+.doc-table tr:hover td { background: var(--cream2); }
+
+/* ── QUICK REF CARD ── */
+.quick-ref {
+  background: var(--ink);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 20px;
+  color: var(--cream);
+}
+
+.quick-ref-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+
+.quick-ref-sub {
+  font-size: 12px;
+  color: rgba(250,247,242,0.4);
+  margin-bottom: 20px;
+}
+
+.quick-ref-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.quick-ref-item {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.quick-ref-item-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--rust2);
+  margin-bottom: 6px;
+}
+
+.quick-ref-item-value {
+  font-size: 13px;
+  color: rgba(250,247,242,0.7);
+  line-height: 1.55;
+}
+
+/* ── TABS ── */
+.tab-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: var(--ink4);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab-btn:hover { color: var(--ink2); }
+.tab-btn.active { color: var(--rust); border-bottom-color: var(--rust); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── DIVIDER ── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 28px 0;
+}
+
+/* ── PRINT BUTTON ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-rust { background: var(--rust); color: white; }
+.btn-rust:hover { background: var(--rust2); }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--ink2); }
+.btn-ghost:hover { border-color: var(--border2); background: var(--cream3); }
+.btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+/* ── PROGRESS TRACKER (interactive) ── */
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.progress-item:hover { border-color: var(--border2); background: var(--cream2); }
+
+.progress-item.done {
+  background: var(--sage-dim);
+  border-color: rgba(74,103,65,0.25);
+}
+
+.progress-check {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--border2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+
+.progress-item.done .progress-check {
+  background: var(--sage);
+  border-color: var(--sage);
+  color: white;
+}
+
+.progress-item-text {
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.45;
+}
+
+.progress-item.done .progress-item-text {
+  color: var(--sage);
+  text-decoration: line-through;
+  text-decoration-color: rgba(74,103,65,0.4);
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--cream2); }
+::-webkit-scrollbar-thumb { background: var(--cream3); border-radius: 3px; }
+.sidebar::-webkit-scrollbar-track { background: var(--ink); }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page.active .card,
+.page.active .step-card,
+.page.active .scenario {
+  animation: fadeIn 0.3s ease both;
+}
+
+/* stagger */
+.page.active .card:nth-child(2) { animation-delay: 0.05s; }
+.page.active .card:nth-child(3) { animation-delay: 0.1s; }
+.page.active .card:nth-child(4) { animation-delay: 0.15s; }
+.page.active .step-card:nth-child(2) { animation-delay: 0.06s; }
+.page.active .step-card:nth-child(3) { animation-delay: 0.12s; }
+.page.active .step-card:nth-child(4) { animation-delay: 0.18s; }
+.page.active .step-card:nth-child(5) { animation-delay: 0.24s; }
+.page.active .step-card:nth-child(6) { animation-delay: 0.30s; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-eyebrow">For Managers — Practical Field Guide</div>
+    <div class="sidebar-title">Manager Enablement Guide</div>
+    <div class="sidebar-sub">Everything you need to run performance conversations well. Tool 5 of 5 — Valentis Group</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-group-label">Chapters</div>
+
+    <div class="nav-item active" onclick="showPage('start', this)">
+      <span class="nav-num">01</span>
+      Why This Matters
+    </div>
+    <div class="nav-item" onclick="showPage('goals', this)">
+      <span class="nav-num">02</span>
+      Setting Goals with Your Team
+    </div>
+    <div class="nav-item" onclick="showPage('feedback', this)">
+      <span class="nav-num">03</span>
+      Giving Feedback Year-Round
+    </div>
+    <div class="nav-item" onclick="showPage('review-conv', this)">
+      <span class="nav-num">04</span>
+      The Review Conversation
+    </div>
+    <div class="nav-item" onclick="showPage('difficult', this)">
+      <span class="nav-num">05</span>
+      Difficult Conversations
+    </div>
+    <div class="nav-item" onclick="showPage('document', this)">
+      <span class="nav-num">06</span>
+      What to Document & When
+    </div>
+    <div class="nav-item" onclick="showPage('phrases', this)">
+      <span class="nav-num">07</span>
+      Phrase Library
+    </div>
+    <div class="nav-item" onclick="showPage('checklist', this)">
+      <span class="nav-num">08</span>
+      Manager Checklist 2026
+    </div>
+  </div>
+
+  <div class="sidebar-quote">
+    "The conversation is the system. Everything else is paperwork."
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="tool-badge">
+      <strong>PM Tool 5 / 5</strong>
+      Manager Enablement Guide<br>
+      <span style="color:rgba(250,247,242,0.3);font-size:10px;">Part of Valentis PM System</span>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- PAGE 1: WHY THIS MATTERS -->
+<div id="page-start" class="page active">
+  <div class="page-hero">
+    <div class="page-eyebrow">Chapter 01 — Foundation</div>
+    <h1 class="page-title">Why Performance<br>Management Matters</h1>
+    <p class="page-desc">Most managers in operations have never had formal training in performance conversations. This guide exists because the PM system only works if the people running it understand why it matters and how to do it well.</p>
+  </div>
+
+  <div class="page-body">
+    <div class="info-box rust">
+      <strong>The Real Cost of Getting This Wrong</strong>
+      In mineral exploration, losing one experienced driller costs an estimated 3–6 months and significant recruitment fees. Losing a Site Manager can delay an entire drilling program. Most of those departures begin with a feeling — not a better salary offer — that their work was not seen, valued, or rewarded fairly. Performance management, done well, is retention strategy.
+    </div>
+
+    <div class="card">
+      <div class="card-title">The Manager's Job in the PM System</div>
+      <div class="card-desc">You are not the judge. You are the coach. Your job is to be clear about what good looks like, honest about where someone stands, and genuinely invested in helping them get better.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:4px;">
+        <div style="background:var(--cream2);border:1px solid var(--border);border-radius:9px;padding:18px;text-align:center;">
+          <div style="font-size:32px;margin-bottom:8px;">🎯</div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--ink);margin-bottom:6px;">Set Goals Together</div>
+          <div style="font-size:12.5px;color:var(--ink3);line-height:1.55;">Goals agreed with the employee — not handed down. Clear, measurable, connected to what the company needs.</div>
+        </div>
+        <div style="background:var(--cream2);border:1px solid var(--border);border-radius:9px;padding:18px;text-align:center;">
+          <div style="font-size:32px;margin-bottom:8px;">💬</div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--ink);margin-bottom:6px;">Give Honest Feedback</div>
+          <div style="font-size:12.5px;color:var(--ink3);line-height:1.55;">Regularly, not just at review time. Praise what works. Address what does not. Never save everything for December.</div>
+        </div>
+        <div style="background:var(--cream2);border:1px solid var(--border);border-radius:9px;padding:18px;text-align:center;">
+          <div style="font-size:32px;margin-bottom:8px;">📋</div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--ink);margin-bottom:6px;">Document What Happens</div>
+          <div style="font-size:12.5px;color:var(--ink3);line-height:1.55;">If it was not written down, it did not happen. Brief notes after important conversations protect everyone.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">The Number One Mistake Managers Make</div>
+      <div class="card-desc">Saving all feedback for the annual review. If your crew member finds out in December that you have been unhappy with their safety reporting since March, two things happen: they feel ambushed, and they do not trust the process. Neither outcome helps anyone.</div>
+      <div class="do-dont" style="margin-top:4px;">
+        <div class="do-box">
+          <div class="do-box-label">What good looks like</div>
+          <ul>
+            <li>Quarterly informal check-ins — 20 minutes, honest conversation</li>
+            <li>Immediate feedback when something goes wrong — same week, not same year</li>
+            <li>Genuine acknowledgement when something goes right</li>
+            <li>Mid-year review used to surface any concerns formally</li>
+            <li>Annual review has zero surprises for the employee</li>
+          </ul>
+        </div>
+        <div class="dont-box">
+          <div class="dont-box-label">What to avoid</div>
+          <ul>
+            <li>Silence for 11 months, then a Rating 2 in December</li>
+            <li>Rating everyone 3 to avoid difficult conversations</li>
+            <li>Vague goals that cannot be measured at review time</li>
+            <li>Basing ratings on the last 2 months (recency bias)</li>
+            <li>Letting one great thing inflate all ratings (halo effect)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">What the Rating Scale Actually Means</div>
+      <div class="card-desc">The most important thing to understand about the Valentis rating scale: <strong>a Rating 3 is a good outcome.</strong> It means the employee did what was expected of them, fully and competently. Most of your team should be Rating 3. That is what a healthy, functional team looks like.</div>
+      <div style="display:grid;gap:10px;margin-top:4px;">
+        <div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--cream2);border:1px solid var(--border);border-radius:8px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(46,213,115,0.15);border:1px solid rgba(46,213,115,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:700;font-size:16px;color:#2a7a4a;flex-shrink:0;">5</div>
+          <div><div style="font-weight:700;color:var(--ink);margin-bottom:2px;">Exceptional</div><div style="font-size:12.5px;color:var(--ink3);">Significantly exceeded all goals. Rare — should be 1–3 people across the whole company. If you are rating more than that, your goals were probably too easy.</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--cream2);border:1px solid var(--border);border-radius:8px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(61,159,255,0.12);border:1px solid rgba(61,159,255,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:700;font-size:16px;color:#1a4a7a;flex-shrink:0;">4</div>
+          <div><div style="font-weight:700;color:var(--ink);margin-bottom:2px;">Strong</div><div style="font-size:12.5px;color:var(--ink3);">Exceeded most goals. Consistently high quality. This should be 5–7 people company-wide. Not half your team.</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px;background:rgba(176,125,42,0.08);border:1px solid rgba(176,125,42,0.2);border-radius:8px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:var(--amber-dim);border:1px solid rgba(176,125,42,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:700;font-size:16px;color:var(--amber);flex-shrink:0;">3</div>
+          <div><div style="font-weight:700;color:var(--ink);margin-bottom:2px;">Meets Expectations — THIS IS GOOD</div><div style="font-size:12.5px;color:var(--ink3);">Did what was agreed, fully and competently. This is the most common rating. It is a positive outcome. Communicate it as such.</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--cream2);border:1px solid var(--border);border-radius:8px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:700;font-size:16px;color:#cc7700;flex-shrink:0;">2</div>
+          <div><div style="font-weight:700;color:var(--ink);margin-bottom:2px;">Needs Improvement</div><div style="font-size:12.5px;color:var(--ink3);">Key deliverables missed. Employee must know about this concern before the annual review — not at it.</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--rust-dim);border:1px solid var(--rust-border);border-radius:8px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:var(--rust-dim2);border:1px solid var(--rust-border);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:700;font-size:16px;color:var(--rust);flex-shrink:0;">1</div>
+          <div><div style="font-weight:700;color:var(--ink);margin-bottom:2px;">Unsatisfactory</div><div style="font-size:12.5px;color:var(--ink3);">Significantly below standard. If this is the first time they are hearing about it, the process has already failed. Prior documentation is mandatory.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: SETTING GOALS -->
+<div id="page-goals" class="page">
+  <div class="page-hero">
+    <div class="page-eyebrow">Chapter 02 — January Every Year</div>
+    <h1 class="page-title">Setting Goals<br>with Your Team</h1>
+    <p class="page-desc">Goals set the foundation for everything that follows. A poor goal makes a fair review impossible. A good goal makes the whole year clearer — for you and for your employee.</p>
+  </div>
+
+  <div class="page-body">
+
+    <div class="card">
+      <div class="card-title">The SMART Test — Does Your Goal Pass?</div>
+      <div class="card-desc">Before you lock any goal, run it through this test. If it fails any of the five checks, rewrite it before signing.</div>
+      <div style="display:grid;gap:10px;margin-top:4px;">
+        <div style="display:flex;gap:14px;align-items:flex-start;padding:12px;background:var(--cream2);border-radius:8px;border:1px solid var(--border);">
+          <div style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--rust);width:28px;flex-shrink:0;">S</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Specific — Could two people read this goal and agree on what it means?</div><div style="font-size:12.5px;color:var(--ink3);">Bad: "Improve safety performance." Good: "Zero LTIs in 2026. Log all near-misses within 24 hours using the site reporting system."</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;padding:12px;background:var(--cream2);border-radius:8px;border:1px solid var(--border);">
+          <div style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--rust);width:28px;flex-shrink:0;">M</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Measurable — Will you know at review time whether this was achieved?</div><div style="font-size:12.5px;color:var(--ink3);">Bad: "Good crew management." Good: "Zero crew departures that were within my control. Resolve crew conflicts within 48 hours."</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;padding:12px;background:var(--cream2);border-radius:8px;border:1px solid var(--border);">
+          <div style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--rust);width:28px;flex-shrink:0;">A</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Achievable — Is this stretching but realistic given the resources available?</div><div style="font-size:12.5px;color:var(--ink3);">If you give someone a goal that requires equipment that does not work, or targets that are impossible without additional headcount, you have set them up to fail — not succeed.</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;padding:12px;background:var(--cream2);border-radius:8px;border:1px solid var(--border);">
+          <div style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--rust);width:28px;flex-shrink:0;">R</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Relevant — Does this connect to what the team and company need?</div><div style="font-size:12.5px;color:var(--ink3);">Individual goals should roll up to department goals, which roll up to company goals. If you cannot explain why a goal matters to the business, it probably should not be a goal.</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;padding:12px;background:var(--cream2);border-radius:8px;border:1px solid var(--border);">
+          <div style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--rust);width:28px;flex-shrink:0;">T</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Time-Bound — Is there a clear deadline or review point?</div><div style="font-size:12.5px;color:var(--ink3);">Annual goals are reviewed in December. Milestones within the year (e.g. Q2 targets) help you track progress at mid-year check-in.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Goal Templates by Role — Starting Points</div>
+      <div class="card-desc">Use these as a starting point, then adapt with your employee based on their specific situation and the company's priorities for the year. The weights must add to 100.</div>
+
+      <div class="goal-template">
+        <div class="goal-template-role">Site Manager / Drilling Supervisor</div>
+        <div class="goal-item"><span class="goal-weight">25%</span><span class="goal-text"><strong>Safety:</strong> Zero LTIs for full year. All near-misses reported within 24 hours. HSE training 100% complete for crew.</span></div>
+        <div class="goal-item"><span class="goal-weight">20%</span><span class="goal-text"><strong>Drilling Output:</strong> Achieve minimum 95% of agreed monthly meterage target over the year.</span></div>
+        <div class="goal-item"><span class="goal-weight">15%</span><span class="goal-text"><strong>Rig Uptime:</strong> Maintain rig operational time above 85%. Unplanned downtime less than 5% of working days.</span></div>
+        <div class="goal-item"><span class="goal-weight">15%</span><span class="goal-text"><strong>Crew Retention:</strong> Zero voluntary departures that were within manager's control. All crew performance conversations completed.</span></div>
+        <div class="goal-item"><span class="goal-weight">25%</span><span class="goal-text"><strong>Development:</strong> Complete one agreed training or certification by end of year. Mentor one junior team member.</span></div>
+      </div>
+
+      <div class="goal-template">
+        <div class="goal-template-role">Senior Driller / Driller</div>
+        <div class="goal-item"><span class="goal-weight">30%</span><span class="goal-text"><strong>Safety:</strong> Zero LTIs. Active participation in toolbox talks. Near-miss reporting maintained.</span></div>
+        <div class="goal-item"><span class="goal-weight">25%</span><span class="goal-text"><strong>Drilling Performance:</strong> Achieve personal meterage targets set quarterly. Core recovery rate above agreed standard.</span></div>
+        <div class="goal-item"><span class="goal-weight">15%</span><span class="goal-text"><strong>Equipment Care:</strong> Daily pre-use checks completed. Zero incidents attributable to equipment neglect.</span></div>
+        <div class="goal-item"><span class="goal-weight">15%</span><span class="goal-text"><strong>Team Contribution:</strong> Support crew integration. Share knowledge with junior drillers.</span></div>
+        <div class="goal-item"><span class="goal-weight">15%</span><span class="goal-text"><strong>Development:</strong> Complete one agreed skills or certification goal by year-end.</span></div>
+      </div>
+
+      <div class="goal-template">
+        <div class="goal-template-role">HSE Officer</div>
+        <div class="goal-item"><span class="goal-weight">30%</span><span class="goal-text"><strong>Zero Incidents:</strong> Zero LTIs across assigned site. All incidents investigated within 5 working days.</span></div>
+        <div class="goal-item"><span class="goal-weight">25%</span><span class="goal-text"><strong>Compliance:</strong> 100% HSE training completion for site. All permits and certifications current with zero lapses.</span></div>
+        <div class="goal-item"><span class="goal-weight">20%</span><span class="goal-text"><strong>Near-Miss Culture:</strong> Increase near-miss reporting by minimum 20% vs prior year. All near-misses actioned within 48 hours.</span></div>
+        <div class="goal-item"><span class="goal-weight">10%</span><span class="goal-text"><strong>Audit Readiness:</strong> Site passes all internal and external HSE audits without major findings.</span></div>
+        <div class="goal-item"><span class="goal-weight">15%</span><span class="goal-text"><strong>Development:</strong> Complete agreed certification or regulatory update training by year-end.</span></div>
+      </div>
+    </div>
+
+    <div class="info-box amber">
+      <strong>Rules for Goal-Setting Conversations</strong>
+      3–5 goals maximum. Weights must add to 100%. At least one development goal every year. Safety must be weighted at least 25% for all operational roles. Goals are agreed together — not presented to be signed. If the employee disagrees, discuss it. Document the conversation.
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: FEEDBACK -->
+<div id="page-feedback" class="page">
+  <div class="page-hero">
+    <div class="page-eyebrow">Chapter 03 — Year-Round Practice</div>
+    <h1 class="page-title">Giving Feedback<br>Throughout the Year</h1>
+    <p class="page-desc">The annual review is a summary of a year of conversations — not a replacement for them. If you are only talking about performance once a year, you are already behind.</p>
+  </div>
+
+  <div class="page-body">
+    <div class="card">
+      <div class="card-title">The Feedback Calendar — Minimum Standard</div>
+      <div class="card-desc">These are the minimum touchpoints Valentis expects from every manager. More is better. Less means the review system will not work.</div>
+
+      <div class="step-card">
+        <div class="step-num">Jan</div>
+        <div class="step-content">
+          <div class="step-title">Goal-Setting Meeting — 45–60 minutes</div>
+          <div class="step-body">Sit down with each direct report. Set 3–5 goals together. Agree weights. Sign the goal sheet. Send to HR by 31 January. Do not do this over the phone or in a toolbox talk — it needs dedicated time.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num" style="background:var(--amber);">Mar</div>
+        <div class="step-content">
+          <div class="step-title">Q1 Informal Check-In — 20 minutes</div>
+          <div class="step-body">Ask: "How is 2026 going so far? Are your goals still realistic? Any blockers?" No forms, no ratings. Just a genuine conversation. Follow up with a brief email summary.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num" style="background:var(--blue);">Jul</div>
+        <div class="step-content">
+          <div class="step-title">Mid-Year Review — 30–45 minutes</div>
+          <div class="step-body">This is a formal meeting. Go through each goal — on track or behind? If behind, why and what changes? <strong>If there is a performance concern, raise it here in writing.</strong> A concern not raised at mid-year cannot appear as a low rating in December.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num" style="background:var(--amber);">Oct</div>
+        <div class="step-content">
+          <div class="step-title">Q3 Check-In — 20 minutes</div>
+          <div class="step-body">How is H2 tracking? Start preparing for annual review. Are goals still the same? What evidence do you have for each rating? Begin making notes now — do not try to remember everything in November.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num" style="background:var(--sage);">Dec</div>
+        <div class="step-content">
+          <div class="step-title">Annual Review — 60–75 minutes</div>
+          <div class="step-body">The formal end-of-year review. Rating confirmed by HR before this meeting. No surprises. See Chapter 04 for the full conversation guide.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">The SBI Model — How to Give Feedback That Lands</div>
+      <div class="card-desc">SBI stands for Situation, Behaviour, Impact. It is the most reliable structure for giving feedback that is specific, fair, and actionable — whether positive or developmental.</div>
+      <div style="display:grid;gap:12px;margin-top:4px;">
+        <div style="display:flex;gap:14px;align-items:flex-start;padding:14px;background:var(--cream2);border:1px solid var(--border);border-radius:8px;">
+          <div style="background:var(--rust);color:white;padding:8px 14px;border-radius:7px;font-family:var(--font-display);font-weight:700;font-size:18px;flex-shrink:0;">S</div>
+          <div><div style="font-weight:700;margin-bottom:4px;">Situation — When and where did this happen?</div><div style="font-size:13px;color:var(--ink3);">Be specific. Not "last month" but "on Tuesday 14 March, at the morning briefing." The situation grounds the conversation in fact, not impression.</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;padding:14px;background:var(--cream2);border:1px solid var(--border);border-radius:8px;">
+          <div style="background:var(--rust);color:white;padding:8px 14px;border-radius:7px;font-family:var(--font-display);font-weight:700;font-size:18px;flex-shrink:0;">B</div>
+          <div><div style="font-weight:700;margin-bottom:4px;">Behaviour — What did the person do (or not do)?</div><div style="font-size:13px;color:var(--ink3);">Describe the observable behaviour — not the intention, character, or attitude. Not "you were reckless" but "you did not complete the pre-use check before starting the rig."</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;padding:14px;background:var(--cream2);border:1px solid var(--border);border-radius:8px;">
+          <div style="background:var(--rust);color:white;padding:8px 14px;border-radius:7px;font-family:var(--font-display);font-weight:700;font-size:18px;flex-shrink:0;">I</div>
+          <div><div style="font-weight:700;margin-bottom:4px;">Impact — What was the effect?</div><div style="font-size:13px;color:var(--ink3);">Explain why it matters. On safety, on the team, on the project, on you. Not "it was bad" but "it meant the crew operated on unverified equipment for two hours — that is a safety exposure I cannot accept."</div></div>
+        </div>
+      </div>
+
+      <div class="dialogue" style="margin-top:16px;">
+        <div class="dialogue-label do">Example — Developmental Feedback Using SBI</div>
+        <div class="dialogue-line">
+          <span class="speaker">Manager:</span>
+          "Somchai, I want to talk about what happened on Wednesday at the pre-shift briefing. [S — Situation] You started the brief five minutes late and three crew members had already gone to the rig. [B — Behaviour] What that meant was that the safety briefing was not heard by everyone, which is a compliance issue and a risk to the crew. [I — Impact] I need us to get that right every day — what happened, and what is going to change?"
+        </div>
+      </div>
+
+      <div class="dialogue">
+        <div class="dialogue-label do">Example — Positive Feedback Using SBI</div>
+        <div class="dialogue-line">
+          <span class="speaker">Manager:</span>
+          "I want to acknowledge something you did this week. On Thursday morning, you spotted the hydraulic line wear before the shift started. [S] You stopped work, reported it immediately, and waited for the replacement before the crew started drilling. [B] That decision probably prevented a serious incident. That is exactly the safety culture we are building here — and I want you to know it was noticed. [I]"
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Common Feedback Mistakes to Avoid</div>
+      <div style="display:grid;gap:10px;margin-top:4px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--rust-dim);border:1px solid var(--rust-border);border-radius:8px;">
+          <span style="color:var(--rust);font-size:18px;flex-shrink:0;margin-top:1px;">✗</span>
+          <div><div style="font-weight:600;color:var(--ink);margin-bottom:2px;">The Feedback Sandwich</div><div style="font-size:13px;color:var(--ink3);">"You are doing great — but your output is too low — but you have a great attitude." The developmental feedback is buried and forgotten. Give it directly, not wrapped in praise.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--rust-dim);border:1px solid var(--rust-border);border-radius:8px;">
+          <span style="color:var(--rust);font-size:18px;flex-shrink:0;margin-top:1px;">✗</span>
+          <div><div style="font-weight:600;color:var(--ink);margin-bottom:2px;">Personality Feedback</div><div style="font-size:13px;color:var(--ink3);">"You have a bad attitude." People cannot change their attitude on request — but they can change specific behaviours. Describe the behaviour you want to change, not the person.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--rust-dim);border:1px solid var(--rust-border);border-radius:8px;">
+          <span style="color:var(--rust);font-size:18px;flex-shrink:0;margin-top:1px;">✗</span>
+          <div><div style="font-weight:600;color:var(--ink);margin-bottom:2px;">Vague Feedback</div><div style="font-size:13px;color:var(--ink3);">"You need to do better." Better at what? By how much? By when? Feedback that is too vague cannot be acted on. It just creates anxiety.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--rust-dim);border:1px solid var(--rust-border);border-radius:8px;">
+          <span style="color:var(--rust);font-size:18px;flex-shrink:0;margin-top:1px;">✗</span>
+          <div><div style="font-weight:600;color:var(--ink);margin-bottom:2px;">Only Giving Feedback in Problems</div><div style="font-size:13px;color:var(--ink3);">If your crew only hears from you when something goes wrong, they will dread your voice. Acknowledge good work regularly. It costs nothing and changes everything.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: REVIEW CONVERSATION -->
+<div id="page-review-conv" class="page">
+  <div class="page-hero">
+    <div class="page-eyebrow">Chapter 04 — The Most Important Meeting of the Year</div>
+    <h1 class="page-title">The Review<br>Conversation</h1>
+    <p class="page-desc">Book 60–75 minutes. Private room. No phone. The annual review conversation is where the whole year is summarised, the rating is confirmed, and the path forward is agreed. Here is how to run it well.</p>
+  </div>
+
+  <div class="page-body">
+
+    <div class="info-box rust">
+      <strong>Before the Meeting — Three Things You Must Have Ready</strong>
+      (1) The employee's self-assessment — read it before you arrive, not during. (2) Your completed manager assessment — ratings decided, evidence noted for each goal. (3) HR confirmation of the final calibrated rating — never walk into an annual review not knowing the final number.
+    </div>
+
+    <div class="card">
+      <div class="card-title">The Six-Phase Meeting Structure</div>
+      <div class="card-desc">Follow this structure for every annual review. It takes 60–75 minutes. Do not skip phases to save time — each one serves a purpose.</div>
+
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Open — 5 minutes</div>
+          <div class="step-time">Purpose: Set tone. Make it a conversation, not an interrogation.</div>
+          <div class="step-body">Thank them for their self-assessment. Explain the purpose: "Today we are looking back at 2026 together, agreeing on the rating, and thinking about 2027." Start with something genuine and positive — one thing you appreciated about their year. One specific thing, not a generic compliment.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num" style="background:var(--amber);">2</div>
+        <div class="step-content">
+          <div class="step-title">Employee Speaks First — 15 minutes</div>
+          <div class="step-time">Purpose: Hear their view before you share yours. This changes the tone of the whole conversation.</div>
+          <div class="step-body">"Walk me through your year — what are you most proud of?" Listen fully. Do not correct mid-sentence. Do not start defending your assessment. Just listen. Then: "What felt difficult? What would you do differently?" The answers tell you a lot about their self-awareness and maturity.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num" style="background:var(--sage);">3</div>
+        <div class="step-content">
+          <div class="step-title">Goal Review — 20 minutes</div>
+          <div class="step-time">Purpose: Go through each goal with evidence. Agree or discuss disagreements.</div>
+          <div class="step-body">Take each goal in turn. State the agreed target, then the actual result. Assign the rating. For goals where you agree with their self-assessment, confirm and move on. Where you disagree: "My view on this goal is a 3, not a 4. Here is why — [specific evidence]. What is your response?" They have a right to respond. Listen. Note their response. If your evidence is solid, the rating stands — even if they disagree.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">The Final Rating — 5 minutes</div>
+          <div class="step-time">Purpose: State it clearly. Explain how it was calculated. Own it.</div>
+          <div class="step-body">State the rating directly: "Your final rating for 2026 is [X] — [label]." Explain the weighted score: "Based on your goal scores and weights, your final score is [X.XX]." For Rating 3: reinforce that it is a good outcome — say it explicitly. "This means you delivered everything we agreed. That is solid performance." Do not be vague. Do not apologise for the rating. Own it.</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num" style="background:var(--sage);">5</div>
+        <div class="step-content">
+          <div class="step-title">Strengths, Development, Forward — 15 minutes</div>
+          <div class="step-time">Purpose: Make the conversation useful, not just administrative.</div>
+          <div class="step-body">Name 2–3 specific strengths — not generic ("good worker") but specific ("your near-miss reporting improved substantially — you logged 6 in H2 and the crew followed your lead"). Name 1–2 development areas — framed as growth, not criticism. Ask: "What do you need from me to get there?" Discuss their career goals: "Where do you want to be in 2–3 years?"</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num" style="background:var(--amber);">6</div>
+        <div class="step-content">
+          <div class="step-title">Close and Sign — 10 minutes</div>
+          <div class="step-time">Purpose: Confirm next steps. Get the signature. End positively.</div>
+          <div class="step-body">Outline goal-setting for 2027: "We will set goals together by end of January." Confirm when salary decisions will be communicated. Ask: "How are you feeling about the conversation? Anything to add?" Hand them the review document to sign. Explain: "Your signature confirms we had this conversation — not that you agree with every rating." If they refuse to sign, see Chapter 05.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5: DIFFICULT CONVERSATIONS -->
+<div id="page-difficult" class="page">
+  <div class="page-hero">
+    <div class="page-eyebrow">Chapter 05 — The Conversations Nobody Wants to Have</div>
+    <h1 class="page-title">Difficult<br>Conversations</h1>
+    <p class="page-desc">Most performance systems fail because managers avoid difficult conversations. This chapter gives you practical scripts and frameworks for the situations that feel hardest.</p>
+  </div>
+
+  <div class="page-body">
+
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-num">01</div>
+        <div class="scenario-title">Employee rated themselves a 4. You are giving them a 2.</div>
+      </div>
+      <div class="scenario-body">
+        <div class="scenario-context">This is the biggest gap possible. The employee believes they had a strong year. You have evidence that they did not. The gap is not a miscommunication — it is a fundamental difference in perception. Handle it directly.</div>
+        <div class="do-dont">
+          <div class="do-box">
+            <div class="do-box-label">Do</div>
+            <ul>
+              <li>Acknowledge what went well — genuinely</li>
+              <li>Present your evidence goal by goal, factually</li>
+              <li>Give them space to respond to each goal</li>
+              <li>Acknowledge what was outside their control</li>
+              <li>Keep the rating if your evidence is solid</li>
+              <li>End with: "I want to help you succeed in 2027"</li>
+            </ul>
+          </div>
+          <div class="dont-box">
+            <div class="dont-box-label">Do not</div>
+            <ul>
+              <li>Change the rating under social pressure alone</li>
+              <li>Apologise for having a different view</li>
+              <li>Rush through to avoid the discomfort</li>
+              <li>Make it personal or attack their character</li>
+              <li>Use vague language — "your performance was not quite there"</li>
+            </ul>
+          </div>
+        </div>
+        <div class="dialogue" style="margin-top:16px;">
+          <div class="dialogue-label do">Say this</div>
+          <div class="dialogue-line"><span class="speaker">Opening:</span>"I can see from your self-assessment that you felt this was a strong year, and I want to acknowledge [specific genuine positive]. On the goal assessment, my view is different, and I want to walk you through my reasoning."</div>
+          <div class="dialogue-line"><span class="speaker">On each gap:</span>"For goal 2 — drilling output — the target was 95% of monthly meterage. Your actual average was 71% over the year. I know some of this was affected by the equipment issue in Q2, and I have reflected that. The portion that was within your control still fell significantly short. My rating on this goal is a 2."</div>
+          <div class="dialogue-line"><span class="speaker">Closing:</span>"I know this is not what you were expecting. I am telling you this directly because I want you to succeed in 2027, and I am committed to supporting that. Let us talk about what needs to change."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-num">02</div>
+        <div class="scenario-title">Employee becomes upset or emotional during the review.</div>
+      </div>
+      <div class="scenario-body">
+        <div class="scenario-context">Performance conversations carry emotional weight — especially for employees who genuinely care about their work and feel their rating does not reflect their effort. This is a normal human response. Your job is to stay calm and give the emotion space.</div>
+        <div class="do-dont">
+          <div class="do-box">
+            <div class="do-box-label">Do</div>
+            <ul>
+              <li>Pause. Say nothing for a moment. Let it settle.</li>
+              <li>"Take a moment. There is no rush."</li>
+              <li>Offer a short break if needed</li>
+              <li>If very distressed: offer to continue the next day</li>
+              <li>Document that the conversation occurred and how it ended</li>
+            </ul>
+          </div>
+          <div class="dont-box">
+            <div class="dont-box-label">Do not</div>
+            <ul>
+              <li>Change the rating to manage the emotion</li>
+              <li>Become defensive or raise your voice</li>
+              <li>Keep talking while they are clearly not listening</li>
+              <li>Tell them they are "overreacting"</li>
+              <li>Promise things you cannot deliver to calm them down</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-num">03</div>
+        <div class="scenario-title">Employee refuses to sign the review document.</div>
+      </div>
+      <div class="scenario-body">
+        <div class="scenario-context">This happens more often than managers expect, and it is almost always a misunderstanding of what the signature means. Clarify before escalating.</div>
+        <div class="do-dont">
+          <div class="do-box">
+            <div class="do-box-label">Do</div>
+            <ul>
+              <li>Clarify first: "Your signature confirms the conversation happened — not that you agree with the rating"</li>
+              <li>If still refusing: note on the document with two witnesses present</li>
+              <li>Note: "Employee declined to sign — meeting held [date], witnessed by [name]"</li>
+              <li>Escalate to HR immediately</li>
+              <li>Never delay the process waiting for a signature</li>
+            </ul>
+          </div>
+          <div class="dont-box">
+            <div class="dont-box-label">Do not</div>
+            <ul>
+              <li>Argue or force the signature</li>
+              <li>Change the rating to get the signature</li>
+              <li>Leave the situation unresolved without HR</li>
+              <li>Treat refusal to sign as the end of the process</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-num">04</div>
+        <div class="scenario-title">You need to raise a performance concern at mid-year.</div>
+      </div>
+      <div class="scenario-body">
+        <div class="scenario-context">This is the conversation most managers avoid and then regret in December when the concern has not improved. Raising it now protects both you and the employee.</div>
+        <div class="dialogue">
+          <div class="dialogue-label do">How to open this conversation</div>
+          <div class="dialogue-line"><span class="speaker">Manager:</span>"I want to use this mid-year check-in to raise something directly with you. I have noticed over H1 that [specific behaviour or result with evidence]. This concerns me because [impact]. I am not giving you a low rating today — this is a mid-year review, not a final assessment. But I want to be honest with you now, because if this does not improve in H2, it will affect your annual rating in December. I would rather give you the chance to turn this around than surprise you in December. What is your view on what I have described?"</div>
+        </div>
+        <div class="info-box rust" style="margin-top:0;">
+          <strong>After this conversation — send a follow-up email</strong>
+          Within 24 hours, send a brief email: "Following our mid-year check-in today, I wanted to summarise the concern I raised: [description]. We agreed on the following next steps: [steps]. I am available to discuss further." Copy HR. This creates the documentation trail.
+        </div>
+      </div>
+    </div>
+
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-num">05</div>
+        <div class="scenario-title">Rating 5 employee wants a promotion, not just a good review.</div>
+      </div>
+      <div class="scenario-body">
+        <div class="scenario-context">Your best people are the ones competitors most want to hire. If you cannot offer a promotion, you need to be honest about it — and offer something real in its place. Vague promises are worse than honest limitations.</div>
+        <div class="dialogue">
+          <div class="dialogue-label do">How to handle this</div>
+          <div class="dialogue-line"><span class="speaker">Manager:</span>"You had an exceptional year and I want you to hear that clearly. I also want to be honest with you: there is no immediate promotion available. What I can offer is [specific: merit increase %, expanded role scope, timeline for next role review, fast-track development plan]. I do not want to make promises I cannot keep — but I do want you to know that your contribution is valued and that we are serious about keeping you here."</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE 6: DOCUMENTATION -->
+<div id="page-document" class="page">
+  <div class="page-hero">
+    <div class="page-eyebrow">Chapter 06 — The Paper Trail That Protects Everyone</div>
+    <h1 class="page-title">What to Document<br>and When</h1>
+    <p class="page-desc">Documentation is not bureaucracy. In a multi-country operation, a well-documented conversation protects you, protects the company, and protects the employee. Here is what to write down and when.</p>
+  </div>
+
+  <div class="page-body">
+
+    <div class="info-box neutral">
+      <strong>The Core Rule</strong>
+      If it was not written down, it did not happen. This applies to every significant performance conversation — especially informal ones. A brief follow-up email takes 5 minutes and is worth its weight in legal protection.
+    </div>
+
+    <div class="card">
+      <div class="card-title">Documentation Requirements by Event Type</div>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>What to Document</th>
+            <th>How</th>
+            <th>File Where</th>
+            <th>Timing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;color:var(--ink);">Goal-Setting Meeting</td>
+            <td>Agreed goals, weights, signatures</td>
+            <td>Valentis Goal Sheet (Tool 1)</td>
+            <td>HR file + employee copy</td>
+            <td>Before 31 January</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--ink);">Informal Coaching / Feedback</td>
+            <td>What was discussed, what was agreed, any actions</td>
+            <td>Brief follow-up email to employee, CC HR</td>
+            <td>Email trail — do not delete</td>
+            <td>Within 24 hours</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--ink);">Mid-Year Review</td>
+            <td>Progress on each goal, any concerns raised, H2 focus</td>
+            <td>Mid-Year Review form (Tool 2) + summary email</td>
+            <td>HR file + employee copy</td>
+            <td>Within 5 working days</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--ink);">Performance Concern Raised</td>
+            <td>Specific concern, evidence, what was said, employee response</td>
+            <td>Email to employee summarising the conversation. CC HR.</td>
+            <td>HR performance file (separate from general)</td>
+            <td>Within 24 hours of the conversation</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--ink);">Annual Review Meeting</td>
+            <td>Full review, final rating, development plan, signatures</td>
+            <td>Annual Review form (Tool 2) — signed by all parties</td>
+            <td>HR file + performance file + employee copy</td>
+            <td>Within 5 working days</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--ink);">Refusal to Sign</td>
+            <td>Date, attendees, that employee declined, manager statement</td>
+            <td>Note on review form. Two witnesses sign.</td>
+            <td>HR file immediately</td>
+            <td>Same day</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--ink);">PIP Initiated</td>
+            <td>Full PIP document — requirements, support, consequences</td>
+            <td>PIP Tracker (Tool 3)</td>
+            <td>Separate performance file</td>
+            <td>Signed at PIP meeting</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">What "Brief Follow-Up Email" Actually Looks Like</div>
+      <div class="card-desc">You do not need a template — you need a habit. After any significant performance conversation, send something like this before the end of the day.</div>
+      <div style="background:var(--cream2);border:1px solid var(--border);border-radius:10px;padding:20px;font-family:var(--font-body);">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--ink4);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Example — post coaching conversation</div>
+        <div style="font-size:13.5px;color:var(--ink2);line-height:1.75;">
+          <strong>To:</strong> [Employee name] <strong>CC:</strong> HR<br>
+          <strong>Subject:</strong> Follow-up — our conversation today<br><br>
+          Hi [Name],<br><br>
+          Following our conversation this afternoon, I wanted to summarise what we discussed so we are both clear.<br><br>
+          I raised a concern about [specific issue — e.g. pre-shift check completion rates in March]. We discussed that [summary of context and your view]. You responded that [their response — record it accurately].<br><br>
+          We agreed that you will [specific action] by [date]. I will check in with you on [date].<br><br>
+          Please let me know if I have missed anything or if you would like to discuss further.<br><br>
+          [Your name]
+        </div>
+      </div>
+      <div class="info-box amber" style="margin-top:16px;">
+        <strong>Why CC HR on performance conversations?</strong>
+        It creates a timestamped record outside your own email. If there is ever a dispute, HR has an independent copy. This is not about distrust — it is about protection for both parties.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 7: PHRASE LIBRARY -->
+<div id="page-phrases" class="page">
+  <div class="page-hero">
+    <div class="page-eyebrow">Chapter 07 — Ready to Use</div>
+    <h1 class="page-title">Phrase Library</h1>
+    <p class="page-desc">Practical language for the moments when you know what you want to say but the words are not coming. Click any phrase to copy it.</p>
+  </div>
+
+  <div class="page-body">
+
+    <div class="phrase-group">
+      <div class="phrase-group-title">Opening a Review Conversation</div>
+      <div class="phrase" onclick="copyPhrase(this)">Thank you for taking the time with your self-assessment — it was clear and it helped me prepare. Today I want us to go through the year together and agree on where you are and where you are headed.<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">Before I share my view on your rating, I want to hear yours. Walk me through your year — what are you most proud of?<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">This is a two-way conversation. Your perspective matters here, not just mine.<div class="phrase-copy">Copy</div></div>
+    </div>
+
+    <div class="phrase-group">
+      <div class="phrase-group-title">Delivering a Rating 3 (Meets Expectations)</div>
+      <div class="phrase" onclick="copyPhrase(this)">Your final rating for 2026 is a 3 — Meets Expectations. I want to say clearly: this is a good outcome. It means you delivered everything we agreed, fully. That is what we expect, and you did it.<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">A 3 is not average in a negative sense — it means you did your job well. Most of the team is at 3. That is a healthy team.<div class="phrase-copy">Copy</div></div>
+    </div>
+
+    <div class="phrase-group">
+      <div class="phrase-group-title">Delivering a Rating 4 or 5</div>
+      <div class="phrase" onclick="copyPhrase(this)">Your rating is a 4 — Strong. And I want to be specific about what earned that: [specific achievement]. That went beyond what we agreed and it made a real difference.<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">You had an exceptional year. A 5 is rare — it represents the best performance we see company-wide — and you earned it. What specifically stood out was [example].<div class="phrase-copy">Copy</div></div>
+    </div>
+
+    <div class="phrase-group">
+      <div class="phrase-group-title">Delivering a Rating 2 — Needs Improvement</div>
+      <div class="phrase" onclick="copyPhrase(this)">I want to be honest with you because I think you deserve that. Your rating this year is a 2 — Needs Improvement. I know that is hard to hear. Let me walk you through my reasoning on each goal.<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">I am giving you this rating not to punish you but because I need you to understand where the gap is. We cannot fix something that has not been named.<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">I am committed to supporting you in improving this. Here is what I think needs to change, and here is how I can help.<div class="phrase-copy">Copy</div></div>
+    </div>
+
+    <div class="phrase-group">
+      <div class="phrase-group-title">When the Employee Disagrees with Your Rating</div>
+      <div class="phrase" onclick="copyPhrase(this)">I hear your view, and I want you to know I considered it. My assessment, based on the evidence I have documented, is [rating]. I am happy to explain my reasoning in more detail if that would help.<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">I understand we see this differently. Your response will be noted in the review document. The rating I am giving is [X], and here is the evidence that supports it.<div class="phrase-copy">Copy</div></div>
+    </div>
+
+    <div class="phrase-group">
+      <div class="phrase-group-title">Raising a Performance Concern (Mid-Year or Informal)</div>
+      <div class="phrase" onclick="copyPhrase(this)">I want to raise something directly with you — not because I want to create a problem, but because I would rather address it now than in December.<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">I have noticed [specific behaviour] on [specific occasions]. Here is what that meant for [safety / the team / the project]. I need this to change. What is getting in the way?<div class="phrase-copy">Copy</div></div>
+    </div>
+
+    <div class="phrase-group">
+      <div class="phrase-group-title">Giving Positive Feedback</div>
+      <div class="phrase" onclick="copyPhrase(this)">I want to acknowledge what you did on [date]. You [specific behaviour], and the result was [impact]. That is exactly the kind of work that makes this team stronger.<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">I noticed [specific contribution] this month. I do not want that to pass without saying something — thank you for it.<div class="phrase-copy">Copy</div></div>
+    </div>
+
+    <div class="phrase-group">
+      <div class="phrase-group-title">Development Conversations</div>
+      <div class="phrase" onclick="copyPhrase(this)">Where do you want to be in two or three years? I want to help you get there — but I need to know where you are aiming.<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">The area I think is most worth focusing on in 2027 is [area]. Not because it is a weakness, but because strengthening it would unlock a lot for you.<div class="phrase-copy">Copy</div></div>
+    </div>
+
+    <div class="phrase-group">
+      <div class="phrase-group-title">Closing the Review</div>
+      <div class="phrase" onclick="copyPhrase(this)">Before we finish — how are you feeling about the conversation? Is there anything you want to add or push back on?<div class="phrase-copy">Copy</div></div>
+      <div class="phrase" onclick="copyPhrase(this)">Your signature on this document confirms we had this conversation — not that you agree with every rating. You are welcome to note your disagreement in writing and it will be attached to the file.<div class="phrase-copy">Copy</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE 8: CHECKLIST -->
+<div id="page-checklist" class="page">
+  <div class="page-hero">
+    <div class="page-eyebrow">Chapter 08 — Your Annual Roadmap</div>
+    <h1 class="page-title">Manager Checklist<br>2026</h1>
+    <p class="page-desc">Every item you are responsible for as a manager in the Valentis PM cycle. Click each item to mark it done. Your progress is saved in this session.</p>
+  </div>
+
+  <div class="page-body">
+
+    <div class="quick-ref">
+      <div class="quick-ref-title">Quick Reference — Key Dates</div>
+      <div class="quick-ref-sub">Deadlines you must not miss</div>
+      <div class="quick-ref-grid">
+        <div class="quick-ref-item">
+          <div class="quick-ref-item-label">Goal Sheets Due</div>
+          <div class="quick-ref-item-value">31 January 2026<br>All goals agreed + signed by this date</div>
+        </div>
+        <div class="quick-ref-item">
+          <div class="quick-ref-item-label">Mid-Year Review Window</div>
+          <div class="quick-ref-item-value">July 2026<br>Mandatory — concerns must be raised here</div>
+        </div>
+        <div class="quick-ref-item">
+          <div class="quick-ref-item-label">Self-Assessments Due</div>
+          <div class="quick-ref-item-value">15 November 2026<br>HR sends forms — you remind your team</div>
+        </div>
+        <div class="quick-ref-item">
+          <div class="quick-ref-item-label">Manager Assessments Due</div>
+          <div class="quick-ref-item-value">30 November 2026<br>Submit to HR before calibration session</div>
+        </div>
+        <div class="quick-ref-item">
+          <div class="quick-ref-item-label">Calibration Session</div>
+          <div class="quick-ref-item-value">1–15 December 2026<br>HR-led — you must attend</div>
+        </div>
+        <div class="quick-ref-item">
+          <div class="quick-ref-item-label">Review Meetings Complete</div>
+          <div class="quick-ref-item-value">31 December 2026<br>All signed documents filed with HR</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">January — Goal Setting</div>
+      <div id="check-jan"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Q1–Q2 — Ongoing Management</div>
+      <div id="check-q1q2"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">July — Mid-Year Review</div>
+      <div id="check-midyear"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Q3–Q4 — Annual Review Preparation</div>
+      <div id="check-q3q4"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">November–December — Annual Review</div>
+      <div id="check-annual"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-rust" onclick="window.print()">Print This Checklist</button>
+      <button class="btn btn-ghost" onclick="resetChecks()">Reset All</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── NAVIGATION ─────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── PHRASE COPY ────────────────────────────────────────────────────
+function copyPhrase(el) {
+  const text = el.childNodes[0].textContent.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = el.querySelector('.phrase-copy');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.style.color = 'var(--sage)';
+    btn.style.background = 'var(--sage-dim)';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.color = '';
+      btn.style.background = '';
+    }, 1800);
+  });
+}
+
+// ── CHECKLIST ─────────────────────────────────────────────────────
+const checks = {
+  jan: [
+    'Review last year\'s goals and outcomes before setting new ones',
+    'Schedule individual goal-setting meetings with each direct report (45–60 min)',
+    'Set 3–5 SMART goals with each employee — agreed together, not handed down',
+    'Ensure safety is weighted at least 25% for all operational roles',
+    'Confirm all goal weights add to exactly 100%',
+    'Have employee and manager sign the goal sheet',
+    'Submit signed goal sheets to HR by 31 January',
+  ],
+  q1q2: [
+    'Conduct Q1 informal check-in (March) — 20 minutes per direct report',
+    'Send brief email summary after each check-in',
+    'Give specific positive feedback when earned — do not save it',
+    'Address any performance concerns immediately — do not wait for review',
+    'Document any significant coaching conversations by email within 24 hours',
+    'Keep brief notes on key observations — not just at review time',
+  ],
+  midyear: [
+    'Complete mid-year review with each direct report before end of July',
+    'Review progress on each goal: on track, behind, or requires adjustment',
+    'Formally raise any performance concerns in writing — email to employee CC HR',
+    'Adjust goals for H2 if business priorities have changed (HR approval required)',
+    'Review development goal progress',
+    'Submit mid-year review forms to HR',
+    'Remember: a concern not raised at mid-year cannot appear as a low rating in December',
+  ],
+  q3q4: [
+    'Conduct Q3 informal check-in (October)',
+    'Begin collecting evidence for annual review — do not rely on memory',
+    'Review your notes from the full year before writing your manager assessment',
+    'Complete manager assessment forms for all direct reports by 30 November',
+    'Attend HR calibration session (1–15 December)',
+    'Confirm final calibrated ratings with HR before any conversations with employees',
+  ],
+  annual: [
+    'Confirm final rating is approved by HR before the meeting',
+    'Read each employee\'s self-assessment before your review meeting',
+    'Book private room, 60–75 minutes, zero interruptions',
+    'Conduct annual review meeting following the six-phase structure',
+    'State the rating clearly — no vagueness, no apology for the rating',
+    'Get employee and manager signatures on the review document',
+    'If employee refuses to sign — note on document with two witnesses, escalate to HR same day',
+    'Submit all signed review documents to HR within 5 working days',
+    'Communicate salary review timeline to employees',
+    'Schedule goal-setting meetings for January 2027',
+  ]
+};
+
+function buildChecklists() {
+  Object.entries(checks).forEach(([key, items]) => {
+    const el = document.getElementById('check-' + key);
+    if (!el) return;
+    el.innerHTML = items.map((item, i) => {
+      const stored = localStorage.getItem ? (localStorage.getItem('check-' + key + '-' + i) === 'done') : false;
+      return `<div class="progress-item${stored ? ' done' : ''}" onclick="toggleCheck(this, '${key}', ${i})">
+        <div class="progress-check">${stored ? '✓' : ''}</div>
+        <div class="progress-item-text">${item}</div>
+      </div>`;
+    }).join('');
+  });
+}
+
+function toggleCheck(el, key, idx) {
+  el.classList.toggle('done');
+  const check = el.querySelector('.progress-check');
+  const isDone = el.classList.contains('done');
+  check.textContent = isDone ? '✓' : '';
+  try { localStorage.setItem('check-' + key + '-' + idx, isDone ? 'done' : ''); } catch(e) {}
+}
+
+function resetChecks() {
+  document.querySelectorAll('.progress-item').forEach(el => {
+    el.classList.remove('done');
+    el.querySelector('.progress-check').textContent = '';
+  });
+  try {
+    Object.keys(checks).forEach(key => {
+      checks[key].forEach((_, i) => localStorage.removeItem('check-' + key + '-' + i));
+    });
+  } catch(e) {}
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  buildChecklists();
+});
+</script>
+</body>
+</html>

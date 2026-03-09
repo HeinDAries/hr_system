@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Headcount Plan & Comms | Valentis Laos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --w:    #ffffff;
+  --g0:   #f7f8fa;
+  --g1:   #f0f2f5;
+  --g2:   #e4e7ec;
+  --g3:   #c8cdd8;
+  --g4:   #8892a4;
+  --g5:   #4a5568;
+  --ink:  #0f1117;
+  --ink2: #1e2433;
+
+  --acc:  #1a56db;   /* blue accent */
+  --acc-l:#eff4ff;
+  --acc-b:#93b4f8;
+
+  --grn:  #0a7e4a;
+  --grn-l:#edfaf3;
+  --grn-b:#6ee7b7;
+
+  --red:  #c81f1f;
+  --red-l:#fff0f0;
+  --red-b:#fca5a5;
+
+  --yel:  #92610a;
+  --yel-l:#fffbeb;
+  --yel-b:#fcd34d;
+
+  --purp: #6b21a8;
+  --purp-l:#faf5ff;
+  --purp-b:#d8b4fe;
+
+  --r: 8px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Syne',sans-serif;background:var(--g0);color:var(--ink);min-height:100vh;font-size:14px;}
+
+/* ── LAYOUT ── */
+.shell{display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.side{
+  width:248px;min-width:248px;
+  background:var(--ink);
+  position:fixed;inset-y:0;left:0;
+  display:flex;flex-direction:column;
+  overflow-y:auto;z-index:40;
+}
+.side-brand{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.sb-eye{font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:10px;}
+.sb-name{font-family:'Lora',serif;font-size:20px;font-weight:600;color:#fff;line-height:1.2;}
+.sb-name em{color:#60a5fa;font-style:italic;}
+.sb-tag{font-size:10.5px;color:rgba(255,255,255,0.25);margin-top:5px;}
+
+.side-mod{padding:12px 14px 4px;}
+.sm-label{font-family:'JetBrains Mono',monospace;font-size:7px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 6px;margin-bottom:6px;}
+.snav{display:flex;flex-direction:column;gap:1px;}
+.nb{
+  display:flex;align-items:center;gap:9px;
+  width:100%;padding:8px 8px;border-radius:6px;
+  background:transparent;border:none;
+  color:rgba(255,255,255,0.32);
+  font-family:'Syne',sans-serif;font-size:11.5px;font-weight:500;
+  cursor:pointer;transition:all 0.13s;text-align:left;
+}
+.nb:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);}
+.nb.active{background:rgba(96,165,250,0.15);color:#60a5fa;}
+.nb-mark{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.nb-chip{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:8.5px;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.25);}
+.nb.active .nb-chip{background:rgba(96,165,250,0.2);color:#60a5fa;}
+
+.side-foot{margin-top:auto;padding:12px 20px;border-top:1px solid rgba(255,255,255,0.05);font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(255,255,255,0.12);line-height:2;}
+
+/* ── MAIN ── */
+.main{margin-left:248px;flex:1;display:flex;flex-direction:column;}
+
+/* ── TOPBAR ── */
+.topbar{
+  background:var(--w);border-bottom:1px solid var(--g2);
+  padding:13px 36px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:20;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04);
+}
+.tb-title{font-family:'Lora',serif;font-size:16px;font-weight:600;color:var(--ink);}
+.tb-sub{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--g4);margin-top:2px;}
+.tb-r{display:flex;gap:8px;align-items:center;}
+.badge{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:4px;}
+.badge-blue{background:var(--acc-l);color:var(--acc);border:1px solid var(--acc-b);}
+.badge-red{background:var(--red-l);color:var(--red);border:1px solid var(--red-b);}
+
+/* ── CONTENT ── */
+.content{padding:28px 36px;flex:1;}
+.tab{display:none;animation:fadeUp .18s ease;}
+.tab.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+/* ── SECTION LABEL ── */
+.sl{font-family:'JetBrains Mono',monospace;font-size:7.5px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--g4);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.sl::after{content:'';flex:1;height:1px;background:var(--g2);}
+
+/* ── CARD ── */
+.card{background:var(--w);border:1px solid var(--g2);border-radius:var(--r);overflow:hidden;margin-bottom:14px;}
+.card-hd{padding:12px 18px;border-bottom:1px solid var(--g2);display:flex;align-items:center;gap:10px;}
+.card-ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.card-tt{font-size:12.5px;font-weight:700;color:var(--ink);}
+.card-st{font-size:10.5px;color:var(--g4);margin-top:1px;}
+.card-bd{padding:14px 18px;}
+
+/* ── PILL / TAG ── */
+.tag{display:inline-flex;padding:2px 7px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;border:1px solid;white-space:nowrap;}
+.t-blue{background:var(--acc-l);color:var(--acc);border-color:var(--acc-b);}
+.t-green{background:var(--grn-l);color:var(--grn);border-color:var(--grn-b);}
+.t-red{background:var(--red-l);color:var(--red);border-color:var(--red-b);}
+.t-yel{background:var(--yel-l);color:var(--yel);border-color:var(--yel-b);}
+.t-purp{background:var(--purp-l);color:var(--purp);border-color:var(--purp-b);}
+.t-grey{background:var(--g1);color:var(--g5);border-color:var(--g3);}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+.sx{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
+/* ── KPI STRIP ── */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--g2);border:1px solid var(--g2);border-radius:var(--r);overflow:hidden;margin-bottom:20px;}
+.kc{background:var(--w);padding:15px 16px;position:relative;}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kc-blue::before{background:var(--acc);}
+.kc-green::before{background:var(--grn);}
+.kc-red::before{background:var(--red);}
+.kc-yel::before{background:#f59e0b;}
+.kc-purp::before{background:var(--purp);}
+.kc-lbl{font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g4);margin-bottom:7px;}
+.kc-val{font-family:'Lora',serif;font-size:28px;font-weight:600;line-height:1;}
+.kc-blue .kc-val{color:var(--acc);}
+.kc-green .kc-val{color:var(--grn);}
+.kc-red .kc-val{color:var(--red);}
+.kc-yel .kc-val{color:#92610a;}
+.kc-purp .kc-val{color:var(--purp);}
+.kc-sub{font-size:10px;color:var(--g4);margin-top:4px;}
+
+/* ── HC TABLE ── */
+.hc-tbl{width:100%;border-collapse:collapse;}
+.hc-tbl thead tr{background:var(--ink2);}
+.hc-tbl thead th{padding:10px 13px;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.55);text-align:left;border-right:1px solid rgba(255,255,255,0.07);white-space:nowrap;}
+.hc-tbl thead th:last-child{border-right:none;}
+.hc-tbl tbody tr{border-bottom:1px solid var(--g2);transition:background .12s;}
+.hc-tbl tbody tr:last-child{border-bottom:none;}
+.hc-tbl tbody tr:hover{background:var(--g0);}
+.hc-tbl tbody td{padding:11px 13px;font-size:11.5px;color:var(--g5);border-right:1px solid var(--g2);vertical-align:middle;line-height:1.4;}
+.hc-tbl tbody td:first-child{font-weight:700;color:var(--ink);font-size:12px;}
+.hc-tbl tbody td:last-child{border-right:none;}
+.hc-tbl tbody tr.critical td:first-child{border-left:3px solid var(--red);}
+.hc-tbl tbody tr.high td:first-child{border-left:3px solid #f59e0b;}
+.hc-tbl tbody tr.medium td:first-child{border-left:3px solid var(--acc);}
+.hc-tbl tbody tr.low td:first-child{border-left:3px solid var(--g3);}
+
+/* ── BUDGET BAR ── */
+.bbar-wrap{height:5px;background:var(--g1);border-radius:3px;overflow:hidden;min-width:60px;}
+.bbar{height:100%;border-radius:3px;}
+
+/* ── QUARTERLY GRID ── */
+.q-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.q-col{background:var(--w);border:1px solid var(--g2);border-radius:var(--r);overflow:hidden;}
+.q-head{padding:10px 13px;border-bottom:1px solid var(--g2);display:flex;align-items:center;justify-content:space-between;}
+.q-period{font-family:'Lora',serif;font-size:14px;font-weight:600;color:var(--ink);}
+.q-target{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--g4);}
+.q-body{padding:10px 13px;}
+.q-role{padding:7px 9px;background:var(--g0);border-radius:5px;border:1px solid var(--g2);margin-bottom:5px;font-size:11.5px;color:var(--ink2);line-height:1.4;}
+.q-role strong{display:block;font-weight:700;font-size:12px;color:var(--ink);}
+.q-role:last-child{margin-bottom:0;}
+
+/* ── ADD ROLE FORM ── */
+.form-panel{background:var(--g0);border:1px solid var(--g2);border-radius:var(--r);padding:18px;margin-bottom:16px;}
+.fr{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fg label{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--g4);}
+.fg input,.fg select,.fg textarea{padding:8px 10px;border:1px solid var(--g3);border-radius:6px;font-family:'Syne',sans-serif;font-size:12px;color:var(--ink);background:var(--w);outline:none;transition:border-color .14s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--acc);}
+.fg textarea{resize:vertical;min-height:60px;}
+.btn{padding:8px 16px;border-radius:6px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .13s;border:1px solid;}
+.btn-ink{background:var(--ink);color:#fff;border-color:var(--ink);}
+.btn-ink:hover{background:var(--ink2);}
+.btn-out{background:transparent;color:var(--g4);border-color:var(--g3);}
+.btn-out:hover{border-color:var(--g4);color:var(--g5);}
+.btn-blue{background:var(--acc);color:#fff;border-color:var(--acc);}
+.btn-blue:hover{background:#1648c8;}
+
+/* ── BUDGET SUMMARY ── */
+.bsum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.bs-cell{background:var(--w);border:1px solid var(--g2);border-radius:var(--r);padding:14px 15px;}
+.bs-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g4);margin-bottom:7px;}
+.bs-val{font-family:'Lora',serif;font-size:22px;font-weight:600;color:var(--ink);line-height:1;}
+.bs-sub{font-size:10px;color:var(--g4);margin-top:4px;}
+
+/* ── TEMPLATE SYSTEM ── */
+.tmpl-wrap{background:var(--ink2);border-radius:var(--r);padding:18px;margin-bottom:14px;position:relative;}
+.tmpl-label{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.tmpl-label span{flex:1;}
+.tmpl-body{font-size:12.5px;color:rgba(255,255,255,0.78);line-height:1.85;white-space:pre-wrap;font-family:'Lora',serif;}
+.tmpl-body b,.tmpl-body strong{color:#fbbf24;font-weight:600;}
+.tmpl-body em{color:#93c5fd;font-style:normal;}
+.copy-btn{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.35);font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border-radius:4px;cursor:pointer;transition:all .14s;white-space:nowrap;}
+.copy-btn:hover{color:#fbbf24;border-color:rgba(251,191,36,.4);}
+.copy-btn.copied{color:#6ee7b7;border-color:rgba(110,231,183,.4);}
+
+/* ── FILTER TABS ── */
+.filter-bar{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.fb{padding:6px 14px;border-radius:20px;border:1px solid var(--g3);background:var(--w);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;cursor:pointer;transition:all .13s;color:var(--g4);}
+.fb:hover{border-color:var(--g4);color:var(--g5);}
+.fb.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+/* ── VARIABLE HIGHLIGHT ── */
+.var-pill{display:inline;background:#fef3c7;color:#92400e;padding:0 3px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;}
+
+/* ── NOTE / WARN ── */
+.note{font-size:11px;color:var(--g5);padding:9px 13px;background:var(--g1);border-radius:6px;border-left:2px solid var(--g3);margin-top:8px;line-height:1.6;}
+.warn{font-size:11px;color:var(--red);padding:9px 13px;background:var(--red-l);border-radius:6px;border-left:2px solid var(--red-b);margin:10px 0;line-height:1.6;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:22px;background:var(--ink);color:#fff;padding:9px 15px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:11px;opacity:0;transform:translateY(5px);transition:all .2s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;transform:none;}
+
+/* ── PRINT ── */
+@media print{
+  .side,.topbar{display:none!important;}
+  .main{margin-left:0!important;}
+  .content{padding:0!important;}
+  .tab{display:block!important;}
+}
+
+@media(max-width:1000px){
+  .side{width:220px;min-width:220px;}
+  .main{margin-left:220px;}
+  .g4,.q-grid,.bsum-grid,.kpi-row,.fr{grid-template-columns:1fr 1fr;}
+  .g3{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="side">
+  <div class="side-brand">
+    <div class="sb-eye">Valentis Laos · Group HR</div>
+    <div class="sb-name">Headcount <em>&</em> Comms</div>
+    <div class="sb-tag">Hiring Plan · Communication Templates</div>
+  </div>
+
+  <div class="side-mod">
+    <div class="sm-label">Headcount Plan</div>
+    <div class="snav">
+      <button class="nb active" onclick="sw('hc-overview',this)"><span class="nb-mark" style="background:#60a5fa;"></span>Overview <span class="nb-chip">Live</span></button>
+      <button class="nb" onclick="sw('hc-roles',this)"><span class="nb-mark" style="background:#60a5fa;"></span>All Requisitions</button>
+      <button class="nb" onclick="sw('hc-quarterly',this)"><span class="nb-mark" style="background:#60a5fa;"></span>Quarterly Plan</button>
+      <button class="nb" onclick="sw('hc-budget',this)"><span class="nb-mark" style="background:#60a5fa;"></span>Budget Tracker</button>
+      <button class="nb" onclick="sw('hc-add',this)"><span class="nb-mark" style="background:#60a5fa;"></span>Add Requisition</button>
+    </div>
+  </div>
+
+  <div class="side-mod">
+    <div class="sm-label">Communication Templates</div>
+    <div class="snav">
+      <button class="nb" onclick="sw('ct-ack',this)"><span class="nb-mark" style="background:#6ee7b7;"></span>Acknowledgements</button>
+      <button class="nb" onclick="sw('ct-invite',this)"><span class="nb-mark" style="background:#6ee7b7;"></span>Interview Invites</button>
+      <button class="nb" onclick="sw('ct-offer',this)"><span class="nb-mark" style="background:#6ee7b7;"></span>Offer Letters</button>
+      <button class="nb" onclick="sw('ct-reject',this)"><span class="nb-mark" style="background:#6ee7b7;"></span>Rejections</button>
+      <button class="nb" onclick="sw('ct-onboard',this)"><span class="nb-mark" style="background:#6ee7b7;"></span>Onboarding Welcome</button>
+      <button class="nb" onclick="sw('ct-probation',this)"><span class="nb-mark" style="background:#6ee7b7;"></span>Probation Letters</button>
+      <button class="nb" onclick="sw('ct-permit',this)"><span class="nb-mark" style="background:#6ee7b7;"></span>Permit Request Letters</button>
+    </div>
+  </div>
+
+  <div class="side-foot">
+    Valentis Laos · Group HR<br>
+    Headcount &amp; Comms v1.0<br>
+    2026 · Confidential
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="tb-title" id="tb-title">Headcount Plan — Overview</div>
+      <div class="tb-sub" id="tb-sub">2026 HIRING PLAN · ALL COUNTRIES</div>
+    </div>
+    <div class="tb-r">
+      <span class="badge badge-red" id="tb-badge">5 Critical Open</span>
+      <button class="btn btn-out" style="font-size:11px;" onclick="window.print()">Print</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════════════
+         HEADCOUNT — OVERVIEW
+    ══════════════════════ -->
+    <div id="tab-hc-overview" class="tab active">
+      <div class="sl">2026 headcount plan · live summary</div>
+
+      <div class="kpi-row">
+        <div class="kc kc-blue"><div class="kc-lbl">Total Approved Roles</div><div class="kc-val" id="kpi-approved">—</div><div class="kc-sub">FY 2026 plan</div></div>
+        <div class="kc kc-red"><div class="kc-lbl">Open / Unfilled</div><div class="kc-val" id="kpi-open">—</div><div class="kc-sub">Active requisitions</div></div>
+        <div class="kc kc-green"><div class="kc-lbl">Hired YTD</div><div class="kc-val" id="kpi-hired">—</div><div class="kc-sub">Confirmed starts</div></div>
+        <div class="kc kc-yel"><div class="kc-lbl">Budget Utilised</div><div class="kc-val" id="kpi-budget">—</div><div class="kc-sub">of annual HC budget</div></div>
+        <div class="kc kc-purp"><div class="kc-lbl">Pending Approval</div><div class="kc-val" id="kpi-pending">—</div><div class="kc-sub">Awaiting COO/CEO sign-off</div></div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--red-l);color:var(--red);">⚑</div><div><div class="card-tt">Critical Vacancies</div><div class="card-st">Roles with highest operational risk</div></div></div>
+          <div class="card-bd" id="critical-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-ic" style="background:var(--acc-l);color:var(--acc);">◈</div><div><div class="card-tt">Headcount by Country</div><div class="card-st">Approved roles per operating country</div></div></div>
+          <div class="card-bd" id="country-breakdown"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--grn-l);color:var(--grn);">☰</div><div><div class="card-tt">Full Headcount Summary</div><div class="card-st">All 2026 approved roles · status overview</div></div></div>
+        <div class="card-bd" style="padding:0;"><div class="sx"><table class="hc-tbl" id="overview-tbl"><thead><tr><th>Role</th><th>Country</th><th>Priority</th><th>Budget Status</th><th>HC Status</th><th>Target Quarter</th><th>Days Open</th></tr></thead><tbody id="overview-body"></tbody></table></div></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         ALL REQUISITIONS
+    ══════════════════════ -->
+    <div id="tab-hc-roles" class="tab">
+      <div class="sl">All requisitions · 2026</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+        <select id="fil-country" onchange="renderRoles()" style="padding:7px 10px;border:1px solid var(--g3);border-radius:6px;font-family:'Syne',sans-serif;font-size:12px;background:var(--w);color:var(--ink);outline:none;">
+          <option value="">All Countries</option>
+          <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option>
+        </select>
+        <select id="fil-status" onchange="renderRoles()" style="padding:7px 10px;border:1px solid var(--g3);border-radius:6px;font-family:'Syne',sans-serif;font-size:12px;background:var(--w);color:var(--ink);outline:none;">
+          <option value="">All Statuses</option>
+          <option>Open</option><option>In Progress</option><option>Offer Out</option><option>Hired</option><option>Pending Approval</option><option>On Hold</option>
+        </select>
+        <select id="fil-prio" onchange="renderRoles()" style="padding:7px 10px;border:1px solid var(--g3);border-radius:6px;font-family:'Syne',sans-serif;font-size:12px;background:var(--w);color:var(--ink);outline:none;">
+          <option value="">All Priorities</option>
+          <option>Critical</option><option>High</option><option>Medium</option><option>Low</option>
+        </select>
+      </div>
+      <div class="card">
+        <div class="card-bd" style="padding:0;"><div class="sx">
+          <table class="hc-tbl">
+            <thead><tr><th>Role</th><th>Country</th><th>Dept</th><th>Priority</th><th>Budget (USD/mo)</th><th>Budget Approved</th><th>HC Status</th><th>Target Fill</th><th>Days Open</th><th>Hired Name</th><th>Notes</th></tr></thead>
+            <tbody id="roles-body"></tbody>
+          </table>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         QUARTERLY PLAN
+    ══════════════════════ -->
+    <div id="tab-hc-quarterly" class="tab">
+      <div class="sl">Quarterly hiring targets · 2026</div>
+      <div class="q-grid" id="q-grid"></div>
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--acc-l);color:var(--acc);">◷</div><div><div class="card-tt">Quarterly Progress</div><div class="card-st">Target hires vs actual by quarter</div></div></div>
+        <div class="card-bd">
+          <div id="q-progress"></div>
+        </div>
+      </div>
+      <div class="note">Quarterly targets are based on approved headcount plan. Roles pending budget approval are excluded from Q targets until approval is confirmed. Myanmar Drilling Supervisor has been overdue since Q4 2025 and carries forward as Q1 2026 critical priority.</div>
+    </div>
+
+    <!-- ══════════════════════
+         BUDGET TRACKER
+    ══════════════════════ -->
+    <div id="tab-hc-budget" class="tab">
+      <div class="sl">Budget tracker · approved HC spend · 2026</div>
+      <div class="bsum-grid" id="bsum-grid"></div>
+      <div class="card">
+        <div class="card-hd"><div class="card-ic" style="background:var(--yel-l);color:var(--yel);">$</div><div><div class="card-tt">Budget by Role</div><div class="card-st">Monthly salary cost · approved vs pending · USD</div></div></div>
+        <div class="card-bd" style="padding:0;"><div class="sx">
+          <table class="hc-tbl">
+            <thead><tr><th>Role</th><th>Country</th><th>Salary (USD/mo)</th><th>Annual Cost</th><th>+ Agency Fee</th><th>Total Year 1</th><th>Budget Status</th><th>% of HC Budget</th></tr></thead>
+            <tbody id="budget-body"></tbody>
+          </table>
+        </div></div>
+      </div>
+      <div class="warn">Agency fees shown are estimates only — applies to roles where agency sourcing is active. Actual fee charged on placement only. Myanmar Drilling Supervisor agency fee estimated at $7,500–12,000 (15–18% of first-year salary).</div>
+    </div>
+
+    <!-- ══════════════════════
+         ADD REQUISITION
+    ══════════════════════ -->
+    <div id="tab-hc-add" class="tab">
+      <div class="sl">Add new requisition</div>
+      <div class="form-panel">
+        <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:14px;">New Headcount Requisition</div>
+        <div class="fr">
+          <div class="fg"><label>Role Title *</label><input id="f-title" placeholder="e.g. Drilling Supervisor"/></div>
+          <div class="fg"><label>Country *</label>
+            <select id="f-country"><option value="">Select…</option><option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option></select>
+          </div>
+          <div class="fg"><label>Department</label>
+            <select id="f-dept"><option value="">Select…</option><option>Operations</option><option>HR</option><option>Finance</option><option>HSE</option><option>Admin/Support</option><option>Geology</option></select>
+          </div>
+          <div class="fg"><label>Priority</label>
+            <select id="f-prio"><option value="Critical">Critical</option><option value="High">High</option><option value="Medium" selected>Medium</option><option value="Low">Low</option></select>
+          </div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Budget (USD/mo)</label><input id="f-budget" placeholder="e.g. 2500"/></div>
+          <div class="fg"><label>Budget Approved?</label>
+            <select id="f-budgetok"><option value="Yes">Yes — Approved</option><option value="No">No — Pending Approval</option><option value="Partial">Partial Approval</option></select>
+          </div>
+          <div class="fg"><label>HC Status</label>
+            <select id="f-status"><option>Open</option><option>In Progress</option><option>Offer Out</option><option>Hired</option><option>Pending Approval</option><option>On Hold</option></select>
+          </div>
+          <div class="fg"><label>Target Fill Quarter</label>
+            <select id="f-quarter"><option>Q1 2026</option><option>Q2 2026</option><option>Q3 2026</option><option>Q4 2026</option></select>
+          </div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label>Hired Name (if filled)</label><input id="f-hired" placeholder="Leave blank if still open"/></div>
+          <div class="fg"><label>Reporting To</label><input id="f-reports" placeholder="e.g. Site Manager / COO"/></div>
+        </div>
+        <div class="fg" style="margin-bottom:12px;"><label>Notes / Justification</label><textarea id="f-notes" placeholder="Business justification, any constraints, links to JD…"></textarea></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ink" onclick="addReq()">Save Requisition</button>
+          <button class="btn btn-out" onclick="clearReq()">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         COMMS — ACKNOWLEDGEMENTS
+    ══════════════════════ -->
+    <div id="tab-ct-ack" class="tab">
+      <div class="sl">Acknowledgement templates · application received</div>
+      <div class="filter-bar">
+        <button class="fb active" onclick="filterTmpl('all',this)">All</button>
+        <button class="fb" onclick="filterTmpl('email',this)">Email</button>
+        <button class="fb" onclick="filterTmpl('whatsapp',this)">WhatsApp</button>
+      </div>
+
+      <div class="tmpl-wrap" data-type="email">
+        <div class="tmpl-label"><span>Email — Application Received (Inbound)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Application Received — <em>[Role Title]</em> · Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+Thank you for your interest in the <em>[Role Title]</em> position at Valentis.
+
+We have received your application and will review it carefully. You can expect to hear from us within <em>[7–10]</em> business days with an update on next steps.
+
+If you have any questions in the meantime, please do not hesitate to reach out to me directly at <em>[your phone/email]</em>.
+
+Thank you again for your time.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos
+<em>[Phone]</em> | <em>[Email]</em></div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="email">
+        <div class="tmpl-label"><span>Email — CV Received via Referral</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Thank You — CV Received · Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+Thank you for reaching out — I understand you were referred to us by <em>[Referee Name]</em>.
+
+I have received your CV and will review it in the context of our current and upcoming openings. I will come back to you within <em>[5–7]</em> business days with a more specific response.
+
+We appreciate the introduction and look forward to learning more about your background.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="whatsapp">
+        <div class="tmpl-label"><span>WhatsApp — CV Received (Quick)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body">Hi <em>[Name]</em>, this is <em>[Your Name]</em> from Valentis HR. Thank you for sending your CV for the <em>[Role]</em> position. We have received it and will review and come back to you within <em>[5–7]</em> days. Feel free to message me here if you have questions.</div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="whatsapp">
+        <div class="tmpl-label"><span>WhatsApp — LinkedIn Connection Follow-Up</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body">Hi <em>[Name]</em>, thanks for connecting. I am reaching out from Valentis — we have an active <em>[Role]</em> opportunity based in <em>[Country]</em> that matches your background. Are you open to a brief conversation this week? I can share more details on the role and package.</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         COMMS — INTERVIEW INVITES
+    ══════════════════════ -->
+    <div id="tab-ct-invite" class="tab">
+      <div class="sl">Interview invitation templates</div>
+      <div class="filter-bar">
+        <button class="fb active" onclick="filterTmpl('all',this)">All</button>
+        <button class="fb" onclick="filterTmpl('round1',this)">Round 1</button>
+        <button class="fb" onclick="filterTmpl('round2',this)">Round 2</button>
+        <button class="fb" onclick="filterTmpl('whatsapp',this)">WhatsApp</button>
+      </div>
+
+      <div class="tmpl-wrap" data-type="round1">
+        <div class="tmpl-label"><span>Email — Round 1 Interview Invitation</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Interview Invitation — <em>[Role Title]</em> · Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+Thank you for your interest in the <em>[Role Title]</em> position at Valentis. After reviewing your background, we would like to invite you to a first-round interview.
+
+<b>Interview Details:</b>
+Date and Time: <em>[Day, Date]</em> at <em>[Time]</em> (<em>[Timezone]</em>)
+Format: <em>[Video call via Zoom / Phone call / In person at (location)]</em>
+Duration: Approximately <em>[45–60]</em> minutes
+Interviewer: <em>[Your Name]</em>, Group HR Manager<em>[, and Name, Title if panel]</em>
+
+The conversation will cover your professional background, relevant experience, and several specific situations from your career. No preparation is required.
+
+Please confirm your availability by replying to this email or reaching me on <em>[phone/WhatsApp]</em>. If the proposed time does not work, please suggest two alternative slots and we will accommodate.
+
+We look forward to speaking with you.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="round2">
+        <div class="tmpl-label"><span>Email — Round 2 Panel Interview Invitation</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Round 2 Interview — <em>[Role Title]</em> · Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+Thank you for your time in the first round — we enjoyed our conversation and would like to invite you to a second-round panel interview.
+
+<b>Interview Details:</b>
+Date and Time: <em>[Day, Date]</em> at <em>[Time]</em> (<em>[Timezone]</em>)
+Format: <em>[Video / In person]</em>
+Duration: Approximately 60–75 minutes
+Panel: <em>[Your Name]</em> (HR), <em>[Hiring Manager Name]</em> (<em>[Title]</em>)<em>[, COO/CEO if applicable]</em>
+
+This round will go deeper into your <em>[technical / operational / leadership]</em> experience. You may find it useful to review examples from your career related to <em>[specific area — e.g. large crew management / multi-country HR / site HSE leadership]</em>.
+
+Please confirm your availability at your earliest convenience.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="round1">
+        <div class="tmpl-label"><span>Email — Technical Assessment Invitation</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Technical Assessment — <em>[Role Title]</em> · Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+As part of our recruitment process for the <em>[Role Title]</em> position, we would like to invite you to complete a short technical assessment prior to the interview stage.
+
+The assessment covers <em>[topic — e.g. drilling methods / labour law / financial reporting]</em> and takes approximately <em>[30–45]</em> minutes to complete. There are no trick questions — we are looking for your practical, working knowledge of the subject area.
+
+I will send the assessment link / document to this email address. Please complete it by <em>[date — 3–5 days from now]</em>.
+
+If you have any questions, please do not hesitate to reach out.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="whatsapp">
+        <div class="tmpl-label"><span>WhatsApp — Interview Confirmation (Same Day)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body">Hi <em>[Name]</em>, confirming your interview for the <em>[Role]</em> position tomorrow, <em>[Date]</em> at <em>[Time]</em> via <em>[Zoom / phone call]</em>. I will send the link / call from this number. Please save it. Looking forward to speaking with you.</div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="whatsapp">
+        <div class="tmpl-label"><span>WhatsApp — Reschedule Request</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body">Hi <em>[Name]</em>, apologies for the short notice — something has come up on our end and I need to reschedule our <em>[Date]</em> interview. Could you share your availability for <em>[two or three alternative dates/times]</em>? I am sorry for the inconvenience and will make sure the rescheduled time works well for you.</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         COMMS — OFFER LETTERS
+    ══════════════════════ -->
+    <div id="tab-ct-offer" class="tab">
+      <div class="sl">Offer letter templates · verbal and formal</div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Email — Verbal Offer (Before Formal Letter)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Offer of Employment — <em>[Role Title]</em> · Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+I am pleased to share that following your interviews, we would like to formally offer you the position of <em>[Role Title]</em> with Valentis.
+
+<b>Key Terms of Offer:</b>
+Role: <em>[Role Title]</em>
+Location: <em>[Site / City / Country]</em>
+Reporting To: <em>[Manager Name and Title]</em>
+Proposed Start Date: <em>[Date — or "TBD subject to work permit processing"]</em>
+Contract Type: <em>[Permanent / Fixed-term — duration]</em>
+Base Salary: USD <em>[amount]</em> per month
+<em>[Rotation: [e.g. 8 weeks on / 3 weeks off] — for site roles]</em>
+<em>[Housing Allowance: USD [amount]/month — for expat roles]</em>
+<em>[R&R Flights: [frequency and class] — for expat roles]</em>
+<em>[Medical Insurance: Company-provided — [coverage details]]</em>
+<em>[Visa and Work Permit: Company-borne — initiated on acceptance]</em>
+
+A formal offer letter and employment contract will follow once you confirm acceptance of these terms in principle.
+
+Please let me know your thoughts by <em>[date — 3–5 business days]</em>. I am happy to answer any questions by call or message.
+
+We look forward to welcoming you to the team.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Email — Offer Accepted Confirmation</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Offer Acceptance Confirmed — Welcome to Valentis</b>
+
+Dear <em>[Candidate Name]</em>,
+
+Thank you for confirming your acceptance — we are delighted to have you joining Valentis.
+
+<b>Next steps from our side:</b>
+1. We will prepare your formal employment contract and send it within <em>[3–5]</em> business days
+2. <em>[For expat roles: Our team will begin the work permit and visa application process immediately]</em>
+3. Your onboarding details and first-day instructions will follow closer to your start date
+
+<b>From your side, please:</b>
+— Formally notify your current employer of your resignation
+— Share your confirmed last day and expected availability date
+— Send a copy of your passport and <em>[relevant certifications — NEBOSH / drilling certs / etc.]</em> to this email
+
+Please do not hesitate to reach out with any questions between now and your start date. We are here to make the transition as smooth as possible.
+
+Welcome aboard.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Email — Offer Extension (Deadline Passed, Still Interested)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Re: Offer — <em>[Role Title]</em> · Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+I wanted to follow up on the offer we sent on <em>[date]</em>. Our original decision deadline has now passed, but we remain very interested in you for this role.
+
+We are able to extend the offer deadline to <em>[new date — 2–3 business days max]</em>. After this date, we will need to progress with other candidates in our pipeline.
+
+If you have any questions about the terms or the role that would help you make your decision, please call me directly on <em>[phone]</em> — I am happy to discuss.
+
+We hope to hear from you soon.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Email — Offer Withdrawn (Candidate Non-Responsive)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Re: Offer — <em>[Role Title]</em> · Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+I have attempted to reach you on <em>[date]</em> and <em>[date]</em> without response regarding our offer for the <em>[Role Title]</em> position.
+
+Given the operational urgency of this role, we have made the difficult decision to withdraw the offer and progress with other candidates.
+
+We wish you well and hope our paths cross again in the future.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         COMMS — REJECTIONS
+    ══════════════════════ -->
+    <div id="tab-ct-reject" class="tab">
+      <div class="sl">Rejection templates · post-screen · post-interview · post-offer</div>
+
+      <div class="warn" style="margin-bottom:14px;">Never ghost a candidate. A 3-line rejection is better than silence. In the SEA drilling and mining community, reputation travels fast — how you reject people affects who refers to you next.</div>
+
+      <div class="filter-bar">
+        <button class="fb active" onclick="filterTmpl('all',this)">All</button>
+        <button class="fb" onclick="filterTmpl('postscreen',this)">Post-Screen</button>
+        <button class="fb" onclick="filterTmpl('postinterview',this)">Post-Interview</button>
+        <button class="fb" onclick="filterTmpl('postoffer',this)">Post-Offer Decline</button>
+        <button class="fb" onclick="filterTmpl('whatsapp',this)">WhatsApp</button>
+      </div>
+
+      <div class="tmpl-wrap" data-type="postscreen">
+        <div class="tmpl-label"><span>Email — Post-Screen Rejection (No Interview)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Your Application — <em>[Role Title]</em> · Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+Thank you for your interest in the <em>[Role Title]</em> position at Valentis and for taking the time to share your background with us.
+
+After careful review, we have decided to progress with other candidates whose experience more closely matches our requirements at this time.
+
+We appreciate your interest and wish you every success in your search.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="postinterview">
+        <div class="tmpl-label"><span>Email — Post-Interview Rejection (Round 1)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: <em>[Role Title]</em> — Update from Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+Thank you for the time you invested in our conversation for the <em>[Role Title]</em> position. We valued learning more about your background and experience.
+
+After careful consideration, we have decided to move forward with another candidate whose experience is a closer match to our specific requirements at this stage.
+
+This was a competitive process and the decision was not straightforward. We would like to stay in touch as our operations continue to grow across Southeast Asia — roles in <em>[relevant area]</em> come up regularly and we hope to consider you for future opportunities.
+
+<em>[Optional: If you would find brief feedback from the interview helpful, I am happy to share it — please let me know.]</em>
+
+We wish you every success.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="postinterview">
+        <div class="tmpl-label"><span>Email — Post-Interview Rejection (Final Round)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: <em>[Role Title]</em> — Final Decision · Valentis Laos</b>
+
+Dear <em>[Candidate Name]</em>,
+
+Thank you for your time throughout our recruitment process for the <em>[Role Title]</em> position. You invested significantly in the process and we genuinely appreciate that.
+
+After thorough deliberation, we have made the difficult decision to proceed with another candidate. This was an extremely close decision — you were among the strongest candidates we have interviewed this year.
+
+I would personally like to stay in touch. Valentis is growing and I expect roles at a similar level to open across our SEA operations within the next 6–12 months. With your permission, I will keep your details on file and reach out when something relevant comes up.
+
+Thank you again, and I hope we have the opportunity to work together in the future.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="postoffer">
+        <div class="tmpl-label"><span>Email — Response to Candidate Declining Offer</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Re: Offer — <em>[Role Title]</em></b>
+
+Dear <em>[Candidate Name]</em>,
+
+Thank you for letting me know your decision — I appreciate you taking the time to respond clearly.
+
+While we are disappointed not to have you join the team at this stage, we respect your decision entirely. It is important that the role is the right fit from both sides.
+
+I would genuinely welcome the opportunity to stay in touch. If your circumstances change or if you would like to explore opportunities with Valentis in the future, please do not hesitate to reach out.
+
+We wish you all the best.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap" data-type="whatsapp">
+        <div class="tmpl-label"><span>WhatsApp — Quick Rejection (Post-Screen)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body">Hi <em>[Name]</em>, thank you for sending your CV for the <em>[Role]</em> position. After reviewing all applications, we have decided to move forward with other candidates at this stage. We appreciate your interest and will keep your details on file for future opportunities. Best wishes.</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         COMMS — ONBOARDING WELCOME
+    ══════════════════════ -->
+    <div id="tab-ct-onboard" class="tab">
+      <div class="sl">Onboarding welcome templates · before and on start date</div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Email — Welcome Email (1 Week Before Start)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Welcome to Valentis — Your Start Date is <em>[Date]</em></b>
+
+Dear <em>[Name]</em>,
+
+We are looking forward to welcoming you to the Valentis team on <em>[start date]</em>.
+
+Here is what to expect on your first day:
+
+<b>Practical Details:</b>
+Date: <em>[Day, Date]</em>
+Time: <em>[Time]</em>
+Location: <em>[Office address / Site name and address / Video call link if remote start]</em>
+Who to ask for: <em>[Name and phone number of contact]</em>
+<em>[Dress code: [if relevant — e.g. site PPE required / smart casual]]</em>
+
+<b>What we have prepared for you:</b>
+— Your employment contract and HR documentation ready to complete
+— A welcome pack with company overview, key contacts, and policies
+— A scheduled induction with me covering HR, payroll, and benefits
+— An introduction to your team and manager
+
+<b>What to bring on Day 1:</b>
+— Original passport and <em>[other ID documents as applicable]</em>
+— <em>[Relevant certifications — NEBOSH card, drilling certifications, etc.]</em>
+— Bank account details for payroll setup
+
+If you have any questions before your start date, please reach me at <em>[phone/email]</em> at any time.
+
+We are genuinely excited to have you on board.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Email — Day 1 Welcome (Send on Arrival)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>Subject: Welcome to the Team, <em>[Name]</em>!</b>
+
+Dear <em>[Name]</em>,
+
+Welcome to Valentis — we are very glad to have you with us.
+
+Today is about getting settled, meeting the team, and understanding how we work. There is no pressure to hit the ground running on Day 1 — take your time, ask questions, and let us know if you need anything.
+
+Your manager <em>[Name]</em> will be your primary point of contact for the first week. I am here for anything HR-related — payroll questions, documentation, or anything about your contract and benefits.
+
+Your 30-day check-in with me is already in the calendar for <em>[date]</em>. That is your opportunity to share how things are going — candidly and privately.
+
+Once again, welcome. We are building something meaningful here and we are glad you are part of it.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos</div>
+      </div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>WhatsApp — Welcome Message (Day Before Start)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body">Hi <em>[Name]</em>! Looking forward to having you start tomorrow. Arrive at <em>[location]</em> at <em>[time]</em> and ask for <em>[contact name]</em>. Bring your passport and any certs. Message me on this number if you need anything. See you tomorrow!</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         COMMS — PROBATION LETTERS
+    ══════════════════════ -->
+    <div id="tab-ct-probation" class="tab">
+      <div class="sl">Probation letters · confirmation · extension · termination</div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Letter — Probation Confirmation (Passed)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>PRIVATE AND CONFIDENTIAL</b>
+
+<em>[Date]</em>
+
+Dear <em>[Employee Name]</em>,
+
+<b>Re: Confirmation of Employment — <em>[Role Title]</em></b>
+
+I am pleased to confirm that your probationary period has been successfully completed as of <em>[date]</em>. Your employment with Valentis is hereby confirmed on a permanent basis, effective <em>[confirmation date]</em>.
+
+Your performance and contribution during the probationary period have been <em>[brief positive summary — e.g. "consistently strong, with notable contributions to site safety and crew management"]</em>.
+
+All other terms and conditions of your employment remain as set out in your original contract dated <em>[contract date]</em>.
+
+Please sign and return a copy of this letter to confirm your acknowledgement.
+
+Congratulations, and we look forward to your continued contribution to the team.
+
+Yours sincerely,
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos
+
+_________________________
+Employee Acknowledgement: <em>[Name]</em> — Date: ___________</div>
+      </div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Letter — Probation Extension</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>PRIVATE AND CONFIDENTIAL</b>
+
+<em>[Date]</em>
+
+Dear <em>[Employee Name]</em>,
+
+<b>Re: Extension of Probationary Period — <em>[Role Title]</em></b>
+
+As your probationary period of <em>[X months]</em> concludes on <em>[date]</em>, I am writing to advise that we are extending the probationary period by a further <em>[X weeks/months]</em>, effective until <em>[new end date]</em>.
+
+This decision has been made because: <em>[specific reason — e.g. "we require more time to assess your performance against the technical requirements of the role, specifically in the areas of [X] and [Y]"]</em>.
+
+During the extended period, we will focus on the following areas:
+1. <em>[Specific area for improvement]</em>
+2. <em>[Specific area for improvement]</em>
+
+A review meeting has been scheduled for <em>[date]</em> to assess your progress. I encourage you to raise any questions or concerns with me directly.
+
+Please sign and return a copy of this letter to confirm receipt.
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos
+
+_________________________
+Employee Acknowledgement: <em>[Name]</em> — Date: ___________</div>
+      </div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Letter — Probation Termination</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>PRIVATE AND CONFIDENTIAL</b>
+
+<em>[Date]</em>
+
+Dear <em>[Employee Name]</em>,
+
+<b>Re: Termination of Employment During Probationary Period — <em>[Role Title]</em></b>
+
+I write to inform you that, following a review of your performance during the probationary period, the Company has made the decision to terminate your employment with effect from <em>[date]</em>.
+
+This decision has been reached after careful consideration and follows the conversations we have had on <em>[date(s)]</em> regarding <em>[brief, factual summary of performance concerns]</em>.
+
+You are entitled to <em>[X days/weeks]</em> notice in accordance with your contract and applicable law, <em>[which you will serve / in lieu of which you will receive payment of USD X]</em>.
+
+Please return all Company property — including <em>[access cards / PPE / devices / documents]</em> — by <em>[date]</em>.
+
+We wish you well in your future career.
+
+Yours sincerely,
+
+<em>[Your Name]</em>
+Group HR Manager, Valentis Laos
+
+_________________________
+Employee Acknowledgement: <em>[Name]</em> — Date: ___________</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         COMMS — PERMIT REQUEST LETTERS
+    ══════════════════════ -->
+    <div id="tab-ct-permit" class="tab">
+      <div class="sl">Work permit and visa support letters · official correspondence</div>
+
+      <div class="warn" style="margin-bottom:14px;">All permit request letters must be signed by an authorised company signatory (Country Director or COO) and issued on official company letterhead. These are legal documents — do not send drafts directly to authorities.</div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Letter — Work Permit Application Support Letter (All Countries)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>[COMPANY LETTERHEAD]</b>
+
+<em>[Date]</em>
+
+To: <em>[Relevant Authority — e.g. Department of Labour and Social Welfare, Laos / Ministry of Labour, Myanmar / Ministry of Manpower, Indonesia / Department of Employment, Thailand]</em>
+
+<b>Re: Work Permit Application — <em>[Employee Full Name]</em>, Passport No. <em>[Passport Number]</em></b>
+
+Dear Sir/Madam,
+
+We write in support of the work permit application for <em>[Employee Full Name]</em>, a national of <em>[Country of citizenship]</em>, currently holding Passport Number <em>[Number]</em> valid until <em>[expiry date]</em>.
+
+<em>[Employee Name]</em> has been offered the position of <em>[Job Title]</em> with <em>[Company Legal Name]</em>, a company registered in <em>[Country]</em> under registration number <em>[Company Reg. No.]</em>.
+
+The nature of this role requires specialised expertise in <em>[brief description — e.g. mineral exploration drilling operations / financial compliance / multi-country HR management]</em> that is not currently available in the local labour market. We have made reasonable efforts to recruit locally and have been unable to identify suitably qualified candidates for this specific role.
+
+The proposed terms of employment are as follows:
+Position: <em>[Job Title]</em>
+Contract Duration: <em>[Permanent / Fixed-term: X months]</em>
+Monthly Salary: <em>[Currency and amount]</em>
+Work Location: <em>[Site/City/Country]</em>
+Start Date: <em>[Proposed start date]</em>
+
+We respectfully request your approval of this application and undertake to comply with all applicable local labour laws during the period of employment.
+
+Please do not hesitate to contact us if further documentation is required.
+
+Yours faithfully,
+
+<em>[Authorised Signatory Name]</em>
+<em>[Title — e.g. Country Director / Chief Operating Officer]</em>
+<em>[Company Name]</em>
+<em>[Phone / Email]</em></div>
+      </div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Letter — Employee Support Letter (Visa Application / Bank / Accommodation)</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>[COMPANY LETTERHEAD]</b>
+
+<em>[Date]</em>
+
+To Whom It May Concern,
+
+<b>Re: Confirmation of Employment — <em>[Employee Full Name]</em></b>
+
+We confirm that <em>[Employee Full Name]</em>, a national of <em>[Country]</em> holding Passport Number <em>[Number]</em>, is currently employed by <em>[Company Legal Name]</em> in the position of <em>[Job Title]</em>.
+
+Details of employment:
+Start Date: <em>[Date]</em>
+Employment Type: <em>[Permanent / Fixed-term]</em>
+Monthly Salary: <em>[Currency and amount]</em>
+Work Location: <em>[City/Country]</em>
+
+This letter is issued at the employee's request for the purpose of <em>[visa application / bank account opening / accommodation rental / other — specify]</em>. The Company accepts no liability for obligations entered into by the employee in their personal capacity.
+
+If further verification is required, please contact us at the details below.
+
+Yours faithfully,
+
+<em>[Authorised Signatory Name]</em>
+<em>[Title]</em>
+<em>[Company Name]</em>
+<em>[Phone / Email]</em></div>
+      </div>
+
+      <div class="tmpl-wrap">
+        <div class="tmpl-label"><span>Letter — Work Permit Renewal Request</span><button class="copy-btn" onclick="copyTmpl(this)">Copy</button></div>
+        <div class="tmpl-body"><b>[COMPANY LETTERHEAD]</b>
+
+<em>[Date]</em>
+
+To: <em>[Relevant Labour Authority]</em>
+
+<b>Re: Work Permit Renewal — <em>[Employee Full Name]</em>, Current Permit No. <em>[Number]</em></b>
+
+Dear Sir/Madam,
+
+We write to request the renewal of the work permit for <em>[Employee Full Name]</em>, currently employed as <em>[Job Title]</em> with <em>[Company Legal Name]</em>.
+
+Current permit details:
+Permit Number: <em>[Number]</em>
+Issue Date: <em>[Date]</em>
+Expiry Date: <em>[Date]</em>
+
+<em>[Employee Name]</em> has been performing their duties satisfactorily and their continued employment is essential to our ongoing operations in <em>[Country]</em>. We respectfully request renewal for a further period of <em>[X months / 1 year]</em>.
+
+Enclosed please find:
+<em>[ ] Completed renewal application form
+[ ] Copy of valid passport
+[ ] Copy of current work permit
+[ ] Updated employment confirmation letter
+[ ] Company registration documents
+[ ] [Any country-specific additional requirements]</em>
+
+We request that the renewal be processed at your earliest convenience, as the current permit expires on <em>[date]</em> and operational continuity depends on this role.
+
+Yours faithfully,
+
+<em>[Authorised Signatory Name]</em>
+<em>[Title]</em>
+<em>[Company Name]</em></div>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</div><!-- main -->
+</div><!-- shell -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+let reqs = [
+  {id:1,title:'Drilling Supervisor',country:'Myanmar',dept:'Operations',prio:'Critical',budget:2500,budgetOk:'Yes',status:'In Progress',quarter:'Q1 2026',hired:'',reports:'Site Manager',notes:'92 days open. Agency engaged. Overdue.',dateAdded:'2025-12-01'},
+  {id:2,title:'Site Manager',country:'Laos',dept:'Operations',prio:'Critical',budget:3400,budgetOk:'Yes',status:'Offer Out',quarter:'Q1 2026',hired:'Arsen Tulebayev',reports:'COO',notes:'Offer out to Arsen — awaiting contract signature and permit.',dateAdded:'2025-12-15'},
+  {id:3,title:'Senior Driller',country:'Indonesia',dept:'Operations',prio:'High',budget:1700,budgetOk:'Yes',status:'In Progress',quarter:'Q1 2026',hired:'',reports:'Drilling Supervisor',notes:'3 candidates in interview. Target offer by end March.',dateAdded:'2026-01-05'},
+  {id:4,title:'Equipment Technician',country:'Indonesia',dept:'Operations',prio:'High',budget:1400,budgetOk:'Yes',status:'In Progress',quarter:'Q2 2026',hired:'',reports:'Senior Driller',notes:'',dateAdded:'2026-01-10'},
+  {id:5,title:'Geologist / Field Tech',country:'Laos',dept:'Geology',prio:'High',budget:1800,budgetOk:'Yes',status:'Open',quarter:'Q2 2026',hired:'',reports:'Site Manager',notes:'JD drafted. Sourcing not yet started.',dateAdded:'2026-01-15'},
+  {id:6,title:'HSE Officer',country:'Laos',dept:'HSE',prio:'Medium',budget:1300,budgetOk:'Yes',status:'In Progress',quarter:'Q2 2026',hired:'',reports:'Site Manager',notes:'NEBOSH verification required before interview.',dateAdded:'2026-02-01'},
+  {id:7,title:'HRBP / HR Manager',country:'Thailand',dept:'HR',prio:'Low',budget:1900,budgetOk:'No',status:'Pending Approval',quarter:'Q3 2026',hired:'',reports:'Group HR Manager',notes:'Budget pending Finance/COO approval. Pipeline building on LinkedIn only.',dateAdded:'2026-02-15'},
+  {id:8,title:'Finance / Payroll Officer',country:'Thailand',dept:'Finance',prio:'Low',budget:1300,budgetOk:'No',status:'Pending Approval',quarter:'Q3 2026',hired:'',reports:'CFO/COO',notes:'Budget pending.',dateAdded:'2026-02-15'},
+  {id:9,title:'Compliance Officer',country:'Indonesia',dept:'Finance',prio:'Medium',budget:1200,budgetOk:'No',status:'Pending Approval',quarter:'Q3 2026',hired:'',reports:'Country Finance Lead',notes:'KITAS/IMTA expertise required. Budget pending.',dateAdded:'2026-02-20'},
+  {id:10,title:'Site Admin / Coordinator',country:'Laos',dept:'Admin/Support',prio:'Medium',budget:750,budgetOk:'Yes',status:'In Progress',quarter:'Q2 2026',hired:'',reports:'Site Manager',notes:'Local Lao hire preferred.',dateAdded:'2026-02-10'},
+  {id:11,title:'Logistics Coordinator',country:'Indonesia',dept:'Admin/Support',prio:'Medium',budget:900,budgetOk:'Yes',status:'Open',quarter:'Q2 2026',hired:'',reports:'Site Manager',notes:'Kalimantan local hire preferred.',dateAdded:'2026-02-25'},
+  {id:12,title:'EA / Office Manager',country:'Thailand',dept:'Admin/Support',prio:'Low',budget:1300,budgetOk:'Yes',status:'In Progress',quarter:'Q2 2026',hired:'',reports:'CEO',notes:'Bangkok-based. CEO face-to-face required before offer.',dateAdded:'2026-03-01'},
+  {id:13,title:'Finance Officer',country:'Myanmar',dept:'Finance',prio:'High',budget:1100,budgetOk:'Yes',status:'Open',quarter:'Q2 2026',hired:'',reports:'COO',notes:'Myanmar political risk context — may need expat candidate.',dateAdded:'2026-02-20'},
+];
+let nextId = 14;
+
+const ANNUAL_HC_BUDGET = 600000; // estimated USD
+
+// ── UTILS ──
+function daysSince(d){return d?Math.floor((new Date()-new Date(d))/86400000):0;}
+function prioClass(p){return{Critical:'critical',High:'high',Medium:'medium',Low:'low'}[p]||'low';}
+function statusTag(s){
+  const m={
+    'Open':'t-red','In Progress':'t-blue','Offer Out':'t-purp',
+    'Hired':'t-green','Pending Approval':'t-yel','On Hold':'t-grey'
+  };
+  return `<span class="tag ${m[s]||'t-grey'}">${s}</span>`;
+}
+function prioTag(p){
+  const m={Critical:'t-red',High:'t-yel',Medium:'t-blue',Low:'t-grey'};
+  return `<span class="tag ${m[p]||'t-grey'}">${p}</span>`;
+}
+function budgetTag(b){
+  return b==='Yes'?'<span class="tag t-green">Approved</span>':
+         b==='No' ?'<span class="tag t-red">Pending</span>':
+         '<span class="tag t-yel">Partial</span>';
+}
+
+// ── NAV ──
+const meta = {
+  'hc-overview': ['Headcount Plan — Overview','2026 HIRING PLAN · ALL COUNTRIES'],
+  'hc-roles':    ['Headcount Plan — All Requisitions','FULL REQ LIST · FILTERABLE'],
+  'hc-quarterly':['Headcount Plan — Quarterly Plan','Q1–Q4 2026 HIRING TARGETS'],
+  'hc-budget':   ['Headcount Plan — Budget Tracker','SALARY COST · APPROVED VS PENDING'],
+  'hc-add':      ['Headcount Plan — Add Requisition','NEW ROLE ENTRY'],
+  'ct-ack':      ['Templates — Acknowledgements','APPLICATION RECEIVED · CV ACK'],
+  'ct-invite':   ['Templates — Interview Invites','ROUND 1 · ROUND 2 · PANEL'],
+  'ct-offer':    ['Templates — Offer Letters','VERBAL OFFER · FORMAL · WITHDRAWAL'],
+  'ct-reject':   ['Templates — Rejections','POST-SCREEN · POST-INTERVIEW · POST-OFFER'],
+  'ct-onboard':  ['Templates — Onboarding Welcome','PRE-START · DAY 1 · WHATSAPP'],
+  'ct-probation':['Templates — Probation Letters','CONFIRMATION · EXTENSION · TERMINATION'],
+  'ct-permit':   ['Templates — Permit Request Letters','WORK PERMIT · VISA SUPPORT · RENEWAL'],
+};
+
+function sw(id, btn) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  const m = meta[id]||[id,''];
+  document.getElementById('tb-title').textContent = m[0];
+  document.getElementById('tb-sub').textContent   = m[1];
+  const isComms = id.startsWith('ct-');
+  document.getElementById('tb-badge').textContent = isComms ? '12 Templates' : '5 Critical Open';
+  document.getElementById('tb-badge').className   = 'badge ' + (isComms ? 'badge-blue' : 'badge-red');
+  if(id==='hc-overview')  renderOverview();
+  if(id==='hc-roles')     renderRoles();
+  if(id==='hc-quarterly') renderQuarterly();
+  if(id==='hc-budget')    renderBudget();
+}
+
+// ── OVERVIEW ──
+function renderOverview() {
+  const approved = reqs.length;
+  const open     = reqs.filter(r=>!['Hired','On Hold'].includes(r.status)).length;
+  const hired    = reqs.filter(r=>r.status==='Hired'||r.hired).length;
+  const pending  = reqs.filter(r=>r.status==='Pending Approval'||r.budgetOk==='No').length;
+  const budgetApproved = reqs.filter(r=>r.budgetOk==='Yes').reduce((s,r)=>s+r.budget*12,0);
+  const budgetPct = Math.round(budgetApproved/ANNUAL_HC_BUDGET*100);
+
+  document.getElementById('kpi-approved').textContent = approved;
+  document.getElementById('kpi-open').textContent     = open;
+  document.getElementById('kpi-hired').textContent    = hired;
+  document.getElementById('kpi-budget').textContent   = budgetPct+'%';
+  document.getElementById('kpi-pending').textContent  = pending;
+
+  // Critical list
+  const criticals = reqs.filter(r=>r.prio==='Critical'&&r.status!=='Hired');
+  document.getElementById('critical-list').innerHTML = criticals.map(r=>`
+    <div style="padding:10px 12px;background:var(--red-l);border:1px solid var(--red-b);border-radius:7px;margin-bottom:8px;">
+      <div style="font-size:12.5px;font-weight:700;color:var(--red);">${r.title} — ${r.country}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--g4);margin-top:3px;">${daysSince(r.dateAdded)}d open · ${r.status}</div>
+      ${r.notes?`<div style="font-size:11px;color:var(--g5);margin-top:3px;">${r.notes}</div>`:''}
+    </div>`).join('') || '<div style="font-size:12px;color:var(--g4);font-style:italic;">No critical vacancies</div>';
+
+  // Country breakdown
+  const countries = ['Laos','Myanmar','Indonesia','Thailand'];
+  const ctColors  = ['var(--acc)','var(--red)','var(--grn)','var(--purp)'];
+  const cCounts   = countries.map(c=>reqs.filter(r=>r.country===c).length);
+  const maxC      = Math.max(...cCounts);
+  document.getElementById('country-breakdown').innerHTML = countries.map((c,i)=>`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+      <div style="font-size:12px;font-weight:700;color:var(--ink);width:90px;">${c}</div>
+      <div style="flex:1;height:8px;background:var(--g1);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${Math.round(cCounts[i]/maxC*100)}%;background:${ctColors[i]};border-radius:4px;"></div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--g4);width:20px;text-align:right;">${cCounts[i]}</div>
+    </div>`).join('');
+
+  // Overview table
+  document.getElementById('overview-body').innerHTML = reqs.map(r=>`
+    <tr class="${prioClass(r.prio)}">
+      <td>${r.title}</td>
+      <td style="font-size:11px;">${r.country}</td>
+      <td>${prioTag(r.prio)}</td>
+      <td>${budgetTag(r.budgetOk)}</td>
+      <td>${statusTag(r.status)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${r.quarter}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;${daysSince(r.dateAdded)>90?'color:var(--red);font-weight:700;':''}">${daysSince(r.dateAdded)}d${daysSince(r.dateAdded)>90?' ⚠':''}</td>
+    </tr>`).join('');
+}
+
+// ── ROLES ──
+function renderRoles() {
+  const fc = document.getElementById('fil-country').value;
+  const fs = document.getElementById('fil-status').value;
+  const fp = document.getElementById('fil-prio').value;
+  const filtered = reqs.filter(r=>(!fc||r.country===fc)&&(!fs||r.status===fs)&&(!fp||r.prio===fp));
+  document.getElementById('roles-body').innerHTML = filtered.map(r=>`
+    <tr class="${prioClass(r.prio)}">
+      <td>${r.title}</td>
+      <td style="font-size:11px;">${r.country}</td>
+      <td style="font-size:11px;">${r.dept||'—'}</td>
+      <td>${prioTag(r.prio)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${r.budget?'$'+r.budget.toLocaleString():'—'}</td>
+      <td>${budgetTag(r.budgetOk)}</td>
+      <td>${statusTag(r.status)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${r.quarter}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;${daysSince(r.dateAdded)>90?'color:var(--red);font-weight:700;':''}">${daysSince(r.dateAdded)}d</td>
+      <td style="font-size:11px;color:${r.hired?'var(--grn)':'var(--g4)'};">${r.hired||'—'}</td>
+      <td style="font-size:11px;color:var(--g4);max-width:180px;">${r.notes||'—'}</td>
+    </tr>`).join('') || '<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--g4);font-style:italic;">No requisitions match filter</td></tr>';
+}
+
+// ── QUARTERLY ──
+function renderQuarterly() {
+  const quarters = ['Q1 2026','Q2 2026','Q3 2026','Q4 2026'];
+  const qColors  = ['var(--red)','var(--acc)','var(--purp)','var(--grn)'];
+  const grid = document.getElementById('q-grid');
+  grid.innerHTML = quarters.map((q,i)=>{
+    const roles = reqs.filter(r=>r.quarter===q);
+    const hired = roles.filter(r=>r.hired||r.status==='Hired').length;
+    return `<div class="q-col">
+      <div class="q-head">
+        <span class="q-period" style="color:${qColors[i]};">${q}</span>
+        <span class="q-target" style="color:${qColors[i]};">${hired}/${roles.length} filled</span>
+      </div>
+      <div class="q-body">
+        ${roles.map(r=>`<div class="q-role">
+          <strong>${r.title}</strong>
+          ${r.country} · ${prioTag(r.prio)} ${statusTag(r.status)}
+        </div>`).join('')||'<div style="font-size:11px;color:var(--g4);font-style:italic;">No roles targeted this quarter</div>'}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Progress bars
+  const prog = document.getElementById('q-progress');
+  prog.innerHTML = quarters.map((q,i)=>{
+    const total  = reqs.filter(r=>r.quarter===q).length;
+    const done   = reqs.filter(r=>r.quarter===q&&(r.hired||r.status==='Hired')).length;
+    const pct    = total ? Math.round(done/total*100) : 0;
+    return `<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--ink);width:60px;">${q}</div>
+      <div style="flex:1;height:10px;background:var(--g1);border-radius:5px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:${qColors[i]};border-radius:5px;transition:width .6s;"></div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--g4);width:80px;">${done}/${total} · ${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+// ── BUDGET ──
+function renderBudget() {
+  const approved = reqs.filter(r=>r.budgetOk==='Yes');
+  const pending  = reqs.filter(r=>r.budgetOk==='No');
+  const totalApprMo = approved.reduce((s,r)=>s+r.budget,0);
+  const totalPendMo = pending.reduce((s,r)=>s+r.budget,0);
+  const agencyEst = 18000; // rough estimate for 2 active agency searches
+
+  document.getElementById('bsum-grid').innerHTML = `
+    <div class="bs-cell"><div class="bs-lbl">Approved Monthly</div><div class="bs-val">$${totalApprMo.toLocaleString()}</div><div class="bs-sub">USD/month if all filled</div></div>
+    <div class="bs-cell"><div class="bs-lbl">Approved Annual</div><div class="bs-val">$${(totalApprMo*12).toLocaleString()}</div><div class="bs-sub">Est. full-year cost</div></div>
+    <div class="bs-cell"><div class="bs-lbl">Pending Approval</div><div class="bs-val" style="color:var(--yel);">$${(totalPendMo*12).toLocaleString()}</div><div class="bs-sub">Annual if approved</div></div>
+    <div class="bs-cell"><div class="bs-lbl">Agency Fees (Est.)</div><div class="bs-val" style="color:var(--red);">$${agencyEst.toLocaleString()}</div><div class="bs-sub">2 active searches</div></div>`;
+
+  document.getElementById('budget-body').innerHTML = reqs.map(r=>{
+    const annual  = r.budget*12;
+    const agency  = r.prio==='Critical'&&!r.hired ? Math.round(r.budget*12*0.16) : 0;
+    const year1   = annual + agency;
+    const pct     = Math.round(annual/ANNUAL_HC_BUDGET*100);
+    return `<tr class="${prioClass(r.prio)}">
+      <td>${r.title}</td>
+      <td style="font-size:11px;">${r.country}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11.5px;">$${r.budget.toLocaleString()}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11.5px;">$${annual.toLocaleString()}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${agency?'var(--red)':'var(--g3)'};">${agency?'$'+agency.toLocaleString():'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;">$${year1.toLocaleString()}</td>
+      <td>${budgetTag(r.budgetOk)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="bbar-wrap"><div class="bbar" style="width:${Math.min(100,pct*4)}%;background:${r.budgetOk==='Yes'?'var(--acc)':'var(--g3)'}"></div></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--g4);">${pct}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── ADD REQUISITION ──
+function addReq() {
+  const title   = document.getElementById('f-title').value.trim();
+  const country = document.getElementById('f-country').value;
+  if (!title||!country) { showToast('Role title and country required'); return; }
+  const budget = parseInt(document.getElementById('f-budget').value)||0;
+  reqs.push({
+    id: nextId++,
+    title, country,
+    dept:      document.getElementById('f-dept').value,
+    prio:      document.getElementById('f-prio').value,
+    budget,
+    budgetOk:  document.getElementById('f-budgetok').value,
+    status:    document.getElementById('f-status').value,
+    quarter:   document.getElementById('f-quarter').value,
+    hired:     document.getElementById('f-hired').value,
+    reports:   document.getElementById('f-reports').value,
+    notes:     document.getElementById('f-notes').value,
+    dateAdded: new Date().toISOString().split('T')[0],
+  });
+  showToast('Requisition added: ' + title);
+  clearReq();
+}
+function clearReq() {
+  ['f-title','f-budget','f-hired','f-reports','f-notes'].forEach(id=>document.getElementById(id).value='');
+  ['f-country','f-dept','f-prio','f-budgetok','f-status','f-quarter'].forEach(id=>document.getElementById(id).selectedIndex=0);
+}
+
+// ── TEMPLATE FILTER ──
+function filterTmpl(type, btn) {
+  document.querySelectorAll('.filter-bar .fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tmpl-wrap').forEach(w=>{
+    if (type==='all') { w.style.display='block'; return; }
+    w.style.display = (w.dataset.type===type) ? 'block' : 'none';
+  });
+}
+
+// ── COPY ──
+function copyTmpl(btn) {
+  const text = btn.closest('.tmpl-wrap').querySelector('.tmpl-body').innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied ✓'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ── INIT ──
+renderOverview();
+</script>
+</body>
+</html>

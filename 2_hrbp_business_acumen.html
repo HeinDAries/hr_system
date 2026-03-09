@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Acumen Toolkit — Valentis HRBP Tool 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=IBM+Plex+Sans:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f7f5;--surface:#ffffff;--surface2:#f2f2ef;--surface3:#e8e8e4;--surface4:#ddddd8;
+  --border:#e0e0db;--border2:#c8c8c2;--border3:#a8a8a0;
+  --ink:#0f0f0e;--ink2:#2a2a28;--ink3:#555550;--ink4:#888880;--ink5:#b8b8b0;
+  --teal:#0d7a6e;--teal2:#0e8f82;--teal3:#10a494;--teal-dim:rgba(13,122,110,0.07);--teal-border:rgba(13,122,110,0.22);
+  --amber:#b8720a;--amber-dim:rgba(184,114,10,0.07);--amber-border:rgba(184,114,10,0.22);
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --navy:#1a3a5c;--navy-dim:rgba(26,58,92,0.07);--navy-border:rgba(26,58,92,0.2);
+  --sidebar-w:272px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--teal3),var(--teal),rgba(13,122,110,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal3);background:rgba(13,122,110,0.12);border:1px solid rgba(13,122,110,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#f5f5f2;line-height:1.15;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--teal3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(13,122,110,0.15);border-color:rgba(13,122,110,0.35);color:var(--teal3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--teal)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--teal3);display:block;margin-bottom:3px}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1080px}
+.page.active{display:block}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:54px;font-weight:800;color:var(--ink);line-height:.95;margin-bottom:14px;letter-spacing:-1px}
+.page-title em{font-style:italic;font-weight:400;color:var(--teal)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;transition:border-color .13s;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.2}
+.card-title em{font-style:italic;color:var(--teal);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-teal{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border)}
+.chip-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-navy{background:var(--navy-dim);color:var(--navy);border:1px solid var(--navy-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+
+/* INFO */
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.teal{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+.info.amber{background:var(--amber-dim);border-color:var(--amber);color:var(--amber)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--red)}
+.info.navy{background:var(--navy-dim);border-color:var(--navy);color:var(--navy)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--ink);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:none}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.dtable-mono{font-family:var(--fm);font-size:11.5px}
+
+/* METRIC TILE */
+.metric-tile{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.metric-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.metric-tile.teal::before{background:var(--teal)}
+.metric-tile.amber::before{background:var(--amber)}
+.metric-tile.red::before{background:var(--red)}
+.metric-tile.navy::before{background:var(--navy)}
+.metric-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px}
+.metric-value{font-family:var(--fd);font-size:38px;font-weight:800;color:var(--ink);line-height:1;margin-bottom:4px}
+.metric-sub{font-size:12px;color:var(--ink4);font-weight:300;line-height:1.5}
+
+/* PL TABLE */
+.pl-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.pl-table td{padding:8px 14px;border-bottom:1px solid var(--border);font-weight:300;color:var(--ink3)}
+.pl-table .pl-label{color:var(--ink2);font-weight:400}
+.pl-table .pl-val{font-family:var(--fm);font-size:12.5px;text-align:right;white-space:nowrap}
+.pl-table .pl-section{background:var(--surface2);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);padding:6px 14px;border-bottom:1px solid var(--border)}
+.pl-table .pl-total{background:var(--ink);color:#fff;font-weight:600}
+.pl-table .pl-total td{color:#fff;border-bottom:none;padding:10px 14px}
+.pl-table .pl-total .pl-val{color:var(--teal3)}
+.pl-table .pl-subtotal{background:var(--surface2)}
+.pl-table .pl-subtotal td{font-weight:600;color:var(--ink);border-bottom:1px solid var(--border2)}
+.pl-table .pl-hr{font-size:11px;color:var(--teal);font-style:italic}
+
+/* CALCULATOR */
+.calc-wrap{background:var(--ink);border-radius:4px;padding:24px;color:#f5f5f2}
+.calc-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px}
+.calc-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:9px 12px;color:#f5f5f2;font-family:var(--fm);font-size:13px;outline:none;transition:border-color .13s;width:100%}
+.calc-input:focus{border-color:var(--teal)}
+.calc-result{background:rgba(13,122,110,0.15);border:1px solid rgba(13,122,110,0.3);border-radius:3px;padding:16px;margin-top:14px}
+.calc-result-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--teal3);margin-bottom:6px}
+.calc-result-val{font-family:var(--fd);font-size:36px;font-weight:800;color:var(--teal3);line-height:1}
+.calc-breakdown{margin-top:10px;display:grid;gap:4px}
+.calc-row{display:flex;justify-content:space-between;font-family:var(--fm);font-size:11px;color:rgba(255,255,255,0.4)}
+.calc-row.highlight{color:var(--teal3);font-weight:600}
+
+/* FORM */
+.form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.form-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.form-select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 10px;color:#f5f5f2;font-family:var(--fm);font-size:12px;outline:none;transition:border-color .13s;width:100%}
+.form-select:focus{border-color:var(--teal)}
+.form-select option{background:#1a1a18}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:var(--teal2)}
+.btn-ink{background:var(--ink);color:#f5f5f2}
+.btn-ink:hover{background:var(--ink2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink3)}
+.btn-ghost:hover{border-color:var(--border3);color:var(--ink)}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .metric-tile{animation:fadeUp .28s ease both}
+.page.active .card:nth-child(2),.page.active .metric-tile:nth-child(2){animation-delay:.06s}
+.page.active .card:nth-child(3),.page.active .metric-tile:nth-child(3){animation-delay:.1s}
+.page.active .card:nth-child(4),.page.active .metric-tile:nth-child(4){animation-delay:.14s}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* PRINT */
+@media print{.sidebar{display:none}.main{margin-left:0}.page.active{padding:20px}}
+
+/* DIVIDER */
+hr.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">HRBP Tool 2 / 10</div>
+    <div class="sb-title">Business<br><em>Acumen</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('why',this)"><span class="nav-num">01</span>Why Business Acumen?</div>
+    <div class="nav-item" onclick="showPage('pl',this)"><span class="nav-num">02</span>Reading a P&amp;L</div>
+    <div class="nav-item" onclick="showPage('kpis',this)"><span class="nav-num">03</span>Operational KPIs</div>
+    <div class="nav-item" onclick="showPage('drivers',this)"><span class="nav-num">04</span>Business Drivers Map</div>
+    <div class="nav-item" onclick="showPage('cost',this)"><span class="nav-num">05</span>People Cost Calculator</div>
+    <div class="nav-item" onclick="showPage('valentis',this)"><span class="nav-num">06</span>Valentis Business Model</div>
+    <div class="nav-item" onclick="showPage('language',this)"><span class="nav-num">07</span>Speaking Business Language</div>
+    <div class="nav-item" onclick="showPage('prep',this)"><span class="nav-num">08</span>Leadership Meeting Prep</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>HRBP Department</strong>
+      Tool 2 of 10 · Business Acumen<br>
+      <span style="color:rgba(255,255,255,0.12)">Prerequisite for all HRBP strategic work</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 WHY -->
+<div id="page-why" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">HRBP Tool 2 — Business Acumen Toolkit</div>
+    <h1 class="page-title">Business<br><em>Acumen</em></h1>
+    <p class="page-desc">The single biggest gap between an HR professional and a strategic HRBP is business literacy. This toolkit teaches you to read financial statements, understand operational KPIs, map business drivers to people risks, and walk into any COO conversation fully prepared.</p>
+  </div>
+
+  <div class="info teal"><strong>The Core Principle</strong>Business leaders do not make people decisions in an HR context. They make them in a business context — revenue targets, project timelines, cost budgets, and operational risk. An HRBP who cannot speak that language is advising from outside the room. This toolkit puts you in the room.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What Business Acumen Actually Means</div>
+      <div class="card-body">
+        Business acumen is not about becoming an accountant or an engineer. It is about being fluent enough in the business's own language to be taken seriously in leadership conversations.<br><br>
+        Specifically, it means understanding:
+        <div style="display:grid;gap:6px;margin-top:12px">
+          <div style="display:flex;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;font-size:13px;color:var(--ink3)"><span style="color:var(--teal);font-weight:600;flex-shrink:0">→</span><span>How the business generates revenue and what drives its costs</span></div>
+          <div style="display:flex;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;font-size:13px;color:var(--ink3)"><span style="color:var(--teal);font-weight:600;flex-shrink:0">→</span><span>What the key operational metrics are and what good looks like</span></div>
+          <div style="display:flex;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;font-size:13px;color:var(--ink3)"><span style="color:var(--teal);font-weight:600;flex-shrink:0">→</span><span>Where people decisions directly affect financial outcomes</span></div>
+          <div style="display:flex;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;font-size:13px;color:var(--ink3)"><span style="color:var(--teal);font-weight:600;flex-shrink:0">→</span><span>What the business's strategic priorities are for the next 1–3 years</span></div>
+          <div style="display:flex;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;font-size:13px;color:var(--ink3)"><span style="color:var(--teal);font-weight:600;flex-shrink:0">→</span><span>What success looks like to the COO and CEO — in their terms, not HR terms</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The Business Acumen Gap — What It Costs</div>
+      <div class="card-body" style="margin-bottom:14px">When an HRBP lacks business acumen, specific things go wrong:</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:11px 14px;background:var(--red-dim);border-left:3px solid var(--red);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink3)"><strong style="color:var(--red);display:block;font-size:11px;font-family:var(--fm);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Recommendations ignored</strong>HR advice framed in HR language gets filtered out. "Employee engagement is low" lands differently than "Low engagement is costing us 2.3 drillers per programme cycle."</div>
+        <div style="padding:11px 14px;background:var(--red-dim);border-left:3px solid var(--red);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink3)"><strong style="color:var(--red);display:block;font-size:11px;font-family:var(--fm);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Excluded from planning</strong>Leaders stop inviting HR to strategic discussions when HR consistently fails to connect to the business agenda. The seat at the table is earned, not given.</div>
+        <div style="padding:11px 14px;background:var(--red-dim);border-left:3px solid var(--red);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink3)"><strong style="color:var(--red);display:block;font-size:11px;font-family:var(--fm);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Wrong priorities</strong>Without business context, HR focuses on the loudest requests rather than the highest-value interventions. The urgent crowd out the important.</div>
+        <div style="padding:11px 14px;background:var(--red-dim);border-left:3px solid var(--red);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink3)"><strong style="color:var(--red);display:block;font-size:11px;font-family:var(--fm);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">No credibility with finance</strong>When HR cannot speak to budget impact, the CFO or COO overrules HR recommendations on cost grounds — often incorrectly, because the full people cost is not visible.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The HRBP Business Acumen Framework</div>
+    <div class="card-body" style="margin-bottom:16px">This toolkit covers five domains of business literacy that every HRBP must develop. Each section of the tool addresses one domain.</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+      <div style="padding:16px 12px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);margin-bottom:6px">P&amp;L</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Financial Literacy</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">Read and interpret a profit and loss statement</div>
+        <div style="margin-top:8px"><span class="chip chip-teal">Section 02</span></div>
+      </div>
+      <div style="padding:16px 12px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--amber);margin-bottom:6px">KPI</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Operational Metrics</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">Understand the numbers the COO watches daily</div>
+        <div style="margin-top:8px"><span class="chip chip-amber">Section 03</span></div>
+      </div>
+      <div style="padding:16px 12px;background:var(--navy-dim);border:1px solid var(--navy-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--navy);margin-bottom:6px">MAP</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:6px">Driver Mapping</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">Connect business drivers to people risks</div>
+        <div style="margin-top:8px"><span class="chip chip-navy">Section 04</span></div>
+      </div>
+      <div style="padding:16px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--red);margin-bottom:6px">$$$</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">People Cost</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">Calculate the true cost of people decisions</div>
+        <div style="margin-top:8px"><span class="chip chip-red">Section 05</span></div>
+      </div>
+      <div style="padding:16px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--ink3);margin-bottom:6px">Talk</div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Business Language</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">Translate HR insights into business language</div>
+        <div style="margin-top:8px"><span class="chip chip-muted">Section 07</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 P&L -->
+<div id="page-pl" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Reading a P&amp;L</div>
+    <h1 class="page-title">Reading<br><em>a P&amp;L</em></h1>
+    <p class="page-desc">The profit and loss statement is the single most important financial document an HRBP must understand. It tells the story of how the business performed — and where people costs fit inside that story.</p>
+  </div>
+
+  <div class="info teal"><strong>The HRBP Lens</strong>You do not need to build a P&amp;L. You need to read one, identify where people costs live inside it, and explain how HR decisions affect each line. That is the business acumen that earns credibility with the COO.</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">P&amp;L Structure — The Five Lines</div>
+      <div class="card-body" style="margin-bottom:14px">Every P&amp;L tells the same story in five steps. Once you understand the structure, you can read any company's financials.</div>
+      <div style="display:grid;gap:3px">
+        <div style="padding:12px 16px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:3px 3px 0 0">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:3px">Line 1 — Revenue</div>
+          <div style="font-size:13px;color:var(--ink2);font-weight:400">Total income from operations. For a service business like mineral exploration, this is the value of programmes delivered to clients.</div>
+        </div>
+        <div style="padding:12px 16px;background:var(--surface2);border:1px solid var(--border)">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:3px">Line 2 — Cost of Goods Sold (COGS)</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Direct costs of delivering the service — site operations, equipment, drilling costs, site labour. <span style="color:var(--teal);font-weight:500">HR link: site workforce costs, including salaries, allowances, and R&amp;R, sit here.</span></div>
+        </div>
+        <div style="padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-top:none">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:3px">= Gross Profit</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Revenue minus COGS. Shows how profitable the core operations are before overhead. The higher this is, the healthier the business model.</div>
+        </div>
+        <div style="padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-top:none">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:3px">Line 3 — Operating Expenses (OPEX)</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Overhead — office costs, management salaries, HR, finance, IT. <span style="color:var(--teal);font-weight:500">HR link: office workforce, benefits, and training costs sit here. This is where most of HR's own cost appears.</span></div>
+        </div>
+        <div style="padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-top:none">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:3px">= EBITDA / Operating Profit</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Earnings before interest, tax, depreciation, and amortisation. The headline number leadership watches. Every people cost decision affects this line.</div>
+        </div>
+        <div style="padding:12px 16px;background:var(--ink);border-radius:0 0 3px 3px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--teal3);margin-bottom:3px">= Net Profit</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:300">After tax and financing costs. The bottom line. What the business actually keeps.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Valentis Illustrative P&amp;L — 2026</div>
+      <div class="card-body" style="margin-bottom:14px;font-size:12.5px">Illustrative figures based on a mineral exploration company of Valentis's scale. Use this to develop your financial literacy — not for external reporting.</div>
+      <table class="pl-table">
+        <tbody>
+          <tr><td colspan="2" class="pl-section">Revenue</td></tr>
+          <tr><td class="pl-label">Drilling programme fees — Laos</td><td class="pl-val" style="color:var(--teal)">$3,200,000</td></tr>
+          <tr><td class="pl-label">Drilling programme fees — Myanmar</td><td class="pl-val" style="color:var(--teal)">$2,400,000</td></tr>
+          <tr><td class="pl-label">Exploration services — Indonesia</td><td class="pl-val" style="color:var(--teal)">$1,800,000</td></tr>
+          <tr><td class="pl-label">Exploration services — Thailand</td><td class="pl-val" style="color:var(--teal)">$900,000</td></tr>
+          <tr class="pl-subtotal"><td>Total Revenue</td><td class="pl-val">$8,300,000</td></tr>
+
+          <tr><td colspan="2" class="pl-section">Cost of Operations (COGS)</td></tr>
+          <tr><td class="pl-label">Site workforce — salaries &amp; allowances <span class="pl-hr">← HRBP visibility</span></td><td class="pl-val">($2,240,000)</td></tr>
+          <tr><td class="pl-label">Equipment and drilling consumables</td><td class="pl-val">($980,000)</td></tr>
+          <tr><td class="pl-label">Site logistics and mobilisation</td><td class="pl-val">($420,000)</td></tr>
+          <tr><td class="pl-label">Subcontractors and technical services</td><td class="pl-val">($360,000)</td></tr>
+          <tr class="pl-subtotal"><td>Gross Profit</td><td class="pl-val">$4,300,000</td></tr>
+
+          <tr><td colspan="2" class="pl-section">Operating Expenses (OPEX)</td></tr>
+          <tr><td class="pl-label">Office workforce — salaries &amp; benefits <span class="pl-hr">← HRBP visibility</span></td><td class="pl-val">($1,360,000)</td></tr>
+          <tr><td class="pl-label">Country office operating costs</td><td class="pl-val">($280,000)</td></tr>
+          <tr><td class="pl-label">Training and development <span class="pl-hr">← HRBP owns</span></td><td class="pl-val">($42,000)</td></tr>
+          <tr><td class="pl-label">Recruitment and onboarding <span class="pl-hr">← HRBP owns</span></td><td class="pl-val">($68,000)</td></tr>
+          <tr><td class="pl-label">Insurance and compliance</td><td class="pl-val">($95,000)</td></tr>
+          <tr class="pl-subtotal"><td>EBITDA</td><td class="pl-val">$2,455,000</td></tr>
+
+          <tr><td class="pl-label">Depreciation and financing costs</td><td class="pl-val">($280,000)</td></tr>
+          <tr><td class="pl-label">Tax provision</td><td class="pl-val">($438,000)</td></tr>
+          <tr class="pl-total"><td><strong>Net Profit</strong></td><td class="pl-val"><strong>$1,737,000</strong></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;font-size:11.5px;color:var(--ink4);font-weight:300;font-style:italic">People costs (site + office) = $3,600,000 = 43% of total revenue. HRBP-influenced spend = $3,710,000 = 45% of revenue. This is why HR decisions are financial decisions.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Three P&amp;L Questions Every HRBP Must Answer</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">
+      <div style="padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:8px">Question 1</div>
+        <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.3">Where does people cost appear in our P&amp;L?</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Know exactly which line items HR influences — site workforce in COGS, office workforce in OPEX, training, recruitment, benefits. Total people cost at Valentis is approximately 43% of revenue.</div>
+      </div>
+      <div style="padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:8px">Question 2</div>
+        <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.3">What is the cost of a people decision going wrong?</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">A bad hire at G5 costs 1.5–2x annual salary in lost productivity, rehire, and delay. A driller vacancy delays a programme. A programme delay affects the revenue line directly. The HRBP must quantify this.</div>
+      </div>
+      <div style="padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:8px">Question 3</div>
+        <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.3">What is the ROI of the HR investment we are proposing?</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">If you propose a $42,000 training spend, what does the business get back? Faster driller qualification? Lower attrition? Reduced rehire cost? Quantify it. "This investment pays back in 4.2 months" is a business case. "Training is important" is not.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 KPIs -->
+<div id="page-kpis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Operational KPIs</div>
+    <h1 class="page-title">Operational<br><em>KPIs</em></h1>
+    <p class="page-desc">The metrics your COO watches every week. An HRBP who understands these KPIs — what they mean, what affects them, and where people decisions sit inside them — becomes instantly relevant in every operational conversation.</p>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:4px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="metric-tile teal"><div class="metric-label">Metres Drilled / Day</div><div class="metric-value" style="color:var(--teal)">18–24</div><div class="metric-sub">Industry benchmark for core drilling. Valentis target: 20m/day per rig.</div></div>
+      <div class="metric-tile amber"><div class="metric-label">Rig Utilisation Rate</div><div class="metric-value" style="color:var(--amber)">82%</div><div class="metric-sub">Percentage of time rigs are actively drilling vs idle. Target: above 80%.</div></div>
+      <div class="metric-tile navy"><div class="metric-label">Programme Delivery Rate</div><div class="metric-value" style="color:var(--navy)">91%</div><div class="metric-sub">% of drilling programmes completed on time and within budget. Target: above 90%.</div></div>
+      <div class="metric-tile red"><div class="metric-label">LTI Frequency Rate</div><div class="metric-value" style="color:var(--red)">0.8</div><div class="metric-sub">Lost Time Injuries per million hours worked. Target: below 1.0. Zero is the aspiration.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why These KPIs Are HRBP Business</div>
+      <div style="display:grid;gap:8px;margin-top:8px">
+        <div style="padding:11px 14px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:0 3px 3px 0">
+          <div style="font-size:12.5px;font-weight:600;color:var(--teal);margin-bottom:3px">Metres drilled per day drops → people problem</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300">Could be driller fatigue, supervision quality, skill gap, or a new hire not yet at full productivity. The HRBP diagnoses which and recommends the intervention.</div>
+        </div>
+        <div style="padding:11px 14px;background:var(--amber-dim);border-left:3px solid var(--amber);border-radius:0 3px 3px 0">
+          <div style="font-size:12.5px;font-weight:600;color:var(--amber);margin-bottom:3px">Rig utilisation drops → could be a vacancy</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300">A rig sitting idle because there is no driller to operate it is a direct revenue loss. $12,000–$18,000 per idle rig day. The HRBP owns the talent pipeline that prevents this.</div>
+        </div>
+        <div style="padding:11px 14px;background:var(--navy-dim);border-left:3px solid var(--navy);border-radius:0 3px 3px 0">
+          <div style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:3px">Programme delivery slips → leadership or skills</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300">Programmes underdeliver when the team is under-skilled, under-led, or overextended. An HRBP with workforce planning data can predict this 60–90 days before it happens.</div>
+        </div>
+        <div style="padding:11px 14px;background:var(--red-dim);border-left:3px solid var(--red);border-radius:0 3px 3px 0">
+          <div style="font-size:12.5px;font-weight:600;color:var(--red);margin-bottom:3px">LTIFR rises → training, culture, supervision</div>
+          <div style="font-size:12.5px;color:var(--red);font-weight:300">A safety incident is a people failure before it is a compliance failure. HSE performance is directly linked to induction quality, supervisor capability, and site culture — all HRBP territory.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Full KPI Reference — Valentis Operations</div>
+    <table class="dtable">
+      <thead><tr><th>KPI</th><th>What It Measures</th><th>Target</th><th>People Driver</th><th>HRBP Action When Off-Track</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--ink)">Metres drilled / day</td><td>Drilling productivity per rig</td><td class="dtable-mono" style="color:var(--teal)">≥20m</td><td>Driller skill, supervision quality, fatigue management</td><td>Skills assessment, supervision review, rotation schedule audit</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Rig utilisation rate</td><td>Active vs idle rig time</td><td class="dtable-mono" style="color:var(--teal)">≥80%</td><td>Vacancy fill time, driller pipeline depth</td><td>Urgency escalation to TA, interim resourcing, skills adjacency review</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Programme delivery rate</td><td>On-time, on-budget completion</td><td class="dtable-mono" style="color:var(--teal)">≥90%</td><td>Team capability, leadership quality, headcount sufficiency</td><td>Workforce plan review, leadership coaching intervention</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">LTIFR</td><td>Safety incident frequency</td><td class="dtable-mono" style="color:var(--teal)">&lt;1.0</td><td>Induction quality, supervisor capability, site culture</td><td>Training audit, culture diagnostic, supervisor capability review</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Site workforce attrition</td><td>Annualised turnover — site roles</td><td class="dtable-mono" style="color:var(--teal)">&lt;15%</td><td>Total rewards, R&amp;R quality, supervisory relationships</td><td>Stay interview programme, TRS review, exit data analysis</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Time to mobilise</td><td>Days from hire decision to on-site</td><td class="dtable-mono" style="color:var(--teal)">&lt;21 days</td><td>TA pipeline readiness, onboarding efficiency</td><td>Pipeline review, pre-boarding process improvement</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Trainee conversion rate</td><td>Trainees reaching G3 competency</td><td class="dtable-mono" style="color:var(--teal)">≥70%</td><td>Programme design, mentoring quality, early attrition</td><td>Programme diagnostic, mentor capability review, rewards redesign</td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Cost per programme (people)</td><td>People cost as % of programme budget</td><td class="dtable-mono" style="color:var(--teal)">27–32%</td><td>Grade mix, allowance structure, overtime management</td><td>Workforce mix analysis, C&amp;B review</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 04 DRIVERS MAP -->
+<div id="page-drivers" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Business Drivers Map</div>
+    <h1 class="page-title">Business<br><em>Drivers Map</em></h1>
+    <p class="page-desc">Every business goal has people risks attached to it. The Business Drivers Map connects Valentis's strategic priorities to the talent and organisational risks the HRBP must monitor and act on.</p>
+  </div>
+
+  <div class="info navy"><strong>How to Use This Map</strong>Before every leadership meeting, run through this map. Ask: which of these business drivers is under pressure right now? What is the people risk behind it? What is HR doing about it — proactively, before the COO has to ask?</div>
+
+  <div style="display:grid;gap:10px">
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 1fr;background:var(--ink)">
+        <div style="padding:11px 16px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4)">Business Driver</div>
+        <div style="padding:11px 16px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);border-left:1px solid rgba(255,255,255,0.08)">People Risk</div>
+        <div style="padding:11px 16px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);border-left:1px solid rgba(255,255,255,0.08)">Early Warning Signal</div>
+        <div style="padding:11px 16px;font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);border-left:1px solid rgba(255,255,255,0.08)">HRBP Response</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px 16px;background:var(--teal-dim);border-right:1px solid var(--teal-border)">
+          <div style="font-weight:600;color:var(--teal);font-size:13px;margin-bottom:2px">Drilling Programme Growth</div>
+          <div style="font-size:11.5px;color:var(--ink4);font-weight:300">Expand from 4 to 6 active programmes by 2027</div>
+        </div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)">Insufficient drillers and supervisors in pipeline to staff two additional rigs</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)">Time-to-fill for G3–G5 site roles exceeds 35 days; trainee conversion rate below 70%</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Accelerate trainee pathway; activate regional sourcing; review compensation vs competitors</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px 16px;background:var(--amber-dim);border-right:1px solid var(--amber-border)">
+          <div style="font-weight:600;color:var(--amber);font-size:13px;margin-bottom:2px">Myanmar Programme Continuity</div>
+          <div style="font-size:11.5px;color:var(--ink4);font-weight:300">Sustain operations through political and logistical complexity</div>
+        </div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)">Single point of failure in Myo H.; no successor identified; hardship premium not competitive</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)">Myo H. retention bonus expires April 2027; no G5 employee being developed for G6 transition</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Succession activation plan; leadership development for internal G5 candidate; retention review</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px 16px;background:var(--navy-dim);border-right:1px solid var(--navy-border)">
+          <div style="font-weight:600;color:var(--navy);font-size:13px;margin-bottom:2px">Cost Discipline</div>
+          <div style="font-size:11.5px;color:var(--ink4);font-weight:300">Maintain people cost within 27–32% of programme budget</div>
+        </div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)">Grade creep, unplanned overtime, unstructured allowance exceptions inflating people cost</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)">People cost as % of programme exceeds 32% in two consecutive quarters; off-matrix salary exceptions rising</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Grade audit; exception register review; workforce mix analysis; merit matrix enforcement</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px 16px;background:var(--red-dim);border-right:1px solid var(--red-border)">
+          <div style="font-weight:600;color:var(--red);font-size:13px;margin-bottom:2px">Safety Performance</div>
+          <div style="font-size:11.5px;color:var(--ink4);font-weight:300">Maintain LTIFR below 1.0 across all sites</div>
+        </div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)">Supervisor capability gaps; inadequate induction for new hires; fatigue from under-rotation</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)">Near-miss frequency rising; induction completion rate below 100%; rotation schedule deviations</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Supervisor capability assessment; induction audit; rotation compliance report to COO</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 1fr;border-top:1px solid var(--border)">
+        <div style="padding:14px 16px;background:var(--surface2);border-right:1px solid var(--border)">
+          <div style="font-weight:600;color:var(--ink2);font-size:13px;margin-bottom:2px">Leadership Depth</div>
+          <div style="font-size:11.5px;color:var(--ink4);font-weight:300">Build next generation of Valentis leaders from within</div>
+        </div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)">Three of four G6 roles have no internal successor; leadership pipeline at G4–G5 underdeveloped</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)">IDP completion rate below 60%; no G5 employees in structured leadership development programme</div>
+        <div style="padding:14px 16px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">9-box review action; IDP activation for G4–G5 high performers; leadership programme design</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 05 COST CALCULATOR -->
+<div id="page-cost" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — People Cost Calculator</div>
+    <h1 class="page-title">People Cost<br><em>Calculator</em></h1>
+    <p class="page-desc">Calculate the true business cost of key people decisions — vacancies, attrition, bad hires, and training investment. These are the numbers that make an HRBP credible in a financial conversation.</p>
+  </div>
+
+  <div class="grid-2">
+
+    <!-- VACANCY COST -->
+    <div class="card">
+      <div class="card-title">Vacancy Cost Calculator</div>
+      <div class="card-body" style="margin-bottom:16px">The hidden cost of an unfilled role goes far beyond lost salary. Calculate it properly and the COO pays attention.</div>
+      <div class="calc-wrap">
+        <div class="form-row-3" style="margin-bottom:10px">
+          <div class="form-group"><div class="calc-label">Annual Salary (USD)</div><input class="calc-input" type="number" id="vc-salary" placeholder="54000" oninput="calcVacancy()"></div>
+          <div class="form-group"><div class="calc-label">Days Vacant</div><input class="calc-input" type="number" id="vc-days" placeholder="45" oninput="calcVacancy()"></div>
+          <div class="form-group"><div class="calc-label">Role Type</div>
+            <select class="form-select" id="vc-type" onchange="calcVacancy()">
+              <option value="site">Site / Operational</option>
+              <option value="office">Office / Support</option>
+              <option value="leadership">Leadership</option>
+            </select>
+          </div>
+        </div>
+        <div class="calc-result" id="vc-result" style="display:none">
+          <div class="calc-result-label">Total Vacancy Cost</div>
+          <div class="calc-result-val" id="vc-total">$0</div>
+          <div class="calc-breakdown" id="vc-breakdown"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ATTRITION COST -->
+    <div class="card">
+      <div class="card-title">Attrition Cost Calculator</div>
+      <div class="card-body" style="margin-bottom:16px">When an employee leaves, the true replacement cost is 1.5–2x their annual salary. This calculator makes that visible.</div>
+      <div class="calc-wrap">
+        <div class="form-row" style="margin-bottom:10px">
+          <div class="form-group"><div class="calc-label">Annual Salary (USD)</div><input class="calc-input" type="number" id="ac-salary" placeholder="38000" oninput="calcAttrition()"></div>
+          <div class="form-group"><div class="calc-label">Grade</div>
+            <select class="form-select" id="ac-grade" onchange="calcAttrition()">
+              <option value="1">G1–G2 Entry</option>
+              <option value="2">G3–G4 Operational</option>
+              <option value="3" selected>G5 Team Leader</option>
+              <option value="4">G6 Manager</option>
+              <option value="5">G7–G8 Senior Leader</option>
+            </select>
+          </div>
+        </div>
+        <div class="calc-result" id="ac-result" style="display:none">
+          <div class="calc-result-label">Total Replacement Cost</div>
+          <div class="calc-result-val" id="ac-total">$0</div>
+          <div class="calc-breakdown" id="ac-breakdown"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRAINING ROI -->
+    <div class="card">
+      <div class="card-title">Training ROI Calculator</div>
+      <div class="card-body" style="margin-bottom:16px">Turn a training proposal into a business case. Calculate payback period and return on investment in terms the COO understands.</div>
+      <div class="calc-wrap">
+        <div class="form-row" style="margin-bottom:10px">
+          <div class="form-group"><div class="calc-label">Training Investment (USD)</div><input class="calc-input" type="number" id="tr-invest" placeholder="15000" oninput="calcTraining()"></div>
+          <div class="form-group"><div class="calc-label">Number of Employees</div><input class="calc-input" type="number" id="tr-count" placeholder="5" oninput="calcTraining()"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:10px">
+          <div class="form-group"><div class="calc-label">Expected Attrition Reduction (%)</div><input class="calc-input" type="number" id="tr-attr" placeholder="20" oninput="calcTraining()"></div>
+          <div class="form-group"><div class="calc-label">Avg Salary of Trainees (USD)</div><input class="calc-input" type="number" id="tr-salary" placeholder="27000" oninput="calcTraining()"></div>
+        </div>
+        <div class="calc-result" id="tr-result" style="display:none">
+          <div class="calc-result-label">Training ROI</div>
+          <div class="calc-result-val" id="tr-roi">0%</div>
+          <div class="calc-breakdown" id="tr-breakdown"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BAD HIRE COST -->
+    <div class="card">
+      <div class="card-title">Bad Hire Cost Calculator</div>
+      <div class="card-body" style="margin-bottom:16px">A mis-hire is one of the most expensive people decisions a business makes. The full cost is rarely understood until this calculation is done.</div>
+      <div class="calc-wrap">
+        <div class="form-row" style="margin-bottom:10px">
+          <div class="form-group"><div class="calc-label">Annual Salary (USD)</div><input class="calc-input" type="number" id="bh-salary" placeholder="54000" oninput="calcBadHire()"></div>
+          <div class="form-group"><div class="calc-label">Months in Role Before Exit</div><input class="calc-input" type="number" id="bh-months" placeholder="8" oninput="calcBadHire()"></div>
+        </div>
+        <div class="calc-result" id="bh-result" style="display:none">
+          <div class="calc-result-label">Total Bad Hire Cost</div>
+          <div class="calc-result-val" id="bh-total">$0</div>
+          <div class="calc-breakdown" id="bh-breakdown"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 06 VALENTIS BUSINESS MODEL -->
+<div id="page-valentis" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Valentis Business Model</div>
+    <h1 class="page-title">Valentis<br><em>Business Model</em></h1>
+    <p class="page-desc">A structured overview of how Valentis makes money, what drives its costs, and where people decisions have the greatest financial impact. This is the business context every HRBP at Valentis must know deeply.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">How Valentis Creates Value</div>
+      <div class="card-body" style="margin-bottom:14px">Valentis is a mineral exploration services business. Its core value chain is:</div>
+      <div style="display:grid;gap:3px">
+        <div style="padding:12px 16px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:3px 3px 0 0;display:flex;gap:14px;align-items:center">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);flex-shrink:0">1</div>
+          <div><div style="font-weight:600;color:var(--teal);font-size:13px">Win the contract</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;margin-top:2px">Secure drilling programme agreements with mining clients. Revenue is contract-based — programme by programme.</div></div>
+        </div>
+        <div style="padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-top:none;display:flex;gap:14px;align-items:center">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--ink3);flex-shrink:0">2</div>
+          <div><div style="font-weight:600;color:var(--ink2);font-size:13px">Mobilise the team</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;margin-top:2px">Deploy drillers, supervisors, and support to site within 21 days. Speed and quality of mobilisation directly affects programme start and client confidence. <span style="color:var(--teal);font-weight:500">← HRBP critical.</span></div></div>
+        </div>
+        <div style="padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-top:none;display:flex;gap:14px;align-items:center">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--ink3);flex-shrink:0">3</div>
+          <div><div style="font-weight:600;color:var(--ink2);font-size:13px">Deliver the programme</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;margin-top:2px">Drill to target metres, on time, within budget, with zero LTIs. Delivery quality = repeat contracts. <span style="color:var(--teal);font-weight:500">← Driller capability, supervisor quality, and team stability all HRBP territory.</span></div></div>
+        </div>
+        <div style="padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-top:none;display:flex;gap:14px;align-items:center">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--ink3);flex-shrink:0">4</div>
+          <div><div style="font-weight:600;color:var(--ink2);font-size:13px">Retain and redeploy</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;margin-top:2px">Keep the best people between programmes. Attrition between contracts is the #1 profit leak for a drilling business. <span style="color:var(--teal);font-weight:500">← Total rewards and retention strategy are the HRBP's most direct lever.</span></div></div>
+        </div>
+        <div style="padding:12px 16px;background:var(--ink);border-radius:0 0 3px 3px;display:flex;gap:14px;align-items:center">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal3);flex-shrink:0">5</div>
+          <div><div style="font-weight:600;color:#f5f5f2;font-size:13px">Win the next contract</div><div style="font-size:12.5px;color:rgba(255,255,255,0.45);font-weight:300;margin-top:2px">Client relationships and programme reputation drive contract renewal. The talent behind the delivery is the competitive advantage.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Valentis Revenue and Cost Drivers</div>
+      <div style="display:grid;gap:8px;margin-top:8px">
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Revenue Drivers</div>
+          <div style="display:grid;gap:4px">
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;display:flex;gap:8px"><span style="color:var(--teal);flex-shrink:0">+</span>Number of active drilling programmes</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;display:flex;gap:8px"><span style="color:var(--teal);flex-shrink:0">+</span>Metres drilled per programme per day</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;display:flex;gap:8px"><span style="color:var(--teal);flex-shrink:0">+</span>Programme on-time completion rate</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;display:flex;gap:8px"><span style="color:var(--teal);flex-shrink:0">+</span>Client retention and contract renewal</div>
+          </div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Cost Drivers</div>
+          <div style="display:grid;gap:4px">
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;display:flex;gap:8px"><span style="color:var(--red);flex-shrink:0">−</span>Site workforce cost (largest single cost at ~27% revenue)</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;display:flex;gap:8px"><span style="color:var(--red);flex-shrink:0">−</span>Rig idle time from vacancies or unplanned absence</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;display:flex;gap:8px"><span style="color:var(--red);flex-shrink:0">−</span>Turnover and replacement cost ($30k–$80k per departure)</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;display:flex;gap:8px"><span style="color:var(--red);flex-shrink:0">−</span>Safety incidents — insurance, penalty, and reputational cost</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;display:flex;gap:8px"><span style="color:var(--red);flex-shrink:0">−</span>Programme delays from under-staffing or skill shortfalls</div>
+          </div>
+        </div>
+        <div style="padding:14px 16px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">The HRBP's Financial Footprint</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">HR-influenced spend at Valentis is approximately <strong style="color:var(--ink)">$3.7M annually</strong> — 45% of total revenue. Every compensation decision, every hire, every training investment, every retention action affects this number. An HRBP who knows this walks into every COO conversation with authority.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07 LANGUAGE -->
+<div id="page-language" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Speaking Business Language</div>
+    <h1 class="page-title">Speaking<br><em>Business Language</em></h1>
+    <p class="page-desc">The same message lands completely differently depending on how it is framed. This section provides a phrase-by-phrase translation guide — from HR language to business language — for the conversations that matter most.</p>
+  </div>
+
+  <div class="info amber"><strong>The Core Principle</strong>Business leaders think in outcomes, costs, and risks. HR practitioners often think in processes, policies, and people. Translating between the two is one of the highest-value skills an HRBP can develop. The examples below cover the most common HRBP conversations at Valentis.</div>
+
+  <div class="card">
+    <div class="card-title">Translation Guide — HR Language → Business Language</div>
+    <table class="dtable" style="margin-top:10px">
+      <thead><tr><th>Situation</th><th style="color:rgba(255,255,255,0.4)">HR Language (avoid)</th><th style="color:var(--teal3)">Business Language (use this)</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;color:var(--ink);font-size:12px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px">Driller Vacancy</td>
+          <td style="color:var(--ink4);font-style:italic">"We are struggling to fill the driller vacancy. The market is tight."</td>
+          <td style="color:var(--teal);font-weight:400">"We have had a rig sitting at 60% utilisation for 18 days due to a driller vacancy. At $12,000 per idle rig day, this is costing us approximately $130,000. I am recommending we activate regional sourcing and review our site allowance against the competitor rate."</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--ink);font-size:12px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px">Trainee Attrition</td>
+          <td style="color:var(--ink4);font-style:italic">"Trainees are leaving because they feel the programme is not meeting their expectations."</td>
+          <td style="color:var(--teal);font-weight:400">"We are losing 3 of every 10 trainees before they reach G3 competency. Each early exit costs approximately $28,000 in recruitment and training investment. The root cause data points to total rewards gap versus site environment expectations. I am recommending a TRS communication intervention and a review of the trainee site allowance."</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--ink);font-size:12px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px">Merit Increase Request</td>
+          <td style="color:var(--ink4);font-style:italic">"Ahmad has been performing well and deserves a salary review."</td>
+          <td style="color:var(--teal);font-weight:400">"Ahmad's compa-ratio is at 100% of the G4 midpoint after five years. His Rating 4 this cycle puts him in the 4–6% merit range. Without a merit increase, he drops to below-market positioning within 18 months. His driller experience is hard to replace — replacement cost is estimated at $52,000. Approving the 6% merit increase at $2,280 is the lower-risk decision."</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--ink);font-size:12px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px">Succession Risk</td>
+          <td style="color:var(--ink4);font-style:italic">"We need to do something about succession for the Myanmar site."</td>
+          <td style="color:var(--teal);font-weight:400">"Myanmar is our second-largest revenue programme at $2.4M annually. Myo H. is the only person capable of leading it, and his retention bonus expires in April 2027. If Myo leaves without a successor in place, we face a programme continuity risk that could cost us the Myanmar contract. I am recommending we initiate an emergency succession plan and identify a development candidate from the G5 pool within 60 days."</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--ink);font-size:12px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.5px">Training Investment</td>
+          <td style="color:var(--ink4);font-style:italic">"We would like to invest in leadership training for our supervisors."</td>
+          <td style="color:var(--teal);font-weight:400">"Our programme delivery rate has dropped from 94% to 88% over three quarters. Exit data and operational feedback point to a supervisor capability gap — specifically in managing complex rotation environments. A targeted development investment of $18,000 for 6 supervisors is estimated to recover 2–3% in programme delivery rate, which at current contract values represents a $166,000 revenue protection. Payback period: 1.4 months."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 08 MEETING PREP -->
+<div id="page-prep" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Leadership Meeting Prep</div>
+    <h1 class="page-title">Leadership<br><em>Meeting Prep</em></h1>
+    <p class="page-desc">A structured preparation framework for every significant leadership conversation. An HRBP who walks in prepared — with data, a point of view, and a recommendation — is an HRBP who gets invited back.</p>
+  </div>
+
+  <div class="info teal"><strong>The Rule</strong>Never walk into a leadership meeting to present a problem. Walk in with a problem, the data behind it, and at least two options. Business leaders respect people who come with solutions, not just issues.</div>
+
+  <div class="card">
+    <div class="card-title">The HRBP Meeting Prep Framework — Six Steps</div>
+    <div style="display:grid;gap:8px;margin-top:10px">
+      <div style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fd);font-size:36px;font-weight:800;color:var(--teal);line-height:1">01</div>
+        <div>
+          <div style="font-weight:600;color:var(--ink);font-size:14px;margin-bottom:5px;font-family:var(--fd)">Know the business context</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">What is the leader's current priority? What pressures are they under? What decisions are they facing in the next 30–90 days? Read the last quarterly business review, operational report, or programme update before the meeting. Know what is on their mind before you sit down.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fd);font-size:36px;font-weight:800;color:var(--teal);line-height:1">02</div>
+        <div>
+          <div style="font-weight:600;color:var(--ink);font-size:14px;margin-bottom:5px;font-family:var(--fd)">Prepare your people data</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">What are the relevant HR metrics for this conversation? Turnover rate, compa-ratio, vacancy days, programme delivery rate, team engagement signals? Have the numbers ready, translated into business impact language. Do not read from a spreadsheet — know your numbers.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fd);font-size:36px;font-weight:800;color:var(--teal);line-height:1">03</div>
+        <div>
+          <div style="font-weight:600;color:var(--ink);font-size:14px;margin-bottom:5px;font-family:var(--fd)">Identify the one thing</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">What is the single most important people issue the business faces right now in this leader's area? Not three things, not five. One. Focus creates impact. Come in with clarity. The Myanmar succession risk, the driller pipeline gap, the trainee attrition — pick the one that matters most and lead with it.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fd);font-size:36px;font-weight:800;color:var(--teal);line-height:1">04</div>
+        <div>
+          <div style="font-weight:600;color:var(--ink);font-size:14px;margin-bottom:5px;font-family:var(--fd)">Prepare two or three options</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">For every issue you raise, bring options — not just a problem. Option A: fast and expensive. Option B: slower but lower cost. Option C: the one you actually recommend. Explain the trade-offs briefly and state your recommendation clearly. Let the leader decide — but give them something to decide between, not a problem to solve alone.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fd);font-size:36px;font-weight:800;color:var(--teal);line-height:1">05</div>
+        <div>
+          <div style="font-weight:600;color:var(--ink);font-size:14px;margin-bottom:5px;font-family:var(--fd)">Know what you need from them</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Every HRBP meeting should end with a clear ask. Do you need a decision? An approval? Information? Access to a team? A budget sign-off? Know your ask before you walk in, and do not leave without it. Ambiguous endings produce no action.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px;background:var(--ink);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fd);font-size:36px;font-weight:800;color:var(--teal3);line-height:1">06</div>
+        <div>
+          <div style="font-weight:600;color:#f5f5f2;font-size:14px;margin-bottom:5px;font-family:var(--fd)">Follow up in writing within 24 hours</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.8">Send a brief follow-up note within 24 hours confirming what was discussed, what was decided, and what the next action is. This is the professional behaviour that builds trust. It also creates a record that protects both parties — and demonstrates that you treat the conversation as seriously as they should.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pre-Meeting Checklist</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px" id="checklist-grid"></div>
+    <div style="margin-top:14px;font-size:12.5px;color:var(--ink4);font-weight:300">Check each item before any significant leadership meeting. If you cannot check all six, prepare further before entering the room.</div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── NAV ───────────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── CALCULATORS ───────────────────────────────────────────────────────
+const fmt = n => '$' + Math.round(n).toLocaleString();
+
+function calcVacancy() {
+  const salary = parseFloat(document.getElementById('vc-salary').value) || 0;
+  const days = parseFloat(document.getElementById('vc-days').value) || 0;
+  const type = document.getElementById('vc-type').value;
+  if (!salary || !days) { document.getElementById('vc-result').style.display='none'; return; }
+
+  const dailyRate = salary / 260;
+  const lostProd = dailyRate * days * (type === 'site' ? 1.5 : type === 'leadership' ? 2.0 : 1.0);
+  const colCost = salary * (type === 'site' ? 0.18 : type === 'leadership' ? 0.25 : 0.12);
+  const adminCost = 800;
+  const total = lostProd + colCost + adminCost;
+
+  document.getElementById('vc-result').style.display = 'block';
+  document.getElementById('vc-total').textContent = fmt(total);
+  document.getElementById('vc-breakdown').innerHTML = [
+    ['Lost productivity (' + days + ' days)', fmt(lostProd)],
+    ['Colleague coverage cost', fmt(colCost)],
+    ['HR admin and advertising', fmt(adminCost)],
+    ['Daily cost of vacancy', fmt(total / days) + '/day', true],
+  ].map(([l,v,h]) => `<div class="calc-row ${h?'highlight':''}"><span>${l}</span><span>${v}</span></div>`).join('');
+}
+
+function calcAttrition() {
+  const salary = parseFloat(document.getElementById('ac-salary').value) || 0;
+  const grade = parseInt(document.getElementById('ac-grade').value) || 2;
+  if (!salary) { document.getElementById('ac-result').style.display='none'; return; }
+
+  const multipliers = {1:0.8, 2:1.2, 3:1.5, 4:1.8, 5:2.2};
+  const mult = multipliers[grade];
+  const total = salary * mult;
+  const recruitment = salary * 0.2;
+  const onboarding = salary * 0.15;
+  const lostProd = salary * (mult - 0.35);
+  const vacancy = salary * 0.05;
+
+  document.getElementById('ac-result').style.display = 'block';
+  document.getElementById('ac-total').textContent = fmt(total);
+  document.getElementById('ac-breakdown').innerHTML = [
+    ['Recruitment and selection', fmt(recruitment)],
+    ['Onboarding and training', fmt(onboarding)],
+    ['Lost productivity period', fmt(lostProd)],
+    ['Vacancy and coverage cost', fmt(vacancy)],
+    ['Cost as multiple of salary', (mult * 100).toFixed(0) + '% of base', true],
+  ].map(([l,v,h]) => `<div class="calc-row ${h?'highlight':''}"><span>${l}</span><span>${v}</span></div>`).join('');
+}
+
+function calcTraining() {
+  const invest = parseFloat(document.getElementById('tr-invest').value) || 0;
+  const count = parseFloat(document.getElementById('tr-count').value) || 0;
+  const attrReduction = parseFloat(document.getElementById('tr-attr').value) || 0;
+  const salary = parseFloat(document.getElementById('tr-salary').value) || 0;
+  if (!invest || !count || !attrReduction || !salary) { document.getElementById('tr-result').style.display='none'; return; }
+
+  const replaceCost = salary * 1.2;
+  const attrSaved = count * (attrReduction / 100);
+  const saving = attrSaved * replaceCost;
+  const roi = ((saving - invest) / invest * 100);
+  const payback = invest / (saving / 12);
+
+  document.getElementById('tr-result').style.display = 'block';
+  document.getElementById('tr-roi').textContent = (roi >= 0 ? '+' : '') + roi.toFixed(0) + '%';
+  document.getElementById('tr-breakdown').innerHTML = [
+    ['Attrition reduction (people)', attrSaved.toFixed(1) + ' fewer exits/yr'],
+    ['Replacement cost avoided', fmt(saving)],
+    ['Net benefit', fmt(saving - invest)],
+    ['Payback period', payback.toFixed(1) + ' months', true],
+  ].map(([l,v,h]) => `<div class="calc-row ${h?'highlight':''}"><span>${l}</span><span>${v}</span></div>`).join('');
+}
+
+function calcBadHire() {
+  const salary = parseFloat(document.getElementById('bh-salary').value) || 0;
+  const months = parseFloat(document.getElementById('bh-months').value) || 0;
+  if (!salary || !months) { document.getElementById('bh-result').style.display='none'; return; }
+
+  const salaryCost = salary * (months / 12);
+  const lostProd = salary * 0.4 * (months / 12);
+  const teamImpact = salary * 0.15;
+  const rehireCost = salary * 0.25;
+  const total = salaryCost + lostProd + teamImpact + rehireCost;
+
+  document.getElementById('bh-result').style.display = 'block';
+  document.getElementById('bh-total').textContent = fmt(total);
+  document.getElementById('bh-breakdown').innerHTML = [
+    ['Salary paid during tenure', fmt(salaryCost)],
+    ['Lost productivity (40% of salary)', fmt(lostProd)],
+    ['Team disruption and management time', fmt(teamImpact)],
+    ['Rehire and replacement cost', fmt(rehireCost)],
+    ['As multiple of annual salary', ((total/salary)*100).toFixed(0) + '% of salary', true],
+  ].map(([l,v,h]) => `<div class="calc-row ${h?'highlight':''}"><span>${l}</span><span>${v}</span></div>`).join('');
+}
+
+// ── CHECKLIST ─────────────────────────────────────────────────────────
+const checkItems = [
+  'I know the leader\'s top 3 priorities this quarter',
+  'I have the relevant people metrics ready — translated into business impact',
+  'I have identified the one most important people issue to raise',
+  'I have prepared at least two options with a clear recommendation',
+  'I know exactly what I need to ask for or decide in this meeting',
+  'I have a plan to follow up in writing within 24 hours',
+];
+
+function buildChecklist() {
+  const grid = document.getElementById('checklist-grid');
+  if (!grid) return;
+  grid.innerHTML = checkItems.map((item, i) => `
+    <label style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;cursor:pointer;transition:background .13s" onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background='var(--surface2)'">
+      <input type="checkbox" id="chk-${i}" style="margin-top:2px;accent-color:var(--teal);flex-shrink:0" onchange="updateChecklist()">
+      <span style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6">${item}</span>
+    </label>`).join('');
+}
+
+function updateChecklist() {
+  const total = checkItems.length;
+  const checked = document.querySelectorAll('[id^=chk-]:checked').length;
+  // Visual feedback could be added here
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildChecklist();
+});
+</script>
+</body>
+</html>

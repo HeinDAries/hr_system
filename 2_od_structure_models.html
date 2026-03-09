@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Org Structure Models — Valentis OD Tool 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3ef;--surface:#ffffff;--surface2:#f0ede7;--surface3:#e8e4dc;
+  --border:#ddd9d0;--border2:#ccc7bb;
+  --ink:#1c1a16;--ink2:#2e2c27;--ink3:#57534a;--ink4:#8a8478;--ink5:#b8b2a8;
+  --sienna:#9b3a1a;--sienna2:#b44420;--sienna3:#c44e28;--sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.22);
+  --slate:#2c3e50;--slate2:#34495e;--slate-dim:rgba(44,62,80,0.07);--slate-border:rgba(44,62,80,0.2);
+  --gold:#8a6914;--gold-dim:rgba(138,105,20,0.07);--gold-border:rgba(138,105,20,0.22);
+  --green:#2d6a4f;--green-dim:rgba(45,106,79,0.07);--green-border:rgba(45,106,79,0.22);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--sienna3),var(--sienna),rgba(155,58,26,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sienna3);background:rgba(155,58,26,0.12);border:1px solid rgba(155,58,26,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--sienna3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(155,58,26,0.15);border-color:rgba(155,58,26,0.35);color:#e8a07a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--sienna)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#e8a07a;display:block;margin-bottom:3px}
+
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--sienna);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--sienna)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:border-color .13s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--sienna);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-slate{background:var(--slate-dim);color:var(--slate);border:1px solid var(--slate-border)}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.sienna{background:var(--sienna-dim);border-color:var(--sienna);color:var(--sienna)}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+
+/* ORG CHART NODES */
+.org-wrap{padding:20px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;overflow-x:auto;margin:12px 0}
+.org-tree{display:flex;flex-direction:column;align-items:center;gap:0;min-width:600px}
+.org-row{display:flex;justify-content:center;gap:8px;position:relative;padding:8px 0}
+.org-node{padding:10px 14px;border-radius:3px;text-align:center;min-width:110px;position:relative;border:2px solid}
+.org-node-label{font-family:var(--fm);font-size:9px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;font-weight:600}
+.org-node-name{font-family:var(--fd);font-size:13px;font-weight:700;line-height:1.2}
+.org-node-sub{font-size:10px;font-weight:300;margin-top:2px;opacity:.7}
+.org-line-v{width:2px;height:20px;margin:0 auto;background:var(--border2)}
+.org-line-h{height:2px;background:var(--border2);position:absolute;top:0;left:50%;transform:translateX(-50%)}
+.org-connector{position:relative;width:100%;height:20px}
+.org-connector::before{content:'';position:absolute;top:0;left:50%;width:2px;height:100%;background:var(--border2);transform:translateX(-50%)}
+
+/* STRUCTURE MODEL CARDS */
+.model-card{border-radius:4px;overflow:hidden;margin-bottom:10px}
+.model-hdr{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:opacity .13s}
+.model-hdr:hover{opacity:.9}
+.model-tag{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.model-title{font-family:var(--fd);font-size:20px;font-weight:700}
+.model-body{display:none;border:1px solid;border-top:none;border-radius:0 0 4px 4px}
+.model-body.open{display:block}
+.model-inner{padding:20px 22px}
+
+/* DECISION TOOL */
+.decision-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px;color:#f5f0e8}
+.d-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:5px;display:block}
+.d-select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:8px 10px;color:#f5f0e8;font-family:var(--fm);font-size:12px;outline:none;width:100%}
+.d-select option{background:#2c3e50}
+.d-row{display:grid;gap:10px;margin-bottom:10px}
+.d-row-3{grid-template-columns:1fr 1fr 1fr}
+.d-row-2{grid-template-columns:1fr 1fr}
+.d-group{display:flex;flex-direction:column;gap:4px}
+.d-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:20px;margin-top:16px;display:none}
+.d-result-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#e8a07a;margin-bottom:8px}
+.d-result-body{font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.85}
+
+/* PULL QUOTE */
+.pull-quote{border-left:4px solid var(--sienna);padding:16px 20px;margin:16px 0;background:var(--sienna-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6;font-weight:400}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna)}
+
+/* SCENARIO TABS */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--sienna);border-bottom-color:var(--sienna);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+
+/* TRADEOFF TABLE */
+.tradeoff{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin:10px 0}
+.tradeoff-col{padding:16px}
+.tradeoff-hdr{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:10px}
+.tradeoff-item{display:flex;gap:8px;font-size:13px;font-weight:300;color:var(--ink3);line-height:1.7;margin-bottom:5px}
+.tradeoff-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:7px}
+
+/* VALENTIS BOX */
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px;color:#f5f0e8}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#e8a07a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f5f0e8;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.85}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-sienna{background:var(--sienna);color:#fff}
+.btn-sienna:hover{background:var(--sienna2)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">OD Tool 2 / 9</div>
+    <div class="sb-title">Org Structure<br><em>Models</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('why',this)"><span class="nav-num">01</span>Why Structure Matters</div>
+    <div class="nav-item" onclick="showPage('models',this)"><span class="nav-num">02</span>The Five Structure Models</div>
+    <div class="nav-item" onclick="showPage('tradeoffs',this)"><span class="nav-num">03</span>Structure Trade-offs</div>
+    <div class="nav-item" onclick="showPage('current',this)"><span class="nav-num">04</span>Valentis Current State</div>
+    <div class="nav-item" onclick="showPage('scenarios',this)"><span class="nav-num">05</span>Valentis Future Scenarios</div>
+    <div class="nav-item" onclick="showPage('design',this)"><span class="nav-num">06</span>Design Principles Applied</div>
+    <div class="nav-item" onclick="showPage('selector',this)"><span class="nav-num">07</span>Structure Selector Tool</div>
+    <div class="nav-item" onclick="showPage('recommendation',this)"><span class="nav-num">08</span>Valentis Recommendation</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Organisation Design &amp; Development</strong>
+      Tool 2 of 9 · Org Structure Models<br>
+      <span style="color:rgba(255,255,255,0.12)">Form follows function — structure follows strategy</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 WHY -->
+<div id="page-why" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">OD Tool 2 / 9 — Org Structure Models</div>
+    <h1 class="page-title">Org Structure<br><em>Models</em></h1>
+    <p class="page-desc">Structure is the skeleton of the organisation — it determines how authority flows, how work is coordinated, and where decisions get made. Choosing the wrong structure for your strategy is one of the most expensive mistakes a growing business can make.</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Organisations are not machines. They are living systems. Structure shapes behaviour far more than any policy, incentive, or leadership programme ever will."</p>
+    <cite>Henry Mintzberg — Structuring Organisations</cite>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Why Structure is a Strategic Decision</div>
+      <div class="card-body" style="margin-bottom:14px">Most organisations treat structure as a HR administration task — updating org charts, changing job titles, shifting reporting lines. This is a category error. Structure determines:</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:11px 14px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Where decisions get made.</strong> A centralised structure pushes decisions up. A decentralised one pushes them down. Neither is right or wrong — the question is which serves the strategy.</div>
+        <div style="padding:11px 14px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">How fast the organisation can move.</strong> Flat structures with wide spans make fast, context-specific decisions. Deep hierarchies make slow, consistent ones. Neither is universally superior.</div>
+        <div style="padding:11px 14px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">What gets prioritised.</strong> A functional structure prioritises functional excellence. A geographic structure prioritises local responsiveness. You cannot optimise for everything simultaneously.</div>
+        <div style="padding:11px 14px;border-left:3px solid var(--sienna);background:var(--sienna-dim);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Who has power.</strong> Structure is one of the most visible signals of organisational power. Changing structure changes who matters — and who knows it. This is why restructures are politically charged even when they are operationally sensible.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The Structure Selection Question</div>
+      <div class="card-body" style="margin-bottom:14px">Before choosing a structure, the HRBP must be able to answer five questions. If any of these cannot be answered clearly, the organisation is not ready to make a structural decision.</div>
+      <div style="display:grid;gap:5px;counter-reset:q">
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Q1 — Strategy</div>
+          <div style="font-size:13.5px;color:var(--ink2);font-style:italic;font-family:var(--fd)">"What does the business strategy require us to be best at in the next 3 years?"</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Q2 — Coordination</div>
+          <div style="font-size:13.5px;color:var(--ink2);font-style:italic;font-family:var(--fd)">"Where is cross-unit coordination most critical — and most difficult right now?"</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Q3 — Accountability</div>
+          <div style="font-size:13.5px;color:var(--ink2);font-style:italic;font-family:var(--fd)">"Who in the current structure is clearly accountable for the most important outcomes?"</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Q4 — Scale</div>
+          <div style="font-size:13.5px;color:var(--ink2);font-style:italic;font-family:var(--fd)">"What happens to coordination and decision speed if we add 20 more people — and a new country?"</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:4px">Q5 — People</div>
+          <div style="font-size:13.5px;color:var(--ink2);font-style:italic;font-family:var(--fd)">"Can we staff the structure we are designing — with people we have or can realistically get?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 MODELS -->
+<div id="page-models" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — The Five Structure Models</div>
+    <h1 class="page-title">The Five<br><em>Structure Models</em></h1>
+    <p class="page-desc">Every organisation is some variant of five structural archetypes. Understanding all five — their logic, their strengths, and their failure modes — is the prerequisite for making a sound structural recommendation.</p>
+  </div>
+
+  <div style="display:grid;gap:8px">
+
+    <!-- FUNCTIONAL -->
+    <div class="model-card">
+      <div class="model-hdr" style="background:var(--slate)" onclick="toggleModel('m1')">
+        <div>
+          <div class="model-tag" style="color:rgba(255,255,255,0.4);margin-bottom:4px">Model 01</div>
+          <div class="model-title" style="color:#f5f0e8">Functional Structure</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3)">Organised by: Discipline</span>
+          <span style="font-family:var(--fm);font-size:18px;color:rgba(255,255,255,0.3)" id="mtog-m1">+</span>
+        </div>
+      </div>
+      <div class="model-body" id="mbody-m1" style="border-color:var(--slate-border);background:var(--slate-dim)">
+        <div class="model-inner">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--slate);margin-bottom:6px">What it looks like</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Groups people by function — Operations, Finance, HR, Sales. Each function has a head who reports to the CEO/COO. Coordination happens at the top. Classic structure for organisations where functional excellence is the competitive advantage.</div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Strengths</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Deep functional expertise</div>
+                <div>— Clear career paths within functions</div>
+                <div>— Economies of scale within functions</div>
+                <div>— Simple, legible reporting lines</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Failure Modes</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Silos: functions optimise for themselves</div>
+                <div>— Slow cross-functional coordination</div>
+                <div>— CEO/COO becomes a bottleneck</div>
+                <div>— Accountability for outcomes diffused</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3)"><strong style="color:var(--gold)">Best for:</strong> Single-product, single-market businesses where functional excellence is the competitive moat. Not well suited to multi-country, multi-site operations where local responsiveness matters.</div>
+          <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);margin-top:6px"><strong style="color:var(--red)">Valentis verdict:</strong> Wrong model for Valentis. The work is fundamentally geographic — each country site has distinct regulatory, cultural, and operational requirements that cannot be effectively managed through a functional lens.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIVISIONAL -->
+    <div class="model-card">
+      <div class="model-hdr" style="background:var(--sienna)" onclick="toggleModel('m2')">
+        <div>
+          <div class="model-tag" style="color:rgba(255,255,255,0.5);margin-bottom:4px">Model 02</div>
+          <div class="model-title" style="color:#f5f0e8">Divisional / Geographic Structure</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.4)">Organised by: Country / Region</span>
+          <span style="font-family:var(--fm);font-size:18px;color:rgba(255,255,255,0.4)" id="mtog-m2">+</span>
+        </div>
+      </div>
+      <div class="model-body" id="mbody-m2" style="border-color:var(--sienna-border);background:var(--sienna-dim)">
+        <div class="model-inner">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:6px">What it looks like</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Groups people by geography, product, or customer segment — each division is largely self-contained with its own operations, P&L, and leadership. A small central function provides group oversight. This is the natural structure for multi-country operators.</div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Strengths</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Clear country/division P&L accountability</div>
+                <div>— Local responsiveness and context-sensitivity</div>
+                <div>— Manageable spans at group level</div>
+                <div>— Develops general managers with broad accountability</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Failure Modes</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Duplication of shared functions</div>
+                <div>— Inconsistent standards across divisions</div>
+                <div>— Divisions become fiefdoms — resist group oversight</div>
+                <div>— Loss of economies of scale</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3)"><strong style="color:var(--gold)">Best for:</strong> Multi-country or multi-product businesses where local conditions vary significantly and local accountability is the primary performance driver. The natural home for mineral exploration operators.</div>
+          <div style="padding:10px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink3);margin-top:6px"><strong style="color:var(--green)">Valentis verdict:</strong> The right structural model for Valentis — now and for the foreseeable future. The question is not whether to use this model, but how to evolve it as the group grows from 4 to 5+ countries.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATRIX -->
+    <div class="model-card">
+      <div class="model-hdr" style="background:var(--gold)" onclick="toggleModel('m3')">
+        <div>
+          <div class="model-tag" style="color:rgba(255,255,255,0.5);margin-bottom:4px">Model 03</div>
+          <div class="model-title" style="color:#fff">Matrix Structure</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.5)">Organised by: Function × Geography</span>
+          <span style="font-family:var(--fm);font-size:18px;color:rgba(255,255,255,0.4)" id="mtog-m3">+</span>
+        </div>
+      </div>
+      <div class="model-body" id="mbody-m3" style="border-color:var(--gold-border);background:var(--gold-dim)">
+        <div class="model-inner">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">What it looks like</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">People have two reporting lines — one to a functional head (e.g. Head of Drilling Operations) and one to a geographic head (e.g. Indonesia Site Manager). In theory, this captures both functional excellence and local responsiveness. In practice, it is extremely difficult to manage well.</div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Strengths</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Combines functional depth with geographic breadth</div>
+                <div>— Efficient use of scarce specialists</div>
+                <div>— Enables cross-geography sharing of practice</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Failure Modes</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— "Who is my real boss?" — chronic confusion</div>
+                <div>— Priority conflicts resolved politically, not logically</div>
+                <div>— Requires exceptional interpersonal skills at every level</div>
+                <div>— Very high coordination overhead</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3)"><strong style="color:var(--gold)">Best for:</strong> Large, mature organisations with strong management systems, high leadership capability, and deep cultural investment in collaborative working. Typically: global consultancies, large engineering firms, multinationals.</div>
+          <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);margin-top:6px"><strong style="color:var(--red)">Valentis verdict:</strong> Wrong for Valentis at current scale. A matrix requires governance sophistication and leadership maturity that Valentis is still developing. The Indonesia resistance dynamic shows that even a clean single reporting line is contested — adding a second would compound that significantly.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLAT / NETWORK -->
+    <div class="model-card">
+      <div class="model-hdr" style="background:var(--green)" onclick="toggleModel('m4')">
+        <div>
+          <div class="model-tag" style="color:rgba(255,255,255,0.5);margin-bottom:4px">Model 04</div>
+          <div class="model-title" style="color:#fff">Flat / Network Structure</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.5)">Organised by: Minimal hierarchy</span>
+          <span style="font-family:var(--fm);font-size:18px;color:rgba(255,255,255,0.4)" id="mtog-m4">+</span>
+        </div>
+      </div>
+      <div class="model-body" id="mbody-m4" style="border-color:var(--green-border);background:var(--green-dim)">
+        <div class="model-inner">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">What it looks like</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Removes as many layers as possible. Few or no middle managers. Teams self-organise around work. Relies heavily on cultural alignment, individual initiative, and strong communication systems. Works in small, high-trust teams with a shared mission.</div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Strengths</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Fast decisions, minimal overhead</div>
+                <div>— High engagement and ownership</div>
+                <div>— Low management cost</div>
+                <div>— Suits highly skilled, autonomous teams</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Failure Modes</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Falls apart past 30–40 people</div>
+                <div>— Informal hierarchy replaces formal — less accountable</div>
+                <div>— Safety-critical environments need clear authority</div>
+                <div>— Career progression disappears — attrition rises</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);margin-top:6px"><strong style="color:var(--red)">Valentis verdict:</strong> Valentis is already operating with a relatively flat structure (3 layers). The risk is that at 65 FTE, the remaining informal coordination mechanisms break down. Adding structure — not removing it — is the right direction of travel.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HYBRID -->
+    <div class="model-card">
+      <div class="model-hdr" style="background:var(--ink2)" onclick="toggleModel('m5')">
+        <div>
+          <div class="model-tag" style="color:rgba(255,255,255,0.4);margin-bottom:4px">Model 05</div>
+          <div class="model-title" style="color:#f5f0e8">Hybrid Structure</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3)">Organised by: Context-specific combination</span>
+          <span style="font-family:var(--fm);font-size:18px;color:rgba(255,255,255,0.3)" id="mtog-m5">+</span>
+        </div>
+      </div>
+      <div class="model-body" id="mbody-m5" style="border-color:var(--border);background:var(--surface2)">
+        <div class="model-inner">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">What it looks like</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">A combination of models — for example, a geographic divisional structure for operations with a functional centre of excellence for shared services. Most real-world organisations are hybrids — the discipline is in making the combination deliberate rather than accidental.</div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Strengths</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Tailored to the actual business model</div>
+                <div>— Can balance local and group priorities</div>
+                <div>— Allows shared functions without full matrix</div>
+                <div>— Evolves as the business evolves</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Failure Modes</div>
+              <div style="display:grid;gap:4px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+                <div>— Accidental hybrids lack intentional design</div>
+                <div>— "Who owns this?" gaps at the boundaries</div>
+                <div>— Harder to explain and communicate clearly</div>
+                <div>— Requires mature governance to prevent confusion</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:10px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink3);margin-top:0"><strong style="color:var(--sienna)">Valentis verdict:</strong> The recommended future-state structure for Valentis is a deliberate hybrid — geographic divisional for country operations, with a small group-level function for cross-country shared standards (HR, HSE, Finance). See Section 08 for the full recommendation.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 03 TRADEOFFS -->
+<div id="page-tradeoffs" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Structure Trade-offs</div>
+    <h1 class="page-title">Structure<br><em>Trade-offs</em></h1>
+    <p class="page-desc">Every structural choice involves trade-offs. There is no structure that optimises everything simultaneously. The HRBP's job is not to find the perfect structure — it is to make the right trade-offs for the strategy, transparently and consciously.</p>
+  </div>
+
+  <div class="info sienna"><strong>The Fundamental Tension</strong>Every structural design sits on a spectrum between two competing imperatives: <strong>integration</strong> (coordinating across units) and <strong>differentiation</strong> (allowing units to adapt to their context). More integration means more consistency but less local responsiveness. More differentiation means more local fit but less coherence. Valentis needs both — and the design must navigate this tension deliberately.</div>
+
+  <div class="card">
+    <div class="card-title">The Core Structural Trade-offs</div>
+    <div style="display:grid;gap:8px;margin-top:8px">
+
+      <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+        <div style="padding:12px 16px;background:var(--ink);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:#f5f0e8">Centralisation vs Decentralisation</div>
+          <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3)">Where decisions are made</div>
+        </div>
+        <div class="tradeoff">
+          <div class="tradeoff-col" style="background:var(--slate-dim);border-right:1px solid var(--border)">
+            <div class="tradeoff-hdr" style="color:var(--slate)">Centralised → Consistency</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Group standards enforced uniformly</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Economies of scale in shared functions</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Clear group-level governance</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>Slow response to local conditions</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>Demotivates capable local leaders</div>
+          </div>
+          <div class="tradeoff-col" style="background:var(--sienna-dim)">
+            <div class="tradeoff-hdr" style="color:var(--sienna)">Decentralised → Responsiveness</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Fast, context-specific decisions</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Develops local leadership capability</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Engages and retains strong SMs</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>Inconsistent group standards</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>Indonesia SM situation — autonomy becomes resistance</div>
+          </div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border-top:1px solid var(--border);font-size:13px;color:var(--ink3)"><strong style="color:var(--sienna)">Valentis position:</strong> Currently too decentralised for a group that needs common standards. The recommended move is selective recentralisation — group standards for HR, HSE, and Finance; full local autonomy for operational delivery.</div>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+        <div style="padding:12px 16px;background:var(--ink);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:#f5f0e8">Wide Spans vs Narrow Spans</div>
+          <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3)">How many direct reports</div>
+        </div>
+        <div class="tradeoff">
+          <div class="tradeoff-col" style="background:var(--slate-dim);border-right:1px solid var(--border)">
+            <div class="tradeoff-hdr" style="color:var(--slate)">Wide Spans (6–10) → Autonomy</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Fewer layers, faster decisions</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Lower management cost</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Encourages self-direction</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>Manager overload — reduced coaching time</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>Works only with highly capable, self-sufficient reports</div>
+          </div>
+          <div class="tradeoff-col" style="background:var(--sienna-dim)">
+            <div class="tradeoff-hdr" style="color:var(--sienna)">Narrow Spans (3–5) → Oversight</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>More coaching and development time per report</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Better visibility of individual performance</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>More management layers required</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>Higher management overhead cost</div>
+          </div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border-top:1px solid var(--border);font-size:13px;color:var(--ink3)"><strong style="color:var(--sienna)">Valentis position:</strong> COO currently has 6 effective direct reports. At 5 countries + shared functions, this reaches 8+. The spans analysis (Tool 4) will quantify this precisely — but the directional answer is that the COO span needs structural relief before Country 5.</div>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+        <div style="padding:12px 16px;background:var(--ink);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:#f5f0e8">Standardisation vs Localisation</div>
+          <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3)">How much country flexibility</div>
+        </div>
+        <div class="tradeoff">
+          <div class="tradeoff-col" style="background:var(--slate-dim);border-right:1px solid var(--border)">
+            <div class="tradeoff-hdr" style="color:var(--slate)">Standardised → Coherence</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Consistent client experience and reporting</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Enables cross-country staff mobility</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Simpler group-level oversight</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>Misfit with local regulatory or cultural requirements</div>
+          </div>
+          <div class="tradeoff-col" style="background:var(--sienna-dim)">
+            <div class="tradeoff-hdr" style="color:var(--sienna)">Localised → Fit</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Adapts to country regulatory requirements</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--green)"></div>Culturally resonant people practices</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>Inconsistent group people standards</div>
+            <div class="tradeoff-item"><div class="tradeoff-dot" style="background:var(--red)"></div>Harder to move talent between countries</div>
+          </div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border-top:1px solid var(--border);font-size:13px;color:var(--ink3)"><strong style="color:var(--sienna)">Valentis position:</strong> Technical and safety standards must be standardised — non-negotiable for client relationships and risk management. HR practices should have a group framework with country-level adaptation. This is the OD Charter design principle: locally flexible, globally consistent.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 04 CURRENT STATE -->
+<div id="page-current" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Valentis Current State</div>
+    <h1 class="page-title">Current<br><em>State</em></h1>
+    <p class="page-desc">The current Valentis organisation — mapped, assessed, and evaluated against the demands of a 5-country growth strategy. Understanding exactly what we have is the prerequisite for designing what we need.</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">Valentis Group — Current Org Structure · March 2026</div>
+    <div class="vx-title">Geographic Divisional · 3 Layers · ~42 FTE</div>
+    <div class="vx-body">Four country sites each led by a Site Manager, all reporting directly to the COO. A lean group centre — CEO, COO, Group HR, Finance — provides oversight and shared services. This is a clean, simple structure that has served a business of this scale well.</div>
+  </div>
+
+  <!-- ORG CHART -->
+  <div class="card">
+    <div class="card-title">Current Org Chart — Valentis Group</div>
+    <div class="org-wrap">
+      <div class="org-tree">
+        <!-- CEO -->
+        <div class="org-row">
+          <div class="org-node" style="background:var(--slate);border-color:var(--slate);color:#f5f0e8;min-width:140px">
+            <div class="org-node-label" style="color:rgba(255,255,255,0.5)">G8</div>
+            <div class="org-node-name">CEO</div>
+          </div>
+        </div>
+        <div class="org-line-v"></div>
+        <!-- COO -->
+        <div class="org-row">
+          <div class="org-node" style="background:var(--sienna);border-color:var(--sienna);color:#fff;min-width:140px">
+            <div class="org-node-label" style="color:rgba(255,255,255,0.5)">G7</div>
+            <div class="org-node-name">COO</div>
+            <div class="org-node-sub">6 direct reports</div>
+          </div>
+        </div>
+        <div class="org-connector"></div>
+        <!-- Layer 2 -->
+        <div class="org-row" style="gap:6px">
+          <div class="org-node" style="background:var(--surface2);border-color:var(--sienna-border);min-width:120px">
+            <div class="org-node-label" style="color:var(--sienna)">G6</div>
+            <div class="org-node-name" style="font-size:12px">Group HR Mgr</div>
+            <div class="org-node-sub">Ba · Group</div>
+          </div>
+          <div class="org-node" style="background:var(--surface2);border-color:var(--border);min-width:110px">
+            <div class="org-node-label" style="color:var(--ink4)">G6</div>
+            <div class="org-node-name" style="font-size:12px">Finance Mgr</div>
+            <div class="org-node-sub">Group</div>
+          </div>
+          <div class="org-node" style="background:var(--sienna-dim);border-color:var(--sienna-border);min-width:110px">
+            <div class="org-node-label" style="color:var(--sienna)">G5</div>
+            <div class="org-node-name" style="font-size:12px">Myo H.</div>
+            <div class="org-node-sub">Myanmar SM ⚠</div>
+          </div>
+          <div class="org-node" style="background:var(--sienna-dim);border-color:var(--sienna-border);min-width:110px">
+            <div class="org-node-label" style="color:var(--sienna)">G5</div>
+            <div class="org-node-name" style="font-size:12px">Wirawan S.</div>
+            <div class="org-node-sub">Indonesia SM ⚠</div>
+          </div>
+          <div class="org-node" style="background:var(--surface2);border-color:var(--border);min-width:110px">
+            <div class="org-node-label" style="color:var(--ink4)">G5</div>
+            <div class="org-node-name" style="font-size:12px">Laos SM</div>
+            <div class="org-node-sub">Laos</div>
+          </div>
+          <div class="org-node" style="background:var(--green-dim);border-color:var(--green-border);min-width:110px">
+            <div class="org-node-label" style="color:var(--green)">G5</div>
+            <div class="org-node-name" style="font-size:12px">Thailand SM</div>
+            <div class="org-node-sub">Thailand ✓</div>
+          </div>
+        </div>
+        <!-- Layer 3 note -->
+        <div style="margin-top:10px;text-align:center;font-family:var(--fm);font-size:9px;color:var(--ink5);letter-spacing:1px">↓ G3/G4 Drillers + Trainees at each site (total ~36 field staff) ↓</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;padding-top:4px">
+      <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink4)"><div style="width:10px;height:10px;border-radius:2px;background:var(--sienna-dim);border:1px solid var(--sienna-border)"></div>Retention risk flagged</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink4)"><div style="width:10px;height:10px;border-radius:2px;background:var(--green-dim);border:1px solid var(--green-border)"></div>High-performing / reference site</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink4)"><span style="color:var(--red)">⚠</span> Active people risk</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What the Current Structure Does Well</div>
+      <div style="display:grid;gap:6px;margin-top:6px">
+        <div style="padding:11px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--green)">Clear country-level accountability.</strong> Each SM owns their country P&L, team, and programme delivery. No ambiguity about who is responsible for what. This is the most important design feature to preserve.</div>
+        <div style="padding:11px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--green)">Low coordination overhead.</strong> Three layers means information travels fast. The COO is close enough to site reality to make informed decisions. No bureaucracy between field and headquarters.</div>
+        <div style="padding:11px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--green)">Strong SM autonomy engages leaders.</strong> Thailand and Myanmar SMs are engaged precisely because they feel trusted and empowered. The structure has supported the retention of strong site leadership.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">What the Current Structure Cannot Support</div>
+      <div style="display:grid;gap:6px;margin-top:6px">
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--red)">A 5th country without COO span redesign.</strong> COO currently has 6 meaningful direct relationships (4 SMs + HR + Finance). Adding SM5 approaches the outer limit of effective management at this complexity level.</div>
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--red)">Cross-country practice sharing.</strong> There is no structural mechanism for SMs to share what works — Thailand's high-conversion trainee model does not naturally flow to Myanmar because there is no group-level coordination function.</div>
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--red)">HR at 65+ FTE / 5 countries.</strong> The single Group HR Manager role is not structurally viable at the next scale. The model needs to evolve — either a second HR role, or a fractional support model for each country.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 05 SCENARIOS -->
+<div id="page-scenarios" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Valentis Future Scenarios</div>
+    <h1 class="page-title">Future<br><em>Scenarios</em></h1>
+    <p class="page-desc">Three structural scenarios for Valentis — each a response to a different growth trajectory. The HRBP presents all three to the COO with the structural implications and a clear recommendation.</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('sc1',this)">Scenario A — Steady State</div>
+    <div class="tab" onclick="showTab('sc2',this)">Scenario B — Country 5 Entry</div>
+    <div class="tab" onclick="showTab('sc3',this)">Scenario C — Full Group Maturity</div>
+  </div>
+
+  <div class="tab-body active" id="tab-sc1">
+    <div class="card">
+      <div class="card-title">Scenario A — Steady State <em>(Current + Optimised)</em></div>
+      <div class="card-body" style="margin-bottom:16px">Continue operating in 4 countries with the current geographic divisional structure, but address the known structural gaps. No new country. Optimise what exists. This scenario is relevant if the Country 5 decision is delayed beyond Q1 2027.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:8px">Structural Changes Required</div>
+          <div style="display:grid;gap:5px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">
+            <div style="padding:8px 10px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px">Add a Group Operations Coordinator role (G5) to provide cross-country programme standards and reduce COO coordination load</div>
+            <div style="padding:8px 10px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px">Formalise HR role scope and add fractional country HR support (or second HR hire at G4)</div>
+            <div style="padding:8px 10px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px">Define formal SM peer forum — quarterly cross-country review chaired by COO</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Key Benefit</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">Low disruption. Builds the structural muscles (cross-country coordination, HR depth) that the business needs regardless of which growth scenario materialises. A low-risk structural upgrade.</div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:8px">Key Risk</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">If Country 5 is subsequently approved, this scenario will have been insufficient — and the structure will need redesign again under time pressure.</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:8px">Headcount Implication</div>
+          <div style="display:grid;gap:5px">
+            <div style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;text-align:center">
+              <div style="font-family:var(--fd);font-size:24px;font-weight:800;color:var(--sienna);line-height:1">+2</div>
+              <div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:3px;letter-spacing:.5px">New roles (Ops Coord + HR)</div>
+            </div>
+            <div style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;text-align:center">
+              <div style="font-family:var(--fd);font-size:24px;font-weight:800;color:var(--ink3);line-height:1">~44</div>
+              <div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:3px;letter-spacing:.5px">Total Group-level FTE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-sc2">
+    <div class="card">
+      <div class="card-title">Scenario B — Country 5 Entry <em>(Recommended Path)</em></div>
+      <div class="card-body" style="margin-bottom:16px">Expand to a 5th country by H1 2027 — but redesign the group structure before entering, not after. This requires addressing the COO span, the cross-country coordination gap, and the HR model in 2026 so that Country 5 is added into a structurally sound organisation.</div>
+      <div class="org-wrap">
+        <div class="org-tree">
+          <div class="org-row">
+            <div class="org-node" style="background:var(--slate);border-color:var(--slate);color:#f5f0e8;min-width:130px">
+              <div class="org-node-label" style="color:rgba(255,255,255,0.5)">G8</div>
+              <div class="org-node-name">CEO</div>
+            </div>
+          </div>
+          <div class="org-line-v"></div>
+          <div class="org-row">
+            <div class="org-node" style="background:var(--sienna);border-color:var(--sienna);color:#fff;min-width:180px">
+              <div class="org-node-label" style="color:rgba(255,255,255,0.5)">G7</div>
+              <div class="org-node-name">COO</div>
+              <div class="org-node-sub">Redesigned: 4 direct reports</div>
+            </div>
+          </div>
+          <div class="org-connector"></div>
+          <div class="org-row" style="gap:8px">
+            <div class="org-node" style="background:var(--surface2);border-color:var(--sienna-border);min-width:130px">
+              <div class="org-node-label" style="color:var(--sienna)">G6</div>
+              <div class="org-node-name" style="font-size:12px">Group HR Mgr</div>
+              <div class="org-node-sub">Ba · +1 HR support</div>
+            </div>
+            <div class="org-node" style="background:var(--surface2);border-color:var(--border);min-width:120px">
+              <div class="org-node-label" style="color:var(--ink4)">G6</div>
+              <div class="org-node-name" style="font-size:12px">Finance Mgr</div>
+            </div>
+            <div class="org-node" style="background:var(--sienna-dim);border-color:var(--sienna-border);min-width:140px">
+              <div class="org-node-label" style="color:var(--sienna)">NEW G6</div>
+              <div class="org-node-name" style="font-size:12px">Group Ops Lead</div>
+              <div class="org-node-sub">Cross-country standards</div>
+            </div>
+            <div class="org-node" style="background:var(--surface2);border-color:var(--border);min-width:120px">
+              <div class="org-node-label" style="color:var(--ink4)">G5</div>
+              <div class="org-node-name" style="font-size:12px">HSE Manager</div>
+              <div class="org-node-sub">Group-level</div>
+            </div>
+          </div>
+          <div style="margin:10px 0 6px;text-align:center;font-family:var(--fm);font-size:9px;color:var(--ink5)">↓ Group Ops Lead has dotted line to all 5 SMs for standards ↓</div>
+          <div class="org-row" style="gap:6px">
+            <div class="org-node" style="background:var(--surface2);border-color:var(--border);min-width:100px">
+              <div class="org-node-label" style="color:var(--ink4)">G5</div>
+              <div class="org-node-name" style="font-size:11px">Myanmar SM</div>
+            </div>
+            <div class="org-node" style="background:var(--surface2);border-color:var(--border);min-width:100px">
+              <div class="org-node-label" style="color:var(--ink4)">G5</div>
+              <div class="org-node-name" style="font-size:11px">Indonesia SM</div>
+            </div>
+            <div class="org-node" style="background:var(--surface2);border-color:var(--border);min-width:100px">
+              <div class="org-node-label" style="color:var(--ink4)">G5</div>
+              <div class="org-node-name" style="font-size:11px">Laos SM</div>
+            </div>
+            <div class="org-node" style="background:var(--green-dim);border-color:var(--green-border);min-width:100px">
+              <div class="org-node-label" style="color:var(--green)">G5</div>
+              <div class="org-node-name" style="font-size:11px">Thailand SM</div>
+            </div>
+            <div class="org-node" style="background:var(--sienna-dim);border-color:var(--sienna-border);min-width:100px;position:relative">
+              <div style="position:absolute;top:-8px;right:-4px;background:var(--sienna);color:#fff;font-family:var(--fm);font-size:7px;padding:1px 5px;border-radius:2px">NEW</div>
+              <div class="org-node-label" style="color:var(--sienna)">G5</div>
+              <div class="org-node-name" style="font-size:11px">Country 5 SM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px">
+        <div style="padding:12px 14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--green)">Key structural change:</strong> COO direct reports reduced from 6 to 4 by creating a Group Operations Lead role (G6) who provides cross-country standards and reduces coordination overhead. COO now manages 4 group functions — not 4 country SMs directly.</div>
+        <div style="padding:12px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:3px;font-size:13px;color:var(--ink2);font-weight:300;line-height:1.75"><strong style="color:var(--gold)">Critical dependency:</strong> The Group Operations Lead role requires a senior G4/G5 with multi-country experience and the trust of the SMs. The most natural candidate is internal — likely from the Thailand site. This role must be identified before Country 5 is contracted.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-sc3">
+    <div class="card">
+      <div class="card-title">Scenario C — Full Group Maturity <em>(65+ FTE · 2027–2028)</em></div>
+      <div class="card-body" style="margin-bottom:16px">The mature Valentis Group operating at full scale — 65+ FTE across 5+ countries, with a properly resourced group centre and clear separation between group oversight and country execution. This is the design target for 2028, not 2026.</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+        <div style="padding:16px;background:var(--slate);border-radius:4px;color:#f5f0e8">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px">Group Centre</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:300;line-height:1.75;display:grid;gap:4px">
+            <div>CEO</div>
+            <div>COO — 4 group functions</div>
+            <div>Group HR (2 FTE)</div>
+            <div>Group Finance</div>
+            <div>Group Ops Lead</div>
+            <div>Group HSE</div>
+          </div>
+        </div>
+        <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:6px">Country Operations (×5)</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;display:grid;gap:4px">
+            <div>Site Manager (G5)</div>
+            <div>Senior Driller G4 (×3 per site)</div>
+            <div>Driller G3 (×2–3 per site)</div>
+            <div>Trainee G1–G2 (×1–2 per site)</div>
+            <div>Site Admin / HSE Officer</div>
+          </div>
+        </div>
+        <div style="padding:16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:6px">Group Design Principles</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;display:grid;gap:4px">
+            <div>Lean group centre — no bureaucracy</div>
+            <div>SM full P&L accountability</div>
+            <div>Group Ops enforces standards only</div>
+            <div>HR embedded at group, advisory at country</div>
+            <div>Succession cover for every G5+ role</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px;font-size:13px;color:var(--ink2)"><strong style="color:var(--sienna)">Design logic:</strong> At 65+ FTE and 5 countries, the group centre must be large enough to provide genuine oversight and coordination without becoming a bureaucratic layer that slows the countries down. The Group Ops Lead role is the key innovation — it provides the coordination function without adding a management layer between the COO and the SMs.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 06 DESIGN PRINCIPLES APPLIED -->
+<div id="page-design" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Design Principles Applied</div>
+    <h1 class="page-title">Design Principles<br><em>Applied</em></h1>
+    <p class="page-desc">The five OD Charter design principles — applied to the Valentis structural scenarios. Every structural decision at Valentis must pass through these five filters before it is adopted.</p>
+  </div>
+
+  <div style="display:grid;gap:8px">
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:40px 1fr 1fr;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:var(--sienna);line-height:1">1</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:5px">Strategy-First</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Structure follows strategy — always. The Valentis strategy requires 5-country programme delivery, internal driller development, and margin protection as headcount scales. Every structural option is evaluated against these three requirements.</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:5px">Valentis Application</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Scenario B (Country 5 with Group Ops Lead) best serves the strategy — it enables 5-country delivery without COO overload, and the Group Ops Lead role directly supports the cross-country practice sharing that the driller development strategy requires.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:40px 1fr 1fr;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:var(--sienna);line-height:1">2</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:5px">Minimum Necessary Complexity</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The simplest structure that can execute the strategy is always preferred. At 65 FTE, the temptation is to add layers and functions. The discipline is to add only what is structurally necessary — and nothing else.</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:5px">Valentis Application</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Do not create a Country Director layer or a regional structure. Do not add functional COEs unless they are critical for shared standards. The Group Ops Lead is a coordinator, not a manager — it adds a function without adding a layer.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:40px 1fr 1fr;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:var(--sienna);line-height:1">3</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:5px">People-Grounded</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">No design is adopted without a clear view of whether it can be staffed. A structurally elegant design that cannot be staffed is not a design — it is a wish.</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:5px">Valentis Application</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Country 5 cannot open until the SM candidate is identified and on a development plan (Q3 2026 at earliest). Group Ops Lead must be recruited or developed before Scenario B is activated — not after. The structure waits for the people; the people do not scramble for the structure.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:40px 1fr 1fr;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:var(--sienna);line-height:1">4</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:5px">Designed for Transition</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The best final-state design is worthless if the organisation cannot get there. Every structural change includes a transition plan — including how it is communicated to SMs who may feel their autonomy is being constrained.</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:5px">Valentis Application</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The Indonesia SM will interpret any new Group Ops Lead role as a threat to his autonomy unless the role is positioned and introduced carefully. The transition plan must include a one-to-one conversation with each SM before the announcement — led by the COO, not just by HR.</div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:40px 1fr 1fr;gap:18px;align-items:start">
+      <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:var(--sienna);line-height:1">5</div>
+      <div>
+        <div style="font-weight:700;color:var(--ink);font-size:15px;margin-bottom:5px">Locally Flexible, Globally Consistent</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Group standards for safety, financial reporting, and HR are non-negotiable. Everything else — how work is scheduled, how teams are managed day-to-day, how communication happens on site — is locally determined.</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--sienna);margin-bottom:5px">Valentis Application</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The Group Ops Lead enforces three non-negotiables: safety standards, programme reporting format, and trainee development protocol. Everything else is the SM's domain. This boundary must be defined clearly and respected consistently — or the Indonesia SM's resistance will be justified.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07 SELECTOR -->
+<div id="page-selector" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Structure Selector Tool</div>
+    <h1 class="page-title">Structure<br><em>Selector</em></h1>
+    <p class="page-desc">An interactive tool to evaluate structural options for any Valentis growth scenario. Answer the five selection questions — receive a structural model recommendation with rationale.</p>
+  </div>
+
+  <div class="decision-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f5f0e8;margin-bottom:18px">Structure Selection — Answer 5 Questions</div>
+    <div class="d-row d-row-3">
+      <div class="d-group">
+        <label class="d-label">Primary competitive advantage</label>
+        <select class="d-select" id="q1">
+          <option value="geo">Geographic/local responsiveness</option>
+          <option value="func">Functional/technical excellence</option>
+          <option value="both">Both equally</option>
+        </select>
+      </div>
+      <div class="d-group">
+        <label class="d-label">Organisation size</label>
+        <select class="d-select" id="q2">
+          <option value="small">Under 50 FTE</option>
+          <option value="mid" selected>50–100 FTE</option>
+          <option value="large">100+ FTE</option>
+        </select>
+      </div>
+      <div class="d-group">
+        <label class="d-label">Geographic spread</label>
+        <select class="d-select" id="q3">
+          <option value="single">Single country</option>
+          <option value="multi" selected>Multi-country (2–5)</option>
+          <option value="global">Global (6+ countries)</option>
+        </select>
+      </div>
+    </div>
+    <div class="d-row d-row-2">
+      <div class="d-group">
+        <label class="d-label">Leadership capability maturity</label>
+        <select class="d-select" id="q4">
+          <option value="low">Developing — limited management depth</option>
+          <option value="mid" selected>Moderate — strong in some areas</option>
+          <option value="high">High — experienced, self-directed leaders</option>
+        </select>
+      </div>
+      <div class="d-group">
+        <label class="d-label">Decision-making priority</label>
+        <select class="d-select" id="q5">
+          <option value="speed">Speed and local context</option>
+          <option value="consistency" selected>Consistency and group standards</option>
+          <option value="balance">Balance of both</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-sienna" onclick="runSelector()">Recommend Structure →</button>
+    <div class="d-result" id="sel-result">
+      <div class="d-result-title" id="sel-title"></div>
+      <div class="d-result-body" id="sel-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 08 RECOMMENDATION -->
+<div id="page-recommendation" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Valentis Recommendation</div>
+    <h1 class="page-title">Valentis<br><em>Recommendation</em></h1>
+    <p class="page-desc">The definitive structural recommendation for Valentis — what the HRBP presents to the COO. Based on the analysis in this tool, the trade-off review, and the design principles applied to the three scenarios.</p>
+  </div>
+
+  <div style="background:var(--ink);border-radius:6px;padding:36px 40px;margin-bottom:14px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-60px;right:-60px;width:240px;height:240px;border-radius:50%;background:rgba(155,58,26,0.06);pointer-events:none"></div>
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--sienna3);margin-bottom:10px;position:relative">HRBP Structural Recommendation · Valentis Group · 2026</div>
+    <div style="font-family:var(--fd);font-size:40px;font-weight:700;color:#f5f0e8;line-height:1;margin-bottom:8px;position:relative;letter-spacing:-.5px">Deliberate <span style="font-style:italic;color:var(--sienna3)">Hybrid</span><br>Geographic Model</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.4);font-weight:300;max-width:520px;line-height:1.9;position:relative">Geographic divisional structure for country operations. Small, lean group centre with functional coordination roles. No matrix, no regional layer, no additional hierarchy. The structure that enables Country 5 entry while protecting what already works.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Recommendation — In Full</div>
+    <table class="dtable" style="margin-top:8px">
+      <thead><tr><th>Design Element</th><th>Current State</th><th>Recommended Change</th><th>Why / Business Rationale</th><th>When</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">COO direct reports</td>
+          <td>6 (4 SMs + HR + Finance)</td>
+          <td>Reduce to 4 group functions. SMs report to COO via Group Ops Lead for standards; directly to COO for performance.</td>
+          <td>At 5 countries + group functions, COO span of 8+ is not manageable. Relief is needed before Country 5, not after.</td>
+          <td><span class="chip chip-sienna">Q3 2026</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">Group Ops Lead role</td>
+          <td>Does not exist</td>
+          <td>Create G6 Group Operations Lead — cross-country programme standards, best practice sharing, SM peer forum chair.</td>
+          <td>Without this role, Country 5 adds a 5th SM to an already strained COO span — and there is no mechanism for cross-country coordination.</td>
+          <td><span class="chip chip-sienna">Q3 2026</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">HR model</td>
+          <td>1 Group HR Manager (Group-level only)</td>
+          <td>Add 1 HR Coordinator (G4) to support country-level HR administration and compliance. Group HR Manager retains strategic scope.</td>
+          <td>At 65 FTE across 5 countries, solo Group HR is not viable. The second hire frees strategic HR capacity and provides country-level support.</td>
+          <td><span class="chip chip-gold">Q4 2026</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">Country 5 SM</td>
+          <td>Role does not exist — candidate in development</td>
+          <td>Identify internal candidate by Q3 2026. Put on 15-month development plan. Role activated at Country 5 contract signing.</td>
+          <td>The structure cannot go live before the person is ready. Development timeline drives the Country 5 entry timeline, not the other way around.</td>
+          <td><span class="chip chip-gold">Q3 2026 start</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--sienna)">SM peer forum</td>
+          <td>No formal mechanism</td>
+          <td>Quarterly SM forum — chaired by Group Ops Lead, attended by all SMs and HRBP. Agenda: programme metrics, shared challenges, best practice transfer.</td>
+          <td>Without a formal forum, Thailand's high-performing model does not reach Myanmar or Indonesia. Knowledge stays siloed at site level.</td>
+          <td><span class="chip chip-green">Q2 2026</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Presenting this to the COO — Three Things to Say</div>
+    <div style="display:grid;gap:8px;margin-top:6px">
+      <div style="padding:14px 18px;background:var(--surface2);border-left:4px solid var(--sienna);border-radius:0 4px 4px 0">
+        <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px">1. "The current structure works — but it will not survive Country 5."</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Frame it as proactive design, not criticism of the current state. The structure has served Valentis well at 42 FTE across 4 countries. The question is what it needs to become for 65 FTE across 5 — and whether we design that intentionally or inherit it by accident.</div>
+      </div>
+      <div style="padding:14px 18px;background:var(--surface2);border-left:4px solid var(--sienna);border-radius:0 4px 4px 0">
+        <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px">2. "I am not proposing more management layers. I am proposing better coordination."</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The Group Ops Lead is not a new layer between the COO and the SMs — it is a coordination function. SMs retain full operational autonomy. The COO retains direct performance accountability. The Ops Lead provides the glue between countries that currently does not exist.</div>
+      </div>
+      <div style="padding:14px 18px;background:var(--sienna-dim);border-left:4px solid var(--sienna);border-radius:0 4px 4px 0">
+        <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px">3. "I need two decisions from you today."</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">One: approval to begin the process of identifying the Group Ops Lead candidate and the Country 5 SM candidate. Two: commitment that Country 5 entry is contingent on both roles being filled — not on the contract timeline. These are the decisions that prevent the structure from being designed by crisis.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  var pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function showTab(id, el) {
+  document.querySelectorAll('.tab-body').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  var tb = document.getElementById('tab-' + id);
+  if (tb) tb.classList.add('active');
+  if (el) el.classList.add('active');
+}
+function toggleModel(id) {
+  var body = document.getElementById('mbody-' + id);
+  var tog  = document.getElementById('mtog-' + id);
+  var open = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  tog.textContent = open ? '+' : '−';
+}
+
+var RECS = {
+  geo_mid_multi:  { title:'Geographic Divisional (Hybrid)', body:'Your inputs match the Valentis profile precisely — a mid-size, multi-country operation where local responsiveness drives competitive advantage. The recommended structure is a Geographic Divisional model with a lean group centre providing shared functional support. Keep the structure flat: Site Manager → COO, with a Group Ops coordinator (not a management layer) enabling cross-country standards. Avoid the matrix — your leadership maturity is not yet at the level the matrix requires.' },
+  geo_small_multi:{ title:'Geographic Divisional — Simple', body:'At under 50 FTE across multiple countries, the current Valentis model (COO → SM → Drillers) is the right structure. Resist adding roles and layers before you need them. The priority is to optimise what exists — formalise the SM forum, define cross-country standards for safety and HR, and build the succession pipeline. Structural complexity should wait until the 50-FTE threshold is crossed.' },
+  geo_large_multi:{ title:'Geographic Divisional with Regional Layer', body:'At 100+ FTE across multiple countries, a regional management layer becomes viable — grouping similar countries under a Regional Director who reports to the COO. For Valentis, this would mean grouping Indonesia/Laos/Myanmar under a Southeast Asia Regional Director and Thailand separately. This design is for the 2028+ scenario — not recommended for 2026.' },
+  func_mid_single:{ title:'Functional Structure', body:'A functional structure suits a single-country business where technical excellence is the primary competitive driver. Group people by discipline — Operations, HR, Finance, Technical. This is not recommended for Valentis given its multi-country, geographically dispersed nature.' },
+  both_mid_multi: { title:'Hybrid Geographic-Functional', body:'When both functional excellence and geographic responsiveness matter equally, a deliberate hybrid is the right answer. The Valentis recommendation — geographic divisional for country operations, functional coordination roles at group level (HR, Ops, Finance) — is the right model. The key discipline is defining clearly what each function owns at group level vs what SMs own at country level.' },
+  default:        { title:'Geographic Divisional (Recommended Default)', body:'Based on your inputs, a geographic divisional structure best fits the organisational profile. For a multi-country operation, local accountability and responsiveness are typically the primary drivers of performance. Consider adding a small group-level function for shared standards (HR, safety, finance) while preserving full operational autonomy at the country level.' }
+};
+
+function runSelector() {
+  var q1 = document.getElementById('q1').value;
+  var q2 = document.getElementById('q2').value;
+  var q3 = document.getElementById('q3').value;
+  var key = q1 + '_' + q2 + '_' + q3;
+  var rec = RECS[key] || RECS['default'];
+  document.getElementById('sel-title').textContent = '→ Recommended: ' + rec.title;
+  document.getElementById('sel-body').textContent = rec.body;
+  document.getElementById('sel-result').style.display = 'block';
+}
+</script>
+</body>
+</html>
