@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merit and Increment Matrix — Valentis C&B Tool 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080c0f;--surface:#0c1217;--surface2:#111920;--surface3:#162028;
+  --border:#1c2d38;--border2:#243848;--border3:#2e4a5e;
+  --teal:#00bcd4;--teal2:#4dd0e1;--teal-dim:rgba(0,188,212,0.07);--teal-border:rgba(0,188,212,0.2);
+  --cyan:#00e5ff;--cyan-dim:rgba(0,229,255,0.05);
+  --green:#00c853;--green-dim:rgba(0,200,83,0.08);--green-border:rgba(0,200,83,0.2);
+  --yellow:#ffd600;--yellow-dim:rgba(255,214,0,0.07);--yellow-border:rgba(255,214,0,0.2);
+  --orange:#ff6d00;--orange-dim:rgba(255,109,0,0.08);--orange-border:rgba(255,109,0,0.2);
+  --red:#f44336;--red-dim:rgba(244,67,54,0.08);--red-border:rgba(244,67,54,0.2);
+  --text:#dde8ee;--text2:#6a8899;--text3:#344d5e;--text4:#1e3040;
+  --sidebar-w:264px;
+  --fd:'Syne',sans-serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'IBM Plex Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14px;line-height:1.6;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-accent{height:3px;background:linear-gradient(90deg,var(--teal),var(--cyan),transparent)}
+.sb-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border)}
+.sb-chip{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);background:var(--teal-dim);border:1px solid var(--teal-border);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:4px;letter-spacing:.5px}
+.sb-sub{font-size:11px;color:var(--text3)}
+.sb-section{padding:12px 10px 4px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text4);padding:0 10px;margin-bottom:5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .12s;color:var(--text3);font-size:12.5px;font-weight:500;margin-bottom:2px;border:1px solid transparent}
+.nav-item:hover{background:var(--surface2);color:var(--text2)}
+.nav-item.active{background:var(--teal-dim);border-color:var(--teal-border);color:var(--teal)}
+.nav-num{font-family:var(--fm);font-size:9px;color:var(--text4);width:22px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--teal)}
+.sb-footer{margin-top:auto;padding:14px;border-top:1px solid var(--border)}
+.sb-note{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:12px;font-size:11px;color:var(--text3)}
+.sb-note strong{display:block;color:var(--text2);margin-bottom:2px;font-family:var(--fm)}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:42px 52px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:46px;font-weight:800;color:var(--text);line-height:1;margin-bottom:10px;letter-spacing:.5px}
+.page-title span{color:var(--teal)}
+.page-desc{font-size:14px;color:var(--text2);max-width:580px;line-height:1.8;font-weight:300}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:26px;margin-bottom:16px;transition:border-color .12s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:.3px}
+.card-body{font-size:13.5px;color:var(--text2);line-height:1.8;font-weight:300}
+
+/* THE MATRIX */
+.matrix-wrap{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:16px}
+.matrix-topbar{background:var(--surface2);padding:14px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.matrix-topbar-title{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--text);letter-spacing:.3px}
+.matrix-grid{padding:24px;overflow-x:auto}
+.mx-table{border-collapse:collapse;width:100%;min-width:560px}
+.mx-table th{padding:10px 16px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;text-align:center;background:var(--surface2);border:1px solid var(--border)}
+.mx-table th.rating-head{color:var(--text2);width:120px;text-align:left}
+.mx-table th.band-head{color:var(--teal)}
+.mx-cell{padding:14px 12px;border:1px solid var(--border);text-align:center;font-family:var(--fm);font-size:14px;font-weight:600;letter-spacing:.5px;position:relative;cursor:default;transition:all .15s}
+.mx-cell:hover{border-color:var(--teal-border) !important;z-index:2}
+.mx-cell-label{padding:12px 16px;border:1px solid var(--border);vertical-align:middle;background:var(--surface2)}
+.mx-rating{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--text);display:block;margin-bottom:2px}
+.mx-rating-name{font-family:var(--fm);font-size:9px;color:var(--text3);letter-spacing:.5px}
+.mx-pct{font-size:18px;font-weight:600;display:block;line-height:1}
+.mx-note{font-family:var(--fb);font-size:10px;font-weight:300;margin-top:3px;display:block;line-height:1.3}
+.mx-cell.c-frozen{background:#0a0c0f;color:var(--text3) !important;border-color:var(--border) !important}
+.mx-cell.c-frozen .mx-pct{color:var(--text3)}
+.mx-cell.c-r1{background:rgba(244,67,54,0.06)}
+.mx-cell.c-r2{background:rgba(255,109,0,0.06)}
+.mx-cell.c-r3{background:var(--surface)}
+.mx-cell.c-r4{background:rgba(0,188,212,0.06)}
+.mx-cell.c-r5{background:rgba(0,200,83,0.08)}
+.pct-1{color:#f44336}
+.pct-2{color:#ff6d00}
+.pct-3{color:var(--teal)}
+.pct-4{color:#29b6f6}
+.pct-5{color:var(--green)}
+
+/* CALC */
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:16px}
+.calc-topbar{background:var(--surface2);padding:14px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.calc-topbar-title{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--text);letter-spacing:.3px}
+.calc-body{padding:26px}
+.calc-inputs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.calc-result-box{background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:14px}
+.crb-item{}
+.crb-label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.crb-value{font-family:var(--fd);font-size:32px;font-weight:700;line-height:1;color:var(--teal)}
+.crb-sub{font-family:var(--fm);font-size:10px;color:var(--text3);margin-top:4px}
+.calc-narrative{background:var(--surface3);border:1px solid var(--border2);border-radius:4px;padding:14px 18px;font-size:13.5px;color:var(--text2);line-height:1.7;font-weight:300}
+
+/* BUDGET */
+.budget-wrap{overflow-x:auto}
+.budget-table{border-collapse:collapse;width:100%;font-size:13px}
+.budget-table th{text-align:left;padding:9px 14px;background:var(--surface2);color:var(--text3);font-family:var(--fm);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:2px solid var(--border)}
+.budget-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;font-weight:300}
+.budget-table tr:last-child td{border-bottom:none}
+.budget-table tr:hover td{background:var(--surface2)}
+.budget-total{background:var(--teal-dim) !important;border-top:2px solid var(--teal-border) !important}
+.budget-total td{color:var(--teal) !important;font-weight:600 !important}
+
+/* SCENARIO */
+.scenario-tabs{display:flex;gap:2px;background:var(--surface2);border-radius:4px;padding:3px;border:1px solid var(--border);margin-bottom:18px;width:fit-content}
+.stab{padding:7px 18px;border-radius:3px;cursor:pointer;font-family:var(--fm);font-size:11px;font-weight:500;letter-spacing:.5px;color:var(--text3);transition:all .12s}
+.stab.active{background:var(--teal-dim);border:1px solid var(--teal-border);color:var(--teal)}
+.stab:hover:not(.active){color:var(--text2)}
+
+/* INFO */
+.info{border-radius:4px;padding:13px 16px;margin-bottom:14px;font-size:13.5px;line-height:1.75;border-left:3px solid;font-weight:300}
+.info.teal{background:var(--teal-dim);border-color:var(--teal);color:var(--teal2)}
+.info.yellow{background:var(--yellow-dim);border-color:var(--yellow);color:var(--yellow)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:#ef9a9a}
+.info.green{background:var(--green-dim);border-color:var(--green);color:#69f0ae}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:9px;font-weight:600;letter-spacing:.5px}
+.chip-teal{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-yellow{background:var(--yellow-dim);color:var(--yellow);border:1px solid var(--yellow-border)}
+.chip-orange{background:var(--orange-dim);color:var(--orange);border:1px solid var(--orange-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+
+/* FORM */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.form-label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+.form-input,.form-select{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:9px 12px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .12s;width:100%}
+.form-input:focus,.form-select:focus{border-color:var(--teal)}
+.form-select option{background:var(--surface2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:4px}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:all .12s}
+.btn-teal{background:var(--teal);color:#080c0f}
+.btn-teal:hover{background:var(--teal2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--border3);color:var(--text)}
+.btn-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+/* PRINT BLOCK */
+.print-block{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:26px;font-size:13px;line-height:1.8}
+.pfieldlabel{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:3px}
+.pfieldval{color:var(--text);font-size:13.5px;margin-bottom:14px;font-weight:300}
+.sig-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:26px}
+.sig-block{border-top:1px solid var(--border2);padding-top:10px}
+.sig-name{font-family:var(--fm);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+
+/* HR */
+hr.div{border:none;border-top:1px solid var(--border);margin:26px 0}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .matrix-wrap,.page.active .calc-wrap{animation:fadeUp .28s ease both}
+.page.active .card:nth-child(2){animation-delay:.06s}
+.page.active .card:nth-child(3){animation-delay:.12s}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px}
+
+/* LETTER BAR */
+.letter-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.letter-fill{height:100%;border-radius:3px;transition:width .5s}
+
+/* EXCEPTION FORM */
+.exception-form{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:20px;margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-accent"></div>
+  <div class="sb-logo">
+    <div class="sb-chip">C&amp;B Tool IV / VIII</div>
+    <div class="sb-title">Merit &amp; Increment Matrix</div>
+    <div class="sb-sub">Valentis Group · 2026 Cycle</div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('matrix',this)"><span class="nav-num">02</span>The Merit Matrix</div>
+    <div class="nav-item" onclick="showPage('calculator',this)"><span class="nav-num">03</span>Increase Calculator</div>
+    <div class="nav-item" onclick="showPage('budget',this)"><span class="nav-num">04</span>Budget Modelling</div>
+    <div class="nav-item" onclick="showPage('cycle',this)"><span class="nav-num">05</span>Review Cycle Guide</div>
+    <div class="nav-item" onclick="showPage('exceptions',this)"><span class="nav-num">06</span>Exceptions and Off-Matrix</div>
+    <div class="nav-item" onclick="showPage('communication',this)"><span class="nav-num">07</span>Communication Scripts</div>
+    <div class="nav-item" onclick="showPage('document',this)"><span class="nav-num">08</span>Generate Merit Letters</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Tool 4 / 8</strong>
+      Merit and Increment Matrix<br>
+      <span style="font-size:10px">Builds on: Tools 2 + 3<br>Feeds into: Tool 7 (TRS)</span>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- 01 OVERVIEW -->
+<div id="page-overview" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">C&amp;B Tool 4 — Merit and Increment Matrix</div>
+    <h1 class="page-title">Merit <span>&amp;</span><br>Increment Matrix</h1>
+    <p class="page-desc">The decision engine that translates PM ratings and compa-ratio positions into specific salary increase recommendations. Connects the performance review cycle (PM Tool 2) to the compensation structure (C&amp;B Tool 3).</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">How the Matrix Works</div>
+      <div class="card-body">Two inputs. One output.<br><br>
+        <strong style="color:var(--text)">Input 1 — Performance Rating (1–5)</strong><br>
+        From the PM system. Ratings drive the base percentage range. A Rating 5 employee receives a larger increase than a Rating 3 employee — even if both are at the same point in the band.<br><br>
+        <strong style="color:var(--text)">Input 2 — Compa-Ratio Zone</strong><br>
+        From Tool 3. An employee at the low end of their band receives a higher increase than an employee at the top — even at the same rating. This is the self-correcting mechanism that moves employees toward market over time.<br><br>
+        Together they produce a recommended increase percentage. Managers cannot override this without a written exception approved by HR and COO.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why This Approach</div>
+      <div style="display:grid;gap:10px;margin-top:4px">
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:5px">Removes Bias</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Without a matrix, salary increases are set by manager confidence and negotiation. Vocal employees get more. Quiet high performers get less. The matrix makes the same factors apply to everyone.</div>
+        </div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:5px">Controls Budget</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">A matrix makes the total merit cost predictable before the cycle starts. HR can model the budget at any distribution assumption and present the cost to leadership for approval.</div>
+        </div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:5px">Separates Rating from Pay</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Rating conversations stay clean. Managers discuss performance — not money. Salary discussions happen separately, anchored to the matrix. This is the key principle from the Total Rewards Framework.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Valentis Merit Budget — 2026</div>
+    <div class="card-body" style="margin-bottom:16px">The total merit pool is set at the start of the cycle by leadership. It constrains the total cost of all increases. The matrix distributes it based on performance and position.</div>
+    <div class="grid-4">
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--teal-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:4px">Merit Pool 2026</div>
+        <div style="font-family:var(--fd);font-size:36px;font-weight:800;color:var(--teal);line-height:1">4.5%</div>
+        <div style="font-family:var(--fm);font-size:10px;color:var(--text3);margin-top:4px">of total payroll</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Eligible Headcount</div>
+        <div style="font-family:var(--fd);font-size:36px;font-weight:800;color:var(--text);line-height:1">24</div>
+        <div style="font-family:var(--fm);font-size:10px;color:var(--text3);margin-top:4px">of 28 employees</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Effective Date</div>
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--text);line-height:1">1 Jan</div>
+        <div style="font-family:var(--fm);font-size:10px;color:var(--text3);margin-top:4px">2027 (next cycle)</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Approval Required</div>
+        <div style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--text);line-height:1.2">COO<br>CEO</div>
+        <div style="font-family:var(--fm);font-size:10px;color:var(--text3);margin-top:4px">above-matrix only</div>
+      </div>
+    </div>
+    <div class="info yellow"><strong>Who is not eligible in 2026?</strong>Employees on a PIP, employees in their first 6 months of employment, and employees in red-circle status (above band maximum). Red-circle employees may receive variable pay recognition but not a base increase.</div>
+  </div>
+</div>
+
+<!-- 02 MATRIX -->
+<div id="page-matrix" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — The Merit Matrix</div>
+    <h1 class="page-title">The Merit<br><span>Matrix</span></h1>
+    <p class="page-desc">Five performance ratings across four compa-ratio zones. Each cell shows the recommended increase percentage range for that combination. Use the Calculator (Section 03) to apply this to a specific employee.</p>
+  </div>
+
+  <div class="matrix-wrap">
+    <div class="matrix-topbar">
+      <div class="matrix-topbar-title">Valentis Merit Matrix — 2026</div>
+      <span class="chip chip-teal">Approved: COO Oct 2025</span>
+    </div>
+    <div class="matrix-grid">
+      <table class="mx-table">
+        <thead>
+          <tr>
+            <th class="rating-head">Performance Rating</th>
+            <th class="band-head">Low Zone<br><span style="font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:.5px">Compa &lt;95%</span></th>
+            <th class="band-head">At Market<br><span style="font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:.5px">95–105%</span></th>
+            <th class="band-head">High Zone<br><span style="font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:.5px">105–120%</span></th>
+            <th class="band-head">Red Circle<br><span style="font-family:var(--fm);font-size:8px;color:var(--text3);letter-spacing:.5px">Above 120%</span></th>
+          </tr>
+        </thead>
+        <tbody id="matrix-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">How to Read the Matrix</div>
+      <div class="card-body">Find the employee's performance rating in the left column. Find their compa-ratio zone across the top. The cell shows the recommended increase range as a percentage of current base salary.<br><br>The range (e.g. 6–8%) gives the manager discretion within the cell. Use the lower end for employees who are solid performers at that rating. Use the upper end for those at the top of the rating band who are close to a promotion or have taken on scope beyond their grade.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Matrix Design Principles</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:10px 14px;background:var(--surface2);border-left:3px solid var(--teal);border-radius:0 4px 4px 0;font-size:13px;color:var(--text2);font-weight:300">Employees below market (low compa) always receive higher increases than employees above market — regardless of rating</div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:3px solid var(--green);border-radius:0 4px 4px 0;font-size:13px;color:var(--text2);font-weight:300">Rating 1 and 2 employees receive 0% regardless of band position — performance must be addressed, not compensated</div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:3px solid var(--yellow);border-radius:0 4px 4px 0;font-size:13px;color:var(--text2);font-weight:300">Red-circle employees (above max) receive 0% base increase regardless of rating — performance is recognised via bonus only</div>
+        <div style="padding:10px 14px;background:var(--surface2);border-left:3px solid var(--orange);border-radius:0 4px 4px 0;font-size:13px;color:var(--text2);font-weight:300">Increases above the matrix ceiling require written justification and COO approval</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Rating Distribution Context</div>
+    <div class="card-body" style="margin-bottom:16px">Expected distribution from PM Tool 1. The matrix is calibrated so the total cost of increases at the expected distribution stays within the 4.5% merit pool.</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px">
+      <div style="padding:14px;background:rgba(244,67,54,.06);border:1px solid var(--red-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--red)">1</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--red);margin-top:4px">Unsatisfactory</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--text2);margin-top:8px">0–5%</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--text3)">of workforce</div>
+      </div>
+      <div style="padding:14px;background:rgba(255,109,0,.06);border:1px solid var(--orange-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--orange)">2</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--orange);margin-top:4px">Needs Improvement</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--text2);margin-top:8px">10–15%</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--text3)">of workforce</div>
+      </div>
+      <div style="padding:14px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal)">3</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--teal);margin-top:4px">Meets Expectations</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--text2);margin-top:8px">50–60%</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--text3)">of workforce</div>
+      </div>
+      <div style="padding:14px;background:rgba(41,182,246,.06);border:1px solid rgba(41,182,246,.2);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:#29b6f6">4</div>
+        <div style="font-family:var(--fm);font-size:9px;color:#29b6f6;margin-top:4px">Strong Performance</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--text2);margin-top:8px">20–25%</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--text3)">of workforce</div>
+      </div>
+      <div style="padding:14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:4px;text-align:center">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--green)">5</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--green);margin-top:4px">Exceptional</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--text2);margin-top:8px">5–10%</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--text3)">of workforce</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 CALCULATOR -->
+<div id="page-calculator" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Increase Calculator</div>
+    <h1 class="page-title">Increase<br><span>Calculator</span></h1>
+    <p class="page-desc">Enter an employee to get the matrix-recommended increase range, the resulting new salary, and a ready-to-use narrative for the merit conversation.</p>
+  </div>
+
+  <div class="calc-wrap">
+    <div class="calc-topbar">
+      <div class="calc-topbar-title">Merit Increase Calculator</div>
+      <span class="chip chip-teal">Live</span>
+    </div>
+    <div class="calc-body">
+      <div class="calc-inputs">
+        <div class="form-group">
+          <div class="form-label">Employee Name</div>
+          <input class="form-input" id="ic-name" placeholder="e.g. Ahmad R." oninput="calcIncrease()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">Performance Rating (1–5)</div>
+          <select class="form-select" id="ic-rating" onchange="calcIncrease()">
+            <option value="5">5 — Exceptional</option>
+            <option value="4" selected>4 — Strong Performance</option>
+            <option value="3">3 — Meets Expectations</option>
+            <option value="2">2 — Needs Improvement</option>
+            <option value="1">1 — Unsatisfactory</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Current Annual Salary (USD)</div>
+          <input class="form-input" type="number" id="ic-salary" value="38000" oninput="calcIncrease()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">Band Midpoint (USD)</div>
+          <input class="form-input" type="number" id="ic-midpoint" value="38000" oninput="calcIncrease()">
+        </div>
+      </div>
+
+      <div class="calc-result-box" id="ic-results">
+        <div class="crb-item">
+          <div class="crb-label">Compa-Ratio</div>
+          <div class="crb-value" id="ic-compa">100%</div>
+          <div class="crb-sub" id="ic-zone">At Market</div>
+        </div>
+        <div class="crb-item">
+          <div class="crb-label">Matrix Range</div>
+          <div class="crb-value" id="ic-range" style="font-size:24px">4–6%</div>
+          <div class="crb-sub">recommended</div>
+        </div>
+        <div class="crb-item">
+          <div class="crb-label">New Salary (Midpoint)</div>
+          <div class="crb-value" id="ic-new-salary">$39,900</div>
+          <div class="crb-sub" id="ic-increase-amt">+$1,900</div>
+        </div>
+        <div class="crb-item">
+          <div class="crb-label">New Compa-Ratio</div>
+          <div class="crb-value" id="ic-new-compa">105%</div>
+          <div class="crb-sub" id="ic-new-zone">At Market</div>
+        </div>
+      </div>
+
+      <div class="calc-narrative" id="ic-narrative">Enter employee details above to generate the merit narrative.</div>
+
+      <div class="btn-row">
+        <button class="btn btn-teal" onclick="generateLetter()">Generate Merit Letter</button>
+        <button class="btn btn-ghost" onclick="resetCalc()">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 04 BUDGET -->
+<div id="page-budget" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Budget Modelling</div>
+    <h1 class="page-title">Merit Budget<br><span>Modelling</span></h1>
+    <p class="page-desc">Model the total cost of the merit cycle under different rating distribution scenarios before presenting to leadership for approval. Shows total cost as a percentage of payroll.</p>
+  </div>
+
+  <div class="scenario-tabs">
+    <div class="stab active" onclick="showScenario('conservative',this)">Conservative</div>
+    <div class="stab" onclick="showScenario('expected',this)">Expected</div>
+    <div class="stab" onclick="showScenario('generous',this)">Generous</div>
+  </div>
+
+  <div id="budget-scenario-card"></div>
+
+  <div class="card">
+    <div class="card-title">Budget Modelling — All Scenarios</div>
+    <div class="card-body" style="margin-bottom:16px">The merit pool is 4.5% of total payroll. Scenarios model what happens if rating distributions are more conservative or more generous than expected. Use this to set manager expectations before calibration.</div>
+    <table class="budget-table">
+      <thead><tr><th>Scenario</th><th>R1 %</th><th>R2 %</th><th>R3 %</th><th>R4 %</th><th>R5 %</th><th>Avg Increase</th><th>Cost vs Pool</th><th>Within Budget?</th></tr></thead>
+      <tbody id="budget-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="info teal"><strong>Calibration Target</strong>The merit calibration session (Section 05) should target the Expected scenario. If calibration sessions result in a rating distribution that would exceed the budget, HR has the authority to request re-calibration before increases are finalised.</div>
+</div>
+
+<!-- 05 CYCLE -->
+<div id="page-cycle" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Review Cycle Guide</div>
+    <h1 class="page-title">Review Cycle<br><span>Guide</span></h1>
+    <p class="page-desc">The end-to-end process for the annual merit cycle — from the performance calibration session through to salary letters being signed and filed.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2026 Merit Cycle Timeline</div>
+    <div style="display:grid;gap:3px;margin-top:8px">
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--teal)">Nov Wk 1–2</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px">Self-Assessments and Manager Reviews Completed</div><div style="font-size:13px;color:var(--text2);font-weight:300">All employees submit self-assessments using PM Tool 2. Managers complete their assessments. Deadline is firm — no extensions without HR approval.</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--teal)">Nov Wk 3</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px">Calibration Session — COO and HR</div><div style="font-size:13px;color:var(--text2);font-weight:300">HR presents draft rating distribution to COO. Outliers are discussed — any Rating 5 must be justified with specific examples. Any Rating 1 or 2 must have a documented performance history. Ratings are finalised.</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--teal)">Nov Wk 4</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px">Matrix Applied — Merit Increases Calculated</div><div style="font-size:13px;color:var(--text2);font-weight:300">HR uses the matrix to calculate recommended increases for all eligible employees. Total cost is checked against the 4.5% pool. Any exceptions are flagged and written justifications are prepared.</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--teal)">Dec Wk 1</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px">CEO Approval — Total Merit Cost</div><div style="font-size:13px;color:var(--text2);font-weight:300">HR presents the full merit cost to CEO for final approval. All above-matrix exceptions require individual CEO approval at this stage. Budget must not be exceeded without explicit CEO sign-off.</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--teal)">Dec Wk 2</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px">Merit Conversations — Managers Deliver</div><div style="font-size:13px;color:var(--text2);font-weight:300">Managers hold merit conversations with each employee. They communicate the rating and the increase. They do not share what others received. Scripts are in Section 07. HR coaches managers before this week.</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--teal)">Dec Wk 3</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px">Salary Letters Signed and Filed</div><div style="font-size:13px;color:var(--text2);font-weight:300">Merit letters (Section 08) signed by employee and HR. New salary effective 1 January. Letters filed in HR system. Payroll updated by HR — not by managers.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 06 EXCEPTIONS -->
+<div id="page-exceptions" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Exceptions and Off-Matrix</div>
+    <h1 class="page-title">Exceptions<br><span>and Off-Matrix</span></h1>
+    <p class="page-desc">Situations where the standard matrix does not apply, or where a deviation is being requested. Every exception requires written documentation and the appropriate level of approval.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Valid Exception Grounds</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:12px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:4px">Market Adjustment</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">External market has moved significantly for a specific role (typically 10%+ gap to P50). Requires market data evidence. Approved by COO.</div>
+        </div>
+        <div style="padding:12px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:4px">Retention Risk</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Employee has a credible competing offer or is demonstrably being targeted. Requires documentary evidence. CEO approval required for Retention Bonus designation.</div>
+        </div>
+        <div style="padding:12px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:4px">Equity Correction</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Internal equity analysis (Tool 3) has identified an unjustifiable pay gap for a long-tenured, high-performing employee. COO approval required.</div>
+        </div>
+        <div style="padding:12px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:4px">Promotion Adjustment</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Employee is simultaneously being promoted to a higher grade. The merit increase and promotion increase are calculated separately and documented as distinct actions.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Not Valid Exception Grounds</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Manager Relationship</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">A manager wants to reward an employee they value personally. The matrix applies equally to all. Favouritism via exception is the primary risk a merit matrix is designed to eliminate.</div>
+        </div>
+        <div style="padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Verbal Commitment</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">A manager promised a salary increase verbally. This is a management error and is handled separately — the exception is not approved simply because a promise was made. The manager is coached.</div>
+        </div>
+        <div style="padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Perceived Unfairness</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">An employee believes their increase is too low. Unless they have evidence of a factual error in their rating or compa-ratio calculation, this is not an exception grounds. The matrix is the answer.</div>
+        </div>
+        <div style="padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:4px">Budget Pressure</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Requesting a below-matrix increase to save budget. Employees must receive at least the minimum matrix recommendation for their rating. Below-matrix is only permitted for Rating 1 and 2 (zero increase).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Exception Request Form</div>
+    <div class="exception-form">
+      <div class="form-row">
+        <div class="form-group"><div class="form-label">Employee Name</div><input class="form-input" id="ex-name" placeholder="Full name"></div>
+        <div class="form-group"><div class="form-label">Exception Type</div><select class="form-select" id="ex-type"><option value="">Select</option><option>Market Adjustment</option><option>Retention Risk</option><option>Equity Correction</option><option>Promotion Adjustment</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><div class="form-label">Matrix Recommendation</div><input class="form-input" id="ex-matrix" placeholder="e.g. 4–6%"></div>
+        <div class="form-group"><div class="form-label">Proposed Increase</div><input class="form-input" id="ex-proposed" placeholder="e.g. 10%"></div>
+      </div>
+      <div class="form-group"><div class="form-label">Business Justification</div><textarea style="background:var(--surface3);border:1px solid var(--border2);border-radius:3px;padding:8px 12px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;width:100%;min-height:80px;resize:vertical;font-weight:300;line-height:1.6" id="ex-justification" placeholder="State the specific business reason. Reference market data, offer letter, or equity analysis as applicable."></textarea></div>
+      <div class="btn-row">
+        <button class="btn btn-teal" onclick="generateException()">Generate Exception Memo</button>
+        <button class="btn btn-ghost" onclick="clearException()">Clear</button>
+      </div>
+    </div>
+    <div id="exception-output" style="display:none"></div>
+  </div>
+</div>
+
+<!-- 07 COMMUNICATION -->
+<div id="page-communication" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Communication Scripts</div>
+    <h1 class="page-title">Communication<br><span>Scripts</span></h1>
+    <p class="page-desc">Ready-to-use scripts for managers delivering merit outcomes. Different scenarios require different approaches. The goal is always: employee feels heard, decision is clear, and the relationship is preserved.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Script 1 — Strong Performer, Good Increase (Rating 4–5)</div>
+    <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:18px;margin-top:8px;font-size:13.5px;color:var(--text2);line-height:1.85;font-weight:300;font-style:italic">
+      "I want to talk with you about your performance this year and what that means for your salary. Your rating this year is a [4/5] — [specific achievement example]. That puts you in the Strong/Exceptional category, and I want that to be recognised in how we compensate you.<br><br>
+      Based on your rating and where your salary sits in the band, the company is giving you a [X]% increase, effective 1 January. Your new salary will be [amount]. You will receive a letter confirming this for your records.<br><br>
+      I want to be clear that this reflects genuine recognition of your contribution. Is there anything you want to ask me about this?"
+    </div>
+    <div style="margin-top:10px;font-family:var(--fm);font-size:10px;color:var(--text3)">Note: Manager should know the exact percentage and new salary before the meeting. Do not say you will check and come back.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Script 2 — Meets Expectations (Rating 3)</div>
+    <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:18px;margin-top:8px;font-size:13.5px;color:var(--text2);line-height:1.85;font-weight:300;font-style:italic">
+      "I want to go through your performance review outcome and your salary for next year. Your rating this year is a 3 — Meets Expectations. I want to be direct with you about what that means: a 3 is a good rating. It means you are doing your job well, you are reliable, and the team depends on you. It is not a criticism.<br><br>
+      Your salary increase for this year is [X]%. That is the market-aligned increase for your rating and where you sit in the salary band. Your new salary from January will be [amount].<br><br>
+      If you want to talk about what a path to a higher rating looks like next year, I am very happy to have that conversation now or separately."
+    </div>
+    <div style="margin-top:10px;font-family:var(--fm);font-size:10px;color:var(--text3)">Note: Managers often under-deliver Rating 3 news because they feel awkward. The script positions 3 as a good outcome — which it is. Coach managers on this framing in advance.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Script 3 — Low Performer (Rating 1–2), Zero Increase</div>
+    <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:18px;margin-top:8px;font-size:13.5px;color:var(--text2);line-height:1.85;font-weight:300;font-style:italic">
+      "I need to be honest with you about your performance review outcome, because it directly affects your salary. Your rating this year is a [1/2]. That means there are areas where your performance has not met the expectations of the role, and we have discussed [specific issues] during the year.<br><br>
+      As a result, there is no salary increase this year. I know that is difficult to hear, and I want to be clear: this is not permanent. If your performance improves significantly in the next review period, the conversation will be very different.<br><br>
+      I want to talk about exactly what needs to change, and how I can support you in getting there. Can we do that now?"
+    </div>
+    <div style="margin-top:10px;font-family:var(--fm);font-size:10px;color:var(--text3)">Note: Do not soften to the point of confusion. The employee should leave knowing: their rating, that there is no increase, and what needs to change. If there is a PIP in place, reference it.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Script 4 — Employee Pushes Back on the Increase</div>
+    <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:18px;margin-top:8px;font-size:13.5px;color:var(--text2);line-height:1.85;font-weight:300;font-style:italic">
+      "I understand this feels lower than you expected, and I want to explain how we got here. Valentis uses a structured salary review process where increases are set based on your performance rating and where your salary sits within the market band for your role. This is applied consistently to everyone in the company — I do not have discretion to change it unilaterally.<br><br>
+      Your increase of [X]% is the outcome of that process for your rating and band position. If you believe there has been an error in your performance rating, that is the right thing to raise — and we can look at the assessment together.<br><br>
+      What I cannot do is change the outcome because you feel it should be different. What I can do is make sure you understand the process fully and that your concerns are heard."
+    </div>
+    <div style="margin-top:10px;font-family:var(--fm);font-size:10px;color:var(--text3)">Note: Never apologise for the matrix. Never make comparative statements about other employees. If the employee escalates to HR, that is a legitimate step — let them know they can do that.</div>
+  </div>
+</div>
+
+<!-- 08 MERIT LETTERS -->
+<div id="page-document" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Merit Letters</div>
+    <h1 class="page-title">Merit Letter<br><span>Generator</span></h1>
+    <p class="page-desc">Generate a formal merit letter for an employee. Print, sign, and file. The letter confirms the rating, the increase percentage, and the new salary effective date.</p>
+  </div>
+
+  <div class="card">
+    <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:14px">Letter Details</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:4px">
+      <div class="form-group"><div class="form-label">Employee Name</div><input class="form-input" id="ml-name" placeholder="Full name"></div>
+      <div class="form-group"><div class="form-label">Job Title</div><input class="form-input" id="ml-title" placeholder="e.g. Drilling Supervisor"></div>
+      <div class="form-group"><div class="form-label">Country</div><select class="form-select" id="ml-country"><option value="">Select</option><option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option><option>Group / Singapore</option></select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:4px">
+      <div class="form-group"><div class="form-label">Current Salary</div><input class="form-input" id="ml-current" placeholder="e.g. 38000" type="number" oninput="calcLetter()"></div>
+      <div class="form-group"><div class="form-label">Increase %</div><input class="form-input" id="ml-pct" placeholder="e.g. 5" type="number" oninput="calcLetter()"></div>
+      <div class="form-group"><div class="form-label">New Salary (auto)</div><input class="form-input" id="ml-new" readonly style="background:var(--surface3);color:var(--teal)"></div>
+      <div class="form-group"><div class="form-label">Currency</div><select class="form-select" id="ml-currency"><option>USD</option><option>LAK</option><option>IDR</option><option>THB</option></select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:4px">
+      <div class="form-group"><div class="form-label">Performance Rating</div><select class="form-select" id="ml-rating"><option>5 — Exceptional</option><option>4 — Strong Performance</option><option>3 — Meets Expectations</option><option>2 — Needs Improvement</option><option>1 — Unsatisfactory</option></select></div>
+      <div class="form-group"><div class="form-label">Effective Date</div><input class="form-input" id="ml-date" value="1 January 2027"></div>
+      <div class="form-group"><div class="form-label">Letter Date</div><input class="form-input" id="ml-letterdate" value="December 2026"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-teal" onclick="generateMeritLetter()">Generate Letter</button>
+      <button class="btn btn-ghost" onclick="clearLetter()">Clear</button>
+    </div>
+  </div>
+
+  <div id="merit-letter-output" style="margin-top:16px"></div>
+
+  <div class="btn-row" id="print-row" style="display:none">
+    <button class="btn btn-ghost" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── NAV ───────────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── MATRIX DATA ───────────────────────────────────────────────────────
+const matrixData = [
+  { rating:5, name:'Exceptional', low:[9,11], market:[7,9], high:[5,7], red:[0,0], rClass:'c-r5', pClass:'pct-5' },
+  { rating:4, name:'Strong Performance', low:[6,8], market:[4,6], high:[3,5], red:[0,0], rClass:'c-r4', pClass:'pct-4' },
+  { rating:3, name:'Meets Expectations', low:[4,5], market:[2,4], high:[1,2], red:[0,0], rClass:'c-r3', pClass:'pct-3' },
+  { rating:2, name:'Needs Improvement', low:[0,0], market:[0,0], high:[0,0], red:[0,0], rClass:'c-r2', pClass:'pct-2' },
+  { rating:1, name:'Unsatisfactory', low:[0,0], market:[0,0], high:[0,0], red:[0,0], rClass:'c-r1', pClass:'pct-1' },
+];
+
+function buildMatrix() {
+  const tb = document.getElementById('matrix-tbody');
+  if (!tb) return;
+  tb.innerHTML = matrixData.map(r => {
+    const cells = [r.low, r.market, r.high, r.red];
+    const frozen = r.rating <= 2;
+    const redCircleFrozen = true;
+    const cellHtml = cells.map((c,i) => {
+      const isRedCircle = i === 3;
+      const isFrozen = frozen || isRedCircle;
+      const pct = isFrozen ? '0%' : (c[0] === c[1] ? c[0]+'%' : c[0]+'–'+c[1]+'%');
+      const note = isFrozen ? (isRedCircle ? 'Bonus only' : 'No increase') : (i===0?'Accelerated':'Standard');
+      return `<td class="mx-cell ${r.rClass}${isFrozen?' c-frozen':''}">
+        <span class="mx-pct ${isFrozen?'':''+r.pClass}">${pct}</span>
+        <span class="mx-note">${note}</span>
+      </td>`;
+    }).join('');
+    return `<tr>
+      <td class="mx-cell-label">
+        <span class="mx-rating" style="color:${r.rating>=4?'var(--teal)':r.rating===3?'var(--text)':'var(--text3)'}">R${r.rating}</span>
+        <span class="mx-rating-name">${r.name}</span>
+      </td>
+      ${cellHtml}
+    </tr>`;
+  }).join('');
+}
+
+// ── COMPA ZONE HELPER ─────────────────────────────────────────────────
+function getZone(ratio) {
+  if (ratio < 95) return { zone:'low', label:'Low Zone', color:'var(--red)' };
+  if (ratio <= 105) return { zone:'market', label:'At Market', color:'var(--teal)' };
+  if (ratio <= 120) return { zone:'high', label:'High Zone', color:'var(--green)' };
+  return { zone:'red', label:'Red Circle', color:'var(--orange)' };
+}
+
+function getMatrix(rating, zone) {
+  const row = matrixData.find(r => r.rating === rating);
+  if (!row) return [0,0];
+  return row[zone] || [0,0];
+}
+
+// ── INCREASE CALCULATOR ───────────────────────────────────────────────
+function calcIncrease() {
+  const rating = parseInt(document.getElementById('ic-rating').value);
+  const salary = parseFloat(document.getElementById('ic-salary').value) || 0;
+  const midpoint = parseFloat(document.getElementById('ic-midpoint').value) || 1;
+  const name = document.getElementById('ic-name').value || 'This employee';
+
+  const ratio = (salary / midpoint * 100);
+  const z = getZone(ratio);
+  const range = getMatrix(rating, z.zone);
+  const midPct = ((range[0] + range[1]) / 2);
+  const newSalary = Math.round(salary * (1 + midPct/100));
+  const newRatio = (newSalary / midpoint * 100);
+  const newZ = getZone(newRatio);
+
+  document.getElementById('ic-compa').textContent = ratio.toFixed(1) + '%';
+  document.getElementById('ic-compa').style.color = z.color;
+  document.getElementById('ic-zone').textContent = z.label;
+  document.getElementById('ic-zone').style.color = z.color;
+
+  const rangeText = range[0] === 0 && range[1] === 0 ? '0%' : range[0] + '\u2013' + range[1] + '%';
+  document.getElementById('ic-range').textContent = rangeText;
+  document.getElementById('ic-range').style.color = range[0] === 0 ? 'var(--text3)' : 'var(--teal)';
+
+  document.getElementById('ic-new-salary').textContent = '$' + newSalary.toLocaleString();
+  document.getElementById('ic-increase-amt').textContent = '+$' + (newSalary - salary).toLocaleString() + ' at midpoint';
+  document.getElementById('ic-new-compa').textContent = newRatio.toFixed(1) + '%';
+  document.getElementById('ic-new-compa').style.color = newZ.color;
+  document.getElementById('ic-new-zone').textContent = newZ.label;
+
+  const ratingNames = {5:'Exceptional',4:'Strong Performance',3:'Meets Expectations',2:'Needs Improvement',1:'Unsatisfactory'};
+  let narrative;
+  if (range[0] === 0) {
+    narrative = name + ' has a Rating ' + rating + ' (' + ratingNames[rating] + '). Per the Valentis Merit Matrix, this rating does not qualify for a base salary increase in the 2026 cycle. Performance must be addressed through the performance management process. No merit letter is required — a performance discussion is the next step.';
+  } else if (z.zone === 'red') {
+    narrative = name + ' is in red-circle status (compa-ratio ' + ratio.toFixed(1) + '% — above band maximum). Regardless of rating, no base increase applies. Performance is recognised through variable pay in the annual bonus cycle.';
+  } else {
+    narrative = name + ' has a Rating ' + rating + ' (' + ratingNames[rating] + ') and a compa-ratio of ' + ratio.toFixed(1) + '% (' + z.label + '). The matrix recommendation is a ' + rangeText + ' base salary increase. At the midpoint of the range (' + midPct + '%), the new salary would be $' + newSalary.toLocaleString() + ', moving the compa-ratio to ' + newRatio.toFixed(1) + '% (' + newZ.label + '). Effective 1 January 2027.';
+  }
+  document.getElementById('ic-narrative').textContent = narrative;
+}
+
+// ── BUDGET MODELLING ──────────────────────────────────────────────────
+const scenarios = {
+  conservative: { r1:2, r2:8, r3:65, r4:20, r5:5, label:'Conservative', desc:'Lower ratings across the board. Protects budget but risks undermining retention of high performers if calibration is too tight.' },
+  expected: { r1:2, r2:12, r3:55, r4:24, r5:7, label:'Expected', desc:'Calibration target. Reflects the expected distribution from PM Tool 1. Stays within the 4.5% merit pool.' },
+  generous: { r1:1, r2:8, r3:45, r4:30, r5:16, label:'Generous', desc:'More high ratings. Increases total merit cost above pool. Would require CEO approval to proceed or a re-calibration of distributions.' },
+};
+
+function calcScenarioCost(s) {
+  const dist = [s.r1/100, s.r2/100, s.r3/100, s.r4/100, s.r5/100];
+  const midPcts = [ 0, 0, 3, 5, 8 ];
+  const avg = dist.reduce((sum, pct, i) => sum + pct * midPcts[i], 0);
+  return avg;
+}
+
+function buildBudgetTable() {
+  const tb = document.getElementById('budget-tbody');
+  if (!tb) return;
+  const pool = 4.5;
+  tb.innerHTML = Object.entries(scenarios).map(([key, s]) => {
+    const cost = calcScenarioCost(s);
+    const within = cost <= pool;
+    return `<tr>
+      <td style="font-weight:600;color:var(--text)">${s.label}</td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--red)">${s.r1}%</td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--orange)">${s.r2}%</td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--teal)">${s.r3}%</td>
+      <td style="font-family:var(--fm);font-size:11px;color:#29b6f6">${s.r4}%</td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--green)">${s.r5}%</td>
+      <td style="font-family:var(--fm);font-size:14px;font-weight:600;color:var(--teal)">${cost.toFixed(2)}%</td>
+      <td style="font-family:var(--fm);font-size:11px">${cost.toFixed(2)}% vs ${pool}%</td>
+      <td><span class="chip ${within?'chip-green':'chip-red'}">${within?'Yes':'Exceeds Pool'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+let activeScenario = 'conservative';
+function showScenario(key, el) {
+  activeScenario = key;
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const s = scenarios[key];
+  const cost = calcScenarioCost(s);
+  const pool = 4.5;
+  const within = cost <= pool;
+  const el2 = document.getElementById('budget-scenario-card');
+  if (!el2) return;
+  el2.innerHTML = `<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div class="card-title">${s.label} Scenario</div>
+      <span class="chip ${within?'chip-green':'chip-red'}">${within?'Within Pool':'Exceeds Pool'}</span>
+    </div>
+    <div class="card-body" style="margin-bottom:16px">${s.desc}</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:16px">
+      ${['r1','r2','r3','r4','r5'].map((r,i)=>{ const colors=['var(--red)','var(--orange)','var(--teal)','#29b6f6','var(--green)']; const names=['R1','R2','R3','R4','R5']; return `<div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;text-align:center"><div style="font-family:var(--fd);font-size:24px;font-weight:800;color:${colors[i]}">${s[r]}%</div><div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-top:3px">${names[i]}</div></div>`; }).join('')}
+    </div>
+    <div style="display:flex;align-items:center;gap:20px;padding:16px;background:var(--surface2);border:1px solid ${within?'var(--teal-border)':'var(--red-border)'};border-radius:4px">
+      <div><div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">Avg Merit Cost</div><div style="font-family:var(--fd);font-size:36px;font-weight:800;color:${within?'var(--teal)':'var(--red)'}">${cost.toFixed(2)}%</div></div>
+      <div><div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">Pool Limit</div><div style="font-family:var(--fd);font-size:36px;font-weight:800;color:var(--text2)">4.50%</div></div>
+      <div style="flex:1"><div style="font-family:var(--fm);font-size:9px;color:var(--text3);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Budget Headroom</div><div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden"><div style="height:100%;width:${Math.min(cost/pool*100,100).toFixed(0)}%;background:${within?'var(--teal)':'var(--red)'};border-radius:4px"></div></div><div style="font-family:var(--fm);font-size:11px;color:var(--text3);margin-top:4px">${within?'+'+(pool-cost).toFixed(2)+'% headroom remaining':''+(cost-pool).toFixed(2)+'% over pool'}</div></div>
+    </div>
+  </div>`;
+}
+
+// ── EXCEPTIONS ────────────────────────────────────────────────────────
+function generateException() {
+  const name = document.getElementById('ex-name').value || '[Employee Name]';
+  const type = document.getElementById('ex-type').value || '[Exception Type]';
+  const matrix = document.getElementById('ex-matrix').value || '[Matrix Range]';
+  const proposed = document.getElementById('ex-proposed').value || '[Proposed]';
+  const just = document.getElementById('ex-justification').value || '[Justification not entered]';
+
+  const out = document.getElementById('exception-output');
+  out.style.display = 'block';
+  out.innerHTML = `<div class="print-block" style="margin-top:14px">
+    <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Off-Matrix Exception Request — Valentis Group</div>
+    <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--text);margin-bottom:16px">${name} — ${type}</div>
+    <div class="pfieldlabel">Matrix Recommendation</div><div class="pfieldval">${matrix}</div>
+    <div class="pfieldlabel">Proposed Increase</div><div class="pfieldval">${proposed}</div>
+    <div class="pfieldlabel">Business Justification</div><div class="pfieldval">${just}</div>
+    <div style="padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:4px;font-size:13px;color:var(--text2);margin-bottom:16px;font-weight:300">This request requires COO approval. CEO approval is required if the proposed increase exceeds 150% of the matrix maximum or if it involves a Retention Bonus designation.</div>
+    <div class="sig-row">
+      <div class="sig-block"><div style="height:38px"></div><div class="sig-name">Group HR Manager</div></div>
+      <div class="sig-block"><div style="height:38px"></div><div class="sig-name">COO — Approval</div></div>
+      <div class="sig-block"><div style="height:38px"></div><div class="sig-name">Date</div></div>
+    </div>
+  </div>`;
+}
+
+function clearException() {
+  ['ex-name','ex-type','ex-matrix','ex-proposed','ex-justification'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  const out = document.getElementById('exception-output');
+  if (out) out.style.display = 'none';
+}
+
+// ── MERIT LETTER ──────────────────────────────────────────────────────
+function calcLetter() {
+  const current = parseFloat(document.getElementById('ml-current').value) || 0;
+  const pct = parseFloat(document.getElementById('ml-pct').value) || 0;
+  const newSalary = Math.round(current * (1 + pct/100));
+  document.getElementById('ml-new').value = newSalary > 0 ? newSalary.toLocaleString() : '';
+}
+
+function generateMeritLetter() {
+  const name = document.getElementById('ml-name').value || '[Employee Name]';
+  const title = document.getElementById('ml-title').value || '[Job Title]';
+  const country = document.getElementById('ml-country').value || '[Country]';
+  const current = parseFloat(document.getElementById('ml-current').value) || 0;
+  const pct = parseFloat(document.getElementById('ml-pct').value) || 0;
+  const newSalary = Math.round(current * (1 + pct/100));
+  const currency = document.getElementById('ml-currency').value || 'USD';
+  const rating = document.getElementById('ml-rating').value || '3 — Meets Expectations';
+  const effDate = document.getElementById('ml-date').value || '1 January 2027';
+  const letterDate = document.getElementById('ml-letterdate').value || 'December 2026';
+
+  const out = document.getElementById('merit-letter-output');
+  const printRow = document.getElementById('print-row');
+  out.innerHTML = `<div class="print-block">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:18px;margin-bottom:20px;border-bottom:1px solid var(--border2)">
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Confidential — Personnel File</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--text);margin-bottom:3px">Annual Merit Increase Letter</div>
+        <div style="font-size:13px;color:var(--text2)">Valentis Group · ${letterDate}</div>
+      </div>
+      <div style="text-align:right;font-family:var(--fm);font-size:10px;color:var(--text3)">
+        <div>Effective: ${effDate}</div>
+        <div>Country: ${country}</div>
+      </div>
+    </div>
+    <div class="pfieldval" style="margin-bottom:6px">Dear <strong style="color:var(--text)">${name}</strong>,</div>
+    <div class="pfieldval">This letter confirms the outcome of your annual performance review and the associated salary adjustment for the period commencing ${effDate}.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:18px 0">
+      <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div class="pfieldlabel" style="margin-bottom:4px">Position</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text)">${title}</div>
+      </div>
+      <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div class="pfieldlabel" style="margin-bottom:4px">Performance Rating</div>
+        <div style="font-size:14px;font-weight:600;color:var(--teal)">${rating}</div>
+      </div>
+      <div style="padding:14px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:4px">
+        <div class="pfieldlabel" style="margin-bottom:4px">Merit Increase</div>
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--teal);line-height:1">${pct}%</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+      <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div class="pfieldlabel" style="margin-bottom:4px">Current Annual Salary</div>
+        <div style="font-family:var(--fm);font-size:14px;font-weight:600;color:var(--text2)">${currency} ${current.toLocaleString()}</div>
+      </div>
+      <div style="padding:14px;background:var(--surface2);border:1px solid var(--teal-border);border-radius:4px">
+        <div class="pfieldlabel" style="margin-bottom:4px">New Annual Salary (from ${effDate})</div>
+        <div style="font-family:var(--fm);font-size:14px;font-weight:600;color:var(--teal)">${currency} ${newSalary.toLocaleString()}</div>
+      </div>
+    </div>
+    <div class="pfieldval">Your salary increase has been determined in accordance with the Valentis Group Compensation and Benefits framework, taking into account your performance rating and your position within the salary band for your role. This letter should be retained for your personal records.</div>
+    <div class="pfieldval">Please acknowledge receipt of this letter by signing below.</div>
+    <div class="sig-row">
+      <div class="sig-block"><div style="height:42px"></div><div class="sig-name">${name} — Employee</div></div>
+      <div class="sig-block"><div style="height:42px"></div><div class="sig-name">Group HR Manager</div></div>
+      <div class="sig-block"><div style="height:42px"></div><div class="sig-name">Date</div></div>
+    </div>
+  </div>`;
+  if (printRow) printRow.style.display = 'flex';
+}
+
+function clearLetter() {
+  ['ml-name','ml-title','ml-current','ml-pct','ml-new'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('merit-letter-output').innerHTML = '';
+  const pr = document.getElementById('print-row'); if (pr) pr.style.display = 'none';
+}
+
+function generateLetter() {
+  showPage('document', document.querySelectorAll('.nav-item')[7]);
+}
+
+function resetCalc() {
+  document.getElementById('ic-name').value = '';
+  document.getElementById('ic-rating').value = '4';
+  document.getElementById('ic-salary').value = '38000';
+  document.getElementById('ic-midpoint').value = '38000';
+  calcIncrease();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  buildMatrix();
+  calcIncrease();
+  buildBudgetTable();
+  showScenario('conservative', document.querySelector('.stab'));
+});
+</script>
+</body>
+</html>

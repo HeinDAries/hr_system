@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Rewards Framework — Valentis C&B Tool 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Lato:wght@300;400;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1a1a12;
+  --surface: #22221a;
+  --surface2: #2a2a20;
+  --surface3: #323228;
+  --border: #3a3a2c;
+  --border2: #4a4a38;
+  --gold: #c9a84c;
+  --gold2: #e2c06a;
+  --gold-dim: rgba(201,168,76,0.1);
+  --gold-border: rgba(201,168,76,0.25);
+  --bronze: #a0714a;
+  --bronze-dim: rgba(160,113,74,0.1);
+  --olive: #6b7c3a;
+  --olive-dim: rgba(107,124,58,0.1);
+  --sage: #7a9e7e;
+  --sage-dim: rgba(122,158,126,0.08);
+  --red: #c0392b;
+  --red-dim: rgba(192,57,43,0.1);
+  --text: #f0ead8;
+  --text2: #a09880;
+  --text3: #5a5444;
+  --sidebar-w: 268px;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Lato', sans-serif;
+  --font-mono: 'Courier Prime', 'Courier New', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-logo{padding:28px 22px 22px;border-bottom:1px solid var(--border)}
+.sb-series{font-family:var(--font-mono);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.sb-title{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:6px}
+.sb-sub{font-size:11px;color:var(--text3);line-height:1.5}
+.sb-divider{border:none;border-top:1px solid var(--border);margin:0}
+.sb-section{padding:16px 12px 6px}
+.sb-group{font-family:var(--font-mono);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:0 10px;margin-bottom:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:6px;cursor:pointer;transition:all .15s;color:var(--text2);font-size:12.5px;font-weight:400;margin-bottom:2px;border:1px solid transparent;letter-spacing:.2px}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)}
+.nav-roman{font-family:var(--font-mono);font-size:10px;color:var(--text3);width:22px;flex-shrink:0;letter-spacing:.5px}
+.nav-item.active .nav-roman{color:var(--gold)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid var(--border)}
+.sb-seal{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.sb-seal-title{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--gold);margin-bottom:3px}
+.sb-seal-sub{font-size:10px;color:var(--text3);line-height:1.5}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 54px;max-width:1060px}
+.page.active{display:block}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:40px;padding-bottom:32px;border-bottom:2px solid var(--border)}
+.page-vol{font-family:var(--font-mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.page-title{font-family:var(--font-display);font-size:46px;font-weight:900;color:var(--text);line-height:1.05;margin-bottom:14px}
+.page-title em{font-style:italic;color:var(--gold2)}
+.page-lead{font-size:15px;color:var(--text2);max-width:600px;line-height:1.8;font-weight:300}
+
+/* SECTIONS */
+.section{margin-bottom:40px}
+.section-eyebrow{font-family:var(--font-mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.section-title{font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.15}
+.section-title em{font-style:italic;color:var(--gold2)}
+.section-body{font-size:14px;color:var(--text2);line-height:1.8;max-width:680px;font-weight:300}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;margin-bottom:18px;transition:border-color .15s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px}
+.card-body{font-size:13.5px;color:var(--text2);line-height:1.8;font-weight:300}
+
+/* PILLAR CARDS */
+.pillars{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin:24px 0}
+.pillar{padding:22px 16px;border-radius:8px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.pillar-1{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2)}
+.pillar-1::before{background:var(--gold)}
+.pillar-2{background:rgba(160,113,74,.1);border:1px solid rgba(160,113,74,.2)}
+.pillar-2::before{background:var(--bronze)}
+.pillar-3{background:rgba(107,124,58,.1);border:1px solid rgba(107,124,58,.2)}
+.pillar-3::before{background:var(--olive)}
+.pillar-4{background:rgba(122,158,126,.08);border:1px solid rgba(122,158,126,.15)}
+.pillar-4::before{background:var(--sage)}
+.pillar-5{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.12)}
+.pillar-5::before{background:var(--gold2)}
+.pillar:hover{transform:translateY(-2px)}
+.pillar-icon{font-size:28px;margin-bottom:10px}
+.pillar-name{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.3}
+.pillar-tagline{font-size:11px;color:var(--text3);line-height:1.5}
+
+/* PHILOSOPHY STATEMENTS */
+.philosophy-list{display:grid;gap:14px;margin-top:8px}
+.philosophy-item{display:flex;gap:18px;align-items:flex-start;padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:8px}
+.philosophy-num{font-family:var(--font-display);font-size:32px;font-weight:900;color:var(--gold-border);line-height:1;flex-shrink:0;width:36px}
+.philosophy-content{}
+.philosophy-title{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px}
+.philosophy-text{font-size:13px;color:var(--text2);line-height:1.7;font-weight:300}
+
+/* INFO BOXES */
+.info{border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13.5px;line-height:1.75;border-left:3px solid;font-weight:300}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--gold2)}
+.info.bronze{background:var(--bronze-dim);border-color:var(--bronze);color:#d4956a}
+.info.olive{background:var(--olive-dim);border-color:var(--olive);color:#9ab050}
+.info.sage{background:var(--sage-dim);border-color:var(--sage);color:var(--sage)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:#e05a4a}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+/* MARKET POSITIONING */
+.market-track{position:relative;height:60px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin:20px 0;overflow:hidden}
+.market-gradient{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(to right, var(--red-dim), var(--gold-dim), var(--olive-dim))}
+.market-labels{display:flex;justify-content:space-between;padding:8px 14px 0;position:relative;z-index:1}
+.market-label{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text3)}
+.market-marker{position:absolute;top:0;bottom:0;width:3px;background:var(--gold);z-index:2;transition:left .4s}
+.market-marker-label{position:absolute;top:6px;left:6px;font-family:var(--font-mono);font-size:9px;color:var(--gold);letter-spacing:.5px;white-space:nowrap}
+.market-percentiles{display:flex;justify-content:space-between;padding:0 14px 8px;position:relative;z-index:1}
+.market-pct{font-family:var(--font-mono);font-size:10px;color:var(--text3)}
+
+/* COUNTRY DIFF TABLE */
+.diff-table{width:100%;border-collapse:collapse;font-size:13px}
+.diff-table th{text-align:left;padding:9px 14px;background:var(--surface2);color:var(--text3);font-family:var(--font-mono);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:2px solid var(--border)}
+.diff-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;font-weight:300;line-height:1.55}
+.diff-table tr:last-child td{border-bottom:none}
+.diff-table tr:hover td{background:var(--surface2)}
+.diff-table td:first-child{font-weight:700;color:var(--text)}
+
+/* REWARD MATRIX */
+.reward-matrix{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin:20px 0}
+.rm-cell{padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px}
+.rm-cell-header{font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.rm-cell-title{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px}
+.rm-cell-body{font-size:12px;color:var(--text2);line-height:1.65;font-weight:300}
+
+/* COMMS CHECKLIST */
+.comm-item{display:flex;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:10px}
+.comm-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.comm-content{}
+.comm-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:3px}
+.comm-text{font-size:12.5px;color:var(--text2);line-height:1.65;font-weight:300}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:3px;font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:.5px}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-olive{background:var(--olive-dim);color:#9ab050;border:1px solid rgba(107,124,58,.25)}
+.chip-sage{background:var(--sage-dim);color:var(--sage);border:1px solid rgba(122,158,126,.2)}
+.chip-red{background:var(--red-dim);color:#e05a4a;border:1px solid rgba(192,57,43,.2)}
+.chip-bronze{background:var(--bronze-dim);color:#d4956a;border:1px solid rgba(160,113,74,.2)}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:6px;border:none;font-family:var(--font-body);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.3px}
+.btn-gold{background:var(--gold);color:#1a1500}
+.btn-gold:hover{background:var(--gold2)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+.btn-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+
+/* DECORATIVE RULE */
+.rule{display:flex;align-items:center;gap:14px;margin:32px 0}
+.rule-line{flex:1;height:1px;background:var(--border)}
+.rule-diamond{width:8px;height:8px;background:var(--gold);transform:rotate(45deg);flex-shrink:0;opacity:.5}
+
+/* PRINT */
+.print-block{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:28px;font-size:13px;line-height:1.8}
+.pfieldlabel{font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:3px}
+.pfieldval{color:var(--text);font-size:14px;margin-bottom:16px;font-weight:300}
+.sig-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:28px}
+.sig-block{border-top:1px solid var(--border2);padding-top:10px}
+.sig-name{font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .section{animation:fadeUp .35s ease both}
+.page.active .card:nth-child(2){animation-delay:.07s}
+.page.active .card:nth-child(3){animation-delay:.14s}
+.page.active .pillar{animation:fadeUp .4s ease both}
+.page.active .pillar:nth-child(2){animation-delay:.07s}
+.page.active .pillar:nth-child(3){animation-delay:.14s}
+.page.active .pillar:nth-child(4){animation-delay:.21s}
+.page.active .pillar:nth-child(5){animation-delay:.28s}
+
+/* HR */
+hr.div{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-series">C&amp;B System — Tool I of VIII</div>
+    <div class="sb-title">Total Rewards Framework</div>
+    <div class="sb-sub">The philosophy and architecture that governs all compensation and benefits decisions at Valentis Group.</div>
+  </div>
+  <hr class="sb-divider">
+
+  <div class="sb-section">
+    <div class="sb-group">Contents</div>
+    <div class="nav-item active" onclick="showPage('philosophy',this)"><span class="nav-roman">I</span>Our Philosophy</div>
+    <div class="nav-item" onclick="showPage('pillars',this)"><span class="nav-roman">II</span>The Five Pillars</div>
+    <div class="nav-item" onclick="showPage('positioning',this)"><span class="nav-roman">III</span>Market Positioning</div>
+    <div class="nav-item" onclick="showPage('country',this)"><span class="nav-roman">IV</span>Country Differentiation</div>
+    <div class="nav-item" onclick="showPage('lifecycle',this)"><span class="nav-roman">V</span>Rewards by Career Stage</div>
+    <div class="nav-item" onclick="showPage('governance',this)"><span class="nav-roman">VI</span>Governance &amp; Authority</div>
+    <div class="nav-item" onclick="showPage('communication',this)"><span class="nav-roman">VII</span>Employee Communication</div>
+    <div class="nav-item" onclick="showPage('document',this)"><span class="nav-roman">VIII</span>Framework Document</div>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-seal">
+      <div class="sb-seal-title">Valentis Group</div>
+      <div class="sb-seal-sub">Compensation &amp; Benefits<br>Tool 1 of 8 · 2026 Edition<br>Confidential — HR &amp; Leadership Only</div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- I. PHILOSOPHY -->
+<div id="page-philosophy" class="page active">
+  <div class="page-header">
+    <div class="page-vol">Valentis C&amp;B System · Chapter I</div>
+    <h1 class="page-title">Our Rewards<br><em>Philosophy</em></h1>
+    <p class="page-lead">The Total Rewards Framework is the single source of truth for how Valentis values, compensates, and rewards its people. Every salary decision, bonus payment, and benefits choice flows from this document.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Why This Framework Exists</div>
+    <div class="section-title">Compensation is<br><em>not a transaction</em></div>
+    <div class="section-body" style="margin-top:12px">In a 28-person company operating across four countries in mineral exploration, every compensation decision is visible, felt, and remembered. There is no anonymity. When two drillers with similar experience discover they are on very different packages, without a clear rationale, the damage to trust and morale is immediate and lasting. This framework exists to ensure that every rewards decision has a defensible, consistent rationale — anchored in market data, internal equity, and business strategy.</div>
+  </div>
+
+  <div class="philosophy-list">
+    <div class="philosophy-item">
+      <div class="philosophy-num">1</div>
+      <div class="philosophy-content">
+        <div class="philosophy-title">Pay for the role, recognise the person</div>
+        <div class="philosophy-text">The salary band is determined by the job — its complexity, impact, and market value. Where an individual sits within that band reflects their performance, tenure, and demonstrated capability. This distinction is fundamental. Two people in the same role can earn different amounts for legitimate, documented reasons. But both are paid within the same band, governed by the same methodology.</div>
+      </div>
+    </div>
+    <div class="philosophy-item">
+      <div class="philosophy-num">2</div>
+      <div class="philosophy-content">
+        <div class="philosophy-title">Competitive enough to attract, fair enough to retain</div>
+        <div class="philosophy-text">Valentis targets the market median for most roles — the 50th percentile of relevant industry benchmarks. For critical and hard-to-fill roles (Site Managers, experienced Drillers), we target the 60th–75th percentile to remain competitive in a supply-constrained market. We do not try to be the highest payer in the market, but we will not lose talent to a 10% salary gap that we could have closed.</div>
+      </div>
+    </div>
+    <div class="philosophy-item">
+      <div class="philosophy-num">3</div>
+      <div class="philosophy-content">
+        <div class="philosophy-title">Total rewards, not just base pay</div>
+        <div class="philosophy-text">Base salary is one component of what Valentis offers. Site allowances, housing, medical coverage, provident fund contributions, performance bonuses, career development support, and job security in a stable privately-held company — together, these often exceed what a higher-base competitor is offering. We communicate the full value of the package, not just the number on the payslip.</div>
+      </div>
+    </div>
+    <div class="philosophy-item">
+      <div class="philosophy-num">4</div>
+      <div class="philosophy-content">
+        <div class="philosophy-title">Performance must connect to reward</div>
+        <div class="philosophy-text">Salary increases, bonuses, and development investment are differentiated by performance. An employee rated 5 should see a materially different reward outcome than an employee rated 3. If everyone gets the same increase regardless of contribution, the PM system loses credibility — and so does the company's commitment to fairness. This connection is built in from the start and is non-negotiable.</div>
+      </div>
+    </div>
+    <div class="philosophy-item">
+      <div class="philosophy-num">5</div>
+      <div class="philosophy-content">
+        <div class="philosophy-title">Country differentiation, not country discrimination</div>
+        <div class="philosophy-text">Valentis operates in four countries with fundamentally different cost of living, labour markets, and statutory requirements. A driller in Laos and a driller in Singapore cannot and should not be on identical packages. Differentiation by country is not discrimination — it is economic reality. What must be consistent is the methodology, the fairness of the process, and the respect with which compensation conversations are conducted in every country.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"><div class="rule-line"></div><div class="rule-diamond"></div><div class="rule-line"></div></div>
+
+  <div class="card">
+    <div class="card-title">What This Framework Covers — and What It Does Not</div>
+    <div class="grid-2" style="margin-top:16px;margin-bottom:0">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--olive);margin-bottom:10px">Covered by this framework</div>
+        <ul style="list-style:none;padding:0">
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);font-weight:300"><span style="color:#9ab050">✓</span>Base salary philosophy and market positioning</li>
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);font-weight:300"><span style="color:#9ab050">✓</span>Total rewards components and their purpose</li>
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);font-weight:300"><span style="color:#9ab050">✓</span>Country differentiation principles</li>
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);font-weight:300"><span style="color:#9ab050">✓</span>Governance and approval authority</li>
+          <li style="display:flex;gap:10px;padding:8px 0;font-size:13px;color:var(--text2);font-weight:300"><span style="color:#9ab050">✓</span>Link between performance ratings and reward outcomes</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:10px">Covered in separate tools</div>
+        <ul style="list-style:none;padding:0">
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);font-weight:300"><span style="color:#e05a4a">→</span>Specific salary bands and grade structures (Tool 2, 3)</li>
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);font-weight:300"><span style="color:#e05a4a">→</span>Merit increase percentages and matrices (Tool 4)</li>
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);font-weight:300"><span style="color:#e05a4a">→</span>Country-specific statutory benefits detail (Tool 5)</li>
+          <li style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);font-weight:300"><span style="color:#e05a4a">→</span>Bonus calculation rules and modifiers (Tool 6)</li>
+          <li style="display:flex;gap:10px;padding:8px 0;font-size:13px;color:var(--text2);font-weight:300"><span style="color:#e05a4a">→</span>Individual total rewards statements (Tool 7)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- II. PILLARS -->
+<div id="page-pillars" class="page">
+  <div class="page-header">
+    <div class="page-vol">Chapter II</div>
+    <h1 class="page-title">The Five<br><em>Pillars</em></h1>
+    <p class="page-lead">Total rewards at Valentis is built on five pillars. Together they represent the full value of working here — not just what appears on a payslip. Each pillar has a defined purpose and a set of components.</p>
+  </div>
+
+  <div class="pillars">
+    <div class="pillar pillar-1"><div class="pillar-icon">💰</div><div class="pillar-name">Base Compensation</div><div class="pillar-tagline">Fixed salary within grade band</div></div>
+    <div class="pillar pillar-2"><div class="pillar-icon">⚡</div><div class="pillar-name">Variable Pay</div><div class="pillar-tagline">Performance-linked bonuses</div></div>
+    <div class="pillar pillar-3"><div class="pillar-icon">🏥</div><div class="pillar-name">Benefits</div><div class="pillar-tagline">Health, protection, retirement</div></div>
+    <div class="pillar pillar-4"><div class="pillar-icon">🏗️</div><div class="pillar-name">Work Environment</div><div class="pillar-tagline">Site conditions, allowances, safety</div></div>
+    <div class="pillar pillar-5"><div class="pillar-icon">🌱</div><div class="pillar-name">Development</div><div class="pillar-tagline">Learning, career, recognition</div></div>
+  </div>
+
+  <!-- PILLAR 1 -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <span style="font-size:24px">💰</span>
+      <div>
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:3px">Pillar I</div>
+        <div class="card-title" style="margin-bottom:0">Base Compensation</div>
+      </div>
+    </div>
+    <div class="card-body" style="margin-bottom:16px">The fixed monthly salary, determined by job grade and position within the salary band. This is the foundation of the package — stable, predictable, and benchmarked against the external market.</div>
+    <div class="reward-matrix">
+      <div class="rm-cell">
+        <div class="rm-cell-header">What it is</div>
+        <div class="rm-cell-title">Fixed Monthly Salary</div>
+        <div class="rm-cell-body">Gross base pay, paid monthly in local currency. Determined by job grade (Tool 2) and position within the salary band (Tool 3).</div>
+      </div>
+      <div class="rm-cell">
+        <div class="rm-cell-header">How it is set</div>
+        <div class="rm-cell-title">Band + Performance Position</div>
+        <div class="rm-cell-body">New hires enter at 80–95% of band midpoint. Existing employees advance within band via annual merit review linked to PM rating. Moves above midpoint require strong sustained performance.</div>
+      </div>
+      <div class="rm-cell">
+        <div class="rm-cell-header">Who approves changes</div>
+        <div class="rm-cell-title">HR + COO / CEO</div>
+        <div class="rm-cell-body">Annual merit increases: HR recommends, COO approves. Off-cycle increases or promotions: HR prepares business case, CEO approves. See Governance section.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR 2 -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <span style="font-size:24px">⚡</span>
+      <div>
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--bronze);margin-bottom:3px">Pillar II</div>
+        <div class="card-title" style="margin-bottom:0">Variable Pay</div>
+      </div>
+    </div>
+    <div class="card-body" style="margin-bottom:16px">Performance-linked pay that rewards exceptional contribution, company success, and retention of critical talent. Variable pay is not guaranteed — it is earned through measurable outcomes.</div>
+    <div class="reward-matrix">
+      <div class="rm-cell">
+        <div class="rm-cell-header">Annual Bonus</div>
+        <div class="rm-cell-title">Company + Individual</div>
+        <div class="rm-cell-body">Paid Q1 of following year. Linked to company financial performance and individual PM rating. Only employees rated 3 or above are eligible. Full framework in Tool 6.</div>
+      </div>
+      <div class="rm-cell">
+        <div class="rm-cell-header">Site / Project Incentive</div>
+        <div class="rm-cell-title">Operational Milestone</div>
+        <div class="rm-cell-body">Paid when a drilling programme or project achieves defined targets — meterage, timeline, safety record. Specific to operational staff. Defined per-programme by COO.</div>
+      </div>
+      <div class="rm-cell">
+        <div class="rm-cell-header">Retention Bonus</div>
+        <div class="rm-cell-title">Critical Talent Only</div>
+        <div class="rm-cell-body">One-time payment for employees identified as critical flight risks. Requires written agreement. Full details in Tool 6. CEO approval required.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR 3 -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <span style="font-size:24px">🏥</span>
+      <div>
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--olive);margin-bottom:3px">Pillar III</div>
+        <div class="card-title" style="margin-bottom:0">Benefits</div>
+      </div>
+    </div>
+    <div class="card-body" style="margin-bottom:16px">Non-cash components of the total package. Statutory benefits are the legal minimum; discretionary benefits are what Valentis provides above that floor to remain competitive and demonstrate care for employees and their families.</div>
+    <table class="diff-table" style="margin-top:4px">
+      <thead><tr><th>Benefit</th><th>Type</th><th>Valentis Position</th><th>All Countries?</th></tr></thead>
+      <tbody>
+        <tr><td>Medical Insurance</td><td><span class="chip chip-gold">Discretionary</span></td><td>Inpatient + outpatient for employee. Inpatient for dependants where applicable.</td><td>Yes</td></tr>
+        <tr><td>Life &amp; Accident Insurance</td><td><span class="chip chip-gold">Discretionary</span></td><td>Group life cover at 2× annual salary. Personal accident on-site and commuting.</td><td>Yes</td></tr>
+        <tr><td>Provident Fund / EPF</td><td><span class="chip chip-olive">Statutory</span></td><td>Employer contribution at statutory minimum or above where competitive pressure warrants.</td><td>By country</td></tr>
+        <tr><td>Annual Leave</td><td><span class="chip chip-olive">Statutory</span></td><td>Minimum statutory entitlement. Senior roles receive additional discretionary leave.</td><td>Yes</td></tr>
+        <tr><td>Sick Leave</td><td><span class="chip chip-olive">Statutory</span></td><td>Per local legislation. Hospitalisation leave additional where statutory.</td><td>Yes</td></tr>
+        <tr><td>Maternity / Paternity Leave</td><td><span class="chip chip-olive">Statutory</span></td><td>Full statutory minimum. Valentis is committed to not penalising parental leave in performance ratings.</td><td>Yes</td></tr>
+      </tbody>
+    </table>
+    <div class="info gold" style="margin-top:16px;margin-bottom:0"><strong>Full country-by-country benefits detail</strong>Statutory requirements vary significantly across Laos, Myanmar, Indonesia, and Thailand. The complete breakdown — contribution rates, entitlement days, employer obligations — is documented in Tool 5: Benefits &amp; Allowances Register.</div>
+  </div>
+
+  <!-- PILLAR 4 -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <span style="font-size:24px">🏗️</span>
+      <div>
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--sage);margin-bottom:3px">Pillar IV</div>
+        <div class="card-title" style="margin-bottom:0">Work Environment &amp; Allowances</div>
+      </div>
+    </div>
+    <div class="card-body" style="margin-bottom:16px">Site-based operations require compensation components that go beyond standard office employment. Allowances recognise the conditions, remoteness, and demands of working in active exploration sites. They are a significant part of the total package for operational staff.</div>
+    <div class="grid-3" style="margin-top:8px;margin-bottom:0">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sage);margin-bottom:8px">Site Allowance</div>
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Remote Location Premium</div>
+        <div style="font-size:12.5px;color:var(--text2);font-weight:300;line-height:1.65">Paid to all employees working on active exploration sites. Reflects remoteness, limited amenities, and separation from family. Rate varies by site designation (defined by COO annually).</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sage);margin-bottom:8px">Accommodation</div>
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Company-Provided or Allowance</div>
+        <div style="font-size:12.5px;color:var(--text2);font-weight:300;line-height:1.65">Site staff: company camp accommodation provided. Office-based staff in countries without local housing network: accommodation allowance at agreed rate, reviewed annually.</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sage);margin-bottom:8px">R&amp;R / Rotation</div>
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Rotation &amp; Travel</div>
+        <div style="font-size:12.5px;color:var(--text2);font-weight:300;line-height:1.65">Site staff on rotation schedule receive paid travel to home city at agreed frequency. Rotation schedule defined per site and role — typically 6 weeks on / 2 weeks off for remote sites.</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sage);margin-bottom:8px">Meals</div>
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Company-Provided On-Site</div>
+        <div style="font-size:12.5px;color:var(--text2);font-weight:300;line-height:1.65">All meals provided on active sites. This is a meaningful component of total compensation that employees often undervalue — include in total rewards statements.</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sage);margin-bottom:8px">Hardship</div>
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Country Hardship Premium</div>
+        <div style="font-size:12.5px;color:var(--text2);font-weight:300;line-height:1.65">Applies to expatriate or cross-border staff deployed to higher-risk or higher-hardship locations. Myanmar currently carries a hardship designation. Rate: defined by HR and approved by CEO.</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sage);margin-bottom:8px">Transport</div>
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Site Transfer &amp; Commute</div>
+        <div style="font-size:12.5px;color:var(--text2);font-weight:300;line-height:1.65">Company transport to and from sites for rotational staff. For office-based staff: transport allowance where public transport is inadequate or unavailable (Myanmar, some Laos locations).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR 5 -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <span style="font-size:24px">🌱</span>
+      <div>
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);margin-bottom:3px">Pillar V</div>
+        <div class="card-title" style="margin-bottom:0">Development &amp; Recognition</div>
+      </div>
+    </div>
+    <div class="card-body" style="margin-bottom:16px">The non-financial components of the total package that are often what makes employees stay or leave. Career development, recognition, and the quality of the management relationship matter — especially in smaller companies where these are visible and personal.</div>
+    <div class="grid-2" style="margin-top:8px;margin-bottom:0">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);margin-bottom:8px">Development Investment</div>
+        <ul style="list-style:none;padding:0">
+          <li style="font-size:13px;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--border);font-weight:300">Training budget per employee (agreed at IDP — Tool 6)</li>
+          <li style="font-size:13px;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--border);font-weight:300">Certification sponsorship for Rating 3+ employees</li>
+          <li style="font-size:13px;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--border);font-weight:300">Study leave for approved qualifications</li>
+          <li style="font-size:13px;color:var(--text2);padding:6px 0;font-weight:300">Acting-up opportunities for succession-ready employees</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);margin-bottom:8px">Recognition</div>
+        <ul style="list-style:none;padding:0">
+          <li style="font-size:13px;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--border);font-weight:300">Long Service Awards (5, 10, 15 year milestones)</li>
+          <li style="font-size:13px;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--border);font-weight:300">Safety Excellence Recognition (zero-LTI site achievement)</li>
+          <li style="font-size:13px;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--border);font-weight:300">Annual Performance Awards (Rating 5 employees)</li>
+          <li style="font-size:13px;color:var(--text2);padding:6px 0;font-weight:300">Manager-led recognition — letter or direct acknowledgement</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- III. MARKET POSITIONING -->
+<div id="page-positioning" class="page">
+  <div class="page-header">
+    <div class="page-vol">Chapter III</div>
+    <h1 class="page-title">Market<br><em>Positioning</em></h1>
+    <p class="page-lead">Where Valentis chooses to sit relative to the market is a strategic decision — not a default. This chapter defines our positioning by role type and explains the rationale behind each choice.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Valentis Market Positioning Policy</div>
+    <div class="card-body" style="margin-bottom:20px">Valentis uses external salary surveys (mining and oil &amp; gas sector benchmarks, regional HR surveys) to anchor salary bands to market data. Positioning is reviewed annually in Q4, before the merit cycle begins. The default target position is P50 — but this is adjusted by role criticality.</div>
+
+    <div style="display:grid;gap:12px">
+      <div style="padding:16px;background:var(--red-dim);border:1px solid rgba(192,57,43,.2);border-radius:8px;display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#e05a4a;margin-bottom:4px">Critical Roles</div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Site Manager, Drilling Supervisor</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Market is supply-constrained. Losing one person has immediate operational impact. We pay above median to retain and attract the best.</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:20px">
+          <div style="font-family:var(--font-display);font-size:32px;font-weight:900;color:#e05a4a">P65–75</div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Target Percentile</div>
+        </div>
+      </div>
+      <div style="padding:16px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:8px;display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">High Criticality</div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Group HR Manager, Finance Manager, HSE Officer</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Specialist roles with compliance risk on vacancy. Market is competitive. Target slightly above median.</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:20px">
+          <div style="font-family:var(--font-display);font-size:32px;font-weight:900;color:var(--gold)">P55–65</div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Target Percentile</div>
+        </div>
+      </div>
+      <div style="padding:16px;background:var(--olive-dim);border:1px solid rgba(107,124,58,.2);border-radius:8px;display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#9ab050;margin-bottom:4px">Standard Roles</div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Senior Driller, Finance Officer, Admin, Support</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Broader talent market availability. Median positioning is competitive and sustainable. Exceptional performers progress within band toward P60.</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:20px">
+          <div style="font-family:var(--font-display);font-size:32px;font-weight:900;color:#9ab050">P50</div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Target Percentile</div>
+        </div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Entry Level</div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Trainee Driller, Junior Officers</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Strong development offer compensates for below-median base. Career path clarity is the retention tool at entry level, not salary.</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:20px">
+          <div style="font-family:var(--font-display);font-size:32px;font-weight:900;color:var(--text3)">P40–50</div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Target Percentile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Compa-Ratio — Reading Your Position in the Band</div>
+    <div class="card-body" style="margin-bottom:16px">Compa-ratio compares an employee's salary to the midpoint of their salary band. It is the key metric for understanding whether an individual is paid fairly relative to their market position.</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:16px">
+      <div style="padding:14px;background:var(--red-dim);border:1px solid rgba(192,57,43,.15);border-radius:6px;text-align:center">
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:#e05a4a">Below 80%</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:4px;letter-spacing:.5px">Significantly below market. Priority for increase.</div>
+      </div>
+      <div style="padding:14px;background:var(--bronze-dim);border:1px solid rgba(160,113,74,.15);border-radius:6px;text-align:center">
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:#d4956a">80–95%</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:4px;letter-spacing:.5px">New hire range or developing role</div>
+      </div>
+      <div style="padding:14px;background:var(--olive-dim);border:1px solid rgba(107,124,58,.2);border-radius:6px;text-align:center">
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:#9ab050">95–105%</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:4px;letter-spacing:.5px">Fully performing at market. Target zone.</div>
+      </div>
+      <div style="padding:14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:6px;text-align:center">
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--gold)">105–120%</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:4px;letter-spacing:.5px">High performer, strong tenure</div>
+      </div>
+      <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-align:center">
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text2)">Above 120%</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:4px;letter-spacing:.5px">Above band. Review at next cycle.</div>
+      </div>
+    </div>
+    <div class="info gold" style="margin-bottom:0"><strong>Formula</strong>Compa-Ratio = (Employee Salary ÷ Band Midpoint) × 100. A compa-ratio of 100 means the employee is paid exactly at the midpoint. Used in the Merit Matrix (Tool 4) to determine merit increase guidelines.</div>
+  </div>
+</div>
+
+<!-- IV. COUNTRY DIFFERENTIATION -->
+<div id="page-country" class="page">
+  <div class="page-header">
+    <div class="page-vol">Chapter IV</div>
+    <h1 class="page-title">Country<br><em>Differentiation</em></h1>
+    <p class="page-lead">One methodology, four markets. The same grading framework and philosophy applies in all four countries — but the absolute numbers, statutory requirements, and currency vary significantly.</p>
+  </div>
+
+  <div class="info bronze"><strong>The Principle</strong>Valentis does not set a "global salary" and apply it uniformly. We apply a consistent methodology to each country's local market data. Internal equity is measured within country, not across countries. Cross-country salary comparisons are natural in a multi-country team and should be handled with a clear, prepared explanation of why differentiation is fair.</div>
+
+  <div class="card">
+    <div class="card-title">Country Profiles — Compensation Context</div>
+    <table class="diff-table">
+      <thead><tr><th>Country</th><th>Currency</th><th>Labour Market</th><th>Statutory Complexity</th><th>Key Considerations</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>🇱🇦 Laos</td>
+          <td style="font-family:var(--font-mono);font-size:11px">LAK / USD</td>
+          <td>Limited mining talent pool. Expat supplement often needed for senior roles.</td>
+          <td><span class="chip chip-bronze">Medium</span></td>
+          <td>Mining sector growing. Minimum wage set nationally. Work permits required for all expat staff. Social security contributions apply.</td>
+        </tr>
+        <tr>
+          <td>🇲🇲 Myanmar</td>
+          <td style="font-family:var(--font-mono);font-size:11px">MMK / USD</td>
+          <td>Significant political and economic volatility since 2021. Currency instability.</td>
+          <td><span class="chip chip-red">High</span></td>
+          <td>USD-denominated contracts recommended for international staff. Local payroll in MMK at market rate. Political risk premium applies. Dual-currency management essential.</td>
+        </tr>
+        <tr>
+          <td>🇮🇩 Indonesia</td>
+          <td style="font-family:var(--font-mono);font-size:11px">IDR</td>
+          <td>Strong local talent market in mining. Regional minimum wages vary by province.</td>
+          <td><span class="chip chip-red">High</span></td>
+          <td>BPJS Kesehatan + BPJS Ketenagakerjaan mandatory. THR (holiday allowance) statutory. Regional UMR must be respected. Severance provisions are the most complex in the region.</td>
+        </tr>
+        <tr>
+          <td>🇹🇭 Thailand</td>
+          <td style="font-family:var(--font-mono);font-size:11px">THB</td>
+          <td>More developed labour market. Higher base salaries for professional roles.</td>
+          <td><span class="chip chip-bronze">Medium</span></td>
+          <td>Social Security Fund contributions mandatory. Provident fund common at professional level. Severance based on tenure. Probation period up to 119 days recommended.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Handling Cross-Country Salary Questions</div>
+    <div class="card-body" style="margin-bottom:16px">This is one of the most common and sensitive situations in multi-country HR. An employee discovers that a colleague in another country earns more (or less) and raises it as a fairness concern. Here is the prepared response framework.</div>
+    <div style="display:grid;gap:12px">
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">The Prepared Explanation</div>
+        <div style="font-family:var(--font-display);font-style:italic;font-size:15px;color:var(--text2);line-height:1.7">"Valentis sets salaries based on the local market in each country. The cost of living, what other companies pay for the same role, and the local labour market are all different in Laos vs Indonesia vs Thailand. Our methodology is consistent — we benchmark every role against the same type of data in each country — but the resulting numbers are different. That is not unfair; it is economically accurate."</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">What You Should NOT Say</div>
+        <ul style="list-style:none;padding:0">
+          <li style="font-size:13px;color:var(--text2);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;font-weight:300"><span style="color:#e05a4a">✗</span>"That is confidential, I cannot discuss it." — This confirms a problem exists without explaining it.</li>
+          <li style="font-size:13px;color:var(--text2);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;font-weight:300"><span style="color:#e05a4a">✗</span>"Everyone is paid fairly." — Vague. Creates more suspicion, not less.</li>
+          <li style="font-size:13px;color:var(--text2);padding:5px 0;display:flex;gap:10px;font-weight:300"><span style="color:#e05a4a">✗</span>Sharing another employee's specific salary. — Never.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- V. LIFECYCLE -->
+<div id="page-lifecycle" class="page">
+  <div class="page-header">
+    <div class="page-vol">Chapter V</div>
+    <h1 class="page-title">Rewards by<br><em>Career Stage</em></h1>
+    <p class="page-lead">The emphasis within total rewards changes as an employee progresses through their career at Valentis. Understanding what matters most at each stage allows HR and managers to have more targeted and effective reward conversations.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Rewards Lifecycle</div>
+    <div style="display:grid;gap:3px;margin-top:8px">
+      <div style="display:grid;grid-template-columns:180px 1fr 1fr 1fr 1fr 1fr;gap:3px">
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--text3);text-transform:uppercase">Stage</div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:9px;color:var(--gold);letter-spacing:.5px">Base Pay</div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:9px;color:var(--bronze);letter-spacing:.5px">Variable</div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:9px;color:var(--olive);letter-spacing:.5px">Benefits</div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:9px;color:var(--sage);letter-spacing:.5px">Allowances</div>
+        <div style="padding:10px;background:var(--surface2);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:9px;color:var(--gold2);letter-spacing:.5px">Development</div>
+      </div>
+      <div style="display:grid;grid-template-columns:180px 1fr 1fr 1fr 1fr 1fr;gap:3px">
+        <div style="padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text)">Entry / Trainee</div>
+        <div style="padding:12px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--gold)">P40–50</div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text3)">None</div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text2)">Standard</div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text2)">Site only</div>
+        <div style="padding:12px;background:rgba(201,168,76,.15);border:1px solid var(--gold-border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--gold2)">★★★</div>
+      </div>
+      <div style="display:grid;grid-template-columns:180px 1fr 1fr 1fr 1fr 1fr;gap:3px">
+        <div style="padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text)">Developing</div>
+        <div style="padding:12px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--gold)">P50</div>
+        <div style="padding:12px;background:var(--bronze-dim);border:1px solid rgba(160,113,74,.2);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:#d4956a">Low</div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text2)">Standard</div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text2)">Standard</div>
+        <div style="padding:12px;background:rgba(201,168,76,.12);border:1px solid var(--gold-border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--gold2)">★★★</div>
+      </div>
+      <div style="display:grid;grid-template-columns:180px 1fr 1fr 1fr 1fr 1fr;gap:3px">
+        <div style="padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text)">Fully Performing</div>
+        <div style="padding:12px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--gold)">P50–65</div>
+        <div style="padding:12px;background:var(--bronze-dim);border:1px solid rgba(160,113,74,.2);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:#d4956a">Medium</div>
+        <div style="padding:12px;background:var(--olive-dim);border:1px solid rgba(107,124,58,.2);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:#9ab050">Enhanced</div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text2)">Standard</div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text3)">★★</div>
+      </div>
+      <div style="display:grid;grid-template-columns:180px 1fr 1fr 1fr 1fr 1fr;gap:3px">
+        <div style="padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text)">Senior / Expert</div>
+        <div style="padding:12px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--gold)">P65–75</div>
+        <div style="padding:12px;background:rgba(160,113,74,.2);border:1px solid rgba(160,113,74,.3);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:#d4956a">High</div>
+        <div style="padding:12px;background:var(--olive-dim);border:1px solid rgba(107,124,58,.2);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:#9ab050">Enhanced</div>
+        <div style="padding:12px;background:rgba(122,158,126,.12);border:1px solid rgba(122,158,126,.2);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--sage)">Enhanced</div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text3)">★</div>
+      </div>
+    </div>
+    <div class="info gold" style="margin-top:16px;margin-bottom:0"><strong>Why development weight shifts down at senior level</strong>Senior employees are already in their primary development phase — their IDP is about stretch, not foundation. The investment at senior level is in retention mechanisms (variable pay, enhanced benefits, enhanced allowances) more than training budget.</div>
+  </div>
+</div>
+
+<!-- VI. GOVERNANCE -->
+<div id="page-governance" class="page">
+  <div class="page-header">
+    <div class="page-vol">Chapter VI</div>
+    <h1 class="page-title">Governance &amp;<br><em>Authority</em></h1>
+    <p class="page-lead">Every compensation decision must go through the right approval channel. This chapter defines who can approve what, and what happens when exceptions are requested.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Approval Authority Matrix</div>
+    <table class="diff-table">
+      <thead><tr><th>Decision Type</th><th>HR Recommends</th><th>Approver</th><th>Timing</th><th>Documentation</th></tr></thead>
+      <tbody>
+        <tr><td>Annual Merit Increase — Standard</td><td>Yes — merit matrix output</td><td>COO</td><td>January cycle</td><td>Merit report + PM rating confirmation</td></tr>
+        <tr><td>Annual Merit Increase — Above Matrix</td><td>Yes — written business case</td><td>CEO</td><td>January cycle</td><td>Business case + justification memo</td></tr>
+        <tr><td>Promotion — Within Grade</td><td>Yes</td><td>COO</td><td>Any time</td><td>Updated JD + salary proposal</td></tr>
+        <tr><td>Promotion — Grade Change</td><td>Yes — grading assessment</td><td>CEO</td><td>Any time</td><td>JE assessment + salary band movement</td></tr>
+        <tr><td>New Hire Offer</td><td>Yes — within band</td><td>COO</td><td>Recruitment cycle</td><td>Offer letter + band reference</td></tr>
+        <tr><td>New Hire — Above Band Midpoint</td><td>Yes — exception memo</td><td>CEO</td><td>Recruitment cycle</td><td>Market data justification</td></tr>
+        <tr><td>Annual Bonus — Individual Payment</td><td>Yes — formula output</td><td>CEO</td><td>Q1 following year</td><td>Bonus calculation sheet</td></tr>
+        <tr><td>Retention Bonus</td><td>Yes — retention risk memo</td><td>CEO</td><td>Any time</td><td>Signed retention agreement</td></tr>
+        <tr><td>Off-Cycle Salary Review</td><td>Yes — written business case</td><td>CEO</td><td>Any time — exception</td><td>Market data + retention risk evidence</td></tr>
+        <tr><td>Benefits Exception</td><td>Yes</td><td>COO</td><td>Any time</td><td>Written request + HR recommendation</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Golden Rules of C&amp;B Governance</div>
+    <div style="display:grid;gap:10px;margin-top:4px">
+      <div style="display:flex;gap:12px;padding:12px;background:var(--red-dim);border:1px solid rgba(192,57,43,.2);border-radius:8px"><span style="color:#e05a4a;font-size:16px;flex-shrink:0">!</span><div style="font-size:13px;color:var(--text2);font-weight:300"><strong style="color:var(--text);display:block;margin-bottom:2px">No verbal salary commitments — ever</strong>Any salary commitment made verbally by a manager, COO, or CEO without HR involvement and written confirmation is not binding on the company — but it will damage trust when it is not honoured. All salary discussions must be followed by written confirmation signed by HR.</div></div>
+      <div style="display:flex;gap:12px;padding:12px;background:var(--red-dim);border:1px solid rgba(192,57,43,.2);border-radius:8px"><span style="color:#e05a4a;font-size:16px;flex-shrink:0">!</span><div style="font-size:13px;color:var(--text2);font-weight:300"><strong style="color:var(--text);display:block;margin-bottom:2px">No salary information sharing between employees</strong>Managers must not share specific salary figures of other employees. HR must not share salary data except through official total rewards statements. Payslips are personal and confidential.</div></div>
+      <div style="display:flex;gap:12px;padding:12px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:8px"><span style="color:var(--gold);font-size:16px;flex-shrink:0">★</span><div style="font-size:13px;color:var(--text2);font-weight:300"><strong style="color:var(--text);display:block;margin-bottom:2px">HR is the custodian of all salary data</strong>All salary records, offer letters, merit increase confirmations, and bonus letters are stored in the HR file. HR prepares the annual compensation report for CEO and COO. No other function holds master salary data.</div></div>
+      <div style="display:flex;gap:12px;padding:12px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:8px"><span style="color:var(--gold);font-size:16px;flex-shrink:0">★</span><div style="font-size:13px;color:var(--text2);font-weight:300"><strong style="color:var(--text);display:block;margin-bottom:2px">Exceptions create precedent — document carefully</strong>Every approved exception to this framework must be documented with a clear rationale. Undocumented exceptions become informal policies that are impossible to enforce or defend later.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- VII. COMMUNICATION -->
+<div id="page-communication" class="page">
+  <div class="page-header">
+    <div class="page-vol">Chapter VII</div>
+    <h1 class="page-title">Employee<br><em>Communication</em></h1>
+    <p class="page-lead">A great total rewards package that employees do not understand is a wasted investment. This chapter covers how to communicate compensation clearly, when to say what, and how to handle sensitive conversations.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Annual Compensation Communication Calendar</div>
+    <div style="display:grid;gap:10px;margin-top:8px">
+      <div class="comm-item"><div class="comm-icon">📋</div><div class="comm-content"><div class="comm-title">January — Merit Increase Letters</div><div class="comm-text">Individual letters to all employees confirming their 2027 salary effective date, new amount, and the PM rating that drove the decision. Delivered by manager, countersigned by employee. HR retains original.</div></div></div>
+      <div class="comm-item"><div class="comm-icon">📊</div><div class="comm-content"><div class="comm-title">February — Total Rewards Statements</div><div class="comm-text">Annual statement showing each employee their full package value: base salary, bonus received, benefits value, allowances, and development investment. Generated from Tool 7. Many employees underestimate their total package by 20–30%.</div></div></div>
+      <div class="comm-item"><div class="comm-icon">💬</div><div class="comm-content"><div class="comm-title">Q1 — Bonus Payment &amp; Communication</div><div class="comm-text">Annual bonus paid with March payroll. Individual bonus letters issued confirming the calculation: company modifier × individual PM rating × target percentage × base salary. No surprises.</div></div></div>
+      <div class="comm-item"><div class="comm-icon">🔄</div><div class="comm-content"><div class="comm-title">Q4 — Market Positioning Review (Internal)</div><div class="comm-text">HR reviews salary bands against market benchmarks. Any adjustments to bands take effect from January. Employees are not individually notified of band adjustments — only of changes to their own salary.</div></div></div>
+      <div class="comm-item"><div class="comm-icon">📅</div><div class="comm-content"><div class="comm-title">As Needed — New Hire Offers</div><div class="comm-text">Offers presented as total package — not just base salary. Include salary, allowances, benefits summary, and development offer. HR prepares offer letter. Manager delivers with verbal context.</div></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Handling the "Why Did I Only Get X% Increase?" Conversation</div>
+    <div class="card-body" style="margin-bottom:16px">This is the most common and most important compensation conversation managers face. Having a clear, confident answer is essential — vague responses damage trust more than the number itself.</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px">
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Prepared Response Framework</div>
+      <div style="font-family:var(--font-display);font-style:italic;font-size:15px;color:var(--text2);line-height:1.75">"Your increase this year is [X]%. That is driven by two things: your performance rating of [N], which puts you in the [rating label] category, and your current position in the salary band, which is at [compa-ratio]%. The merit matrix for your rating and band position produces an increase in the [X–Y]% range, and your [X]% sits within that. If you want to understand what would drive a higher increase next year, the answer is [specific development goal or performance target]. I am happy to talk through that."</div>
+    </div>
+    <div class="info gold" style="margin-top:16px;margin-bottom:0"><strong>The key is specificity</strong>Generic answers ("we consider many factors") create more suspicion than a specific answer that the employee disagrees with. A specific, logical answer — even one they do not like — is better than a vague one every time.</div>
+  </div>
+</div>
+
+<!-- VIII. DOCUMENT -->
+<div id="page-document" class="page">
+  <div class="page-header">
+    <div class="page-vol">Chapter VIII</div>
+    <h1 class="page-title">Framework<br><em>Document</em></h1>
+    <p class="page-lead">The official Total Rewards Framework document for sign-off by CEO and COO. This document records the philosophy, positioning decisions, and governance structure that governs all compensation decisions at Valentis.</p>
+  </div>
+
+  <div class="info gold"><strong>Instructions</strong>This document should be reviewed and signed annually — ideally in Q4 before the new merit cycle begins. Any changes to the philosophy, positioning targets, or governance structure require a new signed version. Store the signed document in the HR policy file.</div>
+
+  <div class="print-block">
+    <div style="text-align:center;border-bottom:1px solid var(--border2);padding-bottom:20px;margin-bottom:24px">
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Valentis Group — Confidential</div>
+      <div style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text);margin-bottom:4px">Total Rewards Framework</div>
+      <div style="font-size:13px;color:var(--text2)">Compensation &amp; Benefits Policy Document · 2026 Edition</div>
+    </div>
+
+    <div class="pfieldlabel">Effective Date</div>
+    <div class="pfieldval">1 January 2026</div>
+
+    <div class="pfieldlabel">Review Date</div>
+    <div class="pfieldval">Q4 2026 — prior to 2027 merit cycle</div>
+
+    <div class="pfieldlabel">Scope</div>
+    <div class="pfieldval">All employees of Valentis Group and its operating entities in Laos, Myanmar, Indonesia, and Thailand. Applicable to all employment types including local national and expatriate staff.</div>
+
+    <div class="pfieldlabel">Core Philosophy Statement</div>
+    <div class="pfieldval" style="font-style:italic">Valentis rewards people for the value of their role as determined by market data, and recognises individual performance through merit increases, variable pay, and development investment. We are committed to internal equity, market competitiveness, and transparent communication of our rewards approach.</div>
+
+    <div class="pfieldlabel">Market Positioning Policy</div>
+    <div class="pfieldval">Critical roles (Site Manager, Drilling Supervisor): P65–75. High criticality roles (Group HR Manager, Finance Manager, HSE Officer): P55–65. Standard roles: P50. Entry level: P40–50. Market data reviewed annually using mining and oil &amp; gas sector benchmarks.</div>
+
+    <div class="pfieldlabel">Performance-Reward Link</div>
+    <div class="pfieldval">Annual merit increases are determined by PM rating (from the Valentis PM System) combined with compa-ratio position. The merit matrix (Tool 4) produces increase ranges per rating and band position. Bonus eligibility requires Rating 3 or above.</div>
+
+    <div class="pfieldlabel">Governance</div>
+    <div class="pfieldval">HR owns the Total Rewards framework and is the custodian of all compensation data. Annual merit increases are approved by COO. New hires above band midpoint, off-cycle increases, retention bonuses, and all exceptions require CEO approval.</div>
+
+    <div class="pfieldlabel">Country Differentiation</div>
+    <div class="pfieldval">Salaries are benchmarked in local currency against local market data in each of the four operating countries. Internal equity is assessed within each country. Cross-country comparisons are not a basis for salary adjustment.</div>
+
+    <div class="sig-row">
+      <div class="sig-block"><div style="height:44px"></div><div class="sig-name">Chief Executive Officer</div></div>
+      <div class="sig-block"><div style="height:44px"></div><div class="sig-name">Chief Operating Officer</div></div>
+      <div class="sig-block"><div style="height:44px"></div><div class="sig-name">Group HR Manager — Date</div></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-gold" onclick="window.print()">Print / Save as PDF</button>
+    <button class="btn btn-ghost" onclick="showPage('philosophy', document.querySelector('.nav-item'))">Back to Chapter I</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

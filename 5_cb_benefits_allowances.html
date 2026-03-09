@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benefits and Allowances Register — Valentis C&B Tool 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Nunito:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d0a12;--surface:#121018;--surface2:#18141f;--surface3:#1e1928;
+  --border:#2a2238;--border2:#362d4a;--border3:#453a5e;
+  --plum:#c084fc;--plum2:#d8b4fe;--plum-dim:rgba(192,132,252,0.07);--plum-border:rgba(192,132,252,0.2);
+  --rose:#fb7185;--rose-dim:rgba(251,113,133,0.08);--rose-border:rgba(251,113,133,0.2);
+  --gold:#f59e0b;--gold-dim:rgba(245,158,11,0.08);--gold-border:rgba(245,158,11,0.2);
+  --sage:#34d399;--sage-dim:rgba(52,211,153,0.07);--sage-border:rgba(52,211,153,0.2);
+  --sky:#38bdf8;--sky-dim:rgba(56,189,248,0.07);--sky-border:rgba(56,189,248,0.2);
+  --text:#e2d9f3;--text2:#8b7aaa;--text3:#4a3d6a;--text4:#2a2040;
+  --sidebar-w:268px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'Nunito',sans-serif;
+  --fm:'Source Code Pro','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-top-rule{height:2px;background:linear-gradient(90deg,var(--plum),rgba(192,132,252,0.2),transparent)}
+.sb-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border)}
+.sb-chip{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--plum);background:var(--plum-dim);border:1px solid var(--plum-border);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--text);line-height:1.15;margin-bottom:4px;letter-spacing:.3px}
+.sb-sub{font-size:11px;color:var(--text3)}
+.sb-section{padding:12px 10px 4px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text4);padding:0 10px;margin-bottom:5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:5px;cursor:pointer;transition:all .12s;color:var(--text3);font-size:12.5px;font-weight:500;margin-bottom:2px;border:1px solid transparent}
+.nav-item:hover{background:var(--surface2);color:var(--text2)}
+.nav-item.active{background:var(--plum-dim);border-color:var(--plum-border);color:var(--plum)}
+.nav-num{font-family:var(--fm);font-size:9px;color:var(--text4);width:22px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--plum)}
+.sb-footer{margin-top:auto;padding:14px;border-top:1px solid var(--border)}
+.sb-note{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:12px;font-size:11px;color:var(--text3)}
+.sb-note strong{display:block;color:var(--text2);margin-bottom:2px;font-family:var(--fm)}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:42px 52px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--plum);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:48px;font-weight:700;color:var(--text);line-height:1;margin-bottom:10px;letter-spacing:.3px}
+.page-title em{font-style:italic;color:var(--plum)}
+.page-desc{font-size:14px;color:var(--text2);max-width:580px;line-height:1.8;font-weight:300}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:26px;margin-bottom:16px;transition:border-color .12s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px}
+.card-body{font-size:13.5px;color:var(--text2);line-height:1.8;font-weight:300}
+
+/* BENEFIT CARDS */
+.benefit-card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:20px;margin-bottom:10px;transition:all .15s;cursor:default}
+.benefit-card:hover{border-color:var(--border2);background:var(--surface2)}
+.bc-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+.bc-icon{width:40px;height:40px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.bc-meta{flex:1}
+.bc-name{font-family:var(--fd);font-size:18px;font-weight:700;color:var(--text);margin-bottom:3px}
+.bc-type{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+.bc-countries{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.bc-desc{font-size:13.5px;color:var(--text2);line-height:1.75;font-weight:300;margin-bottom:10px}
+.bc-detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bc-detail-item{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:10px;font-size:12px}
+.bc-detail-label{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:3px}
+.bc-detail-val{color:var(--text);font-weight:500}
+
+/* COUNTRY TABS */
+.ctabs{display:flex;gap:2px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:3px;margin-bottom:20px;width:fit-content}
+.ctab{padding:8px 18px;border-radius:4px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text3);transition:all .12s}
+.ctab.active{background:var(--plum-dim);border:1px solid var(--plum-border);color:var(--plum)}
+.ctab:hover:not(.active){background:var(--surface3);color:var(--text2)}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--surface2);color:var(--text3);font-family:var(--fm);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:2px solid var(--border)}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;font-weight:300}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font-family:var(--fm);font-size:9px;font-weight:600;letter-spacing:.5px}
+.chip-plum{background:var(--plum-dim);color:var(--plum);border:1px solid var(--plum-border)}
+.chip-rose{background:var(--rose-dim);color:var(--rose);border:1px solid var(--rose-border)}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-sage{background:var(--sage-dim);color:var(--sage);border:1px solid var(--sage-border)}
+.chip-sky{background:var(--sky-dim);color:var(--sky);border:1px solid var(--sky-border)}
+.chip-muted{background:var(--surface3);color:var(--text3);border:1px solid var(--border2)}
+
+/* COUNTRY FLAG CHIP */
+.cflag{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:3px;font-family:var(--fm);font-size:9px;font-weight:600;background:var(--surface3);color:var(--text2);border:1px solid var(--border2)}
+
+/* INFO */
+.info{border-radius:5px;padding:13px 16px;margin-bottom:14px;font-size:13.5px;line-height:1.75;border-left:3px solid;font-weight:300}
+.info.plum{background:var(--plum-dim);border-color:var(--plum);color:var(--plum2)}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+.info.rose{background:var(--rose-dim);border-color:var(--rose);color:var(--rose)}
+.info.sage{background:var(--sage-dim);border-color:var(--sage);color:var(--sage)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+
+/* FORM */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.form-label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+.form-input,.form-select,.form-textarea{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:9px 12px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .12s;width:100%}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--plum)}
+.form-select option{background:var(--surface2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:4px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:4px}
+.form-textarea{resize:vertical;min-height:70px;line-height:1.6;font-weight:300}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:4px;border:none;font-family:var(--fb);font-size:13px;font-weight:700;cursor:pointer;transition:all .12s}
+.btn-plum{background:var(--plum);color:#0d0a12}
+.btn-plum:hover{background:var(--plum2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--border3);color:var(--text)}
+.btn-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+/* PRINT */
+.print-block{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:26px;font-size:13px;line-height:1.8}
+.pfieldlabel{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:3px}
+.pfieldval{color:var(--text);font-size:13.5px;margin-bottom:14px;font-weight:300}
+.sig-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:26px}
+.sig-block{border-top:1px solid var(--border2);padding-top:10px}
+.sig-name{font-family:var(--fm);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+
+/* ELIGIBILITY MATRIX */
+.elig-table{width:100%;border-collapse:collapse}
+.elig-table th{padding:9px 10px;font-family:var(--fm);font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);background:var(--surface2);border:1px solid var(--border);text-align:center}
+.elig-table th.row-head{text-align:left;width:180px}
+.elig-table td{padding:9px 10px;border:1px solid var(--border);text-align:center;font-size:12px;vertical-align:middle}
+.elig-table td.row-head{text-align:left;font-size:13px;font-weight:500;color:var(--text)}
+.elig-yes{color:var(--sage);font-size:16px}
+.elig-no{color:var(--text3);font-size:14px}
+.elig-partial{color:var(--gold);font-size:14px}
+
+/* CHECKLIST */
+.checklist-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);transition:background .12s}
+.checklist-item:last-child{border-bottom:none}
+.checklist-item:hover{background:var(--surface2)}
+.ci-check{width:20px;height:20px;border-radius:4px;border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .12s}
+.ci-check.checked{background:var(--plum-dim);border-color:var(--plum-border)}
+.ci-text{flex:1;font-size:13.5px;color:var(--text2);font-weight:300;line-height:1.65}
+.ci-text strong{color:var(--text);font-weight:600}
+
+/* HR */
+hr.div{border:none;border-top:1px solid var(--border);margin:24px 0}
+
+/* CATEGORY TABS */
+.cat-tabs{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:20px}
+.cat-tab{padding:6px 14px;border-radius:4px;cursor:pointer;font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:.5px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);transition:all .12s}
+.cat-tab.active{color:var(--plum);background:var(--plum-dim);border-color:var(--plum-border)}
+.cat-tab:hover:not(.active){color:var(--text2);border-color:var(--border2)}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .benefit-card{animation:fadeUp .28s ease both}
+.page.active .benefit-card:nth-child(2){animation-delay:.04s}
+.page.active .benefit-card:nth-child(3){animation-delay:.08s}
+.page.active .benefit-card:nth-child(4){animation-delay:.12s}
+.page.active .card:nth-child(2){animation-delay:.06s}
+.page.active .card:nth-child(3){animation-delay:.12s}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-top-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-chip">C&amp;B Tool V / VIII</div>
+    <div class="sb-title">Benefits &amp; Allowances Register</div>
+    <div class="sb-sub">Valentis Group · 4-Country Reference</div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('core',this)"><span class="nav-num">02</span>Core Benefits</div>
+    <div class="nav-item" onclick="showPage('allowances',this)"><span class="nav-num">03</span>Site and Field Allowances</div>
+    <div class="nav-item" onclick="showPage('statutory',this)"><span class="nav-num">04</span>Statutory Requirements</div>
+    <div class="nav-item" onclick="showPage('eligibility',this)"><span class="nav-num">05</span>Eligibility Matrix</div>
+    <div class="nav-item" onclick="showPage('onboarding',this)"><span class="nav-num">06</span>Onboarding Checklist</div>
+    <div class="nav-item" onclick="showPage('benchmarking',this)"><span class="nav-num">07</span>Benefits Benchmarking</div>
+    <div class="nav-item" onclick="showPage('document',this)"><span class="nav-num">08</span>Generate Benefits Summary</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Tool 5 / 8</strong>
+      Benefits and Allowances Register<br>
+      <span style="font-size:10px">Feeds into: Tool 7 (Total Rewards Statement)</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 OVERVIEW -->
+<div id="page-overview" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">C&amp;B Tool 5 — Benefits and Allowances Register</div>
+    <h1 class="page-title">Benefits <em>&amp;</em><br>Allowances</h1>
+    <p class="page-desc">The complete reference register for all Valentis Group benefits, allowances, and non-cash entitlements across Laos, Myanmar, Indonesia, and Thailand. The single source of truth for what employees receive beyond base salary.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What This Register Covers</div>
+      <div class="card-body">Benefits and allowances are everything an employee receives beyond their base salary. At Valentis, these fall into four categories:<br><br>
+        <strong style="color:var(--text)">Core Benefits</strong> — entitlements that apply to all employees regardless of role or country, including health coverage, annual leave, and life insurance.<br><br>
+        <strong style="color:var(--text)">Site and Field Allowances</strong> — additional compensation for the operational realities of exploration work — remote locations, rotation schedules, hardship conditions.<br><br>
+        <strong style="color:var(--text)">Statutory Requirements</strong> — legally mandated contributions and entitlements in each country. Non-negotiable and non-discretionary.<br><br>
+        <strong style="color:var(--text)">Discretionary Benefits</strong> — additional items provided at company discretion, often used competitively in hard-to-source roles.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why Benefits Matter to Total Cost</div>
+      <div style="display:grid;gap:9px;margin-top:4px">
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--plum);margin-bottom:4px">Total Employer Cost</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">At Valentis, total employer cost typically runs 20–35% above base salary depending on country and role. Indonesia and Thailand are highest due to statutory contribution requirements. This register tracks every component of that cost.</div>
+        </div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--plum);margin-bottom:4px">Candidate Communication</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Many candidates compare only base salary. When Valentis communicates total rewards — including the cash value of R&amp;R flights, accommodation, meals, and health coverage — the package becomes considerably more competitive.</div>
+        </div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--plum);margin-bottom:4px">Compliance Risk</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:300">Missing a statutory benefit — a social security contribution, a mandated 13th month, or a legally required leave entitlement — creates employment law risk. This register ensures nothing is missed.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Benefits at a Glance — Valentis 2026</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-top:8px" id="overview-tiles"></div>
+  </div>
+</div>
+
+<!-- 02 CORE BENEFITS -->
+<div id="page-core" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Core Benefits</div>
+    <h1 class="page-title">Core<br><em>Benefits</em></h1>
+    <p class="page-desc">Benefits that apply to all permanent employees across all four countries. These form the baseline of the Valentis benefits package regardless of role, grade, or location.</p>
+  </div>
+
+  <div class="info plum"><strong>All-employee entitlements</strong>Every benefit on this page applies to all permanent employees from their first day of employment unless otherwise noted. Probationary employees have modified entitlements as specified in each item.</div>
+
+  <div id="core-benefits-container"></div>
+</div>
+
+<!-- 03 ALLOWANCES -->
+<div id="page-allowances" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Site and Field Allowances</div>
+    <h1 class="page-title">Site <em>&amp;</em><br>Field Allowances</h1>
+    <p class="page-desc">Additional compensation for employees working in remote field locations, on rotation schedules, or in designated hardship environments. These are critical for attracting and retaining operational site staff.</p>
+  </div>
+
+  <div class="info gold"><strong>Role and location dependent</strong>These allowances are not universal — they apply based on role assignment, site designation, and country. The eligibility matrix (Section 05) shows exactly which roles qualify. Allowances are separate from base salary and are not included in merit increase calculations.</div>
+
+  <div id="allowances-container"></div>
+</div>
+
+<!-- 04 STATUTORY -->
+<div id="page-statutory" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Statutory Requirements</div>
+    <h1 class="page-title">Statutory<br><em>Requirements</em></h1>
+    <p class="page-desc">Legally mandated benefits, contributions, and entitlements in each country. These are floors — Valentis meets or exceeds all statutory requirements. Non-compliance creates criminal and civil liability.</p>
+  </div>
+
+  <div class="info rose"><strong>Legal minimum — non-negotiable</strong>Statutory benefits cannot be contracted away, reduced, or made conditional on performance. If Valentis offers a benefit that exceeds the statutory minimum (e.g. more annual leave than required), the excess is discretionary. The statutory minimum is always protected.</div>
+
+  <div class="ctabs">
+    <div class="ctab active" onclick="showStatutory('LAO',this)">🇱🇦 Laos</div>
+    <div class="ctab" onclick="showStatutory('MMR',this)">🇲🇲 Myanmar</div>
+    <div class="ctab" onclick="showStatutory('IDN',this)">🇮🇩 Indonesia</div>
+    <div class="ctab" onclick="showStatutory('THA',this)">🇹🇭 Thailand</div>
+  </div>
+  <div id="statutory-container"></div>
+</div>
+
+<!-- 05 ELIGIBILITY -->
+<div id="page-eligibility" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Eligibility Matrix</div>
+    <h1 class="page-title">Eligibility<br><em>Matrix</em></h1>
+    <p class="page-desc">Which benefits and allowances apply to which roles. Use this as the reference when onboarding a new employee or answering a benefits query. Cross-reference with country statutory rules in Section 04.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Benefits Eligibility by Role and Grade</div>
+    <div style="overflow-x:auto;margin-top:8px"><table class="elig-table" id="eligibility-table"></table></div>
+  </div>
+
+  <div class="info plum"><strong>Reading this matrix</strong>A checkmark means the benefit is included for this role as a standard entitlement. A tilde (~) means partial or conditional eligibility — hover or see footnotes. A dash means not applicable. All statutory entitlements always apply regardless of what is shown here.</div>
+</div>
+
+<!-- 06 ONBOARDING -->
+<div id="page-onboarding" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Onboarding Checklist</div>
+    <h1 class="page-title">Benefits<br><em>Onboarding Checklist</em></h1>
+    <p class="page-desc">The HR checklist for ensuring every new employee's benefits are correctly set up from day one. Organised by timing — before start date, first day, first week, and first month.</p>
+  </div>
+
+  <div class="form-row" style="margin-bottom:16px">
+    <div class="form-group">
+      <div class="form-label">Employee Name</div>
+      <input class="form-input" id="ob-name" placeholder="New employee name" oninput="updateChecklist()">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Country</div>
+      <select class="form-select" id="ob-country" onchange="updateChecklist()">
+        <option value="">Select country</option>
+        <option value="LAO">Laos</option>
+        <option value="MMR">Myanmar</option>
+        <option value="IDN">Indonesia</option>
+        <option value="THA">Thailand</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Role Type</div>
+      <select class="form-select" id="ob-role" onchange="updateChecklist()">
+        <option value="">Select role type</option>
+        <option value="site">Site / Field (Rotation)</option>
+        <option value="office">Office / Country-based</option>
+        <option value="expat">Expatriate / Cross-border</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="checklist-container">
+    <div class="info plum">Select employee country and role type above to generate a tailored onboarding checklist.</div>
+  </div>
+</div>
+
+<!-- 07 BENCHMARKING -->
+<div id="page-benchmarking" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Benefits Benchmarking</div>
+    <h1 class="page-title">Benefits<br><em>Benchmarking</em></h1>
+    <p class="page-desc">How Valentis benefits compare to market practice in SEA mining and oil and gas. Used to identify gaps, communicate competitiveness, and prioritise the next enhancement to the benefits package.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Valentis vs Market — Core Benefits Comparison</div>
+    <table class="dtable">
+      <thead><tr><th>Benefit</th><th>Market Standard</th><th>Valentis Position</th><th>Gap / Status</th><th>Priority</th></tr></thead>
+      <tbody id="benchmark-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Priority Enhancements — Next Review Cycle</div>
+    <div style="display:grid;gap:8px;margin-top:4px" id="priority-enhancements"></div>
+  </div>
+</div>
+
+<!-- 08 GENERATE -->
+<div id="page-document" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Benefits Summary</div>
+    <h1 class="page-title">Generate Benefits<br><em>Summary</em></h1>
+    <p class="page-desc">Produce a personalised benefits summary for a specific employee. Used in offer letters, onboarding packs, and annual total rewards communication.</p>
+  </div>
+
+  <div class="card">
+    <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--plum);margin-bottom:14px">Employee Details</div>
+    <div class="form-row-3">
+      <div class="form-group"><div class="form-label">Employee Name</div><input class="form-input" id="bs-name" placeholder="Full name"></div>
+      <div class="form-group"><div class="form-label">Job Title</div><input class="form-input" id="bs-title" placeholder="e.g. Drilling Supervisor"></div>
+      <div class="form-group"><div class="form-label">Grade</div><select class="form-select" id="bs-grade"><option>G1</option><option>G2</option><option>G3</option><option>G4</option><option>G5</option><option selected>G6</option><option>G7</option><option>G8</option></select></div>
+    </div>
+    <div class="form-row-3">
+      <div class="form-group"><div class="form-label">Country</div><select class="form-select" id="bs-country"><option value="LAO">Laos</option><option value="MMR">Myanmar</option><option value="IDN">Indonesia</option><option value="THA">Thailand</option></select></div>
+      <div class="form-group"><div class="form-label">Role Type</div><select class="form-select" id="bs-role-type"><option value="site">Site / Field</option><option value="office">Office</option><option value="expat">Expatriate</option></select></div>
+      <div class="form-group"><div class="form-label">Document Date</div><input class="form-input" id="bs-date" value="March 2026"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-plum" onclick="generateBenefitsSummary()">Generate Summary</button>
+      <button class="btn btn-ghost" onclick="clearSummary()">Clear</button>
+    </div>
+  </div>
+  <div id="benefits-summary-output" style="margin-top:16px"></div>
+  <div id="print-btn-row" style="display:none;margin-top:10px">
+    <button class="btn btn-ghost" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── NAV ───────────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────
+const coreData = [
+  {
+    name:'Medical and Health Insurance',
+    type:'Core Benefit',
+    icon:'🏥',
+    iconBg:'rgba(251,113,133,0.12)',
+    countries:['LAO','MMR','IDN','THA'],
+    desc:'Company-funded medical coverage for all permanent employees. Covers inpatient hospitalisation, outpatient consultation, emergency treatment, and prescription medication. Valentis coordinates coverage through a regional insurer with network access in all four countries.',
+    details:[
+      {label:'Coverage Type',val:'Inpatient + Outpatient'},
+      {label:'Annual Limit',val:'USD 5,000 per employee'},
+      {label:'Dependent Coverage',val:'Spouse + up to 2 children'},
+      {label:'Waiting Period',val:'None (from Day 1)'},
+      {label:'Pre-existing Conditions',val:'Covered after 12 months'},
+      {label:'Provider Network',val:'Company-coordinated regional plan'},
+    ],
+    color:'var(--rose)',chip:'chip-rose'
+  },
+  {
+    name:'Annual Leave',
+    type:'Core Benefit',
+    icon:'🌴',
+    iconBg:'rgba(52,211,153,0.1)',
+    countries:['LAO','MMR','IDN','THA'],
+    desc:'Paid annual leave entitlement above statutory minimums. Leave accrues from the first day of employment. Unused leave may be carried forward up to a maximum of 10 days into the following year. Encashment of leave above the carry-forward limit is at company discretion.',
+    details:[
+      {label:'Standard Entitlement',val:'15 working days per year'},
+      {label:'After 3 Years',val:'18 working days per year'},
+      {label:'After 5 Years',val:'21 working days per year'},
+      {label:'Maximum Carry-Forward',val:'10 days'},
+      {label:'Encashment',val:'Company discretion only'},
+      {label:'Probation Period',val:'Pro-rated from start date'},
+    ],
+    color:'var(--sage)',chip:'chip-sage'
+  },
+  {
+    name:'Group Life Insurance',
+    type:'Core Benefit',
+    icon:'🛡',
+    iconBg:'rgba(192,132,252,0.1)',
+    countries:['LAO','MMR','IDN','THA'],
+    desc:'Company-funded group life insurance providing a lump-sum benefit to the nominated beneficiary in the event of employee death, with accidental death and dismemberment coverage. This is in addition to any statutory death benefits mandated in each country.',
+    details:[
+      {label:'Death Benefit',val:'2x annual base salary'},
+      {label:'AD&D Coverage',val:'2x annual base salary'},
+      {label:'Beneficiary',val:'Employee-nominated'},
+      {label:'Cover Start',val:'Day 1 of employment'},
+      {label:'Premium',val:'Company-funded (100%)'},
+      {label:'Maximum Benefit',val:'USD 200,000'},
+    ],
+    color:'var(--plum)',chip:'chip-plum'
+  },
+  {
+    name:'Training and Development',
+    type:'Core Benefit',
+    icon:'📚',
+    iconBg:'rgba(56,189,248,0.1)',
+    countries:['LAO','MMR','IDN','THA'],
+    desc:'Company support for role-relevant training, certifications, and professional development. Employees may request training through their manager and HR. Mandatory technical certifications required for the role are fully funded. Elective development funding requires manager approval and may be subject to a service obligation.',
+    details:[
+      {label:'Mandatory Certifications',val:'100% company-funded'},
+      {label:'Elective Development',val:'Up to USD 800/year'},
+      {label:'Service Obligation',val:'12 months after training'},
+      {label:'Approval Authority',val:'Manager + HR'},
+      {label:'External Programmes',val:'Eligible with approval'},
+      {label:'AIHR / Professional',val:'Case-by-case'},
+    ],
+    color:'var(--sky)',chip:'chip-sky'
+  },
+  {
+    name:'Compassionate Leave',
+    type:'Core Benefit',
+    icon:'🌿',
+    iconBg:'rgba(52,211,153,0.08)',
+    countries:['LAO','MMR','IDN','THA'],
+    desc:'Paid leave for bereavement and serious family emergencies. This is separate from annual leave and does not affect the annual leave balance. Application requires supporting documentation where practicable.',
+    details:[
+      {label:'Immediate Family Death',val:'5 working days'},
+      {label:'Extended Family Death',val:'3 working days'},
+      {label:'Serious Illness (family)',val:'Up to 3 days per event'},
+      {label:'Evidence Required',val:'Where practicable'},
+      {label:'Counted Against Leave?',val:'No'},
+      {label:'Remote Site Employees',val:'Travel time included'},
+    ],
+    color:'var(--sage)',chip:'chip-sage'
+  },
+  {
+    name:'Maternity and Paternity Leave',
+    type:'Core Benefit',
+    icon:'👶',
+    iconBg:'rgba(245,158,11,0.08)',
+    countries:['LAO','MMR','IDN','THA'],
+    desc:'Paid parental leave for the birth or adoption of a child. Valentis meets or exceeds statutory requirements in all countries. Maternity leave entitlement reflects both company policy and local statutory minimums, whichever is higher.',
+    details:[
+      {label:'Maternity (standard)',val:'14 weeks fully paid'},
+      {label:'Paternity',val:'5 working days fully paid'},
+      {label:'Statutory Minimum (LAO)',val:'105 days'},
+      {label:'Statutory Minimum (IDN)',val:'3 months'},
+      {label:'Statutory Minimum (THA)',val:'98 days'},
+      {label:'Adoption',val:'Same as maternity/paternity'},
+    ],
+    color:'var(--gold)',chip:'chip-gold'
+  },
+];
+
+const allowanceData = [
+  {
+    name:'Site Allowance',
+    type:'Field Allowance',
+    icon:'⛏',
+    iconBg:'rgba(245,158,11,0.1)',
+    countries:['LAO','MMR','IDN'],
+    desc:'A cash allowance paid to employees assigned to remote exploration or drilling sites as their primary work location. Compensates for the inconvenience, isolation, and lifestyle impact of remote site posting. Paid monthly as part of the normal payroll cycle.',
+    details:[
+      {label:'G1-G3 Rate',val:'USD 200–350/month'},
+      {label:'G4-G5 Rate',val:'USD 400–550/month'},
+      {label:'G6+ Rate',val:'USD 600–800/month'},
+      {label:'Payment Timing',val:'Monthly with payroll'},
+      {label:'Trigger',val:'Site posting assignment'},
+      {label:'Taxability',val:'Taxable in country of employment'},
+    ],
+    color:'var(--gold)',chip:'chip-gold'
+  },
+  {
+    name:'Rotation and R&R',
+    type:'Field Allowance',
+    icon:'✈',
+    iconBg:'rgba(56,189,248,0.1)',
+    countries:['LAO','MMR','IDN'],
+    desc:'For employees on a formalised rotation schedule (typically 6 weeks on / 2 weeks off), Valentis provides return flights to the employee home base or nearest major city during the rest and recuperation period. Applies to site-based operational staff on formal rotation contracts.',
+    details:[
+      {label:'Standard Rotation',val:'6 weeks on / 2 weeks off'},
+      {label:'R&R Flight',val:'Economy return to home base'},
+      {label:'Flight Booking',val:'Company-arranged'},
+      {label:'Eligibility',val:'Formal rotation contract only'},
+      {label:'Dependents',val:'Not included (company flight)'},
+      {label:'Alternative',val:'Cash equivalent if requested'},
+    ],
+    color:'var(--sky)',chip:'chip-sky'
+  },
+  {
+    name:'Accommodation',
+    type:'Field Allowance',
+    icon:'🏠',
+    iconBg:'rgba(192,132,252,0.1)',
+    countries:['LAO','MMR','IDN','THA'],
+    desc:'Company-provided accommodation or accommodation allowance for employees whose role requires them to be based away from their home city. Site-based employees receive company camp accommodation. Country-office staff in locations away from home may receive a housing allowance.',
+    details:[
+      {label:'Site Staff',val:'Company camp (in-kind)'},
+      {label:'Country Office',val:'Allowance USD 300–600/month'},
+      {label:'Expat Package',val:'Fully furnished apartment'},
+      {label:'Applicable Grades',val:'All grades at designated sites'},
+      {label:'Benefit-in-Kind Tax',val:'Country-dependent'},
+      {label:'Standard',val:'Single room, shared facilities'},
+    ],
+    color:'var(--plum)',chip:'chip-plum'
+  },
+  {
+    name:'Meals and Subsistence',
+    type:'Field Allowance',
+    icon:'🍽',
+    iconBg:'rgba(52,211,153,0.08)',
+    countries:['LAO','MMR','IDN'],
+    desc:'Company-provided meals for all employees during site working hours, or a daily subsistence allowance where company meals are not available. This is a significant cost component of site operations and a valued benefit for operational staff.',
+    details:[
+      {label:'Site Meals',val:'3 meals/day (in-kind)'},
+      {label:'Cash Alternative',val:'USD 15–20 per day'},
+      {label:'Office Locations',val:'Not applicable'},
+      {label:'Benefit-in-Kind',val:'Excluded from tax in most countries'},
+      {label:'Quality Standard',val:'Minimum nutritional standard per HSE'},
+      {label:'Dietary Requirements',val:'Accommodated where practicable'},
+    ],
+    color:'var(--sage)',chip:'chip-sage'
+  },
+  {
+    name:'Hardship Allowance',
+    type:'Field Allowance',
+    icon:'🌐',
+    iconBg:'rgba(251,113,133,0.1)',
+    countries:['MMR'],
+    desc:'An additional premium for employees assigned to locations currently designated as hardship postings. Myanmar is the current active hardship designation for Valentis, reflecting political instability, infrastructure limitations, and personal security considerations.',
+    details:[
+      {label:'Current Designation',val:'Myanmar (all sites)'},
+      {label:'Premium Rate',val:'10–15% of base salary'},
+      {label:'Review Cycle',val:'Quarterly by COO'},
+      {label:'Payment',val:'Monthly with payroll'},
+      {label:'Trigger for Removal',val:'COO removes designation'},
+      {label:'Retroactive Removal',val:'Not applicable — prospective only'},
+    ],
+    color:'var(--rose)',chip:'chip-rose'
+  },
+  {
+    name:'Transport Allowance',
+    type:'Field Allowance',
+    icon:'🚗',
+    iconBg:'rgba(245,158,11,0.08)',
+    countries:['IDN','THA'],
+    desc:'A cash allowance for employees in country offices who incur regular commuting costs. Not applicable to site-based employees (transport is company-arranged for site). Rates vary by city and the availability of company shuttle services.',
+    details:[
+      {label:'Indonesia (Jakarta/Kalimantan)',val:'IDR 500,000–1,000,000/month'},
+      {label:'Thailand (Bangkok)',val:'THB 1,500–3,000/month'},
+      {label:'Where Company Transport Provided',val:'Not paid'},
+      {label:'Applicable Grades',val:'G1–G5 (office-based only)'},
+      {label:'Evidence Required',val:'None — flat rate'},
+      {label:'Taxability',val:'Taxable'},
+    ],
+    color:'var(--gold)',chip:'chip-gold'
+  },
+];
+
+const statutoryData = {
+  LAO:{
+    name:'Laos',flag:'🇱🇦',currency:'LAK',
+    items:[
+      {benefit:'National Social Security Fund (NSSF)',employer:'5.5% of gross salary',employee:'5.5% of gross salary',notes:'Covers sickness, maternity, work injury, invalidity, and old age. Mandatory for all employees.'},
+      {benefit:'Annual Leave',employer:'Minimum 15 working days',employee:'Right, not paid by employee',notes:'Valentis provides 15 days minimum, matching the statutory floor.'},
+      {benefit:'Maternity Leave',employer:'105 days fully paid',employee:'Right',notes:'105 days (approximately 15 weeks). Company is required to pay full salary during this period.'},
+      {benefit:'Public Holidays',employer:'Variable — approximately 12 days/year',employee:'Right',notes:'Employees working on public holidays are entitled to overtime or substitution leave.'},
+      {benefit:'Work Injury Insurance',employer:'Company must maintain',employee:'N/A',notes:'In addition to NSSF. Must cover medical costs and lost wages for work-related injury.'},
+      {benefit:'Probation Period',employer:'Maximum 60 days',employee:'Right',notes:'Cannot extend probation beyond 60 days. Employee entitled to full benefits after confirmation.'},
+    ]
+  },
+  MMR:{
+    name:'Myanmar',flag:'🇲🇲',currency:'USD/MMK',
+    items:[
+      {benefit:'Social Security Board (SSB)',employer:'3% of gross salary (capped)',employee:'2% of gross salary (capped)',notes:'Salary cap applies. Covers health, maternity, and occupational injury. Registration mandatory.'},
+      {benefit:'Annual Leave',employer:'10 working days per year',employee:'Right',notes:'After 12 months continuous service. Valentis provides 15 days — above statutory minimum.'},
+      {benefit:'Maternity Leave',employer:'14 weeks paid',employee:'Right',notes:'6 weeks before birth, 8 weeks after. SSB partially reimburses — employer pays balance.'},
+      {benefit:'Public Holidays',employer:'22 gazetted public holidays',employee:'Right',notes:'Myanmar has one of the highest public holiday counts in SEA. Site operations must manage this carefully.'},
+      {benefit:'Work Injury',employer:'Must provide compensation',employee:'N/A',notes:'Under SSB and standalone obligation. Medical costs and disability compensation mandatory.'},
+      {benefit:'Overtime',employer:'200% for weekday OT; 200% for rest day',employee:'N/A',notes:'Site operations must track hours carefully. Rotation model partially addresses this.'},
+    ]
+  },
+  IDN:{
+    name:'Indonesia',flag:'🇮🇩',currency:'IDR',
+    items:[
+      {benefit:'BPJS Kesehatan (Health)',employer:'4% of salary',employee:'1% of salary',notes:'National health insurance. Mandatory for all employees. Covers healthcare at BPJS-registered facilities.'},
+      {benefit:'BPJS Ketenagakerjaan (Employment)',employer:'3.7% of salary',employee:'2% of salary',notes:'Covers workplace accident (JKK), death (JKM), old age (JHT), and pension (JP).'},
+      {benefit:'THR (Religious Holiday Allowance)',employer:'1 month salary (after 1 year)',employee:'Right',notes:'Must be paid at least 7 days before Lebaran. Pro-rated for less than 1 year service. Legally mandated.'},
+      {benefit:'Annual Leave',employer:'12 working days per year',employee:'Right',notes:'After 12 months continuous service. Valentis provides 15 days — above statutory minimum.'},
+      {benefit:'UMR (Regional Minimum Wage)',employer:'Must observe regional UMR',employee:'Protection',notes:'UMR varies by region. Valentis must check UMR for each operating location. Kalimantan UMR applies to site.'},
+      {benefit:'Maternity Leave',employer:'3 months fully paid',employee:'Right',notes:'1.5 months before birth, 1.5 months after. Miscarriage: 1.5 months. Must pay full salary during leave.'},
+    ]
+  },
+  THA:{
+    name:'Thailand',flag:'🇹🇭',currency:'THB',
+    items:[
+      {benefit:'Social Security Fund (SSF)',employer:'5% of salary (capped at THB 750/month)',employee:'5% of salary (capped)',notes:'Covers illness, maternity, invalidity, death, old age, and unemployment. Mandatory.'},
+      {benefit:'Workmen Compensation Fund',employer:'0.2–1% of salary (sector rate)',employee:'N/A',notes:'Separate from SSF. Mining and energy sectors apply the higher rate. Covers work-related injury and disease.'},
+      {benefit:'Annual Leave',employer:'6 working days per year after 1 year',employee:'Right',notes:'Statutory minimum is very low — 6 days. Valentis provides 15 days as company standard. Significant positive differentiation.'},
+      {benefit:'Maternity Leave',employer:'98 days — 45 days paid by employer',employee:'Right',notes:'SSF pays 45 days, employer pays balance to 98 days if providing enhanced policy. Valentis pays full 98 days.'},
+      {benefit:'Public Holidays',employer:'13 national holidays per year',employee:'Right',notes:'Includes substitution arrangements if holiday falls on weekend.'},
+      {benefit:'Provident Fund',employer:'3–5% of salary (voluntary but common)',employee:'3–5% matched contribution',notes:'Not mandatory but market standard for professional roles. Valentis recommends introduction at next budget cycle.'},
+    ]
+  }
+};
+
+const benchmarkData = [
+  {benefit:'Medical Insurance',market:'Standard in sector',valentis:'Provided — USD 5k limit',gap:'At market',priority:'Maintain',status:'good'},
+  {benefit:'Annual Leave',market:'12–15 days',valentis:'15 days (18 after 3 yrs)',gap:'Above market',priority:'Maintain',status:'good'},
+  {benefit:'Life Insurance',market:'Common in G5+ only',valentis:'All permanent employees',gap:'Above market — differentiator',priority:'Maintain',status:'good'},
+  {benefit:'R&R Flights',market:'Standard for remote site',valentis:'Provided for rotation staff',gap:'At market',priority:'Maintain',status:'good'},
+  {benefit:'Provident Fund (THA)',market:'3–5% match is standard',valentis:'Not yet implemented',gap:'Below market in Thailand',priority:'High — introduce 2027',status:'gap'},
+  {benefit:'Dental Coverage',market:'Increasingly common G4+',valentis:'Not provided',gap:'Below market for professionals',priority:'Medium — consider 2027',status:'gap'},
+  {benefit:'Mental Health Support',market:'Emerging — 30% of companies',valentis:'Not formalised',gap:'Emerging gap',priority:'Low — review 2027',status:'watch'},
+  {benefit:'Education Allowance',market:'Rare in SEA mining',valentis:'Not provided',gap:'Not material for current workforce',priority:'Monitor only',status:'neutral'},
+  {benefit:'Hardship Premium (MMR)',market:'Standard for Myanmar ops',valentis:'Provided at 10–15%',gap:'At market',priority:'Maintain',status:'good'},
+  {benefit:'Retirement Plan',market:'Country-specific (statutory)',valentis:'Statutory only',gap:'At statutory floor — acceptable',priority:'Review at scale-up',status:'neutral'},
+];
+
+const priorityData = [
+  {rank:1,item:'Thailand Provident Fund',desc:'Thailand is the most developed market in the portfolio. The absence of a provident fund makes Valentis materially less competitive for professional roles in Bangkok. Recommend introduction at 3% employer match from January 2027.',cost:'Est. THB 90,000–120,000/year across Thai headcount',timeline:'Q4 2026 design, Q1 2027 launch',chip:'chip-rose',label:'HIGH'},
+  {rank:2,item:'Dental Coverage (G4+)',desc:'Dental is increasingly expected by professional staff across the region. Adding a modest dental rider to the existing health plan (typically USD 200–400 per employee per year) would close the gap at low cost.',cost:'Est. USD 3,000–5,000/year (24 eligible employees)',timeline:'Q2 2027 — bundle with annual health plan renewal',chip:'chip-gold',label:'MEDIUM'},
+  {rank:3,item:'Mental Health and EAP Programme',desc:'Employee Assistance Programmes are emerging in the sector, particularly for site-based staff under rotation stress. A basic EAP (counselling hotline, 6 sessions per year) is available via regional providers at modest cost.',cost:'Est. USD 1,500–2,500/year flat fee',timeline:'Q3 2027 or sooner if retention data warrants',chip:'chip-sky',label:'LOW'},
+];
+
+// ── OVERVIEW TILES ────────────────────────────────────────────────────
+function buildOverviewTiles() {
+  const el = document.getElementById('overview-tiles');
+  if (!el) return;
+  const tiles = [
+    {label:'Core Benefits',count:6,sub:'All employees, all countries',color:'var(--plum)',dim:'var(--plum-dim)',border:'var(--plum-border)'},
+    {label:'Site Allowances',count:6,sub:'Field and rotation staff',color:'var(--gold)',dim:'var(--gold-dim)',border:'var(--gold-border)'},
+    {label:'Statutory Items',count:'24',sub:'6 per country tracked',color:'var(--rose)',dim:'var(--rose-dim)',border:'var(--rose-border)'},
+    {label:'Benefits Gaps',count:2,sub:'Priority enhancements identified',color:'var(--sage)',dim:'var(--sage-dim)',border:'var(--sage-border)'},
+  ];
+  el.innerHTML = tiles.map(t => `
+    <div style="padding:18px;background:${t.dim};border:1px solid ${t.border};border-radius:6px;text-align:center">
+      <div style="font-family:var(--fd);font-size:48px;font-weight:700;color:${t.color};line-height:1">${t.count}</div>
+      <div style="font-family:var(--fm);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:${t.color};margin:8px 0 4px">${t.label}</div>
+      <div style="font-size:12px;color:var(--text3);font-weight:300">${t.sub}</div>
+    </div>`).join('');
+}
+
+// ── COUNTRY FLAG CHIPS ────────────────────────────────────────────────
+const flagMap = {LAO:'🇱🇦 Laos',MMR:'🇲🇲 Myanmar',IDN:'🇮🇩 Indonesia',THA:'🇹🇭 Thailand'};
+function buildBenefitCard(b) {
+  const countryChips = b.countries.map(c => `<span class="cflag">${flagMap[c]}</span>`).join(' ');
+  const details = b.details.map(d => `<div class="bc-detail-item"><div class="bc-detail-label">${d.label}</div><div class="bc-detail-val">${d.val}</div></div>`).join('');
+  return `<div class="benefit-card">
+    <div class="bc-header">
+      <div class="bc-icon" style="background:${b.iconBg}">${b.icon}</div>
+      <div class="bc-meta">
+        <div class="bc-name">${b.name}</div>
+        <div class="bc-type"><span class="chip ${b.chip}" style="font-size:8px">${b.type}</span></div>
+      </div>
+    </div>
+    <div class="bc-countries">${countryChips}</div>
+    <div class="bc-desc">${b.desc}</div>
+    <div class="bc-detail-grid">${details}</div>
+  </div>`;
+}
+
+function buildCoreSection() {
+  const el = document.getElementById('core-benefits-container');
+  if (!el) return;
+  el.innerHTML = coreData.map(buildBenefitCard).join('');
+}
+
+function buildAllowancesSection() {
+  const el = document.getElementById('allowances-container');
+  if (!el) return;
+  el.innerHTML = allowanceData.map(buildBenefitCard).join('');
+}
+
+// ── STATUTORY ─────────────────────────────────────────────────────────
+let activeStatutory = 'LAO';
+function showStatutory(code, el) {
+  activeStatutory = code;
+  document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  buildStatutory(code);
+}
+
+function buildStatutory(code) {
+  const d = statutoryData[code];
+  const el = document.getElementById('statutory-container');
+  if (!el || !d) return;
+  const rows = d.items.map(i => `<tr>
+    <td style="font-weight:600;color:var(--text)">${i.benefit}</td>
+    <td style="font-family:var(--fm);font-size:11px;color:var(--rose)">${i.employer}</td>
+    <td style="font-family:var(--fm);font-size:11px;color:var(--plum)">${i.employee}</td>
+    <td style="font-size:12.5px">${i.notes}</td>
+  </tr>`).join('');
+  el.innerHTML = `<div class="card">
+    <div class="card-title">${d.flag} ${d.name} — Statutory Benefits and Contributions</div>
+    <div class="card-body" style="margin-bottom:14px">Currency: ${d.currency}. Review annually — rates change. Last verified: Q1 2026.</div>
+    <table class="dtable">
+      <thead><tr><th>Statutory Benefit</th><th style="color:var(--rose)">Employer Obligation</th><th style="color:var(--plum)">Employee Contribution</th><th>Notes</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+// ── ELIGIBILITY MATRIX ────────────────────────────────────────────────
+function buildEligibilityMatrix() {
+  const table = document.getElementById('eligibility-table');
+  if (!table) return;
+  const benefits = ['Medical', 'Annual Leave', 'Life Ins.', 'Site Allowance', 'R&R Flights', 'Accommodation', 'Meals', 'Hardship (MMR)', 'Transport'];
+  const roles = [
+    {name:'Trainee / G1-G2',vals:['yes','yes','yes','no','no','yes','no','cond','cond']},
+    {name:'Driller / G3',vals:['yes','yes','yes','yes','yes','yes','yes','cond','no']},
+    {name:'Senior Driller / G4',vals:['yes','yes','yes','yes','yes','yes','yes','cond','no']},
+    {name:'Drilling Supervisor / G5',vals:['yes','yes','yes','yes','yes','yes','yes','cond','no']},
+    {name:'Site Manager / G6',vals:['yes','yes','yes','yes','yes','yes','yes','cond','no']},
+    {name:'Finance / HR (country) / G5',vals:['yes','yes','yes','no','no','part','no','cond','yes']},
+    {name:'Group Manager / G6',vals:['yes','yes','yes','no','no','part','no','no','no']},
+    {name:'COO / CEO / G8',vals:['yes','yes','yes','no','no','yes','no','no','no']},
+  ];
+
+  const icon = v => v === 'yes' ? '<span class="elig-yes">✓</span>' : v === 'no' ? '<span class="elig-no">—</span>' : '<span class="elig-partial">~</span>';
+
+  const headerRow = `<tr><th class="row-head">Role / Grade</th>${benefits.map(b => `<th>${b}</th>`).join('')}</tr>`;
+  const bodyRows = roles.map(r => `<tr><td class="row-head">${r.name}</td>${r.vals.map(v => `<td>${icon(v)}</td>`).join('')}</tr>`).join('');
+
+  table.innerHTML = `<thead>${headerRow}</thead><tbody>${bodyRows}</tbody>`;
+}
+
+// ── ONBOARDING CHECKLIST ──────────────────────────────────────────────
+const checklistItems = {
+  site:{
+    'Before Start Date':[
+      {text:'Register employee in payroll system with correct grade and country', req:['LAO','MMR','IDN','THA']},
+      {text:'Enrol in company medical insurance plan — submit details to insurer', req:['LAO','MMR','IDN','THA']},
+      {text:'Process group life insurance nomination form', req:['LAO','MMR','IDN','THA']},
+      {text:'Register in statutory social security scheme', req:['LAO','MMR','IDN','THA']},
+      {text:'Set up site allowance in payroll (confirm site assignment)', req:['LAO','MMR','IDN']},
+      {text:'Confirm rotation schedule and arrange first R&R flight booking', req:['LAO','MMR','IDN']},
+      {text:'Arrange camp accommodation assignment', req:['LAO','MMR','IDN']},
+      {text:'Set up hardship allowance if Myanmar-assigned', req:['MMR']},
+      {text:'Register for BPJS Kesehatan and BPJS Ketenagakerjaan', req:['IDN']},
+      {text:'Register for Thailand SSF', req:['THA']},
+    ],
+    'First Day':[
+      {text:'Issue benefits summary document (Tool 5, Section 08)', req:['LAO','MMR','IDN','THA']},
+      {text:'Confirm emergency contact and life insurance beneficiary in writing', req:['LAO','MMR','IDN','THA']},
+      {text:'Walk through medical card and how to use health coverage', req:['LAO','MMR','IDN','THA']},
+      {text:'Brief on rotation schedule, R&R entitlement, and flight booking process', req:['LAO','MMR','IDN']},
+      {text:'Issue camp accommodation induction — room assignment, meal times', req:['LAO','MMR','IDN']},
+    ],
+    'First Week':[
+      {text:'Confirm annual leave balance is correctly set up in system', req:['LAO','MMR','IDN','THA']},
+      {text:'Issue leave application process information', req:['LAO','MMR','IDN','THA']},
+      {text:'Confirm payroll is set up correctly — check first payslip preview', req:['LAO','MMR','IDN','THA']},
+      {text:'Ensure HSE orientation completed (affects meal and accommodation access)', req:['LAO','MMR','IDN']},
+    ],
+    'First Month':[
+      {text:'Verify first payslip received and understood by employee', req:['LAO','MMR','IDN','THA']},
+      {text:'Check statutory contribution deductions are correct on payslip', req:['LAO','MMR','IDN','THA']},
+      {text:'Address any benefits queries from employee or manager', req:['LAO','MMR','IDN','THA']},
+      {text:'Confirm THR eligibility period has been noted in system (Indonesia)', req:['IDN']},
+    ],
+  },
+  office:{
+    'Before Start Date':[
+      {text:'Register in payroll with correct grade and country', req:['LAO','MMR','IDN','THA']},
+      {text:'Enrol in company medical insurance plan', req:['LAO','MMR','IDN','THA']},
+      {text:'Process group life insurance nomination form', req:['LAO','MMR','IDN','THA']},
+      {text:'Register in statutory social security scheme', req:['LAO','MMR','IDN','THA']},
+      {text:'Set up transport allowance if applicable (Indonesia / Thailand office)', req:['IDN','THA']},
+      {text:'Register for BPJS Kesehatan and Ketenagakerjaan', req:['IDN']},
+      {text:'Register for Thailand SSF and Workmen Compensation Fund', req:['THA']},
+    ],
+    'First Day':[
+      {text:'Issue benefits summary document', req:['LAO','MMR','IDN','THA']},
+      {text:'Confirm beneficiary for life insurance in writing', req:['LAO','MMR','IDN','THA']},
+      {text:'Walk through medical coverage and how to claim', req:['LAO','MMR','IDN','THA']},
+    ],
+    'First Week':[
+      {text:'Confirm annual leave balance correctly set up', req:['LAO','MMR','IDN','THA']},
+      {text:'Issue leave application process information', req:['LAO','MMR','IDN','THA']},
+      {text:'Confirm payroll and transport allowance set up correctly', req:['IDN','THA']},
+    ],
+    'First Month':[
+      {text:'Verify first payslip received and correct', req:['LAO','MMR','IDN','THA']},
+      {text:'Check statutory deductions are correct', req:['LAO','MMR','IDN','THA']},
+      {text:'Note THR date in system for Indonesia staff', req:['IDN']},
+    ],
+  },
+  expat:{
+    'Before Start Date':[
+      {text:'Confirm employment entity and contract structure (which country entity employs)', req:['LAO','MMR','IDN','THA']},
+      {text:'Arrange expat health insurance (enhanced coverage if cross-border)', req:['LAO','MMR','IDN','THA']},
+      {text:'Process group life insurance at appropriate benefit level', req:['LAO','MMR','IDN','THA']},
+      {text:'Determine statutory contribution obligations in home and host country', req:['LAO','MMR','IDN','THA']},
+      {text:'Arrange furnished accommodation per expat package terms', req:['LAO','MMR','IDN','THA']},
+      {text:'Confirm work permit and immigration compliance before travel', req:['LAO','MMR','IDN','THA']},
+    ],
+    'First Day':[
+      {text:'Issue full expat package summary document', req:['LAO','MMR','IDN','THA']},
+      {text:'Confirm emergency contacts and beneficiaries', req:['LAO','MMR','IDN','THA']},
+      {text:'Brief on host country statutory benefits and tax obligations', req:['LAO','MMR','IDN','THA']},
+    ],
+    'First Week':[
+      {text:'Confirm payroll split and currency arrangements', req:['LAO','MMR','IDN','THA']},
+      {text:'Arrange local bank account support if needed', req:['LAO','MMR','IDN','THA']},
+    ],
+    'First Month':[
+      {text:'Review first payslip — confirm all allowances and deductions correct', req:['LAO','MMR','IDN','THA']},
+      {text:'Tax briefing by local payroll team or external advisor', req:['LAO','MMR','IDN','THA']},
+    ],
+  },
+};
+
+function updateChecklist() {
+  const name = document.getElementById('ob-name').value || 'Employee';
+  const country = document.getElementById('ob-country').value;
+  const role = document.getElementById('ob-role').value;
+  const el = document.getElementById('checklist-container');
+  if (!el) return;
+  if (!country || !role) {
+    el.innerHTML = '<div class="info plum">Select employee country and role type above to generate a tailored checklist.</div>';
+    return;
+  }
+  const items = checklistItems[role];
+  let html = `<div class="card"><div class="card-title">Onboarding Checklist — ${name}</div><div class="card-body" style="margin-bottom:16px">${flagMap[country]} · ${role === 'site' ? 'Site / Field Role' : role === 'office' ? 'Office Role' : 'Expatriate'} · Filtered for country-applicable items only</div>`;
+  let totalCount = 0; let doneCount = 0;
+  Object.entries(items).forEach(([phase, tasks]) => {
+    const relevant = tasks.filter(t => t.req.includes(country));
+    if (relevant.length === 0) return;
+    html += `<div style="margin-bottom:16px"><div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--plum);margin-bottom:8px;padding:0 14px">${phase}</div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:5px;overflow:hidden">`;
+    relevant.forEach((t, idx) => {
+      totalCount++;
+      html += `<div class="checklist-item" onclick="toggleCheck(this)"><div class="ci-check" id="ck-${phase.replace(/ /g,'')}-${idx}">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="var(--plum)" stroke-width="2" stroke-linecap="round" style="display:none" class="ck-mark"/></svg>
+      </div><div class="ci-text">${t.text}</div></div>`;
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function toggleCheck(row) {
+  const box = row.querySelector('.ci-check');
+  const mark = row.querySelector('.ck-mark');
+  if (!box) return;
+  const checked = box.classList.toggle('checked');
+  if (mark) mark.style.display = checked ? 'block' : 'none';
+  const text = row.querySelector('.ci-text');
+  if (text) text.style.textDecoration = checked ? 'line-through' : 'none';
+}
+
+// ── BENCHMARKING ──────────────────────────────────────────────────────
+function buildBenchmark() {
+  const tb = document.getElementById('benchmark-tbody');
+  if (!tb) return;
+  tb.innerHTML = benchmarkData.map(b => {
+    const chipClass = b.status === 'good' ? 'chip-sage' : b.status === 'gap' ? 'chip-rose' : b.status === 'watch' ? 'chip-gold' : 'chip-muted';
+    return `<tr>
+      <td style="font-weight:600;color:var(--text)">${b.benefit}</td>
+      <td style="font-size:12.5px">${b.market}</td>
+      <td style="font-size:12.5px;color:var(--plum2)">${b.valentis}</td>
+      <td style="font-size:12.5px">${b.gap}</td>
+      <td><span class="chip ${chipClass}">${b.priority}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function buildPriorityEnhancements() {
+  const el = document.getElementById('priority-enhancements');
+  if (!el) return;
+  el.innerHTML = priorityData.map(p => `
+    <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:700;color:var(--text2);line-height:1">${p.rank}</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px">${p.item}</div>
+          <span class="chip ${p.chip}">${p.label} PRIORITY</span>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:10px;font-weight:300">${p.desc}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="padding:8px 12px;background:var(--surface3);border-radius:4px;font-size:12px"><span style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:2px">Estimated Cost</span>${p.cost}</div>
+        <div style="padding:8px 12px;background:var(--surface3);border-radius:4px;font-size:12px"><span style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:2px">Timeline</span>${p.timeline}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── BENEFITS SUMMARY ──────────────────────────────────────────────────
+function generateBenefitsSummary() {
+  const name = document.getElementById('bs-name').value || '[Employee Name]';
+  const title = document.getElementById('bs-title').value || '[Job Title]';
+  const grade = document.getElementById('bs-grade').value || 'G1';
+  const country = document.getElementById('bs-country').value || 'LAO';
+  const roleType = document.getElementById('bs-role-type').value || 'site';
+  const docDate = document.getElementById('bs-date').value || 'March 2026';
+  const flagLabel = flagMap[country] || country;
+  const roleLabel = roleType === 'site' ? 'Site / Field (Rotation)' : roleType === 'office' ? 'Office / Country-based' : 'Expatriate / Cross-border';
+
+  const isField = roleType === 'site';
+  const isMMR = country === 'MMR';
+  const isIDNTHA = country === 'IDN' || country === 'THA';
+
+  let benefitRows = `
+    <tr><td style="font-weight:600;color:var(--text)">Medical and Health Insurance</td><td style="color:var(--plum2)">Company-funded, USD 5,000/year, Day 1 coverage, dependents included</td></tr>
+    <tr><td style="font-weight:600;color:var(--text)">Annual Leave</td><td style="color:var(--plum2)">15 working days/year (increases with tenure)</td></tr>
+    <tr><td style="font-weight:600;color:var(--text)">Group Life Insurance</td><td style="color:var(--plum2)">2x annual base salary, company-funded</td></tr>
+    <tr><td style="font-weight:600;color:var(--text)">Compassionate Leave</td><td style="color:var(--plum2)">Up to 5 working days — immediate family bereavement</td></tr>
+    <tr><td style="font-weight:600;color:var(--text)">Training and Development</td><td style="color:var(--plum2)">Mandatory certifications fully funded; up to USD 800/year elective</td></tr>`;
+
+  if (isField) {
+    benefitRows += `
+    <tr><td style="font-weight:600;color:var(--text)">Site Allowance</td><td style="color:var(--gold)">Monthly cash allowance (rate per grade band)</td></tr>
+    <tr><td style="font-weight:600;color:var(--text)">R&amp;R Flights</td><td style="color:var(--gold)">Economy return flights — 6 weeks on / 2 weeks off rotation</td></tr>
+    <tr><td style="font-weight:600;color:var(--text)">Camp Accommodation</td><td style="color:var(--gold)">Company-provided on-site accommodation</td></tr>
+    <tr><td style="font-weight:600;color:var(--text)">Meals</td><td style="color:var(--gold)">3 meals per day provided on-site</td></tr>`;
+  }
+  if (isMMR) {
+    benefitRows += `<tr><td style="font-weight:600;color:var(--rose)">Hardship Allowance</td><td style="color:var(--rose)">10–15% of base salary — Myanmar designation active</td></tr>`;
+  }
+  if (isIDNTHA) {
+    benefitRows += `<tr><td style="font-weight:600;color:var(--text)">Transport Allowance</td><td style="color:var(--plum2)">Monthly transport allowance (where company transport not provided)</td></tr>`;
+    if (country === 'IDN') {
+      benefitRows += `<tr><td style="font-weight:600;color:var(--text)">THR (Religious Holiday Allowance)</td><td style="color:var(--plum2)">1 month salary — paid before Lebaran annually</td></tr>`;
+    }
+  }
+
+  const output = document.getElementById('benefits-summary-output');
+  output.innerHTML = `<div class="print-block">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:18px;margin-bottom:20px;border-bottom:1px solid var(--border2)">
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--plum);margin-bottom:6px">Benefits Summary — Valentis Group · Confidential</div>
+        <div style="font-family:var(--fd);font-size:26px;font-weight:700;color:var(--text);margin-bottom:4px">${name}</div>
+        <div style="font-size:13px;color:var(--text2)">${title} · ${grade} · ${flagLabel} · ${roleLabel}</div>
+      </div>
+      <div style="text-align:right;font-family:var(--fm);font-size:10px;color:var(--text3)">
+        <div>Effective: 1 January 2026</div>
+        <div>Issued: ${docDate}</div>
+      </div>
+    </div>
+    <div class="pfieldlabel" style="margin-bottom:10px">Your Benefits and Allowances Package</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px">
+      <thead><tr><th style="text-align:left;padding:8px 12px;background:var(--surface2);color:var(--text3);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:2px solid var(--border)">Benefit / Allowance</th><th style="text-align:left;padding:8px 12px;background:var(--surface2);color:var(--text3);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:2px solid var(--border)">Entitlement</th></tr></thead>
+      <tbody>${benefitRows}</tbody>
+    </table>
+    <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:12.5px;color:var(--text2);margin-bottom:20px;font-weight:300">This summary is provided for information purposes. Full policy details are available from HR. Statutory benefits under ${flagLabel} employment law apply in addition to company benefits. This document does not form part of the employment contract.</div>
+    <div class="sig-row">
+      <div class="sig-block"><div style="height:40px"></div><div class="sig-name">Employee — Acknowledged</div></div>
+      <div class="sig-block"><div style="height:40px"></div><div class="sig-name">Group HR Manager</div></div>
+      <div class="sig-block"><div style="height:40px"></div><div class="sig-name">Date Issued</div></div>
+    </div>
+  </div>`;
+  document.getElementById('print-btn-row').style.display = 'flex';
+}
+
+function clearSummary() {
+  ['bs-name','bs-title'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('benefits-summary-output').innerHTML = '';
+  document.getElementById('print-btn-row').style.display = 'none';
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  buildOverviewTiles();
+  buildCoreSection();
+  buildAllowancesSection();
+  buildStatutory('LAO');
+  buildEligibilityMatrix();
+  buildBenchmark();
+  buildPriorityEnhancements();
+});
+</script>
+</body>
+</html>

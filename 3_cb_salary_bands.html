@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salary Band Management — Valentis C&B Tool 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Karla:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f0e8;--surface:#faf7f2;--surface2:#f0ebe0;--surface3:#e8e0d0;
+  --border:#d8d0bc;--border2:#c8bda8;
+  --ink:#1a1610;--ink2:#4a4030;--ink3:#8a7a60;--ink4:#b0a088;
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.08);--red-border:rgba(192,57,43,0.2);
+  --blue:#1a5276;--blue-dim:rgba(26,82,118,0.08);--blue-border:rgba(26,82,118,0.2);
+  --green:#1e6b3a;--green-dim:rgba(30,107,58,0.08);--green-border:rgba(30,107,58,0.2);
+  --gold:#8b6914;--gold-dim:rgba(139,105,20,0.1);--gold-border:rgba(139,105,20,0.25);
+  --amber:#d4820a;--amber-dim:rgba(212,130,10,0.08);
+  --sidebar-w:268px;
+  --fd:'Libre Baskerville',Georgia,serif;
+  --fb:'Karla',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--ink);border-right:none;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-logo{padding:28px 22px 22px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-chip{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--amber);background:rgba(212,130,10,0.15);border:1px solid rgba(212,130,10,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ead8;line-height:1.2;margin-bottom:5px}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.3)}
+.sb-section{padding:14px 10px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:0 10px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:5px;cursor:pointer;transition:all .15s;color:rgba(255,255,255,0.45);font-size:12.5px;font-weight:500;margin-bottom:2px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8)}
+.nav-item.active{background:rgba(212,130,10,0.18);border-color:rgba(212,130,10,0.3);color:var(--amber)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.2);width:22px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--amber)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.08)}
+.sb-note{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:12px;font-size:11px;color:rgba(255,255,255,0.3)}
+.sb-note strong{display:block;color:rgba(255,255,255,0.5);margin-bottom:2px;font-family:var(--fm)}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1080px}
+.page.active{display:block}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:38px;padding-bottom:28px;border-bottom:2px solid var(--border)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--amber);margin-bottom:12px}
+.page-title{font-family:var(--fd);font-size:44px;font-weight:700;color:var(--ink);line-height:1.05;margin-bottom:12px}
+.page-title em{font-style:italic;color:var(--gold)}
+.page-desc{font-size:14.5px;color:var(--ink3);max-width:580px;line-height:1.8;font-weight:300}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:28px;margin-bottom:18px;transition:border-color .15s;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.8;font-weight:300}
+
+/* BAND VISUAL */
+.band-visual{position:relative;height:52px;border-radius:6px;overflow:hidden;margin:12px 0}
+.band-track{position:absolute;top:50%;transform:translateY(-50%);height:20px;border-radius:3px;background:linear-gradient(to right, var(--red-dim), var(--blue-dim), var(--green-dim));border:1px solid var(--border)}
+.band-zone{position:absolute;top:50%;transform:translateY(-50%);height:20px;border-radius:2px}
+.band-min-line,.band-mid-line,.band-max-line{position:absolute;top:8px;bottom:8px;width:2px;border-radius:1px}
+.band-min-line{background:var(--red)}
+.band-mid-line{background:var(--blue)}
+.band-max-line{background:var(--green)}
+.band-label{position:absolute;font-family:var(--fm);font-size:9px;letter-spacing:.5px;top:0;transform:translateX(-50%)}
+.band-label.min{color:var(--red)}
+.band-label.mid{color:var(--blue)}
+.band-label.max{color:var(--green)}
+
+/* BAND ROW */
+.band-row{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin-bottom:8px;transition:all .15s;cursor:default}
+.band-row:hover{border-color:var(--border2);box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+.band-row-header{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.grade-pill{width:38px;height:38px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:16px;font-weight:700;flex-shrink:0}
+.gp-1{background:#f0f0f0;color:var(--ink4);border:1px solid var(--border2)}
+.gp-2{background:#e8e8e8;color:var(--ink3);border:1px solid var(--border2)}
+.gp-3{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.gp-4{background:rgba(30,107,58,0.12);color:var(--green);border:1px solid var(--green-border)}
+.gp-5{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.gp-6{background:rgba(139,105,20,0.14);color:var(--gold);border:1px solid var(--gold-border)}
+.gp-7{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(212,130,10,0.25)}
+.gp-8{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.band-row-name{flex:1}
+.band-row-title{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.band-row-roles{font-size:12px;color:var(--ink4);font-weight:300}
+.band-numbers{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;text-align:center}
+.band-num-item{}
+.bni-label{font-family:var(--fm);font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:3px}
+.bni-value{font-family:var(--fm);font-size:13px;font-weight:600;color:var(--ink2)}
+.bni-value.min{color:var(--red)}
+.bni-value.mid{color:var(--blue)}
+.bni-value.max{color:var(--green)}
+.band-bar-wrap{margin-top:12px;position:relative;height:10px;background:var(--surface3);border-radius:5px;overflow:hidden}
+.band-bar-fill{position:absolute;top:0;bottom:0;border-radius:5px;background:linear-gradient(to right,var(--red),var(--blue),var(--green))}
+.band-marker{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:2px;transform:translateX(-50%)}
+
+/* COUNTRY TABS */
+.country-tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface2);border-radius:6px;padding:4px;border:1px solid var(--border)}
+.ctab{padding:8px 18px;border-radius:4px;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink3);transition:all .15s;font-family:var(--fb)}
+.ctab.active{background:var(--ink);color:var(--amber)}
+.ctab:hover:not(.active){background:var(--surface3)}
+
+/* INFO */
+.info{border-radius:6px;padding:13px 16px;margin-bottom:14px;font-size:13.5px;line-height:1.75;border-left:3px solid;font-weight:300}
+.info.amber{background:var(--amber-dim);border-color:var(--amber);color:#7a4500}
+.info.blue{background:var(--blue-dim);border-color:var(--blue);color:var(--blue)}
+.info.green{background:var(--green-dim);border-color:var(--green);color:var(--green)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--red)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+/* COMPA CALC */
+.compa-wrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.compa-bar{background:var(--ink);padding:16px 22px;display:flex;align-items:center;justify-content:space-between}
+.compa-bar-title{font-family:var(--fd);font-size:18px;font-weight:700;color:#f0ead8}
+.compa-body{padding:26px}
+.compa-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.compa-result{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:20px;margin-top:4px}
+.compa-gauge{position:relative;height:28px;background:var(--surface3);border-radius:4px;overflow:hidden;margin:12px 0}
+.compa-gauge-fill{position:absolute;top:0;bottom:0;left:0;border-radius:4px;transition:width .5s}
+.compa-gauge-marker{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.3}
+.compa-zones{display:flex;justify-content:space-between;font-family:var(--fm);font-size:8.5px;color:var(--ink4);margin-top:4px}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--surface2);color:var(--ink4);font-family:var(--fm);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:2px solid var(--border)}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:middle;font-weight:300}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font-family:var(--fm);font-size:9px;font-weight:600;letter-spacing:.5px}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(212,130,10,.25)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-blue{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.chip-ink{background:rgba(26,22,16,0.08);color:var(--ink2);border:1px solid var(--border)}
+
+/* FORM */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.form-label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4)}
+.form-input,.form-select{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:9px 12px;color:var(--ink);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .15s;width:100%}
+.form-input:focus,.form-select:focus{border-color:var(--amber)}
+.form-select option{background:var(--surface)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:4px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:4px}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:5px;border:none;font-family:var(--fb);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-ink{background:var(--ink);color:var(--amber)}
+.btn-ink:hover{background:var(--ink2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink3)}
+.btn-ghost:hover{border-color:var(--ink3);color:var(--ink)}
+.btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+
+/* PRINT */
+.print-block{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:28px;font-size:13px;line-height:1.8;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.pfieldlabel{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:3px}
+.pfieldval{color:var(--ink);font-size:13.5px;margin-bottom:14px;font-weight:300}
+.sig-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:28px}
+.sig-block{border-top:1px solid var(--border2);padding-top:10px}
+.sig-name{font-family:var(--fm);font-size:9px;color:var(--ink4);letter-spacing:1px;text-transform:uppercase}
+
+/* SECTION RULE */
+.rule{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .band-row{animation:fadeUp .3s ease both}
+.page.active .band-row:nth-child(2){animation-delay:.04s}
+.page.active .band-row:nth-child(3){animation-delay:.08s}
+.page.active .band-row:nth-child(4){animation-delay:.12s}
+.page.active .band-row:nth-child(5){animation-delay:.16s}
+.page.active .band-row:nth-child(6){animation-delay:.20s}
+.page.active .band-row:nth-child(7){animation-delay:.24s}
+.page.active .band-row:nth-child(8){animation-delay:.28s}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-chip">C&amp;B Tool III / VIII</div>
+    <div class="sb-title">Salary Band Management</div>
+    <div class="sb-sub">Valentis Group · 2026 Edition</div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('bands',this)"><span class="nav-num">02</span>Salary Bands — USD Reference</div>
+    <div class="nav-item" onclick="showPage('country',this)"><span class="nav-num">03</span>Country Band Tables</div>
+    <div class="nav-item" onclick="showPage('compa',this)"><span class="nav-num">04</span>Compa-Ratio Calculator</div>
+    <div class="nav-item" onclick="showPage('equity',this)"><span class="nav-num">05</span>Internal Equity Analysis</div>
+    <div class="nav-item" onclick="showPage('review',this)"><span class="nav-num">06</span>Band Review Process</div>
+    <div class="nav-item" onclick="showPage('outliers',this)"><span class="nav-num">07</span>Out-of-Band Employees</div>
+    <div class="nav-item" onclick="showPage('document',this)"><span class="nav-num">08</span>Generate Band Report</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Tool 3 / 8</strong>
+      Salary Band Management<br>
+      <span style="font-size:10px">Builds on: Tool 2 (Grades)<br>Feeds into: Tool 4 (Merit Matrix)</span>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- 01 OVERVIEW -->
+<div id="page-overview" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">C&amp;B Tool 3 — Salary Band Management</div>
+    <h1 class="page-title">Salary<br><em>Band Management</em></h1>
+    <p class="page-desc">Eight salary bands, one per grade. Each band defines the minimum, midpoint, and maximum pay for roles at that level. Bands translate the JE grade (Tool 2) into an actual salary range anchored to market data.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Band Anatomy</div>
+      <div class="card-body" style="margin-bottom:16px">Every salary band has three reference points. Together they define the full shape of the band and how employees move through it.</div>
+      <div style="display:grid;gap:8px">
+        <div style="padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:5px;display:flex;gap:14px;align-items:flex-start">
+          <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--red);min-width:36px">MIN</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">The floor of the band. Entry point for new hires or employees new to the role. No employee in this grade should be paid below this figure.</div>
+        </div>
+        <div style="padding:12px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:5px;display:flex;gap:14px;align-items:flex-start">
+          <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--blue);min-width:36px">MID</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">The market reference point — where a fully competent employee performing at expectations (Rating 3) should sit. Compa-ratio of 100 = at midpoint. This is the anchor for all salary decisions.</div>
+        </div>
+        <div style="padding:12px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:5px;display:flex;gap:14px;align-items:flex-start">
+          <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--green);min-width:36px">MAX</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">The ceiling of the band. Reached only by long-tenured, consistently high-performing employees. Employees above max are in red-circle status — eligible for bonuses only, not base increases, until the band is revised.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Band Design Principles</div>
+      <div style="display:grid;gap:10px;margin-top:4px">
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:5px">Band Spread</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Valentis uses a 50% spread — minimum is 80% of midpoint, maximum is 120% of midpoint. This creates a band where the max is 50% above the min. Wider than standard for operational roles to accommodate long-tenure site staff.</div>
+        </div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:5px">Band Overlap</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Adjacent bands overlap by approximately 15–20%. This means a high-performing G4 employee can earn more than a newly appointed G5 employee — and that is intentional. Overlap reflects experience and performance, not just grade.</div>
+        </div>
+        <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:5px">Annual Review</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Bands are reviewed every Q4 against updated market benchmarks. Bands typically increase by 2–5% annually in line with market movement. Band adjustments are independent of individual merit increases.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Band Structure — Visual Overview</div>
+    <div class="card-body" style="margin-bottom:18px">USD reference bands across all eight grades. Country-specific amounts are in Section 03.</div>
+    <div id="band-overview-chart"></div>
+  </div>
+</div>
+
+<!-- 02 BANDS USD -->
+<div id="page-bands" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Salary Bands</div>
+    <h1 class="page-title">USD Reference<br><em>Bands</em></h1>
+    <p class="page-desc">USD-equivalent salary bands for all eight grades. These are reference bands used for cross-country comparison and benchmarking. Actual payroll uses local currency equivalents in Section 03.</p>
+  </div>
+
+  <div class="info amber"><strong>USD Reference Only</strong>These figures represent USD purchasing power equivalents for benchmarking purposes. They are not paid in USD to local staff — local currency equivalents apply (Section 03). Expatriate or cross-border contracts may be denominated in USD by agreement.</div>
+
+  <div id="bands-container"></div>
+</div>
+
+<!-- 03 COUNTRY BANDS -->
+<div id="page-country" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Country Bands</div>
+    <h1 class="page-title">Country Band<br><em>Tables</em></h1>
+    <p class="page-desc">Local currency salary bands by country. Each country applies a market factor to the USD reference band, reflecting local purchasing power, statutory costs, and market supply-demand conditions.</p>
+  </div>
+
+  <div class="info blue"><strong>Market Factors Applied</strong>Each country band is derived from the USD reference by applying a country market factor. The factor reflects local market benchmarks for the mining and oil and gas sector. Factors are reviewed annually in Q4 alongside the band review.</div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px" id="country-factors"></div>
+
+  <div class="country-tabs">
+    <div class="ctab active" onclick="showCountry('LAO',this)">🇱🇦 Laos (LAK)</div>
+    <div class="ctab" onclick="showCountry('MMR',this)">🇲🇲 Myanmar (USD)</div>
+    <div class="ctab" onclick="showCountry('IDN',this)">🇮🇩 Indonesia (IDR)</div>
+    <div class="ctab" onclick="showCountry('THA',this)">🇹🇭 Thailand (THB)</div>
+  </div>
+
+  <div id="country-table-container"></div>
+</div>
+
+<!-- 04 COMPA-RATIO -->
+<div id="page-compa" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Compa-Ratio Calculator</div>
+    <h1 class="page-title">Compa-Ratio<br><em>Calculator</em></h1>
+    <p class="page-desc">Enter an employee and their salary to see their compa-ratio — their position within the band expressed as a percentage of the midpoint. Used in the Merit Matrix (Tool 4) to determine increase guidelines.</p>
+  </div>
+
+  <div class="compa-wrap">
+    <div class="compa-bar">
+      <div class="compa-bar-title">Compa-Ratio Calculator</div>
+      <span class="chip" style="background:rgba(212,130,10,0.2);color:var(--amber);border:1px solid rgba(212,130,10,0.3);font-family:var(--fm);font-size:9px;padding:3px 8px">Live</span>
+    </div>
+    <div class="compa-body">
+      <div class="compa-row">
+        <div class="form-group">
+          <div class="form-label">Grade</div>
+          <select class="form-select" id="cr-grade" onchange="updateCompa()">
+            <option value="1">G1 — Entry Support</option>
+            <option value="2">G2 — Developing Role</option>
+            <option value="3">G3 — Operational Contributor</option>
+            <option value="4" selected>G4 — Senior Contributor</option>
+            <option value="5">G5 — Team Leader / Specialist</option>
+            <option value="6">G6 — Function Manager</option>
+            <option value="7">G7 — Senior Leader</option>
+            <option value="8">G8 — C-Suite</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Currency</div>
+          <select class="form-select" id="cr-currency" onchange="updateCompa()">
+            <option value="USD">USD (Reference)</option>
+            <option value="LAK">LAK (Laos)</option>
+            <option value="MMK">USD/MMK (Myanmar)</option>
+            <option value="IDR">IDR (Indonesia)</option>
+            <option value="THB">THB (Thailand)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Employee Annual Salary</div>
+          <input class="form-input" type="number" id="cr-salary" value="42000" oninput="updateCompa()">
+        </div>
+      </div>
+
+      <div class="compa-result">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:16px">
+          <div><div class="pfieldlabel">Band Min</div><div style="font-family:var(--fm);font-size:13px;font-weight:600;color:var(--red)" id="cr-min">—</div></div>
+          <div><div class="pfieldlabel">Band Midpoint</div><div style="font-family:var(--fm);font-size:13px;font-weight:600;color:var(--blue)" id="cr-mid">—</div></div>
+          <div><div class="pfieldlabel">Band Max</div><div style="font-family:var(--fm);font-size:13px;font-weight:600;color:var(--green)" id="cr-max">—</div></div>
+          <div><div class="pfieldlabel">Compa-Ratio</div><div style="font-family:var(--fd);font-size:28px;font-weight:700;color:var(--ink);line-height:1.1" id="cr-ratio">—</div></div>
+          <div><div class="pfieldlabel">Position</div><div style="font-size:13px;font-weight:600;margin-top:2px" id="cr-position">—</div></div>
+        </div>
+        <div class="compa-gauge">
+          <div class="compa-gauge-fill" id="cr-fill" style="width:50%;background:var(--blue)"></div>
+          <div class="compa-gauge-marker" style="left:50%"></div>
+        </div>
+        <div class="compa-zones"><span style="color:var(--red)">Below 80%</span><span>80–95%</span><span style="color:var(--blue)">95–105%</span><span>105–120%</span><span style="color:var(--green)">Above 120%</span></div>
+        <div style="margin-top:16px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Recommended Action</div>
+          <div style="font-size:13.5px;color:var(--ink2);font-weight:400" id="cr-action">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Compa-Ratio Quick Reference</div>
+    <table class="dtable">
+      <thead><tr><th>Compa-Ratio</th><th>Zone</th><th>Typical Profile</th><th>Recommended Action</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--fm);font-size:12px;color:var(--red)">Below 80%</td><td><span class="chip chip-red">Below Min</span></td><td style="font-size:12px">Employee is below the band minimum. Rare — may indicate a legacy hire or payroll error.</td><td style="font-size:12px;color:var(--ink2)">Immediate review. Bring to minimum at next payroll cycle. Flag to COO.</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:12px;color:var(--red)">80–95%</td><td><span class="chip chip-red">Low</span></td><td style="font-size:12px">New hire, new to role, or employee with developing competence.</td><td style="font-size:12px;color:var(--ink2)">Accelerated merit increases until midpoint is reached. Target midpoint within 2–3 years.</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:12px;color:var(--blue)">95–105%</td><td><span class="chip chip-blue">At Market</span></td><td style="font-size:12px">Fully competent employee performing at expectations. Target zone for Rating 3 employees.</td><td style="font-size:12px;color:var(--ink2)">Standard merit increase aligned to performance. No special action required.</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:12px;color:var(--green)">105–120%</td><td><span class="chip chip-green">High</span></td><td style="font-size:12px">High performer with strong tenure. Consistently rated 4–5. Upper band appropriate.</td><td style="font-size:12px;color:var(--ink2)">Modest merit increases. Consider bonus weighting over base increases. Monitor retention risk.</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:12px;color:var(--ink3)">Above 120%</td><td><span class="chip chip-ink">Red Circle</span></td><td style="font-size:12px">Above band maximum. May be legacy employee, or band has moved down relative to historic package.</td><td style="font-size:12px;color:var(--ink2)">No base increase until band adjusts above their salary. Recognise through variable pay only. Review grade assignment.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 05 EQUITY -->
+<div id="page-equity" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Internal Equity</div>
+    <h1 class="page-title">Internal Equity<br><em>Analysis</em></h1>
+    <p class="page-desc">Internal equity analysis checks whether employees in the same grade are being paid consistently, and whether any patterns exist that cannot be justified by performance, tenure, or market differences.</p>
+  </div>
+
+  <div class="info amber"><strong>What equity analysis is not</strong>It is not about making everyone in the same grade earn the same salary. It is about ensuring that differences within a grade can be explained by legitimate factors: performance rating, tenure, country, and position in band. Unexplained differences are the problem.</div>
+
+  <div class="card">
+    <div class="card-title">Compa-Ratio Distribution — All Employees</div>
+    <div class="card-body" style="margin-bottom:16px">Current compa-ratio spread across Valentis. Healthy distribution should cluster around 95–105% with a long tail toward higher values for tenured staff.</div>
+    <div id="equity-chart"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Equity Red Flags to Investigate</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      <div style="display:flex;gap:14px;padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:5px;align-items:flex-start">
+        <span style="color:var(--red);font-size:16px;flex-shrink:0">!</span>
+        <div><div style="font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:2px">Same role, same country, 15%+ salary difference with no documented justification</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Most commonly found when a new hire negotiated a higher package than the existing employee. Requires written explanation or remediation plan.</div></div>
+      </div>
+      <div style="display:flex;gap:14px;padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:5px;align-items:flex-start">
+        <span style="color:var(--red);font-size:16px;flex-shrink:0">!</span>
+        <div><div style="font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:2px">Long-tenured employee below midpoint with consistently good ratings</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Indicates merit increases have not kept pace. This employee is likely a flight risk and may be unaware of how far below market they are. Requires a catch-up plan.</div></div>
+      </div>
+      <div style="display:flex;gap:14px;padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:5px;align-items:flex-start">
+        <span style="color:var(--red);font-size:16px;flex-shrink:0">!</span>
+        <div><div style="font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:2px">New hire paid above the midpoint with no market justification</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Compresses the band for existing employees and signals that salary decisions are being driven by negotiation rather than methodology. Requires written exception approval.</div></div>
+      </div>
+      <div style="display:flex;gap:14px;padding:12px;background:var(--amber-dim);border:1px solid rgba(212,130,10,.2);border-radius:5px;align-items:flex-start">
+        <span style="color:var(--amber);font-size:16px;flex-shrink:0">~</span>
+        <div><div style="font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:2px">All employees in a grade clustered near the maximum</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">May signal the grade is too low for the actual market value of the role, or that merit increases have been too generous without differentiation. Review grade assignment and market data.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Valentis Employee Compa-Ratio Register</div>
+    <table class="dtable">
+      <thead><tr><th>Employee</th><th>Country</th><th>Role</th><th>Grade</th><th>Rating</th><th>Salary (USD eq.)</th><th>Band Mid</th><th>Compa-Ratio</th><th>Status</th></tr></thead>
+      <tbody id="equity-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 06 BAND REVIEW -->
+<div id="page-review" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Band Review</div>
+    <h1 class="page-title">Band Review<br><em>Process</em></h1>
+    <p class="page-desc">The annual process for updating salary bands to keep pace with market movement. Conducted every Q4 before the merit cycle. A well-run band review takes 2–3 weeks.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Band Review Timeline — Q4 Annual Process</div>
+    <div style="display:grid;gap:3px;margin-top:8px">
+      <div style="display:grid;grid-template-columns:110px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--amber)">October<br>Wk 1–2</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px">Collect Market Data</div><div style="font-size:13px;color:var(--ink3);font-weight:300">Pull latest salary survey data for mining and oil and gas sector in SEA. Reference sources: Mercer, Korn Ferry, Willis Towers Watson regional surveys, or equivalent. Minimum 2 sources per country.</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:110px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--amber)">October<br>Wk 3–4</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px">Benchmark Each Grade</div><div style="font-size:13px;color:var(--ink3);font-weight:300">Compare current Valentis band midpoints to market P50 for each grade. Calculate the gap as a percentage. Flag any grade where the gap exceeds 8% — these require a band adjustment.</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:110px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--amber)">November<br>Wk 1</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px">Propose Band Adjustments</div><div style="font-size:13px;color:var(--ink3);font-weight:300">HR prepares a band adjustment proposal for each grade needing revision. Include: current midpoint, proposed midpoint, market data source, and estimated cost impact of any employees now below the new minimum.</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:110px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--amber)">November<br>Wk 2</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px">COO and CEO Approval</div><div style="font-size:13px;color:var(--ink3);font-weight:300">HR presents band review to COO. CEO approves final changes. Any employee below the new minimum must be brought up to minimum — this is a mandatory cost that must be budgeted.</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:110px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--amber)">December</div>
+        <div><div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px">Publish New Bands</div><div style="font-size:13px;color:var(--ink3);font-weight:300">Updated bands take effect 1 January. HR updates all band reference documents. Managers are briefed before the merit cycle begins. Employees are not told of band changes — only of their own salary changes.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Market Data Sources — Valentis Reference List</div>
+    <table class="dtable">
+      <thead><tr><th>Source</th><th>Coverage</th><th>Frequency</th><th>Best For</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--ink)">Mercer Total Remuneration Survey</td><td>SEA multi-country</td><td>Annual</td><td>G4–G8 professional and management roles</td><td><span class="chip chip-amber">Paid</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Korn Ferry Hay Pay Survey</td><td>Regional</td><td>Annual</td><td>Senior leadership roles G6+</td><td><span class="chip chip-amber">Paid</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Willis Towers Watson — Oil and Gas</td><td>Sector-specific SEA</td><td>Annual</td><td>Operational roles — drillers, site managers</td><td><span class="chip chip-amber">Paid</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">JobStreet / LinkedIn Salary Insights</td><td>Country-specific</td><td>Ongoing</td><td>G1–G4 general roles, market pulse check</td><td><span class="chip chip-green">Free</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Mining Industry Salary Survey (APAC)</td><td>Sector-specific</td><td>Annual</td><td>All operational mining and exploration roles</td><td><span class="chip chip-amber">Paid</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--ink)">Peer company benchmarking</td><td>Direct competitors</td><td>As available</td><td>Offer validation for critical roles</td><td><span class="chip chip-blue">Network</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 07 OUTLIERS -->
+<div id="page-outliers" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Out-of-Band Employees</div>
+    <h1 class="page-title">Out-of-Band<br><em>Employees</em></h1>
+    <p class="page-desc">Employees paid outside their salary band — either below minimum (rare, requires immediate action) or above maximum (red circle status — managed carefully). Both require a documented plan.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Below Band Minimum</div>
+      <div class="card-body" style="margin-bottom:14px">Any employee paid below the band minimum is in breach of the salary band policy. This is the highest priority correction.</div>
+      <div style="display:grid;gap:8px">
+        <div style="padding:11px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:5px;font-size:13px;color:var(--ink3);font-weight:300"><strong style="color:var(--red);display:block;margin-bottom:2px">Cause</strong>Usually: band was raised but the employee was not brought up, or a legacy hire who joined below the then-minimum.</div>
+        <div style="padding:11px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:5px;font-size:13px;color:var(--ink3);font-weight:300"><strong style="color:var(--red);display:block;margin-bottom:2px">Action</strong>Bring to band minimum at the next payroll cycle. This is not discretionary. Document the correction in the HR file.</div>
+        <div style="padding:11px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:5px;font-size:13px;color:var(--ink3);font-weight:300"><strong style="color:var(--red);display:block;margin-bottom:2px">Escalation</strong>Notify COO. Investigate why the gap occurred. Update internal controls to prevent recurrence.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Above Band Maximum (Red Circle)</div>
+      <div class="card-body" style="margin-bottom:14px">An employee paid above the band maximum. More common — usually occurs when bands are adjusted downward or a long-tenured high performer has been progressed to the ceiling over many years.</div>
+      <div style="display:grid;gap:8px">
+        <div style="padding:11px;background:var(--amber-dim);border:1px solid rgba(212,130,10,.2);border-radius:5px;font-size:13px;color:var(--ink3);font-weight:300"><strong style="color:var(--amber);display:block;margin-bottom:2px">Do Not Cut Their Salary</strong>Red circle employees retain their current salary. Salary reductions are almost never acceptable and create serious legal and morale risk.</div>
+        <div style="padding:11px;background:var(--amber-dim);border:1px solid rgba(212,130,10,.2);border-radius:5px;font-size:13px;color:var(--ink3);font-weight:300"><strong style="color:var(--amber);display:block;margin-bottom:2px">Freeze Base Increases</strong>No merit increases to base salary until the band maximum moves above their current salary. Recognise performance through annual bonus only.</div>
+        <div style="padding:11px;background:var(--amber-dim);border:1px solid rgba(212,130,10,.2);border-radius:5px;font-size:13px;color:var(--ink3);font-weight:300"><strong style="color:var(--amber);display:block;margin-bottom:2px">Review Grade</strong>If the employee is consistently above max, consider whether the grade assignment is correct. Their role may have grown beyond the current grade.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Current Out-of-Band Register</div>
+    <table class="dtable">
+      <thead><tr><th>Employee</th><th>Grade</th><th>Salary (USD eq.)</th><th>Band Max</th><th>Status</th><th>Action Required</th><th>Target Resolution</th></tr></thead>
+      <tbody id="outlier-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 08 GENERATE -->
+<div id="page-document" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Document Output</div>
+    <h1 class="page-title">Generate Band<br><em>Report</em></h1>
+    <p class="page-desc">Produce the official Salary Band Schedule for sign-off by COO and CEO. This document is the authorised reference for all salary decisions in the merit cycle.</p>
+  </div>
+
+  <div class="info amber"><strong>Annual Sign-Off Required</strong>The Salary Band Schedule must be reviewed and signed by COO and CEO each year before the January merit cycle begins. Any mid-year band changes also require sign-off.</div>
+
+  <div class="print-block" id="band-report">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:20px;margin-bottom:22px;border-bottom:1px solid var(--border2)">
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--amber);margin-bottom:6px">Valentis Group — Confidential</div>
+        <div style="font-family:var(--fd);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:4px">Salary Band Schedule</div>
+        <div style="font-size:13px;color:var(--ink3)">C&amp;B Tool 3 · USD Reference Bands · Effective 1 January 2026</div>
+      </div>
+      <div style="text-align:right;font-family:var(--fm);font-size:10px;color:var(--ink4)">
+        <div>Band Design: 50% spread</div>
+        <div>Market Target: P50 standard / P65-75 critical</div>
+        <div>Review Date: Q4 2026</div>
+      </div>
+    </div>
+
+    <div id="report-bands-table"></div>
+
+    <div style="margin-top:22px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;font-size:13px;color:var(--ink3);font-weight:300">
+      <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Notes</div>
+      USD reference bands. Country-specific bands available in Tool 3 Country Band Tables. Compa-ratio of 100 = employee at band midpoint. Employees above band maximum (red circle) are ineligible for base increases until band adjusts. Bands reviewed annually Q4.
+    </div>
+
+    <div class="sig-row">
+      <div class="sig-block"><div style="height:42px"></div><div class="sig-name">Chief Executive Officer</div></div>
+      <div class="sig-block"><div style="height:42px"></div><div class="sig-name">Chief Operating Officer</div></div>
+      <div class="sig-block"><div style="height:42px"></div><div class="sig-name">Group HR Manager — Date</div></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-ink" onclick="window.print()">Print / Save as PDF</button>
+    <button class="btn btn-ghost" onclick="showPage('bands',document.querySelectorAll('.nav-item')[1])">Back to Bands</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── NAV ───────────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── BAND DATA ─────────────────────────────────────────────────────────
+const bandData = [
+  { grade:'G1', name:'Entry Support', roles:'Trainee Driller, Admin Intern', midUSD:14000, spread:0.50, gp:'gp-1', mktPos:'P40-50' },
+  { grade:'G2', name:'Developing Role', roles:'Junior Driller, Admin Officer, Finance Assistant', midUSD:19000, spread:0.50, gp:'gp-2', mktPos:'P40-50' },
+  { grade:'G3', name:'Operational Contributor', roles:'Driller, Finance Officer, HSE Officer', midUSD:27000, spread:0.50, gp:'gp-3', mktPos:'P50' },
+  { grade:'G4', name:'Senior Contributor', roles:'Senior Driller, Senior Finance Officer, HR Officer', midUSD:38000, spread:0.50, gp:'gp-4', mktPos:'P50' },
+  { grade:'G5', name:'Team Leader / Specialist', roles:'Drilling Supervisor, Finance Manager (Country)', midUSD:54000, spread:0.50, gp:'gp-5', mktPos:'P55-65' },
+  { grade:'G6', name:'Function Manager', roles:'Site Manager, Group HR Manager, Group Finance Manager', midUSD:76000, spread:0.50, gp:'gp-6', mktPos:'P55-65' },
+  { grade:'G7', name:'Senior Leader', roles:'Regional Ops Manager, CHRO, CFO', midUSD:110000, spread:0.50, gp:'gp-7', mktPos:'P65-75' },
+  { grade:'G8', name:'C-Suite Executive', roles:'COO, CEO', midUSD:160000, spread:0.50, gp:'gp-8', mktPos:'P65-75' },
+];
+
+function getBand(idx) {
+  const b = bandData[idx];
+  const mid = b.midUSD;
+  const min = Math.round(mid * 0.80);
+  const max = Math.round(mid * 1.20);
+  return { min, mid, max };
+}
+
+const countryFactors = {
+  LAO: { name:'Laos', flag:'🇱🇦', currency:'LAK', symbol:'LAK', factor:0.85, note:'Mineral exploration wages relatively low vs regional average. USD supplement common for expat staff.' },
+  MMR: { name:'Myanmar', flag:'🇲🇲', currency:'USD', symbol:'USD', factor:0.80, note:'Contracts typically USD-denominated due to currency instability. Local staff paid at MMK equivalent at market rate.' },
+  IDN: { name:'Indonesia', flag:'🇮🇩', currency:'IDR', symbol:'IDR', factor:0.92, note:'Stronger labour market, higher statutory costs (BPJS). Regional UMR must be observed. THR adds ~8.3% effective cost.' },
+  THA: { name:'Thailand', flag:'🇹🇭', currency:'THB', symbol:'THB', factor:1.05, note:'Most developed market in portfolio. Professional roles command near-regional-average salaries. Provident fund common.' },
+};
+
+const fxRates = { USD:1, LAK:21000, IDR:15800, THB:36 };
+
+// ── FORMAT ────────────────────────────────────────────────────────────
+function fmt(n, currency) {
+  if (currency === 'USD') return '$' + n.toLocaleString();
+  if (currency === 'LAK') return (n * fxRates.LAK).toLocaleString() + ' LAK';
+  if (currency === 'IDR') return 'IDR ' + (n * fxRates.IDR).toLocaleString();
+  if (currency === 'THB') return 'THB ' + (n * fxRates.THB).toLocaleString();
+  return n.toLocaleString();
+}
+
+// ── BUILD OVERVIEW CHART ──────────────────────────────────────────────
+function buildOverviewChart() {
+  const el = document.getElementById('band-overview-chart');
+  if (!el) return;
+  const maxVal = bandData[bandData.length-1].midUSD * 1.20;
+  el.innerHTML = bandData.map((b,i) => {
+    const { min, mid, max } = getBand(i);
+    const minPct = (min/maxVal*100).toFixed(1);
+    const midPct = (mid/maxVal*100).toFixed(1);
+    const maxPct = (max/maxVal*100).toFixed(1);
+    const widthPct = ((max-min)/maxVal*100).toFixed(1);
+    return `<div style="display:grid;grid-template-columns:80px 1fr 90px;gap:12px;align-items:center;margin-bottom:8px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:5px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="grade-pill ${b.gp}">${b.grade}</div>
+        <div style="font-family:var(--fm);font-size:10px;color:var(--ink4)">${b.mktPos}</div>
+      </div>
+      <div style="position:relative;height:18px;background:var(--surface3);border-radius:3px">
+        <div style="position:absolute;top:0;bottom:0;left:${minPct}%;width:${widthPct}%;background:linear-gradient(to right,rgba(192,57,43,.25),rgba(26,82,118,.3),rgba(30,107,58,.25));border-radius:3px;border:1px solid var(--border2)"></div>
+        <div style="position:absolute;top:-2px;bottom:-2px;left:${minPct}%;width:2px;background:var(--red);border-radius:1px"></div>
+        <div style="position:absolute;top:-2px;bottom:-2px;left:${midPct}%;width:2px;background:var(--blue);border-radius:1px;transform:translateX(-50%)"></div>
+        <div style="position:absolute;top:-2px;bottom:-2px;left:${maxPct}%;width:2px;background:var(--green);border-radius:1px;transform:translateX(-50%)"></div>
+      </div>
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ink3);text-align:right">$${(mid/1000).toFixed(0)}k mid</div>
+    </div>`;
+  }).join('');
+}
+
+// ── BUILD BANDS PAGE ──────────────────────────────────────────────────
+function buildBands() {
+  const el = document.getElementById('bands-container');
+  if (!el) return;
+  el.innerHTML = bandData.map((b,i) => {
+    const { min, mid, max } = getBand(i);
+    const overlapNote = i > 0 ? `Overlaps with G${i} max ($${getBand(i-1).max.toLocaleString()})` : 'Base grade — no lower band';
+    return `<div class="band-row">
+      <div class="band-row-header">
+        <div class="grade-pill ${b.gp}">${b.grade}</div>
+        <div class="band-row-name">
+          <div class="band-row-title">${b.grade} — ${b.name}</div>
+          <div class="band-row-roles">${b.roles}</div>
+        </div>
+        <span class="chip chip-ink">${b.mktPos}</span>
+      </div>
+      <div class="band-numbers">
+        <div class="band-num-item"><div class="bni-label">Minimum</div><div class="bni-value min">$${min.toLocaleString()}</div></div>
+        <div class="band-num-item"><div class="bni-label">Lower Quartile</div><div class="bni-value" style="color:var(--ink3)">$${Math.round((min+mid)/2).toLocaleString()}</div></div>
+        <div class="band-num-item"><div class="bni-label">Midpoint (P50)</div><div class="bni-value mid">$${mid.toLocaleString()}</div></div>
+        <div class="band-num-item"><div class="bni-label">Upper Quartile</div><div class="bni-value" style="color:var(--ink3)">$${Math.round((mid+max)/2).toLocaleString()}</div></div>
+        <div class="band-num-item"><div class="bni-label">Maximum</div><div class="bni-value max">$${max.toLocaleString()}</div></div>
+      </div>
+      <div class="band-bar-wrap">
+        <div class="band-bar-fill" style="left:0;right:${(100 - (max/bandData[7].midUSD/1.20)*100)}%"></div>
+        <div class="band-marker" style="left:${(min/(bandData[7].midUSD*1.20)*100).toFixed(1)}%;background:var(--red)"></div>
+        <div class="band-marker" style="left:${(mid/(bandData[7].midUSD*1.20)*100).toFixed(1)}%;background:var(--blue)"></div>
+        <div class="band-marker" style="left:${(max/(bandData[7].midUSD*1.20)*100).toFixed(1)}%;background:var(--green)"></div>
+      </div>
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ink4);margin-top:8px">${overlapNote} · Spread: 50% (min=80% of mid, max=120% of mid)</div>
+    </div>`;
+  }).join('');
+}
+
+// ── COUNTRY FACTORS DISPLAY ───────────────────────────────────────────
+function buildCountryFactors() {
+  const el = document.getElementById('country-factors');
+  if (!el) return;
+  el.innerHTML = Object.entries(countryFactors).map(([k,c]) => `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+      <div style="font-size:24px;margin-bottom:6px">${c.flag}</div>
+      <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px">${c.name}</div>
+      <div style="font-family:var(--fm);font-size:20px;font-weight:600;color:var(--amber);margin-bottom:4px">${(c.factor*100).toFixed(0)}%</div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--ink4);margin-bottom:8px">of USD reference</div>
+      <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">${c.note}</div>
+    </div>`).join('');
+}
+
+// ── COUNTRY TABLE ─────────────────────────────────────────────────────
+let activeCountry = 'LAO';
+
+function showCountry(code, el) {
+  activeCountry = code;
+  document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  buildCountryTable(code);
+}
+
+function buildCountryTable(code) {
+  const c = countryFactors[code];
+  const el = document.getElementById('country-table-container');
+  if (!el) return;
+  const isUSD = code === 'MMR';
+  const rate = isUSD ? 1 : fxRates[c.currency] || 1;
+
+  const rows = bandData.map((b,i) => {
+    const { min, mid, max } = getBand(i);
+    const lMin = Math.round(min * c.factor * rate);
+    const lMid = Math.round(mid * c.factor * rate);
+    const lMax = Math.round(max * c.factor * rate);
+    const sym = isUSD ? 'USD' : c.currency;
+    const f = n => n.toLocaleString() + ' ' + sym;
+    return `<tr>
+      <td><div class="grade-pill ${b.gp}" style="width:30px;height:30px;font-size:14px">${b.grade}</div></td>
+      <td style="font-size:12px;color:var(--ink)">${b.name}</td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--red)">${f(lMin)}</td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--blue)">${f(lMid)}</td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--green)">${f(lMax)}</td>
+      <td style="font-size:12px;color:var(--ink3)">${b.roles}</td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `<div class="card">
+    <div class="card-title">${c.flag} ${c.name} — Salary Bands (${c.currency})</div>
+    <div class="card-body" style="margin-bottom:14px">Market factor: ${(c.factor*100).toFixed(0)}% of USD reference. ${c.note}</div>
+    <table class="dtable">
+      <thead><tr><th>Grade</th><th>Profile</th><th style="color:var(--red)">Min / yr</th><th style="color:var(--blue)">Midpoint / yr</th><th style="color:var(--green)">Max / yr</th><th>Typical Roles</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+// ── COMPA CALCULATOR ──────────────────────────────────────────────────
+function updateCompa() {
+  const gradeIdx = parseInt(document.getElementById('cr-grade').value) - 1;
+  const currency = document.getElementById('cr-currency').value;
+  const salaryInput = parseFloat(document.getElementById('cr-salary').value) || 0;
+
+  const { min, mid, max } = getBand(gradeIdx);
+  const isUSD = currency === 'USD' || currency === 'MMK';
+  const countryKey = { USD:'USD', LAK:'LAO', MMK:'MMR', IDR:'IDN', THB:'THA' }[currency];
+  const factor = countryKey === 'USD' ? 1 : (countryFactors[countryKey]?.factor || 1);
+  const rate = isUSD ? 1 : (fxRates[currency] || 1);
+
+  const lMin = Math.round(min * factor * rate);
+  const lMid = Math.round(mid * factor * rate);
+  const lMax = Math.round(max * factor * rate);
+
+  const ratio = salaryInput > 0 ? (salaryInput / lMid * 100) : 0;
+  const sym = currency === 'LAK' ? 'LAK' : currency === 'IDR' ? 'IDR' : currency === 'THB' ? 'THB' : 'USD';
+  const f = n => n.toLocaleString() + ' ' + sym;
+
+  document.getElementById('cr-min').textContent = f(lMin);
+  document.getElementById('cr-mid').textContent = f(lMid);
+  document.getElementById('cr-max').textContent = f(lMax);
+  document.getElementById('cr-ratio').textContent = ratio.toFixed(1) + '%';
+
+  let pos, posColor, action;
+  if (ratio < 80) { pos = 'Below Minimum'; posColor = 'var(--red)'; action = 'Employee is below the band minimum. Bring to minimum at next payroll cycle. Flag to COO immediately.'; }
+  else if (ratio < 95) { pos = 'Low Zone'; posColor = 'var(--red)'; action = 'New hire or developing employee. Prioritise merit increases to move toward midpoint within 2–3 years.'; }
+  else if (ratio <= 105) { pos = 'At Market'; posColor = 'var(--blue)'; action = 'Employee is in the target zone — fully competent and paid at market. Standard merit increase applies.'; }
+  else if (ratio <= 120) { pos = 'High Zone'; posColor = 'var(--green)'; action = 'High performer or tenured employee. Modest base increases. Consider weighting toward variable pay.'; }
+  else { pos = 'Red Circle'; posColor = 'var(--amber)'; action = 'Above band maximum. No base increases until band maximum moves above current salary. Recognise through bonus only.'; }
+
+  document.getElementById('cr-position').textContent = pos;
+  document.getElementById('cr-position').style.color = posColor;
+  document.getElementById('cr-action').textContent = action;
+
+  const fillPct = Math.min(Math.max(((salaryInput - lMin) / (lMax - lMin)) * 100, 0), 100);
+  const fill = document.getElementById('cr-fill');
+  fill.style.width = fillPct + '%';
+  fill.style.background = ratio < 95 ? 'var(--red)' : ratio <= 105 ? 'var(--blue)' : ratio <= 120 ? 'var(--green)' : 'var(--amber)';
+}
+
+// ── EQUITY CHART ──────────────────────────────────────────────────────
+function buildEquityChart() {
+  const el = document.getElementById('equity-chart');
+  if (!el) return;
+  const employees = getEquityData();
+  const ratios = employees.map(e => e.ratio);
+  const zones = [
+    { label:'Below 80%', color:'var(--red)', count: ratios.filter(r=>r<80).length },
+    { label:'80–95%', color:'#e8826a', count: ratios.filter(r=>r>=80&&r<95).length },
+    { label:'95–105%', color:'var(--blue)', count: ratios.filter(r=>r>=95&&r<=105).length },
+    { label:'105–120%', color:'var(--green)', count: ratios.filter(r=>r>105&&r<=120).length },
+    { label:'Above 120%', color:'var(--amber)', count: ratios.filter(r=>r>120).length },
+  ];
+  const maxCount = Math.max(...zones.map(z=>z.count));
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:8px">
+    ${zones.map(z=>`<div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;text-align:center">
+      <div style="font-family:var(--fd);font-size:32px;font-weight:700;color:${z.color}">${z.count}</div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--ink4);margin-top:4px">${z.label}</div>
+      <div style="height:4px;background:var(--surface3);border-radius:2px;margin-top:8px;overflow:hidden"><div style="height:100%;width:${(z.count/Math.max(maxCount,1)*100).toFixed(0)}%;background:${z.color};border-radius:2px"></div></div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ── EQUITY DATA ───────────────────────────────────────────────────────
+function getEquityData() {
+  return [
+    { name:'Ahmad R.', country:'Laos', role:'Site Manager', grade:'G6', rating:5, salaryUSD:80000, midUSD:76000 },
+    { name:'Somphet K.', country:'Laos', role:'Drilling Supervisor', grade:'G5', rating:5, salaryUSD:57000, midUSD:54000 },
+    { name:'Nguyen T.', country:'Indonesia', role:'Senior Driller', grade:'G4', rating:4, salaryUSD:38500, midUSD:38000 },
+    { name:'Wirawan S.', country:'Indonesia', role:'Finance Manager', grade:'G5', rating:4, salaryUSD:52000, midUSD:54000 },
+    { name:'Ba', country:'Group', role:'Group HR Manager', grade:'G6', rating:4, salaryUSD:72000, midUSD:76000 },
+    { name:'Sai T.', country:'Myanmar', role:'Driller', grade:'G3', rating:4, salaryUSD:24000, midUSD:27000 },
+    { name:'Kanchana W.', country:'Thailand', role:'Admin Officer', grade:'G2', rating:4, salaryUSD:21000, midUSD:19000 },
+    { name:'Bounmy P.', country:'Laos', role:'HSE Officer', grade:'G3', rating:3, salaryUSD:26500, midUSD:27000 },
+    { name:'Khin M.', country:'Myanmar', role:'HSE Officer', grade:'G3', rating:3, salaryUSD:22000, midUSD:27000 },
+    { name:'Putri A.', country:'Indonesia', role:'Driller', grade:'G3', rating:3, salaryUSD:27000, midUSD:27000 },
+    { name:'Zaw M.', country:'Myanmar', role:'Driller', grade:'G3', rating:3, salaryUSD:19000, midUSD:27000 },
+    { name:'Malee C.', country:'Thailand', role:'Finance Officer', grade:'G3', rating:3, salaryUSD:28500, midUSD:27000 },
+  ].map(e => ({...e, ratio: parseFloat((e.salaryUSD/e.midUSD*100).toFixed(1))}));
+}
+
+function buildEquityTable() {
+  const tb = document.getElementById('equity-tbody');
+  if (!tb) return;
+  const employees = getEquityData();
+  const gc = {G1:'var(--ink4)',G2:'var(--ink3)',G3:'var(--green)',G4:'var(--green)',G5:'var(--gold)',G6:'var(--gold)',G7:'var(--amber)',G8:'var(--red)'};
+
+  tb.innerHTML = employees.map(e => {
+    let statusChip, statusColor;
+    if (e.ratio < 80) { statusChip = 'Below Min'; statusColor = 'chip-red'; }
+    else if (e.ratio < 95) { statusChip = 'Low'; statusColor = 'chip-red'; }
+    else if (e.ratio <= 105) { statusChip = 'At Market'; statusColor = 'chip-blue'; }
+    else if (e.ratio <= 120) { statusChip = 'High'; statusColor = 'chip-green'; }
+    else { statusChip = 'Red Circle'; statusColor = 'chip-amber'; }
+
+    const barW = Math.min(Math.max((e.ratio-70)/70*100,0),100).toFixed(0);
+    return `<tr>
+      <td style="font-weight:600;color:var(--ink)">${e.name}</td>
+      <td style="font-size:12px">${e.country}</td>
+      <td style="font-size:12px">${e.role}</td>
+      <td><span style="font-family:var(--fd);font-size:16px;color:${gc[e.grade]}">${e.grade}</span></td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--amber)">${e.rating}</td>
+      <td style="font-family:var(--fm);font-size:11px">$${e.salaryUSD.toLocaleString()}</td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--blue)">$${e.midUSD.toLocaleString()}</td>
+      <td>
+        <div style="font-family:var(--fm);font-size:12px;margin-bottom:3px">${e.ratio}%</div>
+        <div style="height:4px;background:var(--surface3);border-radius:2px;width:80px"><div style="height:100%;width:${barW}%;background:${e.ratio<95?'var(--red)':e.ratio<=105?'var(--blue)':e.ratio<=120?'var(--green)':'var(--amber)'};border-radius:2px"></div></div>
+      </td>
+      <td><span class="chip ${statusColor}">${statusChip}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── OUTLIER TABLE ─────────────────────────────────────────────────────
+function buildOutlierTable() {
+  const tb = document.getElementById('outlier-tbody');
+  if (!tb) return;
+  const outliers = [
+    { name:'Zaw M.', grade:'G3', salary:19000, bandMax:32400, status:'Below Min', action:'Bring to $21,600 minimum at April payroll. Investigate why not caught at Jan review.', target:'April 2026' },
+    { name:'Kanchana W.', grade:'G2', salary:21000, bandMax:22800, status:'Red Circle', action:'No base increase in 2026 merit cycle. Recognise through variable pay. Review if role has grown to G3.', target:'Q4 2026 review' },
+    { name:'Ahmad R.', grade:'G6', salary:80000, bandMax:91200, status:'High Zone', action:'Within band but approaching upper quartile. Bonus weighting recommended over base in 2027.', target:'Monitor' },
+  ];
+  tb.innerHTML = outliers.map(o => {
+    const isBelow = o.status === 'Below Min';
+    return `<tr>
+      <td style="font-weight:600;color:var(--ink)">${o.name}</td>
+      <td style="font-family:var(--fd);font-size:16px;color:var(--gold)">${o.grade}</td>
+      <td style="font-family:var(--fm);font-size:11px">$${o.salary.toLocaleString()}</td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--green)">$${o.bandMax.toLocaleString()}</td>
+      <td><span class="chip ${isBelow?'chip-red':'chip-amber'}">${o.status}</span></td>
+      <td style="font-size:12px;color:var(--ink3);max-width:280px">${o.action}</td>
+      <td style="font-family:var(--fm);font-size:11px;color:var(--ink4)">${o.target}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── REPORT BANDS TABLE ────────────────────────────────────────────────
+function buildReportBandsTable() {
+  const el = document.getElementById('report-bands-table');
+  if (!el) return;
+  const rows = bandData.map((b,i) => {
+    const { min, mid, max } = getBand(i);
+    return `<tr>
+      <td style="font-family:var(--fd);font-size:16px;color:var(--ink)">${b.grade}</td>
+      <td style="color:var(--ink2);font-size:13px">${b.name}</td>
+      <td style="font-family:var(--fm);font-size:12px;color:var(--red)">$${min.toLocaleString()}</td>
+      <td style="font-family:var(--fm);font-size:12px;color:var(--blue)">$${mid.toLocaleString()}</td>
+      <td style="font-family:var(--fm);font-size:12px;color:var(--green)">$${max.toLocaleString()}</td>
+      <td style="font-family:var(--fm);font-size:10px;color:var(--ink4)">${b.mktPos}</td>
+      <td style="font-size:12px;color:var(--ink4)">${b.roles}</td>
+    </tr>`;
+  }).join('');
+  el.innerHTML = `<table class="dtable" style="font-size:13px">
+    <thead><tr><th>Grade</th><th>Profile</th><th>Min (USD)</th><th>Midpoint</th><th>Max (USD)</th><th>Market Target</th><th>Typical Roles</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  buildOverviewChart();
+  buildBands();
+  buildCountryFactors();
+  buildCountryTable('LAO');
+  updateCompa();
+  buildEquityChart();
+  buildEquityTable();
+  buildOutlierTable();
+  buildReportBandsTable();
+});
+</script>
+</body>
+</html>

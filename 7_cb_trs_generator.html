@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Rewards Statement — Valentis C&B Tool 7</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Work+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f4f1ea;--surface:#ffffff;--surface2:#f8f6f0;--surface3:#ede9df;
+  --border:#ddd8cc;--border2:#c6bfae;--border3:#a9a090;
+  --forest:#1d4a2f;--forest2:#2a5e3e;--forest3:#0f2d1a;
+  --forest-dim:rgba(29,74,47,0.07);--forest-border:rgba(29,74,47,0.2);
+  --gold:#b07d2a;--gold2:#c8952e;--gold-dim:rgba(176,125,42,0.09);--gold-border:rgba(176,125,42,0.25);
+  --rust:#8b3a1e;--rust-dim:rgba(139,58,30,0.08);--rust-border:rgba(139,58,30,0.22);
+  --slate:#2c4055;--slate-dim:rgba(44,64,85,0.08);--slate-border:rgba(44,64,85,0.22);
+  --ink:#1a1a10;--ink2:#2e2e20;--ink3:#6a6450;--ink4:#a09880;--ink5:#ccc4b0;
+  --sidebar-w:272px;
+  --fd:'EB Garamond',Georgia,serif;
+  --fb:'Work Sans',sans-serif;
+  --fm:'Space Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--forest);border-right:none;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--gold2),rgba(200,149,46,0.4),transparent)}
+.sb-logo{padding:26px 22px 20px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sb-chip{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);background:rgba(200,149,46,0.14);border:1px solid rgba(200,149,46,0.3);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:600;color:#f2ede0;line-height:1.2;margin-bottom:4px}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.3)}
+.sb-section{padding:14px 10px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:0 10px;margin-bottom:5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.38);font-size:12.5px;font-weight:500;margin-bottom:2px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.72)}
+.nav-item.active{background:rgba(200,149,46,0.16);border-color:rgba(200,149,46,0.3);color:var(--gold2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.18);width:22px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--gold2)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.08)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:5px;padding:12px;font-size:11px;color:rgba(255,255,255,0.28)}
+.sb-note strong{display:block;color:rgba(255,255,255,0.48);margin-bottom:2px;font-family:var(--fm)}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:38px;padding-bottom:26px;border-bottom:2px solid var(--border)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--forest);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:48px;font-weight:600;color:var(--ink);line-height:1;margin-bottom:12px}
+.page-title em{font-style:italic;color:var(--forest2)}
+.page-desc{font-size:14.5px;color:var(--ink3);max-width:580px;line-height:1.85;font-weight:300}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:28px;margin-bottom:18px;box-shadow:0 1px 5px rgba(0,0,0,0.04);transition:border-color .13s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fd);font-size:22px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.85;font-weight:300}
+
+/* FORM */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.form-label{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4)}
+.form-input,.form-select{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:9px 12px;color:var(--ink);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .13s;width:100%}
+.form-input:focus,.form-select:focus{border-color:var(--forest)}
+.form-select option{background:var(--surface)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-row-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:11px}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:4px;border:none;font-family:var(--fb);font-size:13px;font-weight:700;cursor:pointer;transition:all .13s}
+.btn-forest{background:var(--forest);color:#f2ede0}
+.btn-forest:hover{background:var(--forest2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink3)}
+.btn-ghost:hover{border-color:var(--border3);color:var(--ink)}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:var(--gold2)}
+.btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;align-items:center}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font-family:var(--fm);font-size:9px;font-weight:600;letter-spacing:.5px}
+.chip-forest{background:var(--forest-dim);color:var(--forest);border:1px solid var(--forest-border)}
+.chip-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-rust{background:var(--rust-dim);color:var(--rust);border:1px solid var(--rust-border)}
+.chip-slate{background:var(--slate-dim);color:var(--slate);border:1px solid var(--slate-border)}
+
+/* INFO */
+.info{border-radius:5px;padding:14px 18px;margin-bottom:16px;font-size:13.5px;line-height:1.82;border-left:3px solid;font-weight:300}
+.info.forest{background:var(--forest-dim);border-color:var(--forest);color:var(--forest)}
+.info.gold{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+.info.rust{background:var(--rust-dim);border-color:var(--rust);color:var(--rust)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .3s ease both}
+.page.active .card:nth-child(2){animation-delay:.07s}
+.page.active .card:nth-child(3){animation-delay:.14s}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ═══════════════════════════════════════════════════
+   TRS STATEMENT STYLES — the actual output document
+   ═══════════════════════════════════════════════════ */
+.trs-wrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:18px;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+
+/* TRS COVER BAND */
+.trs-cover{background:var(--forest);padding:36px 44px 32px;position:relative;overflow:hidden}
+.trs-cover::before{content:'';position:absolute;top:-40px;right:-40px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,0.03)}
+.trs-cover::after{content:'';position:absolute;bottom:-60px;right:60px;width:180px;height:180px;border-radius:50%;background:rgba(200,149,46,0.08)}
+.trs-cover-chip{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold2);margin-bottom:14px;display:block}
+.trs-cover-name{font-family:var(--fd);font-size:40px;font-weight:600;color:#f2ede0;line-height:1.1;margin-bottom:6px}
+.trs-cover-role{font-size:16px;color:rgba(255,255,255,0.55);margin-bottom:20px;font-weight:300}
+.trs-cover-meta{display:flex;gap:24px;flex-wrap:wrap}
+.trs-meta-item{display:flex;flex-direction:column;gap:2px}
+.trs-meta-label{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.trs-meta-val{font-size:13px;font-weight:500;color:rgba(255,255,255,0.75)}
+
+/* TRS HERO TOTAL */
+.trs-hero{background:linear-gradient(135deg,var(--forest3),var(--forest));padding:28px 44px;display:flex;align-items:center;justify-content:space-between;gap:24px;border-bottom:1px solid rgba(255,255,255,0.08);flex-wrap:wrap}
+.trs-hero-total{display:flex;flex-direction:column}
+.trs-hero-label{font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px}
+.trs-hero-amount{font-family:var(--fd);font-size:52px;font-weight:700;color:var(--gold2);line-height:1}
+.trs-hero-sub{font-size:13px;color:rgba(255,255,255,0.35);margin-top:4px;font-weight:300}
+.trs-hero-breakdown{display:flex;gap:20px;flex-wrap:wrap}
+.trs-hero-item{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.trs-hero-item-label{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.trs-hero-item-val{font-family:var(--fd);font-size:20px;font-weight:600;color:rgba(255,255,255,0.7)}
+
+/* TRS BODY */
+.trs-body{padding:36px 44px}
+
+/* TRS SECTION */
+.trs-section{margin-bottom:32px}
+.trs-section-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.trs-section-icon{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.trs-section-title{font-family:var(--fd);font-size:20px;font-weight:600;color:var(--ink)}
+.trs-section-subtitle{font-size:12px;color:var(--ink4);font-weight:300;margin-left:auto;font-family:var(--fm)}
+
+/* TRS ROW */
+.trs-row{display:flex;align-items:baseline;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--border);gap:12px}
+.trs-row:last-child{border-bottom:none}
+.trs-row-label{font-size:13.5px;color:var(--ink2);font-weight:400;flex:1}
+.trs-row-sublabel{font-size:11.5px;color:var(--ink4);font-weight:300;margin-top:2px}
+.trs-row-amount{font-family:var(--fm);font-size:13px;font-weight:700;color:var(--ink);text-align:right;white-space:nowrap}
+.trs-row-note{font-family:var(--fm);font-size:10px;color:var(--ink4);text-align:right;margin-top:2px}
+
+/* TRS SUBTOTAL */
+.trs-subtotal{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surface2);border-radius:5px;margin-top:6px}
+.trs-subtotal-label{font-family:var(--fm);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3)}
+.trs-subtotal-val{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--forest)}
+
+/* TRS BAR CHART */
+.trs-chart{margin:24px 0}
+.trs-chart-title{font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:14px}
+.trs-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.trs-bar-label{font-size:12.5px;color:var(--ink3);width:160px;flex-shrink:0;font-weight:400}
+.trs-bar-track{flex:1;height:20px;background:var(--surface2);border-radius:3px;overflow:hidden;position:relative}
+.trs-bar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding:0 8px;transition:width .7s ease}
+.trs-bar-val{font-family:var(--fm);font-size:10px;font-weight:700;color:white;white-space:nowrap}
+.trs-bar-pct{font-family:var(--fm);font-size:11px;color:var(--ink4);width:42px;text-align:right;flex-shrink:0}
+
+/* TRS PILLARS */
+.trs-pillars{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0}
+.trs-pillar{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:14px 10px;text-align:center}
+.trs-pillar-icon{font-size:20px;margin-bottom:6px}
+.trs-pillar-name{font-family:var(--fm);font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px;line-height:1.4}
+.trs-pillar-val{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--forest)}
+
+/* TRS SIGNATURE */
+.trs-sig{margin-top:32px;padding-top:24px;border-top:1px solid var(--border)}
+.trs-sig-note{font-size:12px;color:var(--ink4);line-height:1.7;margin-bottom:20px;font-weight:300}
+.trs-sig-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:16px}
+.trs-sig-block{border-top:1px solid var(--border2);padding-top:10px}
+.trs-sig-name{font-family:var(--fm);font-size:9px;color:var(--ink4);letter-spacing:1px;text-transform:uppercase}
+
+/* TRS FOOTER */
+.trs-footer{background:var(--surface2);border-top:1px solid var(--border);padding:16px 44px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--ink4);font-weight:300}
+.trs-footer-logo{font-family:var(--fd);font-size:16px;font-weight:600;color:var(--forest)}
+
+/* PRINT */
+@media print {
+  .sidebar,.main > .page:not(.active){display:none}
+  .main{margin-left:0}
+  .page.active{padding:0}
+  .trs-wrap{box-shadow:none;border:none}
+  .btn-row,.card:not(#trs-output-wrapper){display:none}
+  body{background:white}
+}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--surface2);color:var(--ink4);font-family:var(--fm);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:2px solid var(--border)}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:middle;font-weight:300}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-chip">C&amp;B Tool VII / VIII</div>
+    <div class="sb-title">Total Rewards Statement Generator</div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('builder',this)"><span class="nav-num">02</span>Statement Builder</div>
+    <div class="nav-item" onclick="showPage('preview',this)"><span class="nav-num">03</span>Statement Preview</div>
+    <div class="nav-item" onclick="showPage('communication',this)"><span class="nav-num">04</span>Communication Strategy</div>
+    <div class="nav-item" onclick="showPage('library',this)"><span class="nav-num">05</span>Statement Library</div>
+    <div class="nav-item" onclick="showPage('faqs',this)"><span class="nav-num">06</span>Employee FAQ Guide</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Tool 7 / 8</strong>
+      Total Rewards Statement<br>
+      <span style="font-size:10px">Pulls from: Tools 1–6<br>Final tool before: Tool 8 (Analytics)</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- 01 OVERVIEW -->
+<div id="page-overview" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">C&amp;B Tool 7 — Total Rewards Statement Generator</div>
+    <h1 class="page-title">Total Rewards<br><em>Statement</em></h1>
+    <p class="page-desc">The statement that makes the full value of employment visible. Most employees only see their base salary. A Total Rewards Statement reveals the complete picture — and changes how people think about what they earn.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What a TRS Does</div>
+      <div class="card-body">
+        An employee earning $38,000 base salary at a Valentis site in Laos is not receiving $38,000 in total value. They are receiving:<br><br>
+        <div style="display:grid;gap:5px;margin:10px 0">
+          <div style="display:flex;justify-content:space-between;padding:7px 12px;background:var(--surface2);border-radius:3px;font-size:13px"><span>Base salary</span><span style="font-family:var(--fm);color:var(--forest);font-weight:700">$38,000</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 12px;background:var(--surface2);border-radius:3px;font-size:13px"><span>Site allowance (G4)</span><span style="font-family:var(--fm);color:var(--forest)">$5,400</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 12px;background:var(--surface2);border-radius:3px;font-size:13px"><span>Annual bonus target</span><span style="font-family:var(--fm);color:var(--forest)">$5,700</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 12px;background:var(--surface2);border-radius:3px;font-size:13px"><span>Medical insurance</span><span style="font-family:var(--fm);color:var(--forest)">$2,400</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 12px;background:var(--surface2);border-radius:3px;font-size:13px"><span>Meals (on-site)</span><span style="font-family:var(--fm);color:var(--forest)">$2,736</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 12px;background:var(--surface2);border-radius:3px;font-size:13px"><span>R&amp;R flights (6 cycles)</span><span style="font-family:var(--fm);color:var(--forest)">$2,400</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 12px;background:var(--surface2);border-radius:3px;font-size:13px"><span>Accommodation</span><span style="font-family:var(--fm);color:var(--forest)">$3,600</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 12px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;font-weight:600"><span style="color:var(--forest)">Total employer value</span><span style="font-family:var(--fm);color:var(--forest);font-size:15px">$60,236</span></div>
+        </div>
+        That is 59% more than the base salary figure the employee sees on their contract. Without a TRS, they do not know this.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why This Matters Strategically</div>
+      <div style="display:grid;gap:9px;margin-top:4px">
+        <div style="padding:13px 16px;background:var(--surface2);border-left:3px solid var(--forest);border-radius:0 5px 5px 0">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--forest);margin-bottom:4px">Retention</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Employees who understand their full total rewards package are significantly less likely to be swayed by a competitor offer that appears higher on base salary alone. The TRS makes the true cost of switching visible.</div>
+        </div>
+        <div style="padding:13px 16px;background:var(--surface2);border-left:3px solid var(--gold);border-radius:0 5px 5px 0">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Recruitment</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Attaching a TRS to an offer letter transforms the offer conversation. Candidates who compare only base salaries are shown the complete picture. Valentis becomes materially more competitive — especially for site roles where cash allowances are significant.</div>
+        </div>
+        <div style="padding:13px 16px;background:var(--surface2);border-left:3px solid var(--rust);border-radius:0 5px 5px 0">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--rust);margin-bottom:4px">HR Credibility</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Producing a TRS demonstrates that Valentis HR understands and actively manages total compensation — not just payroll. It positions the HR function as a strategic partner, not an administrative one. This is the document that earns a seat at the planning table.</div>
+        </div>
+        <div style="padding:13px 16px;background:var(--surface2);border-left:3px solid var(--slate);border-radius:0 5px 5px 0">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--slate);margin-bottom:4px">Perceived Fairness</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300">Employees who feel underpaid are often comparing their base salary to an imagined market number. The TRS provides a fact-based anchor for that conversation — and frequently reveals that the total package is more competitive than the employee realised.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Five Pillars in the TRS</div>
+    <div class="card-body" style="margin-bottom:16px">Every Total Rewards Statement at Valentis uses the five-pillar structure from the Total Rewards Framework (Tool 1). Each pillar contributes to the total value calculation.</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+      <div style="padding:16px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:6px;text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">💰</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:600;color:var(--forest);margin-bottom:4px">Pillar I</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--forest);margin-bottom:6px;letter-spacing:.5px">BASE PAY</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300">Annual base salary. The fixed, guaranteed component.</div>
+      </div>
+      <div style="padding:16px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:6px;text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">🏆</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:600;color:var(--gold);margin-bottom:4px">Pillar II</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--gold);margin-bottom:6px;letter-spacing:.5px">VARIABLE PAY</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300">Bonus and incentive targets. At risk — shown at target value.</div>
+      </div>
+      <div style="padding:16px;background:var(--rust-dim);border:1px solid var(--rust-border);border-radius:6px;text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">🏥</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:600;color:var(--rust);margin-bottom:4px">Pillar III</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--rust);margin-bottom:6px;letter-spacing:.5px">BENEFITS</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300">Insurance, leave, and welfare. Assigned cash equivalent value.</div>
+      </div>
+      <div style="padding:16px;background:var(--slate-dim);border:1px solid var(--slate-border);border-radius:6px;text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">⛏</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:600;color:var(--slate);margin-bottom:4px">Pillar IV</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--slate);margin-bottom:6px;letter-spacing:.5px">ALLOWANCES</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300">Site, R&amp;R, meals, accommodation, transport, hardship.</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">📚</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:600;color:var(--ink2);margin-bottom:4px">Pillar V</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--ink4);margin-bottom:6px;letter-spacing:.5px">DEVELOPMENT</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300">Training, certification, career investment. Estimated annual value.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 BUILDER -->
+<div id="page-builder" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Statement Builder</div>
+    <h1 class="page-title">Statement<br><em>Builder</em></h1>
+    <p class="page-desc">Enter the employee details below. The tool calculates total rewards value across all five pillars and generates a complete, print-ready statement in Section 03.</p>
+  </div>
+
+  <!-- EMPLOYEE DETAILS -->
+  <div class="card">
+    <div class="card-title">Employee Details</div>
+    <div class="form-row-3" style="margin-bottom:4px">
+      <div class="form-group"><div class="form-label">Full Name</div><input class="form-input" id="b-name" placeholder="e.g. Ahmad Razali" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Job Title</div><input class="form-input" id="b-title" placeholder="e.g. Senior Driller" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Grade</div>
+        <select class="form-select" id="b-grade" onchange="autoFillGrade()">
+          <option value="">Select grade</option>
+          <option value="1">G1 — Entry</option>
+          <option value="2">G2 — Developing</option>
+          <option value="3">G3 — Operational</option>
+          <option value="4">G4 — Senior Operational</option>
+          <option value="5">G5 — Team Leader</option>
+          <option value="6">G6 — Manager</option>
+          <option value="7">G7 — Senior Leader</option>
+          <option value="8">G8 — C-Suite</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row-3" style="margin-bottom:4px">
+      <div class="form-group"><div class="form-label">Country</div>
+        <select class="form-select" id="b-country" onchange="autoFillCountry()">
+          <option value="">Select</option>
+          <option value="LAO">Laos</option>
+          <option value="MMR">Myanmar</option>
+          <option value="IDN">Indonesia</option>
+          <option value="THA">Thailand</option>
+          <option value="GRP">Group / Singapore</option>
+        </select>
+      </div>
+      <div class="form-group"><div class="form-label">Role Type</div>
+        <select class="form-select" id="b-roletype" onchange="autoFillRole()">
+          <option value="">Select</option>
+          <option value="site">Site / Field (Rotation)</option>
+          <option value="office">Office / Country-based</option>
+          <option value="expat">Expatriate</option>
+        </select>
+      </div>
+      <div class="form-group"><div class="form-label">Statement Year</div>
+        <input class="form-input" id="b-year" value="2026" oninput="liveCalc()">
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR I: BASE PAY -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="width:36px;height:36px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px">💰</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--ink)">Pillar I — Base Pay</div><div style="font-size:12px;color:var(--ink4)">Annual fixed salary</div></div>
+      <div style="margin-left:auto;font-family:var(--fm);font-size:18px;font-weight:700;color:var(--forest)" id="p1-total">$0</div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><div class="form-label">Annual Base Salary (USD)</div><input class="form-input" type="number" id="b-base" placeholder="e.g. 38000" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Currency Paid In</div>
+        <select class="form-select" id="b-currency" onchange="liveCalc()">
+          <option value="USD">USD</option><option value="LAK">LAK</option><option value="IDR">IDR</option><option value="THB">THB</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR II: VARIABLE PAY -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="width:36px;height:36px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px">🏆</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--ink)">Pillar II — Variable Pay</div><div style="font-size:12px;color:var(--ink4)">Shown at target — at risk</div></div>
+      <div style="margin-left:auto;font-family:var(--fm);font-size:18px;font-weight:700;color:var(--gold)" id="p2-total">$0</div>
+    </div>
+    <div class="form-row-3">
+      <div class="form-group"><div class="form-label">Annual Bonus Target (USD)</div><input class="form-input" type="number" id="b-bonus" placeholder="Auto-fills from grade" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Site Incentive Target (USD)</div><input class="form-input" type="number" id="b-site-incentive" value="0" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Other Variable (USD)</div><input class="form-input" type="number" id="b-other-variable" value="0" oninput="liveCalc()"></div>
+    </div>
+  </div>
+
+  <!-- PILLAR III: BENEFITS -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="width:36px;height:36px;background:var(--rust-dim);border:1px solid var(--rust-border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px">🏥</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--ink)">Pillar III — Benefits</div><div style="font-size:12px;color:var(--ink4)">Annual employer cost of benefits</div></div>
+      <div style="margin-left:auto;font-family:var(--fm);font-size:18px;font-weight:700;color:var(--rust)" id="p3-total">$0</div>
+    </div>
+    <div class="form-row-4">
+      <div class="form-group"><div class="form-label">Medical Insurance (USD/yr)</div><input class="form-input" type="number" id="b-medical" value="2400" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Life Insurance (USD/yr)</div><input class="form-input" type="number" id="b-life" value="300" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Leave Cash Value (USD)</div><input class="form-input" type="number" id="b-leave" value="0" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Other Benefits (USD/yr)</div><input class="form-input" type="number" id="b-other-benefit" value="0" oninput="liveCalc()"></div>
+    </div>
+    <div style="font-size:12px;color:var(--ink4);font-weight:300">Leave cash value: divide annual salary by 260 working days, multiply by leave days. E.g. $38k / 260 x 15 days = $2,192.</div>
+  </div>
+
+  <!-- PILLAR IV: ALLOWANCES -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="width:36px;height:36px;background:var(--slate-dim);border:1px solid var(--slate-border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px">⛏</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--ink)">Pillar IV — Allowances</div><div style="font-size:12px;color:var(--ink4)">Annual cash value of all allowances</div></div>
+      <div style="margin-left:auto;font-family:var(--fm);font-size:18px;font-weight:700;color:var(--slate)" id="p4-total">$0</div>
+    </div>
+    <div class="form-row-3" style="margin-bottom:4px">
+      <div class="form-group"><div class="form-label">Site Allowance (USD/yr)</div><input class="form-input" type="number" id="b-site-allow" value="0" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">R&amp;R Flights (USD/yr)</div><input class="form-input" type="number" id="b-rnr" value="0" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Accommodation (USD/yr)</div><input class="form-input" type="number" id="b-accom" value="0" oninput="liveCalc()"></div>
+    </div>
+    <div class="form-row-4">
+      <div class="form-group"><div class="form-label">Meals (USD/yr)</div><input class="form-input" type="number" id="b-meals" value="0" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Hardship Premium (USD/yr)</div><input class="form-input" type="number" id="b-hardship" value="0" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Transport (USD/yr)</div><input class="form-input" type="number" id="b-transport" value="0" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Other Allowance (USD/yr)</div><input class="form-input" type="number" id="b-other-allow" value="0" oninput="liveCalc()"></div>
+    </div>
+  </div>
+
+  <!-- PILLAR V: DEVELOPMENT -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="width:36px;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px">📚</div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:600;color:var(--ink)">Pillar V — Development</div><div style="font-size:12px;color:var(--ink4)">Annual company investment in employee growth</div></div>
+      <div style="margin-left:auto;font-family:var(--fm);font-size:18px;font-weight:700;color:var(--ink3)" id="p5-total">$0</div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><div class="form-label">Training and Certifications (USD/yr)</div><input class="form-input" type="number" id="b-training" value="800" oninput="liveCalc()"></div>
+      <div class="form-group"><div class="form-label">Other Development Investment</div><input class="form-input" type="number" id="b-dev-other" value="0" oninput="liveCalc()"></div>
+    </div>
+  </div>
+
+  <!-- LIVE TOTAL -->
+  <div id="live-total-bar" style="background:var(--forest);border-radius:7px;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:18px">
+    <div>
+      <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px">Total Rewards Value</div>
+      <div style="font-family:var(--fd);font-size:44px;font-weight:700;color:var(--gold2);line-height:1" id="live-total-amount">$0</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:4px;font-weight:300" id="live-total-vs">Enter base salary to see total</div>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div style="text-align:right"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:2px">Base Salary</div><div style="font-family:var(--fm);font-size:16px;color:rgba(255,255,255,0.65)" id="lt-base">-</div></div>
+      <div style="text-align:right"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:2px">Beyond Salary</div><div style="font-family:var(--fm);font-size:16px;color:var(--gold2)" id="lt-beyond">-</div></div>
+      <div style="text-align:right"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:2px">Premium on Salary</div><div style="font-family:var(--fm);font-size:16px;color:var(--gold2)" id="lt-pct">-</div></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-forest" onclick="generateTRS()">Generate Statement</button>
+    <button class="btn btn-ghost" onclick="resetBuilder()">Reset Form</button>
+  </div>
+</div>
+
+<!-- 03 PREVIEW -->
+<div id="page-preview" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Statement Preview</div>
+    <h1 class="page-title">Statement<br><em>Preview</em></h1>
+    <p class="page-desc">Your generated Total Rewards Statement. Print or save as PDF using the button below. Send to the employee as a printed document — not by email if the salary figures are sensitive.</p>
+  </div>
+
+  <div id="trs-output-wrapper">
+    <div class="info forest"><strong>No statement generated yet</strong>Go to Section 02 — Statement Builder, fill in the employee details, and click Generate Statement.</div>
+  </div>
+
+  <div id="trs-print-row" style="display:none;margin-top:16px">
+    <div class="btn-row">
+      <button class="btn btn-forest" onclick="window.print()">Print / Save as PDF</button>
+      <button class="btn btn-ghost" onclick="showPage('builder', document.querySelectorAll('.nav-item')[1])">Edit Details</button>
+    </div>
+  </div>
+</div>
+
+<!-- 04 COMMUNICATION -->
+<div id="page-communication" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Communication Strategy</div>
+    <h1 class="page-title">Communication<br><em>Strategy</em></h1>
+    <p class="page-desc">How and when to deliver the Total Rewards Statement. The document itself is only half the work — the conversation around it determines whether it lands as intended.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">When to Issue a TRS</div>
+    <div style="display:grid;gap:8px;margin-top:8px">
+      <div style="display:grid;grid-template-columns:160px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--forest)">Annual Cycle — Dec</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300">Issue annually alongside the merit letter. Delivered in the same meeting where the merit increase is communicated. This is the primary annual touchpoint for total rewards visibility.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:160px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--forest)">Offer Stage</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300">Attach to an offer letter for senior or hard-to-source roles. For drillers and site supervisors, the total allowance package is often the deciding factor — make it explicit at the offer stage rather than waiting.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:160px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--forest)">Retention Conversation</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300">When an employee raises a competing offer or signals they are considering leaving, produce the TRS immediately. The true cost of their current package is often the most powerful retention tool available before a retention bonus is needed.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:160px 1fr;gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;align-items:flex-start">
+        <div style="font-family:var(--fm);font-size:11px;font-weight:600;color:var(--forest)">Promotion</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300">Issue an updated TRS when promoting an employee. It makes the full value of the promotion visible — not just the salary increase — and reinforces the message that the company is investing in them.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Delivery Script — Annual TRS Meeting</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:18px;margin-top:8px;font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300;font-style:italic">
+      "I want to share something with you today that I think gives you a more complete picture of what you receive from Valentis. This is your Total Rewards Statement for 2026.<br><br>
+      Most of what you see day to day is your base salary — [amount]. But that is only part of what the company invests in you. When we add your bonus target, your medical coverage, your site allowances, R&amp;R flights, accommodation and meals — the total value is actually [total amount].<br><br>
+      I want you to have this document because I think it is important that you understand what your package is truly worth. If you ever receive an offer from another employer that looks attractive on salary, I would encourage you to compare the full picture — not just the headline number.<br><br>
+      Do you have any questions about anything you see on this statement?"
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What the TRS Does NOT Include</div>
+    <div class="card-body" style="margin-bottom:12px">Being transparent about what is and is not in the TRS builds trust. Do not overstate the value.</div>
+    <div style="display:grid;gap:6px">
+      <div style="padding:10px 14px;background:var(--rust-dim);border-left:3px solid var(--rust);border-radius:0 4px 4px 0;font-size:13px;color:var(--ink3);font-weight:300"><strong style="color:var(--rust)">Statutory employer contributions</strong> — BPJS, SSF, NSSF etc. These are not included as they flow to the government scheme, not directly to the employee. Including them risks overstating the employee-felt value.</div>
+      <div style="padding:10px 14px;background:var(--rust-dim);border-left:3px solid var(--rust);border-radius:0 4px 4px 0;font-size:13px;color:var(--ink3);font-weight:300"><strong style="color:var(--rust)">Non-discretionary operational costs</strong> — company vehicles, equipment, safety gear, PPE. These are business costs, not personal rewards.</div>
+      <div style="padding:10px 14px;background:var(--rust-dim);border-left:3px solid var(--rust);border-radius:0 4px 4px 0;font-size:13px;color:var(--ink3);font-weight:300"><strong style="color:var(--rust)">Future earnings or projected increases</strong> — the TRS reflects current-year value only. Do not include projected raises or bonus increases.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 05 LIBRARY -->
+<div id="page-library" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Statement Library</div>
+    <h1 class="page-title">Statement<br><em>Library</em></h1>
+    <p class="page-desc">Pre-built reference statements for each role archetype at Valentis. Use these as starting points, to benchmark a specific employee, or to model the total cost of different roles before hiring.</p>
+  </div>
+
+  <div class="info gold"><strong>Reference values only</strong>Library statements use band midpoint salaries and standard allowance rates. Generate a personalised statement in Section 02 for actual employee communications.</div>
+
+  <div class="card">
+    <div class="card-title">TRS Reference Values — Valentis Role Archetypes</div>
+    <table class="dtable">
+      <thead><tr><th>Role Archetype</th><th>Grade</th><th>Country</th><th>Base (Mid)</th><th>Variable Target</th><th>Benefits</th><th>Allowances</th><th>Total Value</th><th>Premium on Salary</th></tr></thead>
+      <tbody id="library-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 06 FAQs -->
+<div id="page-faqs" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Employee FAQ Guide</div>
+    <h1 class="page-title">Employee<br><em>FAQ Guide</em></h1>
+    <p class="page-desc">The most common questions employees ask when they receive a Total Rewards Statement for the first time — and the correct answers. Prepare managers for these conversations.</p>
+  </div>
+
+  <div id="faq-container"></div>
+</div>
+
+</main>
+
+<script>
+// ── NAV ───────────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── GRADE DATA ────────────────────────────────────────────────────────
+const gradeDefaults = {
+  1:{bonus:5,midSalary:14000,siteAllow:0,training:400},
+  2:{bonus:8,midSalary:19000,siteAllow:0,training:500},
+  3:{bonus:10,midSalary:27000,siteAllow:3600,training:600},
+  4:{bonus:15,midSalary:38000,siteAllow:5400,training:800},
+  5:{bonus:20,midSalary:54000,siteAllow:7200,training:1000},
+  6:{bonus:25,midSalary:76000,siteAllow:9000,training:1500},
+  7:{bonus:35,midSalary:110000,siteAllow:0,training:2500},
+  8:{bonus:50,midSalary:160000,siteAllow:0,training:5000},
+};
+
+function autoFillGrade() {
+  const g = parseInt(document.getElementById('b-grade').value);
+  if (!g) return;
+  const d = gradeDefaults[g];
+  if (!d) return;
+  const base = parseFloat(document.getElementById('b-base').value) || d.midSalary;
+  document.getElementById('b-bonus').value = Math.round(base * d.bonus / 100);
+  document.getElementById('b-training').value = d.training;
+  liveCalc();
+}
+
+function autoFillCountry() {
+  const c = document.getElementById('b-country').value;
+  liveCalc();
+}
+
+function autoFillRole() {
+  const rt = document.getElementById('b-roletype').value;
+  const g = parseInt(document.getElementById('b-grade').value);
+  const base = parseFloat(document.getElementById('b-base').value) || (g ? gradeDefaults[g].midSalary : 38000);
+  if (rt === 'site') {
+    const siteRate = g ? gradeDefaults[g].siteAllow : 4800;
+    document.getElementById('b-site-allow').value = siteRate;
+    document.getElementById('b-rnr').value = 2400;
+    document.getElementById('b-accom').value = 3600;
+    document.getElementById('b-meals').value = Math.round(365 * 0.65 * 16);
+  } else if (rt === 'office') {
+    document.getElementById('b-site-allow').value = 0;
+    document.getElementById('b-rnr').value = 0;
+    document.getElementById('b-accom').value = 0;
+    document.getElementById('b-meals').value = 0;
+  }
+  const country = document.getElementById('b-country').value;
+  if (country === 'MMR' && rt === 'site') {
+    document.getElementById('b-hardship').value = Math.round(base * 0.125);
+  }
+  liveCalc();
+}
+
+// ── LIVE CALC ─────────────────────────────────────────────────────────
+function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+function liveCalc() {
+  const p1 = v('b-base');
+  const p2 = v('b-bonus') + v('b-site-incentive') + v('b-other-variable');
+  const p3 = v('b-medical') + v('b-life') + v('b-leave') + v('b-other-benefit');
+  const p4 = v('b-site-allow') + v('b-rnr') + v('b-accom') + v('b-meals') + v('b-hardship') + v('b-transport') + v('b-other-allow');
+  const p5 = v('b-training') + v('b-dev-other');
+  const total = p1 + p2 + p3 + p4 + p5;
+  const beyond = p2 + p3 + p4 + p5;
+  const pct = p1 > 0 ? Math.round(beyond / p1 * 100) : 0;
+
+  document.getElementById('p1-total').textContent = '$' + Math.round(p1).toLocaleString();
+  document.getElementById('p2-total').textContent = '$' + Math.round(p2).toLocaleString();
+  document.getElementById('p3-total').textContent = '$' + Math.round(p3).toLocaleString();
+  document.getElementById('p4-total').textContent = '$' + Math.round(p4).toLocaleString();
+  document.getElementById('p5-total').textContent = '$' + Math.round(p5).toLocaleString();
+
+  document.getElementById('live-total-amount').textContent = '$' + Math.round(total).toLocaleString();
+  document.getElementById('lt-base').textContent = '$' + Math.round(p1).toLocaleString();
+  document.getElementById('lt-beyond').textContent = '+$' + Math.round(beyond).toLocaleString();
+  document.getElementById('lt-pct').textContent = p1 > 0 ? '+' + pct + '%' : '-';
+  document.getElementById('live-total-vs').textContent = p1 > 0
+    ? 'Total employer investment vs ' + Math.round(p1).toLocaleString() + ' base salary'
+    : 'Enter base salary to see total';
+
+  // Auto-fill bonus when base changes
+  const g = parseInt(document.getElementById('b-grade').value);
+  if (g && gradeDefaults[g]) {
+    const bonusEl = document.getElementById('b-bonus');
+    if (!bonusEl.dataset.manual) {
+      bonusEl.value = Math.round(p1 * gradeDefaults[g].bonus / 100) || '';
+    }
+  }
+}
+
+// ── GENERATE TRS ──────────────────────────────────────────────────────
+function generateTRS() {
+  const name = document.getElementById('b-name').value || '[Employee Name]';
+  const title = document.getElementById('b-title').value || '[Job Title]';
+  const gradeVal = document.getElementById('b-grade').value;
+  const gradeLabel = gradeVal ? 'G' + gradeVal : 'G?';
+  const country = document.getElementById('b-country').value;
+  const roleType = document.getElementById('b-roletype').value;
+  const year = document.getElementById('b-year').value || '2026';
+  const currency = document.getElementById('b-currency').value;
+
+  const flagMap = {LAO:'🇱🇦 Laos',MMR:'🇲🇲 Myanmar',IDN:'🇮🇩 Indonesia',THA:'🇹🇭 Thailand',GRP:'🌐 Group'};
+  const roleMap = {site:'Site / Field (Rotation)',office:'Office / Country-based',expat:'Expatriate'};
+  const countryLabel = flagMap[country] || country;
+  const roleLabel = roleMap[roleType] || roleType;
+
+  const p1 = v('b-base');
+  const bonusTarget = v('b-bonus');
+  const siteIncentive = v('b-site-incentive');
+  const otherVar = v('b-other-variable');
+  const p2 = bonusTarget + siteIncentive + otherVar;
+  const medical = v('b-medical');
+  const life = v('b-life');
+  const leave = v('b-leave');
+  const otherBenefit = v('b-other-benefit');
+  const p3 = medical + life + leave + otherBenefit;
+  const siteAllow = v('b-site-allow');
+  const rnr = v('b-rnr');
+  const accom = v('b-accom');
+  const meals = v('b-meals');
+  const hardship = v('b-hardship');
+  const transport = v('b-transport');
+  const otherAllow = v('b-other-allow');
+  const p4 = siteAllow + rnr + accom + meals + hardship + transport + otherAllow;
+  const training = v('b-training');
+  const devOther = v('b-dev-other');
+  const p5 = training + devOther;
+
+  const total = p1 + p2 + p3 + p4 + p5;
+  const beyond = p2 + p3 + p4 + p5;
+  const beyondPct = p1 > 0 ? Math.round(beyond / p1 * 100) : 0;
+
+  function fmt(n) { return n > 0 ? currency + ' ' + Math.round(n).toLocaleString() : '—'; }
+  function row(label, sub, amount, note) {
+    if (!amount || amount <= 0) return '';
+    return `<div class="trs-row">
+      <div><div class="trs-row-label">${label}</div>${sub ? '<div class="trs-row-sublabel">' + sub + '</div>' : ''}</div>
+      <div><div class="trs-row-amount">${fmt(amount)}</div>${note ? '<div class="trs-row-note">' + note + '</div>' : ''}</div>
+    </div>`;
+  }
+
+  // Bar chart data
+  const pillars = [
+    {label:'Base Pay',val:p1,color:'var(--forest)'},
+    {label:'Variable Pay (target)',val:p2,color:'var(--gold)'},
+    {label:'Benefits',val:p3,color:'var(--rust)'},
+    {label:'Allowances',val:p4,color:'var(--slate)'},
+    {label:'Development',val:p5,color:'var(--ink3)'},
+  ].filter(p => p.val > 0);
+
+  const maxBar = total;
+  const bars = pillars.map(p => `
+    <div class="trs-bar-row">
+      <div class="trs-bar-label">${p.label}</div>
+      <div class="trs-bar-track">
+        <div class="trs-bar-fill" style="width:${(p.val/maxBar*100).toFixed(1)}%;background:${p.color}">
+          <span class="trs-bar-val">${currency} ${Math.round(p.val).toLocaleString()}</span>
+        </div>
+      </div>
+      <div class="trs-bar-pct">${(p.val/total*100).toFixed(0)}%</div>
+    </div>`).join('');
+
+  const trs = `<div class="trs-wrap">
+    <div class="trs-cover">
+      <span class="trs-cover-chip">Total Rewards Statement · ${year} · Confidential</span>
+      <div class="trs-cover-name">${name}</div>
+      <div class="trs-cover-role">${title}</div>
+      <div class="trs-cover-meta">
+        <div class="trs-meta-item"><span class="trs-meta-label">Grade</span><span class="trs-meta-val">${gradeLabel}</span></div>
+        <div class="trs-meta-item"><span class="trs-meta-label">Location</span><span class="trs-meta-val">${countryLabel}</span></div>
+        <div class="trs-meta-item"><span class="trs-meta-label">Role Type</span><span class="trs-meta-val">${roleLabel}</span></div>
+        <div class="trs-meta-item"><span class="trs-meta-label">Statement Date</span><span class="trs-meta-val">December ${year}</span></div>
+      </div>
+    </div>
+
+    <div class="trs-hero">
+      <div class="trs-hero-total">
+        <div class="trs-hero-label">Total Rewards Value ${year}</div>
+        <div class="trs-hero-amount">${currency} ${Math.round(total).toLocaleString()}</div>
+        <div class="trs-hero-sub">Total employer investment · ${beyondPct}% above base salary</div>
+      </div>
+      <div class="trs-hero-breakdown">
+        <div class="trs-hero-item"><span class="trs-hero-item-label">Base Salary</span><span class="trs-hero-item-val">${fmt(p1)}</span></div>
+        ${p2>0?'<div class="trs-hero-item"><span class="trs-hero-item-label">Variable (target)</span><span class="trs-hero-item-val">'+fmt(p2)+'</span></div>':''}
+        ${p3>0?'<div class="trs-hero-item"><span class="trs-hero-item-label">Benefits</span><span class="trs-hero-item-val">'+fmt(p3)+'</span></div>':''}
+        ${p4>0?'<div class="trs-hero-item"><span class="trs-hero-item-label">Allowances</span><span class="trs-hero-item-val">'+fmt(p4)+'</span></div>':''}
+      </div>
+    </div>
+
+    <div class="trs-body">
+
+      <div class="trs-pillars">
+        <div class="trs-pillar"><div class="trs-pillar-icon">💰</div><div class="trs-pillar-name">Base Pay</div><div class="trs-pillar-val" style="color:var(--forest)">${fmt(p1)}</div></div>
+        <div class="trs-pillar"><div class="trs-pillar-icon">🏆</div><div class="trs-pillar-name">Variable Pay</div><div class="trs-pillar-val" style="color:var(--gold)">${p2>0?fmt(p2):'Not eligible'}</div></div>
+        <div class="trs-pillar"><div class="trs-pillar-icon">🏥</div><div class="trs-pillar-name">Benefits</div><div class="trs-pillar-val" style="color:var(--rust)">${fmt(p3)}</div></div>
+        <div class="trs-pillar"><div class="trs-pillar-icon">⛏</div><div class="trs-pillar-name">Allowances</div><div class="trs-pillar-val" style="color:var(--slate)">${p4>0?fmt(p4):'Not applicable'}</div></div>
+        <div class="trs-pillar"><div class="trs-pillar-icon">📚</div><div class="trs-pillar-name">Development</div><div class="trs-pillar-val">${fmt(p5)}</div></div>
+      </div>
+
+      <div class="trs-chart">
+        <div class="trs-chart-title">Total Rewards Composition</div>
+        ${bars}
+      </div>
+
+      ${p1>0?`<div class="trs-section">
+        <div class="trs-section-header">
+          <div class="trs-section-icon" style="background:var(--forest-dim);border:1px solid var(--forest-border)">💰</div>
+          <div class="trs-section-title">Pillar I — Base Pay</div>
+          <div class="trs-section-subtitle">Fixed · Guaranteed</div>
+        </div>
+        ${row('Annual Base Salary','Fixed, guaranteed annual compensation',p1,'Paid monthly')}
+        <div class="trs-subtotal"><span class="trs-subtotal-label">Pillar I Total</span><span class="trs-subtotal-val">${fmt(p1)}</span></div>
+      </div>`:''}
+
+      ${p2>0?`<div class="trs-section">
+        <div class="trs-section-header">
+          <div class="trs-section-icon" style="background:var(--gold-dim);border:1px solid var(--gold-border)">🏆</div>
+          <div class="trs-section-title">Pillar II — Variable Pay</div>
+          <div class="trs-section-subtitle">At target · At risk</div>
+        </div>
+        ${row('Annual Performance Bonus','Target value — subject to company gate and individual performance rating',bonusTarget,'At target')}
+        ${row('Site and Project Incentive','Milestone-based — subject to programme and safety achievement',siteIncentive,'Per programme')}
+        ${row('Other Variable Pay','',otherVar,'')}
+        <div class="trs-subtotal"><span class="trs-subtotal-label">Pillar II Total (at target)</span><span class="trs-subtotal-val">${fmt(p2)}</span></div>
+      </div>`:''}
+
+      ${p3>0?`<div class="trs-section">
+        <div class="trs-section-header">
+          <div class="trs-section-icon" style="background:var(--rust-dim);border:1px solid var(--rust-border)">🏥</div>
+          <div class="trs-section-title">Pillar III — Benefits</div>
+          <div class="trs-section-subtitle">Employer cost · Annual value</div>
+        </div>
+        ${row('Medical and Health Insurance','Company-funded — inpatient, outpatient, emergency. Dependents included.',medical,'Annual premium')}
+        ${row('Group Life Insurance','2x annual salary — company-funded. Beneficiary-nominated.',life,'Annual premium')}
+        ${row('Annual Leave','Cash equivalent value of ' + (leave>0?Math.round(leave/(p1/260)):15) + ' days at your daily rate',leave,'15 days (increases with tenure)')}
+        ${row('Other Benefits','',otherBenefit,'')}
+        <div class="trs-subtotal"><span class="trs-subtotal-label">Pillar III Total</span><span class="trs-subtotal-val">${fmt(p3)}</span></div>
+      </div>`:''}
+
+      ${p4>0?`<div class="trs-section">
+        <div class="trs-section-header">
+          <div class="trs-section-icon" style="background:var(--slate-dim);border:1px solid var(--slate-border)">⛏</div>
+          <div class="trs-section-title">Pillar IV — Allowances</div>
+          <div class="trs-section-subtitle">Site and operational entitlements</div>
+        </div>
+        ${row('Site Allowance','Monthly cash allowance for remote site posting',siteAllow,'Paid monthly')}
+        ${row('R&R Flights','Economy return flights to home base — 6-week rotation cycle',rnr,'6 cycles per year')}
+        ${row('Accommodation','Company-provided camp accommodation — annual cash equivalent',accom,'Estimated value')}
+        ${row('Meals','3 company-provided meals per day on site — annual estimated value',meals,'Estimated at $16/day on-site days')}
+        ${row('Hardship Allowance','Myanmar designation premium — 10–15% of base salary',hardship,'Myanmar active designation')}
+        ${row('Transport Allowance','Monthly commute allowance',transport,'Monthly')}
+        ${row('Other Allowances','',otherAllow,'')}
+        <div class="trs-subtotal"><span class="trs-subtotal-label">Pillar IV Total</span><span class="trs-subtotal-val">${fmt(p4)}</span></div>
+      </div>`:''}
+
+      ${p5>0?`<div class="trs-section">
+        <div class="trs-section-header">
+          <div class="trs-section-icon" style="background:var(--surface2);border:1px solid var(--border)">📚</div>
+          <div class="trs-section-title">Pillar V — Development</div>
+          <div class="trs-section-subtitle">Company investment in your growth</div>
+        </div>
+        ${row('Training and Certifications','Company-funded mandatory certifications and approved professional development',training,'Annual budget')}
+        ${row('Other Development Investment','',devOther,'')}
+        <div class="trs-subtotal"><span class="trs-subtotal-label">Pillar V Total</span><span class="trs-subtotal-val">${fmt(p5)}</span></div>
+      </div>`:''}
+
+      <div style="background:var(--forest);border-radius:7px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;margin:24px 0;flex-wrap:wrap;gap:14px">
+        <div>
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px">Total Rewards Value — ${year}</div>
+          <div style="font-family:var(--fd);font-size:44px;font-weight:700;color:var(--gold2);line-height:1">${currency} ${Math.round(total).toLocaleString()}</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px;font-weight:300">Total employer investment · ${beyondPct}% above base salary of ${fmt(p1)}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:200px">
+          <div style="padding:12px;background:rgba(255,255,255,0.06);border-radius:5px;text-align:center">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px">Base Salary</div>
+            <div style="font-family:var(--fm);font-size:13px;font-weight:700;color:rgba(255,255,255,0.7)">${fmt(p1)}</div>
+          </div>
+          <div style="padding:12px;background:rgba(200,149,46,0.15);border-radius:5px;text-align:center">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(200,149,46,0.7);margin-bottom:4px">Beyond Salary</div>
+            <div style="font-family:var(--fm);font-size:13px;font-weight:700;color:var(--gold2)">+${fmt(beyond)}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trs-sig">
+        <div class="trs-sig-note">This Total Rewards Statement is provided for information purposes. It reflects the estimated total value of your compensation and benefits package for the period stated. Variable pay components are shown at target and are subject to the performance conditions described in the Valentis Variable Pay Framework. Benefits values are based on employer cost and estimated cash equivalent where applicable. This document is confidential and should not be shared with other employees.</div>
+        <div class="trs-sig-row">
+          <div class="trs-sig-block"><div style="height:40px"></div><div class="trs-sig-name">${name} — Received and Acknowledged</div></div>
+          <div class="trs-sig-block"><div style="height:40px"></div><div class="trs-sig-name">Group HR Manager</div></div>
+          <div class="trs-sig-block"><div style="height:40px"></div><div class="trs-sig-name">Date</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trs-footer">
+      <div class="trs-footer-logo">Valentis Group</div>
+      <div>Total Rewards Statement · ${year} · Strictly Confidential — Personnel File</div>
+    </div>
+  </div>`;
+
+  const out = document.getElementById('trs-output-wrapper');
+  out.innerHTML = trs;
+  document.getElementById('trs-print-row').style.display = 'block';
+
+  showPage('preview', document.querySelectorAll('.nav-item')[2]);
+}
+
+function resetBuilder() {
+  document.querySelectorAll('#page-builder input, #page-builder select').forEach(el => {
+    if (el.type === 'number') el.value = '';
+    else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else if (el.id === 'b-year') el.value = '2026';
+    else el.value = '';
+  });
+  document.getElementById('b-medical').value = '2400';
+  document.getElementById('b-life').value = '300';
+  document.getElementById('b-training').value = '800';
+  liveCalc();
+}
+
+// ── LIBRARY TABLE ─────────────────────────────────────────────────────
+const libraryRows = [
+  {role:'Trainee Driller',grade:'G2',country:'🇱🇦 Laos',type:'Site',base:19000,bonus:1520,benefits:2700,allow:10200,total:0},
+  {role:'Driller',grade:'G3',country:'🇱🇦 Laos',type:'Site',base:27000,bonus:2700,benefits:3000,allow:12800,total:0},
+  {role:'Senior Driller',grade:'G4',country:'🇲🇲 Myanmar',type:'Site',base:38000,bonus:5700,benefits:3100,allow:18600,total:0},
+  {role:'Drilling Supervisor',grade:'G5',country:'🇮🇩 Indonesia',type:'Site',base:54000,bonus:10800,benefits:3400,allow:14200,total:0},
+  {role:'Site Manager',grade:'G6',country:'🇱🇦 Laos',type:'Site',base:76000,bonus:19000,benefits:3800,allow:17200,total:0},
+  {role:'Finance Manager',grade:'G5',country:'🇹🇭 Thailand',type:'Office',base:54000,bonus:10800,benefits:3200,allow:2400,total:0},
+  {role:'Group HR Manager',grade:'G6',country:'🌐 Group',type:'Office',base:76000,bonus:19000,benefits:3800,allow:0,total:0},
+  {role:'COO',grade:'G8',country:'🌐 Group',type:'Office',base:160000,bonus:80000,benefits:5200,allow:0,total:0},
+];
+libraryRows.forEach(r => r.total = r.base + r.bonus + r.benefits + r.allow + 800);
+
+function buildLibrary() {
+  const tb = document.getElementById('library-tbody');
+  if (!tb) return;
+  tb.innerHTML = libraryRows.map(r => {
+    const dev = 800;
+    const prem = Math.round((r.total - r.base) / r.base * 100);
+    return `<tr>
+      <td style="font-weight:600;color:var(--ink)">${r.role}</td>
+      <td><span class="chip chip-forest">${r.grade}</span></td>
+      <td style="font-size:12.5px">${r.country} · ${r.type}</td>
+      <td style="font-family:var(--fm);font-size:12px;color:var(--forest);font-weight:700">$${r.base.toLocaleString()}</td>
+      <td style="font-family:var(--fm);font-size:12px;color:var(--gold)">$${r.bonus.toLocaleString()}</td>
+      <td style="font-family:var(--fm);font-size:12px;color:var(--rust)">$${r.benefits.toLocaleString()}</td>
+      <td style="font-family:var(--fm);font-size:12px;color:var(--slate)">${r.allow > 0 ? '$' + r.allow.toLocaleString() : '—'}</td>
+      <td style="font-family:var(--fm);font-size:13px;font-weight:700;color:var(--forest)">$${r.total.toLocaleString()}</td>
+      <td><span class="chip chip-gold">+${prem}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── FAQs ──────────────────────────────────────────────────────────────
+const faqs = [
+  {q:'Why does the statement include meals and accommodation? That is just a work expense.',a:'Meals and accommodation are provided because you work in a remote location where you cannot easily access your own. The cash equivalent value is real — if Valentis did not provide them, you would either have to pay for them yourself or they would need to be reflected in a higher salary. Including them on the TRS makes the full employer cost visible.'},
+  {q:'The bonus is shown at target. What if I do not actually get that amount?',a:'The TRS shows variable pay at target — the amount you would receive if both you and the company fully achieve your KPIs. It is clearly labelled as at risk and at target. The actual amount may be lower or higher depending on the year. The TRS is a picture of your package under normal performance conditions, not a guarantee.'},
+  {q:'I got a higher base salary offer from another company. Does this mean I am underpaid?',a:'A base salary comparison is only part of the picture. Before concluding anything, compare the full package. Does the competing employer provide medical insurance, accommodation, R&R flights, and a site allowance? If not, their higher base may still leave you worse off in total value. The TRS exists precisely to support this comparison.'},
+  {q:'Is the leave value actually money I can get?',a:'The leave cash value shown is the estimated annual value of your paid leave entitlement based on your daily rate. It is not cash you can directly withdraw — it represents what Valentis pays you to not work on your leave days, versus what a company that offers fewer leave days would pay. It is a real component of the cost of employing you.'},
+  {q:'Why is life insurance included? I never think about that.',a:'Life insurance is a benefit that most employees only appreciate in the worst circumstances. The annual premium represents the real cost the company pays to provide your family with financial protection in the event of your death. It is included in the TRS to ensure you are aware it exists and what it covers.'},
+  {q:'Can I share this document with another employee to compare?',a:'No. The TRS contains your individual salary and benefits information. It is a confidential personnel document. Sharing it with other employees breaches the confidentiality policy and can create difficulties between colleagues if their packages differ. If you have questions about how your package compares to market, please speak with HR directly.'},
+  {q:'Does this mean Valentis will not give me a salary increase because I already have a high total value?',a:'No. Total rewards value and salary increases are separate decisions. The merit matrix (C&B Tool 4) drives salary increases based on your performance rating and compa-ratio — not on whether your total package is generous. A high total package reflects the operational context of your role, not a reason to suppress base pay growth.'},
+];
+
+function buildFAQs() {
+  const el = document.getElementById('faq-container');
+  if (!el) return;
+  el.innerHTML = faqs.map((f, i) => `
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--forest);min-width:28px;line-height:1.2">Q${i+1}</div>
+        <div>
+          <div style="font-family:var(--fd);font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.4">"${f.q}"</div>
+          <div style="font-size:13.5px;color:var(--ink3);line-height:1.82;font-weight:300">${f.a}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  liveCalc();
+  buildLibrary();
+  buildFAQs();
+});
+</script>
+</body>
+</html>
