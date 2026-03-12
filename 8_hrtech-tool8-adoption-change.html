@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Tech Adoption & Change Readiness Tracker — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0f1923;--navy:#1a2a3a;--navy2:#243447;--navy3:#2e3f52;
+  --electric:#0ea5e9;--electric2:#38bdf8;--electric-dim:rgba(14,165,233,0.1);--electric-border:rgba(14,165,233,0.28);
+  --cyan:#06b6d4;--cyan-dim:rgba(6,182,212,0.09);
+  --steel:#4a6080;--steel2:#6b8099;--mist:#f0f4f8;--white:#ffffff;
+  --border:#d4dce6;--neutral-bg:#f4f6f8;
+  --success:#0f7a3e;--success-bg:#e8f5ee;--success-border:rgba(15,122,62,0.25);
+  --warning:#b45309;--warning-bg:#fef3cd;--warning-border:rgba(180,83,9,0.25);
+  --danger:#c0392b;--danger-bg:#fdf0ef;--danger-border:rgba(192,57,43,0.25);
+  --purple:#7c3aed;--purple-bg:rgba(124,58,237,0.08);--purple-border:rgba(124,58,237,0.25);
+  --sidebar-w:268px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--mist);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.6;display:flex;min-height:100vh}
+
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--cyan),rgba(14,165,233,0.3),transparent)}
+.sb-logo{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:var(--electric-dim);border:1px solid var(--electric-border);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:9px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#e8f4ff;line-height:1.1;margin-bottom:3px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:10px;color:rgba(255,255,255,0.18);font-family:var(--fm)}
+.sb-nav{padding:10px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.14);padding:0 10px;margin-bottom:4px;margin-top:10px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12px;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.55)}
+.nav-item.active{background:var(--electric-dim);border-color:var(--electric-border);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:18px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--electric)}
+.nav-status{margin-left:auto;font-family:var(--fm);font-size:8px;padding:1px 5px;border-radius:2px}
+.s-done{background:rgba(15,122,62,0.25);color:#6ecf94}
+.s-cur{background:var(--electric-dim);color:var(--electric2)}
+.s-soon{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.2)}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:10px 12px;font-size:10.5px;color:rgba(255,255,255,0.2);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+.top-header{background:var(--navy2);padding:0 44px;display:flex;align-items:center;justify-content:space-between;height:56px;border-bottom:3px solid var(--electric)}
+.th-left{display:flex;align-items:center;gap:14px}
+.th-badge{font-family:var(--fm);font-size:9px;color:var(--electric);letter-spacing:2px;border:1px solid var(--electric-border);padding:2px 8px;border-radius:2px}
+.th-title{font-family:var(--fd);font-size:16px;color:var(--white);font-weight:600}
+.th-meta{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.3)}
+.page-header{background:var(--white);padding:28px 44px 22px;border-bottom:1px solid var(--border)}
+.ph-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--electric);margin-bottom:8px}
+.ph-title{font-family:var(--fd);font-size:30px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1}
+.ph-title em{font-style:italic;font-weight:400;color:var(--steel2)}
+.ph-desc{font-size:13px;color:var(--steel);max-width:660px;line-height:1.7;font-weight:300}
+.ph-tag{display:inline-block;margin-top:8px;font-family:var(--fm);font-size:9px;background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border);padding:3px 10px;border-radius:2px;letter-spacing:1px}
+
+.stats-bar{background:var(--navy);padding:14px 44px;display:flex}
+.stat-item{flex:1;text-align:center;padding:0 12px;border-right:1px solid rgba(255,255,255,0.08)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:var(--fm);font-size:22px;font-weight:600;color:var(--electric2);display:block}
+.stat-num.green{color:#6ee7b7}.stat-num.yellow{color:#fcd34d}.stat-num.red{color:#fca5a5}.stat-num.purple{color:#c4b5fd}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;margin-top:1px}
+
+.tab-bar{background:var(--white);padding:0 44px;display:flex;border-bottom:2px solid var(--border)}
+.tab-btn{padding:12px 20px;font-family:var(--fb);font-size:12px;font-weight:500;color:var(--steel);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab-btn.active{color:var(--electric);border-bottom-color:var(--electric);font-weight:600}
+.tab-btn:hover:not(.active){color:var(--ink)}
+.tab-content{display:none;padding:28px 44px 48px}
+.tab-content.active{display:block}
+
+/* STAKEHOLDER CARDS */
+.stakeholder-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.sh-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.sh-card:hover{box-shadow:0 4px 14px rgba(14,165,233,0.12);border-color:var(--electric-border)}
+.sh-card-top{padding:14px 16px 10px}
+.sh-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px}
+.sh-name{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.sh-role{font-size:11px;color:var(--steel)}
+.sh-country{font-family:var(--fm);font-size:9px;margin-top:4px}
+.sh-card-body{padding:10px 16px 14px;border-top:1px solid var(--border)}
+.sh-readiness-label{font-family:var(--fm);font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--steel2);margin-bottom:5px}
+.sh-bar-wrap{height:7px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:5px}
+.sh-bar-fill{height:100%;border-radius:4px;transition:width .6s}
+.sh-score{font-family:var(--fm);font-size:11px;font-weight:700}
+.readiness-badge{display:inline-block;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:9px;font-weight:600;margin-top:6px}
+.rb-champion{background:var(--success-bg);color:var(--success);border:1px solid var(--success-border)}
+.rb-supporter{background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border)}
+.rb-neutral{background:var(--neutral-bg);color:var(--steel);border:1px solid var(--border)}
+.rb-resistant{background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border)}
+.rb-blocker{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+
+/* CHANGE DIMENSIONS */
+.dim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.dim-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.dim-header{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.dim-title{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--ink)}
+.dim-score-badge{font-family:var(--fm);font-size:13px;font-weight:700;padding:3px 10px;border-radius:3px}
+.dim-body{padding:12px 16px}
+.dim-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid var(--border)}
+.dim-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.dim-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.dim-text{font-size:12px;color:var(--ink);line-height:1.5}
+.dim-sub{font-size:11px;color:var(--steel)}
+
+/* ADOPTION TRACKER */
+.adoption-table{width:100%;border-collapse:collapse}
+.at-th{padding:9px 14px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric2);background:var(--navy)}
+.at-td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--ink);vertical-align:middle}
+.at-tr:hover .at-td{background:var(--electric-dim);cursor:pointer}
+.at-group-row td{background:var(--navy2);padding:7px 14px;font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+.inline-progress{height:6px;background:var(--border);border-radius:3px;overflow:hidden;width:80px}
+.inline-fill{height:100%;border-radius:3px}
+.adoption-status{display:inline-block;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:9px;font-weight:600}
+.as-notstarted{background:var(--neutral-bg);color:var(--steel);border:1px solid var(--border)}
+.as-inprogress{background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border)}
+.as-atrisk{background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border)}
+.as-complete{background:var(--success-bg);color:var(--success);border:1px solid var(--success-border)}
+
+/* CHANGE PLAN */
+.change-phase{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:16px}
+.cp-header{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cp-title{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink)}
+.cp-period{font-family:var(--fm);font-size:10px;color:var(--electric);background:var(--electric-dim);border:1px solid var(--electric-border);padding:2px 8px;border-radius:2px}
+.cp-body{padding:14px 18px}
+.cp-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.cp-action{padding:10px 14px;background:var(--neutral-bg);border:1px solid var(--border);border-radius:4px}
+.cp-action-owner{font-family:var(--fm);font-size:9px;color:var(--electric);margin-bottom:3px}
+.cp-action-text{font-size:12.5px;color:var(--ink);line-height:1.5}
+.cp-action-when{font-family:var(--fm);font-size:9px;color:var(--steel2);margin-top:3px}
+
+/* RESISTANCE LOG */
+.resistance-card{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.rc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.rc-title{font-size:13px;font-weight:600;color:var(--ink)}
+.rc-severity{font-family:var(--fm);font-size:9px;font-weight:600;padding:2px 7px;border-radius:2px}
+.rc-body{font-size:12.5px;color:var(--steel);line-height:1.6;margin-bottom:8px}
+.rc-mitigation{background:var(--electric-dim);border:1px solid var(--electric-border);border-radius:3px;padding:8px 12px;font-size:12px;color:var(--ink)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,30,0.55);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--white);border-radius:8px;width:580px;max-width:95vw;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.22)}
+.modal-header{padding:18px 24px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-family:var(--fd);font-size:19px;font-weight:700;color:var(--ink)}
+.modal-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--steel);padding:2px 6px}
+.modal-close:hover{background:var(--neutral-bg)}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.modal-section-title{font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:8px;margin-top:14px}
+.modal-section-title:first-child{margin-top:0}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.modal-field{padding:10px 12px;background:var(--neutral-bg);border:1px solid var(--border);border-radius:4px}
+.modal-field-label{font-family:var(--fm);font-size:9px;color:var(--steel2);margin-bottom:3px}
+.modal-field-value{font-size:12.5px;color:var(--ink);font-weight:500;line-height:1.5}
+.modal-footer{padding:12px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--neutral-bg)}
+.btn{height:34px;padding:0 16px;border-radius:4px;font-family:var(--fb);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--electric);color:var(--white)}.btn-primary:hover{background:var(--electric2);color:var(--ink)}
+.btn-outline{background:var(--white);color:var(--navy);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--electric);color:var(--electric)}
+.form-group{margin-bottom:12px}
+.form-label{font-family:var(--fm);font-size:10px;color:var(--steel);display:block;margin-bottom:4px}
+.form-input,.form-select,.form-textarea{width:100%;padding:7px 11px;border:1px solid var(--border);border-radius:4px;font-family:var(--fb);font-size:12.5px;color:var(--ink);background:var(--white);outline:none;transition:border .15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--electric)}
+.form-textarea{resize:vertical;min-height:60px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.toast{position:fixed;bottom:28px;right:28px;background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:4px;font-family:var(--fm);font-size:11px;border-left:3px solid var(--electric);opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">DEPT 11 · HR TECH</div>
+    <div class="sb-title">HR <em>Technology</em><br>& Digital HR</div>
+    <div class="sb-sub">VALENTIS GROUP · 2025</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Tools</div>
+    <div class="nav-item" onclick="showToast('→ Tool 1')"><span class="nav-num">01</span>Systems Inventory & Architecture<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 2')"><span class="nav-num">02</span>Integration & Data Flow Map<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 3')"><span class="nav-num">03</span>Vendor Evaluation Framework<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 4')"><span class="nav-num">04</span>Data Governance & Privacy Register<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 5')"><span class="nav-num">05</span>Digital HR Roadmap Planner<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 6')"><span class="nav-num">06</span>HR Tech ROI & Business Case Builder<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 7')"><span class="nav-num">07</span>Automation & AI Opportunity Assessor<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item active"><span class="nav-num">08</span>Adoption & Change Readiness Tracker<span class="nav-status s-cur">CURRENT</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 9 coming soon')"><span class="nav-num">09</span>Digital HR Operating Model<span class="nav-status s-soon">SOON</span></div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note"><strong>Valentis Group</strong>28 employees · 4 countries<br>Laos · Myanmar · Indonesia · Thailand</div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="top-header">
+    <div class="th-left">
+      <div class="th-badge">HR TECH · TOOL 08</div>
+      <div class="th-title">Adoption & Change Readiness Tracker</div>
+    </div>
+    <div class="th-meta">VALENTIS GROUP · GROUP HR</div>
+  </div>
+
+  <div class="page-header">
+    <div class="ph-eyebrow">HR Technology & Digital HR</div>
+    <h1 class="ph-title">Adoption &amp; Change <em>Readiness Tracker</em></h1>
+    <p class="ph-desc">Tracks how ready Valentis's workforce is to adopt new HR technology — by stakeholder, by site, and by system. Maps resistance, identifies champions, and provides a structured change management plan to ensure HRIS and digital HR tools actually get used.</p>
+    <div class="ph-tag">HR TECH · TOOL 08 OF 09</div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item"><span class="stat-num" id="statOverall">0%</span><div class="stat-lbl">Overall Readiness</div></div>
+    <div class="stat-item"><span class="stat-num green" id="statChampions">0</span><div class="stat-lbl">Champions</div></div>
+    <div class="stat-item"><span class="stat-num yellow" id="statNeutral">0</span><div class="stat-lbl">Neutral / Undecided</div></div>
+    <div class="stat-item"><span class="stat-num red" id="statResistant">0</span><div class="stat-lbl">Resistant / At Risk</div></div>
+    <div class="stat-item"><span class="stat-num purple" id="statActions">0</span><div class="stat-lbl">Change Actions Open</div></div>
+    <div class="stat-item"><span class="stat-num" id="statAdoption">0%</span><div class="stat-lbl">Avg Adoption Progress</div></div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('stakeholders')">Stakeholder Readiness</button>
+    <button class="tab-btn" onclick="switchTab('dimensions')">Change Dimensions</button>
+    <button class="tab-btn" onclick="switchTab('adoption')">Adoption Tracker</button>
+    <button class="tab-btn" onclick="switchTab('plan')">Change Management Plan</button>
+    <button class="tab-btn" onclick="switchTab('resistance')">Resistance Log</button>
+  </div>
+
+  <!-- TAB 1: STAKEHOLDER READINESS -->
+  <div class="tab-content active" id="tab-stakeholders">
+    <div style="background:var(--electric-dim);border:1px solid var(--electric-border);border-radius:6px;padding:13px 18px;margin-bottom:20px;font-size:13px;color:var(--ink);line-height:1.7">
+      Readiness scores are based on 5 dimensions: <strong>Digital Literacy</strong>, <strong>Change Appetite</strong>, <strong>Current Process Pain</strong> (motivation to change), <strong>Available Time</strong> for adoption, and <strong>Influence on Others</strong>. Click any card to view detail and update scores.
+    </div>
+    <div class="stakeholder-grid" id="stakeholderGrid"></div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+      <div style="padding:13px 18px;border-bottom:1px solid var(--border);background:var(--neutral-bg)">
+        <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink)">Readiness by Country / Site</div>
+      </div>
+      <div id="countryReadiness" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0"></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: CHANGE DIMENSIONS -->
+  <div class="tab-content" id="tab-dimensions">
+    <div style="margin-bottom:20px">
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin-bottom:16px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:10px">Overall Change Readiness Radar</div>
+        <div id="radarChart" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"></div>
+      </div>
+    </div>
+    <div class="dim-grid" id="dimGrid"></div>
+  </div>
+
+  <!-- TAB 3: ADOPTION TRACKER -->
+  <div class="tab-content" id="tab-adoption">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <button class="btn btn-primary" onclick="openUpdateModal()">✏ Update Adoption Progress</button>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+      <table class="adoption-table">
+        <thead><tr>
+          <th class="at-th">System / Initiative</th>
+          <th class="at-th">User Group</th>
+          <th class="at-th" style="text-align:center">Target Users</th>
+          <th class="at-th">Progress</th>
+          <th class="at-th" style="text-align:center">% Adopted</th>
+          <th class="at-th" style="text-align:center">Status</th>
+          <th class="at-th">Key Barrier</th>
+          <th class="at-th">Next Action</th>
+        </tr></thead>
+        <tbody id="adoptionBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 4: CHANGE MANAGEMENT PLAN -->
+  <div class="tab-content" id="tab-plan">
+    <div style="background:var(--electric-dim);border:1px solid var(--electric-border);border-radius:6px;padding:13px 18px;margin-bottom:20px;font-size:13px;color:var(--ink);line-height:1.7">
+      The change management plan follows a <strong>3-phase ADKAR-informed approach</strong> (Awareness → Desire → Knowledge → Ability → Reinforcement) adapted for Valentis's distributed, multilingual, site-based workforce. Each action is assigned an owner and timing.
+    </div>
+    <div id="changePlan"></div>
+  </div>
+
+  <!-- TAB 5: RESISTANCE LOG -->
+  <div class="tab-content" id="tab-resistance">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <button class="btn btn-primary" onclick="openAddResistanceModal()">+ Log Resistance</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" id="resistanceGrid"></div>
+  </div>
+</div>
+
+<!-- STAKEHOLDER DETAIL MODAL -->
+<div class="modal-overlay" id="shModal" onclick="closeModal('shModal',event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="shm_title"></div>
+        <div id="shm_sub" style="font-family:var(--fm);font-size:10px;color:var(--steel2);margin-top:3px"></div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('shModal').classList.remove('active')">✕</button>
+    </div>
+    <div class="modal-body" id="shm_body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('shModal').classList.remove('active')">Close</button>
+      <button class="btn btn-primary" id="shm_updateBtn">Update Scores</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPDATE ADOPTION MODAL -->
+<div class="modal-overlay" id="updateModal" onclick="closeModal('updateModal',event)">
+  <div class="modal" style="width:500px">
+    <div class="modal-header">
+      <div class="modal-title">Update Adoption Progress</div>
+      <button class="modal-close" onclick="document.getElementById('updateModal').classList.remove('active')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">System / Initiative</label>
+        <select class="form-select" id="ua_system" onchange="prefillAdoption()"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">% Adopted (0–100)</label><input class="form-input" type="number" id="ua_pct" min="0" max="100" placeholder="e.g. 60"></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="ua_status">
+            <option value="not-started">Not Started</option>
+            <option value="in-progress">In Progress</option>
+            <option value="at-risk">At Risk</option>
+            <option value="complete">Complete</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Key Barrier (if any)</label><input class="form-input" id="ua_barrier" placeholder="e.g. Site connectivity in Myanmar"></div>
+      <div class="form-group"><label class="form-label">Next Action</label><input class="form-input" id="ua_action" placeholder="e.g. Run offline training session at Monywa site"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('updateModal').classList.remove('active')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAdoptionUpdate()">Save Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD RESISTANCE MODAL -->
+<div class="modal-overlay" id="resistModal" onclick="closeModal('resistModal',event)">
+  <div class="modal" style="width:520px">
+    <div class="modal-header">
+      <div class="modal-title">Log Resistance Point</div>
+      <button class="modal-close" onclick="document.getElementById('resistModal').classList.remove('active')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Resistance Description *</label><textarea class="form-textarea" id="rr_desc" placeholder="Describe the resistance observed or anticipated…"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Stakeholder / Group</label><input class="form-input" id="rr_who" placeholder="e.g. Myanmar site managers"></div>
+        <div class="form-group"><label class="form-label">Severity</label>
+          <select class="form-select" id="rr_sev">
+            <option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Root Cause</label>
+        <select class="form-select" id="rr_cause">
+          <option>Fear of job change / redundancy</option>
+          <option>Low digital literacy</option>
+          <option>Distrust of data / privacy concern</option>
+          <option>Process disruption during busy period</option>
+          <option>Lack of awareness of benefits</option>
+          <option>Poor prior change experience</option>
+          <option>Language / localisation barrier</option>
+          <option>Site connectivity concern</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Mitigation Plan</label><textarea class="form-textarea" id="rr_mit" placeholder="How will you address this resistance?"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('resistModal').classList.remove('active')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveResistance()">Log Resistance</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+let stakeholders = [
+  {id:'s01',name:'Group HR Manager',initials:'HR',role:'Group HR Manager',country:'Group',color:'#0ea5e9',scores:{literacy:4,appetite:5,pain:5,time:3,influence:5},profile:'Champion',notes:'Primary driver of the change. High digital literacy, strong motivation. Constrained by time — implementation must be manageable alongside BAU.',tactics:['Protect 20% time allocation during HRIS implementation','Leverage as internal champion for site manager buy-in','Build Valentis-specific training materials with HR input']},
+  {id:'s02',name:'COO',initials:'COO',role:'Chief Operating Officer',country:'Group',color:'#7c3aed',scores:{literacy:3,appetite:4,pain:4,time:2,influence:5},profile:'Champion',notes:'Has approved the direction. Motivated by real-time workforce visibility (people cost = 43% revenue). Main risk: time scarcity — needs concise, dashboard-led evidence of progress.',tactics:['Monthly 10-minute dashboard review cadence','Show ROI and pipeline data first, before operational detail','Get COO to sponsor change in comms to site managers']},
+  {id:'s03',name:'Myo H.',initials:'MH',role:'Myanmar Site Manager',country:'Myanmar',color:'#d97706',scores:{literacy:2,appetite:2,pain:2,time:2,influence:4},profile:'Neutral',notes:'Most at-risk adopter. Low digital literacy, limited change appetite, does not perceive current manual processes as painful. Highly influential with site workers. Month-3 attrition pattern originates on his watch.',tactics:['Demonstrate personal benefit: automated cert alerts reduce his compliance risk','Buddy with HR Manager for hands-on training','Use offline-capable mobile app to lower connectivity barrier','Frame HRIS as reducing admin, not adding it']},
+  {id:'s04',name:'Indonesia Site Manager',initials:'ID',role:'Indonesia Site Manager',country:'Indonesia',color:'#0f7a3e',scores:{literacy:3,appetite:3,pain:3,time:3,influence:3},profile:'Neutral',notes:'Open to change but not a driver. Good M365 literacy from Group communications. BPJS integration will directly reduce his statutory filing burden — strong hook.',tactics:['Lead with BPJS automation as personal benefit','Involve in Indonesia pilot of HRIS','Regular 2-weekly check-ins during rollout period']},
+  {id:'s05',name:'Laos Site Manager',initials:'LA',role:'Laos Site Manager',country:'Laos',color:'#0284c7',scores:{literacy:2,appetite:3,pain:3,time:3,influence:3},profile:'Neutral',notes:'Retirement cohort risk in Laos makes succession visibility urgent. Moderate literacy. Needs localised materials (Lao language support in LMS).',tactics:['Frame LMS as protecting his team — succession pipeline visibility','Provide Lao-language training materials','Assign buddy from Indonesia site for peer support']},
+  {id:'s06',name:'Thailand Payroll Lead',initials:'TH',role:'Payroll & Admin Lead',country:'Thailand',color:'#7c3aed',scores:{literacy:4,appetite:4,pain:4,time:4,influence:2},profile:'Supporter',notes:'Strong process knowledge and moderate influence. Motivated by PDPA compliance — current manual data handling creates personal risk. Likely to become an internal champion once trained.',tactics:['Involve in PDPA privacy notice drafting','Position as Thailand HRIS super-user','Leverage PDPA compliance as adoption driver']},
+  {id:'s07',name:'G3 Driller Trainees',initials:'G3',role:'G3 Driller Trainees (×8 approx)',country:'All Sites',color:'#06b6d4',scores:{literacy:2,appetite:2,pain:2,time:3,influence:2},profile:'Neutral',notes:'Largest at-risk adoption group for LMS. Low digital literacy on remote sites. Low perceived pain from manual processes (they have never had better). Language barrier (Burmese, Lao, Bahasa).',tactics:['Multilingual onboarding for LMS (offline-first)','Gamify training completion — milestone badges','Site manager must be visible champion of LMS use','Weekly group check-in on platform during probation']},
+  {id:'s08',name:'Myanmar Site Workers',initials:'MW',role:'Site Workers (non-driller)',country:'Myanmar',color:'#c0392b',scores:{literacy:1,appetite:2,pain:1,time:3,influence:1},profile:'Neutral',notes:'Lowest digital literacy group. Key concern: data privacy and surveillance fear (biometric access system). Requires explicit consent process and plain-language explanation.',tactics:['Plain-language privacy explanation in Burmese','Separate biometric consent from HRIS rollout timing','Site manager to personally introduce system and explain purpose']},
+];
+
+let adoptionItems = [
+  {id:'a01',system:'HRIS (Darwinbox)',group:'All HR users (Group + 4 countries)',target:6,pct:0,status:'not-started',barrier:'Vendor not yet selected',action:'Complete vendor selection Q2 2025',phase:'Phase 1'},
+  {id:'a02',system:'HRIS — Employee Self-Service',group:'All 28 employees',target:28,pct:0,status:'not-started',barrier:'HRIS not live',action:'Design self-service onboarding journey after go-live',phase:'Phase 1'},
+  {id:'a03',system:'HRIS — Manager Portal',group:'Site managers × 4',target:4,pct:0,status:'not-started',barrier:'HRIS not live',action:'Run site manager workshop within 2 weeks of go-live',phase:'Phase 1'},
+  {id:'a04',system:'M365 Onboarding Checklists (Planner)',group:'Site managers × 4',target:4,pct:25,status:'in-progress',barrier:'Low Planner usage by Myanmar SM',action:'1:1 Planner walkthrough with Myanmar site manager',phase:'Quick Win'},
+  {id:'a05',system:'M365 Forms — Employee Data Updates',group:'All 28 employees',target:28,pct:30,status:'in-progress',barrier:'Site workers lack email access',action:'Print QR-code form option for offline sites',phase:'Quick Win'},
+  {id:'a06',system:'Interview Scheduling (M365 Bookings)',group:'Hiring managers × 3',target:3,pct:67,status:'in-progress',barrier:'None currently',action:'Extend to Laos hiring manager',phase:'Quick Win'},
+  {id:'a07',system:'Probation Tracker (Planner)',group:'Site managers × 4',target:4,pct:25,status:'at-risk',barrier:'Myanmar SM not completing 30-day check-in',action:'Escalate to COO — site manager accountability check',phase:'Quick Win'},
+  {id:'a08',system:'LMS Platform',group:'All 28 employees',target:28,pct:0,status:'not-started',barrier:'Platform not yet selected',action:'Include LMS in vendor evaluation shortlist Q3 2025',phase:'Phase 2'},
+  {id:'a09',system:'Power BI HR Dashboard',group:'COO + HR Manager',target:2,pct:0,status:'not-started',barrier:'HRIS data feed not available',action:'Prepare dashboard wireframe for COO review now',phase:'Phase 2'},
+  {id:'a10',system:'Payroll Integration (4 countries)',group:'Country payroll leads × 4',target:4,pct:0,status:'not-started',barrier:'HRIS implementation prerequisite',action:'Map payroll field requirements during HRIS config phase',phase:'Phase 2'},
+];
+
+let resistanceLog = [
+  {id:'r01',who:'Myanmar Site Manager (Myo H.)',desc:'Resistance to HRIS data entry — perceives it as additional admin burden on top of site operational demands.',severity:'high',cause:'Process disruption during busy period',mitigation:'Reframe: show that HRIS reduces admin (automated leave tracking, no more manual cert chasing). Demo the leave auto-calculation feature specifically. Schedule training during a low-activity window.',resolved:false},
+  {id:'r02',who:'G3 Driller Trainees (Myanmar)',desc:'Concern that LMS training completion tracking will be used for disciplinary purposes rather than development support.',severity:'medium',cause:'Distrust of data / privacy concern',mitigation:'Site manager to explicitly communicate purpose of LMS tracking. Include in privacy notice. Show G3→G4 milestone completion as employee benefit (not surveillance). Provide Burmese-language explainer.',resolved:false},
+  {id:'r03',who:'Myanmar Site Workers (biometric)',desc:'Resistance to fingerprint enrolment for site access system. Privacy concern about data being shared with government.',severity:'high',cause:'Distrust of data / privacy concern',mitigation:'Issue explicit biometric consent form in Burmese. Separate biometric rollout from HRIS rollout — do not conflate. HR Manager or site manager to explain personally. Consent is voluntary — offer photo ID alternative.',resolved:false},
+  {id:'r04',who:'Laos Site Manager',desc:'Hesitant about LMS — concerned it will require him to become a trainer/facilitator rather than a supervisor.',severity:'medium',cause:'Fear of job change / redundancy',mitigation:'Clarify role: LMS is self-directed by trainees. Site manager only approves milestone sign-off. Show that LMS reduces his time spent tracking progress manually.',resolved:false},
+  {id:'r05',who:'COO',desc:'Potential fatigue with HR system change if implementation overruns or disrupts operational reporting.',severity:'medium',cause:'Poor prior change experience',mitigation:'Monthly progress dashboard. Clear go/no-go milestone gates. Escalation protocol if timeline slips. Keep implementation parallel (shadow run) before decommissioning Excel HRIS.',resolved:false},
+];
+
+const dimensions = [
+  {title:'Leadership Alignment',score:4,max:5,color:'var(--success)',items:[
+    {dot:'si-green',text:'COO has approved direction and budget exploration',sub:'Strong sponsorship secured'},
+    {dot:'si-green',text:'CEO is informed and supportive',sub:'No active resistance at executive level'},
+    {dot:'si-amber',text:'Site managers need active alignment before go-live',sub:'Myo H. is the primary risk'},
+    {dot:'si-green',text:'HR Manager is leading with full commitment',sub:'Primary champion identified'},
+  ],action:'Maintain COO as visible sponsor. Brief all site managers individually before rollout.'},
+  {title:'Communication Readiness',score:2,max:5,color:'var(--danger)',items:[
+    {dot:'si-red',text:'No formal change communication plan exists yet',sub:'This is the current gap'},
+    {dot:'si-red',text:'No multilingual comms prepared for site workers',sub:'Burmese, Lao, Bahasa, Thai needed'},
+    {dot:'si-amber',text:'M365 Teams available as comms channel — underutilised',sub:'Can be leveraged immediately'},
+    {dot:'si-green',text:'WhatsApp provides informal reach to all sites',sub:'Supplement formal channels'},
+  ],action:'Build comms plan and multilingual FAQ before HRIS go-live. Translate key documents into 4 languages.'},
+  {title:'Training Readiness',score:2,max:5,color:'var(--danger)',items:[
+    {dot:'si-red',text:'No HRIS training materials exist yet',sub:'Depends on vendor selection'},
+    {dot:'si-red',text:'Site literacy gap for self-service modules',sub:'Site workers need hands-on training'},
+    {dot:'si-amber',text:'HR Manager has capacity to lead training for Group',sub:'Site training requires travel or video'},
+    {dot:'si-amber',text:'Offline training needed for remote sites',sub:'Myanmar and Laos connectivity issue'},
+  ],action:'Request vendor training materials and videos at contract stage. Build offline training kit for site delivery.'},
+  {title:'Process Readiness',score:3,max:5,color:'var(--warning)',items:[
+    {dot:'si-amber',text:'Current processes are documented but informal',sub:'No standard operating procedures'},
+    {dot:'si-green',text:'Data cleanse initiative underway (parallel to HRIS)',sub:'Clean data = better go-live quality'},
+    {dot:'si-amber',text:'Country-specific process variations need mapping',sub:'Leave rules, payroll cycles differ'},
+    {dot:'si-red',text:'No formal cut-over plan from Excel HRIS',sub:'Must run parallel for minimum 1 month'},
+  ],action:'Document current-state processes before configuring HRIS. Map country variations. Plan parallel run.'},
+  {title:'Technical Readiness',score:3,max:5,color:'var(--warning)',items:[
+    {dot:'si-green',text:'M365 already deployed — Copilot potential unlocked',sub:'Infrastructure partially in place'},
+    {dot:'si-amber',text:'Myanmar and Laos site connectivity is limited',sub:'LMS offline capability is mandatory'},
+    {dot:'si-amber',text:'4 different payroll systems require individual integration',sub:'Myanmar system has least API maturity'},
+    {dot:'si-red',text:'No HRIS or LMS in place yet',sub:'Phase 1 must be completed first'},
+  ],action:'Verify connectivity at all sites before system launch. Confirm vendor offline capability at demo stage.'},
+  {title:'Cultural Readiness',score:2,max:5,color:'var(--danger)',items:[
+    {dot:'si-red',text:'Site culture is operations-first — HR systems are low priority',sub:'Especially pronounced in Myanmar'},
+    {dot:'si-amber',text:'Some privacy concern around data collection on sites',sub:'Particularly biometric and tracking'},
+    {dot:'si-amber',text:'Language and literacy barriers create adoption risk',sub:'4 local languages, variable literacy'},
+    {dot:'si-green',text:'Younger G3 trainees are more tech-comfortable than G4/G5',sub:'Generational difference to leverage'},
+  ],action:'Build trust before data. Lead with employee benefits. Ensure consent is genuine and understood.'},
+];
+
+const changePlan = [
+  {phase:'Phase A — Awareness & Desire',period:'Now – HRIS Go-Live',color:'var(--electric)',actions:[
+    {owner:'Group HR Manager',text:'Develop change story: "Why we are doing this and what it means for you" — in plain language per audience',when:'Q2 2025'},
+    {owner:'COO',text:'Send all-staff communication endorsing the HRIS programme and framing it as investment in the team',when:'Q2 2025'},
+    {owner:'Group HR Manager',text:'Individual 30-minute briefing with each site manager — address personal concerns and show direct benefit to their role',when:'Q2 2025'},
+    {owner:'Group HR Manager',text:'Translate key comms into Burmese, Lao, Bahasa, and Thai — use M365 Copilot for draft, site manager reviews',when:'Q2–Q3 2025'},
+    {owner:'Site Managers',text:'Site-level team briefing — "Here is what is changing, here is what stays the same, here is how you can ask questions"',when:'Q3 2025 (pre go-live)'},
+    {owner:'Group HR Manager',text:'Address biometric consent separately and formally — do not conflate with HRIS rollout',when:'Before LMS launch'},
+  ]},
+  {phase:'Phase B — Knowledge & Ability',period:'HRIS Go-Live – 90 Days Post',color:'var(--purple)',actions:[
+    {owner:'Vendor + HR Manager',text:'Group HR Manager and site managers attend vendor-led HRIS training. HR Manager then trains each site manager 1:1',when:'Go-live month'},
+    {owner:'Site Managers',text:'Site manager runs 30-minute group walkthrough with site workers — self-service portal and payslip access',when:'Week 2 post go-live'},
+    {owner:'Group HR Manager',text:'Build HRIS quick-reference cards (1 page, with screenshots, per user role) — in local language per site',when:'Go-live month'},
+    {owner:'Group HR Manager',text:'Weekly 15-minute "office hour" via Teams for first 8 weeks post go-live — any user can ask HRIS questions',when:'Weeks 1–8 post go-live'},
+    {owner:'Group HR Manager',text:'Run parallel Excel HRIS for 4 weeks after go-live — compare and reconcile. Formal decommission at Week 5.',when:'Weeks 1–4 post go-live'},
+    {owner:'IT / Vendor',text:'Confirm offline LMS access is working at Myanmar and Laos sites before LMS user onboarding begins',when:'Before LMS launch'},
+  ]},
+  {phase:'Phase C — Reinforcement',period:'90 Days Post Go-Live – Ongoing',color:'var(--success)',actions:[
+    {owner:'Group HR Manager',text:'Monthly adoption dashboard shared with COO: % active users by site, system health, unresolved issues',when:'Monthly from Month 2'},
+    {owner:'COO',text:'COO publicly acknowledges milestone completions (first site fully live, first payroll automated) in team comms',when:'Per milestone'},
+    {owner:'Site Managers',text:'Site managers include HRIS usage in their team monthly update — normalises the system as standard operating practice',when:'From Month 2'},
+    {owner:'Group HR Manager',text:'Quarterly HRIS health check: data completeness, user feedback, process gaps, unresolved barriers',when:'Quarterly'},
+    {owner:'Group HR Manager',text:'Celebrate G3→G4 first automated promotion milestone — use as proof point for LMS value',when:'When first promotion triggered'},
+    {owner:'Group HR Manager',text:'Annual adoption review — any users still not actively using self-service? Individual outreach and support.',when:'12 months post go-live'},
+  ]},
+];
+
+// ── UTILS ─────────────────────────────────────────────
+function readinessScore(s) {
+  const vals = Object.values(s.scores);
+  return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*20);
+}
+function profileOf(s) {
+  const r = readinessScore(s);
+  if(r>=80) return 'Champion';
+  if(r>=60) return 'Supporter';
+  if(r>=40) return 'Neutral';
+  if(r>=25) return 'Resistant';
+  return 'Blocker';
+}
+function profileClass(p) {
+  return {Champion:'rb-champion',Supporter:'rb-supporter',Neutral:'rb-neutral',Resistant:'rb-resistant',Blocker:'rb-blocker'}[p]||'rb-neutral';
+}
+function readinessColor(r) {
+  if(r>=75) return 'var(--success)';
+  if(r>=50) return 'var(--electric)';
+  if(r>=30) return 'var(--warning)';
+  return 'var(--danger)';
+}
+function statusClass(s) {
+  return {'not-started':'as-notstarted','in-progress':'as-inprogress','at-risk':'as-atrisk','complete':'as-complete'}[s]||'as-notstarted';
+}
+function statusLabel(s) {
+  return {'not-started':'Not Started','in-progress':'In Progress','at-risk':'At Risk','complete':'Complete'}[s]||s;
+}
+function sevColor(s) {
+  return {high:'var(--danger)',medium:'var(--warning)',low:'var(--success)'}[s]||'var(--steel)';
+}
+function sevBg(s) {
+  return {high:'var(--danger-bg)',medium:'var(--warning-bg)',low:'var(--success-bg)'}[s]||'var(--neutral-bg)';
+}
+function sevBorder(s) {
+  return {high:'var(--danger-border)',medium:'var(--warning-border)',low:'var(--success-border)'}[s]||'var(--border)';
+}
+
+function updateStats() {
+  const scores = stakeholders.map(readinessScore);
+  const avg = Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+  const profiles = stakeholders.map(profileOf);
+  const champions = profiles.filter(p=>p==='Champion'||p==='Supporter').length;
+  const neutral = profiles.filter(p=>p==='Neutral').length;
+  const resistant = profiles.filter(p=>p==='Resistant'||p==='Blocker').length;
+  const actions = adoptionItems.filter(a=>a.status!=='complete').length;
+  const avgAdoption = Math.round(adoptionItems.reduce((a,b)=>a+b.pct,0)/adoptionItems.length);
+
+  document.getElementById('statOverall').textContent = avg+'%';
+  document.getElementById('statOverall').className = 'stat-num ' + (avg>=70?'green':avg>=45?'yellow':'red');
+  document.getElementById('statChampions').textContent = champions;
+  document.getElementById('statNeutral').textContent = neutral;
+  document.getElementById('statResistant').textContent = resistant;
+  document.getElementById('statActions').textContent = actions;
+  document.getElementById('statAdoption').textContent = avgAdoption+'%';
+}
+
+// ── RENDER STAKEHOLDERS ───────────────────────────────
+function renderStakeholders() {
+  document.getElementById('stakeholderGrid').innerHTML = stakeholders.map(s=>{
+    const r = readinessScore(s);
+    const profile = profileOf(s);
+    return `<div class="sh-card" onclick="openShModal('${s.id}')">
+      <div class="sh-card-top">
+        <div class="sh-avatar" style="background:${s.color}">${s.initials}</div>
+        <div class="sh-name">${s.name}</div>
+        <div class="sh-role">${s.role}</div>
+        <div class="sh-country" style="color:${s.color}">${s.country}</div>
+        <div class="readiness-badge ${profileClass(profile)}">${profile}</div>
+      </div>
+      <div class="sh-card-body">
+        <div class="sh-readiness-label">Change Readiness</div>
+        <div class="sh-bar-wrap"><div class="sh-bar-fill" style="width:${r}%;background:${readinessColor(r)}"></div></div>
+        <div class="sh-score" style="color:${readinessColor(r)}">${r}%</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const countries = ['Group','Myanmar','Indonesia','Laos','Thailand'];
+  document.getElementById('countryReadiness').innerHTML = countries.map(c=>{
+    const cStakeholders = stakeholders.filter(s=>s.country===c||s.country==='All Sites');
+    if(!cStakeholders.length) return '';
+    const avg = Math.round(cStakeholders.reduce((a,s)=>a+readinessScore(s),0)/cStakeholders.length);
+    const flag = {Group:'🌏',Myanmar:'🇲🇲',Indonesia:'🇮🇩',Laos:'🇱🇦',Thailand:'🇹🇭'}[c]||'';
+    return `<div style="padding:16px 18px;border-right:1px solid var(--border)">
+      <div style="font-size:22px;margin-bottom:6px">${flag}</div>
+      <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px">${c}</div>
+      <div style="font-family:var(--fm);font-size:22px;font-weight:700;color:${readinessColor(avg)}">${avg}%</div>
+      <div style="font-size:10px;color:var(--steel);margin-bottom:8px">avg readiness</div>
+      <div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${avg}%;background:${readinessColor(avg)};border-radius:3px"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  updateStats();
+}
+
+function openShModal(id) {
+  const s = stakeholders.find(x=>x.id===id);
+  if(!s) return;
+  const r = readinessScore(s);
+  const profile = profileOf(s);
+  const dimLabels = {literacy:'Digital Literacy',appetite:'Change Appetite',pain:'Process Pain',time:'Available Time',influence:'Influence'};
+  document.getElementById('shm_title').textContent = s.name;
+  document.getElementById('shm_sub').textContent = s.role + ' · ' + s.country;
+  document.getElementById('shm_body').innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <span class="readiness-badge ${profileClass(profile)}">${profile}</span>
+      <span style="font-family:var(--fm);font-size:10px;padding:2px 8px;border-radius:2px;background:var(--neutral-bg);color:var(--steel);border:1px solid var(--border)">Readiness: ${r}%</span>
+    </div>
+    <div class="modal-section-title">Profile Notes</div>
+    <div style="font-size:13px;color:var(--steel);line-height:1.8;margin-bottom:14px">${s.notes}</div>
+    <div class="modal-section-title">Readiness Scores</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px">
+      ${Object.entries(s.scores).map(([k,v])=>`
+        <div class="modal-field" style="text-align:center">
+          <div class="modal-field-label">${dimLabels[k]||k}</div>
+          <div style="font-family:var(--fm);font-size:18px;font-weight:700;color:${v>=4?'var(--success)':v>=3?'var(--electric)':'var(--warning)'};margin-top:3px">${v}<span style="font-size:11px;color:var(--steel2)">/5</span></div>
+        </div>`).join('')}
+    </div>
+    <div class="modal-section-title">Recommended Tactics</div>
+    ${s.tactics.map(t=>`<div style="display:flex;gap:10px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+      <div style="width:20px;height:20px;border-radius:50%;background:${s.color};color:white;font-family:var(--fm);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">→</div>
+      <div style="font-size:12.5px;color:var(--ink);line-height:1.6">${t}</div>
+    </div>`).join('')}`;
+
+  document.getElementById('shm_updateBtn').onclick = () => {
+    const dims = ['literacy','appetite','pain','time','influence'];
+    const labels = ['Digital Literacy (1–5)','Change Appetite (1–5)','Process Pain (1–5)','Available Time (1–5)','Influence (1–5)'];
+    dims.forEach((d,i)=>{
+      const v = parseInt(prompt(labels[i]+' for '+s.name+':',s.scores[d]));
+      if(!isNaN(v) && v>=1 && v<=5) s.scores[d]=v;
+    });
+    document.getElementById('shModal').classList.remove('active');
+    renderStakeholders();
+    showToast('✓ Scores updated: '+s.name);
+  };
+  document.getElementById('shModal').classList.add('active');
+}
+
+// ── RENDER DIMENSIONS ─────────────────────────────────
+function renderDimensions() {
+  const dotColor = {
+    'si-green':'var(--success)','si-amber':'var(--warning)','si-red':'var(--danger)','si-blue':'var(--electric)'
+  };
+  document.getElementById('radarChart').innerHTML = dimensions.map(d=>{
+    const pct = (d.score/d.max)*100;
+    return `<div style="text-align:center;min-width:90px">
+      <div style="font-family:var(--fm);font-size:18px;font-weight:700;color:${d.color}">${d.score}<span style="font-size:10px;color:var(--steel2)">/${d.max}</span></div>
+      <div style="font-size:10px;color:var(--steel);margin:3px 0">${d.title}</div>
+      <div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden;width:80px;margin:0 auto">
+        <div style="height:100%;width:${pct}%;background:${d.color};border-radius:3px"></div>
+      </div>
+    </div>`;
+  }).join('<div style="font-size:16px;color:var(--border);align-self:center">·</div>');
+
+  document.getElementById('dimGrid').innerHTML = dimensions.map(d=>{
+    const pct = (d.score/d.max)*100;
+    const statusLabel = d.score>=4?'Strong':d.score>=3?'Developing':'Needs Work';
+    return `<div class="dim-card">
+      <div class="dim-header">
+        <div class="dim-title">${d.title}</div>
+        <span class="dim-score-badge" style="background:${d.color}22;color:${d.color};border:1px solid ${d.color}44">${d.score}/${d.max} · ${statusLabel}</span>
+      </div>
+      <div class="dim-body">
+        ${d.items.map(item=>`<div class="dim-item">
+          <div class="dim-dot" style="background:${dotColor[item.dot]||'var(--steel)'}"></div>
+          <div><div class="dim-text">${item.text}</div><div class="dim-sub">${item.sub}</div></div>
+        </div>`).join('')}
+        <div style="margin-top:10px;padding:8px 10px;background:var(--electric-dim);border:1px solid var(--electric-border);border-radius:3px;font-size:12px;color:var(--ink)">→ ${d.action}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER ADOPTION ───────────────────────────────────
+function renderAdoption() {
+  const phases = [...new Set(adoptionItems.map(a=>a.phase))];
+  let html = '';
+  phases.forEach(ph=>{
+    const items = adoptionItems.filter(a=>a.phase===ph);
+    html += `<tr class="at-group-row"><td colspan="8">${ph}</td></tr>`;
+    items.forEach(a=>{
+      const fillColor = a.status==='complete'?'var(--success)':a.status==='at-risk'?'var(--warning)':a.status==='in-progress'?'var(--electric)':'var(--border)';
+      html += `<tr class="at-tr">
+        <td class="at-td" style="font-weight:600">${a.system}</td>
+        <td class="at-td" style="font-size:11.5px;color:var(--steel)">${a.group}</td>
+        <td class="at-td" style="text-align:center;font-family:var(--fm)">${a.target}</td>
+        <td class="at-td">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="inline-progress"><div class="inline-fill" style="width:${a.pct}%;background:${fillColor}"></div></div>
+          </div>
+        </td>
+        <td class="at-td" style="text-align:center;font-family:var(--fm);font-weight:700;color:${fillColor}">${a.pct}%</td>
+        <td class="at-td" style="text-align:center"><span class="adoption-status ${statusClass(a.status)}">${statusLabel(a.status)}</span></td>
+        <td class="at-td" style="font-size:11.5px;color:${a.status==='at-risk'?'var(--warning)':'var(--steel)'};max-width:150px">${a.barrier||'—'}</td>
+        <td class="at-td" style="font-size:11.5px;color:var(--ink);max-width:160px">${a.action}</td>
+      </tr>`;
+    });
+  });
+  document.getElementById('adoptionBody').innerHTML = html;
+}
+
+function openUpdateModal() {
+  const sel = document.getElementById('ua_system');
+  sel.innerHTML = adoptionItems.map(a=>`<option value="${a.id}">${a.system}</option>`).join('');
+  prefillAdoption();
+  document.getElementById('updateModal').classList.add('active');
+}
+function prefillAdoption() {
+  const id = document.getElementById('ua_system').value;
+  const a = adoptionItems.find(x=>x.id===id);
+  if(!a) return;
+  document.getElementById('ua_pct').value = a.pct;
+  document.getElementById('ua_status').value = a.status;
+  document.getElementById('ua_barrier').value = a.barrier||'';
+  document.getElementById('ua_action').value = a.action||'';
+}
+function saveAdoptionUpdate() {
+  const id = document.getElementById('ua_system').value;
+  const a = adoptionItems.find(x=>x.id===id);
+  if(!a) return;
+  a.pct = Math.min(100,Math.max(0,parseInt(document.getElementById('ua_pct').value)||0));
+  a.status = document.getElementById('ua_status').value;
+  a.barrier = document.getElementById('ua_barrier').value;
+  a.action = document.getElementById('ua_action').value;
+  if(a.pct===100) a.status='complete';
+  document.getElementById('updateModal').classList.remove('active');
+  renderAdoption(); updateStats();
+  showToast('✓ Adoption updated: '+a.system);
+}
+
+// ── RENDER CHANGE PLAN ────────────────────────────────
+function renderChangePlan() {
+  document.getElementById('changePlan').innerHTML = changePlan.map(ph=>`
+    <div class="change-phase">
+      <div class="cp-header">
+        <div class="cp-title" style="color:${ph.color}">${ph.phase}</div>
+        <div class="cp-period" style="color:${ph.color};background:${ph.color}15;border-color:${ph.color}44">${ph.period}</div>
+      </div>
+      <div class="cp-body">
+        <div style="height:3px;background:${ph.color};border-radius:2px;margin-bottom:14px"></div>
+        <div class="cp-actions">
+          ${ph.actions.map(a=>`<div class="cp-action">
+            <div class="cp-action-owner">${a.owner}</div>
+            <div class="cp-action-text">${a.text}</div>
+            <div class="cp-action-when">📅 ${a.when}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ── RENDER RESISTANCE ─────────────────────────────────
+function renderResistance() {
+  document.getElementById('resistanceGrid').innerHTML = resistanceLog.map(r=>`
+    <div class="resistance-card" style="border-color:${sevColor(r.severity)}44">
+      <div class="rc-header">
+        <div>
+          <div class="rc-title">${r.who}</div>
+          <div style="font-size:11px;color:var(--steel);margin-top:2px">${r.cause}</div>
+        </div>
+        <span class="rc-severity" style="background:${sevBg(r.severity)};color:${sevColor(r.severity)};border:1px solid ${sevBorder(r.severity)}">${r.severity.toUpperCase()}</span>
+      </div>
+      <div class="rc-body">${r.desc}</div>
+      <div class="rc-mitigation"><span style="font-family:var(--fm);font-size:9px;color:var(--electric);margin-right:6px">MITIGATION →</span>${r.mitigation}</div>
+    </div>`).join('');
+}
+
+function openAddResistanceModal() { document.getElementById('resistModal').classList.add('active'); }
+function saveResistance() {
+  const desc = document.getElementById('rr_desc').value.trim();
+  if(!desc){showToast('⚠ Description required');return;}
+  resistanceLog.push({
+    id:'r'+String(resistanceLog.length+1).padStart(2,'0'),
+    who:document.getElementById('rr_who').value||'Unknown',
+    desc,
+    severity:document.getElementById('rr_sev').value,
+    cause:document.getElementById('rr_cause').value,
+    mitigation:document.getElementById('rr_mit').value||'To be determined.',
+    resolved:false
+  });
+  document.getElementById('resistModal').classList.remove('active');
+  document.getElementById('rr_desc').value='';
+  document.getElementById('rr_who').value='';
+  document.getElementById('rr_mit').value='';
+  renderResistance(); updateStats();
+  showToast('✓ Resistance logged');
+}
+
+function switchTab(id) {
+  const tabs=['stakeholders','dimensions','adoption','plan','resistance'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='dimensions') renderDimensions();
+  if(id==='adoption') renderAdoption();
+  if(id==='plan') renderChangePlan();
+  if(id==='resistance') renderResistance();
+}
+function closeModal(id,e){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('active');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+// Init
+renderStakeholders();
+updateStats();
+</script>
+</body>
+</html>

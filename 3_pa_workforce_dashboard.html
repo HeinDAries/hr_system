@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workforce Dashboard — People Analytics Tool 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f5;--surface:#fff;--surface2:#e8ecf2;--surface3:#dde3ed;
+  --border:#cdd4e0;--border2:#b8c2d4;
+  --ink:#0d1117;--ink2:#1a2332;--ink3:#3d4f6b;--ink4:#6b7d99;--ink5:#a0aec0;
+  --navy:#0a1628;--navy2:#0d1f3c;
+  --blue:#1a6bdb;--blue2:#2979e8;--blue3:#4d94ff;
+  --blue-dim:rgba(26,107,219,0.08);--blue-border:rgba(26,107,219,0.22);
+  --electric:#3d8bff;--electric2:#5c9fff;
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --amber:#b8860b;--amber-dim:rgba(184,134,11,0.08);--amber-border:rgba(184,134,11,0.22);
+  --green:#1a7a4a;--green-dim:rgba(26,122,74,0.08);--green-border:rgba(26,122,74,0.22);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--blue),rgba(26,107,219,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:rgba(26,107,219,0.15);border:1px solid rgba(26,107,219,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f4ff;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(26,107,219,0.18);border-color:rgba(26,107,219,0.4);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--blue3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:40px 52px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:32px;padding-bottom:22px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--blue)}
+.page-desc{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.card-title{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--blue);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-blue{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.chip-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.blue{background:var(--blue-dim);border-color:var(--blue);color:var(--ink2)}
+.info.amber{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--navy);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.vx-box{background:var(--navy);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);margin-bottom:6px}
+.vx-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f4ff;margin-bottom:8px;line-height:1.15}
+.vx-body{font-size:13px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tab-body{display:none;padding:18px 0}
+.tab-body.active{display:block}
+/* KPI tiles */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.blue::before{background:var(--blue)}
+.kpi.green::before{background:var(--green)}
+.kpi.amber::before{background:var(--amber)}
+.kpi.red::before{background:var(--red)}
+.kpi.ink::before{background:var(--ink)}
+.kpi-label{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kpi-value{font-family:var(--fd);font-size:38px;font-weight:800;line-height:1;margin-bottom:3px}
+.kpi.blue .kpi-value{color:var(--blue)}
+.kpi.green .kpi-value{color:var(--green)}
+.kpi.amber .kpi-value{color:var(--amber)}
+.kpi.red .kpi-value{color:var(--red)}
+.kpi.ink .kpi-value{color:var(--ink)}
+.kpi-sub{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.kpi-trend{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.kpi-trend.up-good{background:var(--green-dim);color:var(--green)}
+.kpi-trend.up-bad{background:var(--red-dim);color:var(--red)}
+.kpi-trend.down-good{background:var(--green-dim);color:var(--green)}
+.kpi-trend.down-bad{background:var(--red-dim);color:var(--red)}
+.kpi-trend.flat{background:var(--surface2);color:var(--ink4)}
+/* bar chart */
+.bar-wrap{margin:4px 0}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.bar-label{font-size:12px;color:var(--ink3);width:90px;flex-shrink:0}
+.bar-track{flex:1;background:var(--surface2);border-radius:2px;height:20px;position:relative;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;display:flex;align-items:center;padding-left:8px}
+.bar-val{font-family:var(--fm);font-size:10px;font-weight:600;color:#fff;white-space:nowrap}
+.bar-cap{font-family:var(--fm);font-size:10px;color:var(--ink5);margin-left:8px;white-space:nowrap}
+/* country strip */
+.country-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.c-tile{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px}
+.c-code{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--blue);margin-bottom:3px}
+.c-name{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:10px}
+.c-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.c-row-label{color:var(--ink4);font-weight:300}
+.c-row-val{font-weight:700;color:var(--ink)}
+.c-status{margin-top:8px;display:inline-flex;align-items:center;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:8px;font-weight:600}
+/* pipeline visual */
+.pipe-stage{border:1px solid var(--border);border-radius:4px;padding:14px 16px;position:relative}
+.pipe-arrow{text-align:center;font-size:18px;color:var(--ink5);padding:4px 0}
+.pipe-grade{font-family:var(--fm);font-size:9px;color:var(--blue);letter-spacing:1px;margin-bottom:4px}
+.pipe-count{font-family:var(--fd);font-size:36px;font-weight:800;color:var(--ink);line-height:1}
+.pipe-label{font-size:12px;color:var(--ink4);font-weight:300;margin-bottom:8px}
+.pipe-rate{font-family:var(--fm);font-size:10px}
+/* alert */
+.alert-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:3px;margin-bottom:6px;font-size:13px;line-height:1.6}
+.alert-item.red{background:var(--red-dim);border:1px solid var(--red-border);color:var(--ink2)}
+.alert-item.amber{background:var(--amber-dim);border:1px solid var(--amber-border);color:var(--ink2)}
+.alert-item.blue{background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--ink2)}
+.alert-icon{font-size:15px;flex-shrink:0}
+/* inputs */
+.upd-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.upd-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 12px;font-size:12.5px;color:#f0f4ff;font-family:var(--fb);outline:none;transition:border .13s}
+.upd-input:focus{border-color:rgba(26,107,219,0.5)}
+.upd-label{font-family:var(--fm);font-size:7.5px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;display:block}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:rgba(26,107,219,0.5);color:var(--electric2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx-box,.page.active .kpi,.page.active .c-tile{animation:fadeUp .22s ease both}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">People Analytics · Tool 3 / 9</div>
+    <div class="sb-title">Workforce<br><em>Dashboard</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('live',this)"><span class="nav-num">01</span>Live Dashboard</div>
+    <div class="nav-item" onclick="showPage('headcount',this)"><span class="nav-num">02</span>Headcount &amp; Grade Mix</div>
+    <div class="nav-item" onclick="showPage('pipeline',this)"><span class="nav-num">03</span>Pipeline Health</div>
+    <div class="nav-item" onclick="showPage('attrition',this)"><span class="nav-num">04</span>Attrition Tracker</div>
+    <div class="nav-item" onclick="showPage('delivery',this)"><span class="nav-num">05</span>Delivery &amp; Cost</div>
+    <div class="nav-item" onclick="showPage('alerts',this)"><span class="nav-num">06</span>Alert Centre</div>
+    <div class="nav-item" onclick="showPage('update',this)"><span class="nav-num">07</span>Dashboard Updater</div>
+    <div class="nav-item" onclick="showPage('coo',this)"><span class="nav-num">08</span>COO Summary View</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>People Analytics · Tool 3 of 9</strong>
+      Workforce Dashboard<br>
+      <span style="color:rgba(255,255,255,0.1)">One view of workforce health. Updated quarterly. COO-ready in one click.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+
+<div id="page-live" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">People Analytics · Tool 3 / 9 — Workforce Dashboard</div>
+    <h1 class="page-title">Workforce<br><em>Dashboard</em></h1>
+    <p class="page-desc">The single view of Valentis workforce health — headcount, pipeline, attrition, delivery, and cost. Updated quarterly from the HR data infrastructure. Sections 02–05 contain detailed views. Section 07 is where you enter new data each quarter. Section 08 generates the COO summary.</p>
+  </div>
+
+  <div id="live-snapshot" style="font-family:var(--fm);font-size:8px;color:var(--ink5);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase">Loading snapshot…</div>
+
+  <div class="kpi-row" id="kpi-row"></div>
+
+  <div class="country-strip" id="country-strip"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Pipeline <em>at a Glance</em></div>
+      <div id="live-pipeline-summary"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Active <em>Alerts</em></div>
+      <div id="live-alerts-summary"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Grade Distribution — <em>Group</em></div>
+    <div id="live-grade-bars"></div>
+  </div>
+</div>
+
+<div id="page-headcount" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Headcount &amp; Grade Mix</div>
+    <h1 class="page-title">Headcount &amp;<br><em>Grade Mix</em></h1>
+    <p class="page-desc">Headcount by grade and country — current snapshot, trend direction, and target gap. Grade mix tells a structural story: too heavy at junior grades means high training cost; too heavy at senior means succession risk.</p>
+  </div>
+  <div id="hc-content"></div>
+</div>
+
+<div id="page-pipeline" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Pipeline Health</div>
+    <h1 class="page-title">Pipeline<br><em>Health</em></h1>
+    <p class="page-desc">The G1→G4 driller development pipeline — conversion rates by country, stage velocity, bench strength, and at-risk candidate flags. The most critical operational metric at Valentis.</p>
+  </div>
+  <div id="pipeline-content"></div>
+</div>
+
+<div id="page-attrition" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Attrition Tracker</div>
+    <h1 class="page-title">Attrition<br><em>Tracker</em></h1>
+    <p class="page-desc">Attrition rate by country and grade — current quarter, rolling 12-month, and trend. Month-3 exit pattern tracking. Voluntary vs involuntary breakdown. Cost of attrition estimate.</p>
+  </div>
+  <div id="attrition-content"></div>
+</div>
+
+<div id="page-delivery" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Delivery &amp; Cost</div>
+    <h1 class="page-title">Delivery &amp;<br><em>Cost</em></h1>
+    <p class="page-desc">Programme delivery percentage by country against target, and people cost as a percentage of revenue. The two metrics that connect workforce health directly to business performance.</p>
+  </div>
+  <div id="delivery-content"></div>
+</div>
+
+<div id="page-alerts" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Alert Centre</div>
+    <h1 class="page-title">Alert<br><em>Centre</em></h1>
+    <p class="page-desc">All active workforce alerts in one place — ordered by priority. Alerts are generated from the data entered in the Dashboard Updater. Red alerts require action before the next quarterly COO report. Amber alerts require a monitoring plan.</p>
+  </div>
+  <div id="alerts-content"></div>
+</div>
+
+<div id="page-update" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Dashboard Updater</div>
+    <h1 class="page-title">Dashboard<br><em>Updater</em></h1>
+    <p class="page-desc">Enter the quarter's data here. All dashboard views, KPIs, alerts, and the COO summary update automatically from this single data entry point. Complete all fields — partial entries produce incomplete alerts.</p>
+  </div>
+  <div id="update-content"></div>
+</div>
+
+<div id="page-coo" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — COO Summary View</div>
+    <h1 class="page-title">COO<br><em>Summary</em></h1>
+    <p class="page-desc">A one-page workforce health summary formatted for COO review. Generated from the current dashboard data. All metrics in business language — revenue, cost, operational impact. Copy and paste into the quarterly COO brief.</p>
+  </div>
+  <div id="coo-content"></div>
+</div>
+
+</main>
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+var DATA = {
+  quarter: 'Q1 2026',
+  snapshotDate: '2026-03-31',
+  headcount: { total: 42, target65: 65, targetDate: 'Q2 2027',
+    byGrade: { G1:8, G2:10, G3:9, G4:7, G5:4, G6:2, G7:1, G8:1 },
+    byCountry: { LA:14, MM:12, ID:11, TH:5 }
+  },
+  pipeline: {
+    LA: { g1:3, g2:4, g3:4, conv:68, benchStrength:2, atRisk:1, g3RetirementRisk:3 },
+    MM: { g1:3, g2:3, g3:2, conv:58, benchStrength:1, atRisk:2, g3RetirementRisk:0 },
+    ID: { g1:2, g2:2, g3:3, conv:63, benchStrength:1, atRisk:1, g3RetirementRisk:0 },
+    TH: { g1:0, g2:1, g3:0, conv:72, benchStrength:0, atRisk:0, g3RetirementRisk:0 }
+  },
+  attrition: {
+    rolling12: 22, q1Rate: 5.8,
+    byCountry: { LA:18, MM:28, ID:24, TH:10 },
+    voluntary: 75, involuntary: 25,
+    month3exits: 3, totalExits: 9,
+    replacementCostPerPerson: 1500
+  },
+  delivery: {
+    byCountry: { LA:85, MM:80, ID:84, TH:105 },
+    target: 90,
+    indonesiaNote: 'Down from 93% — G3 vacancy impact'
+  },
+  cost: {
+    peopleCostPct: 43, revenueMillion: 8.3, peopleCostMillion: 3.57,
+    peopleCostTarget: 45, ldInvestmentK: 28
+  },
+  retention: {
+    myoHBonusExpiry: 'April 2027', myoHDeadline: 'Sept 2026',
+    wirawanBonusExpiry: 'Q1 2027', wirawanDeadline: 'Oct 2026'
+  },
+  compensation: {
+    bandAdherence: 97, belowMinCount: 1, belowMinName: 'Zaw M. (MM G3)',
+    belowMinAction: 'April 2026 payroll'
+  }
+};
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tab-body').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+
+// ─── COLOUR HELPERS ──────────────────────────────────────────────────────────
+function convColor(v){ return v>=70?'var(--green)':v>=60?'var(--amber)':'var(--red)'; }
+function delivColor(v){ return v>=90?'var(--green)':v>=80?'var(--amber)':'var(--red)'; }
+function attrColor(v){ return v<=20?'var(--green)':v<=28?'var(--amber)':'var(--red)'; }
+function gradeColor(g){ var m={'G1':'#6b7d99','G2':'#4d6b8a','G3':'var(--blue)','G4':'var(--blue2)','G5':'var(--green)','G6':'#1a5c8a','G7':'var(--ink)','G8':'var(--ink)'}; return m[g]||'var(--blue)'; }
+function countryName(c){ return {LA:'Laos',MM:'Myanmar',ID:'Indonesia',TH:'Thailand'}[c]||c; }
+
+// ─── RENDER LIVE DASHBOARD ───────────────────────────────────────────────────
+function renderLive(){
+  var D=DATA;
+  document.getElementById('live-snapshot').textContent='Snapshot: '+D.snapshotDate+' · '+D.quarter+' · Headcount snapshot last working day of month';
+
+  // KPI row
+  var net=D.headcount.target65-D.headcount.total;
+  var kpis=[
+    {label:'Total Headcount',value:D.headcount.total,sub:'Target: '+D.headcount.target65+' by '+D.headcount.targetDate,trend:'▲ +'+net+' needed',tClass:'up-bad',cls:'blue'},
+    {label:'Group Conversion Rate',value:Math.round((D.pipeline.LA.conv*14+D.pipeline.MM.conv*12+D.pipeline.ID.conv*11+D.pipeline.TH.conv*5)/42)+'%',sub:'Target: ≥70%. Myanmar: 58%',trend:D.pipeline.MM.conv<60?'⚠ MM below target':'Monitoring',tClass:D.pipeline.MM.conv<60?'down-bad':'flat',cls:D.pipeline.MM.conv<60?'amber':'green'},
+    {label:'Rolling Attrition',value:D.attrition.rolling12+'%',sub:D.attrition.month3exits+' month-3 exits this quarter',trend:'MM: 28% · ID: 24%',tClass:'up-bad',cls:'red'},
+    {label:'People Cost Ratio',value:D.cost.peopleCostPct+'%',sub:'$'+D.cost.revenueMillion+'M revenue · $'+D.cost.peopleCostMillion+'M people',trend:D.cost.peopleCostPct<=D.cost.peopleCostTarget?'Within target':'Above target',tClass:D.cost.peopleCostPct<=D.cost.peopleCostTarget?'down-good':'up-bad',cls:D.cost.peopleCostPct<=45?'green':'amber'},
+    {label:'Band Adherence',value:D.compensation.bandAdherence+'%',sub:D.compensation.belowMinCount+' below minimum: '+D.compensation.belowMinName,trend:'Action: '+D.compensation.belowMinAction,tClass:'flat',cls:D.compensation.bandAdherence>=95?'green':'amber'}
+  ];
+  var kr=document.getElementById('kpi-row');
+  kr.innerHTML=kpis.map(function(k){
+    return '<div class="kpi '+k.cls+'"><div class="kpi-label">'+k.label+'</div><div class="kpi-value">'+k.value+'</div><div class="kpi-sub">'+k.sub+'</div><div class="kpi-trend '+k.tClass+'">'+k.trend+'</div></div>';
+  }).join('');
+
+  // Country strip
+  var cs=document.getElementById('country-strip');
+  cs.innerHTML=['LA','MM','ID','TH'].map(function(c){
+    var p=D.pipeline[c];
+    var del=D.delivery.byCountry[c];
+    var att=D.attrition.byCountry[c];
+    var hc=D.headcount.byCountry[c];
+    var delCol=delivColor(del); var attCol=attrColor(att);
+    var statusText=del>=90&&att<=20?'HEALTHY':del>=80&&att<=28?'MONITORING':'AT RISK';
+    var statusCls=statusText==='HEALTHY'?'chip-green':statusText==='MONITORING'?'chip-amber':'chip-red';
+    return '<div class="c-tile"><div class="c-code">'+c+'</div><div class="c-name">'+countryName(c)+'</div>'
+      +'<div class="c-row"><span class="c-row-label">Headcount</span><span class="c-row-val">'+hc+'</span></div>'
+      +'<div class="c-row"><span class="c-row-label">Pipeline</span><span class="c-row-val">'+(p.g1+p.g2+p.g3)+' active</span></div>'
+      +'<div class="c-row"><span class="c-row-label">Conversion</span><span class="c-row-val" style="color:'+convColor(p.conv)+'">'+p.conv+'%</span></div>'
+      +'<div class="c-row"><span class="c-row-label">Delivery</span><span class="c-row-val" style="color:'+delCol+'">'+del+'%</span></div>'
+      +'<div class="c-row"><span class="c-row-label">Attrition</span><span class="c-row-val" style="color:'+attCol+'">'+att+'%</span></div>'
+      +'<div class="c-status chip '+statusCls+'">'+statusText+'</div>'
+      +'</div>';
+  }).join('');
+
+  // Pipeline summary
+  var totalPipe=0,atRiskTotal=0;
+  ['LA','MM','ID','TH'].forEach(function(c){var p=D.pipeline[c];totalPipe+=p.g1+p.g2+p.g3;atRiskTotal+=p.atRisk;});
+  var benchTotal=D.pipeline.LA.benchStrength+D.pipeline.MM.benchStrength+D.pipeline.ID.benchStrength;
+  var lps=document.getElementById('live-pipeline-summary');
+  lps.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">'
+    +'<div style="text-align:center;padding:12px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--blue);line-height:1">'+totalPipe+'</div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:3px;letter-spacing:.5px">ACTIVE G1–G3</div></div>'
+    +'<div style="text-align:center;padding:12px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--amber);line-height:1">'+atRiskTotal+'</div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:3px;letter-spacing:.5px">AT-RISK FLAGS</div></div>'
+    +'<div style="text-align:center;padding:12px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--green);line-height:1">'+benchTotal+'</div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:3px;letter-spacing:.5px">G3 BENCH (G4-READY 12 MO)</div></div>'
+    +'</div>'
+    +'<div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Laos senior driller retirement risk: 3 of 5 G4s within 3 years. Only 2 G3 bench candidates. G3 development plans must activate <strong style="color:var(--ink)">June 2026</strong>. Myanmar at-risk candidates: 2 — month-3 intervention window active.</div>';
+
+  // Alert summary
+  var als=document.getElementById('live-alerts-summary');
+  var alerts=buildAlerts();
+  als.innerHTML=alerts.slice(0,4).map(function(a){
+    return '<div class="alert-item '+a.level+'"><span class="alert-icon">'+a.icon+'</span><div><strong style="display:block;margin-bottom:2px">'+a.title+'</strong>'+a.desc+'</div></div>';
+  }).join('')+'<div style="margin-top:8px;font-size:12px;color:var(--ink4);font-family:var(--fm)">→ See Alert Centre for all '+alerts.length+' active alerts</div>';
+
+  // Grade bars
+  var grades=Object.keys(D.headcount.byGrade);
+  var maxVal=Math.max.apply(null,grades.map(function(g){return D.headcount.byGrade[g]}));
+  var gb=document.getElementById('live-grade-bars');
+  gb.innerHTML='<div class="bar-wrap">'+grades.map(function(g){
+    var v=D.headcount.byGrade[g];
+    var pct=Math.round((v/maxVal)*100);
+    var col=gradeColor(g);
+    return '<div class="bar-row"><span class="bar-label">'+g+'</span><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+col+'"><span class="bar-val">'+v+'</span></div></div><span class="bar-cap">of '+D.headcount.total+' total</span></div>';
+  }).join('')+'</div>';
+}
+
+// ─── HEADCOUNT PAGE ──────────────────────────────────────────────────────────
+function renderHeadcount(){
+  var D=DATA;
+  var el=document.getElementById('hc-content');
+  var net=D.headcount.target65-D.headcount.total;
+  var qNeeded=Math.ceil(net/6);
+  var html='<div class="vx-box"><div class="vx-eyebrow">Headcount Gap Analysis</div>'
+    +'<div class="vx-title">'+D.headcount.total+' active · Target '+D.headcount.target65+' by '+D.headcount.targetDate+' · Net gap: '+net+' FTE</div>'
+    +'<div class="vx-body">To reach 65 FTE by Q2 2027 Valentis needs a net addition of '+net+' FTE over approximately 6 quarters — roughly '+qNeeded+' net FTE per quarter. Against current attrition (~'+D.attrition.rolling12+'% rolling) and conversion rates, the pipeline must intake '+Math.ceil(net*1.4)+' G1 trainees over this period to account for expected attrition before G4. This is the supply deficit the workforce planning model (Tool 6) models in detail.</div></div>';
+
+  html+='<div class="grid-2">';
+  // Grade mix table
+  html+='<div class="card"><div class="card-title">Grade Distribution — All Countries</div>';
+  html+='<table class="dtable"><thead><tr><th>Grade</th><th>Count</th><th>% of workforce</th><th>Role</th></tr></thead><tbody>';
+  var gradeRoles={G1:'Trainee Driller',G2:"Driller's Assistant",G3:'Junior Driller',G4:'Senior Driller',G5:'Site Manager',G6:'Group HR / Senior Mgmt',G7:'Country Director / CHRO',G8:'CEO / Exec'};
+  Object.keys(D.headcount.byGrade).forEach(function(g){
+    var v=D.headcount.byGrade[g];
+    var pct=Math.round((v/D.headcount.total)*100);
+    html+='<tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">'+g+'</td><td style="font-weight:600">'+v+'</td><td>'+pct+'%</td><td style="color:var(--ink4)">'+gradeRoles[g]+'</td></tr>';
+  });
+  html+='</tbody></table></div>';
+  // Country headcount
+  html+='<div class="card"><div class="card-title">Headcount by Country</div>';
+  var maxC=Math.max.apply(null,Object.values(D.headcount.byCountry));
+  html+='<div class="bar-wrap">';
+  Object.keys(D.headcount.byCountry).forEach(function(c){
+    var v=D.headcount.byCountry[c];
+    var pct=Math.round((v/maxC)*100);
+    html+='<div class="bar-row"><span class="bar-label">'+countryName(c)+'</span><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var(--blue)"><span class="bar-val">'+v+'</span></div></div><span class="bar-cap">'+Math.round((v/D.headcount.total)*100)+'% of group</span></div>';
+  });
+  html+='</div>';
+  html+='<div style="margin-top:12px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Laos is the largest country (33% of group). Indonesia G3 vacancy gap is depressing headcount — 3 open positions 40+ days. Filling Indonesia G3 vacancies is the fastest path to closing the headcount gap.</div></div>';
+  html+='</div>';
+
+  html+='<div class="card"><div class="card-title">Headcount Mix — <em>What the Numbers Say</em></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px">';
+  var pipelineCount=D.headcount.byGrade.G1+D.headcount.byGrade.G2+D.headcount.byGrade.G3;
+  var seniorCount=D.headcount.byGrade.G4+D.headcount.byGrade.G5;
+  var leaderCount=D.headcount.byGrade.G6+D.headcount.byGrade.G7+D.headcount.byGrade.G8;
+  html+='<div style="padding:14px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;color:var(--blue);margin-bottom:4px">PIPELINE (G1–G3)</div><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--blue)">'+pipelineCount+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;margin-top:4px;line-height:1.6">'+Math.round(pipelineCount/D.headcount.total*100)+'% of workforce in development. High training cost tier — 18–42 month development horizon before operational independence.</div></div>';
+  html+='<div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);margin-bottom:4px">OPERATIONAL (G4–G5)</div><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--ink)">'+seniorCount+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;margin-top:4px;line-height:1.6">'+Math.round(seniorCount/D.headcount.total*100)+'% fully operational. G4s drive production and coach the pipeline. G5 SMs manage sites. This is the tier the business runs on.</div></div>';
+  html+='<div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);margin-bottom:4px">LEADERSHIP (G6–G8)</div><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--ink)">'+leaderCount+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;margin-top:4px;line-height:1.6">'+Math.round(leaderCount/D.headcount.total*100)+'% leadership layer. Includes Group HR (G6), COO/CEO. Lean at current scale — appropriate. Will need expansion at 150+ staff.</div></div>';
+  html+='</div></div>';
+  el.innerHTML=html;
+}
+
+// ─── PIPELINE PAGE ────────────────────────────────────────────────────────────
+function renderPipeline(){
+  var D=DATA;
+  var el=document.getElementById('pipeline-content');
+  var html='';
+
+  // Country conversion comparison
+  html+='<div class="card"><div class="card-title">Conversion Rate by Country</div>';
+  html+='<div class="bar-wrap">';
+  ['LA','MM','ID','TH'].forEach(function(c){
+    var v=D.pipeline[c].conv;
+    var col=convColor(v);
+    html+='<div class="bar-row"><span class="bar-label">'+countryName(c)+'</span><div class="bar-track"><div class="bar-fill" style="width:'+v+'%;background:'+col+'"><span class="bar-val">'+v+'%</span></div></div><span class="bar-cap" style="color:'+(v>=70?'var(--green)':v>=60?'var(--amber)':'var(--red)')+'">'+( v>=70?'On target':v>=60?'Below target':'Critical')+'</span></div>';
+  });
+  html+='</div><div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Target: ≥70% across all countries. Myanmar is the critical case at 58% — G4 coaching programme directly targets this. Indonesia at 63% is improving. Laos at 68% is close. Thailand small cohort with high conversion.</div></div>';
+
+  // Pipeline funnel
+  html+='<div class="card"><div class="card-title">Pipeline Funnel — <em>All Countries</em></div>';
+  var g1=D.headcount.byGrade.G1,g2=D.headcount.byGrade.G2,g3=D.headcount.byGrade.G3,g4=D.headcount.byGrade.G4;
+  var g1max=g1; // normalise to G1
+  html+='<div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:4px;align-items:center;margin:10px 0">';
+  [[g1,'G1','Trainees'],[g2,'G2',"Driller's Asst"],[g3,'G3','Junior Driller'],[g4,'G4','Senior Driller']].forEach(function(item,i){
+    var count=item[0],grade=item[1],role=item[2];
+    var pct=Math.min(100,Math.round((count/g1)*100));
+    var col=gradeColor(grade);
+    html+='<div style="text-align:center;padding:14px 10px;border:1px solid var(--border);border-radius:4px;background:var(--surface)">'
+      +'<div style="font-family:var(--fm);font-size:9px;color:var(--blue);letter-spacing:1px;margin-bottom:4px">'+grade+'</div>'
+      +'<div style="font-family:var(--fd);font-size:38px;font-weight:800;color:'+col+';line-height:1">'+count+'</div>'
+      +'<div style="font-size:11.5px;color:var(--ink4);font-weight:300;margin-top:3px">'+role+'</div>'
+      +'<div style="height:4px;background:var(--surface2);border-radius:2px;margin:8px 0;overflow:hidden"><div style="height:100%;background:'+col+';width:'+pct+'%"></div></div>'
+      +'<div style="font-family:var(--fm);font-size:9px;color:var(--ink5)">'+pct+'% of G1</div>'
+      +'</div>';
+    if(i<3){
+      var rate=i===0?Math.round((g2/g1)*100):i===1?Math.round((g3/g2)*100):Math.round((g4/g3)*100);
+      html+='<div style="text-align:center;font-size:18px;color:var(--ink5)">→</div>';
+    }
+  });
+  html+='</div>';
+  html+='<div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75;margin-top:8px">The funnel shows the current population at each stage — not cohort conversion. The G1→G2 step is where most attrition occurs (month-3 window). The G3→G4 step is the longest development stage (18–24 months) and where Laos retirement risk concentrates.</div></div>';
+
+  // Country-by-country detail
+  html+='<div class="card"><div class="card-title">Pipeline Detail by Country</div>';
+  html+='<table class="dtable"><thead><tr><th>Country</th><th>G1</th><th>G2</th><th>G3</th><th>Conversion</th><th>Bench strength</th><th>At-risk</th><th>Status</th></tr></thead><tbody>';
+  ['LA','MM','ID','TH'].forEach(function(c){
+    var p=D.pipeline[c];
+    var status=p.conv>=70&&p.atRisk===0?'On Track':p.conv>=60||p.atRisk<=1?'Monitor':'Critical';
+    var statusChip=status==='On Track'?'chip-green':status==='Monitor'?'chip-amber':'chip-red';
+    html+='<tr><td style="font-weight:600">'+countryName(c)+'</td><td>'+p.g1+'</td><td>'+p.g2+'</td><td>'+p.g3+'</td>'
+      +'<td style="font-weight:700;color:'+convColor(p.conv)+'">'+p.conv+'%</td>'
+      +'<td>'+p.benchStrength+(c==='LA'?' <span style="color:var(--red);font-size:11px">(critical — 3 retirements)</span>':'')+' </td>'
+      +'<td style="color:'+(p.atRisk>1?'var(--red)':p.atRisk===1?'var(--amber)':'var(--green)')+'">'+p.atRisk+'</td>'
+      +'<td><span class="chip '+statusChip+'">'+status+'</span></td></tr>';
+  });
+  html+='</tbody></table></div>';
+
+  html+='<div class="info amber"><strong>Laos retirement cliff — June 2026 action deadline.</strong>3 of 5 G4s in Laos are retirement-risk within 3 years. Bench strength is only 2 G3 candidates. Net position: −1 senior driller by 2027 without intervention. G3 accelerated development plans must be activated by June 2026 to have any chance of closing this gap before the first retirement. This is the most critical long-term workforce risk at Valentis.</div>';
+
+  el.innerHTML=html;
+}
+
+// ─── ATTRITION PAGE ───────────────────────────────────────────────────────────
+function renderAttrition(){
+  var D=DATA;
+  var el=document.getElementById('attrition-content');
+  var costTotal=Math.round(D.attrition.totalExits*D.attrition.replacementCostPerPerson);
+  var html='<div class="vx-box"><div class="vx-eyebrow">Attrition Cost Estimate · '+D.quarter+'</div>'
+    +'<div class="vx-title">'+D.attrition.totalExits+' exits this rolling 12 months · Est. replacement cost: $'+costTotal.toLocaleString()+'</div>'
+    +'<div class="vx-body">At $'+D.attrition.replacementCostPerPerson.toLocaleString()+' per replacement (recruitment + onboarding, excluding production downtime) Valentis is spending approximately $'+costTotal.toLocaleString()+'/yr on attrition replacement. This excludes the production impact of vacancies during the replacement cycle — the full cost is materially higher. Month-3 exits ('+D.attrition.month3exits+' this quarter) represent the highest-cost attrition event: trainees who exit after 3 months have consumed onboarding investment with zero operational return.</div></div>';
+
+  html+='<div class="grid-2">';
+  // Country attrition bars
+  html+='<div class="card"><div class="card-title">Attrition Rate by Country — Rolling 12 Month</div>';
+  html+='<div class="bar-wrap">';
+  ['LA','MM','ID','TH'].forEach(function(c){
+    var v=D.attrition.byCountry[c];
+    var col=attrColor(v);
+    html+='<div class="bar-row"><span class="bar-label">'+countryName(c)+'</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.min(v,40)/40*100+'%;background:'+col+'"><span class="bar-val">'+v+'%</span></div></div><span class="bar-cap" style="color:'+col+'">'+(v<=20?'Healthy':v<=28?'Elevated':'High')+'</span></div>';
+  });
+  html+='</div><div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Group rolling 12-month: '+D.attrition.rolling12+'%. Myanmar (28%) and Indonesia (24%) are elevated — both are driven by G1 trainee exits at the month-3 window. The targeted intervention is the G4 coaching programme improving early-stage support quality.</div></div>';
+  // Voluntary split
+  html+='<div class="card"><div class="card-title">Exit Type Breakdown</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0">';
+  html+='<div style="text-align:center;padding:16px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px"><div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--red);line-height:1">'+D.attrition.voluntary+'%</div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:4px">VOLUNTARY</div></div>';
+  html+='<div style="text-align:center;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--ink3);line-height:1">'+D.attrition.involuntary+'%</div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:4px">INVOLUNTARY</div></div>';
+  html+='</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">'+D.attrition.voluntary+'% voluntary attrition is the dominant type. This means the majority of exits are employee-initiated — driven by competing offers, personal circumstances, or dissatisfaction. Voluntary attrition is addressable through rewards design and career pathway clarity. Involuntary ('+D.attrition.involuntary+'%) is performance/conduct-driven — a normal operational level.</div></div>';
+  html+='</div>';
+
+  html+='<div class="card"><div class="card-title">Month-3 Exit Pattern</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">';
+  html+='<div><div style="font-family:var(--fd);font-size:48px;font-weight:800;color:var(--red);line-height:1">'+D.attrition.month3exits+'</div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);letter-spacing:.5px;margin-top:4px">MONTH-3 EXITS THIS QUARTER</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75;margin-top:10px">Month-3 exits represent '+(Math.round(D.attrition.month3exits/D.attrition.totalExits*100))+'% of total exits. The month-3 window is where the G4 coaching gap is most visible — trainees without adequate early support disengage before full competency development begins.</div></div>';
+  html+='<div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.85"><strong style="color:var(--ink);display:block;margin-bottom:6px">What drives month-3 exits at Valentis:</strong><div style="padding:8px 12px;border-left:3px solid var(--red);background:var(--red-dim);border-radius:0 3px 3px 0;margin-bottom:6px">G4 coaching quality — insufficient debrief frequency in first 90 days means trainees stall on milestones and lose confidence.</div><div style="padding:8px 12px;border-left:3px solid var(--amber);background:var(--amber-dim);border-radius:0 3px 3px 0;margin-bottom:6px">Total rewards gap — trainee pay at G1 minimum is not compelling enough to offset the physical difficulty of site work without visible career progression support.</div><div style="padding:8px 12px;border-left:3px solid var(--blue);background:var(--blue-dim);border-radius:0 3px 3px 0">Myanmar language barrier — training materials not fully in Myanmar language reduces trainee comprehension and confidence in early milestone assessments.</div></div>';
+  html+='</div></div>';
+
+  el.innerHTML=html;
+}
+
+// ─── DELIVERY PAGE ───────────────────────────────────────────────────────────
+function renderDelivery(){
+  var D=DATA;
+  var el=document.getElementById('delivery-content');
+  var html='';
+
+  html+='<div class="grid-2">';
+  html+='<div class="card"><div class="card-title">Programme Delivery % by Country</div>';
+  html+='<div class="bar-wrap">';
+  ['LA','MM','ID','TH'].forEach(function(c){
+    var v=D.delivery.byCountry[c];
+    var col=delivColor(v);
+    html+='<div class="bar-row"><span class="bar-label">'+countryName(c)+'</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.min(v,110)/110*100+'%;background:'+col+'"><span class="bar-val">'+v+'%</span></div></div><span class="bar-cap">Target: '+D.delivery.target+'%</span></div>';
+  });
+  html+='</div><div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Thailand (105%) is running above target — high conversion rate and full G4 staffing. Laos (85%) and Indonesia (84%) are below target. Myanmar (80%) is at its country factor level — structural, not a deterioration signal. Indonesia is the concern: delivery dropped from 93% to 84% due to G3 vacancies.</div></div>';
+
+  html+='<div class="card"><div class="card-title">People Cost Ratio</div>';
+  html+='<div style="text-align:center;padding:20px 0">'
+    +'<div style="font-family:var(--fd);font-size:64px;font-weight:800;color:'+(D.cost.peopleCostPct<=D.cost.peopleCostTarget?'var(--green)':'var(--amber)')+';line-height:1">'+D.cost.peopleCostPct+'%</div>'
+    +'<div style="font-family:var(--fm);font-size:8px;color:var(--ink5);letter-spacing:1.5px;margin-top:6px">PEOPLE COST AS % OF REVENUE</div>'
+    +'<div style="height:8px;background:var(--surface2);border-radius:4px;margin:14px 0;overflow:hidden"><div style="height:100%;background:'+(D.cost.peopleCostPct<=D.cost.peopleCostTarget?'var(--green)':'var(--amber)')+'%;border-radius:4px;width:'+Math.min(D.cost.peopleCostPct/50*100,100)+'%"></div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">'
+    +'<div style="padding:10px;background:var(--surface2);border-radius:3px;text-align:center"><div style="font-weight:700;font-size:16px;color:var(--ink)">$'+D.cost.peopleCostMillion+'M</div><div style="font-size:11px;color:var(--ink5);font-family:var(--fm)">PEOPLE COST</div></div>'
+    +'<div style="padding:10px;background:var(--surface2);border-radius:3px;text-align:center"><div style="font-weight:700;font-size:16px;color:var(--ink)">$'+D.cost.revenueMillion+'M</div><div style="font-size:11px;color:var(--ink5);font-family:var(--fm)">REVENUE</div></div>'
+    +'</div></div>'
+    +'<div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75;margin-top:12px">Alert threshold: flag to COO if ratio exceeds 47% in any month or 45% on a rolling 3-month basis. Current position ('+D.cost.peopleCostPct+'%) is within target. Monitor: as Valentis adds G1 trainees to close the headcount gap, people cost will rise before new G4 capacity generates revenue — plan for a temporary ratio increase in Q3–Q4 2026.</div>'
+    +'</div></div>';
+
+  html+='<div class="info blue"><strong>Indonesia delivery signal — G3 vacancy is the root cause.</strong>Delivery dropped from 93% to 84% as 3 G3 positions remained open for 40+ days. Each open G3 role reduces the supervisory layer available to G1–G2 trainees, slowing milestone completion and reducing rig operational hours. The path back to 90%+ delivery in Indonesia is filling the G3 vacancies — which is a sourcing and pipeline acceleration problem, not a training quality problem.</div>';
+
+  el.innerHTML=html;
+}
+
+// ─── ALERT ENGINE ─────────────────────────────────────────────────────────────
+function buildAlerts(){
+  var D=DATA; var alerts=[];
+  if(D.compensation.belowMinCount>0) alerts.push({level:'red',icon:'⚠',title:'Below-minimum salary: '+D.compensation.belowMinName,desc:'Action required by '+D.compensation.belowMinAction+'. Salary adjustment to grade band floor. Formal exception documented until remediated.'});
+  if(D.pipeline.LA.g3RetirementRisk>=3) alerts.push({level:'red',icon:'⚠',title:'Laos G4 retirement cliff — 3 retirements within 3 years',desc:'Bench strength: only 2 G3 candidates. Net position: −1 senior driller by 2027 without G3 acceleration. G3 development plans must activate June 2026. If not closed: Laos delivery at structural risk.'});
+  if(D.pipeline.MM.conv<60) alerts.push({level:'red',icon:'⚠',title:'Myanmar conversion rate critical: '+D.pipeline.MM.conv+'%',desc:'Target ≥70%. Current 58% means ~3 trainees per cohort exiting before G2. G4 coaching programme directly targets this — success measure: conversion ≥70% by Q4 2026.'});
+  if(D.pipeline.ID.g1+D.pipeline.ID.g2+D.pipeline.ID.g3<6) alerts.push({level:'red',icon:'⚠',title:'Indonesia G3 vacancies: 3 positions open 40+ days',desc:'Delivery has dropped from 93% to 84%. Each week of vacancy costs approximately $1,500–$2,500 in lost delivery capacity. Sourcing escalation required immediately.'});
+  var atRiskTotal=0; ['LA','MM','ID','TH'].forEach(function(c){atRiskTotal+=D.pipeline[c].atRisk;});
+  if(atRiskTotal>=3) alerts.push({level:'amber',icon:'◉',title:atRiskTotal+' pipeline candidates flagged AT-RISK',desc:'Month-3 check-in required for all flagged candidates within 14 days. G4s responsible for check-in — Group HR to verify completion via monthly pipeline log update.'});
+  if(D.delivery.byCountry.ID<90) alerts.push({level:'amber',icon:'◉',title:'Indonesia delivery below target: '+D.delivery.byCountry.ID+'%',desc:'Below the 90% target. Root cause: G3 vacancies reducing supervisory coverage. Recovery path: fill open G3 positions. Monitor monthly — if still below 85% by Q2 2026, escalate to COO as operational risk.'});
+  alerts.push({level:'amber',icon:'◉',title:'Myo H. (Myanmar SM) retention bonus expiry: April 2027',desc:'Retention conversation deadline: September 2026. COO must lead. Group HR to prepare retention scenario analysis by August 2026. Cost of exit estimated at $40,000+ including replacement and pipeline disruption.'});
+  alerts.push({level:'amber',icon:'◉',title:'Wirawan S. (Indonesia SM) retention: Q1 2027 expiry',desc:'Classified High Power Sceptic — engagement approach requires COO involvement. Retention or succession plan required by October 2026. G4 candidate for SM succession must be identified by Q4 2026.'});
+  if(D.attrition.rolling12>20) alerts.push({level:'amber',icon:'◉',title:'Group attrition elevated: '+D.attrition.rolling12+'%',desc:'Above the 20% monitoring threshold. MM (28%) and ID (24%) are the primary drivers. Month-3 exits are '+Math.round(D.attrition.month3exits/D.attrition.totalExits*100)+'% of total. G4 coaching programme is the primary intervention — track conversion rate improvement from Q3 2026.'});
+  alerts.push({level:'blue',icon:'→',title:'Country 5 expansion: G4 deployment criterion — identify candidate Q4 2026',desc:'G4 deployment to Country 5 requires coaching certification and cross-site experience. Group HR must identify candidate by Q4 2026. Current best candidates: on-track G4s in Laos and Thailand.'});
+  alerts.push({level:'blue',icon:'→',title:'Merit cycle: effective 1 Jan 2027 · Pool 4.5%',desc:'Design work must begin Q3 2026. Group HR to prepare merit matrix recommendation for COO by November 2026. Below-minimum cases (Zaw M.) must be resolved before merit cycle opens.'});
+  return alerts;
+}
+
+function renderAlerts(){
+  var alerts=buildAlerts();
+  var el=document.getElementById('alerts-content');
+  var red=alerts.filter(function(a){return a.level==='red';});
+  var amber=alerts.filter(function(a){return a.level==='amber';});
+  var blue=alerts.filter(function(a){return a.level==='blue';});
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">'
+    +'<div style="padding:14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;text-align:center"><div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--red);line-height:1">'+red.length+'</div><div style="font-family:var(--fm);font-size:8px;color:var(--red);margin-top:4px;letter-spacing:.5px">RED — ACT BEFORE NEXT COO REPORT</div></div>'
+    +'<div style="padding:14px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px;text-align:center"><div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--amber);line-height:1">'+amber.length+'</div><div style="font-family:var(--fm);font-size:8px;color:var(--amber);margin-top:4px;letter-spacing:.5px">AMBER — MONITORING PLAN REQUIRED</div></div>'
+    +'<div style="padding:14px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:3px;text-align:center"><div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--blue);line-height:1">'+blue.length+'</div><div style="font-family:var(--fm);font-size:8px;color:var(--blue);margin-top:4px;letter-spacing:.5px">BLUE — UPCOMING / PLAN AHEAD</div></div>'
+    +'</div>';
+
+  if(red.length){html+='<div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:1px;margin-bottom:8px">RED ALERTS — IMMEDIATE ACTION</div>';red.forEach(function(a){html+='<div class="alert-item red"><span class="alert-icon">'+a.icon+'</span><div><strong style="display:block;margin-bottom:2px">'+a.title+'</strong>'+a.desc+'</div></div>';});}
+  if(amber.length){html+='<div style="font-family:var(--fm);font-size:8px;color:var(--amber);letter-spacing:1px;margin-bottom:8px;margin-top:14px">AMBER ALERTS — MONITOR &amp; PLAN</div>';amber.forEach(function(a){html+='<div class="alert-item amber"><span class="alert-icon">'+a.icon+'</span><div><strong style="display:block;margin-bottom:2px">'+a.title+'</strong>'+a.desc+'</div></div>';});}
+  if(blue.length){html+='<div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:1px;margin-bottom:8px;margin-top:14px">BLUE — UPCOMING DECISIONS</div>';blue.forEach(function(a){html+='<div class="alert-item blue"><span class="alert-icon">'+a.icon+'</span><div><strong style="display:block;margin-bottom:2px">'+a.title+'</strong>'+a.desc+'</div></div>';});}
+  el.innerHTML=html;
+}
+
+// ─── UPDATER PAGE ─────────────────────────────────────────────────────────────
+function renderUpdater(){
+  var D=DATA;
+  var el=document.getElementById('update-content');
+  var html='<div style="background:var(--navy);border-radius:4px;padding:28px">'
+    +'<div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0f4ff;margin-bottom:4px">Quarterly Data Entry</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--fm);margin-bottom:22px">Enter current quarter data · All dashboard views update on Apply</div>';
+
+  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">SNAPSHOT PERIOD</div>';
+  html+='<div class="upd-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:20px">';
+  html+='<div><label class="upd-label">Quarter</label><input id="upd-q" class="upd-input" type="text" value="'+D.quarter+'" placeholder="Q2 2026"></div>';
+  html+='<div><label class="upd-label">Snapshot date</label><input id="upd-date" class="upd-input" type="text" value="'+D.snapshotDate+'" placeholder="YYYY-MM-DD"></div>';
+  html+='<div><label class="upd-label">Total headcount</label><input id="upd-hc" class="upd-input" type="number" value="'+D.headcount.total+'"></div>';
+  html+='</div>';
+
+  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">CONVERSION RATES BY COUNTRY (%)</div>';
+  html+='<div class="upd-grid" style="margin-bottom:20px">';
+  ['LA','MM','ID','TH'].forEach(function(c){
+    html+='<div><label class="upd-label">'+countryName(c)+' conversion %</label><input id="upd-conv-'+c+'" class="upd-input" type="number" value="'+D.pipeline[c].conv+'"></div>';
+  });
+  html+='</div>';
+
+  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">PROGRAMME DELIVERY BY COUNTRY (%)</div>';
+  html+='<div class="upd-grid" style="margin-bottom:20px">';
+  ['LA','MM','ID','TH'].forEach(function(c){
+    html+='<div><label class="upd-label">'+countryName(c)+' delivery %</label><input id="upd-del-'+c+'" class="upd-input" type="number" value="'+D.delivery.byCountry[c]+'"></div>';
+  });
+  html+='</div>';
+
+  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">ATTRITION &amp; PIPELINE</div>';
+  html+='<div class="upd-grid" style="margin-bottom:20px">';
+  html+='<div><label class="upd-label">Rolling 12-month attrition %</label><input id="upd-attr" class="upd-input" type="number" value="'+D.attrition.rolling12+'"></div>';
+  html+='<div><label class="upd-label">Month-3 exits this quarter</label><input id="upd-m3" class="upd-input" type="number" value="'+D.attrition.month3exits+'"></div>';
+  html+='<div><label class="upd-label">Total exits (rolling 12 mo)</label><input id="upd-exits" class="upd-input" type="number" value="'+D.attrition.totalExits+'"></div>';
+  html+='<div><label class="upd-label">MM attrition %</label><input id="upd-attr-mm" class="upd-input" type="number" value="'+D.attrition.byCountry.MM+'"></div>';
+  html+='<div><label class="upd-label">ID attrition %</label><input id="upd-attr-id" class="upd-input" type="number" value="'+D.attrition.byCountry.ID+'"></div>';
+  html+='<div><label class="upd-label">LA attrition %</label><input id="upd-attr-la" class="upd-input" type="number" value="'+D.attrition.byCountry.LA+'"></div>';
+  html+='</div>';
+
+  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">COST</div>';
+  html+='<div class="upd-grid" style="margin-bottom:22px">';
+  html+='<div><label class="upd-label">People cost % of revenue</label><input id="upd-pcpct" class="upd-input" type="number" value="'+D.cost.peopleCostPct+'"></div>';
+  html+='<div><label class="upd-label">Revenue $M</label><input id="upd-rev" class="upd-input" type="number" step="0.1" value="'+D.cost.revenueMillion+'"></div>';
+  html+='<div><label class="upd-label">People cost $M</label><input id="upd-pc" class="upd-input" type="number" step="0.01" value="'+D.cost.peopleCostMillion+'"></div>';
+  html+='</div>';
+
+  html+='<div style="display:flex;gap:8px"><button class="btn btn-blue" onclick="applyUpdate()">Apply &amp; Refresh Dashboard &#8594;</button><button class="btn btn-ghost" onclick="resetData()">Reset to defaults</button></div>';
+  html+='<div id="upd-result" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(26,122,74,0.12);border:1px solid rgba(26,122,74,0.3);border-radius:3px;font-size:13px;color:rgba(180,255,200,0.8);font-family:var(--fm)">Dashboard updated. Navigate to any section to see updated data.</div>';
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function applyUpdate(){
+  var g=function(id){var e=document.getElementById(id);return e?e.value:null;};
+  var n=function(id){var v=g(id);return v!==null&&v!==''?parseFloat(v):null;};
+  if(g('upd-q')) DATA.quarter=g('upd-q');
+  if(g('upd-date')) DATA.snapshotDate=g('upd-date');
+  if(n('upd-hc')) DATA.headcount.total=n('upd-hc');
+  ['LA','MM','ID','TH'].forEach(function(c){
+    if(n('upd-conv-'+c)) DATA.pipeline[c].conv=n('upd-conv-'+c);
+    if(n('upd-del-'+c)) DATA.delivery.byCountry[c]=n('upd-del-'+c);
+  });
+  if(n('upd-attr')) DATA.attrition.rolling12=n('upd-attr');
+  if(n('upd-m3')) DATA.attrition.month3exits=n('upd-m3');
+  if(n('upd-exits')) DATA.attrition.totalExits=n('upd-exits');
+  if(n('upd-attr-mm')) DATA.attrition.byCountry.MM=n('upd-attr-mm');
+  if(n('upd-attr-id')) DATA.attrition.byCountry.ID=n('upd-attr-id');
+  if(n('upd-attr-la')) DATA.attrition.byCountry.LA=n('upd-attr-la');
+  if(n('upd-pcpct')) DATA.cost.peopleCostPct=n('upd-pcpct');
+  if(n('upd-rev')) DATA.cost.revenueMillion=n('upd-rev');
+  if(n('upd-pc')) DATA.cost.peopleCostMillion=n('upd-pc');
+  renderLive();renderHeadcount();renderPipeline();renderAttrition();renderDelivery();renderAlerts();renderCOO();
+  var r=document.getElementById('upd-result');if(r){r.style.display='block';}
+}
+
+var defaultData=JSON.parse(JSON.stringify(DATA));
+function resetData(){DATA=JSON.parse(JSON.stringify(defaultData));renderUpdater();renderLive();renderHeadcount();renderPipeline();renderAttrition();renderDelivery();renderAlerts();renderCOO();}
+
+// ─── COO SUMMARY ─────────────────────────────────────────────────────────────
+function renderCOO(){
+  var D=DATA;
+  var el=document.getElementById('coo-content');
+  var alerts=buildAlerts();
+  var redAlerts=alerts.filter(function(a){return a.level==='red';});
+  var html='<div class="vx-box"><div class="vx-eyebrow">Workforce Summary · '+D.quarter+'</div>'
+    +'<div class="vx-title">'+D.headcount.total+' active employees · '+D.cost.peopleCostPct+'% people cost ratio · '+D.attrition.rolling12+'% attrition</div>'
+    +'<div class="vx-body">Four-country workforce of '+D.headcount.total+' active employees. Progress toward 65 FTE target by '+D.headcount.targetDate+': '+D.headcount.total+'/65 (net gap '+((D.headcount.target65-D.headcount.total))+' FTE). People cost at '+D.cost.peopleCostPct+'% of revenue ($'+D.cost.peopleCostMillion+'M of $'+D.cost.revenueMillion+'M) — within the '+D.cost.peopleCostTarget+'% target band. '+redAlerts.length+' items require immediate action.</div></div>';
+
+  html+='<div class="card">';
+  html+='<div class="card-title">One-Page Workforce Summary — <em>Copy for COO Brief</em></div>';
+  html+='<div style="border:1px solid var(--border);border-radius:3px;padding:22px;font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300">';
+  html+='<div style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:12px">Valentis Group — Workforce Health Summary · '+D.quarter+'</div>';
+  html+='<div style="margin-bottom:14px"><strong style="color:var(--ink)">Headcount.</strong> '+D.headcount.total+' active employees across four countries (Laos: '+D.headcount.byCountry.LA+', Myanmar: '+D.headcount.byCountry.MM+', Indonesia: '+D.headcount.byCountry.ID+', Thailand: '+D.headcount.byCountry.TH+'). Net gap to 65 FTE target: '+(D.headcount.target65-D.headcount.total)+' FTE by '+D.headcount.targetDate+'. Pipeline contains '+( D.headcount.byGrade.G1+D.headcount.byGrade.G2+D.headcount.byGrade.G3)+' active G1–G3 candidates.</div>';
+  html+='<div style="margin-bottom:14px"><strong style="color:var(--ink)">Pipeline health.</strong> Group conversion rate: approximately '+Math.round((D.pipeline.LA.conv*14+D.pipeline.MM.conv*12+D.pipeline.ID.conv*11+D.pipeline.TH.conv*5)/42)+'% against target of ≥70%. Myanmar is the critical market at '+D.pipeline.MM.conv+'% — the G4 coaching programme targets improvement to 70% by Q4 2026. Laos bench strength is '+D.pipeline.LA.benchStrength+' G3 candidates against '+D.pipeline.LA.g3RetirementRisk+' retirement-risk G4s — G3 development plans must activate June 2026.</div>';
+  html+='<div style="margin-bottom:14px"><strong style="color:var(--ink)">Attrition.</strong> Rolling 12-month attrition: '+D.attrition.rolling12+'%. '+D.attrition.month3exits+' month-3 exits this quarter. Estimated replacement cost this period: $'+Math.round(D.attrition.totalExits*D.attrition.replacementCostPerPerson).toLocaleString()+' (excluding production downtime). Myanmar ('+D.attrition.byCountry.MM+'%) and Indonesia ('+D.attrition.byCountry.ID+'%) remain elevated.</div>';
+  html+='<div style="margin-bottom:14px"><strong style="color:var(--ink)">Delivery and cost.</strong> Indonesia delivery: '+D.delivery.byCountry.ID+'% (down from 93% — G3 vacancy impact, 3 positions open 40+ days). Laos: '+D.delivery.byCountry.LA+'%. People cost ratio: '+D.cost.peopleCostPct+'% of revenue — within the '+D.cost.peopleCostTarget+'% target band.</div>';
+  if(redAlerts.length){
+    html+='<div style="margin-bottom:8px"><strong style="color:var(--red)">Immediate actions required ('+redAlerts.length+').</strong></div>';
+    html+='<ul style="margin-left:20px;margin-bottom:0">';
+    redAlerts.forEach(function(a){html+='<li style="margin-bottom:5px;color:var(--ink3)">'+a.title+': '+a.desc+'</li>';});
+    html+='</ul>';
+  }
+  html+='</div></div>';
+
+  html+='<div class="info blue"><strong>How to use this summary.</strong>Copy the "One-Page Workforce Summary" text into the people section of your quarterly COO brief or board pack. All numbers are drawn from the current dashboard data. Update the Dashboard Updater (Section 07) each quarter before generating this summary — the text regenerates automatically from your latest data.</div>';
+
+  el.innerHTML=html;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderLive();
+renderHeadcount();
+renderPipeline();
+renderAttrition();
+renderDelivery();
+renderAlerts();
+renderUpdater();
+renderCOO();
+</script>
+</body>
+</html>

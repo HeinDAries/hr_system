@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automation & AI Opportunity Assessor — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0f1923;--navy:#1a2a3a;--navy2:#243447;--navy3:#2e3f52;
+  --electric:#0ea5e9;--electric2:#38bdf8;--electric-dim:rgba(14,165,233,0.1);--electric-border:rgba(14,165,233,0.28);
+  --cyan:#06b6d4;--cyan-dim:rgba(6,182,212,0.09);
+  --steel:#4a6080;--steel2:#6b8099;--mist:#f0f4f8;--white:#ffffff;
+  --border:#d4dce6;--neutral-bg:#f4f6f8;
+  --success:#0f7a3e;--success-bg:#e8f5ee;--success-border:rgba(15,122,62,0.25);
+  --warning:#b45309;--warning-bg:#fef3cd;--warning-border:rgba(180,83,9,0.25);
+  --danger:#c0392b;--danger-bg:#fdf0ef;--danger-border:rgba(192,57,43,0.25);
+  --purple:#7c3aed;--purple-bg:rgba(124,58,237,0.08);--purple-border:rgba(124,58,237,0.25);
+  --teal:#0d9488;--teal-bg:rgba(13,148,136,0.08);--teal-border:rgba(13,148,136,0.25);
+  --sidebar-w:268px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--mist);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.6;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--cyan),rgba(14,165,233,0.3),transparent)}
+.sb-logo{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:var(--electric-dim);border:1px solid var(--electric-border);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:9px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#e8f4ff;line-height:1.1;margin-bottom:3px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:10px;color:rgba(255,255,255,0.18);font-family:var(--fm)}
+.sb-nav{padding:10px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.14);padding:0 10px;margin-bottom:4px;margin-top:10px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12px;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.55)}
+.nav-item.active{background:var(--electric-dim);border-color:var(--electric-border);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:18px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--electric)}
+.nav-status{margin-left:auto;font-family:var(--fm);font-size:8px;padding:1px 5px;border-radius:2px}
+.s-done{background:rgba(15,122,62,0.25);color:#6ecf94}
+.s-cur{background:var(--electric-dim);color:var(--electric2)}
+.s-soon{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.2)}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:10px 12px;font-size:10.5px;color:rgba(255,255,255,0.2);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+.top-header{background:var(--navy2);padding:0 44px;display:flex;align-items:center;justify-content:space-between;height:56px;border-bottom:3px solid var(--electric)}
+.th-left{display:flex;align-items:center;gap:14px}
+.th-badge{font-family:var(--fm);font-size:9px;color:var(--electric);letter-spacing:2px;border:1px solid var(--electric-border);padding:2px 8px;border-radius:2px}
+.th-title{font-family:var(--fd);font-size:16px;color:var(--white);font-weight:600}
+.th-meta{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.3)}
+.page-header{background:var(--white);padding:28px 44px 22px;border-bottom:1px solid var(--border)}
+.ph-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--electric);margin-bottom:8px}
+.ph-title{font-family:var(--fd);font-size:30px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1}
+.ph-title em{font-style:italic;font-weight:400;color:var(--steel2)}
+.ph-desc{font-size:13px;color:var(--steel);max-width:660px;line-height:1.7;font-weight:300}
+.ph-tag{display:inline-block;margin-top:8px;font-family:var(--fm);font-size:9px;background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border);padding:3px 10px;border-radius:2px;letter-spacing:1px}
+
+/* STATS BAR */
+.stats-bar{background:var(--navy);padding:14px 44px;display:flex}
+.stat-item{flex:1;text-align:center;padding:0 12px;border-right:1px solid rgba(255,255,255,0.08)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:var(--fm);font-size:22px;font-weight:600;color:var(--electric2);display:block}
+.stat-num.green{color:#6ee7b7}.stat-num.purple{color:#c4b5fd}.stat-num.yellow{color:#fcd34d}.stat-num.cyan{color:var(--cyan)}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;margin-top:1px}
+
+/* TABS */
+.tab-bar{background:var(--white);padding:0 44px;display:flex;border-bottom:2px solid var(--border)}
+.tab-btn{padding:12px 20px;font-family:var(--fb);font-size:12px;font-weight:500;color:var(--steel);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab-btn.active{color:var(--electric);border-bottom-color:var(--electric);font-weight:600}
+.tab-btn:hover:not(.active){color:var(--ink)}
+.tab-content{display:none;padding:28px 44px 48px}
+.tab-content.active{display:block}
+
+/* OPPORTUNITY CARDS */
+.opp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.opp-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.opp-card:hover{box-shadow:0 4px 18px rgba(14,165,233,0.13);border-color:var(--electric-border)}
+.opp-stripe{height:3px}
+.opp-card-top{padding:14px 16px 10px}
+.opp-title{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;line-height:1.2}
+.opp-sub{font-size:11.5px;color:var(--steel)}
+.opp-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.opp-tag{font-family:var(--fm);font-size:8.5px;padding:2px 7px;border-radius:2px;font-weight:600}
+.opp-card-body{padding:10px 16px 14px;border-top:1px solid var(--border)}
+.opp-scores{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.score-block{padding:7px 10px;background:var(--neutral-bg);border-radius:3px}
+.score-label{font-family:var(--fm);font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--steel2);margin-bottom:3px}
+.score-bar-wrap{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.score-val{font-family:var(--fm);font-size:10px;font-weight:700;margin-top:3px}
+.opp-saving{font-family:var(--fm);font-size:11px;color:var(--success);font-weight:600}
+
+/* PRIORITY MATRIX */
+.matrix-wrap{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.matrix-canvas{padding:20px;position:relative}
+.matrix-grid{display:grid;grid-template-columns:40px 1fr 1fr;grid-template-rows:1fr 1fr 40px;gap:8px;height:440px}
+.matrix-cell{border:1px solid var(--border);border-radius:4px;padding:12px;position:relative;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.matrix-cell.q1{background:var(--success-bg);border-color:var(--success-border)}
+.matrix-cell.q2{background:var(--electric-dim);border-color:var(--electric-border)}
+.matrix-cell.q3{background:var(--neutral-bg)}
+.matrix-cell.q4{background:var(--warning-bg);border-color:var(--warning-border)}
+.matrix-label-y{writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--steel2);display:flex;align-items:center;justify-content:center}
+.matrix-label-x{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--steel2);display:flex;align-items:center;justify-content:center}
+.matrix-cell-title{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.matrix-cell.q1 .matrix-cell-title{color:var(--success)}
+.matrix-cell.q2 .matrix-cell-title{color:var(--electric)}
+.matrix-cell.q3 .matrix-cell-title{color:var(--steel)}
+.matrix-cell.q4 .matrix-cell-title{color:var(--warning)}
+.matrix-dot{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:3px;font-size:11px;cursor:pointer;transition:background .12s}
+.matrix-dot:hover{background:rgba(255,255,255,0.6)}
+.matrix-dot-icon{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* EFFORT/IMPACT TAGS */
+.effort-low{background:var(--success-bg);color:var(--success);border:1px solid var(--success-border)}
+.effort-med{background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border)}
+.effort-high{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+.impact-critical{background:rgba(124,58,237,0.1);color:var(--purple);border:1px solid var(--purple-border)}
+.impact-high{background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border)}
+.impact-medium{background:var(--neutral-bg);color:var(--steel);border:1px solid var(--border)}
+.type-auto{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border)}
+.type-ai{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border)}
+.type-semi{background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border)}
+
+/* SCORECARD */
+.score-table{width:100%;border-collapse:collapse}
+.sc-th{padding:9px 14px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric2);background:var(--navy)}
+.sc-td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--ink);vertical-align:middle}
+.sc-tr:hover .sc-td{background:var(--electric-dim);cursor:pointer}
+.sc-cat-row td{background:var(--navy2);padding:7px 14px;font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+
+/* AI READINESS */
+.readiness-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.readiness-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.readiness-header{padding:12px 16px;border-bottom:1px solid var(--border);background:var(--navy)}
+.readiness-title{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--white)}
+.readiness-score{font-family:var(--fm);font-size:28px;font-weight:700;color:var(--electric2);padding:14px 16px;text-align:center}
+.readiness-score-lbl{font-size:10px;color:var(--steel);text-align:center;margin-top:-10px;padding:0 16px 12px}
+.readiness-bar{height:6px;background:var(--border);margin:0 16px 14px;border-radius:3px;overflow:hidden}
+.readiness-bar-fill{height:100%;border-radius:3px;transition:width .6s}
+.readiness-items{padding:0 16px 12px}
+.readiness-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--steel);margin-bottom:5px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,30,0.55);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--white);border-radius:8px;width:620px;max-width:95vw;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.22)}
+.modal-header{padding:20px 24px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink)}
+.modal-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--steel);padding:2px 6px}
+.modal-close:hover{background:var(--neutral-bg)}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.modal-section-title{font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:8px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.modal-field{padding:10px 12px;background:var(--neutral-bg);border:1px solid var(--border);border-radius:4px}
+.modal-field-label{font-family:var(--fm);font-size:9px;color:var(--steel2);margin-bottom:3px}
+.modal-field-value{font-size:12.5px;color:var(--ink);font-weight:500;line-height:1.5}
+.steps-list{counter-reset:steps}
+.step-item{display:flex;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.step-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--electric);color:var(--white);font-family:var(--fm);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-text{font-size:12.5px;color:var(--ink);line-height:1.6}
+.modal-footer{padding:12px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--neutral-bg)}
+.btn{height:34px;padding:0 16px;border-radius:4px;font-family:var(--fb);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--electric);color:var(--white)}.btn-primary:hover{background:var(--electric2);color:var(--ink)}
+.btn-outline{background:var(--white);color:var(--navy);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--electric);color:var(--electric)}
+
+/* ADD FORM */
+.form-group{margin-bottom:12px}
+.form-label{font-family:var(--fm);font-size:10px;color:var(--steel);display:block;margin-bottom:4px}
+.form-input,.form-select,.form-textarea{width:100%;padding:7px 11px;border:1px solid var(--border);border-radius:4px;font-family:var(--fb);font-size:12.5px;color:var(--ink);background:var(--white);outline:none;transition:border .15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--electric)}
+.form-textarea{resize:vertical;min-height:60px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* CONTROLS */
+.controls-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.filter-select{height:36px;padding:0 12px;border:1px solid var(--border);border-radius:4px;font-family:var(--fb);font-size:12px;color:var(--steel);background:var(--white);cursor:pointer;outline:none}
+.search-input{height:36px;padding:0 14px;border:1px solid var(--border);border-radius:4px;font-family:var(--fb);font-size:12px;color:var(--ink);background:var(--white);outline:none;width:200px}
+.search-input:focus,.filter-select:focus{border-color:var(--electric)}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:4px;font-family:var(--fm);font-size:11px;border-left:3px solid var(--electric);opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">DEPT 11 · HR TECH</div>
+    <div class="sb-title">HR <em>Technology</em><br>& Digital HR</div>
+    <div class="sb-sub">VALENTIS GROUP · 2025</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Tools</div>
+    <div class="nav-item" onclick="showToast('→ Tool 1: Systems Inventory')"><span class="nav-num">01</span>Systems Inventory & Architecture<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 2: Data Flow Map')"><span class="nav-num">02</span>Integration & Data Flow Map<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 3: Vendor Evaluation')"><span class="nav-num">03</span>Vendor Evaluation Framework<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 4: Data Governance')"><span class="nav-num">04</span>Data Governance & Privacy Register<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 5: Roadmap Planner')"><span class="nav-num">05</span>Digital HR Roadmap Planner<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 6: ROI Builder')"><span class="nav-num">06</span>HR Tech ROI & Business Case Builder<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item active"><span class="nav-num">07</span>Automation & AI Opportunity Assessor<span class="nav-status s-cur">CURRENT</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 8 coming soon')"><span class="nav-num">08</span>Adoption & Change Readiness Tracker<span class="nav-status s-soon">SOON</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 9 coming soon')"><span class="nav-num">09</span>Digital HR Operating Model<span class="nav-status s-soon">SOON</span></div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note"><strong>Valentis Group</strong>28 employees · 4 countries<br>Laos · Myanmar · Indonesia · Thailand</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="top-header">
+    <div class="th-left">
+      <div class="th-badge">HR TECH · TOOL 07</div>
+      <div class="th-title">Automation & AI Opportunity Assessor</div>
+    </div>
+    <div class="th-meta">VALENTIS GROUP · GROUP HR</div>
+  </div>
+
+  <div class="page-header">
+    <div class="ph-eyebrow">HR Technology & Digital HR</div>
+    <h1 class="ph-title">Automation &amp; AI <em>Opportunity Assessor</em></h1>
+    <p class="ph-desc">Identifies, scores, and prioritises every automation and AI opportunity across Valentis's HR function — from simple rule-based automation to emerging AI tools. Maps each opportunity on an effort vs. impact matrix so the highest-value, lowest-risk work gets done first.</p>
+    <div class="ph-tag">HR TECH · TOOL 07 OF 09</div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item"><span class="stat-num cyan" id="statTotal">22</span><div class="stat-lbl">Opportunities Identified</div></div>
+    <div class="stat-item"><span class="stat-num green" id="statQuickWins">7</span><div class="stat-lbl">Quick Wins</div></div>
+    <div class="stat-item"><span class="stat-num purple" id="statAI">6</span><div class="stat-lbl">AI-Enabled</div></div>
+    <div class="stat-item"><span class="stat-num" id="statHrsYr">0</span><div class="stat-lbl">Est. Hours Saved/Year</div></div>
+    <div class="stat-item"><span class="stat-num yellow" id="statReady">0</span><div class="stat-lbl">Ready to Implement Now</div></div>
+    <div class="stat-item"><span class="stat-num green" id="statSaving">$0</span><div class="stat-lbl">Est. Annual Value</div></div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('register')">Opportunity Register</button>
+    <button class="tab-btn" onclick="switchTab('matrix')">Priority Matrix</button>
+    <button class="tab-btn" onclick="switchTab('scorecard')">Scoring Detail</button>
+    <button class="tab-btn" onclick="switchTab('readiness')">AI Readiness</button>
+  </div>
+
+  <!-- TAB: OPPORTUNITY REGISTER -->
+  <div class="tab-content active" id="tab-register">
+    <div class="controls-row">
+      <input class="search-input" type="text" placeholder="Search opportunities…" id="oppSearch" oninput="renderRegister()">
+      <select class="filter-select" id="fCat" onchange="renderRegister()">
+        <option value="">All Categories</option>
+        <option>Payroll & Admin</option>
+        <option>Recruitment</option>
+        <option>Onboarding</option>
+        <option>Learning & Development</option>
+        <option>Performance</option>
+        <option>Workforce Planning</option>
+        <option>Compliance</option>
+        <option>Employee Experience</option>
+      </select>
+      <select class="filter-select" id="fType" onchange="renderRegister()">
+        <option value="">All Types</option>
+        <option value="Automation">Automation</option>
+        <option value="AI">AI-Enabled</option>
+        <option value="Semi-Automation">Semi-Automation</option>
+      </select>
+      <select class="filter-select" id="fEffort" onchange="renderRegister()">
+        <option value="">All Effort Levels</option>
+        <option value="Low">Low Effort</option>
+        <option value="Medium">Medium Effort</option>
+        <option value="High">High Effort</option>
+      </select>
+      <button class="btn btn-outline" onclick="clearFilters()">↺ Reset</button>
+      <button class="btn btn-primary" onclick="openAddModal()">+ Add Opportunity</button>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse" id="registerTable">
+        <thead><tr>
+          <th class="sc-th">Opportunity</th>
+          <th class="sc-th">Category</th>
+          <th class="sc-th">Type</th>
+          <th class="sc-th">Effort</th>
+          <th class="sc-th">Impact</th>
+          <th class="sc-th" style="text-align:right">Hrs/Yr</th>
+          <th class="sc-th" style="text-align:right">Value</th>
+          <th class="sc-th" style="text-align:center">Prerequisite</th>
+          <th class="sc-th" style="text-align:center">Priority</th>
+        </tr></thead>
+        <tbody id="registerBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: PRIORITY MATRIX -->
+  <div class="tab-content" id="tab-matrix">
+    <div style="background:var(--electric-dim);border:1px solid var(--electric-border);border-radius:6px;padding:13px 18px;margin-bottom:20px;font-size:13px;color:var(--ink);line-height:1.7">
+      Each opportunity is plotted by <strong>Implementation Effort</strong> (x-axis) and <strong>Business Impact</strong> (y-axis). <strong style="color:var(--success)">Top-left = Quick Wins</strong> (high impact, low effort — do first). <strong style="color:var(--electric)">Top-right = Strategic Bets</strong> (high impact, high effort — plan carefully). Click any item for full detail.
+    </div>
+    <div class="matrix-wrap">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border);background:var(--neutral-bg);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink)">Effort × Impact Priority Matrix</div>
+        <div style="display:flex;gap:14px">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--steel)"><div style="width:10px;height:10px;border-radius:50%;background:var(--teal)"></div>Automation</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--steel)"><div style="width:10px;height:10px;border-radius:50%;background:var(--purple)"></div>AI-Enabled</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--steel)"><div style="width:10px;height:10px;border-radius:50%;background:var(--electric)"></div>Semi-Auto</div>
+        </div>
+      </div>
+      <div style="padding:20px 24px">
+        <div style="display:grid;grid-template-columns:36px 1fr 1fr;grid-template-rows:1fr 1fr 36px;gap:10px;height:460px">
+          <div style="grid-row:1/3;display:flex;align-items:center;justify-content:center">
+            <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--steel2)">← LOW IMPACT · HIGH IMPACT →</div>
+          </div>
+          <div class="matrix-cell q1" id="matQ1">
+            <div class="matrix-cell-title">⚡ Quick Wins — Do First</div>
+          </div>
+          <div class="matrix-cell q2" id="matQ2">
+            <div class="matrix-cell-title">🎯 Strategic Bets — Plan & Invest</div>
+          </div>
+          <div class="matrix-cell q3" id="matQ3">
+            <div class="matrix-cell-title">🔍 Consider — Low Priority</div>
+          </div>
+          <div class="matrix-cell q4" id="matQ4">
+            <div class="matrix-cell-title">⚠️ Deprioritise — High Effort, Low Gain</div>
+          </div>
+          <div style="grid-column:2/4;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="text-align:center;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--steel2)">LOW EFFORT →</div>
+            <div style="text-align:center;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--steel2)">← HIGH EFFORT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SCORING DETAIL -->
+  <div class="tab-content" id="tab-scorecard">
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+      <table class="score-table">
+        <thead><tr>
+          <th class="sc-th">Opportunity</th>
+          <th class="sc-th" style="text-align:center">Volume</th>
+          <th class="sc-th" style="text-align:center">Repetitive?</th>
+          <th class="sc-th" style="text-align:center">Rule-Based?</th>
+          <th class="sc-th" style="text-align:center">Error Risk</th>
+          <th class="sc-th" style="text-align:center">Data Available?</th>
+          <th class="sc-th" style="text-align:center">Tech Ready?</th>
+          <th class="sc-th" style="text-align:center">Total Score</th>
+          <th class="sc-th" style="text-align:center">Rank</th>
+        </tr></thead>
+        <tbody id="scorecardBody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:16px;background:var(--electric-dim);border:1px solid var(--electric-border);border-radius:6px;padding:14px 18px;font-size:13px;color:var(--ink);line-height:1.7">
+      <strong>Scoring methodology:</strong> Each opportunity is scored 1–5 on six dimensions: task Volume (frequency × quantity), Repetitiveness, Rule-Based suitability, current Error/Risk level, Data Availability, and Technology Readiness. Maximum score = 30. Scores ≥ 22 = strong candidate; 15–21 = viable; &lt; 15 = premature or unsuitable.
+    </div>
+  </div>
+
+  <!-- TAB: AI READINESS -->
+  <div class="tab-content" id="tab-readiness">
+    <div style="background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:6px;padding:14px 18px;margin-bottom:24px;font-size:13px;color:var(--ink);line-height:1.7">
+      <strong style="color:var(--purple)">AI Readiness Assessment</strong> — Valentis's current state across 4 dimensions that determine whether AI tools can deliver value. Each dimension rated on a 1–5 scale. Overall readiness score determines which AI opportunities are viable <em>now</em> vs. which require foundational work first.
+    </div>
+    <div class="readiness-grid" id="readinessGrid"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+        <div style="padding:13px 18px;border-bottom:1px solid var(--border);background:var(--neutral-bg)">
+          <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink)">AI Opportunities Available Now</div>
+          <div style="font-size:11px;color:var(--steel);margin-top:2px">Tools Valentis can begin using immediately — no HRIS required</div>
+        </div>
+        <div id="aiNowList" style="padding:4px 0"></div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+        <div style="padding:13px 18px;border-bottom:1px solid var(--border);background:var(--neutral-bg)">
+          <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink)">AI Opportunities After HRIS</div>
+          <div style="font-size:11px;color:var(--steel);margin-top:2px">Unlocked once integrated data is available</div>
+        </div>
+        <div id="aiLaterList" style="padding:4px 0"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal" onclick="closeModal('detailModal',event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="dmTitle"></div>
+        <div id="dmSub" style="font-family:var(--fm);font-size:10px;color:var(--steel2);margin-top:3px"></div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">✕</button>
+    </div>
+    <div class="modal-body" id="dmBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('detailModal').classList.remove('active')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="addModal" onclick="closeModal('addModal',event)">
+  <div class="modal" style="width:560px">
+    <div class="modal-header">
+      <div class="modal-title">Add Automation Opportunity</div>
+      <button class="modal-close" onclick="document.getElementById('addModal').classList.remove('active')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Opportunity Name *</label><input class="form-input" id="a_name" placeholder="e.g. Auto-generate offer letters"></div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="a_desc" placeholder="What process does this automate or augment?"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Category</label>
+          <select class="form-select" id="a_cat">
+            <option>Payroll & Admin</option><option>Recruitment</option><option>Onboarding</option>
+            <option>Learning & Development</option><option>Performance</option><option>Workforce Planning</option>
+            <option>Compliance</option><option>Employee Experience</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="form-select" id="a_type">
+            <option value="Automation">Automation</option>
+            <option value="AI">AI-Enabled</option>
+            <option value="Semi-Automation">Semi-Automation</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Effort</label>
+          <select class="form-select" id="a_effort">
+            <option value="Low">Low</option><option value="Medium">Medium</option><option value="High">High</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Impact</label>
+          <select class="form-select" id="a_impact">
+            <option value="Critical">Critical</option><option value="High">High</option><option value="Medium">Medium</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Est. Hours Saved/Year</label><input class="form-input" type="number" id="a_hrs" placeholder="e.g. 48"></div>
+        <div class="form-group"><label class="form-label">Est. Annual Value (USD)</label><input class="form-input" type="number" id="a_val" placeholder="e.g. 1800"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Prerequisite</label>
+        <select class="form-select" id="a_prereq">
+          <option value="None">None — start now</option>
+          <option value="HRIS">HRIS live</option>
+          <option value="LMS">LMS live</option>
+          <option value="Payroll Integration">Payroll integration</option>
+          <option value="Power BI">Power BI dashboard</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('addModal').classList.remove('active')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveOpportunity()">Add Opportunity</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+let opportunities = [
+  // Payroll & Admin
+  {id:'o01',name:'Automated payroll data feed to country systems',cat:'Payroll & Admin',type:'Automation',effort:'Medium',impact:'Critical',hrsYr:120,value:4500,prereq:'HRIS',desc:'Replace 5 manual monthly payroll reconciliations with automated HRIS→payroll API feeds across Laos, Myanmar, Indonesia, Thailand.',steps:['Complete HRIS implementation','Map field structures between HRIS and each payroll system','Build and test API connectors per country (start Laos/Thailand)','Run parallel for 1 month before cutover','Decommission manual process'],scores:{volume:5,repetitive:5,rulebased:5,error:5,data:4,techready:3},quickWin:false,aiNow:false,aiLater:false},
+  {id:'o02',name:'Work permit & visa expiry alerts',cat:'Compliance',type:'Automation',effort:'Low',impact:'Critical',hrsYr:36,value:2400,prereq:'HRIS',desc:'Automated 90/60/30-day alerts when employee work permits or visas approach expiry. Triggers notification to Group HR and country site manager.',steps:['Configure permit expiry fields in HRIS','Set alert rules: 90/60/30 days before expiry','Configure email/SMS triggers to Group HR and site managers','Test with upcoming expiries','Run monthly audit report'],scores:{volume:3,repetitive:5,rulebased:5,error:5,data:4,techready:4},quickWin:false,aiNow:false,aiLater:false},
+  {id:'o03',name:'Leave balance auto-calculation',cat:'Payroll & Admin',type:'Automation',effort:'Low',impact:'High',hrsYr:48,value:1800,prereq:'HRIS',desc:'Eliminate manual leave balance tracking in Excel/WhatsApp. HRIS calculates entitlements per country rules automatically, visible to employees and managers.',steps:['Map country-specific leave entitlements into HRIS','Configure leave types per employment contract type','Enable employee self-service leave requests','Train site managers on approval workflow','Communicate to all employees'],scores:{volume:4,repetitive:5,rulebased:5,error:4,data:4,techready:4},quickWin:false,aiNow:false,aiLater:false},
+  {id:'o04',name:'New hire HRIS record creation from ATS',cat:'Recruitment',type:'Automation',effort:'Low',impact:'High',hrsYr:24,value:900,prereq:'HRIS',desc:'Workable ATS auto-creates employee record in HRIS on offer acceptance. Eliminates 1–5 day manual data re-entry lag for each new hire.',steps:['Map Workable fields to HRIS fields','Build API connection (Workable supports webhook/Zapier)','Test with sample hire data','Set up error notification if sync fails','Decommission manual onboarding data entry'],scores:{volume:3,repetitive:5,rulebased:5,error:4,data:5,techready:4},quickWin:false,aiNow:false,aiLater:false},
+  {id:'o05',name:'Statutory certification expiry tracking',cat:'Learning & Development',type:'Automation',effort:'Low',impact:'Critical',hrsYr:40,value:2400,prereq:'LMS',desc:'LMS tracks expiry dates for all statutory safety and drilling certifications. Auto-alerts 60 days before expiry so re-certification can be scheduled without site access disruption.',steps:['Load all current cert data into LMS','Set expiry date fields as mandatory','Configure 60/30/7-day alert rules','Link to HR Manager and direct site manager','Integrate with HRIS employee record'],scores:{volume:4,repetitive:5,rulebased:5,error:5,data:3,techready:3},quickWin:false,aiNow:false,aiLater:false},
+  {id:'o06',name:'Monthly HR dashboard auto-refresh',cat:'Payroll & Admin',type:'Automation',effort:'Low',impact:'High',hrsYr:72,value:2700,prereq:'Power BI',desc:'Power BI dashboard connected to HRIS refreshes automatically. Eliminates 6+ hours/month of manual report building for COO. Live headcount, cost, attrition, pipeline.',steps:['Implement HRIS with Power BI connector','Build dashboard templates (headcount, cost, pipeline)','Set auto-refresh schedule (daily or weekly)','Share dashboard with COO/CEO read-only','Brief COO on how to navigate and interpret'],scores:{volume:4,repetitive:5,rulebased:5,error:3,data:3,techready:4},quickWin:false,aiNow:false,aiLater:false},
+  {id:'o07',name:'Payslip auto-distribution',cat:'Payroll & Admin',type:'Automation',effort:'Low',impact:'Medium',hrsYr:24,value:900,prereq:'HRIS',desc:'Payslips automatically generated and distributed to employees via HRIS employee portal. Eliminates manual PDF generation and WhatsApp/email distribution each pay cycle.',steps:['Configure payslip template in HRIS','Connect to payroll data feed','Enable employee self-service portal','Communicate rollout to all employees','Confirm receipt and address access issues for site workers'],scores:{volume:3,repetitive:5,rulebased:5,error:3,data:4,techready:4},quickWin:false,aiNow:false,aiLater:false},
+
+  // Quick Wins (no HRIS needed)
+  {id:'o08',name:'CV screening template & scoring rubric',cat:'Recruitment',type:'Semi-Automation',effort:'Low',impact:'High',hrsYr:30,value:1125,prereq:'None',desc:'Standardised screening rubric in Workable ATS for G3 driller and technical roles. Consistent scoring reduces review time and improves hire quality consistency across 4 country pipelines.',steps:['Define 5–7 screening criteria per role family','Build scoring rubric in Workable','Train hiring managers on rubric use','Review and calibrate after first 10 applications','Measure time-to-screen and quality of hires'],scores:{volume:3,repetitive:4,rulebased:4,error:3,data:4,techready:5},quickWin:true,aiNow:false,aiLater:false},
+  {id:'o09',name:'Onboarding checklist automation (M365)',cat:'Onboarding',type:'Automation',effort:'Low',impact:'High',hrsYr:36,value:1350,prereq:'None',desc:'Microsoft Planner or Teams checklist templates auto-assigned on new hire creation. Site managers get structured onboarding task list. Reduces ad hoc WhatsApp chasing.',steps:['Design onboarding checklist per role (site vs office)','Build template in Microsoft Planner/Teams','Create trigger: new employee added → checklist assigned','Train site managers on Planner','Review completion rates at 30/60/90 days'],scores:{volume:3,repetitive:5,rulebased:5,error:4,data:4,techready:5},quickWin:true,aiNow:false,aiLater:false},
+  {id:'o10',name:'Employee data update form (M365 Forms)',cat:'Employee Experience',type:'Semi-Automation',effort:'Low',impact:'Medium',hrsYr:20,value:750,prereq:'None',desc:'Microsoft Forms used to collect employee data updates (address, emergency contact, bank details). Replaces ad hoc email and WhatsApp requests. Responses feed a consolidation sheet.',steps:['Build M365 Forms for each data update type','Share link with all employees','Create consolidation spreadsheet (auto-populated)','Set monthly reminder to HR Manager to process updates','Migrate form data into HRIS on go-live'],scores:{volume:3,repetitive:4,rulebased:4,error:3,data:5,techready:5},quickWin:true,aiNow:false,aiLater:false},
+  {id:'o11',name:'JD generation with AI (ChatGPT/Copilot)',cat:'Recruitment',type:'AI',effort:'Low',impact:'Medium',hrsYr:20,value:750,prereq:'None',desc:'Use M365 Copilot or ChatGPT to draft job descriptions for Valentis roles. HR Manager reviews, edits, and approves. Reduces JD drafting time from 2–3 hours to 20–30 minutes per role.',steps:['Build Valentis JD prompt template (grade, country, site context)','Test on G3 driller and G5 geologist roles','Create prompt library for recurring roles','Establish HR review and approval step','Maintain Valentis tone and compliance additions'],scores:{volume:2,repetitive:3,rulebased:3,error:2,data:5,techready:5},quickWin:true,aiNow:true,aiLater:false},
+  {id:'o12',name:'HR policy Q&A via AI assistant (Copilot)',cat:'Employee Experience',type:'AI',effort:'Low',impact:'Medium',hrsYr:24,value:900,prereq:'None',desc:'M365 Copilot or a simple AI assistant answers common employee HR policy questions (leave entitlements, allowances, payslip queries). Reduces HR Manager inbound query volume by ~30%.',steps:['Identify top 20 employee HR FAQs','Create Copilot or SharePoint knowledge base','Train HR assistant on Valentis policies','Soft-launch to Group office staff first','Extend to site staff once tested'],scores:{volume:4,repetitive:4,rulebased:4,error:2,data:4,techready:4},quickWin:true,aiNow:true,aiLater:false},
+  {id:'o13',name:'Interview scheduling automation',cat:'Recruitment',type:'Automation',effort:'Low',impact:'Medium',hrsYr:16,value:600,prereq:'None',desc:'Use Calendly or M365 Bookings to automate interview scheduling for shortlisted candidates. Eliminates back-and-forth email. Candidate books direct slot from hiring manager\'s calendar.',steps:['Set up M365 Bookings or Calendly for each hiring manager','Create booking link per role type','Integrate with Workable ATS candidate pipeline','Test with next live vacancy','Measure time-to-interview-scheduled improvement'],scores:{volume:2,repetitive:4,rulebased:5,error:3,data:5,techready:5},quickWin:true,aiNow:false,aiLater:false},
+  {id:'o14',name:'Probation milestone tracking (M365)',cat:'Onboarding',type:'Semi-Automation',effort:'Low',impact:'Critical',hrsYr:28,value:2100,prereq:'None',desc:'Track 30/60/90-day probation check-in milestones for all new hires using Microsoft Planner or a calendar-triggered system. Critical for Myanmar month-3 attrition — manager must be alerted before the risk window.',steps:['Create probation tracking template in Planner','Set recurring task triggers at 30/60/90 days post start','Assign to site manager and Group HR','Review check-in completion weekly','Log outcomes and flag non-completions'],scores:{volume:3,repetitive:5,rulebased:5,error:5,data:5,techready:5},quickWin:true,aiNow:false,aiLater:false},
+
+  // Learning & Development
+  {id:'o15',name:'G3→G4 progression milestone tracker',cat:'Learning & Development',type:'Automation',effort:'Medium',impact:'Critical',hrsYr:60,value:4500,prereq:'LMS',desc:'LMS tracks each G3 driller\'s progress through the 18–24 month development programme. Automated alerts when milestones are due, completed, or overdue. Group HR and COO get pipeline health view.',steps:['Define G3→G4 milestone taxonomy in LMS','Enrol all current G3 trainees','Set timeline expectations and alert thresholds','Connect LMS data to HRIS for grade change trigger','Build pipeline report in Power BI'],scores:{volume:4,repetitive:4,rulebased:4,error:5,data:3,techready:3},quickWin:false,aiNow:false,aiLater:true},
+  {id:'o16',name:'AI-generated training content (site safety)',cat:'Learning & Development',type:'AI',effort:'Medium',impact:'High',hrsYr:40,value:1500,prereq:'LMS',desc:'Use AI tools (e.g. Synthesia, Articulate AI) to generate short multilingual safety induction videos and quizzes for site workers. Reduces translation and production cost vs. external vendors.',steps:['Identify 3–5 priority safety modules','Use AI video tool to create scripts and narration','Generate in Lao, Burmese, Bahasa, Thai','Review with site safety officer','Publish to LMS and measure completion'],scores:{volume:3,repetitive:3,rulebased:3,error:4,data:4,techready:3},quickWin:false,aiNow:false,aiLater:true},
+
+  // Workforce Planning / Analytics
+  {id:'o17',name:'Predictive attrition model (driller workforce)',cat:'Workforce Planning',type:'AI',effort:'High',impact:'Critical',hrsYr:80,value:6000,prereq:'Power BI',desc:'Use HRIS + LMS data to identify early indicators of attrition risk among G3 trainees. Model flags individuals at risk before the month-3 Myanmar departure window. Saves $1,000–$2,000 per prevented departure.',steps:['Accumulate 12+ months of integrated HR data','Identify predictor variables (training engagement, check-in completion, tenure patterns)','Build model in Power BI or Python','Test on historical attrition data','Deploy as monthly risk alert for site managers'],scores:{volume:4,repetitive:2,rulebased:2,error:5,data:2,techready:2},quickWin:false,aiNow:false,aiLater:true},
+  {id:'o18',name:'Headcount scenario modelling (Power BI)',cat:'Workforce Planning',type:'Semi-Automation',effort:'Medium',impact:'High',hrsYr:50,value:1875,prereq:'Power BI',desc:'Interactive Power BI model that lets Group HR run headcount scenarios: what happens to people cost if a new rig is commissioned, or if 2 G4 drillers leave in Laos? Replaces ad hoc Excel modelling.',steps:['Build base headcount model from HRIS data','Add scenario parameters (new hire, departure, grade change)','Connect to people cost assumptions','Test with COO on realistic scenarios','Present as standard planning tool in quarterly reviews'],scores:{volume:3,repetitive:3,rulebased:4,error:3,data:3,techready:3},quickWin:false,aiNow:false,aiLater:true},
+  {id:'o19',name:'Succession pipeline visualisation',cat:'Workforce Planning',type:'Semi-Automation',effort:'Medium',impact:'Critical',hrsYr:40,value:3000,prereq:'LMS',desc:'Live 9-box or pipeline view of Valentis\'s driller succession health — showing G3 trainees by readiness, G4 capacity per site, and Laos retirement risk. Replaces manual tracking.',steps:['Define succession criteria per grade','Map current G3/G4/G5 population in HRIS','Build visualisation in Power BI','Set quarterly update cadence','Present at business review meetings'],scores:{volume:3,repetitive:4,rulebased:3,error:4,data:3,techready:3},quickWin:false,aiNow:false,aiLater:true},
+
+  // Performance & AI
+  {id:'o20',name:'AI-assisted performance review summaries',cat:'Performance',type:'AI',effort:'Low',impact:'Medium',hrsYr:24,value:900,prereq:'None',desc:'Use M365 Copilot to draft performance review summaries from manager notes. HR Manager reviews and edits. Reduces drafting time from 45 to 10 minutes per review.',steps:['Define review summary format','Build Copilot prompt template with Valentis context','Pilot with HR Manager self-review','Roll out to top 3–4 senior roles','Evaluate quality and time savings after first cycle'],scores:{volume:3,repetitive:3,rulebased:3,error:2,data:4,techready:5},quickWin:false,aiNow:true,aiLater:false},
+  {id:'o21',name:'Exit interview sentiment analysis',cat:'Employee Experience',type:'AI',effort:'Medium',impact:'High',hrsYr:20,value:1500,prereq:'HRIS',desc:'Apply AI sentiment analysis to exit interview notes to identify patterns in departure reasons. Especially valuable for Myanmar trainee attrition — quantifies emotional and structural drivers.',steps:['Standardise exit interview format','Collect 6+ months of exit data','Apply sentiment tool (Azure AI or OpenAI API)','Identify top themes by site and grade','Present findings to COO quarterly'],scores:{volume:2,repetitive:2,rulebased:2,error:3,data:2,techready:3},quickWin:false,aiNow:false,aiLater:true},
+  {id:'o22',name:'Automated offer letter generation',cat:'Recruitment',type:'Automation',effort:'Low',impact:'Medium',hrsYr:18,value:675,prereq:'HRIS',desc:'HRIS generates offer letters automatically from approved templates on candidate selection. HR Manager approves before send. Eliminates manual Word document creation per hire.',steps:['Build offer letter templates per country and contract type','Map merge fields to HRIS candidate/role data','Set approval workflow before send','Test with next vacancy in each country','Track time-to-offer improvement'],scores:{volume:2,repetitive:5,rulebased:5,error:3,data:5,techready:4},quickWin:false,aiNow:false,aiLater:false},
+];
+
+const readinessData = [
+  {title:'Data Quality & Availability',score:2,max:5,color:'var(--danger)',items:['HR data in Excel — incomplete and inconsistent','4 siloed payroll systems with no unified history','No LMS data exists yet','Training completions tracked manually'],action:'Data quality is the primary blocker for AI. HRIS implementation unlocks this.'},
+  {title:'Technology Infrastructure',score:3,max:5,color:'var(--warning)',items:['M365 (Copilot-ready) already deployed','Workable ATS has API capability','No current HRIS or LMS','Limited site connectivity in Myanmar/Laos'],action:'M365 Copilot can be used now. Full AI stack requires HRIS go-live.'},
+  {title:'HR Process Maturity',score:2,max:5,color:'var(--danger)',items:['Most HR processes are informal','Inconsistent practices across 4 countries','No documented standard operating procedures','Performance review process ad hoc'],action:'Standardise processes before automating them. Automate what is stable.'},
+  {title:'People & Change Readiness',score:3,max:5,color:'var(--warning)',items:['HR Manager has strong tech appetite','COO open to digital HR investment','Site managers have basic M365 literacy','Remote sites present adoption challenge'],action:'Group office can lead AI adoption. Site rollout needs offline-first design.'},
+];
+
+const aiNow = ['o11','o12','o20'];
+const aiLater = ['o15','o16','o17','o18','o19','o21'];
+
+// ── UTILS ─────────────────────────────────────────────
+function effortClass(e){return{Low:'effort-low',Medium:'effort-med',High:'effort-high'}[e]||''}
+function impactClass(i){return{Critical:'impact-critical',High:'impact-high',Medium:'impact-medium'}[i]||''}
+function typeClass(t){return{Automation:'type-auto',AI:'type-ai','Semi-Automation':'type-semi'}[t]||''}
+function priorityScore(o){
+  const eScore = {Low:3,Medium:2,High:1}[o.effort]||1;
+  const iScore = {Critical:3,High:2,Medium:1}[o.impact]||1;
+  return eScore * iScore;
+}
+function isQuadrant(o,q){
+  const lowEffort = o.effort==='Low';
+  const highImpact = o.impact==='Critical'||o.impact==='High';
+  if(q===1) return lowEffort && highImpact;
+  if(q===2) return !lowEffort && highImpact;
+  if(q===3) return lowEffort && !highImpact;
+  if(q===4) return !lowEffort && !highImpact;
+  return false;
+}
+function totalScore(o){
+  const s = o.scores;
+  return s.volume + s.repetitive + s.rulebased + s.error + s.data + s.techready;
+}
+function prereqChip(p){
+  if(p==='None') return '<span style="font-family:var(--fm);font-size:9px;padding:2px 7px;border-radius:2px;background:var(--success-bg);color:var(--success);border:1px solid var(--success-border);font-weight:600">NOW</span>';
+  return '<span style="font-family:var(--fm);font-size:9px;padding:2px 7px;border-radius:2px;background:var(--neutral-bg);color:var(--steel);border:1px solid var(--border)">' + p + '</span>';
+}
+
+function updateStats(){
+  const total = opportunities.length;
+  const qw = opportunities.filter(o=>o.effort==='Low'&&(o.impact==='Critical'||o.impact==='High')).length;
+  const ai = opportunities.filter(o=>o.type==='AI').length;
+  const hrs = opportunities.reduce((a,o)=>a+o.hrsYr,0);
+  const ready = opportunities.filter(o=>o.prereq==='None').length;
+  const saving = opportunities.reduce((a,o)=>a+o.value,0);
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statQuickWins').textContent = qw;
+  document.getElementById('statAI').textContent = ai;
+  document.getElementById('statHrsYr').textContent = hrs.toLocaleString();
+  document.getElementById('statReady').textContent = ready;
+  document.getElementById('statSaving').textContent = '$' + Math.round(saving/1000) + 'k';
+}
+
+// ── RENDER REGISTER ───────────────────────────────────
+function renderRegister(){
+  const q = (document.getElementById('oppSearch').value||'').toLowerCase();
+  const fCat = document.getElementById('fCat').value;
+  const fType = document.getElementById('fType').value;
+  const fEffort = document.getElementById('fEffort').value;
+  const filtered = opportunities.filter(o=>
+    (!q || o.name.toLowerCase().includes(q) || o.desc.toLowerCase().includes(q)) &&
+    (!fCat || o.cat===fCat) &&
+    (!fType || o.type===fType) &&
+    (!fEffort || o.effort===fEffort)
+  ).sort((a,b)=>priorityScore(b)-priorityScore(a));
+
+  const rows = filtered.map((o,i)=>{
+    const ps = priorityScore(o);
+    const priColor = ps>=6?'var(--success)':ps>=4?'var(--electric)':ps>=2?'var(--warning)':'var(--steel)';
+    const priLabel = ps>=6?'QUICK WIN':ps>=4?'HIGH':ps>=2?'MEDIUM':'LOW';
+    return `<tr class="sc-tr" onclick="openDetail('${o.id}')">
+      <td class="sc-td" style="font-weight:600;max-width:220px">${o.name}</td>
+      <td class="sc-td" style="font-size:11.5px;color:var(--steel);white-space:nowrap">${o.cat}</td>
+      <td class="sc-td"><span class="opp-tag ${typeClass(o.type)}">${o.type}</span></td>
+      <td class="sc-td"><span class="opp-tag ${effortClass(o.effort)}">${o.effort}</span></td>
+      <td class="sc-td"><span class="opp-tag ${impactClass(o.impact)}">${o.impact}</span></td>
+      <td class="sc-td" style="text-align:right;font-family:var(--fm);font-size:12px">${o.hrsYr}</td>
+      <td class="sc-td" style="text-align:right;font-family:var(--fm);font-size:12px;color:var(--success);font-weight:600">$${o.value.toLocaleString()}</td>
+      <td class="sc-td" style="text-align:center">${prereqChip(o.prereq)}</td>
+      <td class="sc-td" style="text-align:center"><span style="font-family:var(--fm);font-size:9px;font-weight:700;color:${priColor}">${priLabel}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('registerBody').innerHTML = rows ||
+    '<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--steel)">No opportunities match your filters.</td></tr>';
+}
+
+// ── RENDER MATRIX ─────────────────────────────────────
+function renderMatrix(){
+  const typeColor = {Automation:'var(--teal)',AI:'var(--purple)','Semi-Automation':'var(--electric)'};
+  [1,2,3,4].forEach(q=>{
+    const cell = document.getElementById('matQ'+q);
+    const title = cell.querySelector('.matrix-cell-title').outerHTML;
+    const items = opportunities.filter(o=>isQuadrant(o,q));
+    cell.innerHTML = title + items.map(o=>`
+      <div class="matrix-dot" onclick="openDetail('${o.id}')">
+        <div class="matrix-dot-icon" style="background:${typeColor[o.type]}"></div>
+        <span style="font-size:11px;color:var(--ink);line-height:1.3">${o.name}</span>
+      </div>`).join('');
+  });
+}
+
+// ── RENDER SCORECARD ──────────────────────────────────
+function renderScorecard(){
+  const sorted = [...opportunities].sort((a,b)=>totalScore(b)-totalScore(a));
+  let lastCat = '';
+  document.getElementById('scorecardBody').innerHTML = sorted.map(o=>{
+    const ts = totalScore(o);
+    const tsColor = ts>=22?'var(--success)':ts>=15?'var(--electric)':'var(--steel)';
+    const scoreBar = (v)=>`<div style="display:flex;align-items:center;gap:4px;justify-content:center">
+      ${[1,2,3,4,5].map(i=>`<div style="width:7px;height:7px;border-radius:1px;background:${i<=v?'var(--electric)':'var(--border)'}"></div>`).join('')}
+    </div>`;
+    let catRow = '';
+    if(o.cat !== lastCat){
+      catRow = `<tr class="sc-cat-row"><td colspan="9">${o.cat}</td></tr>`;
+      lastCat = o.cat;
+    }
+    const rank = sorted.indexOf(o)+1;
+    return catRow + `<tr class="sc-tr" onclick="openDetail('${o.id}')">
+      <td class="sc-td" style="font-weight:600;max-width:200px">${o.name}</td>
+      <td class="sc-td" style="text-align:center">${scoreBar(o.scores.volume)}</td>
+      <td class="sc-td" style="text-align:center">${scoreBar(o.scores.repetitive)}</td>
+      <td class="sc-td" style="text-align:center">${scoreBar(o.scores.rulebased)}</td>
+      <td class="sc-td" style="text-align:center">${scoreBar(o.scores.error)}</td>
+      <td class="sc-td" style="text-align:center">${scoreBar(o.scores.data)}</td>
+      <td class="sc-td" style="text-align:center">${scoreBar(o.scores.techready)}</td>
+      <td class="sc-td" style="text-align:center;font-family:var(--fm);font-size:14px;font-weight:700;color:${tsColor}">${ts}</td>
+      <td class="sc-td" style="text-align:center;font-family:var(--fm);font-size:12px;color:var(--steel2)">#${rank}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── RENDER READINESS ──────────────────────────────────
+function renderReadiness(){
+  document.getElementById('readinessGrid').innerHTML = readinessData.map(r=>{
+    const pct = (r.score/r.max)*100;
+    const overall = readinessData.reduce((a,x)=>a+x.score,0);
+    const overallPct = Math.round(overall/readinessData.reduce((a,x)=>a+x.max,0)*100);
+    return `<div class="readiness-card">
+      <div class="readiness-header"><div class="readiness-title">${r.title}</div></div>
+      <div class="readiness-score" style="color:${r.color}">${r.score}<span style="font-size:14px;color:var(--steel2)">/${r.max}</span></div>
+      <div class="readiness-score-lbl">${r.score<=2?'Needs Work':r.score<=3?'Developing':'Strong'}</div>
+      <div class="readiness-bar"><div class="readiness-bar-fill" style="width:${pct}%;background:${r.color}"></div></div>
+      <div class="readiness-items">
+        ${r.items.map(item=>`<div class="readiness-item"><span style="color:${r.color};font-size:10px">●</span>${item}</div>`).join('')}
+      </div>
+      <div style="padding:10px 16px;background:var(--neutral-bg);border-top:1px solid var(--border);font-size:11.5px;color:var(--ink);line-height:1.5">→ ${r.action}</div>
+    </div>`;
+  }).join('');
+
+  const nowOpps = opportunities.filter(o=>aiNow.includes(o.id));
+  const laterOpps = opportunities.filter(o=>aiLater.includes(o.id));
+
+  document.getElementById('aiNowList').innerHTML = nowOpps.map(o=>`
+    <div style="padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer" onclick="openDetail('${o.id}')">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+        <span style="font-size:16px">🤖</span>
+        <span style="font-size:13px;font-weight:600;color:var(--ink)">${o.name}</span>
+      </div>
+      <div style="font-size:11.5px;color:var(--steel);padding-left:24px">${o.desc.substring(0,90)}…</div>
+      <div style="padding-left:24px;margin-top:4px"><span class="opp-tag ${effortClass(o.effort)}" style="font-size:8px">${o.effort} effort</span></div>
+    </div>`).join('');
+
+  document.getElementById('aiLaterList').innerHTML = laterOpps.map(o=>`
+    <div style="padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;opacity:0.7" onclick="openDetail('${o.id}')">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+        <span style="font-size:16px">🔮</span>
+        <span style="font-size:13px;font-weight:600;color:var(--ink)">${o.name}</span>
+      </div>
+      <div style="font-size:11.5px;color:var(--steel);padding-left:24px">${o.desc.substring(0,90)}…</div>
+      <div style="padding-left:24px;margin-top:4px"><span style="font-family:var(--fm);font-size:8px;padding:2px 6px;border-radius:2px;background:var(--neutral-bg);color:var(--steel);border:1px solid var(--border)">Requires: ${o.prereq}</span></div>
+    </div>`).join('');
+}
+
+// ── DETAIL MODAL ──────────────────────────────────────
+function openDetail(id){
+  const o = opportunities.find(x=>x.id===id);
+  if(!o) return;
+  document.getElementById('dmTitle').textContent = o.name;
+  document.getElementById('dmSub').textContent = o.cat + ' · ' + o.type + ' · ' + o.effort + ' Effort · ' + o.impact + ' Impact';
+  const ts = totalScore(o);
+  const tsColor = ts>=22?'var(--success)':ts>=15?'var(--electric)':'var(--steel)';
+  document.getElementById('dmBody').innerHTML = `
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
+      <span class="opp-tag ${typeClass(o.type)}">${o.type}</span>
+      <span class="opp-tag ${effortClass(o.effort)}">${o.effort} Effort</span>
+      <span class="opp-tag ${impactClass(o.impact)}">${o.impact} Impact</span>
+      ${prereqChip(o.prereq)}
+    </div>
+    <div class="modal-section-title">Description</div>
+    <div style="font-size:13px;color:var(--steel);line-height:1.8;margin-bottom:16px">${o.desc}</div>
+    <div class="modal-section-title">Business Value</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="modal-field"><div class="modal-field-label">HOURS SAVED/YEAR</div><div class="modal-field-value">${o.hrsYr} hrs</div></div>
+      <div class="modal-field"><div class="modal-field-label">EST. ANNUAL VALUE</div><div class="modal-field-value" style="color:var(--success)">$${o.value.toLocaleString()}</div></div>
+      <div class="modal-field"><div class="modal-field-label">AUTOMATION SCORE</div><div class="modal-field-value" style="color:${tsColor}">${ts}/30</div></div>
+    </div>
+    <div class="modal-section-title">Scoring Breakdown</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+      ${['volume','repetitive','rulebased','error','data','techready'].map((k,i)=>{
+        const labels = ['Task Volume','Repetitiveness','Rule-Based?','Error/Risk','Data Available','Tech Ready'];
+        const v = o.scores[k];
+        return `<div class="modal-field"><div class="modal-field-label">${labels[i]}</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:3px">
+            ${[1,2,3,4,5].map(n=>`<div style="width:10px;height:10px;border-radius:2px;background:${n<=v?'var(--electric)':'var(--border)'}"></div>`).join('')}
+            <span style="font-family:var(--fm);font-size:11px;font-weight:700;margin-left:4px">${v}/5</span>
+          </div></div>`;
+      }).join('')}
+    </div>
+    <div class="modal-section-title">Implementation Steps</div>
+    <div class="steps-list">
+      ${o.steps.map((s,i)=>`<div class="step-item"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></div>`).join('')}
+    </div>`;
+  document.getElementById('detailModal').classList.add('active');
+}
+
+function openAddModal(){ document.getElementById('addModal').classList.add('active'); }
+function saveOpportunity(){
+  const name = document.getElementById('a_name').value.trim();
+  if(!name){showToast('⚠ Name required');return;}
+  const effort = document.getElementById('a_effort').value;
+  const impact = document.getElementById('a_impact').value;
+  const s = effort==='Low'?4:effort==='Medium'?3:2;
+  opportunities.push({
+    id:'o'+String(opportunities.length+1).padStart(2,'0'),
+    name, desc:document.getElementById('a_desc').value||'—',
+    cat:document.getElementById('a_cat').value,
+    type:document.getElementById('a_type').value,
+    effort, impact,
+    hrsYr:parseInt(document.getElementById('a_hrs').value)||20,
+    value:parseInt(document.getElementById('a_val').value)||500,
+    prereq:document.getElementById('a_prereq').value,
+    steps:['Define scope','Pilot and test','Roll out group-wide'],
+    scores:{volume:3,repetitive:s,rulebased:s,error:3,data:3,techready:4},
+    quickWin:effort==='Low'&&(impact==='Critical'||impact==='High'),
+    aiNow:false,aiLater:false
+  });
+  document.getElementById('addModal').classList.remove('active');
+  document.getElementById('a_name').value='';
+  document.getElementById('a_desc').value='';
+  renderRegister(); updateStats();
+  showToast('✓ Opportunity added: '+name);
+}
+
+function clearFilters(){
+  document.getElementById('oppSearch').value='';
+  document.getElementById('fCat').value='';
+  document.getElementById('fType').value='';
+  document.getElementById('fEffort').value='';
+  renderRegister();
+}
+
+function switchTab(id){
+  const tabs=['register','matrix','scorecard','readiness'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='matrix') renderMatrix();
+  if(id==='scorecard') renderScorecard();
+  if(id==='readiness') renderReadiness();
+}
+function closeModal(id,e){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('active');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+// Init
+renderRegister();
+updateStats();
+</script>
+</body>
+</html>

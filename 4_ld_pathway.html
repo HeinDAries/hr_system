@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G1→G4 Development Pathway — L&amp;D Tool 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1eb;--surface:#fff;--surface2:#edeae2;--surface3:#e4e0d6;
+  --border:#d8d3c8;--border2:#c8c2b4;
+  --ink:#1a1a14;--ink2:#2c2b22;--ink3:#524f44;--ink4:#857f72;--ink5:#b4ae9f;
+  --forest:#1f4d35;--forest2:#276044;--forest3:#2e7350;
+  --forest-dim:rgba(31,77,53,0.07);--forest-border:rgba(31,77,53,0.22);
+  --brass:#7a5c14;--brass2:#8f6d1a;
+  --brass-dim:rgba(122,92,20,0.08);--brass-border:rgba(122,92,20,0.22);
+  --sienna:#9b3a1a;--sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.2);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --slate:#2c3a30;
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--forest3),var(--forest),rgba(31,77,53,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;background:rgba(31,77,53,0.2);border:1px solid rgba(31,77,53,0.4);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:#6dbf8a;font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(31,77,53,0.2);border-color:rgba(31,77,53,0.45);color:#6dbf8a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--forest3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#6dbf8a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--forest);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--forest)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--forest);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-forest{background:var(--forest-dim);color:var(--forest);border:1px solid var(--forest-border)}
+.chip-brass{background:var(--brass-dim);color:var(--brass);border:1px solid var(--brass-border)}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.forest{background:var(--forest-dim);border-color:var(--forest);color:var(--ink2)}
+.info.brass{background:var(--brass-dim);border-color:var(--brass);color:var(--ink2)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--forest);padding:16px 20px;margin:16px 0;background:var(--forest-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--forest)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap;margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--forest);border-bottom-color:var(--forest);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* PIPELINE VISUAL */
+.pipeline{display:flex;align-items:stretch;gap:0;margin-bottom:14px;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.pipe-stage{flex:1;padding:18px 16px;border-right:1px solid var(--border);position:relative;transition:background .15s}
+.pipe-stage:last-child{border-right:none}
+.pipe-stage:hover{background:var(--surface2)}
+.pipe-grade{font-family:var(--fd);font-size:36px;font-weight:800;color:var(--forest);line-height:1;margin-bottom:4px}
+.pipe-label{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px}
+.pipe-months{font-family:var(--fm);font-size:9px;color:var(--brass);letter-spacing:.5px;margin-bottom:8px}
+.pipe-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65}
+.pipe-arrow{display:flex;align-items:center;padding:0 6px;background:var(--bg);font-size:18px;color:var(--forest);flex-shrink:0;z-index:1}
+/* MILESTONE CARD */
+.ms-card{border:1px solid var(--border);border-radius:4px;margin-bottom:8px;overflow:hidden}
+.ms-header{display:grid;grid-template-columns:56px 1fr auto;align-items:center;padding:13px 18px;background:var(--surface);gap:12px;cursor:pointer}
+.ms-header:hover{background:var(--surface2)}
+.ms-num{font-family:var(--fd);font-size:26px;font-weight:800;color:var(--forest);line-height:1}
+.ms-title{font-weight:600;font-size:13.5px;color:var(--ink)}
+.ms-sub{font-size:11.5px;color:var(--ink4);font-weight:300;margin-top:2px}
+.ms-badge{font-family:var(--fm);font-size:8px;letter-spacing:.5px;padding:3px 8px;border-radius:2px;white-space:nowrap}
+.ms-body{display:none;padding:18px;background:var(--surface);border-top:1px solid var(--border)}
+.ms-body.open{display:block}
+/* TRACKER */
+.tracker-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px}
+.tr-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;display:block}
+.tr-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 13px;font-size:13px;color:#f0ede4;font-family:var(--fb);outline:none;transition:border .13s;margin-bottom:10px}
+.tr-input:focus{border-color:rgba(31,77,53,0.6)}
+.tr-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 13px;font-size:13px;color:#f0ede4;font-family:var(--fb);outline:none;cursor:pointer;margin-bottom:10px}
+.tr-select option{background:var(--slate);color:#f0ede4}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-forest{background:var(--forest);color:#fff}
+.btn-forest:hover{background:var(--forest2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:rgba(31,77,53,0.5);color:#6dbf8a}
+.tr-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+/* PROGRESS BAR */
+.prog-bar{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:4px}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--forest),var(--forest3))}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx-box{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">L&amp;D Tool 4 / 7</div>
+    <div class="sb-title">G1→G4 Development<br><em>Pathway</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Pathway Overview</div>
+    <div class="nav-item" onclick="showPage('g1',this)"><span class="nav-num">02</span>G1 — Trainee Driller</div>
+    <div class="nav-item" onclick="showPage('g2',this)"><span class="nav-num">03</span>G2 — Driller</div>
+    <div class="nav-item" onclick="showPage('g3',this)"><span class="nav-num">04</span>G3 — Senior Driller</div>
+    <div class="nav-item" onclick="showPage('g4',this)"><span class="nav-num">05</span>G4 — Lead Driller</div>
+    <div class="nav-item" onclick="showPage('transitions',this)"><span class="nav-num">06</span>Transition Decision Framework</div>
+    <div class="nav-item" onclick="showPage('country',this)"><span class="nav-num">07</span>Country Pathway Adaptations</div>
+    <div class="nav-item" onclick="showPage('tracker',this)"><span class="nav-num">08</span>Candidate Progress Tracker</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Learning &amp; Development — Tool 4 of 7</strong>
+      G1→G4 Development Pathway<br>
+      <span style="color:rgba(255,255,255,0.12)">The pathway is not a timeline. It is a milestone framework. Time is approximate — milestones are not.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">L&amp;D Tool 4 / 7 — G1→G4 Development Pathway</div>
+    <h1 class="page-title">The Driller<br><em>Pathway</em></h1>
+    <p class="page-desc">The G1→G4 pathway is Valentis's most critical business process. Every unit of exploration revenue depends on having enough G4 lead drillers to run operations across four countries. This tool defines exactly what a driller must demonstrate at each grade — and how Group HR and site managers ensure the pipeline stays full.</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">Valentis Pipeline Reality — March 2026</div>
+    <div class="vx-title">48–60 months from G1 entry to G4 certification. Every cohort matters.</div>
+    <div class="vx-body">The full G1→G4 journey takes 4–5 years under normal conditions. At Valentis's current scale, each G1 cohort of 8 trainees produces 1–2 G4-ready drillers over that timeline. Three Laos G4s are retiring within 3 years. Indonesia has 3 G3 vacancies open now. Myanmar is converting at 58% — 12pp below target. The pathway tool makes the pipeline visible, milestone-driven, and managed — not left to chance and individual G4 quality.</div>
+  </div>
+
+  <!-- Pipeline visual -->
+  <div style="margin-bottom:14px">
+    <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:10px">The Four-Stage Pipeline — Approximate Timelines</div>
+    <div class="pipeline">
+      <div class="pipe-stage">
+        <div class="pipe-grade">G1</div>
+        <div class="pipe-label">Trainee Driller</div>
+        <div class="pipe-months">Months 1–18</div>
+        <div class="pipe-desc">Learning site operations, equipment handling, safety protocols, and basic drilling under continuous G4 supervision. Month-3 check-in is the primary attrition gate.</div>
+        <div style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap">
+          <span class="chip chip-muted">8 enter cohort</span>
+          <span class="chip chip-red">4–5 remain at G2</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 8px;color:var(--forest);font-size:20px;flex-shrink:0">→</div>
+      <div class="pipe-stage">
+        <div class="pipe-grade">G2</div>
+        <div class="pipe-label">Driller</div>
+        <div class="pipe-months">Months 19–36</div>
+        <div class="pipe-desc">Independent operation of standard drilling tasks. Beginning to handle non-routine situations. Starting to support G1 trainees under G4 direction.</div>
+        <div style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap">
+          <span class="chip chip-muted">4–5 enter G2</span>
+          <span class="chip chip-brass">3–4 progress to G3</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 8px;color:var(--forest);font-size:20px;flex-shrink:0">→</div>
+      <div class="pipe-stage">
+        <div class="pipe-grade">G3</div>
+        <div class="pipe-label">Senior Driller</div>
+        <div class="pipe-months">Months 37–60</div>
+        <div class="pipe-desc">Expert technical driller. Leads operations independently. Formally supervises G1 trainees. Demonstrates people development capability as the primary G4 readiness signal.</div>
+        <div style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap">
+          <span class="chip chip-muted">3–4 enter G3</span>
+          <span class="chip chip-forest">1–2 reach G4</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 8px;color:var(--forest);font-size:20px;flex-shrink:0">→</div>
+      <div class="pipe-stage">
+        <div class="pipe-grade">G4</div>
+        <div class="pipe-label">Lead Driller</div>
+        <div class="pipe-months">Month 61+</div>
+        <div class="pipe-desc">Full technical and people accountability. Runs training cohorts. Responsible for G1 conversion rate. The primary measure of G4 quality is trainee development outcomes — not just drilling output.</div>
+        <div style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap">
+          <span class="chip chip-forest">1–2 certified G4s</span>
+          <span class="chip chip-muted">per original cohort of 8</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">How the Pathway Works</div>
+      <div class="card-body" style="margin-bottom:12px">The pathway is milestone-based, not time-based. A driller advances when they have demonstrated the required capabilities at their current grade — not simply because they have been in role for the expected number of months. Time estimates are indicative; milestone completion is mandatory.</div>
+      <div style="display:grid;gap:7px">
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Milestones, not months.</strong> Each grade has 3–5 defined milestones. Advancement requires all milestones at the current grade to be completed and signed off. A G2 who has been in role 18 months but has not completed milestone G2-M3 does not advance.</div>
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">G4 sign-off, SM approval.</strong> Each milestone is signed off by the G4 (direct observation) and approved by the SM (quality check). Group HR reviews all G3→G4 transitions before Ba countersigns. This creates a three-level quality gate.</div>
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Quarterly pipeline review.</strong> Ba reviews all active candidates in the quarterly talent review — milestone completion, time-in-grade, G4 coaching quality, at-risk flags. Any candidate stalled for 3+ months on the same milestone triggers an intervention review.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Pipeline Metrics — Current State</div>
+      <table class="dtable" style="margin-top:4px">
+        <thead><tr><th>Metric</th><th>Target</th><th>Current</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">G1 conversion rate (to G2)</td><td>≥70%</td><td>58% Myanmar · ~72% others</td><td><span class="chip chip-red">Critical — Myanmar</span></td></tr>
+          <tr><td style="font-weight:600">G2→G3 progression rate</td><td>≥75%</td><td>Est. 70–75%</td><td><span class="chip chip-brass">Monitor</span></td></tr>
+          <tr><td style="font-weight:600">G3→G4 conversion</td><td>≥50%</td><td>Est. 40–50%</td><td><span class="chip chip-brass">Monitor</span></td></tr>
+          <tr><td style="font-weight:600">Average time G1→G2</td><td>14–18 months</td><td>Not yet tracked formally</td><td><span class="chip chip-muted">Baseline needed</span></td></tr>
+          <tr><td style="font-weight:600">Active G3→G4 candidates</td><td>≥2 per country</td><td>Laos: 2 · Others: unknown</td><td><span class="chip chip-brass">Laos urgent</span></td></tr>
+          <tr><td style="font-weight:600">G4 pipeline depth (Laos)</td><td>3 certified G4s</td><td>2 by 2027 without intervention</td><td><span class="chip chip-red">Retirement cliff</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Pathway in the Business Context</div>
+    <div class="card-body" style="margin-bottom:12px">Every strategic commitment Valentis has made depends on this pipeline functioning. The 2026–2027 growth plan is not deliverable without the G4 headcount to support it.</div>
+    <table class="dtable">
+      <thead><tr><th>Strategic commitment</th><th>Pipeline dependency</th><th>Pathway milestone required by</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">65 FTE by Q2 2027 (from 42)</td><td>Net +23 headcount, majority G1–G3. Requires G4 capacity to train new cohorts across all countries simultaneously.</td><td>G4 development plans active June 2026. At least 1 new G4 certified per country by Q4 2026.</td></tr>
+        <tr><td style="font-weight:600">93%+ programme delivery all countries</td><td>Indonesia recovery requires 3 G3 replacements to full productivity (12–18 months post-hire). Myanmar requires conversion rate recovery from 58% to 70%+.</td><td>Indonesia G3 hires on site by May 2026. Myanmar coaching programme complete June 2026.</td></tr>
+        <tr><td style="font-weight:600">Laos retirement cohort — 3 G4s in 3 years</td><td>2 G3 candidates must be G4-certified before first retirement. Net G4 deficit otherwise: -1 by 2027.</td><td>Laos G3 development plans activated June 2026. G4 certification target: Q4 2026 for candidate 1.</td></tr>
+        <tr><td style="font-weight:600">Country 5 entry Q2 2027</td><td>Country 5 requires at least 2 certified G4s from day one — one per active drill site. These must come from existing pipeline, not external hire.</td><td>Country 5 G4 candidates identified Q3 2026. Development plans activated to reach G4 readiness before Q2 2027 deployment.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-g1" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Grade Profile</div>
+    <h1 class="page-title">G1 — Trainee<br><em>Driller</em></h1>
+    <p class="page-desc">The G1 Trainee Driller is the entry point to the Valentis pipeline. The G1 stage is the highest-attrition period — month 3 is the primary exit window. The primary development relationship is with the G4, and the primary retention mechanism is the quality of that relationship and the clarity of the development promise.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:14px">
+    <div style="display:grid;gap:10px">
+      <div class="card" style="margin-bottom:0">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--forest);margin-bottom:10px">Grade Specification</div>
+        <div style="display:grid;gap:6px;font-size:13px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">GRADE</div><div style="font-weight:700;color:var(--ink)">G1</div></div>
+            <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">TYPICAL DURATION</div><div style="font-weight:700;color:var(--ink)">12–18 months</div></div>
+          </div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">PRIMARY DEVELOPMENT RELATIONSHIP</div><div style="font-weight:700;color:var(--ink)">G4 Lead Driller (direct coach)</div></div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">CRITICAL GATE</div><div style="font-weight:700;color:var(--red)">Month-3 check-in — primary attrition window</div></div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">COHORT ENTRY SIZE</div><div style="font-weight:700;color:var(--ink)">8 per cohort</div></div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">TARGET CONVERSION TO G2</div><div style="font-weight:700;color:var(--forest)">≥70% (5–6 of 8)</div></div>
+          <div style="padding:8px 10px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--red);letter-spacing:.5px;margin-bottom:2px">MYANMAR CURRENT RATE</div><div style="font-weight:700;color:var(--red)">58% — 12pp below target</div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--forest);margin-bottom:10px">Role at G1</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">The G1 is an observer and learner. They do not make independent operational decisions. Their job is to absorb and demonstrate — watch, assist, ask, and practice. Every task is a learning event. The G4 is accountable for creating those learning events deliberately, not leaving development to chance exposure.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title">G1 Milestones — Required for G2 Advancement</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;margin-bottom:14px;line-height:1.7">All five milestones must be completed and signed off before the G1 can advance to G2. G4 signs each milestone based on direct observation. SM reviews and approves. Ba countersigns for the G1-M5 people milestone only.</div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M1</div>
+            <div><div class="ms-title">Site Safety and HSE Competency</div><div class="ms-sub">Foundation certification — Month 1–2</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-forest chip">Foundation</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Correct use of all required PPE without prompting. Knowledge of site emergency procedures — can locate and describe each response. Understanding of Valentis HSE incident reporting process. Zero unreported near-misses or safety violations in prior 4 weeks.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 direct observation over minimum 4-week period. G4 asks verbal questions about emergency procedures — trainee demonstrates without script. One formal site walkthrough with G4 to verify PPE and procedure knowledge. G4 signs milestone card.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">COMMON FAILURE MODES</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">PPE compliance drops when G4 is not present (not yet internalised). Emergency procedure knowledge is scripted but not understood (passes verbal but fails unexpected scenario). Near-misses not reported due to fear of consequences — build psychological safety explicitly.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF REQUIREMENT</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 signature on milestone card. SM review. No countersignature from Group HR required — this is a site-level safety milestone.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M2</div>
+            <div><div class="ms-title">Equipment Familiarisation and Basic Operation</div><div class="ms-sub">Technical foundation — Month 2–5</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-forest chip">Technical</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Can identify all site equipment by name and function. Can perform daily equipment checks independently and document correctly. Can operate primary drilling equipment under G4 supervision without intervention for routine tasks. Understands equipment maintenance schedule and can explain rationale.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 uses "watch and narrate → assisted execution → supervised independent" progression (Tool 3 design framework). Milestone is signed when the G4 can step back to supervised independent on routine tasks without operational risk. Minimum 3 independent equipment checks completed and verified.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">COMMON FAILURE MODES</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 advances trainee to independent too early — operational risk. Trainee knows procedure but cannot explain rationale — surface learning only, will fail in non-routine situations. Equipment check documentation is completed but not reviewed by G4 — quality drops when not observed.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF REQUIREMENT</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 signature. SM verification that G4 observation was genuine (spot-check of G4 documentation). Not a written exam — demonstrated competency only.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M3</div>
+            <div><div class="ms-title">Drilling Fundamentals — Routine Operations</div><div class="ms-sub">Core technical competency — Month 4–10</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-forest chip">Technical</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Executes standard drilling programme sequences independently with G4 available. Maintains correct parameters (speed, pressure, angle) for geological conditions encountered. Completes shift handover correctly — written record, verbal debrief to G4 or G2. Identifies and reports deviations from expected geological conditions.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 reviews 10 consecutive shift records for parameter compliance and documentation quality. G4 conducts debrief on 3 shifts chosen without advance notice. Trainee must be able to explain decisions made during each shift, not just record that they happened. SM spot-checks one shift per month.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">COMMON FAILURE MODES</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Compliant in routine conditions but uncertain in variation — passes M3 too early, fails in G2 independent conditions. Shift records are filled in retrospectively rather than in real time. Trainee cannot explain why they made a parameter decision — execution without understanding.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF REQUIREMENT</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 signature based on shift record review and debrief quality. SM approval. This milestone typically takes longest — 4–6 months from start. Do not rush.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M4</div>
+            <div><div class="ms-title">Non-Routine Problem Response</div><div class="ms-sub">Situational competency — Month 9–15</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-brass chip">Advanced</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Responds correctly to at least 2 documented non-routine situations (equipment fault, unexpected geological condition, weather event). Knows escalation thresholds — when to handle independently vs when to call the G4. Does not panic or freeze. Documents the event and their decision process.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Based on documented real events — not simulated. G4 reviews the trainee's incident/event documentation and debriefs each one using the four-question framework. The quality of the trainee's reflection (Q2) and principle formation (Q3) is the primary assessment signal. G4 must have 2 documented events to sign off.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">COMMON FAILURE MODES</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Trainee always escalates — even events they could handle. This is a confidence and decision-rights gap, not a capability gap. G4 must explicitly grant "attempt first" authority for a defined range of situations. Waiting for naturally occurring non-routine events can delay M4 — G4 should deliberately introduce low-risk variation.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF REQUIREMENT</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 signature with 2 documented events attached. SM review of event documentation. The quality of documentation is itself a milestone signal — poor documentation at M4 predicts difficulty at G2 independent level.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M5</div>
+            <div><div class="ms-title">Peer Support — Teaching Readiness</div><div class="ms-sub">People capability signal — Month 12–18</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-sienna chip">People</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Has successfully briefed a newer G1 on at least one task they have mastered — demonstrating, explaining, and checking for understanding. Can answer a newer G1's technical question accurately. G4 has observed this interaction directly at least once. This is the first signal of G4 potential — the trainee who teaches well is the future G4 candidate.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 observes at least one peer teaching interaction and debriefs both the teaching G1 and the learning G1 afterwards. Did the learning G1 understand? Did the teaching G1 check for understanding rather than just demonstrating? This is the first use of Kolb's cycle assessment at G1 level.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">STRATEGIC IMPORTANCE</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">M5 is the earliest G4 pipeline signal. A G1 who completes M5 with strong quality is flagged in the quarterly talent review as a G4 candidate — this starts the long-term tracking 3+ years before the G3→G4 transition. Do not miss this signal.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF REQUIREMENT</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 signature with observation note. SM approval. Ba countersignature — Group HR records this milestone as a pipeline quality signal and flags strong performers in the quarterly talent review.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">G1 Induction — First 30 Days</div>
+    <div class="card-body" style="margin-bottom:12px">The first 30 days set the foundation for the trainee's decision at month 3. A G1 who enters with clear expectations, an assigned G4, and a visible development plan is significantly more likely to reach the month-3 check-in as an engaged trainee. A G1 who is dropped into site operations without structure is already at risk.</div>
+    <table class="dtable">
+      <thead><tr><th>Day / Period</th><th>G4 action</th><th>SM action</th><th>Group HR action</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Day 1</td><td>Meet, site orientation, introduce the G1→G4 pathway visually. Assign to G4 as named coach. "I am your G4. Here is what we are going to do together."</td><td>Brief welcome — SM states commitment to the trainee's development. Confirms G4 assignment.</td><td>Induction pack sent before day 1: Valentis overview, grade descriptions, development promise, pay structure, contact for Group HR (Ba).</td></tr>
+        <tr><td style="font-weight:600">Days 2–5</td><td>Site safety induction, equipment walk-through (watch only). No independent operation. G4 narrates everything. "Tell me what you're seeing" at end of each session.</td><td>Check in with G4 — is the trainee asking questions? Engaging? Flag any concerns early.</td><td>—</td></tr>
+        <tr><td style="font-weight:600">Week 2–4</td><td>Begin assisted execution on equipment. Daily brief debrief (10 min). M1 assessment begins. Record observations in milestone card.</td><td>One-to-one with trainee at end of week 2: "How's it going? What's one thing your G4 has taught you?" This is a welfare check, not a performance review.</td><td>—</td></tr>
+        <tr><td style="font-weight:600">Week 4–6</td><td>Review trainee's development plan with them: "Here's where you are, here's what we're working toward." Set M1 target completion date together.</td><td>Review G4's milestone card for the trainee. Any concerns flagged to Ba.</td><td>—</td></tr>
+        <tr><td style="font-weight:600">Month 3</td><td>Run the formal month-3 check-in (Tool 3 framework). Document. Escalate if signals present.</td><td>Receive G4's check-in report. Act on escalation within 1 week if triggered.</td><td>Review check-in data from all countries. Flag patterns. Update pipeline report.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-g2" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Grade Profile</div>
+    <h1 class="page-title">G2 — <em>Driller</em></h1>
+    <p class="page-desc">The G2 Driller has demonstrated foundational competency and is now developing operational independence. The G2 stage is characterised by progressive autonomy — the G4 steps back, the G2 steps up. The key development signal at G2 is how the driller behaves when the G4 is not watching.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:14px">
+    <div style="display:grid;gap:10px">
+      <div class="card" style="margin-bottom:0">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--forest);margin-bottom:10px">Grade Specification</div>
+        <div style="display:grid;gap:6px;font-size:13px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">GRADE</div><div style="font-weight:700;color:var(--ink)">G2</div></div>
+            <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">TYPICAL DURATION</div><div style="font-weight:700;color:var(--ink)">12–18 months</div></div>
+          </div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">PRIMARY DEVELOPMENT RELATIONSHIP</div><div style="font-weight:700;color:var(--ink)">G4 (oversight) · G3 where available (peer learning)</div></div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">KEY DEVELOPMENT SIGNAL</div><div style="font-weight:700;color:var(--forest)">Behaviour when G4 is not present</div></div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">PROGRESSION TARGET</div><div style="font-weight:700;color:var(--ink)">≥75% progress to G3</div></div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">INDONESIA CONTEXT</div><div style="font-weight:700;color:var(--red)">3 G3 vacancies create pressure on G2 pipeline — accelerated pathway for top performers</div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--forest);margin-bottom:10px">Role at G2</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">The G2 executes standard operations independently. They are no longer observing and assisting — they are doing. The G4's role shifts from active coach to available supervisor. The G2 makes operational decisions within defined parameters and escalates only when those parameters are exceeded. They begin to see themselves as drillers, not trainees.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title">G2 Milestones — Required for G3 Advancement</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;margin-bottom:14px;line-height:1.7">Four milestones required for G2→G3 advancement. The G2 stage develops two parallel tracks: advanced technical competency and early people leadership. Both must be demonstrated. Technical excellence alone is not sufficient for G3 advancement.</div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M1</div>
+            <div><div class="ms-title">Independent Operations — Complex Conditions</div><div class="ms-sub">Advanced technical — Months 1–8 at G2</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-forest chip">Technical</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Manages a full shift independently — including at least one non-routine event — without G4 intervention. Adapts drilling parameters to different geological formations without direction. Completes programme sequences in variable conditions. G4's role is remote availability, not active supervision.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 reviews shift records for 8 consecutive independent shifts. Debriefs 3 shifts in depth. SM spot-checks one shift record per 6-week period. The G4 specifically looks for evidence of adaptive decision-making — changes made for good operational reasons, documented and explained.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">INDONESIA ACCELERATED NOTE</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">For the Indonesia G3 gap: identify G2 drillers who are approaching M1 completion. These are the accelerated pipeline candidates. Do not advance them prematurely — but do prioritise their G4 coaching time to accelerate M1 to M4 completion within 10–12 months rather than 12–18.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 signature. SM approval. Shift records retained for Group HR quarterly review.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M2</div>
+            <div><div class="ms-title">Equipment Maintenance and Fault Diagnosis</div><div class="ms-sub">Technical mastery — Months 4–12 at G2</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-forest chip">Technical</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Can perform scheduled maintenance on primary drilling equipment independently. Can diagnose common faults — describe the fault, its likely cause, and the correct response — without reference to the manual. Has managed at least one equipment fault situation: identified, documented, escalated or resolved, and debriefed.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 observes one scheduled maintenance session without assistance. G4 conducts a verbal fault diagnosis assessment — presents 3 fault scenarios, G2 diagnoses each. One documented real fault event required. G4 rates: "Would I be comfortable with this G2 handling this without me available?" If no — M2 is not complete.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">COMMON FAILURE MODES</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G2 can perform maintenance correctly but cannot explain why each step matters. Surface competency is not M2. The maintenance knowledge must be transferable — a G2 who cannot explain maintenance to a G1 will not complete G3-M3 (training design capability).</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 signature with fault documentation attached. SM review.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M3</div>
+            <div><div class="ms-title">G1 Trainee Day-to-Day Supervision</div><div class="ms-sub">People leadership — Months 8–15 at G2</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-sienna chip">People</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Has supervised a G1 trainee through a full work shift — assigning tasks, monitoring execution, providing real-time correction, and briefing the G4 at end of shift. The G4 is available but not present on the floor. The G2's debrief to the G4 covers: what the G1 did well, what needed correction, and what the G2 will do differently next time they supervise.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 observes the G2-G1 interaction from distance on at least 2 occasions. G4 debriefs the G2 using the four-question framework after each supervision session. G4 also separately debriefs the G1: "How was working with [G2]? Did you understand what you were asked to do?" The G1's experience of the G2's supervision is part of the milestone assessment.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">STRATEGIC IMPORTANCE</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">M3 quality predicts G4 capability more than any other G2 milestone. A G2 who cannot give clear direction to a G1, or who cannot debrief their own supervision experience with self-awareness, will struggle at G3→G4. Flag strong M3 performers as G4 pathway candidates in the quarterly talent review.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 signature with 2 observation notes attached. SM review. Ba notified of strong M3 performers at next quarterly talent review.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M4</div>
+            <div><div class="ms-title">Operational Planning and Shift Leadership</div><div class="ms-sub">Leadership readiness — Months 12–18 at G2</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-brass chip">Leadership</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Plans and executes a shift with a team of G1 trainees — assigns work, manages time and sequence, responds to unexpected events, and completes the shift to programme targets. Presents the shift plan to the G4 before execution and the shift summary after. Has identified and communicated one efficiency or quality improvement observed during a shift.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 reviews the pre-shift plan and post-shift summary. G4 interviews the G1 team members: did they understand the plan? Did the G2 adjust when things changed? G4 assesses: is this G2 ready to run a shift without me available? This is the G3 readiness gate — G4 should only sign M4 when the honest answer is yes.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">COMMON FAILURE MODES</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G2 plans well but loses the plan under pressure — reverts to task-by-task reaction. The shift plan is a thinking tool; if the G2 abandons it when conditions change, they are not ready for G3 independence. The G4 should introduce a planned disruption during the observed shift to test adaptive planning.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 signature. SM approval with specific note: "This G2 is ready for G3 independent operation." Group HR receives G2→G3 promotion recommendation with all four milestone cards attached.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <div id="page-g3" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Grade Profile</div>
+    <h1 class="page-title">G3 — Senior<br><em>Driller</em></h1>
+    <p class="page-desc">The G3 Senior Driller is the most operationally capable driller grade. G3s run complex operations, manage G1 trainees, and are the primary operational resource at each site. The G3→G4 transition is the hardest in the pipeline — it requires not just technical mastery but a demonstrated shift from doing to developing others.</p>
+  </div>
+  <div class="info red"><strong>Laos G3 emergency — June 2026 activation deadline</strong>Two G3 candidates in Laos must have individual development plans activated by June 2026. The first Laos G4 retirement is projected within 18 months. The G3→G4 development cycle at Valentis takes 18–24 months under normal conditions. Without June 2026 activation, the net Laos G4 deficit by 2027 is unavoidable.</div>
+
+  <div style="display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:14px">
+    <div style="display:grid;gap:10px">
+      <div class="card" style="margin-bottom:0">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--forest);margin-bottom:10px">Grade Specification</div>
+        <div style="display:grid;gap:6px;font-size:13px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">GRADE</div><div style="font-weight:700;color:var(--ink)">G3</div></div>
+            <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">TYPICAL DURATION</div><div style="font-weight:700;color:var(--ink)">18–24 months</div></div>
+          </div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">PRIMARY FOCUS</div><div style="font-weight:700;color:var(--ink)">Technical mastery + people development proof</div></div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">G4 READINESS SIGNAL</div><div style="font-weight:700;color:var(--forest)">G1 trainee progresses past month 3 under G3's direct development</div></div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">CRITICAL MILESTONE</div><div style="font-weight:700;color:var(--forest)">G3-M4 — G1 development accountability</div></div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7px;color:var(--ink4);letter-spacing:.5px;margin-bottom:2px">PROGRESSION TARGET</div><div style="font-weight:700;color:var(--ink)">≥50% progress to G4</div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--forest);margin-bottom:10px">The G3→G4 Shift</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">The G3→G4 transition is the hardest promotion at Valentis because it requires a fundamental shift in identity — from "I am the best driller" to "I make other drillers better." Many technically excellent G3s fail this transition not because they lack capability, but because the G4 role has never been clearly defined as a development role with explicit accountability for trainee conversion rate.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title">G3 Milestones — Required for G4 Advancement</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;margin-bottom:14px;line-height:1.7">Five milestones required. The final two are people-focused and are the primary G4 readiness signals. A G3 who completes M1–M3 but not M4–M5 is not G4-ready — regardless of technical excellence.</div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M1</div>
+            <div><div class="ms-title">Technical Mastery — Non-Standard Operations</div><div class="ms-sub">Advanced technical — Months 1–10 at G3</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-forest chip">Technical</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Has successfully led complex or non-standard drilling operations — unusual geological conditions, programme deviation, multi-phase or multi-shift operation. Has made technical decisions under pressure that deviated from standard procedure for good operational reasons, and can fully justify those decisions.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">SM review of 3 documented non-standard operations — written record plus verbal debrief with G4 or SM. The debrief specifically tests: did the G3 know when to deviate and when to escalate? The boundary between autonomous G3 decision and SM escalation is the core competency at this milestone.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">CROSS-SITE EXPOSURE VALUE</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">A 4–6 week cross-site exposure to Thailand or Indonesia accelerates M1 by exposing the G3 to geological and operational conditions different from their home site. Laos G3 candidates should have cross-site exposure built into their development plan — this both accelerates M1 and satisfies the G4 readiness "independent in new context" requirement.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">SM signature (not G4 — SM is the appropriate assessor at this level of technical complexity). Group HR review at next quarterly talent review.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M2</div>
+            <div><div class="ms-title">Programme Management and Reporting</div><div class="ms-sub">Operational leadership — Months 6–14 at G3</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-forest chip">Operational</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Manages a multi-week drilling programme segment — plans the sequence, tracks daily progress against programme targets, identifies deviations, adjusts the plan, and reports to the SM. Produces a written programme summary that the SM can use without needing to ask follow-up questions.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">SM reviews one complete programme segment managed by the G3 — plan, daily records, summary report. SM rates the report: "Can I use this to brief the client or the COO without asking clarifying questions?" If yes — M2 is complete. This milestone directly prepares the G3 for the G4 programme reporting accountability.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">COMMON FAILURE MODES</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G3 tracks what happened but not why, and what the response was. Reports that describe events without analysis or decision rationale do not meet M2 standard. The G4 coaching programme's debrief discipline (Q2 and Q3) is the precursor capability that M2 builds on.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">SM signature with programme summary attached. Group HR receives copy for pipeline file.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M3</div>
+            <div><div class="ms-title">Technical Training Design and Delivery</div><div class="ms-sub">Teaching capability — Months 8–16 at G3</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-sienna chip">Teaching</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Has designed and delivered a structured learning session for G1 trainees — not just assigned tasks, but planned what the trainee would learn, how they would learn it, and how the G3 would know they had learned it. Has demonstrated at least one teaching session using the watch-and-narrate → assisted execution → debrief progression from Tool 3.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 or SM observes one G3-led teaching session. Assesses: did the G3 use the four learning modes? Did the session end with a specific commitment from the G1? Could the G3 articulate what the G1 had learned at the end of the session? The G4 coaching programme content (Tool 3) is the reference framework — G3 should have been exposed to it before M3 assessment.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">LINK TO G4 COACHING PROGRAMME</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G3 candidates approaching M3 should be invited to observe or co-facilitate one session of the G4 coaching programme. This exposes them to the framework before they need to apply it at G4 level — accelerating their own M3 progress and seeding their future coaching approach.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 or SM signature with observation note. Ba reviews at quarterly talent review — strong M3 performance triggers formal G4 candidacy flag.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M4</div>
+            <div><div class="ms-title">G1 Trainee Development Accountability</div><div class="ms-sub">Primary G4 readiness signal — Months 12–22 at G3</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-brass chip">Development</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Has taken primary development responsibility for a G1 trainee through their first 6 months — including running the month-3 check-in. The G1 trainee must have progressed past month 3 without attrition. G3 has produced written development updates to the SM at month 1, month 3, and month 6. G3 has raised at least one at-risk concern proactively — before the G1's behaviour became a departure risk.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">SM reviews all three development updates. Ba assesses the check-in quality using the month-3 check-in documentation framework (Tool 3). The G1's outcome — progressed past month 3 — is the primary success indicator. A G3 whose G1 trainee leaves at month 3 without the G3 having raised any at-risk signals has not completed M4, regardless of other factors.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:.5px;margin-bottom:5px">LAOS URGENCY NOTE</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">For Laos G3 candidates: M4 must be in progress by June 2026 — meaning the G3 must be actively developing a G1 trainee with Group HR oversight by that date. If no G1 is currently assigned, Ba must arrange the assignment in coordination with the Laos SM immediately.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">SM signature. Ba countersignature — Group HR must be involved in G4 readiness assessments. Three development updates attached. Check-in documentation attached.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-card">
+          <div class="ms-header" onclick="toggleMs(this)">
+            <div class="ms-num">M5</div>
+            <div><div class="ms-title">Performance and Conduct Management — G1 Level</div><div class="ms-sub">People management proof — Months 16–24 at G3</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="ms-badge chip-sienna chip">People Mgmt</span><span class="ms-icon" style="font-family:var(--fm);color:var(--forest);font-size:14px">+</span></div>
+          </div>
+          <div class="ms-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT MUST BE DEMONSTRATED</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Has managed at least one performance or conduct situation with a G1 trainee — lateness, quality issue, attitude concern — using the developmental feedback approach (Tool 3). Has documented the situation, the conversation, and the outcome. Has escalated to the SM when the situation exceeded G3 authority. Has not ignored a performance issue because it felt uncomfortable.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">ASSESSMENT METHOD</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">SM debriefs the G3 on the documented performance situation: "What did you do? Why? What happened? What would you do differently?" The quality of the G3's reflection — not just the outcome — is the assessment criterion. A G3 who handled a situation perfectly but cannot articulate why is less ready for G4 than a G3 who made a mistake and can fully debrief it.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">COMMON FAILURE MODES</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G3 avoids the performance conversation because it is uncomfortable. This is a very common G3 failure mode — technically strong, people-avoidant. A G3 who does not complete M5 is not G4-ready, because the G4 role includes managing G1 attendance, performance, and exit conversations. The G4 who avoids these conversations is the G4 whose G1 attrition rate stays at 58%.</div></div>
+              <div><div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">SIGN-OFF</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">SM signature with documented performance situation attached. Ba countersignature. All five G3 milestones complete → G4 promotion recommendation to Group HR and COO.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-g4" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Grade Profile</div>
+    <h1 class="page-title">G4 — Lead<br><em>Driller</em></h1>
+    <p class="page-desc">The G4 Lead Driller is the most strategically important role at Valentis below Site Manager. The G4's technical capability keeps programmes running. The G4's coaching quality determines whether the next generation of drillers exists. The G4 is accountable for both.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">The G4 Accountability Shift</div>
+    <div class="vx-title">The G4 is not the best driller. The G4 is the person who creates the next best drillers.</div>
+    <div class="vx-body">This distinction is the single most important framing in the G4 role profile. G4s hired or promoted because of technical excellence frequently default to the mindset that their job is to drill — and that trainee development is a secondary administrative burden. The G4 coaching programme (Tool 3), the G4 performance metrics below, and this pathway tool all exist to make the people development accountability primary and explicit, not secondary and aspirational.</div>
+  </div>
+  <div class="grid-2">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">G4 Role Profile</div>
+      <table class="dtable" style="margin-top:4px">
+        <thead><tr><th>Dimension</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Grade</td><td>G4</td></tr>
+          <tr><td style="font-weight:600">Title</td><td>Lead Driller</td></tr>
+          <tr><td style="font-weight:600">Reports to</td><td>Site Manager (G5)</td></tr>
+          <tr><td style="font-weight:600">Supervises directly</td><td>G1 trainees (2–4 per G4, depending on cohort size) and G2/G3 drillers on operational matters</td></tr>
+          <tr><td style="font-weight:600">Technical accountability</td><td>Leads complex and non-standard drilling operations. Final technical decision-maker below SM for programme delivery.</td></tr>
+          <tr><td style="font-weight:600">People accountability</td><td>Primary development relationship with assigned G1 trainees. Accountable for trainee conversion rate. Runs month-3 check-in for each trainee. Develops G2/G3 drillers through daily debrief practice.</td></tr>
+          <tr><td style="font-weight:600">Decision rights</td><td>Independently: adjust trainee schedule within SM-approved parameters, run month-3 check-in, sign G1–G2 milestones, debrief any driller grade. With SM approval: trainee assignment changes, performance escalations above informal level, G3 milestone sign-off.</td></tr>
+          <tr><td style="font-weight:600">Key performance metrics</td><td>G1 conversion rate (primary). Programme delivery % (shared with SM). G4 coaching quality rubric score (annual Ba assessment). G3 milestone progression rate.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">G4 Performance Metrics — 2026</div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:12px 14px;border:1px solid var(--border);border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+            <div style="font-weight:700;font-size:13px;color:var(--ink)">G1 Trainee Conversion Rate</div>
+            <span class="chip chip-forest">Primary</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:6px">Percentage of assigned G1 trainees who successfully reach G2 milestone completion. Measured per cohort and annually. Target: ≥70%. Myanmar current: 58%.</div>
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4)">Weight in performance review: 40%</div>
+        </div>
+        <div style="padding:12px 14px;border:1px solid var(--border);border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+            <div style="font-weight:700;font-size:13px;color:var(--ink)">Coaching Quality Rubric Score</div>
+            <span class="chip chip-brass">Secondary</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:6px">Ba's annual observed coaching assessment using the five-dimension rubric (Tool 3). Score ≥3/5 on all dimensions is the minimum standard. Score of 4–5 on all dimensions is performance recognition.</div>
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4)">Weight in performance review: 30%</div>
+        </div>
+        <div style="padding:12px 14px;border:1px solid var(--border);border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+            <div style="font-weight:700;font-size:13px;color:var(--ink)">Month-3 Check-in Completion Rate</div>
+            <span class="chip chip-muted">Process</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:6px">100% completion target — every trainee receives a documented month-3 check-in within days 85–95 of their start date. No exceptions. Completion tracked by Group HR monthly.</div>
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4)">Weight in performance review: 15%</div>
+        </div>
+        <div style="padding:12px 14px;border:1px solid var(--border);border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+            <div style="font-weight:700;font-size:13px;color:var(--ink)">Programme Delivery Contribution</div>
+            <span class="chip chip-muted">Operational</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:6px">G4's technical operations contribute to the site's programme delivery %. Shared metric with SM. Target: G4's assigned programmes deliver ≥93% of planned metres/targets.</div>
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4)">Weight in performance review: 15%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">G4 Ongoing Development — Post-Certification</div>
+    <div class="card-body" style="margin-bottom:12px">G4 certification is not the end of development. The G4 who stops developing becomes the G4 whose conversion rate stagnates. Three ongoing development mechanisms keep G4 capability current.</div>
+    <table class="dtable">
+      <thead><tr><th>Development mechanism</th><th>Frequency</th><th>Content</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Quarterly coaching quality debrief</td><td>Quarterly</td><td>Ba reviews the G4's conversion rate data, check-in completion, and any at-risk flags from the prior quarter. Debrief focuses on: what is working in their coaching approach, one specific development commitment for the next quarter. Replaces or supplements regular SM 1:1 development conversation.</td><td>Ba (design + facilitation)</td></tr>
+        <tr><td style="font-weight:600">SM peer forum participation (as presenter)</td><td>Once per year minimum</td><td>Each G4 presents one practice from their coaching or development approach at the SM peer forum — either in person with the SM, or via video to the group. The act of presenting consolidates their own practice and creates the knowledge transfer infrastructure.</td><td>Ba (coordinates) + SM (nominates)</td></tr>
+        <tr><td style="font-weight:600">G3 candidate mentoring</td><td>Ongoing when G3 candidate assigned</td><td>G4 is assigned as the formal mentor for a G3 candidate working toward G4 readiness. The G4's role: model the coaching behaviours, debrief the G3's teaching attempts, sign G3 milestones M1–M3. This role is both a development contribution and a further development of the G4's own coaching capacity.</td><td>SM (assign) + Ba (framework)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-transitions" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Transition Decision Framework</div>
+    <h1 class="page-title">Transition Decision<br><em>Framework</em></h1>
+    <p class="page-desc">Grade transitions at Valentis are decisions, not events. They require deliberate assessment, multi-level sign-off, and a clear rationale. This section gives Ba and SMs the framework for making consistent, defensible promotion decisions — and for managing situations where a candidate is stalled or at risk of regression.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">The Promotion Decision Criteria</div>
+    <div class="card-body" style="margin-bottom:12px">Every promotion decision at Valentis is evaluated against four criteria. All four must be satisfied before a promotion recommendation is made. A candidate who meets three of four is not ready — they have a defined gap that needs a defined intervention.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div style="padding:16px;background:var(--forest-dim);border:2px solid var(--forest-border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:1px;margin-bottom:6px">CRITERION 1 — MILESTONES</div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px">All grade milestones completed and signed off</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Every milestone for the current grade must have a G4 or SM signature and a completion date. Partial completion of a milestone does not count. No exceptions — if a milestone is incomplete, the promotion is deferred until it is complete.</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:1px;margin-bottom:6px">CRITERION 2 — OBSERVATION</div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px">SM has directly observed next-grade behaviour</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The SM must be able to state: "I have personally observed this candidate behaving at the next grade level — not just reaching the current grade standard." For G3→G4 this means the SM has seen the candidate run a development conversation. For G1→G2 this means independent operation without G4 prompting.</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:1px;margin-bottom:6px">CRITERION 3 — TIME IN GRADE</div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px">Minimum time-in-grade satisfied</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G1: minimum 12 months. G2: minimum 12 months. G3: minimum 18 months. These minimums exist because milestone completion before the minimum time often reflects G4 sign-off quality rather than candidate readiness. A candidate completing all G1 milestones in 8 months should be reviewed carefully — are the milestones genuinely complete, or was the G4 advancing them prematurely?</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:1px;margin-bottom:6px">CRITERION 4 — GROUP HR REVIEW</div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px">Group HR pipeline review completed</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Ba reviews all promotion recommendations at the quarterly talent review. For G3→G4, Ba countersigns the promotion recommendation before it goes to COO. This is not a veto — it is a quality check. Ba reviews milestone documentation, checks for consistency across countries, and confirms the promotion against the pipeline plan. Any concern raised by Ba must be resolved before the promotion proceeds.</div>
+      </div>
+    </div>
+    <div class="info brass"><strong>The accelerated pathway exception — Indonesia G3 context</strong>In extraordinary circumstances (Indonesia G3 vacancy crisis), a G2 candidate may be advanced before full time-in-grade if milestones 1–4 are complete, SM has observed next-grade behaviour, and Ba has approved in writing. This exception must be documented and the candidate's development plan must include completion of any outstanding elements within 6 months of promotion. It is an exception — not a standard practice.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Stalled Candidate Protocol</div>
+    <div class="card-body" style="margin-bottom:12px">A candidate who has not progressed on any milestone in 3+ consecutive months is considered stalled. Stalled candidates require a diagnostic conversation before any further development investment is made.</div>
+    <table class="dtable">
+      <thead><tr><th>Stall duration</th><th>Diagnostic action</th><th>Possible findings</th><th>Response</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">3 months on same milestone</td><td>G4 reviews with Ba: what specific gap is preventing milestone completion? Is it capability, motivation, process, or structural?</td><td>Knowledge gap (trainee hasn't received the right development). Process gap (milestone criteria unclear). G4 quality gap (G4 not running structured sessions).</td><td>Targeted intervention on the specific gap. Adjust G4 coaching approach. Clarify milestone criteria if ambiguous.</td></tr>
+        <tr><td style="font-weight:600">6 months stalled</td><td>SM formal review with Ba. Consider: is this the right career path for this individual? Is the stall capability-based or motivation-based?</td><td>Motivation gap (candidate not invested in G4 pathway). Ceiling effect (capability at current grade is the ceiling). Personal circumstances (external factors affecting development).</td><td>Honest career conversation with candidate. If motivation gap — consider role redesign or exit. If ceiling — acknowledge and manage at current grade. If personal circumstances — development pause with review date.</td></tr>
+        <tr><td style="font-weight:600">12 months stalled / no progression from G1</td><td>Ba-led review. Consider: is this person viable for the Valentis pipeline at any grade?</td><td>Fundamental capability or culture fit mismatch. G4 quality failure (candidate never received adequate development). Onboarding failure (development promise not delivered).</td><td>Exit conversation or formal performance process if there is conduct involved. Root cause analysis — if G4 quality caused the stall, that G4's coaching approach is reviewed across all their trainees.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">The Promotion Conversation — What to Say</div>
+    <div class="card-body" style="margin-bottom:12px">The promotion conversation is a development moment, not an HR administrative event. The SM and G4 together have the conversation with the candidate — framing what the promotion means, what the new expectations are, and what the candidate must do to succeed at the next grade.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="padding:14px 16px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT THE CONVERSATION INCLUDES</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">What the promotion recognises. What is different at the new grade — accountabilities, expectations, and freedoms. What the new pay step is (confirm with Ba before the conversation — no surprises). What the first 90-day development focus will be at the new grade. Who their development relationship is with at the new grade. What the next milestone target is.</div>
+      </div>
+      <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">WHAT THE CONVERSATION DOES NOT INCLUDE</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">A general welcome and congratulations with no development content. An announcement without a conversation. A pay change communication without role expectation clarity. Any suggestion that the promoted person has "arrived" — every grade is a foundation for the next, not a destination.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-country" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Country Pathway Adaptations</div>
+    <h1 class="page-title">Country<br><em>Adaptations</em></h1>
+    <p class="page-desc">The G1→G4 pathway is consistent across all Valentis countries in its milestone structure. Country adaptations address local context — geological conditions, language, labour law, SM capability, and the specific pipeline risks that make each country's pathway implementation different from the others.</p>
+  </div>
+  <div class="tabs" id="tabs-country">
+    <div class="tab active" onclick="showTab('c-myanmar',this)">Myanmar</div>
+    <div class="tab" onclick="showTab('c-laos',this)">Laos</div>
+    <div class="tab" onclick="showTab('c-indonesia',this)">Indonesia</div>
+    <div class="tab" onclick="showTab('c-thailand',this)">Thailand</div>
+  </div>
+  <div class="tab-body active" id="tab-c-myanmar">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Myanmar — Pathway Profile</div>
+      <div class="vx-title">Priority: fix G1→G2 conversion. Address month-3 attrition before anything else.</div>
+      <div class="vx-body">Myanmar is Valentis's highest-volume trainee country and its highest-attrition context. The 58% conversion rate is 12pp below target and costs $18K–$36K per year in avoidable replacement cost. The pathway adaptation for Myanmar focuses on the G1 stage — tightening the first 90 days, activating the month-3 check-in, and addressing the G4 coaching quality gap through the coaching programme.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Myanmar Adaptations — G1 Stage</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">Month-3 check-in is mandatory and monitored.</strong> Ba tracks Myanmar check-in completion in the monthly HR report. Any check-in missed triggers a direct follow-up with the Myanmar SM within 48 hours.</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Language adaptation.</strong> All G1 milestone cards and check-in documentation are in Myanmar language. G4 coaching frameworks are delivered in Myanmar language via the coaching programme.</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Family pressure acknowledgement.</strong> Myanmar induction explicitly acknowledges family expectations and the long-term nature of the G1→G4 pathway. Trainees are asked at induction: "What does your family expect from this job?" — and this is incorporated into their development plan framing.</div>
+          <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">G4 coaching programme priority.</strong> All 3 Myanmar G4 supervisors complete the G4 coaching programme by June 2026. Conversion rate is reviewed at Q3 2026 as the primary measure of programme impact.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Myanmar 2026 Pipeline Targets</div>
+        <table class="dtable" style="margin-top:4px">
+          <thead><tr><th>Metric</th><th>Current</th><th>Q3 2026 target</th><th>Q4 2026 target</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">G1→G2 conversion rate</td><td><span style="color:var(--red);font-weight:700">58%</span></td><td>65%+</td><td>70%+</td></tr>
+            <tr><td style="font-weight:600">Month-3 check-in completion</td><td>Informal only</td><td>100% documented</td><td>100% documented</td></tr>
+            <tr><td style="font-weight:600">G4 coaching programme</td><td>Not started</td><td>All 3 G4s certified</td><td>Sustained</td></tr>
+            <tr><td style="font-weight:600">Active G3→G4 candidates</td><td>Unknown</td><td>Identified and assessed</td><td>Plans active</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-c-laos">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Laos — Pathway Profile</div>
+      <div class="vx-title">Priority: activate G3→G4 development plans by June 2026. The retirement clock is running.</div>
+      <div class="vx-body">Laos has a stable G1 pipeline and good conversion rates. The crisis is at the top: 3 of 5 G4 senior drillers are within 3 years of retirement, and only 2 G3 candidates exist to fill those roles. Without June 2026 activation of individual development plans, the G3→G4 development cycle cannot complete before the first retirement in 2027.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Laos Adaptations — G3→G4 Stage</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">June 2026 is a hard deadline.</strong> Both Laos G3 candidates must have signed individual development plans by June 2026, each with a specific G4 readiness target date, a G4 sponsor, and cross-site exposure planned.</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Retiring G4 as mentor.</strong> Each Laos G3 candidate is paired with a retiring G4 as formal mentor — minimum 6 months of structured knowledge transfer before the G4's retirement date. Knowledge transfer sessions documented by Ba.</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Cross-site exposure — Thailand Q3 2026.</strong> Laos G3 candidate 1 spends 4 weeks in Thailand Q3 2026. Laos G3 candidate 2 in Indonesia Q4 2026 (subject to Indonesia recovery). Cross-site exposure counts toward G3-M1 milestone completion.</div>
+          <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">G3-M4 priority.</strong> Both candidates must be actively developing a G1 trainee by June 2026 — this is the G3-M4 milestone in progress. If no G1 is assigned, Ba arranges the assignment with the Laos SM immediately.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Laos 2026 Pipeline Targets</div>
+        <table class="dtable" style="margin-top:4px">
+          <thead><tr><th>Metric</th><th>Current</th><th>June 2026</th><th>Q4 2026</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">G3→G4 dev plans active</td><td><span style="color:var(--red);font-weight:700">0</span></td><td><span style="color:var(--forest);font-weight:700">2 activated</span></td><td>On track</td></tr>
+            <tr><td style="font-weight:600">Cross-site exposure</td><td>0</td><td>Candidate 1 planned</td><td>Both complete</td></tr>
+            <tr><td style="font-weight:600">G3-M4 in progress</td><td>Unknown</td><td>Both candidates assigned G1</td><td>G1 past month 3</td></tr>
+            <tr><td style="font-weight:600">Candidate 1 G4 target</td><td>Not set</td><td>Date set</td><td>On track for Q2 2027</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-c-indonesia">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Indonesia — Pathway Profile</div>
+      <div class="vx-title">Priority: fill G3 vacancies, then build the G2→G3 pipeline to prevent recurrence.</div>
+      <div class="vx-body">Indonesia has 3 G3 vacancies open 40+ days. Programme delivery has dropped from 93% to 84%. External sourcing is the immediate response, but the structural fix is building a G2→G3 pipeline that produces G3s internally within 12–15 months. The Indonesia SM's resistance to Group HR involvement is a governance risk that Ba must manage carefully — the pipeline work must proceed regardless.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Indonesia Adaptations — G2→G3 Accelerated Pipeline</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">Emergency sourcing first.</strong> 3 G3 external hires needed by May 2026. Group HR leads the process. Indonesia SM is hiring manager. Delivery recovery cannot wait for the pipeline fix — both must run in parallel.</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">G2 accelerated pathway identification.</strong> Ba reviews all Indonesia G2 drillers for M1–M3 completion status. Any G2 who is ≥60% through their milestones is identified as an accelerated candidate. G4 coaching time prioritised for these candidates.</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Labour law compliance.</strong> Indonesia has stricter employment regulations. All promotion decisions — and any performance management that might lead to exit — must involve Group HR review before any action. The Indonesia SM must not proceed unilaterally.</div>
+          <div style="padding:10px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--brass)">SM engagement strategy.</strong> Present Thailand data at Q2 peer forum: Thailand's pipeline practices → higher conversion rate → lower vacancy risk. Data, not compliance pressure, is the Indonesia SM influence mechanism. COO endorsement of Group HR pipeline authority is the backstop.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Indonesia 2026 Pipeline Targets</div>
+        <table class="dtable" style="margin-top:4px">
+          <thead><tr><th>Metric</th><th>Current</th><th>May 2026</th><th>Q4 2026</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">G3 headcount</td><td><span style="color:var(--red);font-weight:700">-3 vacancies</span></td><td>All 3 filled</td><td>Stable</td></tr>
+            <tr><td style="font-weight:600">Programme delivery</td><td><span style="color:var(--red);font-weight:700">84%</span></td><td>88%+</td><td>93%+</td></tr>
+            <tr><td style="font-weight:600">G2 accelerated candidates</td><td>Unknown</td><td>2–3 identified</td><td>Plans active</td></tr>
+            <tr><td style="font-weight:600">SM Group HR engagement</td><td>Resistant</td><td>Participating in peer forum</td><td>Applying check-in framework</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="tab-body" id="tab-c-thailand">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Thailand — Pathway Profile</div>
+      <div class="vx-title">Priority: document what is working and transfer it. Thailand is the pipeline benchmark.</div>
+      <div class="vx-body">Thailand operates at 105% country factor, the highest conversion rates in the group, and the strongest G4 coaching quality. The pathway priority for Thailand is not fixing gaps — it is documenting and transferring what works before it becomes a single-point-of-failure knowledge risk. If the Thailand SM moves to Country 5, the practices leave with them unless they are captured first.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Thailand Adaptations — Knowledge Capture Priority</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Practice capture Q2 2026.</strong> Ba conducts the Thailand SM structured interview (5 questions, Tool 3 Section 04). Output: 3–5 documented practices for peer forum transfer. Thailand SM presents first at every peer forum — their practices are the reference for the group.</div>
+          <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Cross-site host role formalised.</strong> Thailand is the preferred host for cross-site exposure placements from Laos, Myanmar, and Indonesia. Thailand SM explicitly included in cross-site candidate briefings — "you are a development resource for the group."</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Country 5 succession planning.</strong> If Thailand SM is the Country 5 candidate (Q3 2026 assessment), Thailand G4 succession must be activated simultaneously. Thailand pipeline must not be sacrificed for Country 5 gain.</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">G4 coaching programme co-facilitation.</strong> Thailand SM co-facilitates modules 2, 4, and 6 of the Myanmar G4 coaching programme. This is both a transfer mechanism and a recognition of Thailand's benchmark status.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Thailand 2026 Pipeline Targets</div>
+        <table class="dtable" style="margin-top:4px">
+          <thead><tr><th>Metric</th><th>Current</th><th>Q2 2026</th><th>Q4 2026</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Practice documentation</td><td>None</td><td>3+ practices captured</td><td>Transferred to all countries</td></tr>
+            <tr><td style="font-weight:600">Cross-site placements hosted</td><td>0</td><td>Laos G3 planned</td><td>1–2 completed</td></tr>
+            <tr><td style="font-weight:600">SM succession plan</td><td>Not started</td><td>Country 5 assessment done</td><td>Thailand G4 succession active if needed</td></tr>
+            <tr><td style="font-weight:600">G4 coaching co-facilitation</td><td>Not started</td><td>Sessions 2, 4, 6 delivered</td><td>Annual co-facilitation cadence set</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-tracker" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Candidate Progress Tracker</div>
+    <h1 class="page-title">Candidate<br><em>Progress Tracker</em></h1>
+    <p class="page-desc">Use this tracker to assess where a specific candidate sits in the G1→G4 pathway — milestone completion status, time-in-grade, next steps, and any risk flags. The output is the starting point for a quarterly talent review discussion or an individual development plan update.</p>
+  </div>
+  <div class="tracker-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0ede4;margin-bottom:4px">Candidate Progress Assessment</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:22px">Enter candidate details to generate a development status report and next-step recommendations</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+      <div>
+        <span class="tr-label">Candidate name (optional)</span>
+        <input class="tr-input" id="tr-name" placeholder="e.g. Maung K." type="text">
+        <span class="tr-label">Country</span>
+        <select class="tr-select" id="tr-country">
+          <option value="">Select…</option>
+          <option>Myanmar</option><option>Laos</option><option>Indonesia</option><option>Thailand</option>
+        </select>
+      </div>
+      <div>
+        <span class="tr-label">Current grade</span>
+        <select class="tr-select" id="tr-grade">
+          <option value="">Select…</option>
+          <option>G1 — Trainee Driller</option>
+          <option>G2 — Driller</option>
+          <option>G3 — Senior Driller</option>
+        </select>
+        <span class="tr-label">Months in current grade</span>
+        <select class="tr-select" id="tr-months">
+          <option value="">Select…</option>
+          <option value="3">0–3 months</option>
+          <option value="6">4–6 months</option>
+          <option value="9">7–9 months</option>
+          <option value="12">10–12 months</option>
+          <option value="15">13–15 months</option>
+          <option value="18">16–18 months</option>
+          <option value="24">19–24 months</option>
+          <option value="30">25+ months</option>
+        </select>
+      </div>
+      <div>
+        <span class="tr-label">Milestones completed (of total for grade)</span>
+        <select class="tr-select" id="tr-ms">
+          <option value="">Select…</option>
+          <option value="0">0 of grade milestones</option>
+          <option value="1">1 of grade milestones</option>
+          <option value="2">2 of grade milestones</option>
+          <option value="3">3 of grade milestones</option>
+          <option value="4">4 of grade milestones</option>
+          <option value="5">All milestones complete</option>
+        </select>
+        <span class="tr-label">G4 coaching quality signal</span>
+        <select class="tr-select" id="tr-coaching">
+          <option value="">Select…</option>
+          <option>Strong — G4 is actively developing this candidate</option>
+          <option>Adequate — coaching is happening but inconsistently</option>
+          <option>Weak — minimal structured coaching observed</option>
+          <option>Unknown — not yet assessed</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-forest" onclick="runTracker()">Generate Status Report &#8594;</button>
+      <button class="btn btn-ghost" onclick="clearTracker()">Reset</button>
+    </div>
+    <div class="tr-result" id="tr-result"></div>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tab-body').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+function toggleMs(el){
+  var body=el.nextElementSibling;var isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  el.querySelector('.ms-icon').textContent=isOpen?'+':'−';
+}
+
+var gradeMs={'G1 — Trainee Driller':5,'G2 — Driller':4,'G3 — Senior Driller':5};
+var gradeMin={'G1 — Trainee Driller':12,'G2 — Driller':12,'G3 — Senior Driller':18};
+var gradeNext={'G1 — Trainee Driller':'G2 Driller','G2 — Driller':'G3 Senior Driller','G3 — Senior Driller':'G4 Lead Driller'};
+
+var countryAlerts={
+  'Myanmar':'Myanmar alert: G4 coaching programme must be complete by June 2026. Ensure this candidate\'s G4 coach is enrolled. Month-3 check-in completion is tracked monthly by Ba — confirm it is documented.',
+  'Laos':'Laos alert: G3→G4 development plans must be activated by June 2026. If this candidate is G3, their development plan must be in place immediately. Cross-site exposure to Thailand planned for Q3 2026.',
+  'Indonesia':'Indonesia alert: G3 vacancies are creating operational pressure. Any G2 approaching milestone completion should be flagged as an accelerated pipeline candidate. All promotion decisions require Group HR review before proceeding — Indonesian labour law.',
+  'Thailand':'Thailand note: Thailand is the benchmark country. Document this candidate\'s development experience as a reference for the peer forum and cross-site learning programme.'
+};
+
+function runTracker(){
+  var name=document.getElementById('tr-name').value.trim()||'the candidate';
+  var country=document.getElementById('tr-country').value;
+  var grade=document.getElementById('tr-grade').value;
+  var months=parseInt(document.getElementById('tr-months').value)||0;
+  var ms=parseInt(document.getElementById('tr-ms').value);
+  var coaching=document.getElementById('tr-coaching').value;
+  if(!country||!grade||!months||isNaN(ms)||!coaching){alert('Please complete all fields.');return;}
+
+  var totalMs=gradeMs[grade]||5;
+  var minMonths=gradeMin[grade]||12;
+  var nextGrade=gradeNext[grade]||'G4';
+  var pct=Math.round((ms/totalMs)*100);
+  var timeOk=months>=minMonths;
+  var msOk=ms===5||ms>=totalMs;
+  var coachingOk=coaching.indexOf('Strong')>-1||coaching.indexOf('Adequate')>-1;
+
+  // Status
+  var status,statusColor,statusNote;
+  if(msOk&&timeOk){
+    status='Ready for promotion review';statusColor='var(--forest)';
+    statusNote='All milestones complete and minimum time-in-grade satisfied. Raise at next quarterly talent review. Ensure SM has directly observed next-grade behaviour before promotion recommendation is submitted to Ba.';
+  } else if(ms===0&&months<=3){
+    status='Newly started — monitoring phase';statusColor='var(--ink4)';
+    statusNote='Too early to assess. Ensure G4 is assigned, induction is complete, and development plan has been shared with the candidate. Schedule month-3 check-in.';
+  } else if(!coachingOk){
+    status='At risk — coaching quality gap';statusColor='var(--red)';
+    statusNote='Milestone progress is unlikely to be reliable if G4 coaching is weak or unknown. Before addressing the candidate\'s milestones, assess and address G4 coaching quality. Enrol G4 in coaching programme if not already complete.';
+  } else if(!timeOk&&msOk){
+    status='Milestones complete — time-in-grade pending';statusColor='var(--brass)';
+    statusNote='All milestones are signed off but the minimum time-in-grade has not been reached. Do not advance early without Ba approval. Review milestone quality — early completion sometimes reflects sign-off quality rather than candidate readiness.';
+  } else if(months>=minMonths*1.5&&ms<3){
+    status='Stalled — intervention required';statusColor='var(--red)';
+    statusNote='Candidate has been in grade significantly longer than expected with fewer than 3 milestones complete. Run the stalled candidate protocol: G4 diagnostic conversation with Ba. Identify: is this a capability gap, G4 quality failure, motivation issue, or personal circumstances?';
+  } else {
+    status='In progress — on track';statusColor='var(--forest)';
+    statusNote='Development is progressing. Continue current approach. Ensure G4 coaching is consistent and structured debrief sessions are happening at least twice per week.';
+  }
+
+  var urgencyNote='';
+  if(country==='Laos'&&grade==='G3 — Senior Driller'){urgencyNote='<div style="padding:11px 14px;background:rgba(155,26,26,0.1);border:1px solid rgba(155,26,26,0.3);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.7;margin-bottom:8px"><strong style="color:var(--red);display:block;margin-bottom:2px">⚠ LAOS RETIREMENT CLIFF — URGENT</strong>This G3 candidate must have a signed development plan by June 2026 and must be actively developing a G1 trainee (G3-M4 in progress) by that date. Escalate to Ba immediately if either condition is not met.</div>';}
+  if(country==='Indonesia'&&grade==='G2 — Driller'&&ms>=3){urgencyNote='<div style="padding:11px 14px;background:rgba(122,92,20,0.12);border:1px solid rgba(122,92,20,0.3);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.7);font-weight:300;line-height:1.7;margin-bottom:8px"><strong style="color:#f0c060;display:block;margin-bottom:2px">Indonesia G3 Pipeline — Potential Accelerated Candidate</strong>This G2 has 3+ milestones complete. Flag as a potential accelerated G3 pipeline candidate. Do not advance before milestone completion, but prioritise G4 coaching time to accelerate M4 completion.</div>';}
+
+  // Next steps
+  var nextSteps=[];
+  if(ms<totalMs){nextSteps.push('Identify which specific milestone is the current focus and what the G4 is doing to accelerate it.')}
+  if(!timeOk&&!msOk){nextSteps.push('Set a realistic milestone completion date with the G4 and SM — share with Ba at next talent review.')}
+  if(coaching.indexOf('Weak')>-1||coaching.indexOf('Unknown')>-1){nextSteps.push('Assess G4 coaching quality before next talent review. Use the G4 coaching quality rubric (Tool 3, Section 08).')}
+  if(status==='Ready for promotion review'){nextSteps.push('Submit promotion recommendation to Ba with all milestone cards attached.');nextSteps.push('Ensure SM has written promotion note confirming direct observation of next-grade behaviour.');nextSteps.push('Book promotion conversation — SM + G4 + candidate. Confirm pay step with Ba before conversation.');}
+  if(months>=minMonths*1.5&&ms<3){nextSteps.push('Run stalled candidate protocol immediately. Ba should be involved in the diagnostic conversation.');}
+
+  var html='<div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ede4;margin-bottom:4px">Progress Report — '+name+'</div>'
+    +'<div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:14px">'+grade+' · '+country+' · '+months+' months in grade</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;text-align:center"><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-bottom:4px">MILESTONES</div><div style="font-size:22px;font-weight:800;color:#6dbf8a;font-family:var(--fd)">'+ms+' / '+totalMs+'</div><div class="prog-bar" style="margin-top:6px"><div class="prog-fill" style="width:'+pct+'%"></div></div></div>'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;text-align:center"><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-bottom:4px">TIME IN GRADE</div><div style="font-size:22px;font-weight:800;color:'+(timeOk?'#6dbf8a':'#f0c060')+';font-family:var(--fd)">'+months+' mo</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:3px">Min: '+minMonths+' months</div></div>'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;text-align:center"><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-bottom:4px">STATUS</div><div style="font-size:12px;font-weight:700;color:'+statusColor+';margin-top:4px;line-height:1.3">'+status+'</div></div>'
+    +'</div>'
+    +urgencyNote
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;margin-bottom:8px;font-size:12.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.75"><strong style="color:rgba(255,255,255,0.7);display:block;margin-bottom:3px">Status interpretation</strong>'+statusNote+'</div>'
+    +'<div style="padding:12px 14px;background:rgba(31,77,53,0.1);border:1px solid rgba(31,77,53,0.3);border-radius:3px;margin-bottom:8px;font-size:12.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.75"><strong style="color:#6dbf8a;display:block;margin-bottom:3px">Country context</strong>'+countryAlerts[country]+'</div>';
+
+  if(nextSteps.length>0){
+    html+='<div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.75"><strong style="color:rgba(255,255,255,0.7);display:block;margin-bottom:6px">Recommended next steps</strong>';
+    nextSteps.forEach(function(s,i){html+='<div style="display:grid;grid-template-columns:20px 1fr;gap:8px;margin-bottom:5px"><div style="font-family:var(--fm);font-size:9px;color:#6dbf8a;margin-top:2px">'+(i+1)+'.</div><div>'+s+'</div></div>';});
+    html+='</div>';
+  }
+
+  var res=document.getElementById('tr-result');
+  res.innerHTML=html;res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearTracker(){
+  ['tr-name','tr-country','tr-grade','tr-months','tr-ms','tr-coaching'].forEach(function(id){
+    var el=document.getElementById(id);if(el){el.tagName==='INPUT'?el.value='':el.value='';}
+  });
+  document.getElementById('tr-result').style.display='none';
+}
+</script>
+</body>
+</html>

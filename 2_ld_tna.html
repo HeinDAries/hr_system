@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training Needs Analysis — L&amp;D Tool 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1eb;--surface:#ffffff;--surface2:#edeae2;--surface3:#e4e0d6;
+  --border:#d8d3c8;--border2:#c8c2b4;
+  --ink:#1a1a14;--ink2:#2c2b22;--ink3:#524f44;--ink4:#857f72;--ink5:#b4ae9f;
+  --forest:#1f4d35;--forest2:#276044;--forest3:#2e7350;
+  --forest-dim:rgba(31,77,53,0.07);--forest-border:rgba(31,77,53,0.22);
+  --brass:#7a5c14;--brass2:#8f6d1a;
+  --brass-dim:rgba(122,92,20,0.08);--brass-border:rgba(122,92,20,0.22);
+  --sienna:#9b3a1a;--sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.2);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --slate:#2c3a30;
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--forest3),var(--forest),rgba(31,77,53,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;background:rgba(31,77,53,0.2);border:1px solid rgba(31,77,53,0.4);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:#6dbf8a;font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(31,77,53,0.2);border-color:rgba(31,77,53,0.45);color:#6dbf8a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--forest3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#6dbf8a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--forest);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--forest)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--forest);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-forest{background:var(--forest-dim);color:var(--forest);border:1px solid var(--forest-border)}
+.chip-brass{background:var(--brass-dim);color:var(--brass);border:1px solid var(--brass-border)}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.forest{background:var(--forest-dim);border-color:var(--forest);color:var(--ink2)}
+.info.brass{background:var(--brass-dim);border-color:var(--brass);color:var(--ink2)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--forest);padding:16px 20px;margin:16px 0;background:var(--forest-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--forest)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px;color:#f0ede4}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--forest);border-bottom-color:var(--forest);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* RAG */
+.rag-r{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--red);margin-right:5px;vertical-align:middle}
+.rag-a{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--brass);margin-right:5px;vertical-align:middle}
+.rag-g{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--forest);margin-right:5px;vertical-align:middle}
+/* GAP BAR */
+.gap-bar-wrap{margin:4px 0 2px}
+.gap-bar{height:8px;border-radius:4px;background:var(--surface3);overflow:hidden}
+.gap-fill{height:100%;border-radius:4px}
+/* TNA BUILDER */
+.tna-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px}
+.tna-step{margin-bottom:16px}
+.tna-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;display:block}
+.tna-opts{display:flex;gap:6px;flex-wrap:wrap}
+.tna-opt{padding:7px 14px;border-radius:2px;border:1px solid rgba(255,255,255,0.1);font-size:12.5px;color:rgba(255,255,255,0.4);cursor:pointer;transition:all .13s;font-family:var(--fb)}
+.tna-opt:hover{border-color:rgba(31,77,53,0.5);color:#6dbf8a}
+.tna-opt.sel{background:rgba(31,77,53,0.2);border-color:rgba(31,77,53,0.5);color:#6dbf8a;font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-forest{background:var(--forest);color:#fff}
+.btn-forest:hover{background:var(--forest2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:rgba(31,77,53,0.5);color:#6dbf8a}
+.tna-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+/* ACCORDION */
+.acc-item{border:1px solid var(--border);border-radius:4px;margin-bottom:8px;overflow:hidden}
+.acc-header{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--surface);transition:background .12s;font-weight:600;color:var(--ink);font-size:14px}
+.acc-header:hover{background:var(--surface2)}
+.acc-header.open{background:var(--forest-dim);border-bottom:1px solid var(--forest-border)}
+.acc-icon{font-family:var(--fm);font-size:12px;color:var(--forest);transition:transform .2s}
+.acc-header.open .acc-icon{transform:rotate(45deg)}
+.acc-body{display:none;padding:18px;background:var(--surface)}
+.acc-body.open{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">L&amp;D Tool 2 / 7</div>
+    <div class="sb-title">Training Needs<br><em>Analysis</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('what',this)"><span class="nav-num">01</span>What is a TNA?</div>
+    <div class="nav-item" onclick="showPage('process',this)"><span class="nav-num">02</span>The TNA Process</div>
+    <div class="nav-item" onclick="showPage('sources',this)"><span class="nav-num">03</span>Data Sources &amp; Methods</div>
+    <div class="nav-item" onclick="showPage('gaps',this)"><span class="nav-num">04</span>Valentis Gap Analysis</div>
+    <div class="nav-item" onclick="showPage('priority',this)"><span class="nav-num">05</span>Gap Prioritisation</div>
+    <div class="nav-item" onclick="showPage('country',this)"><span class="nav-num">06</span>Country TNA Profiles</div>
+    <div class="nav-item" onclick="showPage('builder',this)"><span class="nav-num">07</span>TNA Builder</div>
+    <div class="nav-item" onclick="showPage('output',this)"><span class="nav-num">08</span>TNA Output &amp; Action Plan</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Learning &amp; Development — Tool 2 of 7</strong>
+      Training Needs Analysis<br>
+      <span style="color:rgba(255,255,255,0.12)">A TNA is not a survey. It is a structured diagnostic that connects capability gaps to business risk.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+<div id="page-what" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">L&amp;D Tool 2 / 7 — Training Needs Analysis</div>
+    <h1 class="page-title">What is a<br><em>TNA?</em></h1>
+    <p class="page-desc">A Training Needs Analysis is the structured process of identifying the gap between the capability an organisation needs and the capability it currently has — then translating that gap into a prioritised, costed set of learning interventions. At Valentis, the TNA is the mechanism that stops L&D being driven by whoever asked last.</p>
+  </div>
+  <div class="pull-quote">
+    <p>"The TNA is not a survey asking people what training they want. It is a diagnostic asking what capability the business needs — and identifying the gap between that requirement and what currently exists."</p>
+    <cite>Valentis L&amp;D Framework · 2026</cite>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">TNA vs Training Request</div>
+      <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:4px">
+        <div style="display:grid;grid-template-columns:1fr 1fr">
+          <div style="padding:14px 16px;border-right:1px solid var(--border)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px">Training Request</div>
+            <div style="display:grid;gap:5px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>— Initiated by the employee or SM</div>
+              <div>— Based on perceived need or interest</div>
+              <div>— Reactive to a specific event or complaint</div>
+              <div>— No link to business strategy required</div>
+              <div>— Approved or denied based on budget availability</div>
+              <div>— No outcome measurement expected</div>
+            </div>
+          </div>
+          <div style="padding:14px 16px;background:var(--forest-dim)">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--forest);margin-bottom:8px">TNA-Driven L&amp;D</div>
+            <div style="display:grid;gap:5px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+              <div>+ Initiated by Group HR from business data</div>
+              <div>+ Based on measured capability gap</div>
+              <div>+ Proactive — before the gap causes harm</div>
+              <div>+ Directly linked to pipeline or strategy</div>
+              <div>+ Investment sized against business impact</div>
+              <div>+ Outcome measured against defined success criteria</div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:11px 16px;background:var(--surface2);border-top:1px solid var(--border);font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">
+          <strong style="color:var(--ink2)">Valentis today:</strong> Currently operating on training requests. The Myanmar coaching programme was identified reactively — after conversion rate data revealed the gap. The TNA process formalises this so the gap is identified before the damage accumulates, not after.
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The Three Levels of TNA</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:14px 16px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--forest);margin-bottom:4px">Level 1 — Organisational TNA</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">What capability does Valentis as a whole need to execute its strategy? Driven by the business plan — 65 FTE by Q2 2027, Country 5 entry, 93%+ programme delivery across all countries. This level identifies the aggregate capability gap and drives the L&D investment priorities.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--brass);margin-bottom:4px">Level 2 — Functional / Country TNA</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">What capability does each country need that it currently lacks? Myanmar G4 coaching gap. Indonesia G3 technical gap from vacancy. Laos G3 development gap ahead of retirement cohort. Thailand practice documentation gap. Each country has a different profile.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Level 3 — Individual TNA</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">What specific development does this individual need to reach the next milestone? Activated at the G3→G4 transition (the hardest and most consequential) and for G5 succession candidates. The G4 performance review and the quarterly talent review are the primary inputs to this level.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Why Valentis Needs a Formal TNA Now</div>
+    <table class="dtable">
+      <thead><tr><th>Current situation</th><th>Without TNA</th><th>With TNA</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Myanmar conversion rate 58% vs 70% target</td><td>Identified 18 months after onset. Programme delivers Myanmar coaching only after damage to 3+ cohorts. $18K–$36K avoidable cost already incurred.</td><td>Identified at first quarter's data review. Coaching programme designed and delivered before Month 3 attrition pattern becomes entrenched.</td></tr>
+        <tr><td style="font-weight:600">Indonesia 3 G3 vacancies open 40+ days</td><td>Sourcing crisis managed reactively. No pipeline analysis to anticipate the gap before it became a vacancy. Emergency mode only.</td><td>Workforce plan (TNA input) flags Indonesia G3 pipeline risk 6 months prior. Sourcing begins proactively. Emergency avoided.</td></tr>
+        <tr><td style="font-weight:600">Laos retirement cohort — 3 of 5 G4s retiring within 3 years</td><td>Retirement risk managed case-by-case. G3 development plans activated late. Net G4 deficit by 2027 unavoidable.</td><td>TNA identifies the 2027 cliff in 2025. G3 development plans start June 2026. At least 1–2 G4-ready candidates by Q4 2026.</td></tr>
+        <tr><td style="font-weight:600">Country 5 entry Q2 2027</td><td>Country 5 SM hired and deployed without a development plan or onboarding pathway. G1 trainees start without a defined programme. Group HR scrambles to adapt existing materials.</td><td>TNA for Country 5 completed Q3 2026. SM development plan starts at appointment. Trainee programme adapted for Country 5 context before first hire.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="page-process" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — The TNA Process</div>
+    <h1 class="page-title">The TNA<br><em>Process</em></h1>
+    <p class="page-desc">The TNA process at Valentis follows a five-step sequence — from defining the business requirement through to communicating the output. Each step has a defined owner, a method, and a deliverable. The process runs annually as part of the HR planning cycle, with a mid-year update triggered by any significant pipeline event.</p>
+  </div>
+  <div style="display:grid;gap:10px;margin-bottom:14px">
+    <div style="padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start">
+      <div style="text-align:center">
+        <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--forest);line-height:1">1</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;text-transform:uppercase">Define</div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:5px">Define the Business Requirement</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">Start with what the business needs to achieve — not with what training is available. At Valentis: 65 FTE by Q2 2027, 93%+ programme delivery across all countries, Country 5 entry capability, G4 pipeline sufficient to cover 3 Laos retirements. This is the business requirement that the TNA tests capability against.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-forest">Owner: Group HR (Ba)</span>
+          <span class="chip chip-muted">Input: business plan, workforce plan (Tool 6), scenario model (OD Tool 8)</span>
+          <span class="chip chip-muted">Output: capability requirement statement by grade and country</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start">
+      <div style="text-align:center">
+        <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--forest);line-height:1">2</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;text-transform:uppercase">Assess</div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:5px">Assess Current Capability</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">Map the current capability state at each grade and country against the requirement. This is not a self-assessment survey — it draws on pipeline data (conversion rates, milestone completions, attrition patterns), performance data (G4 review outcomes, SM observations), and operational data (programme delivery %, vacancy duration). The SM is a key data source, not the decision-maker on what the gaps are.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-forest">Owner: Group HR</span>
+          <span class="chip chip-muted">Input: monthly HR data, performance reviews, pipeline metrics, SM observations</span>
+          <span class="chip chip-muted">Output: current capability map by grade and country</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:18px 22px;background:var(--forest-dim);border:2px solid var(--forest-border);border-radius:4px;display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start">
+      <div style="text-align:center">
+        <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--forest);line-height:1">3</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;text-transform:uppercase">Gap</div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:5px">Identify and Size the Gaps</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The gap is the difference between Step 1 (what the business needs) and Step 2 (what currently exists). Size each gap in two dimensions: severity (how large is the shortfall?) and urgency (how soon does the gap cause business harm?). This is the core analytical output of the TNA. A gap that is severe but not urgent requires a different intervention than a gap that is moderate but immediate.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-forest">Owner: Group HR</span>
+          <span class="chip chip-muted">Output: gap register with severity and urgency ratings — the Valentis gap matrix (Section 04)</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start">
+      <div style="text-align:center">
+        <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--forest);line-height:1">4</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;text-transform:uppercase">Design</div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:5px">Design the Intervention</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">For each prioritised gap, select and design the most appropriate intervention — applying the 70/20/10 model and the build/buy/borrow decision framework from Tool 1. Not every gap requires a training programme. Some require a process change (month-3 check-in formalisation), a role design change (G4 decision rights), or a structural intervention (cross-country exposure for Laos G3 candidates). Training is one option, not the default.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-forest">Owner: Group HR</span>
+          <span class="chip chip-muted">Input: gap register, 70/20/10 model, build/buy matrix</span>
+          <span class="chip chip-muted">Output: intervention plan with method, timeline, cost, and success measure</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start">
+      <div style="text-align:center">
+        <div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--forest);line-height:1">5</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;text-transform:uppercase">Communicate</div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:5px">Communicate the TNA Output</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The TNA output must be communicated in two directions: upward to the COO (business case for L&D investment — what are the gaps, what will it cost to close them, what is the cost of not closing them) and laterally to SMs (what is expected of them in delivering the 70% and 20% components, and what Group HR will deliver in the 10% component). The COO presentation uses the gap-to-risk framing: here is what we will lose if we do not act.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip chip-forest">Owner: Group HR</span>
+          <span class="chip chip-muted">Upward: COO business case with gap-to-risk quantification</span>
+          <span class="chip chip-muted">Lateral: SM briefing on their role in the intervention plan</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">TNA Cadence at Valentis</div>
+    <table class="dtable">
+      <thead><tr><th>TNA type</th><th>When</th><th>Trigger</th><th>Scope</th><th>Output feeds</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Annual full TNA</td><td>October–November each year</td><td>HR planning cycle. Informs next year's L&D budget and curriculum.</td><td>All grades, all countries, organisational and functional levels</td><td>Annual HR plan (presented to CEO November), L&D curriculum (Tool 7), headcount budget</td></tr>
+        <tr><td style="font-weight:600">Mid-year TNA update</td><td>April–May each year</td><td>Q1 pipeline data review. Adjust interventions based on first-half outcomes.</td><td>Priority gaps only — focus on any gaps where interventions are not tracking to target</td><td>COO–HRBP monthly 1:1, SM peer forum agenda, active intervention adjustments</td></tr>
+        <tr><td style="font-weight:600">Event-triggered TNA</td><td>Within 4 weeks of trigger event</td><td>Significant pipeline event: new country entry, SM departure, unexpected attrition spike, grade restructure</td><td>Affected country or grade only</td><td>Immediate intervention design. COO briefing within 2 weeks of TNA completion.</td></tr>
+        <tr><td style="font-weight:600">Individual TNA</td><td>At G3→G4 promotion decision and G5 succession review</td><td>Promotion decision point or succession review. Triggered by quarterly talent review.</td><td>Individual — specific development plan for the candidate</td><td>Individual development plan (L&D Tool 5), G4 role profile update, succession tracker</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-sources" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Data Sources &amp; Methods</div>
+    <h1 class="page-title">Data Sources<br><em>&amp; Methods</em></h1>
+    <p class="page-desc">The quality of a TNA is only as good as the data it draws on. At Valentis, the primary data sources are operational — pipeline metrics, performance reviews, attrition patterns. The TNA does not rely on self-reported training needs, which are systematically biased toward comfortable requests rather than actual capability gaps.</p>
+  </div>
+  <div class="info forest"><strong>Valentis data advantage</strong>Valentis is small enough that Group HR can speak directly with every SM and review every G4's performance data. This is a genuine advantage — large organisations run TNAs on surveys because they cannot access people directly. At 42 active employees across 4 countries, Ba can conduct the TNA through structured conversations and data review, not a tick-box questionnaire.</div>
+  <div class="card">
+    <div class="card-title">Primary Data Sources</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      <div style="padding:14px 18px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;display:grid;grid-template-columns:180px 1fr;gap:14px">
+        <div>
+          <div style="font-weight:700;color:var(--forest);font-size:14px;margin-bottom:3px">Pipeline metrics</div>
+          <div style="font-family:var(--fm);font-size:9px;color:var(--forest);text-transform:uppercase;letter-spacing:.5px">Highest reliability</div>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Conversion rate by country and cohort. Time-to-milestone at each grade transition. Month-3 attrition rate. G3 vacancy duration. Programme delivery % vs target. These are the most objective indicators of capability gaps — they show the output of the training system, regardless of what inputs were delivered. Myanmar's 58% conversion rate is the most important single data point in the current TNA.</div>
+      </div>
+      <div style="padding:14px 18px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;display:grid;grid-template-columns:180px 1fr;gap:14px">
+        <div>
+          <div style="font-weight:700;color:var(--forest);font-size:14px;margin-bottom:3px">Performance review data</div>
+          <div style="font-family:var(--fm);font-size:9px;color:var(--forest);text-transform:uppercase;letter-spacing:.5px">High reliability</div>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4 performance ratings — particularly the coaching and development quality dimensions. SM assessments of their G3 candidates' readiness. Development conversation quality scores. These reveal where individual capability gaps exist that aggregate pipeline data might obscure — a country with good conversion rates might still have one G4 who is a weak coach, creating a fragile pipeline dependent on only the strong G4s.</div>
+      </div>
+      <div style="padding:14px 18px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px;display:grid;grid-template-columns:180px 1fr;gap:14px">
+        <div>
+          <div style="font-weight:700;color:var(--brass);font-size:14px;margin-bottom:3px">SM structured interview</div>
+          <div style="font-family:var(--fm);font-size:9px;color:var(--brass);text-transform:uppercase;letter-spacing:.5px">Medium-high reliability</div>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Annual structured interview with each SM using a consistent question set. Focuses on: what capability is your team missing that is affecting delivery? What do your G4s struggle with most? What is preventing your G3s from progressing? The interview supplements pipeline data with SM-level intelligence — but is weighted lower than outcome data because SMs often identify symptoms rather than root causes. Indonesia SM may cite "G3 availability" when the root cause is lack of an accelerated development pipeline for G2 candidates.</div>
+      </div>
+      <div style="padding:14px 18px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px;display:grid;grid-template-columns:180px 1fr;gap:14px">
+        <div>
+          <div style="font-weight:700;color:var(--brass);font-size:14px;margin-bottom:3px">Trainee exit data</div>
+          <div style="font-family:var(--fm);font-size:9px;color:var(--brass);text-transform:uppercase;letter-spacing:.5px">Medium reliability</div>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Exit interview data from departing trainees and G1–G3 employees. Particularly valuable for understanding the month-3 attrition pattern in Myanmar. Data is self-reported and subject to social desirability bias — trainees often cite "better opportunity" when the actual reason is lack of investment in their development. Cross-reference with timing (month of departure) and G4 assignment to identify coaching quality as a driver.</div>
+      </div>
+      <div style="padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;display:grid;grid-template-columns:180px 1fr;gap:14px">
+        <div>
+          <div style="font-weight:700;color:var(--ink3);font-size:14px;margin-bottom:3px">Operational data</div>
+          <div style="font-family:var(--fm);font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:.5px">Contextual</div>
+        </div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Programme delivery %, HSE incident rates, client feedback, equipment utilisation. Not direct capability measures but useful for contextualising capability gaps. A country with declining programme delivery and increasing HSE incidents may have a capability gap in site management, not just technical drilling — pointing to an SM-level development need rather than a G3 technical need.</div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Data Collection Methods</div>
+      <table class="dtable" style="margin-top:4px">
+        <thead><tr><th>Method</th><th>When used</th><th>Time required</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Monthly HR data review</td><td>Every month — ongoing TNA input. Flags gaps as they emerge rather than waiting for annual TNA.</td><td>1–2 hours / month</td></tr>
+          <tr><td style="font-weight:600">Annual SM structured interview (4 × 60 min)</td><td>October — feeds annual TNA. Consistent 8-question protocol. Ba conducts all four interviews.</td><td>4 hours total</td></tr>
+          <tr><td style="font-weight:600">G4 performance review analysis</td><td>Post-performance review cycle. Ba reviews all G4 assessments for coaching quality patterns.</td><td>2–3 hours / cycle</td></tr>
+          <tr><td style="font-weight:600">Exit interview synthesis</td><td>Quarterly. Ba reviews all exit data from the prior quarter and flags any capability-related patterns.</td><td>1 hour / quarter</td></tr>
+          <tr><td style="font-weight:600">Pipeline data analysis</td><td>Annual TNA and mid-year update. Deep dive into conversion rates, attrition timing, milestone completion.</td><td>3–4 hours / TNA cycle</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Data Quality Rules</div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Rule 1 — Outcome data beats perception data.</strong> If pipeline metrics say conversion rate is 58%, and the Myanmar SM says "our G4s are good coaches," the pipeline data wins. Look for what is causing the discrepancy in the SM's perception.</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Rule 2 — Triangulate before concluding.</strong> No single data source is definitive. A spike in Myanmar attrition could be a coaching gap, a compensation gap, a working conditions issue, or a local labour market shift. Cross-reference before designing an L&D intervention for what might be a C&B problem.</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Rule 3 — Disaggregate by country and G4.</strong> A group-level conversion rate masks country variation. A country-level conversion rate masks G4-level variation. Get to the lowest level of disaggregation the data supports — the gap is almost always more specific than it first appears.</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Rule 4 — Training is the last hypothesis, not the first.</strong> Before concluding that a capability gap requires a training intervention, ask: is this a knowledge gap (training helps), a motivation gap (rewards/recognition), a process gap (system or tools), or a structural gap (wrong role design)? Each requires a different response.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-gaps" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Valentis Gap Analysis</div>
+    <h1 class="page-title">Valentis Gap<br><em>Analysis</em></h1>
+    <p class="page-desc">The current Valentis capability gap register — derived from pipeline data, performance reviews, and SM interviews. Each gap is sized by severity (impact on business outcomes if unclosed) and urgency (time before the gap causes measurable harm). This is the live document that drives the 2026 L&D agenda.</p>
+  </div>
+  <div class="info red"><strong>Current TNA status — March 2026</strong>This gap analysis is based on available pipeline data and SM intelligence as of Q1 2026. A formal annual TNA has not been conducted at Valentis before. This document constitutes the first structured gap register and is the baseline against which future TNAs will measure progress.</div>
+
+  <div class="card">
+    <div class="card-title">Capability Gap Register — All Grades &amp; Countries</div>
+    <div style="overflow-x:auto;margin-top:8px">
+      <table class="dtable" style="min-width:820px">
+        <thead>
+          <tr>
+            <th style="width:22%">Capability gap</th>
+            <th style="width:10%">Grade(s)</th>
+            <th style="width:12%">Country</th>
+            <th style="width:22%">Evidence</th>
+            <th style="width:10%;text-align:center">Severity</th>
+            <th style="width:10%;text-align:center">Urgency</th>
+            <th style="width:14%">Gap type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600">G4 coaching and development conversation skills</td>
+            <td>G4</td>
+            <td>Myanmar (primary) · all countries (secondary)</td>
+            <td>Conversion rate 58% vs 70% target. Month-3 attrition pattern. Exit interview themes: "felt unsupported." G4 performance reviews show inconsistent coaching quality.</td>
+            <td style="text-align:center"><span class="rag-r"></span><strong style="color:var(--red)">High</strong></td>
+            <td style="text-align:center"><span class="rag-r"></span><strong style="color:var(--red)">Now</strong></td>
+            <td><span class="chip chip-sienna">Knowledge + Ability</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">G3→G4 development pathway execution</td>
+            <td>G3 → G4</td>
+            <td>Laos (critical) · Myanmar · Indonesia</td>
+            <td>3 of 5 Laos G4s retiring within 3 years. Only 2 G3 candidates. No formal development plans in place. Net deficit -1 G4 by 2027 without intervention.</td>
+            <td style="text-align:center"><span class="rag-r"></span><strong style="color:var(--red)">High</strong></td>
+            <td style="text-align:center"><span class="rag-r"></span><strong style="color:var(--red)">June 2026</strong></td>
+            <td><span class="chip chip-brass">Process gap</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">G3 technical drilling capability (vacancy-driven)</td>
+            <td>G2 → G3</td>
+            <td>Indonesia</td>
+            <td>3 G3 vacancies open 40+ days. Delivery dropped 93%→84%. No accelerated G2→G3 pipeline. Sourcing alone will not solve the structural gap.</td>
+            <td style="text-align:center"><span class="rag-r"></span><strong style="color:var(--red)">High</strong></td>
+            <td style="text-align:center"><span class="rag-r"></span><strong style="color:var(--red)">Now</strong></td>
+            <td><span class="chip chip-sienna">Knowledge + Ability</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Month-3 check-in process — structured and documented</td>
+            <td>G4 (delivering) · G1 (receiving)</td>
+            <td>Myanmar · All countries</td>
+            <td>Check-ins happen informally. No consistent structure. No documentation. No SM visibility. Primary early-warning system for trainee attrition risk is not functioning.</td>
+            <td style="text-align:center"><span class="rag-r"></span><strong style="color:var(--red)">High</strong></td>
+            <td style="text-align:center"><span class="rag-r"></span><strong style="color:var(--red)">Now</strong></td>
+            <td><span class="chip chip-brass">Process gap</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">SM people management and team development capability</td>
+            <td>G5</td>
+            <td>Indonesia (primary) · Myanmar</td>
+            <td>Indonesia SM escalates people decisions to COO inappropriately. Myanmar supervisors have Knowledge + Ability gap in coaching. SMs hired for technical excellence, not people management.</td>
+            <td style="text-align:center"><span class="rag-a"></span><strong style="color:var(--brass)">Medium</strong></td>
+            <td style="text-align:center"><span class="rag-a"></span><strong style="color:var(--brass)">Q3 2026</strong></td>
+            <td><span class="chip chip-sienna">Knowledge + Ability</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Cross-country practice sharing and transfer</td>
+            <td>G4–G5</td>
+            <td>All (Thailand has the practices; others lack them)</td>
+            <td>Thailand outperforms on conversion rate and delivery %. Practices undocumented. No transfer mechanism. High-value knowledge held by one SM — single point of failure and knowledge retention risk.</td>
+            <td style="text-align:center"><span class="rag-a"></span><strong style="color:var(--brass)">Medium</strong></td>
+            <td style="text-align:center"><span class="rag-a"></span><strong style="color:var(--brass)">Q2 2026</strong></td>
+            <td><span class="chip chip-brass">Process gap</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">G5 succession and Country 5 SM pipeline</td>
+            <td>G4 → G5</td>
+            <td>All countries (pipeline)</td>
+            <td>No formal G5 succession candidates identified. Country 5 SM candidate must be identified Q3 2026. Myo H. and Wirawan S. retention risk with no named successor for either.</td>
+            <td style="text-align:center"><span class="rag-a"></span><strong style="color:var(--brass)">Medium</strong></td>
+            <td style="text-align:center"><span class="rag-a"></span><strong style="color:var(--brass)">Q3 2026</strong></td>
+            <td><span class="chip chip-brass">Process gap</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">SM financial literacy — programme P&amp;L management</td>
+            <td>G5</td>
+            <td>All countries</td>
+            <td>SMs escalate routine financial questions to COO. People cost running at 43% of revenue — SMs do not understand their role in managing this ratio. Increases COO burden unnecessarily.</td>
+            <td style="text-align:center"><span class="rag-g"></span><strong style="color:var(--forest)">Lower</strong></td>
+            <td style="text-align:center"><span class="rag-g"></span><strong style="color:var(--forest)">Q4 2026</strong></td>
+            <td><span class="chip chip-muted">Knowledge gap</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Country 5 SM onboarding and programme setup</td>
+            <td>G5 (new SM)</td>
+            <td>Country 5 (not yet active)</td>
+            <td>No Country 5 SM onboarding pathway exists. Country 5 entry Q2 2027. SM appointment Q2 2026 (internal candidate ideally). Pathway must be designed before appointment.</td>
+            <td style="text-align:center"><span class="rag-a"></span><strong style="color:var(--brass)">Medium</strong></td>
+            <td style="text-align:center"><span class="rag-a"></span><strong style="color:var(--brass)">Q1 2027</strong></td>
+            <td><span class="chip chip-brass">Process gap</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Gap Type Analysis — Root Cause Before Intervention</div>
+    <div class="card-body" style="margin-bottom:12px">Before designing any intervention, the root cause type determines the response. Training is appropriate for knowledge and ability gaps. Process, motivation, and structural gaps require different solutions — and applying training to them wastes budget and time.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="padding:14px 16px;background:var(--sienna-dim);border:1px solid var(--sienna-border);border-radius:3px">
+        <div style="font-weight:700;color:var(--sienna);font-size:13px;margin-bottom:5px">Knowledge + Ability gap → Training appropriate</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The person does not know how to do the thing, or cannot yet execute it to the required standard. Training, coaching, and practice are the right responses. <em>G4 coaching skills, G3 technical drilling capability, SM financial literacy.</em></div>
+      </div>
+      <div style="padding:14px 16px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px">
+        <div style="font-weight:700;color:var(--brass);font-size:13px;margin-bottom:5px">Process gap → System or tool design, not training</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The person knows what to do but the system does not support them doing it. Month-3 check-in is informal not because G4s lack knowledge — but because no documented process exists. Fix the process, not the person. <em>Month-3 check-in, G3→G4 development pathway, practice transfer mechanism.</em></div>
+      </div>
+      <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+        <div style="font-weight:700;color:var(--ink3);font-size:13px;margin-bottom:5px">Motivation gap → Rewards or recognition design</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The person knows how and the system supports them — but they are not motivated to do it. If G4 coaching quality is low because G4s are not rewarded for trainee development outcomes, training them in coaching skills will not solve it. Fix the incentive. <em>Weak total rewards was identified as a root cause of trainee attrition — C&amp;B department toolkit addresses this separately.</em></div>
+      </div>
+      <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+        <div style="font-weight:700;color:var(--ink3);font-size:13px;margin-bottom:5px">Structural gap → Role or org design change</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The capability gap exists because the role is not designed correctly — decision rights are absent, reporting lines create confusion, or the role combines incompatible responsibilities. G4 ghost accountability on trainee conversion is a structural gap, not a training gap. Fix the role design (OD Tool 3). <em>G4 decision rights, SM authority boundaries.</em></div>
+      </div>
+    </div>
+  </div>
+</div>
+  <div id="page-priority" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Gap Prioritisation</div>
+    <h1 class="page-title">Gap<br><em>Prioritisation</em></h1>
+    <p class="page-desc">Not all capability gaps can be closed simultaneously — and trying to close them all at once is the fastest route to closing none of them properly. Prioritisation forces the decisions that make L&D investment focused and credible to the COO.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">The Priority Matrix — Severity × Urgency</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:8px">
+      <div style="padding:18px 20px;background:var(--red-dim);border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:8px">High Severity + High Urgency</div>
+        <div style="font-weight:700;font-size:14px;color:var(--red);margin-bottom:8px">Tier 1 — Act now</div>
+        <div style="display:grid;gap:5px">
+          <div style="padding:8px 10px;background:rgba(155,26,26,0.06);border-radius:2px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--red)">G4 coaching skills — Myanmar</strong><br>Direct cause of 58% conversion rate. $18K–$36K annual cost. Month-3 attrition entrenching.</div>
+          <div style="padding:8px 10px;background:rgba(155,26,26,0.06);border-radius:2px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--red)">Month-3 check-in — all countries</strong><br>Primary early-warning mechanism is non-functional. Every cohort runs without an attrition safety net.</div>
+          <div style="padding:8px 10px;background:rgba(155,26,26,0.06);border-radius:2px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--red)">G3 Indonesia — sourcing + pipeline</strong><br>Delivery at 84%. Revenue risk active. Emergency sourcing + accelerated G2→G3 pipeline.</div>
+          <div style="padding:8px 10px;background:rgba(155,26,26,0.06);border-radius:2px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--red)">Laos G3→G4 development plans</strong><br>June 2026 deadline. 2027 retirement cliff irreversible if plans not activated now.</div>
+        </div>
+      </div>
+      <div style="padding:18px 20px;background:var(--brass-dim);border-bottom:1px solid var(--border)">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--brass);margin-bottom:8px">High Severity + Lower Urgency</div>
+        <div style="font-weight:700;font-size:14px;color:var(--brass);margin-bottom:8px">Tier 2 — Plan and schedule</div>
+        <div style="display:grid;gap:5px">
+          <div style="padding:8px 10px;background:rgba(122,92,20,0.06);border-radius:2px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--brass)">G5 succession pipeline</strong><br>Country 5 SM candidate by Q3 2026. Myo H. and Wirawan S. succession plans by Q2 2026. Not urgent today — but becomes critical fast.</div>
+          <div style="padding:8px 10px;background:rgba(122,92,20,0.06);border-radius:2px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--brass)">SM people management capability</strong><br>Indonesia SM escalation behaviour and Myanmar supervisor development. Starts Q2 2026 with peer forum and coaching programme.</div>
+          <div style="padding:8px 10px;background:rgba(122,92,20,0.06);border-radius:2px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--brass)">Thailand practice documentation</strong><br>High-value knowledge at single-failure risk. Document and transfer by Q2 2026 before Thailand SM rotation or departure risk.</div>
+        </div>
+      </div>
+      <div style="padding:18px 20px;background:var(--surface2)">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px">Lower Severity + Any Urgency</div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink3);margin-bottom:8px">Tier 3 — Address in next cycle</div>
+        <div style="display:grid;gap:5px">
+          <div style="padding:8px 10px;background:rgba(0,0,0,0.03);border-radius:2px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--ink3)">SM financial literacy</strong><br>Reduces COO escalation burden. Real value — but no operational emergency. Q4 2026 half-day workshop.</div>
+          <div style="padding:8px 10px;background:rgba(0,0,0,0.03);border-radius:2px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--ink3)">Country 5 SM onboarding</strong><br>Required before Q2 2027 entry. Design begins Q1 2027 once SM identified. No action required in 2026 other than identifying the candidate.</div>
+        </div>
+      </div>
+      <div style="padding:18px 20px;background:var(--surface2);border-left:1px solid var(--border)">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px">Defer or Decline</div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink3);margin-bottom:8px">Not in 2026 L&amp;D plan</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Any training request that does not appear in Tier 1–3 above is deferred to 2027 or declined. Group HR is not a training catalogue — it is a pipeline protection function. Requests for general skills training, conference attendance, or individual development outside the pipeline framework are evaluated against available capacity after Tier 1 and 2 are fully resourced. This is communicated to SMs via the L&D curriculum governance tool (Tool 7).</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Investment Sizing — Cost vs Risk</div>
+    <div class="card-body" style="margin-bottom:12px">Every Tier 1 gap has a quantifiable cost of inaction. Presenting this to the COO as a business case — not an L&D budget request — is how Group HR earns investment approval.</div>
+    <table class="dtable">
+      <thead><tr><th>Gap</th><th>Cost of inaction (annual)</th><th>Estimated intervention cost</th><th>Payback</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">G4 coaching skills — Myanmar</td><td>$18K–$36K replacement cost per year at 58% conversion (3 cohorts × 8 trainees × 12% excess attrition × $1K–$2K per trainee). Excludes production downtime.</td><td>Group HR design time (~40 hrs) + Thailand SM co-facilitation (6 sessions) + minimal materials. Total: &lt;$3K cash cost.</td><td><span class="chip chip-forest">Within 1 cohort if conversion rate improves 7pp+</span></td></tr>
+        <tr><td style="font-weight:600">Month-3 check-in framework</td><td>Every cohort runs without the primary attrition early-warning system. Estimated value of one prevented early exit: $1K–$2K direct + production downtime. Across all countries: 4–8 preventable exits per year.</td><td>Group HR design time (~20 hrs). No cash cost. G4 briefing via existing SM peer forum.</td><td><span class="chip chip-forest">Immediate — first cohort after implementation</span></td></tr>
+        <tr><td style="font-weight:600">Laos G3→G4 development plans</td><td>Net -1 G4 by 2027 without intervention. Replacement cost of one G4 departure (external hire at G4 level): $3K–$5K recruitment + 12–18 months to full competence. Programme delivery risk during gap period.</td><td>Group HR design time (~30 hrs). G4 sponsor assignment. Cross-site exposure (1–2 months in Thailand or Indonesia) — travel cost ~$1K–$2K per candidate.</td><td><span class="chip chip-brass">12–18 month horizon — investment now, pipeline benefit 2027</span></td></tr>
+        <tr><td style="font-weight:600">Indonesia G3 pipeline acceleration</td><td>Sustained delivery at 84% vs 93% benchmark = ~9pp revenue delivery gap. At $8.3M group revenue with Indonesia as one of four countries, delivery gap is a material revenue risk.</td><td>Accelerated G2→G3 development support — Group HR time (~20 hrs) + possible cross-country exposure cost.</td><td><span class="chip chip-brass">6–12 month horizon — after sourcing gap closed</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-country" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Country TNA Profiles</div>
+    <h1 class="page-title">Country TNA<br><em>Profiles</em></h1>
+    <p class="page-desc">Each of Valentis's four countries has a distinct capability gap profile — shaped by its workforce composition, pipeline stage, and operational context. The country TNA profiles ensure that group-level priorities do not obscure country-specific needs that require different interventions.</p>
+  </div>
+
+  <div class="tabs" id="tabs-country">
+    <div class="tab active" onclick="showTab('myanmar',this)">Myanmar</div>
+    <div class="tab" onclick="showTab('indonesia',this)">Indonesia</div>
+    <div class="tab" onclick="showTab('laos',this)">Laos</div>
+    <div class="tab" onclick="showTab('thailand',this)">Thailand</div>
+  </div>
+
+  <div class="tab-body active" id="tab-myanmar">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Myanmar — Country TNA Profile</div>
+      <div class="vx-title">Primary risk: G4 coaching quality driving pipeline leakage</div>
+      <div class="vx-body">Myanmar runs at 80% country factor (L&D context: lower baseline compensation relative to regional norms creates higher exit sensitivity at month 3 — the point at which trainees have sufficient information to assess whether the investment in their development matches what was promised). The primary capability gap is not technical — Myanmar G4s are technically competent. The gap is in their ability to develop others.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Myanmar Gap Summary</div>
+        <table class="dtable" style="margin-top:4px">
+          <thead><tr><th>Gap</th><th>Severity</th><th>Intervention</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">G4 coaching and development conversations</td><td><span class="rag-r"></span><strong style="color:var(--red)">Critical</strong></td><td>6-week coaching programme. 3 G4 supervisors. Q2 2026.</td></tr>
+            <tr><td style="font-weight:600">Month-3 check-in — structured process</td><td><span class="rag-r"></span><strong style="color:var(--red)">Critical</strong></td><td>Process design + G4 briefing. Built into coaching programme output.</td></tr>
+            <tr><td style="font-weight:600">SM people management — Myanmar supervisors</td><td><span class="rag-a"></span><strong style="color:var(--brass)">High</strong></td><td>SM peer forum practice transfer. Coaching relationship with COO/Ba.</td></tr>
+            <tr><td style="font-weight:600">G3 technical competency (secondary)</td><td><span class="rag-g"></span><strong style="color:var(--forest)">Moderate</strong></td><td>Existing on-the-job progression. No additional intervention required in 2026.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Myanmar L&amp;D Context</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Language and culture:</strong> Training materials and coaching frameworks must be adapted for local language delivery. The coaching programme should use local language scenarios. Thailand SM as reference practitioner — cross-cultural communication must be considered in the practice transfer.</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Shift patterns:</strong> Site-based modular delivery required. 6-week programme designed around shift rotations — 45-minute sessions per module, not full-day workshops.</div>
+          <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">Supervisor resistance risk:</strong> Myanmar supervisors identified as Knowledge + Ability gap (not motivational). However, change management approach required — supervisors should not perceive coaching programme as a performance criticism but as a professional development investment. SM framing critical.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Myanmar 2026 L&amp;D Plan</div>
+      <table class="dtable">
+        <thead><tr><th>Initiative</th><th>April</th><th>May</th><th>June</th><th>Q3</th><th>Q4</th><th>Success measure</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">G4 coaching programme (3 supervisors)</td><td style="background:var(--forest-dim)">Design complete</td><td style="background:var(--forest-dim)">Wks 1–3 delivered</td><td style="background:var(--forest-dim)">Wks 4–6 + sign-off</td><td>—</td><td>—</td><td>All 3 G4s certified. Check-in documented monthly.</td></tr>
+          <tr><td style="font-weight:600">Month-3 check-in process live</td><td style="background:var(--forest-dim)">Framework designed</td><td style="background:var(--forest-dim)">Live — next cohort</td><td>Embedded</td><td>Embedded</td><td>Embedded</td><td>100% check-in completion. At-risk trainees flagged within 48h.</td></tr>
+          <tr><td style="font-weight:600">Conversion rate target</td><td>58% (baseline)</td><td>—</td><td>—</td><td>Target: 65%+</td><td>Target: 70%+</td><td>≥70% sustained for 2+ consecutive cohorts.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-indonesia">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Indonesia — Country TNA Profile</div>
+      <div class="vx-title">Primary risk: G3 vacancy driving delivery collapse and pipeline compression</div>
+      <div class="vx-body">Indonesia runs at 92% country factor — the highest baseline in the group. The capability gap is not a coaching or development quality issue — it is a headcount shortage. 3 G3 vacancies open 40+ days have reduced delivery from 93% to 84%. The sourcing solution is immediate; the pipeline solution is structural. Indonesia's higher pay position makes retention less of a risk than Myanmar — but the pipeline is thin, and the SM's resistance to Group HR guidance is a governance gap that affects L&D delivery, not just operational decisions.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Indonesia Gap Summary</div>
+        <table class="dtable" style="margin-top:4px">
+          <thead><tr><th>Gap</th><th>Severity</th><th>Intervention</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">G3 headcount — 3 open vacancies</td><td><span class="rag-r"></span><strong style="color:var(--red)">Critical</strong></td><td>Emergency sourcing — Group HR leads, SM is hiring manager. Target: filled by end April 2026.</td></tr>
+            <tr><td style="font-weight:600">G2→G3 pipeline (structural fix)</td><td><span class="rag-r"></span><strong style="color:var(--red)">High</strong></td><td>Accelerated G2→G3 development for 2–3 candidates. Timeline: 12–15 months from April 2026.</td></tr>
+            <tr><td style="font-weight:600">SM engagement with Group HR L&amp;D framework</td><td><span class="rag-a"></span><strong style="color:var(--brass)">Medium</strong></td><td>COO communicates mandatory Group HR authority. SM peer forum as influence mechanism. Indonesia SM converts via data, not compliance pressure.</td></tr>
+            <tr><td style="font-weight:600">G4 coaching quality (secondary)</td><td><span class="rag-g"></span><strong style="color:var(--forest)">Low-moderate</strong></td><td>Include Indonesia G4 in check-in framework rollout. Monitor conversion rate baseline once G3 vacancies filled.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Indonesia L&amp;D Context</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">SM engagement strategy:</strong> Indonesia SM is a High Power Sceptic (OD Tool 3 / Stakeholder Map). L&D interventions in Indonesia require SM buy-in, not just compliance. Present Myanmar coaching programme results data to Indonesia SM at Q3 peer forum to convert through evidence. Do not mandate before data is available.</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Stricter labour law:</strong> Indonesia has more restrictive employment regulations than Laos or Myanmar. All G1–G3 terminations and exits must involve Group HR compliance review — the Indonesia SM's history of bypassing Group HR creates legal exposure risk that is higher here than in other countries.</div>
+          <div style="padding:10px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--brass)">Pipeline risk after sourcing:</strong> Filling 3 G3 vacancies by external hire creates 3 new employees who need 12–18 months to reach full productivity. Delivery will improve from 84% but is unlikely to recover to 93%+ until Q4 2026 at earliest. Manage COO expectations on recovery timeline.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-laos">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Laos — Country TNA Profile</div>
+      <div class="vx-title">Primary risk: Retirement cliff creating structural G4 deficit by 2027</div>
+      <div class="vx-body">Laos operates at an 85% country factor. The workforce is experienced but ageing — 3 of 5 G4 senior drillers are within 3 years of retirement, with an average age of 51. Only 2 G3 candidates exist to fill those roles. Without intervention, Laos faces a net G4 deficit of -1 by 2027. This is not a current operational crisis — it is a forward-looking pipeline emergency that must be addressed now because the G3→G4 development cycle takes 18–24 months.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Laos Gap Summary</div>
+        <table class="dtable" style="margin-top:4px">
+          <thead><tr><th>Gap</th><th>Severity</th><th>Intervention</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">G3→G4 development — 2 candidates</td><td><span class="rag-r"></span><strong style="color:var(--red)">Critical</strong></td><td>Individual development plans activated June 2026. Stretch assignments + possible cross-site exposure in Thailand. G4 sponsor assigned.</td></tr>
+            <tr><td style="font-weight:600">Knowledge transfer from retiring G4s</td><td><span class="rag-r"></span><strong style="color:var(--red)">High</strong></td><td>Structured knowledge capture from retiring G4s before departure. Pair retiring G4 with G3 candidate as explicit mentoring relationship.</td></tr>
+            <tr><td style="font-weight:600">G3 technical readiness for G4 responsibility</td><td><span class="rag-a"></span><strong style="color:var(--brass)">Medium</strong></td><td>Assessment of 2 G3 candidates against G4 milestone criteria. Gap-fill plan included in individual development plans.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Laos L&amp;D Context</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">The retirement clock is running:</strong> June 2026 is the activation deadline for development plans — not the completion deadline. If plans are not active by June 2026, the G3→G4 development cycle cannot complete before the first Laos G4 retirement in 2027. This is a hard deadline, not a guideline.</div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Cross-site exposure value:</strong> Laos G3 candidates gaining experience at Thailand or Indonesia sites accelerates development by exposing them to different geological conditions and operational challenges. One candidate should spend 4–6 weeks in Thailand in Q3 2026 if operationally feasible.</div>
+          <div style="padding:10px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--brass)">Tacit knowledge risk:</strong> Retiring G4s carry site-specific knowledge — geological conditions, equipment quirks, client relationship history — that is not documented anywhere. Structured knowledge capture conversations (3–4 hours per retiring G4) should be completed 6 months before their departure date.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-thailand">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Thailand — Country TNA Profile</div>
+      <div class="vx-title">Primary gap: Knowledge is not documented — high-value practices at single-failure risk</div>
+      <div class="vx-body">Thailand operates at a 105% country factor — the highest in the group — and outperforms on programme delivery and conversion rates. The L&D gap in Thailand is not a capability deficit but a knowledge management risk: the practices that make Thailand the highest-performing country are undocumented and held primarily by the Thailand SM. If the SM departs or is deployed to Country 5, those practices leave with them. Thailand's TNA priority is documentation and transfer, not development.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Thailand Gap Summary</div>
+        <table class="dtable" style="margin-top:4px">
+          <thead><tr><th>Gap</th><th>Severity</th><th>Intervention</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Thailand SM practice documentation</td><td><span class="rag-a"></span><strong style="color:var(--brass)">High</strong></td><td>Ba conducts structured practice capture interview with Thailand SM. 3–4 practices documented for peer forum transfer. Q2 2026.</td></tr>
+            <tr><td style="font-weight:600">Thailand SM as Country 5 candidate</td><td><span class="rag-a"></span><strong style="color:var(--brass)">Medium</strong></td><td>If Thailand SM is the Country 5 SM candidate — Thailand succession plan must be activated simultaneously. SM peer forum facilitates this.</td></tr>
+            <tr><td style="font-weight:600">G3→G4 pipeline depth</td><td><span class="rag-g"></span><strong style="color:var(--forest)">Low</strong></td><td>Thailand pipeline is healthy. Monitor only. If Thailand SM moves to Country 5, G4 pipeline becomes critical — flag for Q3 2026 review.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Thailand as a Learning Resource</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Practice transfer source:</strong> Thailand SM presents at every SM peer forum. Minimum one documented practice transfer per session. Ba facilitates structured debrief: what is the practice, what problem does it solve, what conditions are required to implement it, and what will each SM commit to trying in their country before the next forum.</div>
+          <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Cross-site exposure host:</strong> Thailand is the first choice for cross-country development exposure for G3 candidates from Laos, Myanmar, and (post-recovery) Indonesia. The Thailand SM should be formally recognised as a development resource — not just a high-performer — and this should be reflected in their role profile and development plan for Country 5 consideration.</div>
+          <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Reference case for Indonesia SM:</strong> Thailand's performance data is Ba's most powerful tool for the Indonesia SM influence campaign. "Thailand implemented this check-in process and their conversion rate is X%" is more persuasive to a sceptical SM than any HR framework. Use it explicitly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <div id="page-builder" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — TNA Builder</div>
+    <h1 class="page-title">TNA<br><em>Builder</em></h1>
+    <p class="page-desc">Use this tool to run a quick TNA for any specific gap — whether a new gap has emerged from monthly data, or you are preparing for the annual TNA cycle. Select the context and answer three diagnostic questions to generate a recommended intervention approach.</p>
+  </div>
+  <div class="tna-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0ede4;margin-bottom:4px">TNA Intervention Designer</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:22px">Three questions — recommended intervention with rationale</div>
+
+    <div class="tna-step">
+      <span class="tna-label">Step 1 — What grade level is affected?</span>
+      <div class="tna-opts">
+        <div class="tna-opt" onclick="selOpt(this)">G1 Trainee</div>
+        <div class="tna-opt" onclick="selOpt(this)">G2 Driller</div>
+        <div class="tna-opt" onclick="selOpt(this)">G3 Driller</div>
+        <div class="tna-opt" onclick="selOpt(this)">G4 Senior Driller</div>
+        <div class="tna-opt" onclick="selOpt(this)">G5 Site Manager</div>
+        <div class="tna-opt" onclick="selOpt(this)">G6+ Group Functions</div>
+      </div>
+    </div>
+    <div class="tna-step">
+      <span class="tna-label">Step 2 — What type of gap is it?</span>
+      <div class="tna-opts">
+        <div class="tna-opt" onclick="selOpt(this)">Knowledge gap — doesn't know how</div>
+        <div class="tna-opt" onclick="selOpt(this)">Ability gap — knows but can't execute yet</div>
+        <div class="tna-opt" onclick="selOpt(this)">Process gap — no system or framework exists</div>
+        <div class="tna-opt" onclick="selOpt(this)">Motivation gap — knows and can, but doesn't</div>
+        <div class="tna-opt" onclick="selOpt(this)">Structural gap — role design prevents it</div>
+      </div>
+    </div>
+    <div class="tna-step">
+      <span class="tna-label">Step 3 — How urgent is this gap?</span>
+      <div class="tna-opts">
+        <div class="tna-opt" onclick="selOpt(this)">Causing harm now</div>
+        <div class="tna-opt" onclick="selOpt(this)">Will cause harm within 3 months</div>
+        <div class="tna-opt" onclick="selOpt(this)">Will cause harm within 6 months</div>
+        <div class="tna-opt" onclick="selOpt(this)">Horizon risk — 12+ months</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn btn-forest" onclick="runTna()">Generate Recommendation &#8594;</button>
+      <button class="btn btn-ghost" onclick="clearTna()">Reset</button>
+    </div>
+    <div class="tna-result" id="tna-result"></div>
+  </div>
+</div>
+
+  <div id="page-output" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — TNA Output &amp; Action Plan</div>
+    <h1 class="page-title">TNA Output<br><em>&amp; Action Plan</em></h1>
+    <p class="page-desc">The TNA output is not a gap register — it is an action plan that the COO can approve and SMs can act on. This section consolidates the full 2026 L&D action plan from the gap analysis, with owners, timelines, and success measures for every priority intervention.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">COO Briefing — TNA Summary 2026</div>
+    <div class="vx-title">9 capability gaps. 4 critical. 3 countries in active intervention. 1 system to build.</div>
+    <div class="vx-body">The first formal Valentis TNA has identified 9 capability gaps across 4 countries and all operational grades. 4 are critical — causing measurable business harm now or within 60 days. The most significant is Myanmar G4 coaching quality, which is the primary driver of a 12pp conversion rate gap costing $18K–$36K per year in avoidable replacement cost. 3 are high-priority — they will cause strategic harm within 6 months if not addressed. The total cash investment required for all Tier 1 and Tier 2 interventions is under $15K — the investment-to-risk ratio is strongly positive. The biggest investment is Group HR design time, which is already budgeted.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2026 L&amp;D Action Plan — Full Register</div>
+    <table class="dtable">
+      <thead><tr><th style="width:24%">Intervention</th><th style="width:9%">Tier</th><th style="width:10%">Country</th><th style="width:9%">Grade</th><th style="width:10%">Owner</th><th style="width:10%">Deadline</th><th style="width:14%">Success measure</th><th style="width:14%">Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600">Myanmar G4 coaching programme</td>
+          <td><span class="chip chip-red">Tier 1</span></td>
+          <td>Myanmar</td><td>G4</td><td>Ba (design) + Thailand SM (co-facilitate)</td><td>Complete by June 2026</td>
+          <td>Conversion rate ≥65% by Q3, ≥70% by Q4</td>
+          <td><span class="chip chip-brass">In design</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Month-3 check-in framework — all countries</td>
+          <td><span class="chip chip-red">Tier 1</span></td>
+          <td>All</td><td>G4 delivering / G1 receiving</td><td>Ba (design) + all SMs (delivery)</td><td>Live by May 2026</td>
+          <td>100% completion rate. At-risk flags within 48h.</td>
+          <td><span class="chip chip-brass">In design</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Indonesia G3 emergency sourcing</td>
+          <td><span class="chip chip-red">Tier 1</span></td>
+          <td>Indonesia</td><td>G3</td><td>Ba (process) + Indonesia SM (hiring)</td><td>April 2026</td>
+          <td>All 3 vacancies filled. Delivery ≥88% by Q3.</td>
+          <td><span class="chip chip-red">Urgent — active</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Laos G3&#8594;G4 development plans (2 candidates)</td>
+          <td><span class="chip chip-red">Tier 1</span></td>
+          <td>Laos</td><td>G3&#8594;G4</td><td>Ba (design) + Laos SM (delivery) + retiring G4 (mentoring)</td><td>Activated June 2026</td>
+          <td>1+ candidate G4-ready by Q4 2026</td>
+          <td><span class="chip chip-muted">Not started</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Thailand practice documentation + peer transfer</td>
+          <td><span class="chip chip-brass">Tier 2</span></td>
+          <td>Thailand &#8594; all</td><td>G4–G5</td><td>Ba (capture) + Thailand SM (present)</td><td>Q2 2026 (document) + ongoing (transfer)</td>
+          <td>3+ practices documented. Adoption tracked at next forum.</td>
+          <td><span class="chip chip-muted">Not started</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">G5 succession pipeline — identify candidates</td>
+          <td><span class="chip chip-brass">Tier 2</span></td>
+          <td>All</td><td>G4&#8594;G5</td><td>Ba (facilitate) + COO (approve)</td><td>Q3 2026</td>
+          <td>Country 5 SM candidate named. Myo H. and Wirawan S. successors identified.</td>
+          <td><span class="chip chip-muted">Not started</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Indonesia SM L&amp;D engagement (influence)</td>
+          <td><span class="chip chip-brass">Tier 2</span></td>
+          <td>Indonesia</td><td>G5</td><td>Ba + COO</td><td>Q2–Q3 2026</td>
+          <td>Indonesia SM applies month-3 check-in and provides monthly HR data without chasing.</td>
+          <td><span class="chip chip-muted">Not started</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">SM financial literacy workshop</td>
+          <td><span class="chip chip-muted">Tier 3</span></td>
+          <td>All</td><td>G5</td><td>Ba (design) + external facilitator</td><td>Q4 2026</td>
+          <td>Reduction in COO financial escalations from SMs. SMs can read P&amp;L independently.</td>
+          <td><span class="chip chip-muted">Planned</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Indonesia G2&#8594;G3 accelerated pipeline</td>
+          <td><span class="chip chip-brass">Tier 2</span></td>
+          <td>Indonesia</td><td>G2&#8594;G3</td><td>Ba + Indonesia SM</td><td>Q3 2026 (plans) / Q1 2027 (outcomes)</td>
+          <td>2+ G2 candidates on accelerated pathway by Q3 2026.</td>
+          <td><span class="chip chip-muted">Planned post-sourcing</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">TNA Review Cadence</div>
+    <div class="card-body" style="margin-bottom:12px">The TNA is a living document — it is updated when data changes, not only when the annual cycle runs. The following review points are built into the 2026 governance calendar.</div>
+    <table class="dtable">
+      <thead><tr><th>Review point</th><th>When</th><th>What is reviewed</th><th>Output</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Monthly data check</td><td>10th of each month (with HR data submission)</td><td>Conversion rate, vacancy duration, attrition timing, check-in completion. Flag any gap that is worsening or new.</td><td>Escalation to COO if Tier 1 gap deteriorates. No action if tracking to plan.</td></tr>
+        <tr><td style="font-weight:600">Q2 mid-year TNA update</td><td>May 2026</td><td>Myanmar coaching programme early results. Indonesia sourcing outcome. Laos development plan activation status. All Tier 1 interventions.</td><td>Intervention adjustments if not tracking. COO briefing at May 1:1.</td></tr>
+        <tr><td style="font-weight:600">Q3 talent review</td><td>September 2026</td><td>G5 succession pipeline status. Laos G3 development milestone progress. Thailand practice transfer adoption across countries.</td><td>Updated succession tracker. Tier 2 intervention adjustments.</td></tr>
+        <tr><td style="font-weight:600">Annual TNA — 2027 cycle</td><td>October 2026</td><td>Full TNA reset: all grades, all countries including Country 5 preparation. 2027 L&amp;D budget proposal.</td><td>2027 L&amp;D plan presented to CEO at November annual HR review.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  var pg=document.getElementById('page-'+id);
+  if(pg) pg.classList.add('active');
+  if(el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('.page');
+  if(scope){
+    scope.querySelectorAll('.tab-body').forEach(function(b){b.classList.remove('active');});
+    scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  }
+  var tb=document.getElementById('tab-'+id);
+  if(tb) tb.classList.add('active');
+  if(el) el.classList.add('active');
+}
+function toggleAcc(el){
+  var body=el.nextElementSibling;
+  var isOpen=el.classList.contains('open');
+  el.classList.toggle('open',!isOpen);
+  body.classList.toggle('open',!isOpen);
+}
+function selOpt(el){
+  el.closest('.tna-opts').querySelectorAll('.tna-opt').forEach(function(o){o.classList.remove('sel');});
+  el.classList.add('sel');
+}
+
+var tnaData={
+  'G1 Trainee':{
+    'Knowledge gap — doesn\'t know how':{method:'70% on-the-job + structured G4 shadowing',design:'Assign to strongest available G4. Define the first 30 days as structured observation with a daily debrief question. Formal knowledge element: induction programme covering Valentis methodology, safety, and equipment basics.',owner:'G4 (delivery) + Ba (design)',timeline:'Before trainee starts'},
+    'Ability gap — knows but can\'t execute yet':{method:'Progressive stretch assignments under G4 supervision',design:'Start with observation, move to assisted execution, then supervised independent work. G4 must define specific tasks for each stage. Month-3 check-in is the formal assessment point — catches ability gaps before they become attrition.',owner:'G4 (delivery) + SM (oversight)',timeline:'Ongoing — structured into G1 progression plan'},
+    'Process gap — no system or framework exists':{method:'Redesign the onboarding and check-in process',design:'The gap is not the trainee\'s capability — it is the absence of a structured framework for their development. Build the month-3 check-in process (L&D Tool 3). Define the G1 milestone criteria (L&D Tool 4). This is a Group HR design task, not a training task.',owner:'Ba (design) + SM (communicate)',timeline:'Q2 2026 — immediate priority'},
+    'Motivation gap — knows and can, but doesn\'t':{method:'Review total rewards and development promise alignment',design:'If a G1 trainee is not engaging with their development, check whether the development promise (what they were told about career progression and support) matches the reality. Month-3 check-in is the intervention — surface the gap before they exit. If motivation is driven by pay, this is a C&B issue, not L&D.',owner:'G4 (check-in) + Ba (diagnosis)',timeline:'Month 3 mandatory check-in'},
+    'Structural gap — role design prevents it':{method:'Review G1 role design and G4 decision rights',design:'If G1 trainees cannot progress because G4s do not have authority to assign stretch tasks, or because the workload structure prevents learning alongside operational work, this is a role design fix. Review G4 decision rights (OD Tool 3) and G1 workload design.',owner:'Ba (diagnose) + SM (fix)',timeline:'Q2 2026'}
+  },
+  'G2 Driller':{
+    'Knowledge gap — doesn\'t know how':{method:'Technical training + G4 coaching',design:'G2 knowledge gaps are typically technical — specific geological conditions, equipment configuration, non-routine situations. Buy the relevant technical content (industry training providers). Supplement with G4-facilitated on-the-job application. Ensure the G2→G3 technical certification is the milestone target.',owner:'G4 (coaching) + Ba (buy decision)',timeline:'Within current development plan'},
+    'Ability gap — knows but can\'t execute yet':{method:'Supervised independent operations with progressive complexity',design:'The G2 ability gap is usually execution under pressure or in non-routine conditions. Design progressively complex assignments — starting with routine independent work, moving to complex or unusual situations. G4 available but not present. Review at 3-month intervals.',owner:'G4 (design with Ba) + SM (monitor)',timeline:'3–6 month development plan'},
+    'Process gap — no system or framework exists':{method:'Define G2 milestone criteria and progression process',design:'If G2s are not progressing to G3 because nobody knows when G2 is complete, the gap is a milestone definition problem. Define the G2→G3 transition criteria (L&D Tool 4) — what observable capability must the G2 demonstrate, assessed by whom, on what evidence.',owner:'Ba (milestone design) + SM (assess)',timeline:'Q2 2026 — part of pathway build'},
+    'Motivation gap — knows and can, but doesn\'t':{method:'Review G2 progression visibility and recognition',design:'G2 drillers who are not progressing despite capability are often missing line-of-sight to G3 — they do not see what the next step looks like or when it will happen. Make the G3 milestone explicit and the timeline credible. Consider whether the G2-to-G3 pay step is sufficient to motivate the progression effort.',owner:'SM (conversation) + Ba (C&B review)',timeline:'Next development conversation'},
+    'Structural gap — role design prevents it':{method:'Review G2 workload and learning opportunity design',design:'If G2 drillers spend 100% of their time on routine production with no stretch, they cannot develop G3 capabilities. The structural fix is to create deliberate development time — G4 assigns G2 to lead one non-routine task per week, for example.',owner:'SM (workload design) + G4 (assign)',timeline:'Immediate — operational decision'}
+  },
+  'G3 Driller':{
+    'Knowledge gap — doesn\'t know how':{method:'Technical certification + leadership preparation',design:'G3 knowledge gaps are typically either advanced technical (unusual geological conditions, complex equipment) or early leadership (how to brief a team, how to handle a performance issue with a G1). Buy technical training if available. Build leadership preparation as part of the G3→G4 development plan.',owner:'Ba (design) + SM (delivery)',timeline:'Part of G3 development plan'},
+    'Ability gap — knows but can\'t execute yet':{method:'G3 stretch assignments — lead operations + mentor G1s',design:'The G3→G4 transition requires demonstrating people development capability, not just technical excellence. Assign the G3 to formally mentor a G1 trainee — this is both a development experience and a capability test. If the G3 cannot support a G1\'s development, they are not G4-ready regardless of their technical skill.',owner:'SM (assign) + G4 (observe and coach)',timeline:'6–12 months before G4 promotion decision'},
+    'Process gap — no system or framework exists':{method:'Build the G3→G4 development pathway',design:'Indonesia and Laos both have G3 capability that is not converting to G4 because there is no formal development pathway. The G3 does not know what G4-readiness looks like. Build the pathway (L&D Tool 4) with explicit milestone criteria. Laos G3 development plans must be activated June 2026.',owner:'Ba (build) + SM (apply)',timeline:'Q2 2026 — L&D Tool 4'},
+    'Motivation gap — knows and can, but doesn\'t':{method:'Review G4 career proposition and total rewards',design:'If G3 drillers are not pursuing G4 because the promotion does not represent a sufficient step up in pay, recognition, or status — this is a total rewards design problem. Review the G3-to-G4 pay step (C&B Tool 3). The G4 accountability increase (managing trainees, conversion rate responsibility) must be matched by a meaningful rewards increase.',owner:'Ba (C&B review) + COO (approve)',timeline:'C&B merit cycle Q4 2026'},
+    'Structural gap — role design prevents it':{method:'Clarify G4 decision rights and remove blockers',design:'G3 drillers who are ready for G4 but cannot demonstrate the capability because they are never given the authority are blocked by a structural gap. Review whether G3s have adequate opportunity to lead operations and develop trainees. If the G4 is present and active, the G3 has no development space.',owner:'SM (create space) + Ba (role design review)',timeline:'Immediate operational decision'}
+  },
+  'G4 Senior Driller':{
+    'Knowledge gap — doesn\'t know how':{method:'Coaching skills programme — build not buy',design:'G4 coaching knowledge gaps are the highest-priority L&D gap at Valentis. Build the Myanmar coaching programme (6-week modular). Content: structured development conversations, the month-3 check-in framework, recognising at-risk trainees early, giving feedback that motivates rather than deflates. Valentis-specific scenarios throughout.',owner:'Ba (design and deliver) + Thailand SM (co-facilitate)',timeline:'Q2 2026 — Myanmar priority'},
+    'Ability gap — knows but can\'t execute yet':{method:'Practice coaching with observation and feedback',design:'G4 ability to coach develops through doing with feedback. After the coaching programme, pair each G4 with an observer (SM or Ba) for 2–3 check-in conversations. Debrief after each one. The ability gap closes faster with immediate feedback on real conversations than with any amount of additional workshop content.',owner:'SM (observe) + Ba (debrief design)',timeline:'Post-coaching programme Q3 2026'},
+    'Process gap — no system or framework exists':{method:'Build the month-3 check-in process and conversation guide',design:'G4s who do not run structured check-ins are usually not failing to coach — they are operating without a framework that tells them when, what, and how. The month-3 check-in guide (a single-page conversation framework with 5 structured questions and a documentation template) is the process fix. Design time: 10 hours. Impact: immediate.',owner:'Ba (design)',timeline:'April 2026 — urgent'},
+    'Motivation gap — knows and can, but doesn\'t':{method:'Link G4 coaching quality to performance review and rewards',design:'If G4s know how to coach and have a framework but still do not do it consistently — the incentive is wrong. Trainee conversion rate must be a named G4 performance metric. G4 performance review must include a coaching quality dimension. The G4 who has 58% conversion rate should be having a different performance conversation than the G4 with 75%.',owner:'Ba (performance framework) + SM (review)',timeline:'Next performance cycle'},
+    'Structural gap — role design prevents it':{method:'Grant G4 explicit decision rights over trainee development',design:'G4s who do not act on their trainee development accountability often lack the authority to do so. If the SM must approve every schedule change or programme adjustment, the G4 cannot be accountable for outcomes they cannot influence. Fix: G4 role profile must include decision rights (OD Tool 3). G4 can adjust trainee schedule within SM-approved parameters without individual approval.',owner:'Ba (role design) + COO (endorse)',timeline:'Q2 2026 — part of role profile update'}
+  },
+  'G5 Site Manager':{
+    'Knowledge gap — doesn\'t know how':{method:'Buy framework + build Valentis application',design:'SM knowledge gaps are typically in two areas: people development methodology (how to develop a G4, not just manage one) and business/financial management (P&L, people cost ratio management). Buy a leadership coaching framework and the SM financial literacy workshop. Apply to Valentis context in both cases.',owner:'Ba (design + buy decision)',timeline:'Q3–Q4 2026'},
+    'Ability gap — knows but can\'t execute yet':{method:'SM peer forum + COO coaching relationship',design:'SM ability gaps — particularly in people management — develop through practice with feedback. The SM peer forum provides structured peer learning. For individual SM ability gaps (e.g. Indonesia SM people management), a direct coaching relationship with COO or Ba is the most effective intervention.',owner:'COO (coaching) + Ba (peer forum facilitation)',timeline:'Q2 2026 onwards — SM peer forum'},
+    'Process gap — no system or framework exists':{method:'Provide SM-level people management framework',design:'SMs who rely on intuition rather than structured people management are operating without a process framework. Provide the G4 development conversation guide, the succession planning framework (PM Tool 7), and the talent review process as structured tools. The SM peer forum is the mechanism for ensuring consistent adoption.',owner:'Ba (design) + SM peer forum (share)',timeline:'Q2 2026 peer forum launch'},
+    'Motivation gap — knows and can, but doesn\'t':{method:'Review SM accountability and recognition for developing G4s',design:'If SMs are not investing in G4 development because they are not rewarded for it — this is a performance management and C&B problem. SM performance review must include a G4 pipeline development metric. The SM who has two G4-ready successors should be recognised differently from the SM who has none.',owner:'Ba (performance design) + COO (approve)',timeline:'Next performance cycle'},
+    'Structural gap — role design prevents it':{method:'Review SM role design and decision authority',design:'SMs who cannot develop their G4s because they are overwhelmed with COO escalations, cross-country meetings, or administrative load are experiencing a structural capacity gap. The Ops Lead creation (OD Tool 2) is the structural fix — it frees SM capacity for site-level development. Before the Ops Lead is in post, review what COO tasks can be eliminated from SM scope.',owner:'Ba (diagnose) + COO (structural decision)',timeline:'Q3 2026 — post Ops Lead appointment'}
+  },
+  'G6+ Group Functions':{
+    'Knowledge gap — doesn\'t know how':{method:'Professional development certification — buy',design:'G6+ gaps are typically in strategic HR, financial management, or domain expertise. AIHR certifications (Strategic Talent Acquisition, Compensation & Benefits) are the appropriate buy decision for Ba. For the Ops Lead, operational leadership development from an industry body or external provider.',owner:'Individual + COO (approve budget)',timeline:'Ongoing — self-directed with deadlines'},
+    'Ability gap — knows but can\'t execute yet':{method:'Stretch assignment + COO coaching',design:'G6 roles develop through doing. Ba develops HRBP capability by running the tools in this toolkit — each tool is both a deliverable and a development experience. COO coaching relationship (monthly 1:1 agenda includes a development element) provides the 20% social learning component.',owner:'COO (coaching) + individual (self-directed)',timeline:'Ongoing'},
+    'Process gap — no system or framework exists':{method:'Build the missing process — this is the L&D toolkit',design:'Group HR currently lacks many of the processes that would enable it to operate at Level 3 maturity. The L&D toolkit is itself the solution to this gap — building the TNA, pathway, measurement framework, and curriculum governance tools creates the processes that do not yet exist.',owner:'Ba (build)',timeline:'Q2–Q4 2026 toolkit build'},
+    'Motivation gap — knows and can, but doesn\'t':{method:'CHRO positioning conversation and career plan',design:'If Ba is not driving the toolkit build because the business case for the CHRO role is unclear, the intervention is a structured career conversation with the COO — clarifying the path from Group HR Manager to CHRO at Valentis, what milestones must be demonstrated, and what the timeline is.',owner:'COO (conversation) + Ba (career plan)',timeline:'Next COO 1:1'},
+    'Structural gap — role design prevents it':{method:'HRBP inclusion in business planning',design:'If Ba cannot do strategic work because the role is defined as administrative, the structural fix is Ba\'s inclusion in business planning meetings. This is identified as a personal development goal. The mechanism is demonstrating strategic value through the monthly 1:1 (pipeline data, COO-language reporting) until inclusion follows naturally from demonstrated capability.',owner:'Ba (demonstrate value) + COO (invite)',timeline:'H2 2026 milestone'}
+  }
+};
+
+function runTna(){
+  var steps=document.querySelectorAll('.tna-step');
+  var grade=steps[0].querySelector('.tna-opt.sel');
+  var gtype=steps[1].querySelector('.tna-opt.sel');
+  var urg=steps[2].querySelector('.tna-opt.sel');
+  if(!grade||!gtype||!urg){alert('Please answer all three questions.');return;}
+  var g=grade.textContent.trim();
+  var t=gtype.textContent.trim();
+  var u=urg.textContent.trim();
+  var rec=(tnaData[g]&&tnaData[g][t])?tnaData[g][t]:{
+    method:'70/20/10 blended approach',
+    design:'For this combination, run a structured diagnostic conversation with the relevant SM using the 5-question TNA interview protocol. Triangulate with pipeline data before designing an intervention. Apply the gap type framework: knowledge=training, process=system design, motivation=rewards, structural=role design.',
+    owner:'Ba (diagnose first)',
+    timeline:'Within 4 weeks of gap identification'
+  };
+  var urgColor=u==='Causing harm now'?'var(--red)':u==='Will cause harm within 3 months'?'var(--sienna)':u==='Will cause harm within 6 months'?'var(--brass)':'var(--forest)';
+  var urgLabel=u==='Causing harm now'?'Act immediately — this week':u==='Will cause harm within 3 months'?'Act this month — Tier 1 priority':u==='Will cause harm within 6 months'?'Plan now — Tier 2 priority':'Include in annual TNA cycle — Tier 3';
+  var html='<div style="font-family:var(--fd);font-size:19px;font-weight:700;color:#f0ede4;margin-bottom:4px">Intervention Recommendation</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--fm);margin-bottom:14px">'+g+' &middot; '+t+'</div>'
+    +'<div style="padding:10px 14px;border-radius:3px;margin-bottom:10px;font-size:12.5px;font-weight:600;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)"><span style="color:'+urgColor+'">&#9679; Urgency: '+u+'</span> &mdash; <span style="color:rgba(255,255,255,0.5)">'+urgLabel+'</span></div>'
+    +'<div style="display:grid;gap:8px">'
+    +'<div style="padding:12px 16px;background:rgba(31,77,53,0.12);border:1px solid rgba(31,77,53,0.3);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#6dbf8a;margin-bottom:4px">Recommended Method</div><div style="font-size:13px;color:#f0ede4;font-weight:500">'+rec.method+'</div></div>'
+    +'<div style="padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px">Design Guidance</div><div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.75">'+rec.design+'</div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+    +'<div style="padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px">Owner</div><div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300">'+rec.owner+'</div></div>'
+    +'<div style="padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px">Timeline</div><div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300">'+rec.timeline+'</div></div>'
+    +'</div></div>';
+  var res=document.getElementById('tna-result');
+  res.innerHTML=html;
+  res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearTna(){
+  document.querySelectorAll('.tna-opt').forEach(function(o){o.classList.remove('sel');});
+  document.getElementById('tna-result').style.display='none';
+}
+</script>
+</body>
+</html>

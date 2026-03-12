@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Permit & Visa Compliance Monitor — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#1a1a2e; --slate:#2d3142; --amber:#c9802a; --amber-light:#e8a84a;
+    --amber-pale:#fdf3e3; --steel:#4a5568; --mist:#f4f5f7; --white:#ffffff;
+    --border:#dde1ea; --success:#2d7d46; --success-bg:#edf7f1;
+    --warning:#b45309; --warning-bg:#fef3cd; --danger:#b91c1c; --danger-bg:#fef2f2;
+    --info:#1e5f74; --info-bg:#e8f4f8; --purple:#5b21b6; --purple-bg:#ede9fe;
+    --tag-laos:#1e5f74; --tag-myanmar:#6b3a2a; --tag-indonesia:#1a4731; --tag-thailand:#3b2a6e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--mist);color:var(--ink);min-height:100vh;}
+
+  .header{background:var(--slate);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:64px;border-bottom:3px solid var(--amber);}
+  .header-left{display:flex;align-items:center;gap:16px;}
+  .dept-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:2px;border:1px solid var(--amber);padding:3px 8px;border-radius:2px;}
+  .header-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:600;}
+  .header-meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8899aa;letter-spacing:1px;}
+
+  .tool-header{background:var(--white);padding:28px 40px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:24px;}
+  .tool-title-block h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+  .tool-title-block p{font-size:13px;color:var(--steel);max-width:620px;line-height:1.6;}
+  .tool-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--amber-pale);color:var(--amber);border:1px solid var(--amber-light);padding:4px 10px;border-radius:2px;letter-spacing:1px;white-space:nowrap;margin-top:4px;}
+
+  .stats-bar{background:var(--slate);padding:16px 40px;display:flex;}
+  .stat-item{flex:1;text-align:center;padding:0 14px;border-right:1px solid rgba(255,255,255,0.1);}
+  .stat-item:last-child{border-right:none;}
+  .stat-number{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500;color:var(--amber-light);display:block;}
+  .stat-number.red{color:#f87171;} .stat-number.green{color:#6ee7b7;} .stat-number.yellow{color:#fcd34d;}
+  .stat-label{font-size:11px;color:#99aabb;letter-spacing:0.5px;margin-top:2px;}
+
+  .main{padding:28px 40px;display:flex;flex-direction:column;gap:24px;}
+  .tab-bar{display:flex;border-bottom:2px solid var(--border);}
+  .tab-btn{padding:10px 22px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:500;color:var(--steel);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.15s;}
+  .tab-btn.active{color:var(--amber);border-bottom-color:var(--amber);font-weight:600;}
+  .tab-btn:hover:not(.active){color:var(--ink);}
+  .tab-content{display:none;} .tab-content.active{display:block;}
+
+  .controls-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px;}
+  .search-box{flex:1;min-width:200px;display:flex;align-items:center;background:var(--white);border:1px solid var(--border);border-radius:4px;padding:0 14px;gap:8px;height:38px;}
+  .search-box input{border:none;outline:none;font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--ink);flex:1;background:transparent;}
+  .filter-select{height:38px;padding:0 12px;border:1px solid var(--border);border-radius:4px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--steel);background:var(--white);cursor:pointer;outline:none;}
+  .btn{height:38px;padding:0 18px;border-radius:4px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+  .btn-primary{background:var(--amber);color:var(--white);} .btn-primary:hover{background:var(--amber-light);}
+  .btn-outline{background:var(--white);color:var(--slate);border:1px solid var(--border);} .btn-outline:hover{border-color:var(--amber);color:var(--amber);}
+
+  .table-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .table-card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .table-card-title{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);letter-spacing:1.5px;text-transform:uppercase;}
+  .record-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);}
+  table{width:100%;border-collapse:collapse;}
+  thead th{background:var(--mist);padding:10px 14px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--steel);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);font-weight:500;white-space:nowrap;}
+  tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;cursor:pointer;}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:var(--amber-pale);}
+  td{padding:10px 14px;font-size:12.5px;color:var(--ink);vertical-align:middle;}
+
+  .country-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;padding:2px 7px;border-radius:2px;color:var(--white);}
+  .ct-laos{background:var(--tag-laos);} .ct-myanmar{background:var(--tag-myanmar);}
+  .ct-indonesia{background:var(--tag-indonesia);} .ct-thailand{background:var(--tag-thailand);}
+
+  /* EXPIRY PILLS */
+  .expiry-pill{display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;padding:4px 10px;border-radius:3px;}
+  .ep-critical{background:var(--danger-bg);color:var(--danger);}
+  .ep-warning{background:var(--warning-bg);color:var(--warning);}
+  .ep-ok{background:var(--success-bg);color:var(--success);}
+  .ep-expired{background:#1a1a2e;color:#f87171;}
+  .ep-na{background:var(--mist);color:var(--steel);}
+
+  /* PERMIT TYPE */
+  .permit-badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-weight:500;}
+  .pb-wp{background:var(--info-bg);color:var(--info);}
+  .pb-visa{background:var(--purple-bg);color:var(--purple);}
+  .pb-rptka{background:var(--warning-bg);color:var(--warning);}
+  .pb-local{background:var(--success-bg);color:var(--success);}
+  .pb-multiple{background:var(--amber-pale);color:var(--amber);}
+
+  /* STATUS */
+  .status-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:10px;font-family:'IBM Plex Mono',monospace;}
+  .sp-active{background:var(--success-bg);color:var(--success);}
+  .sp-expiring{background:var(--warning-bg);color:var(--warning);}
+  .sp-expired{background:var(--danger-bg);color:var(--danger);}
+  .sp-pending{background:var(--purple-bg);color:var(--purple);}
+  .sp-na{background:var(--mist);color:var(--steel);}
+
+  .action-btns{display:flex;gap:6px;}
+  .icon-btn{width:28px;height:28px;border-radius:3px;border:1px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.15s;color:var(--steel);}
+  .icon-btn:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-pale);}
+
+  /* ALERT PANEL */
+  .alert-panels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+  .alert-panel{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .ap-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+  .ap-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--white);}
+  .ap-count{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;color:var(--white);}
+  .ap-body{padding:4px 0;}
+  .ap-row{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);}
+  .ap-row:last-child{border-bottom:none;}
+  .ap-avatar{width:30px;height:30px;border-radius:50%;background:var(--slate);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:12px;color:var(--amber-light);font-weight:700;flex-shrink:0;}
+  .ap-info{flex:1;}
+  .ap-name{font-size:13px;font-weight:600;}
+  .ap-detail{font-size:11px;color:var(--steel);margin-top:2px;}
+  .ap-days{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;white-space:nowrap;}
+  .ap-days.red{color:var(--danger);} .ap-days.yellow{color:var(--warning);}
+
+  /* COUNTRY REQUIREMENTS */
+  .req-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+  .req-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .req-header{padding:14px 18px;}
+  .req-country{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);}
+  .req-sub{font-size:10px;color:rgba(255,255,255,0.65);font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+  .req-body{padding:14px 18px;}
+  .req-section{margin-bottom:14px;}
+  .req-section:last-child{margin-bottom:0;}
+  .req-section-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
+  .req-row{display:flex;gap:10px;align-items:flex-start;padding:5px 0;border-bottom:1px dotted var(--border);font-size:12px;}
+  .req-row:last-child{border-bottom:none;}
+  .req-label{flex:1;color:var(--ink);}
+  .req-value{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);font-weight:500;white-space:nowrap;}
+  .req-note{font-size:11px;color:var(--steel);margin-top:1px;line-height:1.3;}
+
+  /* MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,46,0.6);z-index:100;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.active{display:flex;}
+  .modal{background:var(--white);border-radius:8px;width:100%;max-width:700px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);}
+  .modal-sm{max-width:580px;}
+  .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1;}
+  .modal-header h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);}
+  .modal-close{width:32px;height:32px;border-radius:4px;border:1px solid var(--border);background:none;cursor:pointer;font-size:16px;color:var(--steel);display:flex;align-items:center;justify-content:center;}
+  .modal-close:hover{background:var(--mist);}
+  .modal-body{padding:24px;}
+  .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--mist);border-radius:0 0 8px 8px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-full{grid-column:1/-1;}
+  .form-section-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--amber-pale);}
+  .form-group{display:flex;flex-direction:column;gap:4px;}
+  .form-group label{font-size:11px;font-weight:500;color:var(--steel);}
+  .form-group input,.form-group select,.form-group textarea{padding:8px 10px;border:1px solid var(--border);border-radius:4px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;background:var(--white);}
+  .form-group input:focus,.form-group select:focus{border-color:var(--amber);}
+  .form-group textarea{resize:vertical;min-height:60px;}
+
+  /* DETAIL MODAL */
+  .detail-hero{background:var(--slate);padding:18px 22px;border-radius:4px;margin-bottom:18px;}
+  .dh-id{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8899aa;letter-spacing:1px;margin-bottom:5px;}
+  .dh-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--white);margin-bottom:8px;}
+  .dh-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .detail-section-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:10px;margin-top:18px;padding-bottom:5px;border-bottom:1px solid var(--amber-pale);}
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .dl{font-size:10px;color:var(--steel);text-transform:uppercase;margin-bottom:3px;font-weight:500;}
+  .dv{font-size:13px;color:var(--ink);line-height:1.4;}
+
+  /* PERMIT TIMELINE */
+  .permit-row{display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--mist);border-radius:4px;margin-bottom:8px;}
+  .pr-type{flex:0 0 120px;}
+  .pr-bar-wrap{flex:1;}
+  .pr-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:4px;}
+  .pr-fill{height:100%;border-radius:4px;}
+  .pr-fill-ok{background:var(--success);}
+  .pr-fill-warn{background:var(--warning);}
+  .pr-fill-crit{background:var(--danger);}
+  .pr-fill-exp{background:#374151;}
+  .pr-dates{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--steel);}
+  .pr-expiry{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;}
+
+  .note-box{background:var(--amber-pale);border:1px solid var(--amber-light);border-radius:4px;padding:10px 14px;font-size:12px;color:var(--ink);line-height:1.5;margin-top:12px;}
+  .note-box strong{color:var(--amber);}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--slate);color:var(--white);padding:12px 20px;border-radius:6px;font-size:13px;border-left:3px solid var(--amber);display:none;z-index:200;}
+  .toast.show{display:block;animation:fadeUp 0.2s ease;}
+  @keyframes fadeUp{from{transform:translateY(8px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+  @media(max-width:1050px){.alert-panels{grid-template-columns:1fr 1fr;} .req-grid{grid-template-columns:1fr;} .main,.header,.tool-header,.stats-bar{padding-left:16px;padding-right:16px;}}
+  @media(max-width:640px){.alert-panels{grid-template-columns:1fr;} .form-grid,.detail-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="dept-badge">HR OPS · D9</div>
+    <div class="header-title">Valentis Group — HR Operations & Compliance</div>
+  </div>
+  <div class="header-meta">TOOL 08 / 09 &nbsp;·&nbsp; WORK PERMITS & VISAS</div>
+</div>
+
+<div class="tool-header">
+  <div class="tool-title-block">
+    <h1>Work Permit & Visa Compliance Monitor</h1>
+    <p>Tracks all work authorisations, visas, and foreign worker permits across Valentis's four operating jurisdictions. Monitors expiry timelines, renewal actions, and country-specific regulatory requirements — including Myanmar Business Visas, Laos Work Permits, Indonesia RPTKA/IMTA, and Thailand Work Permits.</p>
+  </div>
+  <div class="tool-tag">HR OPS · TOOL 8 OF 9</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-number" id="sTotal">—</span><div class="stat-label">Tracked Authorisations</div></div>
+  <div class="stat-item"><span class="stat-number red" id="sExpired">—</span><div class="stat-label">Expired / Critical</div></div>
+  <div class="stat-item"><span class="stat-number yellow" id="sWarning">—</span><div class="stat-label">Expiring ≤90 Days</div></div>
+  <div class="stat-item"><span class="stat-number green" id="sActive">—</span><div class="stat-label">Active & Valid</div></div>
+  <div class="stat-item"><span class="stat-number" id="sForeign">—</span><div class="stat-label">Foreign National Staff</div></div>
+  <div class="stat-item"><span class="stat-number yellow" id="sPending">—</span><div class="stat-label">Renewals In Progress</div></div>
+</div>
+
+<div class="main">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('permits')">Permit Register</button>
+    <button class="tab-btn" onclick="switchTab('alerts')">Expiry Alerts</button>
+    <button class="tab-btn" onclick="switchTab('requirements')">Country Requirements</button>
+  </div>
+
+  <!-- TAB 1: PERMIT REGISTER -->
+  <div class="tab-content active" id="tab-permits">
+    <div class="controls-row">
+      <div class="search-box">
+        <span style="color:#99aabb;font-size:14px;">⌕</span>
+        <input type="text" id="permSearch" placeholder="Search employee, permit number…" oninput="filterPermits()">
+      </div>
+      <select class="filter-select" id="fpCountry" onchange="filterPermits()">
+        <option value="">All Countries</option>
+        <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option>
+      </select>
+      <select class="filter-select" id="fpType" onchange="filterPermits()">
+        <option value="">All Permit Types</option>
+        <option>Work Permit</option><option>Business Visa</option><option>RPTKA/IMTA</option><option>Multiple Entry Visa</option><option>Local National</option>
+      </select>
+      <select class="filter-select" id="fpStatus" onchange="filterPermits()">
+        <option value="">All Statuses</option>
+        <option>Active</option><option>Expiring Soon</option><option>Expired</option><option>Renewal In Progress</option><option>N/A — Local</option>
+      </select>
+      <button class="btn btn-primary" onclick="openAddPermit()">+ Add Permit</button>
+      <button class="btn btn-outline" onclick="exportPermits()">↓ Export</button>
+    </div>
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">Work Authorisation Register</span>
+        <span class="record-count" id="permCount"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>EMPLOYEE</th><th>COUNTRY</th><th>NATIONALITY</th><th>PERMIT TYPE</th>
+            <th>PERMIT / REF NO.</th><th>ISSUED</th><th>EXPIRY</th><th>DAYS LEFT</th>
+            <th>STATUS</th><th>RENEWAL OWNER</th><th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="permTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 2: EXPIRY ALERTS -->
+  <div class="tab-content" id="tab-alerts">
+    <div class="alert-panels" id="alertPanels"></div>
+    <div id="alertTableWrap"></div>
+  </div>
+
+  <!-- TAB 3: COUNTRY REQUIREMENTS -->
+  <div class="tab-content" id="tab-requirements">
+    <div style="font-size:13px;color:var(--steel);line-height:1.6;margin-bottom:16px;">Country-specific regulatory requirements for foreign worker authorisation across all Valentis operating jurisdictions. All foreign national employees must maintain valid work authorisation at all times.</div>
+    <div class="req-grid" id="reqGrid"></div>
+  </div>
+</div>
+
+<!-- PERMIT DETAIL MODAL -->
+<div class="modal-overlay" id="permitDetailModal" onclick="closeMod('permitDetailModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="pdModalTitle">Permit Detail</h2>
+      <button class="modal-close" onclick="closeDirect('permitDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="pdBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('permitDetailModal')">Close</button>
+      <button class="btn btn-primary" id="pdRenewBtn">Mark Renewal In Progress</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PERMIT MODAL -->
+<div class="modal-overlay" id="addPermitModal" onclick="closeMod('addPermitModal',event)">
+  <div class="modal modal-sm" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Add Work Authorisation</h2>
+      <button class="modal-close" onclick="closeDirect('addPermitModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title" style="margin-top:0;">Employee & Permit Details</div>
+      <div class="form-grid">
+        <div class="form-group form-full"><label>Employee Name *</label><input type="text" id="ap_emp" placeholder="Full name"></div>
+        <div class="form-group"><label>Employee ID</label><input type="text" id="ap_eid" placeholder="VTG-XX-000"></div>
+        <div class="form-group"><label>Nationality *</label><input type="text" id="ap_nat" placeholder="e.g. Australian"></div>
+        <div class="form-group"><label>Country (work location) *</label>
+          <select id="ap_country"><option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option></select>
+        </div>
+        <div class="form-group"><label>Grade</label>
+          <select id="ap_grade"><option>G1</option><option>G2</option><option>G3</option><option>G4</option><option>G5</option><option>G6</option><option>G7</option><option>G8</option></select>
+        </div>
+        <div class="form-group"><label>Permit Type *</label>
+          <select id="ap_type"><option>Work Permit</option><option>Business Visa</option><option>RPTKA/IMTA</option><option>Multiple Entry Visa</option><option>Local National</option></select>
+        </div>
+        <div class="form-group form-full"><label>Permit / Reference Number</label><input type="text" id="ap_refno" placeholder="e.g. MM-WP-2024-0042"></div>
+        <div class="form-group"><label>Issue Date</label><input type="date" id="ap_issued"></div>
+        <div class="form-group"><label>Expiry Date *</label><input type="date" id="ap_expiry"></div>
+        <div class="form-group"><label>Status</label>
+          <select id="ap_status"><option>Active</option><option>Expiring Soon</option><option>Renewal In Progress</option><option>Expired</option><option>N/A — Local</option></select>
+        </div>
+        <div class="form-group"><label>Renewal Owner</label><input type="text" id="ap_owner" value="Group HR Manager"></div>
+        <div class="form-group form-full"><label>Notes</label><textarea id="ap_notes" placeholder="Renewal requirements, issuing authority, special conditions…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('addPermitModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePermit()">Save Authorisation</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TODAY = new Date('2025-03-10');
+
+let permits = [
+  // FOREIGN NATIONALS — LAOS SITE
+  {
+    id:'VP-LA-001', empName:'Sven Andersen', empId:'VTG-LA-004', nationality:'Swedish',
+    country:'Laos', grade:'G3', type:'Work Permit',
+    refNo:'LA-WP-2023-0117', issued:'2023-04-01', expiry:'2025-04-30',
+    status:'Expiring Soon', renewalOwner:'Group HR Manager',
+    notes:'Issued by Ministry of Labour, Laos. Quota-based. Renewal requires updated employment contract, medical certificate, and photo documentation. Lead time: 4–6 weeks.',
+  },
+  {
+    id:'VP-LA-002', empName:'Sven Andersen', empId:'VTG-LA-004', nationality:'Swedish',
+    country:'Laos', grade:'G3', type:'Multiple Entry Visa',
+    refNo:'LA-MEV-2024-0049', issued:'2024-03-15', expiry:'2025-03-15',
+    status:'Expired', renewalOwner:'Group HR Manager',
+    notes:'Multiple Entry Visa expired. Employee currently operating on work permit. Urgent: renewal required before next international travel.',
+  },
+  {
+    id:'VP-LA-003', empName:'Nguyen Van Duc', empId:'VTG-LA-007', nationality:'Vietnamese',
+    country:'Laos', grade:'G3', type:'Work Permit',
+    refNo:'LA-WP-2022-0088', issued:'2022-04-01', expiry:'2025-03-31',
+    status:'Expiring Soon', renewalOwner:'Group HR Manager',
+    notes:'CRITICAL: Expiry in 21 days. Renewal package submitted to Ministry of Labour Feb 25. Awaiting response. Employment contract also expiring — renewal linked.',
+  },
+
+  // FOREIGN NATIONALS — MYANMAR SITE
+  {
+    id:'VP-MM-001', empName:'Kyaw Zin Thant', empId:'VTG-MM-008', nationality:'Myanmar',
+    country:'Myanmar', grade:'G4', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Myanmar national. No foreign work authorisation required.',
+  },
+
+  // THAILAND OFFICE — EXPATS
+  {
+    id:'VP-TH-001', empName:'Somchai Rattana', empId:'VTG-TH-023', nationality:'Thai',
+    country:'Thailand', grade:'G8', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Thai national. No foreign work authorisation required.',
+  },
+  {
+    id:'VP-TH-002', empName:'Kasem Wongchai', empId:'VTG-TH-027', nationality:'Thai',
+    country:'Thailand', grade:'G7', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Thai national. No foreign work authorisation required.',
+  },
+  {
+    id:'VP-TH-003', empName:'Nattaporn Suksawat', empId:'VTG-TH-024', nationality:'Thai',
+    country:'Thailand', grade:'G7', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Thai national. No foreign work authorisation required.',
+  },
+
+  // INDONESIA — FOREIGN WORKERS (RPTKA/IMTA)
+  {
+    id:'VP-ID-001', empName:'Budi Santoso', empId:'VTG-ID-017', nationality:'Indonesian',
+    country:'Indonesia', grade:'G4', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Indonesian national. No foreign work authorisation required.',
+  },
+  {
+    id:'VP-ID-002', empName:'Siti Rahayu', empId:'VTG-ID-022', nationality:'Indonesian',
+    country:'Indonesia', grade:'G5', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Indonesian national — HR Country Lead.',
+  },
+
+  // FOREIGN TECHNICAL CONSULTANTS
+  {
+    id:'VP-ID-003', empName:'Arif Budiman', empId:'VTG-ID-018', nationality:'Indonesian',
+    country:'Indonesia', grade:'G3', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Indonesian national.',
+  },
+  {
+    id:'VP-ID-004', empName:'Rizky Firmansyah', empId:'VTG-ID-019', nationality:'Indonesian',
+    country:'Indonesia', grade:'G3', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Indonesian national.',
+  },
+
+  // EXPAT TECHNICAL LEADS — PLACEHOLDER RECORDS FOR RPTKA PLANNING
+  {
+    id:'VP-ID-005', empName:'[Future G6 Expat — Kalimantan]', empId:'TBD', nationality:'TBD',
+    country:'Indonesia', grade:'G6', type:'RPTKA/IMTA',
+    refNo:'RPTKA-PENDING', issued:null, expiry:null,
+    status:'Renewal In Progress', renewalOwner:'Siti Rahayu',
+    notes:'RPTKA (foreign worker utilisation plan) approval pending at Ministry of Manpower. Required before any expatriate G6 Technical Lead can be contracted for Kalimantan site. Estimated approval: 8–12 weeks from submission.',
+  },
+
+  // LAOS LOCAL NATIONALS
+  {
+    id:'VP-LA-004', empName:'Bounmy Phommasack', empId:'VTG-LA-001', nationality:'Lao',
+    country:'Laos', grade:'G4', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Lao national.',
+  },
+  {
+    id:'VP-LA-005', empName:'Khamla Sysouphanthong', empId:'VTG-LA-002', nationality:'Lao',
+    country:'Laos', grade:'G4', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Lao national.',
+  },
+  {
+    id:'VP-LA-006', empName:'Phonesavanh Boupha', empId:'VTG-LA-003', nationality:'Lao',
+    country:'Laos', grade:'G4', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Lao national.',
+  },
+  {
+    id:'VP-LA-007', empName:'Dalavanh Keosavanh', empId:'VTG-LA-006', nationality:'Lao',
+    country:'Laos', grade:'G2', type:'Local National',
+    refNo:'N/A', issued:null, expiry:null,
+    status:'N/A — Local', renewalOwner:'—',
+    notes:'Lao national.',
+  },
+];
+
+let filteredPermits = [...permits];
+
+// ── HELPERS ──────────────────────────────────────────
+function daysLeft(expiry) {
+  if (!expiry) return null;
+  return Math.round((new Date(expiry) - TODAY) / 86400000);
+}
+function fmtDate(d) { if(!d) return '—'; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function expiryPill(expiry, status) {
+  if (status==='N/A — Local') return `<span class="expiry-pill ep-na">Local</span>`;
+  if (!expiry) return `<span class="expiry-pill ep-na">TBD</span>`;
+  const d = daysLeft(expiry);
+  if (d < 0) return `<span class="expiry-pill ep-expired">▲ Expired ${Math.abs(d)}d ago</span>`;
+  if (d <= 30) return `<span class="expiry-pill ep-critical">▲ ${d}d left</span>`;
+  if (d <= 90) return `<span class="expiry-pill ep-warning">● ${d}d left</span>`;
+  return `<span class="expiry-pill ep-ok">✓ ${d}d left</span>`;
+}
+
+// ── RENDER PERMITS ──────────────────────────────────────────
+function renderPermits(data) {
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'};
+  const typeClass = {'Work Permit':'pb-wp','Business Visa':'pb-visa','RPTKA/IMTA':'pb-rptka','Local National':'pb-local','Multiple Entry Visa':'pb-multiple'};
+  const statusClass = {'Active':'sp-active','Expiring Soon':'sp-expiring','Expired':'sp-expired','Renewal In Progress':'sp-pending','N/A — Local':'sp-na'};
+  document.getElementById('permTableBody').innerHTML = data.map(p=>`
+    <tr onclick="openPermitDetail('${p.id}')">
+      <td><div style="font-weight:600;font-size:13px;">${p.empName}</div><div style="font-size:11px;color:var(--steel);">${p.empId} · ${p.grade}</div></td>
+      <td><span class="country-tag ${ctClass[p.country]||''}">${p.country}</span></td>
+      <td style="font-size:12px;">${p.nationality}</td>
+      <td><span class="permit-badge ${typeClass[p.type]||''}">${p.type}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);">${p.refNo||'—'}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(p.issued)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(p.expiry)}</td>
+      <td>${expiryPill(p.expiry, p.status)}</td>
+      <td><span class="status-pill ${statusClass[p.status]||''}">${p.status}</span></td>
+      <td style="font-size:12px;">${p.renewalOwner}</td>
+      <td onclick="event.stopPropagation()">
+        <div class="action-btns">
+          <button class="icon-btn" title="View Detail" onclick="openPermitDetail('${p.id}')">◉</button>
+          ${p.status!=='N/A — Local'?`<button class="icon-btn" title="Mark Renewal In Progress" onclick="markRenewal('${p.id}')">↻</button>`:''}
+        </div>
+      </td>
+    </tr>`).join('');
+  document.getElementById('permCount').textContent = `${data.length} of ${permits.length} records`;
+  updateStats();
+}
+
+function filterPermits() {
+  const q = document.getElementById('permSearch').value.toLowerCase();
+  const country = document.getElementById('fpCountry').value;
+  const type = document.getElementById('fpType').value;
+  const status = document.getElementById('fpStatus').value;
+  filteredPermits = permits.filter(p=>{
+    const mq = !q || p.empName.toLowerCase().includes(q) || (p.refNo||'').toLowerCase().includes(q) || p.empId.toLowerCase().includes(q);
+    return mq && (!country||p.country===country) && (!type||p.type===type) && (!status||p.status===status);
+  });
+  renderPermits(filteredPermits);
+}
+
+function updateStats() {
+  const active = permits.filter(p=>['Active'].includes(p.status)).length;
+  const expiring = permits.filter(p=>['Expiring Soon','Expired'].includes(p.status));
+  const expired = permits.filter(p=>p.status==='Expired' || (p.expiry && daysLeft(p.expiry)<0)).length;
+  const warn = permits.filter(p=>{ const d=daysLeft(p.expiry); return d!==null&&d>=0&&d<=90; }).length;
+  const pending = permits.filter(p=>p.status==='Renewal In Progress').length;
+  const foreign = permits.filter(p=>p.status!=='N/A — Local').length;
+  document.getElementById('sTotal').textContent = permits.filter(p=>p.status!=='N/A — Local').length;
+  document.getElementById('sExpired').textContent = expired;
+  document.getElementById('sWarning').textContent = warn;
+  document.getElementById('sActive').textContent = active;
+  document.getElementById('sForeign').textContent = new Set(permits.filter(p=>p.status!=='N/A — Local').map(p=>p.empId)).size;
+  document.getElementById('sPending').textContent = pending;
+}
+
+// ── PERMIT DETAIL MODAL ──────────────────────────────────────────
+function openPermitDetail(id) {
+  const p = permits.find(x=>x.id===id);
+  if (!p) return;
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'};
+  const typeClass = {'Work Permit':'pb-wp','Business Visa':'pb-visa','RPTKA/IMTA':'pb-rptka','Local National':'pb-local','Multiple Entry Visa':'pb-multiple'};
+  const statusClass = {'Active':'sp-active','Expiring Soon':'sp-expiring','Expired':'sp-expired','Renewal In Progress':'sp-pending','N/A — Local':'sp-na'};
+  const d = daysLeft(p.expiry);
+  const isLocal = p.status==='N/A — Local';
+
+  // bar calc
+  let pct=100, fillClass='pr-fill-ok';
+  if (p.issued && p.expiry) {
+    const total = Math.round((new Date(p.expiry)-new Date(p.issued))/86400000);
+    const remaining = Math.max(0,d);
+    pct = Math.round(remaining/total*100);
+    if (d<0) fillClass='pr-fill-exp';
+    else if (d<=30) fillClass='pr-fill-crit';
+    else if (d<=90) fillClass='pr-fill-warn';
+  }
+
+  document.getElementById('pdModalTitle').textContent = p.empName;
+  document.getElementById('pdBody').innerHTML = `
+    <div class="detail-hero">
+      <div class="dh-id">${p.id} &nbsp;·&nbsp; ${p.empId}</div>
+      <div class="dh-name">${p.empName}</div>
+      <div class="dh-tags">
+        <span class="country-tag ${ctClass[p.country]||''}">${p.country}</span>
+        <span class="permit-badge ${typeClass[p.type]||''}">${p.type}</span>
+        <span class="status-pill ${statusClass[p.status]||''}">${p.status}</span>
+      </div>
+    </div>
+
+    <div class="detail-section-title">Authorisation Details</div>
+    <div class="detail-grid">
+      <div><div class="dl">Nationality</div><div class="dv">${p.nationality}</div></div>
+      <div><div class="dl">Grade</div><div class="dv">${p.grade}</div></div>
+      <div><div class="dl">Reference No.</div><div class="dv" style="font-family:'IBM Plex Mono',monospace;">${p.refNo||'—'}</div></div>
+      <div><div class="dl">Renewal Owner</div><div class="dv">${p.renewalOwner}</div></div>
+      <div><div class="dl">Issue Date</div><div class="dv">${fmtDate(p.issued)}</div></div>
+      <div><div class="dl">Expiry Date</div><div class="dv">${fmtDate(p.expiry)}</div></div>
+    </div>
+
+    ${!isLocal && p.expiry ? `
+    <div class="detail-section-title">Validity Timeline</div>
+    <div class="permit-row">
+      <div class="pr-type"><span class="permit-badge ${typeClass[p.type]||''}">${p.type}</span></div>
+      <div class="pr-bar-wrap">
+        <div class="pr-bar"><div class="pr-fill ${fillClass}" style="width:${pct}%"></div></div>
+        <div class="pr-dates"><span>${fmtDate(p.issued)}</span><span>${fmtDate(p.expiry)}</span></div>
+      </div>
+      <div class="pr-expiry" style="color:${d!==null&&d<0?'var(--danger)':d<=30?'var(--danger)':d<=90?'var(--warning)':'var(--success)'};">
+        ${d!==null?(d<0?Math.abs(d)+'d overdue':d+'d left'):'—'}
+      </div>
+    </div>` : ''}
+
+    <div class="detail-section-title">Notes & Renewal Requirements</div>
+    <div style="font-size:13px;color:var(--ink);line-height:1.6;background:var(--mist);padding:12px 16px;border-radius:4px;">${p.notes||'—'}</div>
+
+    ${!isLocal&&d!==null&&d<=90?`
+    <div class="note-box" style="margin-top:14px;">
+      <strong>⚠ Action Required:</strong> This permit ${d<0?'has expired':'expires in '+d+' days'}. Renewal should be initiated immediately. Lead times for Laos Work Permits are 4–6 weeks; Myanmar Business Visa renewals typically take 1–2 weeks.
+    </div>`:''}`;
+
+  const renewBtn = document.getElementById('pdRenewBtn');
+  if (!isLocal && p.status!=='Renewal In Progress') {
+    renewBtn.style.display='inline-flex';
+    renewBtn.onclick = ()=>{ markRenewal(id); closeDirect('permitDetailModal'); };
+  } else { renewBtn.style.display='none'; }
+  document.getElementById('permitDetailModal').classList.add('active');
+}
+
+function markRenewal(id) {
+  const p = permits.find(x=>x.id===id);
+  if (p && p.status!=='N/A — Local') {
+    p.status='Renewal In Progress';
+    filterPermits(); renderAlerts(); updateStats();
+    showToast(`↻ ${p.empName} — ${p.type} renewal marked as In Progress`);
+  }
+}
+
+// ── ALERTS TAB ──────────────────────────────────────────
+function renderAlerts() {
+  const critical = permits.filter(p=>{ const d=daysLeft(p.expiry); return d!==null&&d<=30; });
+  const warning  = permits.filter(p=>{ const d=daysLeft(p.expiry); return d!==null&&d>30&&d<=90; });
+  const inProg   = permits.filter(p=>p.status==='Renewal In Progress');
+
+  const panelHtml = (title, items, color, emptyMsg) => {
+    if (!items.length) return `
+      <div class="alert-panel">
+        <div class="ap-header" style="background:${color};">
+          <span class="ap-title">${title}</span><span class="ap-count">0</span>
+        </div>
+        <div style="padding:20px 16px;font-size:13px;color:#aab;font-style:italic;">${emptyMsg}</div>
+      </div>`;
+    return `
+      <div class="alert-panel">
+        <div class="ap-header" style="background:${color};">
+          <span class="ap-title">${title}</span><span class="ap-count">${items.length}</span>
+        </div>
+        <div class="ap-body">
+          ${items.map(p=>{
+            const d=daysLeft(p.expiry);
+            return `<div class="ap-row" onclick="openPermitDetail('${p.id}')" style="cursor:pointer;">
+              <div class="ap-avatar">${p.empName.charAt(0)}</div>
+              <div class="ap-info">
+                <div class="ap-name">${p.empName}</div>
+                <div class="ap-detail">${p.type} · ${p.country} · ${fmtDate(p.expiry)}</div>
+                <div class="ap-detail" style="margin-top:2px;">Owner: ${p.renewalOwner}</div>
+              </div>
+              <div class="ap-days ${d!==null&&d<=30?'red':'yellow'}">${d!==null?(d<0?Math.abs(d)+'d OVR':d+'d'):'—'}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  };
+
+  document.getElementById('alertPanels').innerHTML =
+    panelHtml('🔴 Critical — Expired or ≤30 Days', critical, '#b91c1c', 'No critical expiries.') +
+    panelHtml('⚠ Warning — 31–90 Days', warning, '#b45309', 'No permits expiring within 90 days.') +
+    panelHtml('↻ Renewals In Progress', inProg, '#1e5f74', 'No renewals currently in progress.');
+
+  // Action table
+  const actionItems = [...critical.filter(p=>!inProg.includes(p)), ...warning.filter(p=>!inProg.includes(p))];
+  document.getElementById('alertTableWrap').innerHTML = actionItems.length ? `
+    <div class="table-card" style="margin-top:4px;">
+      <div class="table-card-header">
+        <span class="table-card-title">Recommended Actions</span>
+        <span class="record-count">${actionItems.length} permits requiring attention</span>
+      </div>
+      <table><thead><tr>
+        <th>EMPLOYEE</th><th>COUNTRY</th><th>PERMIT TYPE</th><th>EXPIRY</th><th>DAYS LEFT</th><th>RECOMMENDED ACTION</th><th></th>
+      </tr></thead>
+      <tbody>
+        ${actionItems.map(p=>{
+          const d=daysLeft(p.expiry);
+          const action = d<0 ? '🔴 Immediate renewal — permit expired' : d<=30 ? '🔴 Initiate renewal this week' : '⚠ Schedule renewal — 90-day window open';
+          return `<tr onclick="openPermitDetail('${p.id}')">
+            <td><div style="font-weight:600;">${p.empName}</div><div style="font-size:11px;color:var(--steel);">${p.empId}</div></td>
+            <td><span class="country-tag ct-${p.country.toLowerCase()}">${p.country}</span></td>
+            <td><span class="permit-badge pb-wp">${p.type}</span></td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(p.expiry)}</td>
+            <td>${expiryPill(p.expiry, p.status)}</td>
+            <td style="font-size:12px;">${action}</td>
+            <td onclick="event.stopPropagation()"><button class="icon-btn" onclick="markRenewal('${p.id}')">↻</button></td>
+          </tr>`;
+        }).join('')}
+      </tbody></table>
+    </div>` : `<div style="text-align:center;padding:24px;font-size:13px;color:#aab;font-style:italic;">All permits with upcoming deadlines have renewals in progress.</div>`;
+}
+
+// ── COUNTRY REQUIREMENTS ──────────────────────────────────────────
+function renderRequirements() {
+  const reqs = [
+    {
+      country:'Laos', color:'background:#1e5f74',
+      legislation:'Labour Law No.43/NA (2013); Decree No.1807',
+      sections:[
+        { title:'Foreign Worker Quota', rows:[
+          { label:'Employer quota limit', value:'10% of workforce', note:'Foreign nationals cannot exceed 10% of total headcount' },
+          { label:'Current Valentis exposure', value:'2 of 7 (29%)', note:'⚠ Exceeds statutory quota — quota waiver under ministerial review' },
+        ]},
+        { title:'Work Permit Requirements', rows:[
+          { label:'Issuing authority', value:'Ministry of Labour', note:'' },
+          { label:'Validity', value:'1 year', note:'Renewable annually' },
+          { label:'Processing time', value:'4–6 weeks', note:'From complete submission' },
+          { label:'Required documents', value:'5 docs', note:'Contract, medical cert, passport, photo, application form' },
+          { label:'Application fee', value:'USD 100–150', note:'Approximate; subject to change' },
+        ]},
+        { title:'Business Visa (Multiple Entry)', rows:[
+          { label:'Validity', value:'1 year', note:'Multiple entry; single stay typically 30 days' },
+          { label:'Renewal lead time', value:'1–2 weeks', note:'Via Thai or Vietnamese embassy; or in-country' },
+        ]},
+      ]
+    },
+    {
+      country:'Myanmar', color:'background:#6b3a2a',
+      legislation:'Foreigners Registration Law (2018); Immigration Act',
+      sections:[
+        { title:'Business Visa (Most Common)', rows:[
+          { label:'Visa type', value:'Business (B)', note:'Used for most foreign technical workers' },
+          { label:'Validity', value:'70 days single / 1yr multiple', note:'Multiple entry recommended for site rotations' },
+          { label:'Processing time', value:'3–7 working days', note:'Online portal or consulate' },
+          { label:'Renewal', value:'In-country or on departure', note:'Overstay fines are significant — monitor closely' },
+        ]},
+        { title:'Work Permit (Stay Permit)', rows:[
+          { label:'Required for stays >70 days', value:'Stay Permit', note:'In addition to business visa' },
+          { label:'Issuing authority', value:'Directorate of Investment & Company Admin (DICA)', note:'' },
+          { label:'Processing time', value:'4–8 weeks', note:'' },
+          { label:'Note', value:'Situation evolving', note:'Monitor political/regulatory context; requirements may change' },
+        ]},
+      ]
+    },
+    {
+      country:'Indonesia', color:'background:#1a4731',
+      legislation:'Law No.13/2003; Omnibus Law No.11/2020; MOM Regulation No.8/2021',
+      sections:[
+        { title:'RPTKA — Foreign Worker Utilisation Plan', rows:[
+          { label:'Required before hiring any expat', value:'Yes', note:'Must be approved by Ministry of Manpower (MOM) before recruitment' },
+          { label:'Processing time', value:'8–12 weeks', note:'From submission to approval' },
+          { label:'Position restrictions', value:'Sector-specific', note:'Certain roles prohibited for foreign workers (e.g. HR Director)' },
+          { label:'Valentis status', value:'Pending', note:'RPTKA for G6 Technical Lead in progress for Kalimantan site' },
+        ]},
+        { title:'IMTA — Work Permit', rows:[
+          { label:'Issued after RPTKA approval', value:'Yes', note:'Sequential: RPTKA → IMTA → VITAS → KITAS' },
+          { label:'IMTA validity', value:'Max 1 year', note:'Renewable' },
+          { label:'KITAS (Stay Permit)', value:'Required', note:'Issued for valid IMTA holders' },
+          { label:'DPKK levy', value:'USD 100/month', note:'Paid per foreign worker employed' },
+        ]},
+      ]
+    },
+    {
+      country:'Thailand', color:'background:#3b2a6e',
+      legislation:'Foreign Business Act B.E. 2542; Alien Working Act B.E. 2551',
+      sections:[
+        { title:'Work Permit Requirements', rows:[
+          { label:'Issuing authority', value:'Department of Employment', note:'' },
+          { label:'Validity', value:'1–2 years', note:'Typically tied to visa/employment contract' },
+          { label:'Processing time', value:'2–4 weeks', note:'From complete submission' },
+          { label:'Required documents', value:'Medical cert, contract, tax ID, photos, application', note:'' },
+          { label:'Minimum capital requirement', value:'THB 2M per foreign employee', note:'Company must meet capital threshold' },
+        ]},
+        { title:'Non-Immigrant B Visa', rows:[
+          { label:'Validity', value:'90 days (single); 1yr (multiple)', note:'Most expats use Non-B + Work Permit' },
+          { label:'Renewal', value:'Annual', note:'Tied to valid work permit' },
+          { label:'90-day reporting', value:'Required', note:'Foreign nationals must report to immigration every 90 days' },
+        ]},
+      ]
+    },
+  ];
+
+  document.getElementById('reqGrid').innerHTML = reqs.map(r=>`
+    <div class="req-card">
+      <div class="req-header" style="${r.color}">
+        <div class="req-country">${r.country}</div>
+        <div class="req-sub">${r.legislation}</div>
+      </div>
+      <div class="req-body">
+        ${r.sections.map(s=>`
+          <div class="req-section">
+            <div class="req-section-title">${s.title}</div>
+            ${s.rows.map(row=>`
+              <div class="req-row">
+                <div><div class="req-label">${row.label}</div>${row.note?`<div class="req-note">${row.note}</div>`:''}</div>
+                <div class="req-value">${row.value}</div>
+              </div>`).join('')}
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ── ADD PERMIT ──────────────────────────────────────────
+function openAddPermit() {
+  ['ap_emp','ap_eid','ap_nat','ap_refno','ap_notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ap_owner').value='Group HR Manager';
+  document.getElementById('ap_issued').value='';
+  document.getElementById('ap_expiry').value='';
+  document.getElementById('addPermitModal').classList.add('active');
+}
+function savePermit() {
+  const emp = document.getElementById('ap_emp').value.trim();
+  if (!emp) { showToast('⚠ Employee name required'); return; }
+  permits.push({
+    id:`VP-NEW-${permits.length+1}`, empName:emp, empId:document.getElementById('ap_eid').value||'—',
+    nationality:document.getElementById('ap_nat').value||'—',
+    country:document.getElementById('ap_country').value, grade:document.getElementById('ap_grade').value,
+    type:document.getElementById('ap_type').value, refNo:document.getElementById('ap_refno').value||'—',
+    issued:document.getElementById('ap_issued').value||null, expiry:document.getElementById('ap_expiry').value||null,
+    status:document.getElementById('ap_status').value, renewalOwner:document.getElementById('ap_owner').value,
+    notes:document.getElementById('ap_notes').value||'—'
+  });
+  filteredPermits=[...permits]; renderPermits(filteredPermits); renderAlerts(); updateStats();
+  closeDirect('addPermitModal'); showToast(`✓ Authorisation added for ${emp}`);
+}
+
+function exportPermits() {
+  const headers=['ID','Employee','Country','Nationality','Type','Ref No','Issued','Expiry','Status','Owner'];
+  const rows=filteredPermits.map(p=>[p.id,p.empName,p.country,p.nationality,p.type,p.refNo||'',p.issued||'',p.expiry||'',p.status,p.renewalOwner]);
+  const csv=[headers.join(','),...rows.map(r=>r.map(v=>`"${v}"`).join(','))].join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='valentis-work-permits.csv'; a.click(); showToast('✓ Permit register exported');
+}
+
+function switchTab(id) {
+  const tabs=['permits','alerts','requirements'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function closeMod(id,e){if(e.target===document.getElementById(id))closeDirect(id);}
+function closeDirect(id){document.getElementById(id).classList.remove('active');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+renderPermits(permits);
+renderAlerts();
+renderRequirements();
+</script>
+</body>
+</html>

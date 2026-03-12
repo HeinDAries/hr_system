@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Records & Data Management Hub — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --slate: #2d3142;
+    --amber: #c9802a;
+    --amber-light: #e8a84a;
+    --amber-pale: #fdf3e3;
+    --steel: #4a5568;
+    --mist: #f4f5f7;
+    --white: #ffffff;
+    --border: #dde1ea;
+    --success: #2d7d46;
+    --success-bg: #edf7f1;
+    --warning: #b45309;
+    --warning-bg: #fef3cd;
+    --danger: #b91c1c;
+    --danger-bg: #fef2f2;
+    --neutral: #4a5568;
+    --neutral-bg: #f4f5f7;
+    --tag-laos: #1e5f74;
+    --tag-myanmar: #6b3a2a;
+    --tag-indonesia: #1a4731;
+    --tag-thailand: #3b2a6e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--mist);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--slate);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    border-bottom: 3px solid var(--amber);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .dept-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--amber);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid var(--amber);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--white);
+    font-weight: 600;
+  }
+  .header-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #8899aa;
+    letter-spacing: 1px;
+  }
+
+  /* ── TOOL HEADER ── */
+  .tool-header {
+    background: var(--white);
+    padding: 28px 40px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .tool-title-block h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .tool-title-block p {
+    font-size: 13px;
+    color: var(--steel);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+  .tool-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    background: var(--amber-pale);
+    color: var(--amber);
+    border: 1px solid var(--amber-light);
+    padding: 4px 10px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    margin-top: 4px;
+  }
+
+  /* ── SUMMARY STATS ── */
+  .stats-bar {
+    background: var(--slate);
+    padding: 16px 40px;
+    display: flex;
+    gap: 0;
+  }
+  .stat-item {
+    flex: 1;
+    text-align: center;
+    padding: 0 20px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--amber-light);
+    display: block;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #99aabb;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    padding: 28px 40px;
+    display: flex;
+    gap: 24px;
+    flex-direction: column;
+  }
+
+  /* ── CONTROLS ── */
+  .controls-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-box {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0 14px;
+    gap: 8px;
+    height: 38px;
+  }
+  .search-box input {
+    border: none;
+    outline: none;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    flex: 1;
+    background: transparent;
+  }
+  .search-icon { color: #99aabb; font-size: 14px; }
+
+  .filter-select {
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    color: var(--steel);
+    background: var(--white);
+    cursor: pointer;
+    outline: none;
+  }
+  .btn {
+    height: 38px;
+    padding: 0 18px;
+    border-radius: 4px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    letter-spacing: 0.3px;
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: var(--amber);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: var(--amber-light); }
+  .btn-outline {
+    background: var(--white);
+    color: var(--slate);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* ── TABLE ── */
+  .table-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .table-card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .table-card-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--steel);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .record-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--amber);
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: var(--mist);
+    padding: 10px 14px;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--steel);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  thead th.sortable { cursor: pointer; user-select: none; }
+  thead th.sortable:hover { color: var(--amber); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    cursor: pointer;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--amber-pale); }
+
+  td {
+    padding: 11px 14px;
+    font-size: 12.5px;
+    color: var(--ink);
+    vertical-align: middle;
+  }
+
+  .emp-id {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--steel);
+  }
+  .emp-name { font-weight: 600; font-size: 13px; }
+  .emp-name-sub { font-size: 11px; color: var(--steel); font-weight: 400; margin-top: 1px; }
+
+  .country-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 2px;
+    color: var(--white);
+    letter-spacing: 0.5px;
+  }
+  .ct-laos { background: var(--tag-laos); }
+  .ct-myanmar { background: var(--tag-myanmar); }
+  .ct-indonesia { background: var(--tag-indonesia); }
+  .ct-thailand { background: var(--tag-thailand); }
+
+  .grade-badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 2px;
+    background: var(--slate);
+    color: var(--amber-light);
+    letter-spacing: 0.5px;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 10px;
+  }
+  .status-active { background: var(--success-bg); color: var(--success); }
+  .status-probation { background: var(--warning-bg); color: var(--warning); }
+  .status-inactive { background: var(--danger-bg); color: var(--danger); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot-active { background: var(--success); }
+  .dot-probation { background: var(--warning); }
+  .dot-inactive { background: var(--danger); }
+
+  .data-completeness {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .completeness-bar {
+    flex: 1;
+    height: 5px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    max-width: 80px;
+  }
+  .completeness-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .fill-high { background: var(--success); }
+  .fill-med { background: var(--amber); }
+  .fill-low { background: var(--danger); }
+  .completeness-pct {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--steel);
+    min-width: 28px;
+  }
+
+  .action-btns { display: flex; gap: 6px; }
+  .icon-btn {
+    width: 28px; height: 28px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    transition: all 0.15s;
+    color: var(--steel);
+  }
+  .icon-btn:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-pale); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(26,26,46,0.6);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 740px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0;
+    background: var(--white);
+    z-index: 1;
+  }
+  .modal-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .modal-close {
+    width: 32px; height: 32px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--steel);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: var(--mist); }
+
+  .modal-body { padding: 24px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-grid.three-col { grid-template-columns: 1fr 1fr 1fr; }
+  .form-full { grid-column: 1 / -1; }
+
+  .form-section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+    margin-top: 4px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--amber-pale);
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--steel);
+    letter-spacing: 0.3px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 8px 11px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+    background: var(--white);
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--amber); }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+
+  .form-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16px 0;
+  }
+
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: var(--mist);
+    border-radius: 0 0 8px 8px;
+  }
+
+  /* ── AUDIT PANEL ── */
+  .side-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .panel-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 12px 16px;
+    background: var(--slate);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-header-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--amber-light);
+  }
+  .panel-body { padding: 14px 16px; }
+
+  .audit-entry {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .audit-entry:last-child { border-bottom: none; }
+  .audit-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--amber);
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  .audit-dot.dot-green { background: var(--success); }
+  .audit-dot.dot-red { background: var(--danger); }
+  .audit-text { font-size: 12px; color: var(--ink); line-height: 1.4; flex: 1; }
+  .audit-time {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #99aabb;
+    white-space: nowrap;
+  }
+
+  .flag-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .flag-item:last-child { border-bottom: none; }
+  .flag-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .flag-text { font-size: 12px; color: var(--ink); flex: 1; line-height: 1.4; }
+  .flag-emp { font-weight: 600; }
+  .flag-detail { font-size: 11px; color: var(--steel); }
+
+  /* ── DATA STANDARDS ── */
+  .standards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .standard-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+  }
+  .standard-card-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--steel);
+    margin-bottom: 10px;
+  }
+  .standard-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px dotted var(--border);
+    font-size: 11px;
+  }
+  .standard-field:last-child { border-bottom: none; }
+  .sf-name { color: var(--ink); }
+  .sf-req {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+  .sf-mandatory { background: #fee2e2; color: var(--danger); }
+  .sf-optional { background: var(--neutral-bg); color: var(--neutral); }
+  .sf-system { background: var(--amber-pale); color: var(--amber); }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--steel);
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+  .tab-btn.active {
+    color: var(--amber);
+    border-bottom-color: var(--amber);
+    font-weight: 600;
+  }
+  .tab-btn:hover:not(.active) { color: var(--ink); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── NOTIFICATION ── */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--slate);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    border-left: 3px solid var(--amber);
+    display: none;
+    z-index: 200;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .toast.show { display: block; animation: slideIn 0.2s ease; }
+  @keyframes slideIn {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* ── DETAIL VIEW ── */
+  .detail-section { margin-bottom: 20px; }
+  .detail-section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--amber-pale);
+  }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .detail-item { }
+  .detail-label { font-size: 10px; color: var(--steel); font-weight: 500; letter-spacing: 0.3px; text-transform: uppercase; margin-bottom: 2px; }
+  .detail-value { font-size: 13px; color: var(--ink); }
+
+  .completeness-full {
+    margin: 12px 0;
+    background: var(--mist);
+    border-radius: 4px;
+    padding: 12px;
+  }
+  .comp-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--ink); }
+  .comp-bar-full { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .comp-fill-full { height: 100%; border-radius: 4px; background: var(--success); transition: width 0.3s; }
+  .comp-fields { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .comp-field-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .tag-complete { background: var(--success-bg); color: var(--success); }
+  .tag-missing { background: var(--danger-bg); color: var(--danger); }
+
+  @media (max-width: 900px) {
+    .header, .tool-header, .main, .stats-bar { padding-left: 20px; padding-right: 20px; }
+    .form-grid, .side-panels, .standards-grid { grid-template-columns: 1fr; }
+    .stats-bar { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="dept-badge">HR OPS · D9</div>
+    <div class="header-title">Valentis Group — HR Operations & Compliance</div>
+  </div>
+  <div class="header-meta">TOOL 01 / 09 &nbsp;·&nbsp; EMPLOYEE RECORDS</div>
+</div>
+
+<!-- TOOL HEADER -->
+<div class="tool-header">
+  <div class="tool-title-block">
+    <h1>Employee Records & Data Management Hub</h1>
+    <p>Central employee data register across all four operating countries. Maintains data standards, tracks record completeness, and provides a full audit trail for all additions and amendments.</p>
+  </div>
+  <div class="tool-tag">HR OPS · TOOL 1 OF 9</div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat-item">
+    <span class="stat-number" id="statTotal">28</span>
+    <div class="stat-label">Total Employees</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" id="statActive">24</span>
+    <div class="stat-label">Active</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" id="statProbation">3</span>
+    <div class="stat-label">On Probation</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" id="statCompleteness">81%</span>
+    <div class="stat-label">Avg. Data Completeness</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" id="statFlags">4</span>
+    <div class="stat-label">Records Flagged</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">4</span>
+    <div class="stat-label">Countries</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('records')">Employee Register</button>
+    <button class="tab-btn" onclick="switchTab('standards')">Data Standards</button>
+    <button class="tab-btn" onclick="switchTab('audit')">Audit Trail</button>
+  </div>
+
+  <!-- TAB: EMPLOYEE REGISTER -->
+  <div class="tab-content active" id="tab-records">
+    <!-- Controls -->
+    <div class="controls-row" style="margin-bottom:16px;">
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="searchInput" placeholder="Search by name, ID, role…" oninput="filterTable()">
+      </div>
+      <select class="filter-select" id="filterCountry" onchange="filterTable()">
+        <option value="">All Countries</option>
+        <option value="Laos">Laos</option>
+        <option value="Myanmar">Myanmar</option>
+        <option value="Indonesia">Indonesia</option>
+        <option value="Thailand">Thailand</option>
+      </select>
+      <select class="filter-select" id="filterGrade" onchange="filterTable()">
+        <option value="">All Grades</option>
+        <option value="G1">G1</option>
+        <option value="G2">G2</option>
+        <option value="G3">G3</option>
+        <option value="G4">G4</option>
+        <option value="G5">G5</option>
+        <option value="G6">G6</option>
+        <option value="G7">G7</option>
+        <option value="G8">G8</option>
+      </select>
+      <select class="filter-select" id="filterStatus" onchange="filterTable()">
+        <option value="">All Statuses</option>
+        <option value="Active">Active</option>
+        <option value="Probation">Probation</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+      <button class="btn btn-primary" onclick="openAddModal()">+ Add Employee</button>
+      <button class="btn btn-outline" onclick="exportCSV()">↓ Export</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">Employee Register</span>
+        <span class="record-count" id="recordCount">Showing 28 records</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>EMP ID</th>
+            <th class="sortable" onclick="sortTable('name')">NAME ↕</th>
+            <th>COUNTRY</th>
+            <th class="sortable" onclick="sortTable('grade')">GRADE ↕</th>
+            <th>ROLE / CATEGORY</th>
+            <th>STATUS</th>
+            <th>START DATE</th>
+            <th>DATA COMPLETENESS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="empTableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: DATA STANDARDS -->
+  <div class="tab-content" id="tab-standards">
+    <div style="margin-bottom:16px; font-size:13px; color:var(--steel); line-height:1.6;">
+      Valentis Group data standards define which fields are mandatory, optional, or system-generated for each employee record. All HR staff must adhere to these standards when creating or amending records.
+    </div>
+    <div class="standards-grid">
+      <div class="standard-card">
+        <div class="standard-card-title">Personal Information</div>
+        <div class="standard-field"><span class="sf-name">Full Legal Name</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Date of Birth</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Nationality</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">National ID / Passport No.</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Emergency Contact</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Personal Email</span><span class="sf-req sf-optional">Optional</span></div>
+        <div class="standard-field"><span class="sf-name">Home Address</span><span class="sf-req sf-optional">Optional</span></div>
+      </div>
+      <div class="standard-card">
+        <div class="standard-card-title">Employment Details</div>
+        <div class="standard-field"><span class="sf-name">Employee ID</span><span class="sf-req sf-system">System</span></div>
+        <div class="standard-field"><span class="sf-name">Job Title</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Grade (G1–G8)</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Department</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Country / Site</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Start Date</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Contract Type</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Reporting Manager</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Probation End Date</span><span class="sf-req sf-optional">Optional</span></div>
+      </div>
+      <div class="standard-card">
+        <div class="standard-card-title">Payroll & Compensation</div>
+        <div class="standard-field"><span class="sf-name">Base Salary</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Currency</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Pay Frequency</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Bank Account Details</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Tax Reference No.</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Allowances</span><span class="sf-req sf-optional">Optional</span></div>
+        <div class="standard-field"><span class="sf-name">Last Salary Review</span><span class="sf-req sf-system">System</span></div>
+      </div>
+      <div class="standard-card">
+        <div class="standard-card-title">Documents & Compliance</div>
+        <div class="standard-field"><span class="sf-name">Signed Contract on File</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">ID Document Copy</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Work Permit No.</span><span class="sf-req sf-optional">Optional</span></div>
+        <div class="standard-field"><span class="sf-name">Work Permit Expiry</span><span class="sf-req sf-optional">Optional</span></div>
+        <div class="standard-field"><span class="sf-name">Background Check</span><span class="sf-req sf-optional">Optional</span></div>
+        <div class="standard-field"><span class="sf-name">Reference Checks</span><span class="sf-req sf-optional">Optional</span></div>
+      </div>
+      <div class="standard-card">
+        <div class="standard-card-title">Operational / Site Data</div>
+        <div class="standard-field"><span class="sf-name">Site / Camp Location</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Roster Type</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">PPE Issued</span><span class="sf-req sf-optional">Optional</span></div>
+        <div class="standard-field"><span class="sf-name">Medical Fitness Date</span><span class="sf-req sf-optional">Optional</span></div>
+        <div class="standard-field"><span class="sf-name">Safety Induction Date</span><span class="sf-req sf-mandatory">Mandatory</span></div>
+        <div class="standard-field"><span class="sf-name">Driller Certification</span><span class="sf-req sf-optional">Optional</span></div>
+      </div>
+      <div class="standard-card">
+        <div class="standard-card-title">System & Metadata</div>
+        <div class="standard-field"><span class="sf-name">Record Created Date</span><span class="sf-req sf-system">System</span></div>
+        <div class="standard-field"><span class="sf-name">Last Modified Date</span><span class="sf-req sf-system">System</span></div>
+        <div class="standard-field"><span class="sf-name">Modified By</span><span class="sf-req sf-system">System</span></div>
+        <div class="standard-field"><span class="sf-name">Termination Date</span><span class="sf-req sf-optional">Optional</span></div>
+        <div class="standard-field"><span class="sf-name">Termination Reason</span><span class="sf-req sf-optional">Optional</span></div>
+        <div class="standard-field"><span class="sf-name">Re-hire Eligible</span><span class="sf-req sf-optional">Optional</span></div>
+      </div>
+    </div>
+    <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--steel);">
+        <span style="background:#fee2e2;color:var(--danger);padding:2px 8px;border-radius:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;">Mandatory</span>
+        Must be completed at time of hire
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--steel);">
+        <span style="background:var(--neutral-bg);color:var(--neutral);padding:2px 8px;border-radius:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;">Optional</span>
+        Recommended; complete where applicable
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--steel);">
+        <span style="background:var(--amber-pale);color:var(--amber);padding:2px 8px;border-radius:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;">System</span>
+        Auto-populated; do not manually edit
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: AUDIT TRAIL -->
+  <div class="tab-content" id="tab-audit">
+    <div class="side-panels">
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-header-title">Recent Activity Log</span>
+        </div>
+        <div class="panel-body">
+          <div class="audit-entry">
+            <div class="audit-dot dot-green"></div>
+            <div class="audit-text"><strong>Record Created</strong> — Tin Maung Win (VTG-MM-018) added to Myanmar register</div>
+            <div class="audit-time">Today 09:14</div>
+          </div>
+          <div class="audit-entry">
+            <div class="audit-dot"></div>
+            <div class="audit-text"><strong>Field Updated</strong> — Grade changed G2→G3 for Sven Andersen (VTG-LA-004)</div>
+            <div class="audit-time">Yesterday</div>
+          </div>
+          <div class="audit-entry">
+            <div class="audit-dot"></div>
+            <div class="audit-text"><strong>Document Uploaded</strong> — Signed contract added for Budi Santoso (VTG-ID-011)</div>
+            <div class="audit-time">Mar 8</div>
+          </div>
+          <div class="audit-entry">
+            <div class="audit-dot dot-red"></div>
+            <div class="audit-text"><strong>Record Flagged</strong> — Missing bank details for Khin Zaw (VTG-MM-015). Flagged for follow-up</div>
+            <div class="audit-time">Mar 7</div>
+          </div>
+          <div class="audit-entry">
+            <div class="audit-dot"></div>
+            <div class="audit-text"><strong>Status Updated</strong> — Probation confirmed complete for Arif Budiman (VTG-ID-009)</div>
+            <div class="audit-time">Mar 6</div>
+          </div>
+          <div class="audit-entry">
+            <div class="audit-dot"></div>
+            <div class="audit-text"><strong>Field Updated</strong> — Salary revised for Somchai Rattana (VTG-TH-002)</div>
+            <div class="audit-time">Mar 5</div>
+          </div>
+          <div class="audit-entry">
+            <div class="audit-dot dot-red"></div>
+            <div class="audit-text"><strong>Record Flagged</strong> — Work permit expiry in 45 days for Nguyen Van Duc (VTG-LA-007)</div>
+            <div class="audit-time">Mar 4</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-header-title">Active Flags & Data Gaps</span>
+        </div>
+        <div class="panel-body">
+          <div class="flag-item">
+            <div class="flag-icon">⚠️</div>
+            <div class="flag-text">
+              <div class="flag-emp">Khin Zaw (VTG-MM-015)</div>
+              <div class="flag-detail">Missing: Bank account details · Payroll at risk</div>
+            </div>
+          </div>
+          <div class="flag-item">
+            <div class="flag-icon">⚠️</div>
+            <div class="flag-text">
+              <div class="flag-emp">Nguyen Van Duc (VTG-LA-007)</div>
+              <div class="flag-detail">Work permit expiry in 45 days · Renewal required</div>
+            </div>
+          </div>
+          <div class="flag-item">
+            <div class="flag-icon">🔴</div>
+            <div class="flag-text">
+              <div class="flag-emp">Htet Aung (VTG-MM-016)</div>
+              <div class="flag-detail">Missing: Signed contract on file · Critical gap</div>
+            </div>
+          </div>
+          <div class="flag-item">
+            <div class="flag-icon">ℹ️</div>
+            <div class="flag-text">
+              <div class="flag-emp">3× Indonesia G3 roles</div>
+              <div class="flag-detail">Positions approved but vacant · Headcount record needed on hire</div>
+            </div>
+          </div>
+          <div style="margin-top:12px; padding:10px; background:var(--amber-pale); border-radius:4px; font-size:11px; color:var(--amber); line-height:1.5;">
+            <strong>4 flags active.</strong> Review and resolve before month-end payroll cycle.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="modalTitle">Add New Employee</h2>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- COMPLETENESS (edit mode) -->
+      <div id="completenessBlock" style="display:none;" class="completeness-full">
+        <div class="comp-header">
+          <span>Record Completeness</span>
+          <span id="compPct" style="color:var(--success);">—</span>
+        </div>
+        <div class="comp-bar-full"><div class="comp-fill-full" id="compBar" style="width:0%;"></div></div>
+        <div class="comp-fields" id="compFields"></div>
+      </div>
+
+      <div class="form-section-title" style="margin-top:0;">Personal Information</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Legal Name *</label>
+          <input type="text" id="f_name" placeholder="e.g. Tin Maung Win">
+        </div>
+        <div class="form-group">
+          <label>Date of Birth *</label>
+          <input type="date" id="f_dob">
+        </div>
+        <div class="form-group">
+          <label>Nationality *</label>
+          <input type="text" id="f_nationality" placeholder="e.g. Myanmar">
+        </div>
+        <div class="form-group">
+          <label>National ID / Passport No. *</label>
+          <input type="text" id="f_idno" placeholder="e.g. MA-1234567">
+        </div>
+        <div class="form-group">
+          <label>Emergency Contact Name *</label>
+          <input type="text" id="f_emerg_name" placeholder="Name">
+        </div>
+        <div class="form-group">
+          <label>Emergency Contact Phone *</label>
+          <input type="text" id="f_emerg_phone" placeholder="+95 …">
+        </div>
+      </div>
+
+      <hr class="form-divider">
+      <div class="form-section-title">Employment Details</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Job Title *</label>
+          <input type="text" id="f_title" placeholder="e.g. Driller Trainee">
+        </div>
+        <div class="form-group">
+          <label>Grade *</label>
+          <select id="f_grade">
+            <option value="">Select grade…</option>
+            <option>G1</option><option>G2</option><option>G3</option>
+            <option>G4</option><option>G5</option><option>G6</option>
+            <option>G7</option><option>G8</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Country *</label>
+          <select id="f_country">
+            <option value="">Select country…</option>
+            <option>Laos</option><option>Myanmar</option>
+            <option>Indonesia</option><option>Thailand</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Site / Location *</label>
+          <input type="text" id="f_site" placeholder="e.g. Vientiane Office, Site A">
+        </div>
+        <div class="form-group">
+          <label>Department *</label>
+          <input type="text" id="f_dept" placeholder="e.g. Drilling Operations">
+        </div>
+        <div class="form-group">
+          <label>Reporting Manager *</label>
+          <input type="text" id="f_manager" placeholder="e.g. Myo H.">
+        </div>
+        <div class="form-group">
+          <label>Start Date *</label>
+          <input type="date" id="f_start">
+        </div>
+        <div class="form-group">
+          <label>Contract Type *</label>
+          <select id="f_contract">
+            <option value="">Select…</option>
+            <option>Permanent</option>
+            <option>Fixed Term</option>
+            <option>Probationary</option>
+            <option>Trainee</option>
+            <option>Casual</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Employment Status *</label>
+          <select id="f_status">
+            <option value="Active">Active</option>
+            <option value="Probation">Probation</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Probation End Date</label>
+          <input type="date" id="f_probation">
+        </div>
+      </div>
+
+      <hr class="form-divider">
+      <div class="form-section-title">Compliance & Documents</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Safety Induction Date *</label>
+          <input type="date" id="f_induction">
+        </div>
+        <div class="form-group">
+          <label>Work Permit No. (if applicable)</label>
+          <input type="text" id="f_permit" placeholder="Leave blank if not applicable">
+        </div>
+        <div class="form-group">
+          <label>Work Permit Expiry</label>
+          <input type="date" id="f_permit_expiry">
+        </div>
+        <div class="form-group">
+          <label>Medical Fitness Date</label>
+          <input type="date" id="f_medical">
+        </div>
+      </div>
+
+      <hr class="form-divider">
+      <div class="form-section-title">Notes</div>
+      <div class="form-group">
+        <label>Additional Notes</label>
+        <textarea id="f_notes" placeholder="Any relevant notes about this employee record…"></textarea>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModalDirect()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEmployee()">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="detailTitle">Employee Record</h2>
+      <button class="modal-close" onclick="closeDetailDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDetailDirect()">Close</button>
+      <button class="btn btn-primary" id="detailEditBtn">Edit Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const employees = [
+  { id:'VTG-LA-001', name:'Bounmy Phommasack', title:'Senior Driller', grade:'G4', country:'Laos', status:'Active', start:'2019-03-12', completeness:95, site:'Vientiane Site A', dept:'Drilling Operations', manager:'Site Manager Laos', nationality:'Lao', contract:'Permanent' },
+  { id:'VTG-LA-002', name:'Khamla Sysouphanthong', title:'Senior Driller', grade:'G4', country:'Laos', status:'Active', start:'2018-07-01', completeness:92, site:'Vientiane Site A', dept:'Drilling Operations', manager:'Site Manager Laos', nationality:'Lao', contract:'Permanent' },
+  { id:'VTG-LA-003', name:'Phonesavanh Boupha', title:'Senior Driller', grade:'G4', country:'Laos', status:'Active', start:'2017-11-15', completeness:90, site:'Vientiane Site A', dept:'Drilling Operations', manager:'Site Manager Laos', nationality:'Lao', contract:'Permanent' },
+  { id:'VTG-LA-004', name:'Sven Andersen', title:'Driller', grade:'G3', country:'Laos', status:'Active', start:'2021-05-10', completeness:88, site:'Vientiane Site A', dept:'Drilling Operations', manager:'Site Manager Laos', nationality:'Norwegian', contract:'Fixed Term' },
+  { id:'VTG-LA-005', name:'Viengkham Xayavong', title:'Driller Trainee', grade:'G2', country:'Laos', status:'Probation', start:'2024-01-08', completeness:72, site:'Vientiane Site A', dept:'Drilling Operations', manager:'Bounmy Phommasack', nationality:'Lao', contract:'Trainee' },
+  { id:'VTG-LA-006', name:'Dalavanh Keosavanh', title:'Driller Trainee', grade:'G2', country:'Laos', status:'Active', start:'2023-06-01', completeness:80, site:'Vientiane Site B', dept:'Drilling Operations', manager:'Bounmy Phommasack', nationality:'Lao', contract:'Trainee' },
+  { id:'VTG-LA-007', name:'Nguyen Van Duc', title:'Field Technician', grade:'G3', country:'Laos', status:'Active', start:'2022-09-14', completeness:78, site:'Vientiane Site B', dept:'Technical', manager:'Site Manager Laos', nationality:'Vietnamese', contract:'Fixed Term' },
+  { id:'VTG-MM-008', name:'Kyaw Zin Thant', title:'Senior Driller', grade:'G4', country:'Myanmar', status:'Active', start:'2020-02-20', completeness:91, site:'Mandalay Site', dept:'Drilling Operations', manager:'Myanmar Site Manager', nationality:'Myanmar', contract:'Permanent' },
+  { id:'VTG-MM-009', name:'Aung Myint Kyaw', title:'Driller', grade:'G3', country:'Myanmar', status:'Active', start:'2021-10-05', completeness:85, site:'Mandalay Site', dept:'Drilling Operations', manager:'Kyaw Zin Thant', nationality:'Myanmar', contract:'Permanent' },
+  { id:'VTG-MM-010', name:'Zaw Lin Oo', title:'Driller', grade:'G3', country:'Myanmar', status:'Active', start:'2022-04-18', completeness:83, site:'Mandalay Site', dept:'Drilling Operations', manager:'Kyaw Zin Thant', nationality:'Myanmar', contract:'Permanent' },
+  { id:'VTG-MM-011', name:'Ye Htut Win', title:'Driller Trainee', grade:'G2', country:'Myanmar', status:'Probation', start:'2024-10-01', completeness:65, site:'Mandalay Site', dept:'Drilling Operations', manager:'Kyaw Zin Thant', nationality:'Myanmar', contract:'Trainee' },
+  { id:'VTG-MM-012', name:'Myo Naing', title:'Driller Trainee', grade:'G2', country:'Myanmar', status:'Probation', start:'2024-10-01', completeness:65, site:'Mandalay Site', dept:'Drilling Operations', manager:'Kyaw Zin Thant', nationality:'Myanmar', contract:'Trainee' },
+  { id:'VTG-MM-013', name:'Thurein Aung', title:'Driller Trainee', grade:'G2', country:'Myanmar', status:'Active', start:'2024-07-15', completeness:70, site:'Mandalay Site', dept:'Drilling Operations', manager:'Kyaw Zin Thant', nationality:'Myanmar', contract:'Trainee' },
+  { id:'VTG-MM-014', name:'Hlaing Min Oo', title:'Field Support', grade:'G1', country:'Myanmar', status:'Active', start:'2023-03-01', completeness:75, site:'Mandalay Site', dept:'Operations Support', manager:'Myanmar Site Manager', nationality:'Myanmar', contract:'Permanent' },
+  { id:'VTG-MM-015', name:'Khin Zaw', title:'Field Support', grade:'G1', country:'Myanmar', status:'Active', start:'2023-08-10', completeness:55, site:'Mandalay Site', dept:'Operations Support', manager:'Myanmar Site Manager', nationality:'Myanmar', contract:'Permanent' },
+  { id:'VTG-MM-016', name:'Htet Aung', title:'Driller Trainee', grade:'G2', country:'Myanmar', status:'Active', start:'2024-11-20', completeness:50, site:'Mandalay Site', dept:'Drilling Operations', manager:'Kyaw Zin Thant', nationality:'Myanmar', contract:'Trainee' },
+  { id:'VTG-ID-017', name:'Budi Santoso', title:'Senior Driller', grade:'G4', country:'Indonesia', status:'Active', start:'2020-08-12', completeness:94, site:'Kalimantan Site', dept:'Drilling Operations', manager:'Indonesia Site Manager', nationality:'Indonesian', contract:'Permanent' },
+  { id:'VTG-ID-018', name:'Arif Budiman', title:'Driller', grade:'G3', country:'Indonesia', status:'Active', start:'2022-01-10', completeness:87, site:'Kalimantan Site', dept:'Drilling Operations', manager:'Budi Santoso', nationality:'Indonesian', contract:'Permanent' },
+  { id:'VTG-ID-019', name:'Rizky Firmansyah', title:'Driller', grade:'G3', country:'Indonesia', status:'Active', start:'2023-03-22', completeness:82, site:'Kalimantan Site', dept:'Drilling Operations', manager:'Budi Santoso', nationality:'Indonesian', contract:'Permanent' },
+  { id:'VTG-ID-020', name:'Dedi Kurniawan', title:'Driller Trainee', grade:'G2', country:'Indonesia', status:'Active', start:'2024-02-05', completeness:73, site:'Kalimantan Site', dept:'Drilling Operations', manager:'Budi Santoso', nationality:'Indonesian', contract:'Trainee' },
+  { id:'VTG-ID-021', name:'Eko Prasetyo', title:'Field Technician', grade:'G3', country:'Indonesia', status:'Active', start:'2022-07-18', completeness:86, site:'Kalimantan Site', dept:'Technical', manager:'Indonesia Site Manager', nationality:'Indonesian', contract:'Fixed Term' },
+  { id:'VTG-ID-022', name:'Siti Rahayu', title:'HR & Admin Officer', grade:'G5', country:'Indonesia', status:'Active', start:'2021-04-01', completeness:96, site:'Jakarta Office', dept:'HR & Administration', manager:'Group HR Manager', nationality:'Indonesian', contract:'Permanent' },
+  { id:'VTG-TH-023', name:'Somchai Rattana', title:'Country Manager', grade:'G8', country:'Thailand', status:'Active', start:'2016-06-01', completeness:98, site:'Bangkok HQ', dept:'Management', manager:'COO', nationality:'Thai', contract:'Permanent' },
+  { id:'VTG-TH-024', name:'Nattaporn Suksawat', title:'Finance Manager', grade:'G7', country:'Thailand', status:'Active', start:'2018-09-15', completeness:97, site:'Bangkok HQ', dept:'Finance', manager:'CEO', nationality:'Thai', contract:'Permanent' },
+  { id:'VTG-TH-025', name:'Pimchanok Thongdee', title:'Operations Coordinator', grade:'G5', country:'Thailand', status:'Active', start:'2020-11-01', completeness:93, site:'Bangkok HQ', dept:'Operations', manager:'COO', nationality:'Thai', contract:'Permanent' },
+  { id:'VTG-TH-026', name:'Ananya Buranasiri', title:'Procurement Officer', grade:'G5', country:'Thailand', status:'Active', start:'2022-02-14', completeness:89, site:'Bangkok HQ', dept:'Procurement', manager:'COO', nationality:'Thai', contract:'Permanent' },
+  { id:'VTG-TH-027', name:'Kasem Wongchai', title:'Group HR Manager', grade:'G7', country:'Thailand', status:'Active', start:'2019-08-01', completeness:99, site:'Bangkok HQ', dept:'Human Resources', manager:'CEO', nationality:'Thai', contract:'Permanent' },
+  { id:'VTG-MM-028', name:'Tin Maung Win', title:'Driller Trainee', grade:'G2', country:'Myanmar', status:'Probation', start:'2025-03-01', completeness:60, site:'Mandalay Site', dept:'Drilling Operations', manager:'Kyaw Zin Thant', nationality:'Myanmar', contract:'Trainee' },
+];
+
+let filtered = [...employees];
+let sortKey = null;
+let sortAsc = true;
+let editingId = null;
+
+// ── RENDER ──────────────────────────────────────────────
+function renderTable(data) {
+  const tbody = document.getElementById('empTableBody');
+  tbody.innerHTML = '';
+  data.forEach(emp => {
+    const ctClass = { 'Laos':'ct-laos','Myanmar':'ct-myanmar','Indonesia':'ct-indonesia','Thailand':'ct-thailand' }[emp.country] || '';
+    const statusClass = { 'Active':'status-active','Probation':'status-probation','Inactive':'status-inactive' }[emp.status] || '';
+    const dotClass = { 'Active':'dot-active','Probation':'dot-probation','Inactive':'dot-inactive' }[emp.status] || '';
+    const fillClass = emp.completeness >= 85 ? 'fill-high' : emp.completeness >= 65 ? 'fill-med' : 'fill-low';
+    const startFmt = new Date(emp.start).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    tbody.innerHTML += `
+      <tr onclick="openDetail('${emp.id}')">
+        <td><span class="emp-id">${emp.id}</span></td>
+        <td>
+          <div class="emp-name">${emp.name}</div>
+          <div class="emp-name-sub">${emp.nationality}</div>
+        </td>
+        <td><span class="country-tag ${ctClass}">${emp.country}</span></td>
+        <td><span class="grade-badge">${emp.grade}</span></td>
+        <td>
+          <div style="font-size:12.5px;">${emp.title}</div>
+          <div style="font-size:11px;color:var(--steel);">${emp.dept}</div>
+        </td>
+        <td>
+          <span class="status-badge ${statusClass}">
+            <span class="status-dot ${dotClass}"></span>${emp.status}
+          </span>
+        </td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${startFmt}</td>
+        <td>
+          <div class="data-completeness">
+            <div class="completeness-bar"><div class="completeness-fill ${fillClass}" style="width:${emp.completeness}%"></div></div>
+            <span class="completeness-pct">${emp.completeness}%</span>
+          </div>
+        </td>
+        <td onclick="event.stopPropagation()">
+          <div class="action-btns">
+            <button class="icon-btn" title="Edit" onclick="openEditModal('${emp.id}')">✎</button>
+            <button class="icon-btn" title="Flag" onclick="flagRecord('${emp.id}')">⚑</button>
+          </div>
+        </td>
+      </tr>`;
+  });
+  document.getElementById('recordCount').textContent = `Showing ${data.length} of ${employees.length} records`;
+  updateStats();
+}
+
+function updateStats() {
+  const active = employees.filter(e=>e.status==='Active').length;
+  const probation = employees.filter(e=>e.status==='Probation').length;
+  const avgComp = Math.round(employees.reduce((a,e)=>a+e.completeness,0)/employees.length);
+  document.getElementById('statTotal').textContent = employees.length;
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statProbation').textContent = probation;
+  document.getElementById('statCompleteness').textContent = avgComp+'%';
+}
+
+// ── FILTER ──────────────────────────────────────────────
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const country = document.getElementById('filterCountry').value;
+  const grade = document.getElementById('filterGrade').value;
+  const status = document.getElementById('filterStatus').value;
+  filtered = employees.filter(e => {
+    const matchQ = !q || e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q) || e.title.toLowerCase().includes(q) || e.dept.toLowerCase().includes(q);
+    const matchC = !country || e.country === country;
+    const matchG = !grade || e.grade === grade;
+    const matchS = !status || e.status === status;
+    return matchQ && matchC && matchG && matchS;
+  });
+  renderTable(filtered);
+}
+
+function sortTable(key) {
+  if (sortKey === key) sortAsc = !sortAsc;
+  else { sortKey = key; sortAsc = true; }
+  filtered.sort((a,b) => {
+    const av = a[key]; const bv = b[key];
+    return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
+  renderTable(filtered);
+}
+
+// ── TABS ──────────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    const tabs = ['records','standards','audit'];
+    b.classList.toggle('active', tabs[i]===id);
+  });
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// ── MODAL ──────────────────────────────────────────────
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Add New Employee';
+  document.getElementById('completenessBlock').style.display = 'none';
+  clearForm();
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function openEditModal(id) {
+  const emp = employees.find(e=>e.id===id);
+  if (!emp) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = `Edit Record — ${emp.name}`;
+  document.getElementById('f_name').value = emp.name;
+  document.getElementById('f_nationality').value = emp.nationality;
+  document.getElementById('f_title').value = emp.title;
+  document.getElementById('f_grade').value = emp.grade;
+  document.getElementById('f_country').value = emp.country;
+  document.getElementById('f_site').value = emp.site;
+  document.getElementById('f_dept').value = emp.dept;
+  document.getElementById('f_manager').value = emp.manager;
+  document.getElementById('f_start').value = emp.start;
+  document.getElementById('f_contract').value = emp.contract;
+  document.getElementById('f_status').value = emp.status;
+  // Show completeness
+  document.getElementById('completenessBlock').style.display = 'block';
+  document.getElementById('compPct').textContent = emp.completeness+'%';
+  document.getElementById('compBar').style.width = emp.completeness+'%';
+  document.getElementById('compBar').style.background = emp.completeness >= 85 ? 'var(--success)' : emp.completeness >= 65 ? 'var(--amber)' : 'var(--danger)';
+  const fields = [
+    {name:'Legal Name', filled: !!emp.name},
+    {name:'Nationality', filled: !!emp.nationality},
+    {name:'Job Title', filled: !!emp.title},
+    {name:'Grade', filled: !!emp.grade},
+    {name:'Country', filled: !!emp.country},
+    {name:'Department', filled: !!emp.dept},
+    {name:'Start Date', filled: !!emp.start},
+    {name:'Contract Type', filled: !!emp.contract},
+    {name:'Bank Details', filled: emp.completeness > 70},
+    {name:'Safety Induction', filled: emp.completeness > 75},
+    {name:'Signed Contract', filled: emp.completeness > 80},
+  ];
+  document.getElementById('compFields').innerHTML = fields.map(f=>`<span class="comp-field-tag ${f.filled?'tag-complete':'tag-missing'}">${f.filled?'✓':'✗'} ${f.name}</span>`).join('');
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function clearForm() {
+  ['f_name','f_dob','f_nationality','f_idno','f_emerg_name','f_emerg_phone',
+   'f_title','f_site','f_dept','f_manager','f_start','f_probation',
+   'f_induction','f_permit','f_permit_expiry','f_medical','f_notes'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('f_grade').value = '';
+  document.getElementById('f_country').value = '';
+  document.getElementById('f_contract').value = '';
+  document.getElementById('f_status').value = 'Active';
+}
+
+function saveEmployee() {
+  const name = document.getElementById('f_name').value.trim();
+  const country = document.getElementById('f_country').value;
+  const grade = document.getElementById('f_grade').value;
+  const title = document.getElementById('f_title').value.trim();
+  if (!name || !country || !grade || !title) {
+    showToast('⚠ Please fill in all mandatory fields (Name, Country, Grade, Title)');
+    return;
+  }
+  if (editingId) {
+    const emp = employees.find(e=>e.id===editingId);
+    if (emp) {
+      emp.name = name;
+      emp.title = title;
+      emp.grade = grade;
+      emp.country = country;
+      emp.nationality = document.getElementById('f_nationality').value || emp.nationality;
+      emp.site = document.getElementById('f_site').value || emp.site;
+      emp.dept = document.getElementById('f_dept').value || emp.dept;
+      emp.manager = document.getElementById('f_manager').value || emp.manager;
+      emp.start = document.getElementById('f_start').value || emp.start;
+      emp.contract = document.getElementById('f_contract').value || emp.contract;
+      emp.status = document.getElementById('f_status').value || emp.status;
+    }
+    showToast('✓ Record updated successfully');
+  } else {
+    const countryCode = { 'Laos':'LA','Myanmar':'MM','Indonesia':'ID','Thailand':'TH' }[country] || 'XX';
+    const nextNum = String(employees.length + 1).padStart(3,'0');
+    const newEmp = {
+      id: `VTG-${countryCode}-${nextNum}`,
+      name, title, grade, country,
+      status: document.getElementById('f_status').value || 'Active',
+      start: document.getElementById('f_start').value || new Date().toISOString().split('T')[0],
+      completeness: 60,
+      site: document.getElementById('f_site').value || '',
+      dept: document.getElementById('f_dept').value || '',
+      manager: document.getElementById('f_manager').value || '',
+      nationality: document.getElementById('f_nationality').value || '',
+      contract: document.getElementById('f_contract').value || 'Permanent',
+    };
+    employees.push(newEmp);
+    showToast(`✓ Employee ${newEmp.id} added to register`);
+  }
+  filtered = [...employees];
+  renderTable(filtered);
+  closeModalDirect();
+}
+
+function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modalOverlay').classList.remove('active'); }
+
+// ── DETAIL VIEW ──────────────────────────────────────────────
+function openDetail(id) {
+  const emp = employees.find(e=>e.id===id);
+  if (!emp) return;
+  document.getElementById('detailTitle').textContent = emp.name;
+  const startFmt = new Date(emp.start).toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  const fillClass = emp.completeness >= 85 ? 'fill-high' : emp.completeness >= 65 ? 'fill-med' : 'fill-low';
+  const ctClass = { 'Laos':'ct-laos','Myanmar':'ct-myanmar','Indonesia':'ct-indonesia','Thailand':'ct-thailand' }[emp.country] || '';
+  const statusClass = { 'Active':'status-active','Probation':'status-probation','Inactive':'status-inactive' }[emp.status] || '';
+  const dotClass = { 'Active':'dot-active','Probation':'dot-probation','Inactive':'dot-inactive' }[emp.status] || '';
+
+  document.getElementById('detailBody').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div style="width:48px;height:48px;border-radius:50%;background:var(--slate);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;color:var(--amber-light);font-weight:700;">${emp.name.charAt(0)}</div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;">${emp.name}</div>
+        <div style="font-size:12px;color:var(--steel);margin-top:2px;">${emp.id} &nbsp;·&nbsp; ${emp.title} &nbsp;·&nbsp; <span class="grade-badge">${emp.grade}</span></div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+        <span class="country-tag ${ctClass}">${emp.country}</span>
+        <span class="status-badge ${statusClass}"><span class="status-dot ${dotClass}"></span>${emp.status}</span>
+      </div>
+    </div>
+
+    <div class="completeness-full">
+      <div class="comp-header"><span>Data Completeness</span><span style="color:${emp.completeness>=85?'var(--success)':emp.completeness>=65?'var(--amber)':'var(--danger)'}">${emp.completeness}%</span></div>
+      <div class="comp-bar-full"><div class="comp-fill-full ${fillClass}" style="width:${emp.completeness}%;background:${emp.completeness>=85?'var(--success)':emp.completeness>=65?'var(--amber)':'var(--danger)'}"></div></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Employment Details</div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-label">Site / Location</div><div class="detail-value">${emp.site || '—'}</div></div>
+        <div class="detail-item"><div class="detail-label">Department</div><div class="detail-value">${emp.dept || '—'}</div></div>
+        <div class="detail-item"><div class="detail-label">Reporting Manager</div><div class="detail-value">${emp.manager || '—'}</div></div>
+        <div class="detail-item"><div class="detail-label">Start Date</div><div class="detail-value">${startFmt}</div></div>
+        <div class="detail-item"><div class="detail-label">Contract Type</div><div class="detail-value">${emp.contract || '—'}</div></div>
+        <div class="detail-item"><div class="detail-label">Nationality</div><div class="detail-value">${emp.nationality || '—'}</div></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('detailEditBtn').onclick = () => { closeDetailDirect(); openEditModal(id); };
+  document.getElementById('detailOverlay').classList.add('active');
+}
+function closeDetail(e) { if (e.target === document.getElementById('detailOverlay')) closeDetailDirect(); }
+function closeDetailDirect() { document.getElementById('detailOverlay').classList.remove('active'); }
+
+// ── FLAG ──────────────────────────────────────────────
+function flagRecord(id) {
+  const emp = employees.find(e=>e.id===id);
+  if (emp) showToast(`⚑ ${emp.name} flagged for review`);
+}
+
+// ── EXPORT ──────────────────────────────────────────────
+function exportCSV() {
+  const headers = ['ID','Name','Nationality','Grade','Title','Country','Site','Department','Manager','Status','Start Date','Completeness'];
+  const rows = filtered.map(e=>[e.id,e.name,e.nationality,e.grade,e.title,e.country,e.site,e.dept,e.manager,e.status,e.start,e.completeness+'%']);
+  const csv = [headers.join(','),...rows.map(r=>r.map(v=>`"${v}"`).join(','))].join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'valentis-employee-register.csv';
+  a.click();
+  showToast('✓ Register exported as CSV');
+}
+
+// ── TOAST ──────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ── INIT ──────────────────────────────────────────────
+renderTable(employees);
+</script>
+</body>
+</html>

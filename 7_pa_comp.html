@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compensation Analytics — People Analytics Tool 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f5;--surface:#fff;--surface2:#e8ecf2;
+  --border:#cdd4e0;--border2:#b8c2d4;
+  --ink:#0d1117;--ink2:#1a2332;--ink3:#3d4f6b;--ink4:#6b7d99;--ink5:#a0aec0;
+  --navy:#0a1628;
+  --blue:#1a6bdb;--blue2:#2979e8;--blue3:#4d94ff;
+  --blue-dim:rgba(26,107,219,0.08);--blue-border:rgba(26,107,219,0.22);
+  --electric:#3d8bff;--electric2:#5c9fff;
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --amber:#b8860b;--amber-dim:rgba(184,134,11,0.08);--amber-border:rgba(184,134,11,0.22);
+  --green:#1a7a4a;--green-dim:rgba(26,122,74,0.08);--green-border:rgba(26,122,74,0.22);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--blue),rgba(26,107,219,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:rgba(26,107,219,0.15);border:1px solid rgba(26,107,219,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f4ff;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(26,107,219,0.18);border-color:rgba(26,107,219,0.4);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--blue3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:40px 52px;max-width:1100px}
+.page.active{display:block}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--blue)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--blue);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cb{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.ca{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.cg{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.b{background:var(--blue-dim);border-color:var(--blue);color:var(--ink2)}
+.inf.a{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.inf.r{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.inf.g{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--navy);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+.vx{background:var(--navy);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f4ff;margin-bottom:8px;line-height:1.2}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+.br{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bl{font-size:12px;color:var(--ink3);width:110px;flex-shrink:0}
+.bt{flex:1;background:var(--surface2);border-radius:2px;height:20px;overflow:hidden}
+.bf{height:100%;border-radius:2px;display:flex;align-items:center;padding-left:8px}
+.bv{font-family:var(--fm);font-size:10px;font-weight:600;color:#fff;white-space:nowrap}
+.bc{font-family:var(--fm);font-size:10px;color:var(--ink5);margin-left:8px;white-space:nowrap}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kbl::before{background:var(--blue)}.kgr::before{background:var(--green)}
+.kam::before{background:var(--amber)}.krd::before{background:var(--red)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kbl .kv{color:var(--blue)}.kgr .kv{color:var(--green)}
+.kam .kv{color:var(--amber)}.krd .kv{color:var(--red)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.kt{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktb{background:var(--blue-dim);color:var(--blue)}.kta{background:var(--amber-dim);color:var(--amber)}
+.ktr{background:var(--red-dim);color:var(--red)}.ktg{background:var(--green-dim);color:var(--green)}
+.ci{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 12px;font-size:13px;color:#f0f4ff;font-family:var(--fb);outline:none;transition:border .13s;margin-bottom:10px}
+.ci:focus{border-color:rgba(26,107,219,0.5)}
+.cl{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;display:block}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btnb{background:var(--blue);color:#fff}.btnb:hover{background:var(--blue2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">People Analytics · Tool 7 / 9</div>
+    <div class="sb-title">Compensation<br><em>Analytics</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Comp Overview</div>
+    <div class="nav-item" onclick="showPage('bands',this)"><span class="nav-num">02</span>Band Adherence</div>
+    <div class="nav-item" onclick="showPage('equity',this)"><span class="nav-num">03</span>Pay Equity Analysis</div>
+    <div class="nav-item" onclick="showPage('compa',this)"><span class="nav-num">04</span>Compa-Ratio Analysis</div>
+    <div class="nav-item" onclick="showPage('merit',this)"><span class="nav-num">05</span>Merit Cycle Modeller</div>
+    <div class="nav-item" onclick="showPage('retention',this)"><span class="nav-num">06</span>Retention Pay Risk</div>
+    <div class="nav-item" onclick="showPage('market',this)"><span class="nav-num">07</span>Market Positioning</div>
+    <div class="nav-item" onclick="showPage('coo',this)"><span class="nav-num">08</span>COO Comp Brief</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>People Analytics · Tool 7 of 9</strong>
+      Compensation Analytics<br>
+      <span style="color:rgba(255,255,255,0.1)">Pay is the single most visible signal of how Valentis values its people. This tool makes it measurable.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview"  class="page active"></div>
+  <div id="page-bands"     class="page"></div>
+  <div id="page-equity"    class="page"></div>
+  <div id="page-compa"     class="page"></div>
+  <div id="page-merit"     class="page"></div>
+  <div id="page-retention" class="page"></div>
+  <div id="page-market"    class="page"></div>
+  <div id="page-coo"       class="page"></div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+// PAGES_INJECT
+</script>
+</body>
+</html>
+<script>
+// Shared grade band data — used across multiple sections
+var BANDS = [
+  {g:'G1',role:'Trainee Driller',    min:18000, mid:22000, max:26000, cf:{LA:0.85,MM:0.80,ID:0.92,TH:1.05}},
+  {g:'G2',role:"Driller's Assistant",min:28000, mid:34000, max:40000, cf:{LA:0.85,MM:0.80,ID:0.92,TH:1.05}},
+  {g:'G3',role:'Junior Driller',     min:42000, mid:52000, max:62000, cf:{LA:0.85,MM:0.80,ID:0.92,TH:1.05}},
+  {g:'G4',role:'Senior Driller',     min:62000, mid:76000, max:90000, cf:{LA:0.85,MM:0.80,ID:0.92,TH:1.05}},
+  {g:'G5',role:'Site Manager',       min:95000, mid:115000,max:135000,cf:{LA:0.85,MM:0.80,ID:0.92,TH:1.05}},
+  {g:'G6',role:'Group HR Manager',   min:110000,mid:130000,max:155000,cf:{HQ:1.00}},
+  {g:'G7',role:'COO / CHRO',         min:140000,mid:170000,max:200000,cf:{HQ:1.00}},
+  {g:'G8',role:'CEO / Director',     min:180000,mid:215000,max:250000,cf:{HQ:1.00}}
+];
+
+// ── PAGE 01 ──────────────────────────────────────────────────────
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">People Analytics · Tool 7 / 9 — Compensation Analytics</div>
+<div class="pt">Compensation<br><em>Analytics</em></div>
+<p class="pd">Compensation analytics connects pay decisions to retention outcomes, pipeline health, and people cost ratio. At Valentis, weak total rewards is an identified root cause of trainee attrition — this tool makes the link between pay positioning, band adherence, and the business cost of getting it wrong visible and measurable.</p>
+<div class="vx">
+  <div class="vx-ey">Why Compensation Analytics Matters at Valentis</div>
+  <div class="vx-ti">One employee is paid below the G3 minimum salary band. 22% annual attrition costs $71K–$116K per year. A merit pool of 4.5% is budgeted for January 2027. Each of these facts has a direct cost implication — and a decision that Group HR owns.</div>
+  <div class="vx-bo">Compensation at a 42-person mineral exploration company might feel like a simple payroll function. It is not. The salary band structure determines whether trainees see a financial reason to stay through the G1→G4 development journey. The compa-ratio distribution shows who is underpaid relative to grade and creates retention risk. Market positioning in four countries with different country factors determines whether Valentis is competitive in each labour market independently. This tool provides the analytical framework to move compensation decisions from intuition to evidence.</div>
+</div>
+<div class="krow">
+  <div class="kpi krd"><div class="kl">Below-Band Employees</div><div class="kv">1</div><div class="ks">Zaw M. (MM G3) — below G3 minimum. Remediation deadline: April 2026</div><div class="kt ktr">Immediate action required</div></div>
+  <div class="kpi kam"><div class="kl">Band Adherence Rate</div><div class="kv">97%</div><div class="ks">41 of 42 employees within their grade band</div><div class="kt kta">Target: 100%</div></div>
+  <div class="kpi kbl"><div class="kl">Merit Pool (Jan 2027)</div><div class="kv">4.5%</div><div class="ks">Approved merit pool · effective 1 Jan 2027</div><div class="kt ktb">~$161K at current payroll base</div></div>
+  <div class="kpi kgr"><div class="kl">Avg Compa-Ratio</div><div class="kv">0.94</div><div class="ks">Group weighted average · below midpoint</div><div class="kt ktg">Target range: 0.90–1.10</div></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Compensation Health — Grade Summary</div>
+    <table class="dt">
+      <thead><tr><th>Grade</th><th>Band min</th><th>Midpoint</th><th>Band max</th><th>Avg actual (est)</th><th>Compa-ratio</th><th>Status</th></tr></thead>
+      <tbody>
+        ${BANDS.slice(0,6).map(function(b){
+          var avgActual=Math.round(b.mid*0.93);
+          var cr=(avgActual/b.mid).toFixed(2);
+          var col=cr>=0.90&&cr<=1.10?'var(--green)':cr<0.85?'var(--red)':'var(--amber)';
+          var status=cr>=0.90&&cr<=1.10?'<span class="chip cg">In range</span>':cr<0.85?'<span class="chip cr">Below range</span>':'<span class="chip ca">Monitor</span>';
+          return '<tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">'+b.g+'</td>'
+            +'<td>$'+b.min.toLocaleString()+'</td>'
+            +'<td style="font-weight:600">$'+b.mid.toLocaleString()+'</td>'
+            +'<td>$'+b.max.toLocaleString()+'</td>'
+            +'<td>$'+avgActual.toLocaleString()+'</td>'
+            +'<td style="font-weight:700;color:'+col+'">'+cr+'</td>'
+            +'<td>'+status+'</td>'
+            +'</tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Compensation Risk — <em>Live Issues</em></div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      <div style="padding:12px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+        <div style="font-weight:700;font-size:13px;color:var(--red);margin-bottom:4px">Zaw M. — below G3 minimum salary</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Country: Myanmar · Grade: G3 · Current salary below G3 band minimum. Action required by April 2026. Remediation = bring to G3 minimum ($42K × 0.80 Myanmar CF = $33,600 minimum). Risk: continued below-band pay is both a retention risk and a policy compliance failure.</div>
+        <div style="margin-top:8px;display:flex;gap:8px"><span class="chip cr">Below band</span><span class="chip ca">April 2026 deadline</span></div>
+      </div>
+      <div style="padding:12px 14px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px">
+        <div style="font-weight:700;font-size:13px;color:var(--amber);margin-bottom:4px">SM Retention Bonuses — 2 at risk</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Myo H. (MM G5) retention bonus expires April 2027. Wirawan S. (ID G5) retention bonus expires Q1 2027. Renewal requires budget approval and COO endorsement. Combined replacement cost risk: $268K–$435K.</div>
+        <div style="margin-top:8px;display:flex;gap:8px"><span class="chip ca">Myo H. — Sep 2026 conversation</span><span class="chip ca">Wirawan — Oct 2026</span></div>
+      </div>
+      <div style="padding:12px 14px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:3px">
+        <div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:4px">Merit cycle — Jan 2027 effective date</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">4.5% merit pool. Design must be complete November 2026. Grade step-up policy for G1→G2 and G2→G3 promotions must be formalised. People cost impact model required for COO approval.</div>
+        <div style="margin-top:8px;display:flex;gap:8px"><span class="chip cb">Design: Nov 2026</span><span class="chip cb">Effective: 1 Jan 2027</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">The Compensation–Retention Link at Valentis</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:4px">
+    ${[
+      {title:'Weak rewards → trainee exits',desc:'Identified as a root cause of Myanmar month-3 attrition. Trainees who cannot clearly see the financial progression from G1 to G4 have no economic reason to stay through 42+ months of development. The grade step-up policy — making salary progression visible at each milestone — is the targeted fix.',col:'var(--red)'},
+      {title:'Grade step-up = retention investment',desc:'Every $1 invested in G1→G2 step-up pay increase reduces the probability of a month-3 exit. A trainee who receives a tangible pay increase at G2 milestone has a financial reason to reach G3. The ROI of grade step-up is the $3.5K–$6K replacement cost per G2 exit avoided — measurable and defensible.',col:'var(--blue)'},
+      {title:'SM pay is operational risk management',desc:'Myo H. and Wirawan are not just expensive employees — they are the coaching capacity and site knowledge that the entire pipeline depends on. The cost of a retention bonus for either SM is a fraction of the cost of replacing them ($130K–$250K replacement cost each). Retention pay here is risk management, not reward.',col:'var(--amber)'}
+    ].map(function(d){return '<div style="padding:14px;background:var(--surface2);border-radius:3px;border-top:3px solid '+d.col+'"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:6px">'+d.title+'</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">'+d.desc+'</div></div>';}).join('')}
+  </div>
+</div>
+`;
+
+// ── PAGE 02 ──────────────────────────────────────────────────────
+document.getElementById('page-bands').innerHTML=`
+<div class="pe">Section 02 — Band Adherence</div>
+<div class="pt">Band<br><em>Adherence</em></div>
+<p class="pd">Band adherence measures how many employees are paid within their grade's salary band — minimum to maximum. 100% adherence is the policy target. One employee is currently below band. This section maps the full band structure with country factors applied and identifies all adherence exceptions.</p>
+<div class="inf r"><strong>Zaw M. is below band — action required April 2026.</strong>Myanmar G3 actual salary is below the G3 minimum after the 0.80 Myanmar country factor is applied. This is the only current adherence failure. The remediation is straightforward: bring Zaw M. to the G3 minimum ($33,600 USD equivalent). This requires COO approval as it is an out-of-cycle salary adjustment.</div>
+<div class="card" data-tabs="true">
+  <div class="ct">Salary Band Structure — All Grades</div>
+  <div class="tabs">
+    ${['LA','MM','ID','TH'].map(function(c,i){return '<div class="tab'+(i===0?' active':'')+'" onclick="showTab(\'band-'+c.toLowerCase()+'\',this)">'+{LA:'Laos',MM:'Myanmar',ID:'Indonesia',TH:'Thailand'}[c]+'</div>';}).join('')}
+    <div class="tab" onclick="showTab('band-usd',this)">USD Base</div>
+  </div>
+  ${(function(){
+    var countries=[
+      {id:'band-la',name:'Laos',cf:0.85,active:true},
+      {id:'band-mm',name:'Myanmar',cf:0.80},
+      {id:'band-id',name:'Indonesia',cf:0.92},
+      {id:'band-th',name:'Thailand',cf:1.05},
+      {id:'band-usd',name:'USD Base (before CF)',cf:1.00}
+    ];
+    return countries.map(function(ct){
+      return '<div id="tb-'+ct.id+'" class="tb'+(ct.active?' active':'')+'"><table class="dt">'
+        +'<thead><tr><th>Grade</th><th>Role</th><th>Band min ('+ct.name+')</th><th>Midpoint</th><th>Band max</th><th>Range spread</th><th>Illustrative compa at mid</th></tr></thead>'
+        +'<tbody>'
+        +BANDS.map(function(b){
+          var min=Math.round(b.min*ct.cf);
+          var mid=Math.round(b.mid*ct.cf);
+          var max=Math.round(b.max*ct.cf);
+          var spread=Math.round(((max-min)/min)*100);
+          return '<tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">'+b.g+'</td>'
+            +'<td>'+b.role+'</td>'
+            +'<td>$'+min.toLocaleString()+'</td>'
+            +'<td style="font-weight:600">$'+mid.toLocaleString()+'</td>'
+            +'<td>$'+max.toLocaleString()+'</td>'
+            +'<td style="font-family:var(--fm);font-size:11px">'+spread+'%</td>'
+            +'<td style="font-family:var(--fm);color:var(--green)">1.00</td>'
+            +'</tr>';
+        }).join('')
+        +'</tbody></table>'
+        +'<div style="margin-top:12px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">'
+        +(ct.cf<1?'Country factor '+ct.cf+' applied to all USD base figures. Employees in '+ct.name+' are paid in local currency equivalent of the adjusted USD band.':'Base USD figures — country factor 1.00.')
+        +'</div></div>';
+    }).join('');
+  })()}
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Band Adherence — Visualised</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Each bar shows where average actual salaries sit relative to the midpoint for each grade. Target = bar reaches or approaches midpoint (1.00 line). Below 0.85 = below-band risk.</div>
+    ${BANDS.slice(0,6).map(function(b){
+      var cr=0.93;
+      var pct=Math.round(cr*90);
+      var col=cr>=0.90?'var(--green)':cr>=0.85?'var(--amber)':'var(--red)';
+      return '<div class="br"><span class="bl">'+b.g+' '+b.role.split(' ')[0]+'</span><div class="bt"><div class="bf" style="width:'+pct+'%;background:'+col+'"><span class="bv">'+cr.toFixed(2)+'</span></div></div><span class="bc">vs mid $'+b.mid.toLocaleString()+'</span></div>';
+    }).join('')}
+    <div style="margin-top:8px;font-size:11.5px;color:var(--ink5);font-family:var(--fm)">Illustrative compa-ratio data — update from payroll each quarter</div>
+  </div>
+  <div class="card">
+    <div class="ct">Band Design Principles — Valentis</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {p:'Range spread: 40–44%',d:'Each band spans 40–44% from minimum to maximum (max/min ratio ~1.40–1.44). Wide enough to accommodate new hires and long-tenured performers within the same grade without premature promotion.'},
+        {p:'Country factor applied to all bands',d:'All salary bands are set in USD and adjusted by country factor (LA: 0.85, MM: 0.80, ID: 0.92, TH: 1.05). The factor reflects purchasing power parity, local market rates, and operational cost of living at each site.'},
+        {p:'Grade step-up at promotion',d:'Promotion from G1→G2 or G2→G3 triggers an automatic step-up to the new grade minimum as a minimum action. Group HR recommendation: step to 105% of new grade minimum to signal value of progression.'},
+        {p:'No salary compression',d:'No employee at a lower grade should earn more than the minimum of the grade above. Salary compression between G3 and G4 is the highest risk given open G3 vacancies — external hires must be checked against G4 minimum to prevent compression.'},
+        {p:'Out-of-cycle adjustments require COO approval',d:'Any salary movement outside the annual merit cycle (including below-band remediation, retention adjustments, and equity corrections) requires COO sign-off. Group HR prepares the business case and cost model.'}
+      ].map(function(d){return '<div style="padding:9px 12px;border-left:3px solid var(--blue);background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:3px">'+d.p+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.d+'</div></div>';}).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 03 ──────────────────────────────────────────────────────
+document.getElementById('page-equity').innerHTML=`
+<div class="pe">Section 03 — Pay Equity Analysis</div>
+<div class="pt">Pay Equity<br><em>Analysis</em></div>
+<p class="pd">Pay equity analysis checks whether employees doing equivalent work at the same grade are paid consistently — with differences explained only by tenure, performance, and market factors. At Valentis with operations across four countries, the country factor structure is the primary control mechanism for equity. This section maps the equity framework, identifies risk areas, and provides the monitoring approach.</p>
+<div class="vx">
+  <div class="vx-ey">The Equity Standard at Valentis</div>
+  <div class="vx-ti">Equivalent work at the same grade in the same country should be paid within 10% of each other — with differences justified by documented tenure or performance differentials. Unjustified gaps create legal risk and drive attrition.</div>
+  <div class="vx-bo">Pay equity at Valentis is complex because of the four-country structure. A G4 driller in Thailand earns more than a G4 in Myanmar by design — the country factor reflects market differences, not a differential in the value Valentis places on the work. The equity test within each country is: do employees doing the same job at the same grade, with similar tenure, earn similar salaries? Systematic gaps without documented justification are an equity risk — regardless of whether they reflect bias in intent, they create retention risk and potential legal exposure in each operating jurisdiction.</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Equity Analysis Framework — Valentis</div>
+    <table class="dt">
+      <thead><tr><th>Equity dimension</th><th>Standard</th><th>How measured</th><th>Current risk</th></tr></thead>
+      <tbody>
+        ${[
+          {dim:'Within-grade, within-country equity',std:'Employees at the same grade in the same country should earn within 10% of each other absent documented tenure or performance differential.',meas:'Compa-ratio spread within each country-grade cell. Flag any cell where max/min ratio exceeds 1.15.',risk:'Low — small workforce, bands well understood. Primary exception: Zaw M. below band.'},
+          {dim:'Grade progression equity',std:'Promotion step-up should be consistent across all employees at the same transition (G1→G2, G2→G3 etc.). No ad hoc step-up decisions.',meas:'Track promotion step-up amount as % of new grade minimum at each promotion event. Compare across cohorts and countries.',risk:'Medium — no formalised step-up policy yet. Merit cycle design (Nov 2026) must codify this.'},
+          {dim:'Cross-country equity (controlled)',std:'Salary differences between countries are acceptable and expected — explained entirely by country factors. No employee should receive a lower country factor than their country standard without documented justification.',meas:'Verify each employee\'s salary ÷ their applicable country factor = a value within the USD band. Flag any exceptions.',risk:'Low — country factors consistently applied. Zaw M. is the only confirmed exception.'},
+          {dim:'Gender and demographic equity',std:'No systematic pay gap within any country-grade cell attributable to gender or other protected characteristic.',meas:'With 42 employees, statistical significance is limited. Annual review: flag any within-cell gap >10% with no documented explanation.',risk:'Cannot be assessed without individual pay data. Recommend annual manual review by Group HR with documented sign-off.'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:600">'+r.dim+'</td><td style="font-size:11.5px">'+r.std+'</td><td style="font-size:11.5px">'+r.meas+'</td><td style="font-size:11.5px">'+r.risk+'</td></tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Country Factor Equity — <em>The Control Mechanism</em></div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">The country factor is Valentis's primary tool for managing cross-country pay equity. It translates the USD band into a locally competitive salary in each country.</div>
+    <table class="dt">
+      <thead><tr><th>Country</th><th>Factor</th><th>G3 midpoint (local)</th><th>G4 midpoint (local)</th><th>G5 SM midpoint (local)</th><th>Rationale</th></tr></thead>
+      <tbody>
+        ${[
+          {c:'Laos',cf:0.85,rat:'Below-average purchasing power parity. Remote site operational allowances partially compensate.'},
+          {c:'Myanmar',cf:0.80,rat:'Lowest market rate in Valentis geography. Political/economic instability depresses formal labour market rates. G4 coaching premium required to retain experienced talent.'},
+          {c:'Indonesia',cf:0.92,rat:'Closer to international market rates. Competing employment risk is highest here — country factor may need upward review in 2026 salary review.'},
+          {c:'Thailand',cf:1.05,rat:'Higher cost of living and more competitive formal labour market. Currently the benchmark country — higher factor is consistent with lower attrition rates.'}
+        ].map(function(r){
+          var g3=Math.round(52000*r.cf);
+          var g4=Math.round(76000*r.cf);
+          var g5=Math.round(115000*r.cf);
+          return '<tr><td style="font-weight:600">'+r.c+'</td>'
+            +'<td style="font-weight:700;font-family:var(--fm)">×'+r.cf+'</td>'
+            +'<td>$'+g3.toLocaleString()+'</td>'
+            +'<td>$'+g4.toLocaleString()+'</td>'
+            +'<td>$'+g5.toLocaleString()+'</td>'
+            +'<td style="font-size:11.5px">'+r.rat+'</td>'
+            +'</tr>';
+        }).join('')}
+      </tbody>
+    </table>
+    <div style="margin-top:12px;padding:12px;background:var(--amber-dim);border-left:3px solid var(--amber);border-radius:0 3px 3px 0;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--amber);display:block;margin-bottom:3px">Indonesia country factor review recommended 2026:</strong>Indonesia attrition (24%) and competing employment risk suggest the 0.92 factor may be too low for G3–G4 retention. A case for moving Indonesia to 0.95–0.97 should be modelled in the site allowance review business case.</div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Pay Equity Monitoring — Annual Review Protocol</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px">
+    ${[
+      {step:'1',title:'Extract payroll data',desc:'Full salary extract by employee: grade, country, start date, current salary, last increase date and %, promotion history. Frequency: annually (December) + after any out-of-cycle adjustment.',col:'var(--blue)'},
+      {step:'2',title:'Calculate compa-ratio per cell',desc:'For each country-grade combination, calculate: min, max, average, and spread of actual salaries. Flag any cell where spread exceeds 15% or any individual is below band minimum.',col:'var(--blue)'},
+      {step:'3',title:'Document and justify gaps',desc:'For every flagged gap: confirm documented justification (tenure differential, performance rating difference, market adjustment). If no justification exists: create remediation plan with cost and timeline.',col:'var(--amber)'},
+      {step:'4',title:'COO sign-off',desc:'Annual equity report to COO: summary of compa-ratio distribution, any exceptions, remediation actions taken or planned, and confirmation that no unjustified gaps exist. Signed off before merit cycle opens.',col:'var(--green)'}
+    ].map(function(d){return '<div style="padding:14px;background:var(--surface2);border-radius:3px;border-top:3px solid '+d.col+'"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:'+d.col+';line-height:1;margin-bottom:6px">'+d.step+'</div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:5px">'+d.title+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.desc+'</div></div>';}).join('')}
+  </div>
+</div>
+`;
+
+// ── PAGE 04 ──────────────────────────────────────────────────────
+document.getElementById('page-compa').innerHTML=`
+<div class="pe">Section 04 — Compa-Ratio Analysis</div>
+<div class="pt">Compa-Ratio<br><em>Analysis</em></div>
+<p class="pd">Compa-ratio is actual salary ÷ grade midpoint. A ratio of 1.00 means the employee earns exactly the midpoint. Below 0.85 is a retention risk — the employee is significantly underpaid for their grade. Above 1.15 is a budget risk — the employee is at the top of the band with limited headroom for merit increases. This section maps compa-ratio distribution across grades and countries and identifies the individuals who require priority attention.</p>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Compa-Ratio Distribution — All Grades</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Illustrative distribution based on current payroll structure. Group HR should update this chart quarterly from the payroll extract.</div>
+    ${(function(){
+      var zones=[
+        {label:'Below 0.80 (critical)',pct:2,col:'var(--red)',note:'1 employee (Zaw M.) — immediate action'},
+        {label:'0.80–0.89 (below target)',pct:14,col:'var(--amber)',note:'~6 employees — merit priority'},
+        {label:'0.90–0.99 (at/near midpoint)',pct:52,col:'var(--blue)',note:'~22 employees — healthy range'},
+        {label:'1.00–1.09 (midpoint+)',pct:24,col:'var(--green)',note:'~10 employees — well-positioned'},
+        {label:'1.10–1.19 (upper band)',pct:6,col:'var(--ink4)',note:'~3 employees — limited merit headroom'},
+        {label:'Above 1.20 (above band)',pct:2,col:'var(--ink5)',note:'~1 employee — review required'}
+      ];
+      return zones.map(function(z){
+        return '<div class="br"><span class="bl" style="width:160px;font-size:11.5px">'+z.label+'</span><div class="bt"><div class="bf" style="width:'+z.pct+'%;background:'+z.col+'"><span class="bv">'+z.pct+'%</span></div></div><span class="bc">'+z.note+'</span></div>';
+      }).join('');
+    })()}
+  </div>
+  <div class="card">
+    <div class="ct">Compa-Ratio — What Each Zone Means</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {zone:'Below 0.85',meaning:'Underpaid for grade. Retention risk is high — the employee knows they are below what their grade commands. Below-band employees are the first to exit when a competitor offers market rate. Requires immediate review and remediation plan.',col:'var(--red)'},
+        {zone:'0.85–0.95',meaning:'Below midpoint. Common for newer hires or recent promotees who have not yet accumulated merit increases within the new grade. Normal — but these employees should be progressing toward midpoint through merit cycles. Watch if ratio is stagnant across multiple years.',col:'var(--amber)'},
+        {zone:'0.95–1.05',meaning:'At or near midpoint. The target zone for experienced employees performing solidly in grade. Merit increases in this zone are standard. These employees are well-positioned and generally not at elevated pay-related attrition risk.',col:'var(--green)'},
+        {zone:'1.05–1.15',meaning:'Upper half of band. Typically senior/long-tenured employees in grade or high performers. Merit increases here are smaller as the employee approaches band maximum. Promotion planning should be considered for employees above 1.10 with confirmed high performance.',col:'var(--blue)'},
+        {zone:'Above 1.15',meaning:'At or above band maximum. No further merit increases without grade reclassification or out-of-cycle exception. Promotion is the right move if performance justifies — or the conversation must be managed. Red flag if employee is not performing at the level the salary implies.',col:'var(--ink4)'}
+      ].map(function(d){return '<div style="padding:9px 12px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:12px;color:var(--ink);margin-bottom:3px">'+d.zone+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.meaning+'</div></div>';}).join('')}
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Compa-Ratio by Grade and Country — Illustrative Heat Table</div>
+  <div style="overflow-x:auto;margin-bottom:12px">
+  <table class="dt">
+    <thead><tr><th>Grade</th><th>Laos avg CR</th><th>Myanmar avg CR</th><th>Indonesia avg CR</th><th>Thailand avg CR</th><th>Group avg CR</th><th>Priority action</th></tr></thead>
+    <tbody>
+      ${[
+        {g:'G1',la:0.91,mm:0.89,id:0.90,th:0.95,action:'Within acceptable range. Myanmar slightly low — monitor as coaching programme improves retention.'},
+        {g:'G2',la:0.93,mm:0.90,id:0.91,th:0.97,action:'Healthy range. G2 step-up from G1 should be tracked to ensure consistent band entry.'},
+        {g:'G3',la:0.94,mm:0.82,id:0.92,th:0.98,action:'Myanmar G3 low (0.82) — includes Zaw M. below-band exception. Remediation in April 2026 will improve this.'},
+        {g:'G4',la:0.95,mm:0.93,id:0.94,th:0.99,action:'G4 is the most critical grade for retention. All countries near target. Thailand benchmark is the model.'},
+        {g:'G5 SM',la:1.02,mm:1.05,id:1.04,th:1.00,action:'SMs are on retention bonuses which push compa-ratio above midpoint. This is intentional — the retention cost.'}
+      ].map(function(r){
+        var avg=((r.la+r.mm+r.id+r.th)/4).toFixed(2);
+        function crCell(v){var col=v>=0.90&&v<=1.10?'var(--green)':v<0.85?'var(--red)':'var(--amber)';return '<td style="font-weight:700;color:'+col+'">'+v.toFixed(2)+'</td>';}
+        return '<tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">'+r.g+'</td>'
+          +crCell(r.la)+crCell(r.mm)+crCell(r.id)+crCell(r.th)
+          +'<td style="font-weight:700">'+avg+'</td>'
+          +'<td style="font-size:11.5px">'+r.action+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+  </div>
+  <div style="background:var(--navy);border-radius:4px;padding:22px">
+    <div style="font-family:var(--fm);font-size:8px;color:var(--electric2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Compa-Ratio Calculator</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px">
+      <div><label class="cl">Grade</label>
+        <select id="cr-grade" class="ci" style="background:rgba(255,255,255,0.05);color:#f0f4ff;border:1px solid rgba(255,255,255,0.1);padding:9px 12px;border-radius:3px;width:100%;margin-bottom:10px" oninput="calcCR()">
+          ${BANDS.map(function(b){return '<option value="'+b.mid+'">'+b.g+' — '+b.role+'</option>';}).join('')}
+        </select>
+      </div>
+      <div><label class="cl">Country</label>
+        <select id="cr-country" class="ci" style="background:rgba(255,255,255,0.05);color:#f0f4ff;border:1px solid rgba(255,255,255,0.1);padding:9px 12px;border-radius:3px;width:100%;margin-bottom:10px" oninput="calcCR()">
+          <option value="0.85">Laos (×0.85)</option>
+          <option value="0.80">Myanmar (×0.80)</option>
+          <option value="0.92">Indonesia (×0.92)</option>
+          <option value="1.05">Thailand (×1.05)</option>
+          <option value="1.00">HQ / USD base (×1.00)</option>
+        </select>
+      </div>
+      <div><label class="cl">Actual salary (USD)</label><input id="cr-salary" class="ci" type="number" value="44000" oninput="calcCR()"></div>
+      <div id="cr-result" style="display:flex;flex-direction:column;justify-content:center"></div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+<script>
+// ── PAGE 05 ──────────────────────────────────────────────────────
+document.getElementById('page-merit').innerHTML=`
+<div class="pe">Section 05 — Merit Cycle Modeller</div>
+<div class="pt">Merit Cycle<br><em>Modeller</em></div>
+<p class="pd">The 4.5% merit pool is budgeted for January 2027. Merit cycle design must be complete by November 2026. This section provides the distribution framework, grade step-up policy, and the interactive modeller Group HR uses to build the COO-approved merit proposal.</p>
+<div class="vx">
+  <div class="vx-ey">Merit Cycle Context</div>
+  <div class="vx-ti">4.5% merit pool. $3.57M current payroll base. ~$161K total merit budget. January 2027 effective date. Design complete November 2026. COO approval required.</div>
+  <div class="vx-bo">Merit at Valentis is not just a pay review — it is the annual signal of the grade step-up culture. The design must explicitly reward pipeline progression: employees who have promoted from G1 to G2 or G2 to G3 during the year should receive a step-up that makes the financial progression visible. Employees who have not promoted receive a standard merit increase based on performance and compa-ratio position. The merit matrix below is the recommended framework.</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Merit Matrix — Recommended Framework</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Merit award is determined by two factors: compa-ratio position within band and performance rating. Lower compa-ratios receive higher merit percentages — this is by design to move employees toward midpoint over time.</div>
+    <div style="overflow-x:auto">
+    <table class="dt">
+      <thead>
+        <tr><th>Compa-ratio position</th><th>Below expectations</th><th>Meets expectations</th><th>Exceeds expectations</th><th>Outstanding</th></tr>
+      </thead>
+      <tbody>
+        ${[
+          {zone:'Below 0.85 (below band)',be:0,me:6.0,ee:7.5,out:9.0,note:'Priority for remediation regardless of performance'},
+          {zone:'0.85–0.94 (developing)',be:0,me:4.5,ee:6.0,out:7.5,note:'Standard merit. Below midpoint — needs progression'},
+          {zone:'0.95–1.04 (at midpoint)',be:0,me:3.5,ee:4.5,out:6.0,note:'Core merit range for solid performers'},
+          {zone:'1.05–1.14 (above midpoint)',be:0,me:2.5,ee:3.5,out:4.5,note:'Lower increases as band maximum approached'},
+          {zone:'1.15+ (at/above band max)',be:0,me:0,ee:2.0,out:3.0,note:'Promotion conversation required if Exceeds/Outstanding'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:600;font-size:12px">'+r.zone+'</td>'
+            +'<td style="color:var(--ink5)">'+r.be+'%</td>'
+            +'<td style="font-weight:600">'+r.me+'%</td>'
+            +'<td style="color:var(--blue);font-weight:600">'+r.ee+'%</td>'
+            +'<td style="color:var(--green);font-weight:700">'+r.out+'%</td>'
+            +'</tr>';
+        }).join('')}
+      </tbody>
+    </table>
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--ink4);line-height:1.7">Average weighted merit must not exceed the 4.5% pool. If distribution skews toward Exceeds/Outstanding, the matrix percentages must be adjusted downward proportionally before COO sign-off.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Grade Step-Up Policy — Promotions in 2026</div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Employees promoted during 2026 (G1→G2 or G2→G3) receive a promotion step-up in addition to, or instead of, a standard merit increase. The step-up policy is the pipeline retention tool.</div>
+    <table class="dt">
+      <thead><tr><th>Promotion</th><th>Min step-up</th><th>Recommended step-up</th><th>To position at</th><th>Purpose</th></tr></thead>
+      <tbody>
+        ${[
+          {from:'G1→G2',min:'To G2 minimum',rec:'105% of G2 minimum',pos:'Compa-ratio ~0.88 in new grade',purpose:'Signal that promotion is financially meaningful. Trainee who reached G2 should feel a tangible reward — not just a title change.'},
+          {from:'G2→G3',min:'To G3 minimum',rec:'107% of G3 minimum',pos:'Compa-ratio ~0.90 in new grade',purpose:'G2→G3 is a major competency threshold. The step-up must reflect the skill level being recognised. Employees at 0.90+ are more resistant to competing offers.'},
+          {from:'G3→G4',min:'To G4 minimum',rec:'110% of G4 minimum',pos:'Compa-ratio ~0.92 in new grade',purpose:'G4 is the operational lynchpin. A strong step-up at G4 confirmation reinforces the investment in the development journey and signals that G4 status is genuinely valued.'},
+          {from:'G4→G5 SM',min:'To G5 minimum',rec:'Individually negotiated',pos:'Market competitive',purpose:'SM promotions are rare and individually negotiated. Minimum: G5 band minimum. Recommended: incorporate retention structure (bonus component + 12-month lock-in) from day one.'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:600;color:var(--blue);font-family:var(--fm)">'+r.from+'</td>'
+            +'<td>'+r.min+'</td>'
+            +'<td style="font-weight:600;color:var(--green)">'+r.rec+'</td>'
+            +'<td>'+r.pos+'</td>'
+            +'<td style="font-size:11.5px">'+r.purpose+'</td>'
+            +'</tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div style="background:var(--navy);border-radius:4px;padding:28px;margin-bottom:14px">
+  <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f4ff;margin-bottom:4px">Merit Pool Modeller</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--fm);margin-bottom:22px">Model total merit cost before COO proposal · Adjust inputs to fit 4.5% pool</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+    <div><label class="cl">Total payroll base ($)</label><input id="mp-base" class="ci" type="number" value="3570000" oninput="calcMerit()"></div>
+    <div><label class="cl">Pool % approved</label><input id="mp-pool" class="ci" type="number" value="4.5" step="0.1" oninput="calcMerit()"></div>
+    <div><label class="cl">Employees below 0.85 CR (remediation)</label><input id="mp-rem" class="ci" type="number" value="1" oninput="calcMerit()"></div>
+    <div><label class="cl">Employees 0.85–0.94 CR (below mid)</label><input id="mp-bm" class="ci" type="number" value="6" oninput="calcMerit()"></div>
+    <div><label class="cl">Employees 0.95–1.04 CR (at mid)</label><input id="mp-am" class="ci" type="number" value="22" oninput="calcMerit()"></div>
+    <div><label class="cl">Planned promotions (step-up count)</label><input id="mp-prom" class="ci" type="number" value="4" oninput="calcMerit()"></div>
+  </div>
+  <div id="merit-result" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:20px"></div>
+</div>
+`;
+
+// ── PAGE 06 ──────────────────────────────────────────────────────
+document.getElementById('page-retention').innerHTML=`
+<div class="pe">Section 06 — Retention Pay Risk</div>
+<div class="pt">Retention<br><em>Pay Risk</em></div>
+<p class="pd">Retention pay risk identifies employees whose departure would be disproportionately costly — and quantifies the cost of retaining them vs. replacing them. At Valentis, two SMs are the highest retention pay risks. This section provides the retention cost model, the conversation brief, and the decision framework for each.</p>
+<div class="vx">
+  <div class="vx-ey">The Retention Economics Principle</div>
+  <div class="vx-ti">Retention investment is justified when the cost of retention is less than the cost of replacement. For Myo H. and Wirawan S., this is not a close call — retention is cheaper by a factor of 3–5×.</div>
+  <div class="vx-bo">Myo H. (Myanmar G5 SM) has a retention bonus expiring April 2027. Wirawan S. (Indonesia G5 SM) has a retention bonus expiring Q1 2027. Each SM is worth more than their salary — they carry the pipeline culture, the site relationships, and 5–10 years of Valentis-specific operational knowledge that cannot be purchased at any salary. The question is not whether to retain them, but how to structure the retention offer compellingly enough that they say yes.</div>
+</div>
+<div class="g2">
+  <div class="card" style="border-top:3px solid var(--red)">
+    <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Myanmar · G5 SM · High retention risk</div>
+    <div class="ct">Myo H.</div>
+    <table class="dt" style="margin-bottom:14px">
+      <thead><tr><th>Factor</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Retention bonus expiry</td><td>April 2027</td></tr>
+        <tr><td style="font-weight:600">Conversation deadline</td><td>September 2026 (7 months before expiry)</td></tr>
+        <tr><td style="font-weight:600">Conversation owner</td><td>COO (lead) · Group HR (support, prep)</td></tr>
+        <tr><td style="font-weight:600">Cost of exit (est.)</td><td>$130,000–$200,000 (recruitment, knowledge loss, pipeline disruption)</td></tr>
+        <tr><td style="font-weight:600">Retention investment required</td><td>$25,000–$40,000 (12-month extended retention bonus)</td></tr>
+        <tr><td style="font-weight:600">ROI of retention</td><td>3–5× — retention is the clear financial decision</td></tr>
+        <tr><td style="font-weight:600">Risk classification</td><td>High Power / Strategic — loss disrupts pipeline and country delivery simultaneously</td></tr>
+      </tbody>
+    </table>
+    <div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Retention offer framework</div>
+    ${['12-month retention bonus extension (min equivalent to current structure, prefer +15% on prior year amount to signal value recognition)','Formal acknowledgement of Myo H.\'s role in the G4 coaching programme — credit as co-architect in the HR function\'s narrative to the COO','Clear Country 5 pathway: if Myo H. is interested in Country 5 SM or multi-country leadership, this is the carrot. Group HR must discuss aspirations before the retention conversation.','Offer development support: Group HR partners with Myo H. on an individual development plan toward G6-equivalent scope if Country 5 launch proceeds.'].map(function(t){return '<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12.5px"><span style="color:var(--blue)">→</span><span style="color:var(--ink3);font-weight:300;line-height:1.65">'+t+'</span></div>';}).join('')}
+  </div>
+  <div class="card" style="border-top:3px solid var(--red)">
+    <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Indonesia · G5 SM · Critical retention risk</div>
+    <div class="ct">Wirawan S.</div>
+    <table class="dt" style="margin-bottom:14px">
+      <thead><tr><th>Factor</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Retention bonus expiry</td><td>Q1 2027</td></tr>
+        <tr><td style="font-weight:600">Conversation deadline</td><td>October 2026</td></tr>
+        <tr><td style="font-weight:600">Conversation owner</td><td>COO (lead) · Group HR (support, prep)</td></tr>
+        <tr><td style="font-weight:600">Cost of exit (est.)</td><td>$150,000–$250,000 (recruitement, knowledge loss, delivery disruption in already-stressed country)</td></tr>
+        <tr><td style="font-weight:600">Retention investment required</td><td>$30,000–$45,000 (12-month extended retention bonus)</td></tr>
+        <tr><td style="font-weight:600">ROI of retention</td><td>4–6× — Indonesia is under the most operational stress; losing the SM now would be devastating</td></tr>
+        <tr><td style="font-weight:600">Risk classification</td><td>High Power Sceptic — requires careful stakeholder management, not just financial retention</td></tr>
+      </tbody>
+    </table>
+    <div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Retention + sceptic conversion approach</div>
+    ${['Retention bonus renewal with site allowance review built in — Wirawan\'s concerns about Indonesia market competitiveness must be addressed at the same time as the retention offer, not separately','Thailand SM peer influence: Thailand SM (change champion) has been briefed. A peer conversation about what Valentis\'s growth trajectory means for career development can be more persuasive than a Group HR pitch.','Indonesia G3 vacancy resolution first: the conversation will be easier if the G3 vacancies are filled before October 2026. Wirawan\'s frustration with site delivery is a real factor in their risk profile.','Country Director pathway if Country 5 proceeds — Wirawan managing Indonesia + Country 5 in a Country Director structure is a meaningful career offer. Only available if COO has committed to the expansion.'].map(function(t){return '<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12.5px"><span style="color:var(--blue)">→</span><span style="color:var(--ink3);font-weight:300;line-height:1.65">'+t+'</span></div>';}).join('')}
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Retention Investment vs Replacement Cost — <em>Decision Framework</em></div>
+  <table class="dt">
+    <thead><tr><th>Grade</th><th>Retention investment (typical)</th><th>Replacement cost range</th><th>ROI of retention</th><th>Decision rule</th></tr></thead>
+    <tbody>
+      ${[
+        {g:'G1',ret:'$0–$500 (milestone bonus)',rep:'$1,000–$2,000',roi:'2–4×',rule:'Cost of retention is negligible. Grade step-up pay increase at G2 milestone is the primary retention tool.'},
+        {g:'G2',ret:'$500–$1,500 (milestone bonus)',rep:'$3,500–$6,000',roi:'3–6×',rule:'Milestone bonuses at G2→G3 sign-off are strongly positive ROI. Low cost, high retention signal.'},
+        {g:'G3',ret:'$1,500–$4,000 (salary correction + milestone)',rep:'$8,000–$18,000',roi:'4–8×',rule:'Salary corrections (like Zaw M.) are very high ROI. An $800 correction to G3 minimum avoids an $8K–$18K replacement.'},
+        {g:'G4',ret:'$4,000–$8,000 (retention bonus)',rep:'$25,000–$48,000',roi:'5–8×',rule:'G4 retention bonuses are strongly justified. Losing a G4 is operationally and financially costly — pipeline takes 18–24 months to replace.'},
+        {g:'G5 SM',ret:'$25,000–$45,000 (structured retention)',rep:'$130,000–$250,000',roi:'4–7×',rule:'SM retention is always the right financial decision if the individual is performing. The question is only the structure of the retention offer, not whether to make it.'}
+      ].map(function(r){
+        return '<tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">'+r.g+'</td>'
+          +'<td>'+r.ret+'</td>'
+          +'<td style="color:var(--red)">'+r.rep+'</td>'
+          +'<td style="font-weight:700;color:var(--green)">'+r.roi+'</td>'
+          +'<td style="font-size:11.5px">'+r.rule+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── PAGE 07 ──────────────────────────────────────────────────────
+document.getElementById('page-market').innerHTML=`
+<div class="pe">Section 07 — Market Positioning</div>
+<div class="pt">Market<br><em>Positioning</em></div>
+<p class="pd">Market positioning determines whether Valentis pays competitively enough in each country to attract and retain the talent it needs. With operations in four markets with different labour dynamics, Valentis must make conscious decisions about where it wants to sit relative to the market — not default to a position by accident.</p>
+<div class="vx">
+  <div class="vx-ey">Valentis Market Positioning Philosophy</div>
+  <div class="vx-ti">Valentis targets the 50th–60th percentile of the mineral extraction labour market in each country. Below 50th percentile = attrition risk. Above 65th = unsustainable at 43% people cost ratio.</div>
+  <div class="vx-bo">Market positioning is not a single number — it varies by grade and country. Valentis can afford to be a premium payer at G4–G5 (retention value is enormous) while staying at market median at G1–G2 (these are entry-level roles where training investment is the differentiator, not pay). The country factor structure is the mechanism, but it must be calibrated to actual market data — not internal assumptions. The Indonesia situation (24% attrition, competing employment) suggests the 0.92 country factor may already be below the 50th percentile for G3–G4 in the Indonesian mineral exploration market.</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Market Positioning by Grade — Target Strategy</div>
+    <table class="dt">
+      <thead><tr><th>Grade</th><th>Market target</th><th>Why</th><th>Current est. position</th><th>Action</th></tr></thead>
+      <tbody>
+        ${[
+          {g:'G1',target:'40th–50th percentile',why:'Entry-level. Pay is less decisive than development quality at this stage. Market median is sufficient.',pos:'~45th percentile',action:'Maintain. Step-up at G2 is the retention signal — not absolute G1 salary.'},
+          {g:'G2',target:'45th–55th percentile',why:'G2 is the first commitment gate. Employees who reach G2 have invested ~18 months. Pay should signal this is valued.',pos:'~48th percentile',action:'Maintain. Ensure step-up at G2 entry is visible and consistent.'},
+          {g:'G3',target:'50th–60th percentile',why:'G3 drillers are operationally productive and replaceable by competitors. Must be competitive.',pos:'~48th percentile (Indonesia lower)',action:'Indonesia country factor review — move toward 0.95 for G3+. G3 market data should be benchmarked annually.'},
+          {g:'G4',target:'55th–65th percentile',why:'G4 is the operational core. Takes 42–60 months to develop. Must be priced to retain, not just attract.',pos:'~52nd percentile',action:'Increase G4 positioning as headcount grows. G4 step-up at promotion should land in the 55th+ range.'},
+          {g:'G5 SM',target:'60th–70th percentile',why:'SMs are irreplaceable in the short term. Structural retention is required. Market data for SM in mineral exploration is essential.',pos:'~58th percentile (with retention bonus)',action:'Review SM total comp annually. Retention bonus structure should target 60th+ in total comp including variable.'},
+          {g:'G6 Group HR',target:'55th–65th percentile',why:'Senior group functions in a growing multi-country company. Talent for Group HR/Finance is mobile — positioning must be competitive.',pos:'~60th percentile (est.)',action:'Benchmark annually against regional HR Director / Group HR Manager roles in comparable-sized mineral extraction companies.'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">'+r.g+'</td>'
+            +'<td style="font-weight:600">'+r.target+'</td>'
+            +'<td style="font-size:11.5px">'+r.why+'</td>'
+            +'<td style="font-size:11.5px">'+r.pos+'</td>'
+            +'<td style="font-size:11.5px;color:var(--blue)">'+r.action+'</td>'
+            +'</tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Country Market Positioning — Current Assessment</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {c:'Thailand',pos:'On target',pct:55,desc:'72% conversion and 10% attrition are the market signals that positioning is right. Thailand CF (1.05) places Valentis at approximately 55th percentile across grades. Maintain.',col:'var(--green)'},
+        {c:'Laos',pos:'At lower edge',pct:48,desc:'68% conversion and 18% attrition — functional but not strong. CF 0.85 is at approximately 48th percentile. No urgent action but monitor closely as market competition increases in Laos.',col:'var(--blue)'},
+        {c:'Indonesia',pos:'Below target (G3+)',pct:43,desc:'24% attrition and competing employment risk are clear market signals that CF 0.92 is below the 50th percentile for G3–G4 in Indonesia. The site allowance review business case must address this. Recommended: 0.95–0.97 for G3 and above.',col:'var(--red)'},
+        {c:'Myanmar',pos:'Below target (G3)',pct:41,desc:'CF 0.80 places Myanmar G3–G4 below the 45th percentile. The coaching premium argument (G4s who coach should earn more) and the G4 retention risk of Myo H. both support a targeted Myanmar G4 market adjustment as part of the retention strategy.',col:'var(--amber)'}
+      ].map(function(d){
+        return '<div style="padding:12px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0">'
+          +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">'
+          +'<span style="font-weight:700;font-size:13px;color:var(--ink)">'+d.c+'</span>'
+          +'<span style="font-family:var(--fd);font-size:22px;font-weight:800;color:'+d.col+'">~'+d.pct+'th pct</span>'
+          +'</div>'
+          +'<div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.desc+'</div>'
+          +'</div>';
+      }).join('')}
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Market Benchmarking — Valentis Annual Process</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px">
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">What to benchmark annually</div>
+      ${['G3 and G4 driller salaries in mineral exploration in each operating country — these are the most competitive roles and the most at risk.','G5 SM total compensation (base + bonus + allowances) in comparable exploration companies in SE Asia — needed before any SM retention negotiation.','G1 trainee starting salary in each country — entry-level pay affects applicant quality and volume, not just retention.','Country factor adequacy vs actual purchasing power parity data — review annually and flag to COO if any CF is more than 5 percentage points below market.'].map(function(t){return '<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12.5px"><span style="color:var(--blue)">→</span><span style="color:var(--ink3);font-weight:300;line-height:1.6">'+t+'</span></div>';}).join('')}
+    </div>
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">How to benchmark (practical approach at Valentis scale)</div>
+      ${['Partner with 1–2 HR consultancies in each country for annual salary survey data. Cost: $2K–$5K/country. ROI: a single retained G3 covers the cost.','Use exit interview data as a market signal — "found a better-paying role" responses directly indicate below-market positioning. Track reason-for-leaving by country and grade.','Network with peer exploration companies at industry events — informal salary data is often more current than formal surveys for niche roles.','Review publicly available government wage data in each country annually — minimum wage movements directly affect the competitiveness of G1 band floors.'].map(function(t){return '<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12.5px"><span style="color:var(--blue)">→</span><span style="color:var(--ink3);font-weight:300;line-height:1.6">'+t+'</span></div>';}).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 08 ──────────────────────────────────────────────────────
+document.getElementById('page-coo').innerHTML=`
+<div class="pe">Section 08 — COO Compensation Brief</div>
+<div class="pt">COO Comp<br><em>Brief</em></div>
+<p class="pd">The COO compensation brief consolidates all live compensation decisions requiring COO attention — from immediate remediation actions to the merit cycle approval to the SM retention strategy. Use this section to prepare for any compensation discussion with the COO or CEO.</p>
+<div class="inf r" style="margin-bottom:20px"><strong>Action required now: Zaw M. salary remediation.</strong>One employee (Myanmar G3) is currently paid below the G3 minimum salary band. This requires an out-of-cycle adjustment — which requires COO approval. Group HR should bring this brief to the COO in April 2026 as a standard compliance correction, not a discretionary ask.</div>
+<div class="card">
+  <div class="ct">COO Compensation Decision Register — 2026</div>
+  <table class="dt">
+    <thead><tr><th>Decision</th><th>Type</th><th>Cost implication</th><th>COO action</th><th>Deadline</th><th>Risk if deferred</th></tr></thead>
+    <tbody>
+      ${[
+        {dec:'Zaw M. — G3 minimum salary remediation',type:'Compliance correction',cost:'~$800–$1,200/year additional',action:'Approve out-of-cycle salary adjustment to G3 band minimum (Myanmar CF applied)',dl:'April 2026',risk:'Continued policy violation. Retention risk for an employee already 3+ months below minimum.'},
+        {dec:'Indonesia site allowance / CF review',type:'Strategic compensation',cost:'$15,000–$25,000/year if CF moved from 0.92→0.96',action:'Approve business case review. Decide whether to move Indonesia CF for G3+ grades. Indonesia G3 sourcing brief must reflect updated offer.',dl:'Q2 2026',risk:'Continued attrition (24%) and G3 sourcing difficulty. Delivery stays at 84% vs 90% target.'},
+        {dec:'Merit cycle design and pool approval',type:'Annual cycle',cost:'~$161K total (4.5% × $3.57M payroll base)',action:'Approve merit matrix design in November 2026. Confirm grade step-up policy. Effective 1 Jan 2027.',dl:'November 2026',risk:'Without approved matrix, merit cycle cannot execute on schedule. January 2027 effective date at risk.'},
+        {dec:'Myo H. retention bonus renewal',type:'Retention investment',cost:'$25,000–$40,000 (12-month extension)',action:'COO leads retention conversation September 2026. Decide on retention offer structure. Authorise payment.',dl:'September 2026 (conversation)',risk:'Loss of Myanmar SM: $130K–$200K replacement cost, pipeline disruption, G4 coaching programme at risk.'},
+        {dec:'Wirawan S. retention bonus renewal',type:'Retention investment',cost:'$30,000–$45,000 (12-month extension)',action:'COO leads retention conversation October 2026 (with Thailand SM as peer). Decide on retention offer + site allowance component.',dl:'October 2026 (conversation)',risk:'Loss of Indonesia SM during country\'s most stressed period: $150K–$250K replacement cost, delivery crisis worsens.'},
+        {dec:'Country 5 compensation structure',type:'New market design',cost:'~$480K/year at launch (10 FTE)',action:'Approve Country 5 compensation structure (new CF, band application, SM total comp package). Required before launch Q2 2027.',dl:'Q4 2026',risk:'Country 5 launch cannot proceed without approved comp structure. SM appointment cannot be made without confirmed package.'}
+      ].map(function(r){
+        return '<tr><td style="font-weight:600">'+r.dec+'</td>'
+          +'<td><span class="chip cm">'+r.type+'</span></td>'
+          +'<td style="color:var(--blue)">'+r.cost+'</td>'
+          +'<td style="font-size:11.5px">'+r.action+'</td>'
+          +'<td style="font-weight:600;font-family:var(--fm);font-size:11px;color:var(--amber)">'+r.dl+'</td>'
+          +'<td style="font-size:11.5px;color:var(--red)">'+r.risk+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="card">
+  <div class="ct">Compensation Brief — <em>COO Narrative Template</em></div>
+  <div style="background:var(--surface2);padding:18px;border-radius:3px;font-size:13.5px;color:var(--ink3);line-height:2;font-weight:300">
+    <p style="margin-bottom:12px">"Valentis's compensation structure is functioning well overall — 41 of 42 employees are within their grade bands, and the average compa-ratio of 0.94 indicates the workforce is paid appropriately relative to grade midpoints. One exception requires immediate action: <strong style="color:var(--red)">Zaw M. in Myanmar is currently below the G3 band minimum</strong>, which is a policy compliance failure. The correction costs approximately $800–$1,200 per year and requires your approval as an out-of-cycle adjustment."</p>
+    <p style="margin-bottom:12px">"The more material compensation risk is the two SM retention bonus expiries in Q1 2027. <strong style="color:var(--ink)">Myo H. and Wirawan S. together represent $268K–$435K in replacement cost risk</strong>. Retaining both costs approximately $55K–$85K in renewal bonuses — a 3–6× return on that investment. I am recommending you lead both conversations personally: Myo H. in September 2026 and Wirawan in October 2026. I will prepare the brief and attend both."</p>
+    <p style="margin-bottom:12px">"The <strong style="color:var(--ink)">4.5% merit pool</strong> is budgeted and I will have the design complete by November 2026 for your approval. The design explicitly rewards pipeline progression — employees promoted during 2026 will receive a step-up to at least 105% of the new grade minimum, making the financial value of promotion visible."</p>
+    <p>"Finally, the <strong style="color:var(--ink)">Indonesia country factor</strong> needs a review. At 0.92, we are likely below the 50th percentile for G3–G4 in the Indonesian mineral exploration market, which explains the 24% attrition and G3 sourcing difficulty. I am modelling the cost impact of moving the CF to 0.95 for G3 and above — this will be part of the Indonesia site allowance business case I will bring to you in Q2 2026."</p>
+  </div>
+</div>
+`;
+
+// ── CALCULATORS ───────────────────────────────────────────────────
+function calcCR(){
+  var mid=parseFloat(document.getElementById('cr-grade').value)||76000;
+  var cf=parseFloat(document.getElementById('cr-country').value)||1.0;
+  var sal=parseFloat(document.getElementById('cr-salary').value)||44000;
+  var localMid=Math.round(mid*cf);
+  var cr=(sal/localMid).toFixed(3);
+  var col=cr>=0.90&&cr<=1.10?'var(--green)':cr<0.85?'var(--red)':'var(--amber)';
+  var label=cr<0.85?'Below band — action required':cr>=0.90&&cr<=1.10?'In healthy range':cr>1.15?'Above band — review':'Below target range — merit priority';
+  document.getElementById('cr-result').innerHTML=
+    '<div style="text-align:center">'
+    +'<div style="font-family:var(--fd);font-size:42px;font-weight:800;color:'+col+';line-height:1">'+cr+'</div>'
+    +'<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:.5px;margin:4px 0">COMPA-RATIO</div>'
+    +'<div style="font-size:11px;color:'+col+';font-weight:600">'+label+'</div>'
+    +'<div style="font-size:10.5px;color:rgba(255,255,255,0.3);margin-top:4px">Local mid: $'+localMid.toLocaleString()+'</div>'
+    +'</div>';
+}
+
+function calcMerit(){
+  var base=parseFloat(document.getElementById('mp-base').value)||3570000;
+  var pool=parseFloat(document.getElementById('mp-pool').value)||4.5;
+  var rem=parseFloat(document.getElementById('mp-rem').value)||1;
+  var bm=parseFloat(document.getElementById('mp-bm').value)||6;
+  var am=parseFloat(document.getElementById('mp-am').value)||22;
+  var prom=parseFloat(document.getElementById('mp-prom').value)||4;
+  var totalPool=Math.round(base*(pool/100));
+  var avgSal=base/(rem+bm+am+8);
+  var remCost=Math.round(rem*avgSal*0.065);
+  var bmCost=Math.round(bm*avgSal*0.045);
+  var amCost=Math.round(am*avgSal*0.035);
+  var promCost=Math.round(prom*avgSal*0.08);
+  var totalCost=remCost+bmCost+amCost+promCost;
+  var rem2=totalPool-totalCost;
+  var overspend=totalCost>totalPool;
+  document.getElementById('merit-result').innerHTML=
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px">'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--electric2);line-height:1">$'+totalPool.toLocaleString()+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:3px">TOTAL MERIT POOL</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--blue3);line-height:1">$'+totalCost.toLocaleString()+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:3px">EST TOTAL COST</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:'+(overspend?'var(--red)':'var(--green)')+';line-height:1">'+(overspend?'-':'$'+(rem2.toLocaleString()))+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:3px">'+(overspend?'OVERSPEND':'REMAINING')+'</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--electric2);line-height:1">'+Math.round(totalCost/base*100*10)/10+'%</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:3px">EFFECTIVE POOL USED</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(255,255,255,0.04);border-radius:3px;padding:12px;font-size:12.5px;color:rgba(255,255,255,0.45);line-height:1.8">'
+    +(overspend?'<strong style="color:var(--red)">Pool overspend: reduce merit percentages or limit promotion step-ups to fit within $'+totalPool.toLocaleString()+' budget.</strong>':'Merit cost of $'+totalCost.toLocaleString()+' fits within the $'+totalPool.toLocaleString()+' pool with $'+rem2.toLocaleString()+' headroom. '
+    +'Breakdown: remediation $'+remCost.toLocaleString()+' · below-mid merit $'+bmCost.toLocaleString()+' · standard merit $'+amCost.toLocaleString()+' · promotions $'+promCost.toLocaleString()+'.')
+    +'</div>';
+}
+calcCR();
+calcMerit();
+</script>

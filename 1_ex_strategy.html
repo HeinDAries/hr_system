@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EX Strategy & Framework — Employee Experience Tool 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6f0;--surface:#fff;--surface2:#f2ebe1;--surface3:#e8ddd0;
+  --border:#ddd0c0;--border2:#c8b89e;
+  --ink:#1a1208;--ink2:#2d2010;--ink3:#4a3520;--ink4:#7a6248;--ink5:#b09878;
+  --coral:#c0533a;--coral2:#d4644a;--coral3:#e8846e;
+  --coral-dim:rgba(192,83,58,0.08);--coral-border:rgba(192,83,58,0.22);
+  --teal:#1a5f6a;--teal2:#226e7a;--teal3:#4a9aaa;
+  --teal-dim:rgba(26,95,106,0.08);--teal-border:rgba(26,95,106,0.22);
+  --gold:#b8962e;--gold2:#c9a83a;
+  --gold-dim:rgba(184,150,46,0.08);--gold-border:rgba(184,150,46,0.22);
+  --green:#2d7a4a;--green-dim:rgba(45,122,74,0.08);--green-border:rgba(45,122,74,0.22);
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--teal);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--coral),var(--coral3),rgba(192,83,58,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#fff;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:rgba(255,200,180,0.9);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.35);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.7)}
+.nav-item.active{background:rgba(192,83,58,0.22);border-color:rgba(192,83,58,0.45);color:#ffcfc0}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--coral3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.08)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:rgba(255,200,180,0.8);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:40px 52px;max-width:1100px}
+.page.active{display:block}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--coral);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--coral)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(100,60,20,0.06)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--coral);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cc{background:var(--coral-dim);color:var(--coral);border:1px solid var(--coral-border)}
+.ct2{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border)}
+.cg{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.cgr{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.c{background:var(--coral-dim);border-color:var(--coral);color:var(--ink2)}
+.inf.t{background:var(--teal-dim);border-color:var(--teal);color:var(--ink2)}
+.inf.g{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.inf.gr{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--teal);color:rgba(255,255,255,0.75);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+.vx{background:var(--teal);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,200,180,0.7);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.25}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--coral);border-bottom-color:var(--coral);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kco::before{background:var(--coral)}.kte::before{background:var(--teal)}
+.kgo::before{background:var(--gold)}.kgr::before{background:var(--green)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kco .kv{color:var(--coral)}.kte .kv{color:var(--teal)}
+.kgo .kv{color:var(--gold)}.kgr .kv{color:var(--green)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.kt{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktc{background:var(--coral-dim);color:var(--coral)}
+.ktt{background:var(--teal-dim);color:var(--teal)}
+.ktg{background:var(--gold-dim);color:var(--gold)}
+.ktgr{background:var(--green-dim);color:var(--green)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">Employee Experience · Tool 1 / 8</div>
+    <div class="sb-title">EX Strategy &amp;<br><em>Framework</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>EX Overview</div>
+    <div class="nav-item" onclick="showPage('philosophy',this)"><span class="nav-num">02</span>EX Philosophy</div>
+    <div class="nav-item" onclick="showPage('moments',this)"><span class="nav-num">03</span>Moments That Matter</div>
+    <div class="nav-item" onclick="showPage('journey',this)"><span class="nav-num">04</span>Employee Journey Map</div>
+    <div class="nav-item" onclick="showPage('pillars',this)"><span class="nav-num">05</span>EX Pillars</div>
+    <div class="nav-item" onclick="showPage('multicountry',this)"><span class="nav-num">06</span>Multi-Country EX</div>
+    <div class="nav-item" onclick="showPage('measurement',this)"><span class="nav-num">07</span>EX Measurement</div>
+    <div class="nav-item" onclick="showPage('roadmap',this)"><span class="nav-num">08</span>EX Roadmap</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Employee Experience · Tool 1 of 8</strong>
+      EX Strategy &amp; Framework<br>
+      <span style="color:rgba(255,255,255,0.12)">The experience employees have at Valentis determines whether they stay, grow, and perform — or leave.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview"     class="page active"></div>
+  <div id="page-philosophy"   class="page"></div>
+  <div id="page-moments"      class="page"></div>
+  <div id="page-journey"      class="page"></div>
+  <div id="page-pillars"      class="page"></div>
+  <div id="page-multicountry" class="page"></div>
+  <div id="page-measurement"  class="page"></div>
+  <div id="page-roadmap"      class="page"></div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+</script>
+</body>
+</html>
+<script>
+// ── PAGE 01 ──────────────────────────────────────────────────────
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">Employee Experience & Culture · Tool 1 / 8</div>
+<div class="pt">EX Strategy &amp;<br><em>Framework</em></div>
+<p class="pd">Employee Experience (EX) is the sum of everything an employee encounters, observes, and feels across their time at Valentis — from the moment they apply to the moment they leave. At a 42-person mineral exploration company operating across four countries and physically demanding remote sites, EX is not a corporate nicety. It is the mechanism through which Valentis either retains a trained driller or loses one at month three.</p>
+<div class="vx">
+  <div class="vx-ey">Why EX Is Valentis's Most Urgent Priority</div>
+  <div class="vx-ti">22% annual attrition. $71K–$116K lost per year. Month-3 is the highest exit point. All of these are EX failures — moments where the experience did not hold the person.</div>
+  <div class="vx-bo">Valentis spends 18–24 months developing a G4 driller. The investment in training, coaching, and site integration is enormous relative to company size. When a G1 trainee exits at month three, Valentis does not just lose a person — it loses the entire pipeline investment that person represented, plus the G4 coaching time that person consumed. The root cause in nearly every case is an experience failure: the job was not what was expected, nobody checked in, the grade progression felt invisible, or the site felt isolating. EX strategy is the systematic effort to prevent those failures.</div>
+</div>
+<div class="krow">
+  <div class="kpi kco"><div class="kl">Annual Attrition Cost</div><div class="kv">$94K</div><div class="ks">Midpoint of $71K–$116K annual cost · excludes production downtime</div><div class="kt ktc">EX failure cost</div></div>
+  <div class="kpi kte"><div class="kl">Highest Exit Point</div><div class="kv">Month 3</div><div class="ks">~35% of voluntary exits occur at or before month 3</div><div class="kt ktt">Critical EX moment</div></div>
+  <div class="kpi kgo"><div class="kl">Countries to Design For</div><div class="kv">4</div><div class="ks">One EX strategy · four cultural contexts · consistent principles</div><div class="kt ktg">LA · MM · ID · TH</div></div>
+  <div class="kpi kgr"><div class="kl">EX Ambition</div><div class="kv">≥70%</div><div class="ks">G1→G2 conversion target · the clearest measure of EX success at Valentis</div><div class="kt ktgr">Currently 58% Myanmar</div></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">The EX–Business Performance Connection</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {ex:'Trainee EX quality (months 1–3)',biz:'G1→G2 conversion rate · month-3 exit rate · pipeline supply 3 years forward',link:'A month-3 exit is the most visible EX failure. Every percentage point of conversion improvement is worth $3.5K–$6K in avoidable cost per cohort.',col:'var(--coral)'},
+        {ex:'G4 coaching experience',biz:'G4 debrief frequency · coaching quality · retention of experienced drillers',link:'G4s who feel valued as coaches (not just operators) give more debriefs. The EX of being a G4 at Valentis determines whether the pipeline moves.',col:'var(--coral)'},
+        {ex:'SM–team relationship quality',biz:'Country delivery rate · site attrition rate · pipeline log compliance',link:'Sites with engaged, fair, clear SMs have lower attrition and higher delivery. SM experience design is part of EX strategy.',col:'var(--teal)'},
+        {ex:'Grade progression visibility',biz:'Time-in-grade · promotion rates · trainee commitment past month 3',link:'Employees who can see a clear financial and career path through G1→G4 stay longer. EX design makes that path tangible, not assumed.',col:'var(--teal)'},
+        {ex:'Site welfare and belonging',biz:'Absenteeism · unplanned exits · productivity on site',link:'Remote sites create isolation risk. Wellbeing and belonging interventions directly reduce unplanned exits and improve on-site productivity.',col:'var(--gold)'}
+      ].map(function(d){return '<div style="padding:10px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:2px">'+d.ex+'</div><div style="font-size:12px;color:var(--coral);font-weight:600;margin-bottom:2px">→ '+d.biz+'</div><div style="font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.6;font-style:italic">'+d.link+'</div></div>';}).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">EX at Valentis — <em>What Makes It Different</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:14px">EX strategy designed for a corporate office environment does not transfer directly to Valentis. Five factors make Valentis's EX context distinctive — and must shape every EX design decision.</div>
+    ${[
+      {n:'1',title:'Remote site as the primary workplace',desc:'Most employees spend their working lives on a mineral exploration site, not in a corporate office. EX design must address the physical environment, isolation, fatigue, and limited access to family — not just the employment relationship.',col:'var(--coral)'},
+      {n:'2',title:'Career journey as the core EX narrative',desc:'The G1→G2→G3→G4 pipeline is not a background administrative process — it is the central story of what Valentis offers its employees. EX design must make this journey visible, celebrated, and financially meaningful at every stage.',col:'var(--teal)'},
+      {n:'3',title:'Four languages, four cultures, one employer brand',desc:'A trainee in Myanmar and a trainee in Thailand have different cultural expectations of their employer. EX principles must be consistent; EX delivery must be culturally adapted. The SM is the primary EX delivery mechanism in each country.',col:'var(--gold)'},
+      {n:'4',title:'Small workforce — personal experience is everything',desc:'With 42 employees, Valentis has no EX anonymity. Every interaction between Group HR, the COO, and site employees is a direct EX moment. The quality of the person-to-person experience matters more than any formal programme.',col:'var(--teal)'},
+      {n:'5',title:'Pipeline investment creates an EX obligation',desc:'Valentis invests 18–24 months developing each driller. This investment creates an obligation: if the EX does not reflect the value of that investment, the employee will leave — and take the investment with them.',col:'var(--coral)'}
+    ].map(function(d){return '<div style="display:flex;gap:10px;margin-bottom:8px"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:'+d.col+';line-height:1;flex-shrink:0;width:22px">'+d.n+'</div><div><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:2px">'+d.title+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.desc+'</div></div></div>';}).join('')}
+  </div>
+</div>
+`;
+
+// ── PAGE 02 ──────────────────────────────────────────────────────
+document.getElementById('page-philosophy').innerHTML=`
+<div class="pe">Section 02 — EX Philosophy</div>
+<div class="pt">EX<br><em>Philosophy</em></div>
+<p class="pd">The Valentis EX philosophy defines what Valentis believes about the employee experience — the principles that guide every EX decision, from how the month-3 check-in is conducted to how a G4 promotion is celebrated. Philosophy comes before programmes. Without it, EX initiatives are disconnected activities rather than a coherent experience.</p>
+<div class="vx">
+  <div class="vx-ey">The Valentis EX Belief</div>
+  <div class="vx-ti">"Every person who joins Valentis is making a serious commitment — to a demanding environment, a long development journey, and a remote way of life. Valentis's obligation is to make that commitment worth it."</div>
+  <div class="vx-bo">This belief is not aspirational language — it is an operational commitment. It means that every EX touchpoint must actively demonstrate that Valentis values the commitment its employees have made. The month-3 check-in demonstrates it. The grade step-up pay increase demonstrates it. The G4 coaching programme demonstrates it. The SM who knows each trainee's name demonstrates it. The EX philosophy is the test every decision is held against: does this action show the employee that their commitment is matched by ours?</div>
+</div>
+<div class="card">
+  <div class="ct">Five EX Principles — <em>Valentis</em></div>
+  <div style="display:grid;gap:10px;margin-top:4px">
+    ${[
+      {p:'1',name:'We make the journey visible',desc:'The G1→G4 development journey is the central offer Valentis makes to every employee who joins as a trainee. This journey must be explicitly communicated — at offer stage, at onboarding, at every milestone. Employees who cannot see the path ahead of them have no reason to stay on it. Visible progression is an EX design requirement, not a communication preference.',principle:'Every employee knows their next milestone, what it requires, and what it means financially and professionally.',col:'var(--coral)'},
+      {p:'2',name:'We recognise commitment, not just performance',desc:'At Valentis, showing up to a remote site and grinding through a demanding physical environment for 18 months is itself an achievement. EX design recognises commitment alongside capability. The month-3 milestone is as significant as the G2 grading — because reaching month 3 on a remote exploration site is genuinely hard.',principle:'Commitment at every stage is acknowledged — not assumed and overlooked.',col:'var(--coral)'},
+      {p:'3',name:'We check in before people check out',desc:'The month-3 exit pattern is not a surprise — it is a predictable failure point that EX design can address. A proactive check-in protocol at week 10–14 is the single highest-leverage EX intervention at Valentis. The principle is simple: Valentis reaches out before the employee withdraws, not after.',principle:'Valentis initiates the conversation at every at-risk moment — we do not wait for resignation.',col:'var(--teal)'},
+      {p:'4',name:'We design for the site, not the office',desc:'EX design that assumes a comfortable working environment, access to HR, and daily manager interaction does not work at a mineral exploration site. Every EX touchpoint — check-ins, recognition, communication — must be designed for the realities of remote site life: limited connectivity, physical fatigue, distance from family, and SM as the primary HR interface.',principle:'Every EX programme works in the field, not just on paper.',col:'var(--teal)'},
+      {p:'5',name:'We are consistent across countries, adapted in delivery',desc:'Every Valentis employee — regardless of country — deserves the same quality of experience: the same grade step-up commitment, the same check-in protocol, the same recognition standard. How that experience is delivered must respect local culture, language, and context. Consistency in standard, flexibility in execution.',principle:'Same EX standard everywhere. Culturally adapted everywhere.',col:'var(--gold)'}
+    ].map(function(d){
+      return '<div style="display:grid;grid-template-columns:auto 1fr;gap:14px;padding:16px;border:1px solid var(--border);border-radius:4px;border-left:4px solid '+d.col+'">'
+        +'<div style="font-family:var(--fd);font-size:42px;font-weight:800;color:'+d.col+';line-height:1;opacity:0.25;width:40px;flex-shrink:0">'+d.p+'</div>'
+        +'<div><div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:5px">'+d.name+'</div>'
+        +'<div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">'+d.desc+'</div>'
+        +'<div style="font-size:12px;font-weight:600;color:'+d.col+';border-top:1px solid var(--border);padding-top:7px;font-style:italic">'+d.principle+'</div>'
+        +'</div></div>';
+    }).join('')}
+  </div>
+</div>
+<div class="card">
+  <div class="ct">EX Philosophy — What It Rules Out</div>
+  <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:10px">A philosophy is only meaningful if it guides what Valentis will <em>not</em> do as well as what it will. These are the EX anti-patterns the philosophy explicitly rejects.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    ${[
+      {bad:'Check-in as administration',good:'Check-in as care','why':'A month-3 check-in form submitted to HR is not an EX intervention. A conversation between the SM and the trainee — guided by a protocol, documented for follow-up — is. The format must reflect genuine interest, not compliance.'},
+      {bad:'Promotion with no ceremony',good:'Promotion as a milestone moment','why':'Issuing a contract amendment with no acknowledgement is an EX failure. A G2 or G3 grading should be a visible moment — communicated to the team, linked to the pay step-up, and recognised by the SM personally.'},
+      {bad:'One-size-fits-all communication',good:'Communication designed for the recipient','why':'A policy document sent to a site in Myanmar with no translation and no context is not communication. EX-quality communication is in the language the employee reads, delivered through the channel they access, at a time they can receive it.'},
+      {bad:'Waiting for the exit interview',good:'Acting before the exit','why':'Exit interviews confirm what happened — they do not change it. EX strategy front-loads the intervention to the risk points: month 3, grade transition, SM change, return from leave. After resignation, the EX has already failed.'}
+    ].map(function(d){
+      return '<div style="padding:14px;background:var(--surface2);border-radius:3px">'
+        +'<div style="display:flex;gap:8px;margin-bottom:6px">'
+        +'<span style="font-family:var(--fm);font-size:8px;color:var(--red);background:var(--red-dim);border:1px solid var(--red-border);padding:1px 6px;border-radius:2px;flex-shrink:0">NOT</span>'
+        +'<span style="font-weight:600;font-size:12.5px;color:var(--ink)">'+d.bad+'</span>'
+        +'</div>'
+        +'<div style="display:flex;gap:8px;margin-bottom:8px">'
+        +'<span style="font-family:var(--fm);font-size:8px;color:var(--green);background:var(--green-dim);border:1px solid var(--green-border);padding:1px 6px;border-radius:2px;flex-shrink:0">YES</span>'
+        +'<span style="font-weight:600;font-size:12.5px;color:var(--coral)">'+d.good+'</span>'
+        +'</div>'
+        +'<div style="font-size:12px;color:var(--ink4);font-weight:300;line-height:1.65">'+d.why+'</div>'
+        +'</div>';
+    }).join('')}
+  </div>
+</div>
+`;
+
+// ── PAGE 03 ──────────────────────────────────────────────────────
+document.getElementById('page-moments').innerHTML=`
+<div class="pe">Section 03 — Moments That Matter</div>
+<div class="pt">Moments<br><em>That Matter</em></div>
+<p class="pd">Moments That Matter are the specific points in the Valentis employment experience where the quality of what happens has a disproportionate impact on whether the employee stays, grows, and commits. They are not all moments of crisis — some are moments of opportunity. EX strategy is the deliberate design of what happens at every one of these moments.</p>
+<div class="inf c"><strong>The critical EX insight:</strong> Employees do not leave because of the average of their experience — they leave because of specific moments that did not meet their expectation or need. Identifying those moments and designing them intentionally is the difference between reactive HR and proactive EX.</div>
+<div class="card">
+  <div class="ct">Valentis Moments That Matter — Full Map</div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('mtm-pipeline',this)">Pipeline Journey</div>
+    <div class="tab" onclick="showTab('mtm-site',this)">Site Experience</div>
+    <div class="tab" onclick="showTab('mtm-relationship',this)">Relationships</div>
+    <div class="tab" onclick="showTab('mtm-transition',this)">Transitions</div>
+  </div>
+  <div id="tb-mtm-pipeline" class="tb active">
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">The pipeline journey moments are the highest-stakes EX moments at Valentis. These are the points where a trainee decides — consciously or not — whether the Valentis investment is worth continuing.</div>
+    <table class="dt">
+      <thead><tr><th>Moment</th><th>When</th><th>What employee needs</th><th>EX risk if poorly handled</th><th>Valentis standard</th></tr></thead>
+      <tbody>
+        ${[
+          {m:'Offer and pre-start',w:'Before day 1',need:'Clear picture of the job reality: site conditions, development timeline, grade structure, pay progression.',risk:'Expectation mismatch → exit in first 30 days. Most avoidable exit type.',std:'Offer includes grade structure overview, G1→G4 timeline, month-3 check-in commitment, and site conditions briefing. No surprises on day 1.'},
+          {m:'Day 1 on site',w:'First day',need:'Belonging. Clarity. A person who knows their name. A role that makes sense immediately.',risk:'Confusion + isolation → low commitment from the start. Day 1 sets the narrative for everything that follows.',std:'SM greets personally. Buddy assigned (G2 or G3). Site orientation structured. First task assigned before end of day 1.'},
+          {m:'Month-3 check-in',w:'Weeks 10–14',need:'To be asked — and genuinely heard. To know what comes next. To feel the company cares whether they stay.',risk:'The highest voluntary exit point at Valentis. Without a check-in, this moment passes unacknowledged — and the employee makes their own conclusion.',std:'SM conducts structured check-in conversation. Risk rating assigned same day. High-risk flagged to Group HR within 24 hours. Follow-up action documented.'},
+          {m:'G1→G2 grading',w:'~18 months',need:'Recognition that the milestone is real. A tangible pay step-up. Clear communication of what G2 means.',risk:'Grading without ceremony = confirmation that progression is not valued. Often triggers delayed exit (3–6 months post-grading).',std:'SM announces grading to the team. Pay step-up to 105% G2 minimum effective same month. Group HR sends written acknowledgement. Next milestone briefed.'},
+          {m:'G2→G3 grading',w:'~30 months',need:'Affirmation that G3 is a genuine achievement. Understanding of what G3 means for coaching expectations and pay.',risk:'Employees who reach G3 without feeling the significance often drift — they have invested 30 months and still do not feel embedded.',std:'Same ceremony standard as G2. G3 role expectations briefed. G4 pathway made explicit. Compa-ratio position at G3 communicated.'},
+          {m:'G3→G4 confirmation',w:'~42–54 months',need:'Recognition of becoming the operational backbone of the site. G4 identity — driller and coach — must be conferred, not assumed.',risk:'G4s who do not feel the significance of their role become reluctant coaches. The whole pipeline suffers.',std:'G4 certification celebration. Thailand SM video message if cross-site. Group HR letter from COO level. Coaching responsibility formally briefed.'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:700;color:var(--coral)">'+r.m+'</td><td style="font-family:var(--fm);font-size:11px;white-space:nowrap">'+r.w+'</td><td style="font-size:11.5px">'+r.need+'</td><td style="font-size:11.5px;color:var(--red)">'+r.risk+'</td><td style="font-size:11.5px;color:var(--teal)">'+r.std+'</td></tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div id="tb-mtm-site" class="tb">
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Site experience moments happen in the day-to-day work environment. They are often invisible to Group HR — which is why SM briefing and pipeline log compliance are the primary levers.</div>
+    <table class="dt">
+      <thead><tr><th>Moment</th><th>What employee needs</th><th>EX risk if poorly handled</th><th>Valentis standard</th></tr></thead>
+      <tbody>
+        ${[
+          {m:'First week on site (full)',need:'Physical orientation. Safety clarity. Social belonging. Reduction of overwhelm.',risk:'Disorientation leads to safety incidents and early exits. First week experience is the strongest predictor of 90-day retention.',std:'Structured first-week programme: safety briefing day 1, buddy introduces all team members by day 3, SM 1:1 by end of week 1.'},
+          {m:'Return from leave',need:'Reconnection. Update on what changed. Reaffirmation that they were missed.',risk:'Return from leave is a hidden exit risk — employees who feel disconnected after leave often reconsider their commitment.',std:'SM contacts employee 1 week before return. Site update briefed on return day. No expectation of immediate full productivity on day 1 back.'},
+          {m:'Difficult project or safety incident',need:'Support. Clear communication. No blame without inquiry. Recovery plan.',risk:'How Valentis responds to difficulty defines the trust relationship. A poor response at a safety incident or project failure can trigger exits across the team.',std:'COO or Group HR contact within 48 hours of significant incidents. Team debrief within 1 week. Lessons communicated, not buried.'},
+          {m:'Recognition on site',need:'To be seen doing good work. Public acknowledgement in front of peers.',risk:'Invisible good work is a slow attrition driver. Employees who are never recognised begin to feel unvalued — and stop trying.',std:'SM recognises at least one team member publicly every month. G4 debrief quality recognised as well as output. Recognition tied to Valentis values.'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:700;color:var(--coral)">'+r.m+'</td><td style="font-size:11.5px">'+r.need+'</td><td style="font-size:11.5px;color:var(--red)">'+r.risk+'</td><td style="font-size:11.5px;color:var(--teal)">'+r.std+'</td></tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div id="tb-mtm-relationship" class="tb">
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Relationship moments involve interactions with SM, G4 coach, or Group HR. The quality of these relationships is the most powerful predictor of employee retention at Valentis.</div>
+    <table class="dt">
+      <thead><tr><th>Moment</th><th>What employee needs</th><th>EX risk if poorly handled</th><th>Valentis standard</th></tr></thead>
+      <tbody>
+        ${[
+          {m:'First G4 coaching debrief',need:'To understand what coaching is, why it matters, and that the G4 is invested in their development.',risk:'A perfunctory or skipped first debrief sets the coaching relationship as low-priority from the start.',std:'G4 introduces coaching relationship explicitly on or before week 2. First debrief is structured: expectations, rubric explained, next session scheduled.'},
+          {m:'SM feedback conversation',need:'Honest, specific, constructive feedback. Delivered with respect. Focused on growth.',risk:'Feedback that is vague, delayed, or delivered poorly erodes trust. SM feedback quality is a major differentiator between high and low retention sites.',std:'SM feedback conversations follow Valentis Leadership Framework: balanced, specific, focused on the next step. Group HR briefs SM on feedback standards annually.'},
+          {m:'Group HR contact',need:'To feel that HR is a resource, not a threat. Accessible and responsive.',risk:'Employees who have never meaningfully interacted with Group HR before their exit interview have had no EX support from the function.',std:'Group HR makes at least two proactive contacts per year with all employees — one in the annual engagement survey, one at a site visit or virtual check-in.'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:700;color:var(--coral)">'+r.m+'</td><td style="font-size:11.5px">'+r.need+'</td><td style="font-size:11.5px;color:var(--red)">'+r.risk+'</td><td style="font-size:11.5px;color:var(--teal)">'+r.std+'</td></tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div id="tb-mtm-transition" class="tb">
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Transition moments are structural changes in the employment relationship. They require deliberate EX design because they are predictably high-risk.</div>
+    <table class="dt">
+      <thead><tr><th>Moment</th><th>What employee needs</th><th>EX risk if poorly handled</th><th>Valentis standard</th></tr></thead>
+      <tbody>
+        ${[
+          {m:'SM change at site',need:'Continuity. Introduction to the new SM before day 1. Understanding that their pipeline log and history transfers.',risk:'SM change is one of the most common triggers for delayed exits. New SM who does not know the team loses credibility and trust quickly.',std:'Outgoing SM conducts handover briefing for each team member with new SM present. New SM 1:1s with all employees in first two weeks.'},
+          {m:'Country 5 deployment',need:'Clear briefing on what the deployment means: location, duration, support structures, pay, development credit.',risk:'Deployment without full information creates anxiety and resentment. Employees sent to Country 5 without adequate preparation become the highest-risk cohort.',std:'Full deployment briefing document prepared by Group HR. Compensation structure confirmed in writing before deployment. SM support structure briefed.'},
+          {m:'Voluntary exit conversation',need:'To be heard. To understand that Valentis wants to understand why.',risk:'A defensive or administrative exit conversation closes the relationship badly — and damages Valentis\'s reputation as an employer in the local labour market.',std:'Exit interview conducted by Group HR (not SM). Structured protocol. Data fed back to COO quarterly. Genuinely acted on where patterns emerge.'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:700;color:var(--coral)">'+r.m+'</td><td style="font-size:11.5px">'+r.need+'</td><td style="font-size:11.5px;color:var(--red)">'+r.risk+'</td><td style="font-size:11.5px;color:var(--teal)">'+r.std+'</td></tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+</script>
+<script>
+// ── PAGE 04 ──────────────────────────────────────────────────────
+document.getElementById('page-journey').innerHTML=`
+<div class="pe">Section 04 — Employee Journey Map</div>
+<div class="pt">Employee<br><em>Journey Map</em></div>
+<p class="pd">The Valentis employee journey map traces the full arc of an employee's time with the company — from first awareness through to departure. For a G1 trainee who reaches G4, this journey spans approximately 4–5 years. The map identifies the emotional high and low points, the EX design interventions at each stage, and the transition risks that Group HR must manage proactively.</p>
+<div class="card" style="overflow-x:auto">
+  <div class="ct">The Valentis Journey — <em>Trainee to Senior Driller</em></div>
+  <div style="margin-bottom:14px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">This map follows the primary Valentis career pathway: G1 Trainee → G2 → G3 → G4. Each stage shows the EX sentiment curve, the critical moments, and the Group HR intervention.</div>
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;min-width:700px">
+    ${[
+      {stage:'Attract',sub:'Pre-hire',time:'Weeks −4 to 0',sentiment:60,color:'var(--teal)',moments:['Job ad','Referral','Interview','Offer'],ex:'Grade structure and pay progression communicated at offer. Site conditions clearly described. Expectation alignment built in.'},
+      {stage:'Onboard',sub:'G1 start',time:'Months 1–3',sentiment:45,color:'var(--coral)',moments:['Day 1','Week 1','Month-3 check-in'],ex:'Day 1 SM greeting. Buddy assigned. Month-3 check-in protocol activated at week 10. Highest exit risk window.',risk:true},
+      {stage:'Develop',sub:'G1–G2',time:'Months 4–18',sentiment:65,color:'var(--gold)',moments:['First debrief','6-month review','G2 grading'],ex:'G4 coaching relationship established. Milestone progress tracked. G2 grading celebrated with pay step-up.'},
+      {stage:'Progress',sub:'G2–G3',time:'Months 19–36',sentiment:72,color:'var(--teal)',moments:['G3 candidacy','G3 grading','G3 coaching role'],ex:'G3 pathway briefed at G2 grading. G3 grading ceremony. Coaching expectation introduced. Compa-ratio position communicated.'},
+      {stage:'Establish',sub:'G3–G4',time:'Months 37–54',sentiment:78,color:'var(--coral)',moments:['G4 candidacy','G4 certification','G4 coaching identity'],ex:'G4 development plan active. Coaching programme participation. Certification celebration. Country 5 opportunity briefed if applicable.'},
+      {stage:'Sustain',sub:'G4+',time:'Month 55+',sentiment:82,color:'var(--green)',moments:['Annual review','Retention check','Succession'],ex:'Annual compa-ratio review. Retention conversation proactive. Succession discussed. SM pathway if eligible.'}
+    ].map(function(d,i){
+      var barH=Math.round(d.sentiment*0.8);
+      return '<div style="border-right:'+(i<5?'1px solid var(--border)':'none')+'">'
+        +'<div style="background:'+d.color+';padding:10px 12px">'
+        +'<div style="font-family:var(--fm);font-size:7.5px;color:rgba(255,255,255,0.6);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">'+d.time+'</div>'
+        +'<div style="font-weight:700;font-size:14px;color:#fff">'+d.stage+'</div>'
+        +'<div style="font-size:11px;color:rgba(255,255,255,0.7)">'+d.sub+'</div>'
+        +'</div>'
+        +'<div style="padding:10px 12px;background:var(--surface)">'
+        +(d.risk?'<div style="font-family:var(--fm);font-size:8px;color:var(--red);margin-bottom:5px;padding:2px 6px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:2px;display:inline-block">⚠ Exit risk window</div>':'')
+        +'<div style="height:'+barH+'px;background:'+d.color+';opacity:0.15;border-radius:2px;margin-bottom:8px;position:relative"><div style="position:absolute;bottom:4px;left:8px;font-family:var(--fm);font-size:9px;color:'+d.color+';font-weight:700">'+d.sentiment+'%</div></div>'
+        +'<div style="font-family:var(--fm);font-size:7.5px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Key moments</div>'
+        +d.moments.map(function(m){return '<div style="font-size:11px;color:var(--ink3);margin-bottom:2px">· '+m+'</div>';}).join('')
+        +'<div style="margin-top:8px;font-size:11px;color:var(--ink4);font-weight:300;line-height:1.6;border-top:1px solid var(--border);padding-top:6px">'+d.ex+'</div>'
+        +'</div>'
+        +'</div>';
+    }).join('')}
+  </div>
+  <div style="margin-top:10px;font-size:12px;color:var(--ink5);font-family:var(--fm)">Sentiment % = illustrative EX sentiment score at each stage · bar height reflects relative sentiment level</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Journey by Employee Type — <em>Not Just Trainees</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">The G1→G4 journey is the primary pathway, but Valentis has multiple employee types — each with a distinct journey map and EX design requirement.</div>
+    <table class="dt">
+      <thead><tr><th>Employee type</th><th>Journey duration</th><th>Critical EX moments</th><th>Primary risk</th></tr></thead>
+      <tbody>
+        ${[
+          {type:'G1 Trainee (entry cohort)',dur:'0–18 months (to G2)',moments:'Day 1, month 3, first debrief, G2 grading',risk:'Month-3 exit — highest probability exit point in the organisation'},
+          {type:'G2 Driller\'s Assistant',dur:'18–36 months (to G3)',moments:'G3 pathway briefing, 2-year mark, G3 grading',risk:'Complacency plateau — visible next step required to maintain momentum'},
+          {type:'G3 Junior Driller',dur:'30–54 months (to G4)',moments:'G4 candidacy assessment, coaching introduction, G4 certification',risk:'External poaching — G3 is the most marketable grade in competing exploration companies'},
+          {type:'G4 Senior Driller',dur:'Ongoing from G4 confirmation',moments:'Annual compa-ratio review, coaching programme, retention conversation',risk:'Burnout or flat career — limited promotion runway; must be managed through enrichment and recognition'},
+          {type:'G5 Site Manager',dur:'Long-tenure, retention-critical',moments:'Retention bonus conversation, Country 5 opportunity, succession discussion',risk:'Exit due to perceived lack of growth or unresolved site frustrations — replacement cost $130K–$250K'},
+          {type:'Group functions (HR, Finance)',dur:'Variable',moments:'Annual review, CHRO-track conversation, Group HR development',risk:'Scope limitation — small company can feel constraining for ambitious group function professionals'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:600">'+r.type+'</td><td style="font-family:var(--fm);font-size:11px">'+r.dur+'</td><td style="font-size:11.5px">'+r.moments+'</td><td style="font-size:11.5px;color:var(--red)">'+r.risk+'</td></tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">The Sentiment Curve — <em>Why Month 3 Is the Cliff</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">Understanding why sentiment drops at month 3 is essential to designing the right intervention. The causes are predictable — which means they are preventable.</div>
+    ${[
+      {phase:'Month 1 — High excitement, high uncertainty',desc:'Most new hires arrive with enthusiasm but significant anxiety. The site environment is new, the work is physically demanding, and social belonging is not yet established. Sentiment is fragile even when it appears positive.',action:'Day 1 greeting, buddy assignment, and structured first week reduce anxiety before it compounds.',col:'var(--teal)'},
+      {phase:'Month 2 — Reality sets in',desc:'The physical demands of the work, the distance from family, and the pace of progression (slower than expected) begin to land. Employees start forming an honest assessment of whether the commitment is worth it.',action:'Proactive SM check-in at month 2. G4 coaching relationship must be established and delivering value by now.',col:'var(--gold)'},
+      {phase:'Month 3 — Decision point',desc:'By month 3, the employee has enough information to decide. If the experience has not matched the promise — if they feel unseen, if progression feels unclear, if the site feels isolating — they leave. This is the moment EX design is built to intercept.',action:'Structured month-3 check-in (weeks 10–14). High-risk rating triggers 24-hour Group HR response. The check-in is the intervention.',col:'var(--coral)'},
+      {phase:'Month 4+ — Committed or compromised',desc:'Employees who pass month 3 without exiting are significantly more likely to reach G2. The survival rate from month 4 to G2 grading is much higher than the survival rate from month 1 to month 3. Month 3 is the gate.',action:'After month-3 check-in and positive outcome, maintain quarterly touchpoint. The crisis window has passed but the relationship must be sustained.',col:'var(--green)'}
+    ].map(function(d){return '<div style="padding:10px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0;margin-bottom:7px"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:3px">'+d.phase+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:4px">'+d.desc+'</div><div style="font-size:11.5px;color:'+d.col+';font-weight:600">→ '+d.action+'</div></div>';}).join('')}
+  </div>
+</div>
+`;
+
+// ── PAGE 05 ──────────────────────────────────────────────────────
+document.getElementById('page-pillars').innerHTML=`
+<div class="pe">Section 05 — EX Pillars</div>
+<div class="pt">EX<br><em>Pillars</em></div>
+<p class="pd">The Valentis EX Pillars are the five dimensions of experience that every employee should feel across their time with the company. They are the architecture of what "a good experience at Valentis" means — practical enough to design programmes against, clear enough to communicate to employees and SMs, and measurable enough to track.</p>
+<div class="vx">
+  <div class="vx-ey">The Five Pillars of Valentis Employee Experience</div>
+  <div class="vx-ti">Clarity · Growth · Belonging · Recognition · Wellbeing</div>
+  <div class="vx-bo">These five pillars were developed from the specific drivers of attrition and retention at Valentis. Each pillar addresses a documented reason why employees leave or stay. Together they form the foundation of every EX programme in this toolkit — from onboarding design to recognition to wellness to exit analytics. If an EX programme does not serve at least one pillar, it should not be prioritised.</div>
+</div>
+<div style="display:grid;gap:12px;margin-bottom:14px">
+  ${[
+    {n:'01',name:'Clarity',ico:'◎',desc:'Employees at Valentis must know where they are in the journey, what comes next, and what it means. Clarity is the antidote to the ambiguity that drives month-3 exits. It operates at every level: clarity about the role, the grade structure, the pay progression, the performance expectation, and the path to G4.',signals:['I know what my next grade milestone is and when I am likely to reach it','I understand what my current salary means relative to my band','My SM has told me what I need to do to progress to the next grade','I understood what the job would be like before I started'],programmes:'Grade step-up communication · Offer experience design · Onboarding milestone brief · Annual development conversations',gap:'Without clarity: employees invent their own narrative — and it is usually more pessimistic than reality.',col:'var(--coral)'},
+    {n:'02',name:'Growth',ico:'↑',desc:'Growth at Valentis is concrete and tangible — it is the G1→G4 development journey, the coaching relationship, the expanding skill set, and the financial reward at each grade milestone. Employees who feel they are growing stay. Employees who feel they are stagnating — even at a reasonable salary — leave.',signals:['I am learning something meaningful every month in this role','My G4 invests real time in my development','I can see how my current work is building the skills I need for the next grade','Valentis has invested in me, not just in a position'],programmes:'G4 coaching programme · Grade step-up financial recognition · Development conversation framework · L&D pathway integration',gap:'Without growth: G3 becomes a ceiling, not a step. G3 drillers who feel stuck are the most marketable employees in the SE Asian mining labour market.',col:'var(--teal)'},
+    {n:'03',name:'Belonging',ico:'◇',desc:'Belonging at a remote exploration site is not about team-building activities — it is about feeling known, valued, and connected despite the physical isolation of the work environment. It is the SM who greets a returning employee by name. It is the G4 buddy who checks in during week 1. It is the team that acknowledges a grade milestone publicly.',signals:['I feel like I am part of a team at this site','My SM knows my name and something about me personally','I would go to my G4 or SM if I had a personal problem affecting my work','I felt welcomed when I returned from leave'],programmes:'Buddy programme · SM relationship standards · Return-from-leave protocol · Month-3 check-in · Site culture consistency framework',gap:'Without belonging: the site is just a job. Employees without belonging connections exit at the first available opportunity — and rarely tell anyone why.',col:'var(--gold)'},
+    {n:'04',name:'Recognition',ico:'★',desc:'Recognition at Valentis must be specific, timely, and proportional. It is the G2 grading ceremony that the SM announces to the team. It is the COO-level letter that arrives when a G4 earns certification. It is the monthly moment where the SM names one person who did something well. At a small company, recognition is cheap to deliver and expensive to withhold.',signals:['When I do good work, someone acknowledges it','My grade milestones have been celebrated, not just processed','I feel that Valentis values my contribution, not just my output','The effort I put in is visible to the people who matter'],programmes:'Grade milestone celebration protocol · Monthly SM recognition standard · Coaching quality recognition (G4 programme) · Values-based recognition framework',gap:'Without recognition: invisible good work becomes demotivating. The employee who is never recognised has no external signal that staying is worth it.',col:'var(--coral)'},
+    {n:'05',name:'Wellbeing',ico:'◉',desc:'Wellbeing at a remote mineral exploration site means physical safety, adequate rest, access to support when needed, and a working environment that does not systematically damage the person doing the work. Wellbeing is not a wellness programme — it is the site conditions, the shift structure, the access to medical support, and the SM who notices when someone is not coping.',signals:['I feel physically safe at this site','My working hours and rest conditions are fair','I would know who to talk to if I was struggling personally','Valentis takes site welfare seriously, not just on paper'],programmes:'Site welfare standards · Fatigue and safety policy · SM welfare briefing · Mental health access pathway · EX pulse survey wellbeing questions',gap:'Without wellbeing: Valentis cannot retain anyone long enough to develop them. Physical or psychological harm on site destroys the employment relationship faster than any other factor.',col:'var(--teal)'}
+  ].map(function(d){
+    return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px 24px;border-left:5px solid '+d.col+'">'
+      +'<div style="display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start">'
+      +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:48px;font-weight:800;color:'+d.col+';opacity:0.2;line-height:1">'+d.n+'</div><div style="font-size:20px;color:'+d.col+';margin-top:4px">'+d.ico+'</div></div>'
+      +'<div><div style="font-family:var(--fd);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px">'+d.name+'</div>'
+      +'<div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">'+d.desc+'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">'
+      +'<div><div style="font-family:var(--fm);font-size:7.5px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Employee signals</div>'
+      +d.signals.map(function(s){return '<div style="font-size:11.5px;color:var(--ink3);margin-bottom:3px;font-weight:300">· '+s+'</div>';}).join('')+'</div>'
+      +'<div><div style="font-family:var(--fm);font-size:7.5px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">EX programmes that serve this pillar</div>'
+      +'<div style="font-size:11.5px;color:var(--teal);font-weight:300;line-height:1.7">'+d.programmes+'</div></div>'
+      +'<div style="padding:10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:7.5px;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Without this pillar</div><div style="font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.65">'+d.gap+'</div></div>'
+      +'</div></div></div></div>';
+  }).join('')}
+</div>
+`;
+
+// ── PAGE 06 ──────────────────────────────────────────────────────
+document.getElementById('page-multicountry').innerHTML=`
+<div class="pe">Section 06 — Multi-Country EX</div>
+<div class="pt">Multi-Country<br><em>EX</em></div>
+<p class="pd">Delivering a consistent employee experience across Laos, Myanmar, Indonesia, and Thailand — each with different languages, cultures, labour market conditions, and SM styles — is the most operationally complex EX challenge at Valentis. This section defines the principle of consistency in standard, adaptation in delivery and maps what must be the same everywhere versus what can and should vary by country.</p>
+<div class="vx">
+  <div class="vx-ey">The Multi-Country EX Principle</div>
+  <div class="vx-ti">Every Valentis employee deserves the same quality of experience — regardless of which country they work in. The standard is consistent. The SM is the delivery mechanism. The language, style, and timing adapt.</div>
+  <div class="vx-bo">Consistency does not mean uniformity. A month-3 check-in in Myanmar should feel as personal and substantive as a month-3 check-in in Thailand — but it will be conducted in Burmese, adapted for the Myanmar site context, and facilitated by Myo H. The EX design responsibility of Group HR is to define the standard and brief the SM; the SM's responsibility is to deliver it authentically in their context. The risk of not defining standards is that each country's EX defaults to the SM's personal style — which creates a four-country lottery for employee experience quality.</div>
+</div>
+<div class="card">
+  <div class="ct">What Must Be Consistent — Non-Negotiable EX Standards</div>
+  <table class="dt">
+    <thead><tr><th>EX standard</th><th>Why it must be consistent</th><th>How compliance is verified</th></tr></thead>
+    <tbody>
+      ${[
+        {std:'Month-3 check-in protocol (structured, documented)',why:'The month-3 exit is a group-wide pattern — any country that skips the check-in will have higher attrition. Consistency is the only way to close the gap across all four countries.',verify:'Pipeline log check-in field completion rate · Group HR reviews monthly · Any country below 80% compliance triggers SM brief'},
+        {std:'Grade milestone celebration (SM announcement + pay step-up)',why:'If one country celebrates promotions and another does not, word travels. The standard of recognition must be equal — even if the ceremony style differs by country.',verify:'Group HR confirms each grade progression is logged with promotion_date and sm_acknowledgement field. Sample 20% of promotions quarterly.'},
+        {std:'Annual engagement pulse survey (all employees)',why:'If Thailand completes the survey and Myanmar does not, Group HR cannot make evidence-based EX decisions for the group. All-country participation is essential.',verify:'Survey completion rate target: ≥85% all countries. Group HR follows up with SM for non-responding employees within 2 weeks of survey close.'},
+        {std:'Exit interview (structured, conducted by Group HR)',why:'Exit data from only some countries creates false patterns. Group HR must conduct or commission exit interviews in every country every time — not delegate to the SM who may be the reason for exit.',verify:'Exit interview completion rate: ≥90% of voluntary exits. Any missed interview requires Group HR explanation to COO.'},
+        {std:'G4 debrief frequency tracked monthly',why:'The coaching standard must be equally held in all countries. Thailand\'s G4 performance is the standard — Myanmar and Indonesia must be held to the same expectation.',verify:'Monthly debrief tally submitted by all G4s to SM · SM submits to Group HR quarterly · Any country below 3/month average triggers Group HR support visit.'}
+      ].map(function(r){
+        return '<tr><td style="font-weight:700;color:var(--coral)">'+r.std+'</td><td style="font-size:11.5px">'+r.why+'</td><td style="font-size:11.5px;color:var(--teal)">'+r.verify+'</td></tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">What Can Adapt — Country-Level Flexibility</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {area:'Language of all EX communications',adapt:'All EX materials — check-in guides, recognition messages, pulse survey questions — should be translated into the primary language of each country. English as the only language is an exclusion decision, not a neutral one.',col:'var(--teal)'},
+        {area:'Check-in conversation style',adapt:'The month-3 check-in in Thailand may be more direct; in Laos more relationship-oriented. The SM delivers the check-in in the cultural style that will be received as genuine — the structured protocol ensures the content is consistent, the style adapts.',col:'var(--teal)'},
+        {area:'Recognition format and ceremony',adapt:'A G2 grading celebration in Myanmar looks different from one in Thailand — different foods, different customs, different formality. The requirement is that the SM marks the moment publicly. How that happens adapts.',col:'var(--gold)'},
+        {area:'Wellbeing and welfare priorities',adapt:'Site welfare priorities in Laos (heat management, remote access) differ from Indonesia (competing employment stress, family proximity). Each country has a site welfare supplement aligned to its specific conditions.',col:'var(--gold)'},
+        {area:'Engagement survey timing',adapt:'Survey timing should avoid major local holidays and site rotation periods. Each SM advises Group HR on the best 3-week window in each country for maximum response rates.',col:'var(--teal)'}
+      ].map(function(d){return '<div style="padding:9px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:3px">'+d.area+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.adapt+'</div></div>';}).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Country EX Profile — Current State</div>
+    <div class="tabs">
+      ${['LA','MM','ID','TH'].map(function(c,i){return '<div class="tab'+(i===0?' active':'')+'" onclick="showTab(\'cx-'+c.toLowerCase()+'\',this)">'+{LA:'Laos',MM:'Myanmar',ID:'Indonesia',TH:'Thailand'}[c]+'</div>';}).join('')}
+    </div>
+    ${[
+      {id:'cx-la',c:'Laos',active:true,
+        strength:'Stable SM relationship. Long-tenured G4 cohort provides strong peer environment. Pipeline log compliance 85%.',
+        gap:'Retirement cliff creates pipeline anxiety — experienced drillers leaving without visible bench means junior employees question the future. Bench plan must be communicated to the team, not just managed behind the scenes.',
+        priority:'Communicate bench plan and external hire decision to site. Month-3 check-in compliance to 100%. G4 retirement transition managed with dignity and ceremony.',
+        exscore:67},
+      {id:'cx-mm',c:'Myanmar',active:false,
+        strength:'Strong community cohesion on site. Cultural tendency toward group loyalty is an EX asset when activated correctly. Myo H. personally invested in pipeline.',
+        gap:'Coaching relationship quality below standard. Month-3 check-in compliance 55% — the highest-risk gap in the group. Language barrier reduces Group HR accessibility for non-English speakers.',
+        priority:'G4 coaching programme in progress. Month-3 check-in compliance is the single most important Myanmar EX metric. Myanmar-language EX materials required.',
+        exscore:48},
+      {id:'cx-id',c:'Indonesia',active:false,
+        strength:'Indonesia has the strongest competing employment environment — which means employees who stay are making an active choice. Wirawan\'s site knowledge is deep.',
+        gap:'G3 vacancies creating site stress — existing employees carrying above-capacity workload. Wirawan\'s retention risk means the site\'s primary EX delivery mechanism is at risk.',
+        priority:'G3 vacancy fill restores site equilibrium. Wirawan retention conversation is an EX priority, not just a compensation priority. Site workload communication to remaining team.',
+        exscore:54},
+      {id:'cx-th',c:'Thailand',active:false,
+        strength:'Thailand SM is the group EX benchmark. Month-3 check-in compliance 100%. G4 debrief frequency 4.1/month. Delivery 105%. Lowest attrition (10%).',
+        gap:'Bench strength is the one gap — no formal successor identified for SM. Country 5 deployment will remove the most capable G4 from the site. Risk of Thailand becoming a laggard if preparation is insufficient.',
+        priority:'Document the Thailand EX model as the group standard. Formalise SM succession. Identify Country 5 deployment candidate and brief replacement plan.',
+        exscore:84}
+    ].map(function(d){
+      var col=d.exscore>=75?'var(--green)':d.exscore>=60?'var(--gold)':'var(--coral)';
+      return '<div id="tb-cx-'+d.c.toLowerCase()+'" class="tb'+(d.active?' active':'')+'">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+        +'<div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink)">'+d.c+' EX Profile</div>'
+        +'<div style="text-align:right"><div style="font-family:var(--fd);font-size:40px;font-weight:800;color:'+col+';line-height:1">'+d.exscore+'</div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5)">EX SCORE / 100</div></div>'
+        +'</div>'
+        +'<div style="padding:10px;background:var(--green-dim);border-left:3px solid var(--green);border-radius:0 3px 3px 0;margin-bottom:7px"><div style="font-family:var(--fm);font-size:8px;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Strengths</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.strength+'</div></div>'
+        +'<div style="padding:10px;background:var(--coral-dim);border-left:3px solid var(--coral);border-radius:0 3px 3px 0;margin-bottom:7px"><div style="font-family:var(--fm);font-size:8px;color:var(--coral);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">EX Gaps</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.gap+'</div></div>'
+        +'<div style="padding:10px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:0 3px 3px 0"><div style="font-family:var(--fm);font-size:8px;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">2026 Priority</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.priority+'</div></div>'
+        +'</div>';
+    }).join('')}
+  </div>
+</div>
+`;
+</script>
+<script>
+// ── PAGE 07 ──────────────────────────────────────────────────────
+document.getElementById('page-measurement').innerHTML=`
+<div class="pe">Section 07 — EX Measurement</div>
+<div class="pt">EX<br><em>Measurement</em></div>
+<p class="pd">EX measurement answers the question: is the experience we are designing actually improving? Without measurement, EX programmes become faith-based HR — well-intentioned, unmeasured, and ultimately unable to demonstrate value to the COO. At Valentis, EX measurement is lean, connected to operational outcomes, and directly tied to the five pillars.</p>
+<div class="card">
+  <div class="ct">EX Measurement Framework — <em>Valentis</em></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;margin-bottom:14px">
+    ${[
+      {type:'Leading indicators',desc:'Metrics that predict EX outcomes before they materialise. These are the early warning system.',examples:['Month-3 check-in compliance rate','G4 debrief frequency (coaching leading indicator)','Pipeline log submission compliance','Onboarding completion rate (week 1 checklist)'],col:'var(--teal)'},
+      {type:'Experience indicators',desc:'Metrics that measure the quality of the experience at the time it happens.',examples:['Pulse survey scores per pillar (annual)','Exit interview sentiment by exit reason','Month-3 check-in risk rating distribution','Recognition event frequency (SM report)'],col:'var(--coral)'},
+      {type:'Outcome indicators',desc:'Metrics that show whether EX is converting into business results.',examples:['G1→G2 conversion rate (EX proxy)','Voluntary attrition rate by country','Delivery rate correlation with EX score','Revenue per employee trajectory'],col:'var(--gold)'}
+    ].map(function(d){return '<div style="padding:16px;background:var(--surface2);border-radius:4px;border-top:3px solid '+d.col+'"><div style="font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:4px">'+d.type+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:10px">'+d.desc+'</div>'+d.examples.map(function(e){return '<div style="font-size:11.5px;color:var(--ink4);margin-bottom:3px">· '+e+'</div>';}).join('')+'</div>';}).join('')}
+  </div>
+  <table class="dt">
+    <thead><tr><th>EX metric</th><th>Pillar</th><th>Frequency</th><th>Target</th><th>Current (est.)</th><th>Source</th></tr></thead>
+    <tbody>
+      ${[
+        {m:'Month-3 check-in compliance',p:'Clarity + Belonging',f:'Monthly',t:'100%',c:'Myanmar 55% / Thailand 100%',s:'Pipeline log'},
+        {m:'G1→G2 conversion rate',p:'Growth',f:'Per cohort',t:'≥70% all countries',c:'58% Myanmar · 72% Thailand',s:'Pipeline log'},
+        {m:'Voluntary attrition rate',p:'All pillars (outcome)',f:'Rolling 12-month',t:'≤15% group',c:'22% group average',s:'Payroll exits'},
+        {m:'G4 debrief frequency',p:'Growth + Recognition',f:'Monthly',t:'≥4/month all G4s',c:'1.2 Myanmar · 4.1 Thailand',s:'G4 tally sheet'},
+        {m:'Pulse survey — pillar scores',p:'All five pillars',f:'Annual',t:'≥7/10 all pillars all countries',c:'Not yet baselined',s:'Annual pulse survey'},
+        {m:'Exit interview — primary reason',p:'Diagnosis',f:'Every exit',t:'≥90% exit interview completion',c:'~65% completion (est.)',s:'Exit interview log'},
+        {m:'Grade milestone celebration rate',p:'Recognition',f:'Per promotion',t:'100% — every grading acknowledged',c:'~70% (est., no formal log)',s:'Group HR promotion log'},
+        {m:'Pipeline log submission compliance',p:'Clarity + Growth',f:'Monthly',t:'≥90% on-time submission',c:'Myanmar 72% · Thailand 100%',s:'Pipeline log admin'}
+      ].map(function(r){
+        return '<tr><td style="font-weight:600">'+r.m+'</td>'
+          +'<td><span class="chip cm">'+r.p+'</span></td>'
+          +'<td style="font-family:var(--fm);font-size:11px">'+r.f+'</td>'
+          +'<td style="color:var(--teal);font-weight:600">'+r.t+'</td>'
+          +'<td style="color:var(--coral);font-size:11.5px">'+r.c+'</td>'
+          +'<td style="font-family:var(--fm);font-size:11px;color:var(--ink5)">'+r.s+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Annual EX Pulse Survey — Design</div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">The annual pulse survey is Valentis's primary tool for gathering employee sentiment across all five EX pillars. Design principles: short (≤12 questions), mobile-accessible, available in all four country languages, and acted on visibly within 6 weeks of close.</div>
+    <table class="dt">
+      <thead><tr><th>#</th><th>Question</th><th>Pillar</th><th>Scale</th></tr></thead>
+      <tbody>
+        ${[
+          {n:1,q:'I understand what I need to do to progress to the next grade.',p:'Clarity',s:'1–10'},
+          {n:2,q:'The work I do at Valentis is helping me build skills for my future.',p:'Growth',s:'1–10'},
+          {n:3,q:'I feel like a valued member of my site team.',p:'Belonging',s:'1–10'},
+          {n:4,q:'My good work is recognised by my Site Manager.',p:'Recognition',s:'1–10'},
+          {n:5,q:'I feel physically safe and well-supported at this site.',p:'Wellbeing',s:'1–10'},
+          {n:6,q:'I know what my next grade milestone is and when I am likely to reach it.',p:'Clarity',s:'1–10'},
+          {n:7,q:'My G4 invests real time in coaching me.',p:'Growth',s:'1–10'},
+          {n:8,q:'I would recommend Valentis as an employer to someone I know.',p:'All pillars (eNPS)',s:'0–10'},
+          {n:9,q:'I plan to be working at Valentis in 12 months\' time.',p:'Retention intent',s:'1–10'},
+          {n:10,q:'If I could change one thing about working at Valentis, it would be...',p:'Open',s:'Open text'}
+        ].map(function(r){
+          return '<tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral)">'+r.n+'</td><td style="font-size:12px">'+r.q+'</td><td><span class="chip cm">'+r.p+'</span></td><td style="font-family:var(--fm);font-size:11px">'+r.s+'</td></tr>';
+        }).join('')}
+      </tbody>
+    </table>
+    <div style="margin-top:10px;padding:10px 12px;background:var(--coral-dim);border-left:3px solid var(--coral);border-radius:0 3px 3px 0;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--coral)">Action commitment:</strong> Group HR must share results with all employees within 6 weeks of survey close — including what will and will not change as a result. Surveys without visible action destroy future participation.</div>
+  </div>
+  <div class="card">
+    <div class="ct">EX Reporting — Cadence and Audience</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {aud:'COO monthly people brief',freq:'Monthly',content:'Attrition rate · month-3 check-in compliance · G4 debrief frequency · pipeline conversion · any EX incidents or SM concerns. 1-page format. EX lens on operational performance.',col:'var(--coral)'},
+        {aud:'Site Managers (all)',freq:'Quarterly',content:'Country EX scores vs group benchmark · their site\'s month-3 compliance · G4 debrief frequency · recognition event count · any pulse survey insights from their country.',col:'var(--teal)'},
+        {aud:'COO — annual EX review',freq:'Annual',content:'Full pulse survey results by country and pillar · year-on-year EX score movement · attrition cost model update · EX programme effectiveness review · next year EX priorities.',col:'var(--gold)'},
+        {aud:'All employees',freq:'Annual (post-survey)',content:'Summary of pulse survey results — what we heard, what we are doing about it, and what we are not changing and why. Delivered in each country language via SM.',col:'var(--teal)'}
+      ].map(function(d){return '<div style="padding:12px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span style="font-weight:700;font-size:13px;color:var(--ink)">'+d.aud+'</span><span class="chip cm">'+d.freq+'</span></div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.content+'</div></div>';}).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 08 ──────────────────────────────────────────────────────
+document.getElementById('page-roadmap').innerHTML=`
+<div class="pe">Section 08 — EX Roadmap</div>
+<div class="pt">EX<br><em>Roadmap</em></div>
+<p class="pd">The Valentis EX Roadmap sequences the EX programme build across 2026 and into 2027. It is prioritised by impact — the interventions that address the highest-cost EX failures first — and designed to be delivered by a Group HR function of one, in parallel with all other HR priorities.</p>
+<div class="vx">
+  <div class="vx-ey">Roadmap Principle</div>
+  <div class="vx-ti">Do the high-impact, low-cost EX interventions first. Month-3 check-in compliance costs nothing — and is worth more than any formal wellbeing programme at current attrition rates.</div>
+  <div class="vx-bo">The EX roadmap is not a wish list. It is a sequenced plan that respects the constraints of Group HR capacity and the urgency of the pipeline problem. The order is: fix the check-in (the cheapest, highest-ROI EX intervention), then build the recognition structure, then design onboarding, then run the first pulse survey, then build the remaining EX architecture. Every intervention builds on the last.</div>
+</div>
+<div class="card">
+  <div class="ct">EX Roadmap — 2026 to Q2 2027</div>
+  <table class="dt">
+    <thead><tr><th>Quarter</th><th>Initiative</th><th>Pillar(s)</th><th>Owner</th><th>Effort</th><th>Expected impact</th></tr></thead>
+    <tbody>
+      ${[
+        {q:'Q2 2026',init:'Month-3 check-in protocol formalised + all SMs briefed',p:'Belonging · Clarity',o:'Group HR',e:'Low',impact:'Myanmar check-in compliance: 55%→90%+. Immediate month-3 attrition reduction.'},
+        {q:'Q2 2026',init:'Grade milestone celebration protocol documented and activated',p:'Recognition',o:'Group HR + SMs',e:'Low',impact:'Promotion acknowledgement rate: ~70%→100%. Retention signal at every grading.'},
+        {q:'Q2 2026',init:'Buddy programme launched at all sites (G2/G3 as buddies)',p:'Belonging',o:'SM (Group HR design)',e:'Low',impact:'Week 1 belonging score improves. Reduces first-30-day exits.'},
+        {q:'Q3 2026',init:'Onboarding journey designer tool activated (Tool 3)',p:'Clarity · Growth · Belonging',o:'Group HR',e:'Medium',impact:'Structured onboarding reduces expectation mismatch. Target: first-30-day exit rate ≤5%.'},
+        {q:'Q3 2026',init:'First annual pulse survey — all countries, all languages',p:'All five pillars',o:'Group HR',e:'Medium',impact:'Baseline EX scores per pillar per country. First evidence-based EX decision making.'},
+        {q:'Q3 2026',init:'Recognition programme formalised — monthly SM recognition + milestone certificates',p:'Recognition',o:'Group HR + SMs',e:'Low–Medium',impact:'Visible, consistent recognition standard across all four countries.'},
+        {q:'Q4 2026',init:'Wellbeing and site welfare review (Tool 6) — country supplements',p:'Wellbeing',o:'Group HR + SMs',e:'Medium',impact:'Site welfare standards documented. Country-specific welfare supplements completed.'},
+        {q:'Q4 2026',init:'Exit analytics framework active (Tool 7) — structured exit interviews',p:'Diagnosis',o:'Group HR',e:'Low',impact:'First systematic exit data. Root cause patterns identified within 2 exit cycles.'},
+        {q:'Q1 2027',init:'Culture consistency framework deployed (Tool 8)',p:'Belonging · Recognition',o:'Group HR',e:'Medium',impact:'Valentis culture language consistent across all four countries. SM culture briefs completed.'},
+        {q:'Q1–Q2 2027',init:'EX strategy review — post-pulse survey Year 1 results',p:'All',o:'Group HR → COO',e:'Low',impact:'Year 1 EX baseline → Year 2 priorities set. First COO EX annual review presented.'}
+      ].map(function(r){
+        var qcol=r.q==='Q2 2026'?'var(--coral)':r.q==='Q3 2026'?'var(--teal)':r.q==='Q4 2026'?'var(--gold)':'var(--green)';
+        var ecol=r.e==='Low'?'var(--green)':r.e==='Medium'||r.e==='Low–Medium'?'var(--gold)':'var(--coral)';
+        return '<tr><td style="font-weight:700;font-family:var(--fm);font-size:11px;color:'+qcol+'">'+r.q+'</td>'
+          +'<td style="font-weight:600;font-size:12.5px">'+r.init+'</td>'
+          +'<td><span class="chip cm" style="font-size:8px">'+r.p+'</span></td>'
+          +'<td style="font-size:11.5px">'+r.o+'</td>'
+          +'<td style="font-weight:700;color:'+ecol+'">'+r.e+'</td>'
+          +'<td style="font-size:11.5px;color:var(--teal)">'+r.impact+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="card">
+  <div class="ct">EX Investment vs Attrition Cost — <em>The Business Case</em></div>
+  <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.85;margin-bottom:14px">The full EX programme build across all eight tools requires approximately 120–160 hours of Group HR time over 12 months, plus SM engagement time. The ROI case does not require complex modelling.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--coral);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">EX programme cost (approximate)</div>
+      <table class="dt">
+        <thead><tr><th>Input</th><th>Estimate</th></tr></thead>
+        <tbody>
+          <tr><td>Group HR design time (120 hrs @ opportunity cost)</td><td>$9,600</td></tr>
+          <tr><td>SM engagement time (briefings, check-ins, recognition)</td><td>$4,800 (opp. cost)</td></tr>
+          <tr><td>Survey tool (simple, e.g. Typeform or equivalent)</td><td>$600/year</td></tr>
+          <tr><td>Translation of EX materials (4 languages)</td><td>$2,000–$3,500</td></tr>
+          <tr><td>Recognition materials (milestone certificates, etc.)</td><td>$800</td></tr>
+          <tr style="background:var(--surface2)"><td style="font-weight:700">Total EX programme investment (Year 1)</td><td style="font-weight:700;color:var(--coral)">~$17,800–$19,300</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--green);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">EX programme return (conservative estimate)</div>
+      <table class="dt">
+        <thead><tr><th>Benefit</th><th>Annual value</th></tr></thead>
+        <tbody>
+          <tr><td>Month-3 exit reduction (−4 exits/year × avg $4K replacement)</td><td>$16,000</td></tr>
+          <tr><td>G1→G2 conversion improvement (58%→65% Myanmar, 1 additional G2/cohort)</td><td>$8,000–$18,000</td></tr>
+          <tr><td>Reduced G3 exits via recognition + belonging (−2 G3 exits × $13K)</td><td>$26,000</td></tr>
+          <tr><td>Delivery improvement from improved EX/engagement (+1pp × $83K)</td><td>$83,000</td></tr>
+          <tr style="background:var(--surface2)"><td style="font-weight:700">Total conservative return (Year 1)</td><td style="font-weight:700;color:var(--green)">$133,000–$143,000</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;padding:12px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:12.5px;line-height:1.75"><strong style="color:var(--green)">ROI: 7–8× in Year 1.</strong> <span style="color:var(--ink3);font-weight:300">Every dollar invested in the EX programme returns seven to eight in reduced attrition cost and improved delivery. The business case for EX at Valentis is not philosophical — it is arithmetically obvious.</span></div>
+    </div>
+  </div>
+</div>
+`;
+</script>

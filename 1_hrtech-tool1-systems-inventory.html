@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Systems Inventory & Architecture Map — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0f1923; --navy:#1a2a3a; --navy2:#243447; --navy3:#2e3f52;
+  --electric:#0ea5e9; --electric2:#38bdf8; --electric-dim:rgba(14,165,233,0.1); --electric-border:rgba(14,165,233,0.28);
+  --cyan:#06b6d4; --cyan-dim:rgba(6,182,212,0.09);
+  --steel:#4a6080; --steel2:#6b8099; --mist:#f0f4f8; --white:#ffffff;
+  --border:#d4dce6; --border2:#c0ccda;
+  --success:#0f7a3e; --success-bg:#e8f5ee; --success-border:rgba(15,122,62,0.25);
+  --warning:#b45309; --warning-bg:#fef3cd; --warning-border:rgba(180,83,9,0.25);
+  --danger:#c0392b; --danger-bg:#fdf0ef; --danger-border:rgba(192,57,43,0.25);
+  --neutral:#5a6a7a; --neutral-bg:#f4f6f8;
+  --tag-laos:#1e5f74; --tag-myanmar:#6b3a2a; --tag-indonesia:#1a4731; --tag-thailand:#3b2a6e; --tag-group:#0f1923;
+  --sidebar-w:268px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--mist);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.6;display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--cyan),rgba(14,165,233,0.3),transparent)}
+.sb-logo{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:var(--electric-dim);border:1px solid var(--electric-border);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:9px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#e8f4ff;line-height:1.1;margin-bottom:3px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:10px;color:rgba(255,255,255,0.18);font-family:var(--fm)}
+.sb-nav{padding:10px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.14);padding:0 10px;margin-bottom:4px;margin-top:10px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.55)}
+.nav-item.active{background:var(--electric-dim);border-color:var(--electric-border);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:18px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--electric)}
+.nav-status{margin-left:auto;font-family:var(--fm);font-size:8px;padding:1px 5px;border-radius:2px}
+.status-done{background:rgba(15,122,62,0.25);color:#6ecf94}
+.status-next{background:var(--electric-dim);color:var(--electric2)}
+.status-soon{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.2)}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:10px 12px;font-size:10.5px;color:rgba(255,255,255,0.2);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+.page{display:none}
+.page.active{display:block}
+
+/* ── TOP HEADER ── */
+.top-header{background:var(--navy2);padding:0 44px;display:flex;align-items:center;justify-content:space-between;height:56px;border-bottom:3px solid var(--electric)}
+.th-left{display:flex;align-items:center;gap:14px}
+.th-badge{font-family:var(--fm);font-size:9px;color:var(--electric);letter-spacing:2px;border:1px solid var(--electric-border);padding:2px 8px;border-radius:2px}
+.th-title{font-family:var(--fd);font-size:16px;color:var(--white);font-weight:600}
+.th-meta{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.5px}
+
+/* ── PAGE HEADER ── */
+.page-header{background:var(--white);padding:28px 44px 22px;border-bottom:1px solid var(--border)}
+.ph-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--electric);margin-bottom:8px}
+.ph-title{font-family:var(--fd);font-size:30px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1}
+.ph-title em{font-style:italic;font-weight:400;color:var(--steel2)}
+.ph-desc{font-size:13px;color:var(--steel);max-width:640px;line-height:1.7;font-weight:300}
+.ph-tag{display:inline-block;margin-top:8px;font-family:var(--fm);font-size:9px;background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border);padding:3px 10px;border-radius:2px;letter-spacing:1px}
+
+/* ── STATS BAR ── */
+.stats-bar{background:var(--navy);padding:14px 44px;display:flex;gap:0}
+.stat-item{flex:1;text-align:center;padding:0 12px;border-right:1px solid rgba(255,255,255,0.08)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:var(--fm);font-size:22px;font-weight:600;color:var(--electric2);display:block}
+.stat-num.green{color:#6ee7b7}.stat-num.red{color:#fca5a5}.stat-num.yellow{color:#fcd34d}.stat-num.cyan{color:var(--cyan)}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;margin-top:1px}
+
+/* ── TAB BAR ── */
+.tab-bar{background:var(--white);padding:0 44px;display:flex;border-bottom:2px solid var(--border)}
+.tab-btn{padding:12px 20px;font-family:var(--fb);font-size:12px;font-weight:500;color:var(--steel);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;letter-spacing:0.3px}
+.tab-btn.active{color:var(--electric);border-bottom-color:var(--electric);font-weight:600}
+.tab-btn:hover:not(.active){color:var(--ink)}
+.tab-content{display:none;padding:28px 44px 44px}
+.tab-content.active{display:block}
+
+/* ── CONTROLS ROW ── */
+.controls-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.search-input{height:36px;padding:0 14px;border:1px solid var(--border);border-radius:4px;font-family:var(--fb);font-size:12px;color:var(--ink);background:var(--white);outline:none;width:220px;transition:border .15s}
+.search-input:focus{border-color:var(--electric)}
+.filter-select{height:36px;padding:0 12px;border:1px solid var(--border);border-radius:4px;font-family:var(--fb);font-size:12px;color:var(--steel);background:var(--white);cursor:pointer;outline:none}
+.btn{height:36px;padding:0 16px;border-radius:4px;font-family:var(--fb);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s;letter-spacing:0.3px}
+.btn-primary{background:var(--electric);color:var(--white)}.btn-primary:hover{background:var(--electric2);color:var(--ink)}
+.btn-outline{background:var(--white);color:var(--navy);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--electric);color:var(--electric)}
+
+/* ── SYSTEM CARDS (Inventory) ── */
+.systems-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.sys-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:box-shadow .15s;cursor:pointer}
+.sys-card:hover{box-shadow:0 4px 16px rgba(14,165,233,0.12);border-color:var(--electric-border)}
+.sys-card-top{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+.sys-icon{width:40px;height:40px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sys-info{flex:1;min-width:0}
+.sys-name{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);line-height:1.1;margin-bottom:2px}
+.sys-vendor{font-family:var(--fm);font-size:10px;color:var(--steel2);letter-spacing:0.5px}
+.sys-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.dot-live{background:#22c55e}.dot-partial{background:#f59e0b}.dot-manual{background:#94a3b8}.dot-planned{background:var(--electric)}
+.sys-card-body{padding:12px 18px}
+.sys-meta-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.sys-chip{font-family:var(--fm);font-size:9px;padding:2px 7px;border-radius:2px;letter-spacing:0.5px;font-weight:600}
+.chip-cat{background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border)}
+.chip-country{padding:2px 6px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600}
+.chip-laos{background:rgba(30,95,116,0.1);color:var(--tag-laos);border:1px solid rgba(30,95,116,0.25)}
+.chip-myanmar{background:rgba(107,58,42,0.1);color:var(--tag-myanmar);border:1px solid rgba(107,58,42,0.25)}
+.chip-indonesia{background:rgba(26,71,49,0.1);color:var(--tag-indonesia);border:1px solid rgba(26,71,49,0.25)}
+.chip-thailand{background:rgba(59,42,110,0.1);color:var(--tag-thailand);border:1px solid rgba(59,42,110,0.25)}
+.chip-group{background:rgba(15,25,35,0.07);color:var(--tag-group);border:1px solid rgba(15,25,35,0.18)}
+.sys-desc{font-size:12px;color:var(--steel);line-height:1.6;margin-bottom:10px}
+.sys-card-footer{padding:10px 18px;background:var(--neutral-bg);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sys-footer-item{font-family:var(--fm);font-size:10px;color:var(--steel2)}
+.sys-footer-item span{color:var(--ink);font-weight:500}
+.sys-cost{font-family:var(--fm);font-size:11px;font-weight:600;color:var(--navy)}
+.sys-cost.free{color:var(--success)}
+
+/* ── ARCHITECTURE MAP ── */
+.arch-wrap{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.arch-toolbar{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--neutral-bg)}
+.arch-title{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink)}
+.arch-legend{display:flex;gap:14px;align-items:center}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--steel)}
+.leg-dot{width:10px;height:10px;border-radius:2px}
+.arch-canvas{padding:32px 40px;min-height:500px;position:relative;overflow:auto;background:#fafbfc}
+
+/* Architecture tiers */
+.arch-tier{margin-bottom:28px}
+.arch-tier-label{font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--steel2);margin-bottom:10px;padding-left:4px;display:flex;align-items:center;gap:8px}
+.arch-tier-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.arch-nodes{display:flex;gap:14px;flex-wrap:wrap}
+.arch-node{background:var(--white);border:2px solid var(--border);border-radius:8px;padding:12px 16px;min-width:140px;position:relative;cursor:pointer;transition:all .15s;text-align:center}
+.arch-node:hover{border-color:var(--electric);box-shadow:0 0 0 3px var(--electric-dim)}
+.arch-node.status-live{border-color:#22c55e;background:#f0fdf4}
+.arch-node.status-partial{border-color:#f59e0b;background:#fffbeb}
+.arch-node.status-manual{border-color:#cbd5e1;background:#f8fafc}
+.arch-node.status-planned{border-color:var(--electric);background:var(--electric-dim);border-style:dashed}
+.arch-node-icon{font-size:22px;margin-bottom:4px}
+.arch-node-name{font-family:var(--fb);font-size:11px;font-weight:600;color:var(--ink);line-height:1.2}
+.arch-node-vendor{font-family:var(--fm);font-size:9px;color:var(--steel2);margin-top:2px}
+.arch-node-badge{position:absolute;top:-8px;right:-8px;width:18px;height:18px;border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;border:2px solid var(--white);font-weight:700}
+.badge-live{background:#22c55e;color:white}
+.badge-partial{background:#f59e0b;color:white}
+.badge-manual{background:#94a3b8;color:white}
+.badge-planned{background:var(--electric);color:white}
+
+/* Integration arrows container */
+.arch-integrations{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.int-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:4px;font-size:12px;color:var(--steel)}
+.int-from,.int-to{font-weight:600;color:var(--ink);font-family:var(--fm);font-size:11px}
+.int-arrow{color:var(--electric);font-size:14px;flex-shrink:0}
+.int-arrow.manual{color:#94a3b8}
+.int-type{font-family:var(--fm);font-size:9px;padding:2px 7px;border-radius:2px;margin-left:auto;flex-shrink:0}
+.int-auto{background:var(--success-bg);color:var(--success);border:1px solid var(--success-border)}
+.int-manual{background:var(--neutral-bg);color:var(--steel);border:1px solid var(--border)}
+.int-planned{background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border)}
+.int-gap{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+.int-freq{font-size:11px;color:var(--steel2);margin-left:8px}
+
+/* ── DATA GOVERNANCE ── */
+.gov-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.gov-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.gov-card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.gov-card-icon{width:34px;height:34px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.gov-card-title{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink)}
+.gov-card-sub{font-size:11px;color:var(--steel);margin-top:1px}
+.gov-table{width:100%;border-collapse:collapse}
+.gov-th{font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--steel2);padding:8px 14px;background:var(--neutral-bg);border-bottom:1px solid var(--border);text-align:left}
+.gov-td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--ink);vertical-align:top}
+.gov-td:last-child{border-bottom:none}
+.gov-tr:last-child .gov-td{border-bottom:none}
+.gov-tr:hover .gov-td{background:var(--electric-dim)}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,30,0.55);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--white);border-radius:8px;width:560px;max-width:92vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink)}
+.modal-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--steel);padding:2px 6px;border-radius:3px}
+.modal-close:hover{background:var(--neutral-bg)}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.modal-section{margin-bottom:18px}
+.modal-section-title{font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:8px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-field{padding:10px 12px;background:var(--neutral-bg);border:1px solid var(--border);border-radius:4px}
+.modal-field-label{font-family:var(--fm);font-size:9px;color:var(--steel2);letter-spacing:0.5px;margin-bottom:3px}
+.modal-field-value{font-size:12.5px;color:var(--ink);font-weight:500}
+.risk-tag{display:inline-block;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:9px;font-weight:600}
+.risk-high{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+.risk-medium{background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border)}
+.risk-low{background:var(--success-bg);color:var(--success);border:1px solid var(--success-border)}
+
+/* ── ADD SYSTEM MODAL ── */
+.form-group{margin-bottom:14px}
+.form-label{font-family:var(--fm);font-size:10px;letter-spacing:0.5px;color:var(--steel);display:block;margin-bottom:5px}
+.form-input,.form-select,.form-textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:4px;font-family:var(--fb);font-size:12.5px;color:var(--ink);background:var(--white);outline:none;transition:border .15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--electric)}
+.form-textarea{resize:vertical;min-height:72px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--neutral-bg)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:4px;font-family:var(--fm);font-size:11px;letter-spacing:0.5px;border-left:3px solid var(--electric);opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* ── STATUS BADGE ── */
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:2px;font-family:var(--fm);font-size:9px;font-weight:600;letter-spacing:0.5px}
+.sb-live{background:var(--success-bg);color:var(--success);border:1px solid var(--success-border)}
+.sb-partial{background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border)}
+.sb-manual{background:var(--neutral-bg);color:var(--neutral);border:1px solid var(--border)}
+.sb-planned{background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:48px 24px;color:var(--steel)}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:0.4}
+.empty-text{font-family:var(--fd);font-size:18px;color:var(--steel2);margin-bottom:6px}
+.empty-sub{font-size:12px;color:var(--steel2)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">DEPT 11 · HR TECH</div>
+    <div class="sb-title">HR <em>Technology</em><br>& Digital HR</div>
+    <div class="sb-sub">VALENTIS GROUP · 2025</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Tools</div>
+    <div class="nav-item active" onclick="switchPage('inventory')">
+      <span class="nav-num">01</span> Systems Inventory & Architecture
+      <span class="nav-status status-next">CURRENT</span>
+    </div>
+    <div class="nav-item" onclick="showToast('→ Tool 2 coming soon')">
+      <span class="nav-num">02</span> Integration & Data Flow Map
+      <span class="nav-status status-soon">NEXT</span>
+    </div>
+    <div class="nav-item" onclick="showToast('→ Tool 3 coming soon')">
+      <span class="nav-num">03</span> Vendor Evaluation Framework
+      <span class="nav-status status-soon">SOON</span>
+    </div>
+    <div class="nav-item" onclick="showToast('→ Tool 4 coming soon')">
+      <span class="nav-num">04</span> Data Governance & Privacy Register
+      <span class="nav-status status-soon">SOON</span>
+    </div>
+    <div class="nav-item" onclick="showToast('→ Tool 5 coming soon')">
+      <span class="nav-num">05</span> Digital HR Roadmap Planner
+      <span class="nav-status status-soon">SOON</span>
+    </div>
+    <div class="nav-item" onclick="showToast('→ Tool 6 coming soon')">
+      <span class="nav-num">06</span> HR Tech ROI & Business Case Builder
+      <span class="nav-status status-soon">SOON</span>
+    </div>
+    <div class="nav-item" onclick="showToast('→ Tool 7 coming soon')">
+      <span class="nav-num">07</span> Automation & AI Opportunity Assessor
+      <span class="nav-status status-soon">SOON</span>
+    </div>
+    <div class="nav-item" onclick="showToast('→ Tool 8 coming soon')">
+      <span class="nav-num">08</span> Adoption & Change Readiness Tracker
+      <span class="nav-status status-soon">SOON</span>
+    </div>
+    <div class="nav-item" onclick="showToast('→ Tool 9 coming soon')">
+      <span class="nav-num">09</span> Digital HR Operating Model
+      <span class="nav-status status-soon">SOON</span>
+    </div>
+    <div class="sb-group" style="margin-top:16px">Departments</div>
+    <div class="nav-item" onclick="showToast('→ Navigate to HRBP department')">
+      <span class="nav-num">04</span> HR Business Partnering
+      <span class="nav-status status-done">✓</span>
+    </div>
+    <div class="nav-item" onclick="showToast('→ Navigate to CoE')">
+      <span class="nav-num">10</span> Centre of Excellence
+      <span class="nav-status status-done">✓</span>
+    </div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Valentis Group</strong>
+      28 employees · 4 countries<br>Laos · Myanmar · Indonesia · Thailand
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- Page: Inventory -->
+  <div class="page active" id="page-inventory">
+    <div class="top-header">
+      <div class="th-left">
+        <div class="th-badge">HR TECH · TOOL 01</div>
+        <div class="th-title">HR Systems Inventory & Architecture Map</div>
+      </div>
+      <div class="th-meta">VALENTIS GROUP · GROUP HR</div>
+    </div>
+
+    <div class="page-header">
+      <div class="ph-eyebrow">HR Technology & Digital HR</div>
+      <h1 class="ph-title">Systems Inventory &amp; <em>Architecture Map</em></h1>
+      <p class="ph-desc">A complete register of all HR tools, platforms, and systems across Valentis Group. Tracks ownership, status, cost, coverage, and integration points — the foundation for all digital HR decisions.</p>
+      <div class="ph-tag">HR TECH · TOOL 01 OF 09</div>
+    </div>
+
+    <div class="stats-bar" id="statsBar">
+      <div class="stat-item"><span class="stat-num cyan" id="statTotal">9</span><div class="stat-lbl">Total Systems</div></div>
+      <div class="stat-item"><span class="stat-num green" id="statLive">5</span><div class="stat-lbl">Live & Active</div></div>
+      <div class="stat-item"><span class="stat-num yellow" id="statPartial">2</span><div class="stat-lbl">Partial / Manual</div></div>
+      <div class="stat-item"><span class="stat-num" id="statPlanned">2</span><div class="stat-lbl">Planned</div></div>
+      <div class="stat-item"><span class="stat-num red" id="statGaps">3</span><div class="stat-lbl">Integration Gaps</div></div>
+      <div class="stat-item"><span class="stat-num" id="statCost">$9.2k</span><div class="stat-lbl">Est. Annual Cost</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('systems')">Systems Register</button>
+      <button class="tab-btn" onclick="switchTab('architecture')">Architecture Map</button>
+      <button class="tab-btn" onclick="switchTab('integrations')">Integration Audit</button>
+      <button class="tab-btn" onclick="switchTab('ownership')">Ownership & Governance</button>
+    </div>
+
+    <!-- TAB: SYSTEMS REGISTER -->
+    <div class="tab-content active" id="tab-systems">
+      <div class="controls-row">
+        <input class="search-input" type="text" placeholder="Search systems…" id="sysSearch" oninput="renderSystems()">
+        <select class="filter-select" id="sysCategory" onchange="renderSystems()">
+          <option value="">All Categories</option>
+          <option value="HRIS">HRIS / HR Core</option>
+          <option value="Payroll">Payroll</option>
+          <option value="Recruitment">Recruitment</option>
+          <option value="Learning">Learning</option>
+          <option value="Performance">Performance</option>
+          <option value="Communication">Communication</option>
+          <option value="Analytics">Analytics</option>
+          <option value="Finance">Finance / ERP</option>
+        </select>
+        <select class="filter-select" id="sysStatus" onchange="renderSystems()">
+          <option value="">All Statuses</option>
+          <option value="live">Live</option>
+          <option value="partial">Partial</option>
+          <option value="manual">Manual</option>
+          <option value="planned">Planned</option>
+        </select>
+        <button class="btn btn-outline" onclick="renderSystems()">↺ Reset</button>
+        <button class="btn btn-primary" onclick="openAddModal()">+ Add System</button>
+      </div>
+      <div class="systems-grid" id="systemsGrid"></div>
+    </div>
+
+    <!-- TAB: ARCHITECTURE MAP -->
+    <div class="tab-content" id="tab-architecture">
+      <div class="arch-wrap">
+        <div class="arch-toolbar">
+          <div class="arch-title">Valentis HR Systems Architecture — Current State</div>
+          <div class="arch-legend">
+            <div class="leg-item"><div class="leg-dot" style="background:#22c55e"></div> Live</div>
+            <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div> Partial</div>
+            <div class="leg-item"><div class="leg-dot" style="background:#94a3b8"></div> Manual</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--electric);border:1px dashed"></div> Planned</div>
+          </div>
+        </div>
+        <div class="arch-canvas">
+
+          <div class="arch-tier">
+            <div class="arch-tier-label">Core HR Data</div>
+            <div class="arch-nodes">
+              <div class="arch-node status-manual" onclick="openSystemDetail('excel-hris')">
+                <div class="arch-node-badge badge-manual">M</div>
+                <div class="arch-node-icon">📊</div>
+                <div class="arch-node-name">Excel / Sheets HRIS</div>
+                <div class="arch-node-vendor">Manual · Group</div>
+              </div>
+              <div class="arch-node status-partial" onclick="openSystemDetail('bamboohr')">
+                <div class="arch-node-badge badge-partial">~</div>
+                <div class="arch-node-icon">🌿</div>
+                <div class="arch-node-name">BambooHR</div>
+                <div class="arch-node-vendor">BambooHR · Evaluation</div>
+              </div>
+              <div class="arch-node status-planned" onclick="openSystemDetail('hris-unified')">
+                <div class="arch-node-badge badge-planned">→</div>
+                <div class="arch-node-icon">🏗️</div>
+                <div class="arch-node-name">Unified HRIS</div>
+                <div class="arch-node-vendor">TBD · 2026 Roadmap</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-tier">
+            <div class="arch-tier-label">Payroll & Finance</div>
+            <div class="arch-nodes">
+              <div class="arch-node status-live" onclick="openSystemDetail('quickbooks-laos')">
+                <div class="arch-node-badge badge-live">✓</div>
+                <div class="arch-node-icon">💰</div>
+                <div class="arch-node-name">QuickBooks</div>
+                <div class="arch-node-vendor">Intuit · Laos</div>
+              </div>
+              <div class="arch-node status-live" onclick="openSystemDetail('local-payroll-mm')">
+                <div class="arch-node-badge badge-live">✓</div>
+                <div class="arch-node-icon">💰</div>
+                <div class="arch-node-name">Local Payroll SW</div>
+                <div class="arch-node-vendor">Country Specific · Myanmar</div>
+              </div>
+              <div class="arch-node status-live" onclick="openSystemDetail('local-payroll-id')">
+                <div class="arch-node-badge badge-live">✓</div>
+                <div class="arch-node-icon">💰</div>
+                <div class="arch-node-name">Local Payroll SW</div>
+                <div class="arch-node-vendor">Country Specific · Indonesia</div>
+              </div>
+              <div class="arch-node status-live" onclick="openSystemDetail('local-payroll-th')">
+                <div class="arch-node-badge badge-live">✓</div>
+                <div class="arch-node-icon">💰</div>
+                <div class="arch-node-name">Local Payroll SW</div>
+                <div class="arch-node-vendor">Country Specific · Thailand</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-tier">
+            <div class="arch-tier-label">Talent & Learning</div>
+            <div class="arch-nodes">
+              <div class="arch-node status-live" onclick="openSystemDetail('workable')">
+                <div class="arch-node-badge badge-live">✓</div>
+                <div class="arch-node-icon">🎯</div>
+                <div class="arch-node-name">Workable ATS</div>
+                <div class="arch-node-vendor">Workable · Group</div>
+              </div>
+              <div class="arch-node status-manual" onclick="openSystemDetail('lms-manual')">
+                <div class="arch-node-badge badge-manual">M</div>
+                <div class="arch-node-icon">📚</div>
+                <div class="arch-node-name">LMS (Manual)</div>
+                <div class="arch-node-vendor">Excel Tracking · Sites</div>
+              </div>
+              <div class="arch-node status-planned" onclick="openSystemDetail('lms-platform')">
+                <div class="arch-node-badge badge-planned">→</div>
+                <div class="arch-node-icon">🎓</div>
+                <div class="arch-node-name">LMS Platform</div>
+                <div class="arch-node-vendor">TBD · 2026 Roadmap</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-tier">
+            <div class="arch-tier-label">Communication & Collaboration</div>
+            <div class="arch-nodes">
+              <div class="arch-node status-live" onclick="openSystemDetail('microsoft365')">
+                <div class="arch-node-badge badge-live">✓</div>
+                <div class="arch-node-icon">📧</div>
+                <div class="arch-node-name">Microsoft 365</div>
+                <div class="arch-node-vendor">Microsoft · Group</div>
+              </div>
+              <div class="arch-node status-live" onclick="openSystemDetail('whatsapp-ops')">
+                <div class="arch-node-badge badge-live">✓</div>
+                <div class="arch-node-icon">💬</div>
+                <div class="arch-node-name">WhatsApp / Telegram</div>
+                <div class="arch-node-vendor">Informal · Site Ops</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: INTEGRATION AUDIT -->
+    <div class="tab-content" id="tab-integrations">
+      <div style="margin-bottom:20px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:6px">Integration Audit</div>
+        <div style="font-size:13px;color:var(--steel);max-width:600px;line-height:1.7">Current state of data flow between HR systems. Manual handoffs are highlighted as integration gaps requiring attention in the Digital HR Roadmap.</div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:var(--navy)">
+              <th style="padding:11px 16px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric2)">From System</th>
+              <th style="padding:11px 16px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric2)">To System</th>
+              <th style="padding:11px 16px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric2)">Data Exchanged</th>
+              <th style="padding:11px 16px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric2)">Method</th>
+              <th style="padding:11px 16px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric2)">Frequency</th>
+              <th style="padding:11px 16px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric2)">Risk</th>
+            </tr>
+          </thead>
+          <tbody id="integrationTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: OWNERSHIP & GOVERNANCE -->
+    <div class="tab-content" id="tab-ownership">
+      <div class="gov-grid">
+        <div class="gov-card">
+          <div class="gov-card-header">
+            <div class="gov-card-icon" style="background:var(--electric-dim)">🔑</div>
+            <div>
+              <div class="gov-card-title">System Ownership Matrix</div>
+              <div class="gov-card-sub">Who owns and maintains each HR system</div>
+            </div>
+          </div>
+          <table class="gov-table">
+            <thead><tr><th class="gov-th">System</th><th class="gov-th">Primary Owner</th><th class="gov-th">Backup Owner</th><th class="gov-th">Review Cycle</th></tr></thead>
+            <tbody>
+              <tr class="gov-tr"><td class="gov-td">Excel/Sheets HRIS</td><td class="gov-td" style="font-weight:600">Group HR Manager</td><td class="gov-td">COO</td><td class="gov-td"><span class="status-badge sb-partial">Monthly</span></td></tr>
+              <tr class="gov-tr"><td class="gov-td">Workable ATS</td><td class="gov-td" style="font-weight:600">Group HR Manager</td><td class="gov-td">Site Managers</td><td class="gov-td"><span class="status-badge sb-live">Per Hire</span></td></tr>
+              <tr class="gov-tr"><td class="gov-td">Payroll — Laos</td><td class="gov-td" style="font-weight:600">Laos Country Lead</td><td class="gov-td">Group HR Manager</td><td class="gov-td"><span class="status-badge sb-live">Monthly</span></td></tr>
+              <tr class="gov-tr"><td class="gov-td">Payroll — Myanmar</td><td class="gov-td" style="font-weight:600">Myanmar Site Manager</td><td class="gov-td">Group HR Manager</td><td class="gov-td"><span class="status-badge sb-live">Monthly</span></td></tr>
+              <tr class="gov-tr"><td class="gov-td">Payroll — Indonesia</td><td class="gov-td" style="font-weight:600">Indonesia Site Manager</td><td class="gov-td">Group HR Manager</td><td class="gov-td"><span class="status-badge sb-live">Monthly</span></td></tr>
+              <tr class="gov-tr"><td class="gov-td">Payroll — Thailand</td><td class="gov-td" style="font-weight:600">Thailand Site Manager</td><td class="gov-td">Group HR Manager</td><td class="gov-td"><span class="status-badge sb-live">Monthly</span></td></tr>
+              <tr class="gov-tr"><td class="gov-td">Microsoft 365</td><td class="gov-td" style="font-weight:600">COO</td><td class="gov-td">Group HR Manager</td><td class="gov-td"><span class="status-badge sb-manual">Annual</span></td></tr>
+              <tr class="gov-tr"><td class="gov-td">LMS (Manual)</td><td class="gov-td" style="font-weight:600">Group HR Manager</td><td class="gov-td">L&D Lead (Site)</td><td class="gov-td"><span class="status-badge sb-partial">Quarterly</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="gov-card">
+          <div class="gov-card-header">
+            <div class="gov-card-icon" style="background:#fef3cd">⚠️</div>
+            <div>
+              <div class="gov-card-title">Access & Security Flags</div>
+              <div class="gov-card-sub">Known risks and access control gaps</div>
+            </div>
+          </div>
+          <table class="gov-table">
+            <thead><tr><th class="gov-th">System</th><th class="gov-th">Issue</th><th class="gov-th">Severity</th><th class="gov-th">Action</th></tr></thead>
+            <tbody>
+              <tr class="gov-tr"><td class="gov-td">Excel HRIS</td><td class="gov-td">Shared file, no audit trail</td><td class="gov-td"><span class="risk-tag risk-high">HIGH</span></td><td class="gov-td">Migrate to HRIS platform</td></tr>
+              <tr class="gov-tr"><td class="gov-td">WhatsApp Ops</td><td class="gov-td">Sensitive comms on personal devices</td><td class="gov-td"><span class="risk-tag risk-high">HIGH</span></td><td class="gov-td">Define acceptable use policy</td></tr>
+              <tr class="gov-tr"><td class="gov-td">Payroll Files</td><td class="gov-td">Email transfer of payroll data</td><td class="gov-td"><span class="risk-tag risk-medium">MED</span></td><td class="gov-td">Implement secure transfer protocol</td></tr>
+              <tr class="gov-tr"><td class="gov-td">Workable ATS</td><td class="gov-td">Candidate data retention policy undefined</td><td class="gov-td"><span class="risk-tag risk-medium">MED</span></td><td class="gov-td">Define retention schedule</td></tr>
+              <tr class="gov-tr"><td class="gov-td">M365 / SharePoint</td><td class="gov-td">HR folder permissions not reviewed</td><td class="gov-td"><span class="risk-tag risk-medium">MED</span></td><td class="gov-td">Quarterly access review</td></tr>
+              <tr class="gov-tr"><td class="gov-td">LMS (Manual)</td><td class="gov-td">No backup of training completion records</td><td class="gov-td"><span class="risk-tag risk-low">LOW</span></td><td class="gov-td">Add to SharePoint archive</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="gov-card" style="grid-column:1/-1">
+          <div class="gov-card-header">
+            <div class="gov-card-icon" style="background:var(--success-bg)">💵</div>
+            <div>
+              <div class="gov-card-title">Cost & Licensing Summary</div>
+              <div class="gov-card-sub">Estimated annual spend on HR technology</div>
+            </div>
+          </div>
+          <table class="gov-table">
+            <thead><tr><th class="gov-th">System</th><th class="gov-th">Vendor</th><th class="gov-th">Licensing Model</th><th class="gov-th">Est. Annual Cost (USD)</th><th class="gov-th">Value Rating</th><th class="gov-th">Next Review</th></tr></thead>
+            <tbody>
+              <tr class="gov-tr"><td class="gov-td">Microsoft 365</td><td class="gov-td">Microsoft</td><td class="gov-td">Per user/month</td><td class="gov-td" style="font-weight:600">$3,360</td><td class="gov-td">⭐⭐⭐⭐⭐</td><td class="gov-td">Jan 2026</td></tr>
+              <tr class="gov-tr"><td class="gov-td">Workable ATS</td><td class="gov-td">Workable</td><td class="gov-td">Per job / subscription</td><td class="gov-td" style="font-weight:600">$2,400</td><td class="gov-td">⭐⭐⭐⭐</td><td class="gov-td">Mar 2026</td></tr>
+              <tr class="gov-tr"><td class="gov-td">QuickBooks (Laos)</td><td class="gov-td">Intuit</td><td class="gov-td">Annual subscription</td><td class="gov-td" style="font-weight:600">$1,200</td><td class="gov-td">⭐⭐⭐</td><td class="gov-td">Jun 2026</td></tr>
+              <tr class="gov-tr"><td class="gov-td">Local Payroll Software</td><td class="gov-td">Various</td><td class="gov-td">Per country license</td><td class="gov-td" style="font-weight:600">$2,100</td><td class="gov-td">⭐⭐⭐</td><td class="gov-td">Ongoing</td></tr>
+              <tr class="gov-tr"><td class="gov-td">Excel / Sheets (HRIS)</td><td class="gov-td">Microsoft / Google</td><td class="gov-td">Included in M365</td><td class="gov-td" style="font-weight:600;color:var(--success)">$0</td><td class="gov-td">⭐⭐</td><td class="gov-td">Migrate 2026</td></tr>
+              <tr class="gov-tr"><td class="gov-td">LMS (Manual)</td><td class="gov-td">Internal</td><td class="gov-td">No system cost</td><td class="gov-td" style="font-weight:600;color:var(--success)">$0</td><td class="gov-td">⭐⭐</td><td class="gov-td">Replace 2026</td></tr>
+              <tr style="background:var(--neutral-bg)"><td class="gov-td" style="font-weight:700;font-family:var(--fd);font-size:14px">Total</td><td class="gov-td" colspan="2"></td><td class="gov-td" style="font-weight:700;font-family:var(--fm);font-size:14px;color:var(--navy)">$9,060 / yr</td><td class="gov-td" colspan="2"><span style="font-size:11px;color:var(--steel)">~$324 per employee</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SYSTEM DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal" onclick="closeModal('detailModal',event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div id="detailTitle" class="modal-title"></div>
+        <div id="detailVendor" style="font-family:var(--fm);font-size:10px;color:var(--steel2);margin-top:3px"></div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('detailModal').classList.remove('active')">✕</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<!-- ADD SYSTEM MODAL -->
+<div class="modal-overlay" id="addModal" onclick="closeModal('addModal',event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add New System</div>
+      <button class="modal-close" onclick="document.getElementById('addModal').classList.remove('active')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">System Name *</label><input class="form-input" id="f_name" placeholder="e.g. BambooHR"></div>
+        <div class="form-group"><label class="form-label">Vendor</label><input class="form-input" id="f_vendor" placeholder="e.g. BambooHR Inc."></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Category *</label>
+          <select class="form-select" id="f_category">
+            <option value="HRIS">HRIS / HR Core</option><option value="Payroll">Payroll</option><option value="Recruitment">Recruitment</option>
+            <option value="Learning">Learning</option><option value="Performance">Performance</option><option value="Communication">Communication</option>
+            <option value="Analytics">Analytics</option><option value="Finance">Finance / ERP</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Status *</label>
+          <select class="form-select" id="f_status">
+            <option value="live">Live</option><option value="partial">Partial / Evaluation</option><option value="manual">Manual Workaround</option><option value="planned">Planned</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Countries Covered</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="fc_group" value="Group"> Group-wide</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="fc_laos" value="Laos"> Laos</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="fc_myanmar" value="Myanmar"> Myanmar</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="fc_indonesia" value="Indonesia"> Indonesia</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="fc_thailand" value="Thailand"> Thailand</label>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Annual Cost (USD)</label><input class="form-input" id="f_cost" placeholder="e.g. 1200 or 0 if free"></div>
+        <div class="form-group"><label class="form-label">Primary Owner</label><input class="form-input" id="f_owner" placeholder="e.g. Group HR Manager"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="f_desc" placeholder="What does this system do? Key functions…"></textarea></div>
+      <div class="form-group"><label class="form-label">Key Risks / Notes</label><textarea class="form-textarea" id="f_risk" placeholder="Known issues, limitations, or data risks…" style="min-height:56px"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('addModal').classList.remove('active')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSystem()">Add System</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+let systems = [
+  {id:'excel-hris',name:'Excel / Sheets HRIS',vendor:'Microsoft / Google',category:'HRIS',status:'manual',icon:'📊',
+   countries:['Group'],cost:0,owner:'Group HR Manager',
+   desc:'Primary employee data store for all 28 employees. Maintained manually in Excel/Google Sheets. Contains personal info, employment details, grade, and site assignment.',
+   risk:'No audit trail. Shared access. No data validation. High risk of inconsistency across country tabs. Priority for migration.',
+   integrations:['Manual export to payroll','Manual export for reports']},
+
+  {id:'workable',name:'Workable ATS',vendor:'Workable',category:'Recruitment',status:'live',icon:'🎯',
+   countries:['Group'],cost:2400,owner:'Group HR Manager',
+   desc:'Applicant Tracking System used for all open requisitions. Manages job postings, candidate pipeline, and interview scheduling across all 4 countries.',
+   risk:'Candidate data retention policy not defined. No formal integration with HRIS — new hires manually transferred to Excel register.',
+   integrations:['Manual import to HRIS on hire']},
+
+  {id:'quickbooks-laos',name:'QuickBooks (Laos)',vendor:'Intuit',category:'Payroll',status:'live',icon:'💰',
+   countries:['Laos'],cost:1200,owner:'Laos Country Lead',
+   desc:'Accounting and payroll processing software used for the Laos entity. Handles local KIP payroll calculations, tax filings, and basic reporting.',
+   risk:'No direct link to HRIS. Monthly payroll data manually reconciled with HR headcount.',
+   integrations:['Manual reconciliation with HRIS']},
+
+  {id:'local-payroll-mm',name:'Local Payroll SW (Myanmar)',vendor:'Country-specific',category:'Payroll',status:'live',icon:'💰',
+   countries:['Myanmar'],cost:600,owner:'Myanmar Site Manager',
+   desc:'Country-specific payroll software compliant with Myanmar labour regulations. Processes MMK payroll and manages local statutory deductions.',
+   risk:'Limited visibility from Group HR. No group consolidation capability.',
+   integrations:['Monthly summary email to Group HR']},
+
+  {id:'local-payroll-id',name:'Local Payroll SW (Indonesia)',vendor:'Country-specific',category:'Payroll',status:'live',icon:'💰',
+   countries:['Indonesia'],cost:700,owner:'Indonesia Site Manager',
+   desc:'Indonesian payroll system compliant with BPJS (health and employment insurance) requirements. Handles IDR payroll and regulatory reporting.',
+   risk:'G3 vacancy data not synced with HR. Payroll adjustments for new hires can be delayed.',
+   integrations:['Monthly summary to Group HR']},
+
+  {id:'local-payroll-th',name:'Local Payroll SW (Thailand)',vendor:'Country-specific',category:'Payroll',status:'live',icon:'💰',
+   countries:['Thailand'],cost:800,owner:'Thailand Site Manager',
+   desc:'Thai payroll system handling THB payroll processing and compliance with Thai Social Security Fund (SSF) contributions and personal income tax withholding.',
+   risk:'Minimal integration with Group HR systems.',
+   integrations:['Monthly summary to Group HR']},
+
+  {id:'microsoft365',name:'Microsoft 365',vendor:'Microsoft',category:'Communication',status:'live',icon:'📧',
+   countries:['Group'],cost:3360,owner:'COO',
+   desc:'Group-wide email, document storage (SharePoint), and collaboration tools. HR uses SharePoint for policy storage and OneDrive for document management. Teams used for HQ communication.',
+   risk:'HR folder permissions not formally reviewed. No structured HR document governance applied.',
+   integrations:['Policy distribution','Document storage for all departments']},
+
+  {id:'lms-manual',name:'LMS — Manual Tracker',vendor:'Internal (Excel)',category:'Learning',status:'manual',icon:'📚',
+   countries:['Group'],cost:0,owner:'Group HR Manager',
+   desc:'Training completion and driller certification tracking maintained manually in Excel. Tracks G3→G4 development milestones, safety certifications, and mandatory compliance training.',
+   risk:'No automated reminders for certification expiry. Risk of missing training deadlines for driller pipeline. Critical gap given 18–24 month G3-to-G4 cycle.',
+   integrations:['Manual update, no system integration']},
+
+  {id:'bamboohr',name:'BambooHR (Evaluation)',vendor:'BambooHR',category:'HRIS',status:'partial',icon:'🌿',
+   countries:['Group'],cost:0,owner:'Group HR Manager',
+   desc:'Under evaluation as a potential unified HRIS replacement for the Excel-based system. Assessed for suitability across 4 SE Asian countries — evaluating multi-currency support and regional compliance.',
+   risk:'Evaluation stage only. Full implementation would require data migration from Excel HRIS and payroll integration work.',
+   integrations:['Evaluation — no live integrations']},
+
+  {id:'hris-unified',name:'Unified HRIS (Planned)',vendor:'TBD',category:'HRIS',status:'planned',icon:'🏗️',
+   countries:['Group'],cost:0,owner:'Group HR Manager',
+   desc:'Planned unified HRIS platform to replace the Excel-based employee register. Target: 2026. Will consolidate employee data, support multi-country payroll integration, and enable real-time reporting.',
+   risk:'Vendor not yet selected. Business case required for COO/CEO approval. Budget not yet allocated.',
+   integrations:['Target: integrate with all 4 payroll systems + ATS']},
+
+  {id:'lms-platform',name:'LMS Platform (Planned)',vendor:'TBD',category:'Learning',status:'planned',icon:'🎓',
+   countries:['Group'],cost:0,owner:'Group HR Manager',
+   desc:'Planned LMS to replace manual Excel training tracker. Priority features: driller development milestone tracking, certification expiry alerts, multi-language support (Lao, Burmese, Bahasa, Thai).',
+   risk:'Connectivity at remote sites (Myanmar, Laos) is a potential adoption barrier. Offline capability is a key vendor requirement.',
+   integrations:['Target: HRIS integration for auto-enrolment']},
+
+  {id:'whatsapp-ops',name:'WhatsApp / Telegram',vendor:'Meta / Telegram',category:'Communication',status:'live',icon:'💬',
+   countries:['Group'],cost:0,owner:'Site Managers',
+   desc:'Informal communication channels used heavily for site-to-HQ coordination. Widely used for shift scheduling, incident reporting, and HR queries from site staff. Not formally sanctioned for sensitive HR matters.',
+   risk:'Sensitive employee issues discussed on uncontrolled channels. No record retention. GDPR/data privacy risk. Policy gap.',
+   integrations:['None — informal use only']}
+];
+
+const integrations = [
+  {from:'Workable ATS',to:'Excel HRIS',data:'New hire details',method:'manual',freq:'Per hire',risk:'gap'},
+  {from:'Excel HRIS',to:'Payroll — Laos',data:'Headcount, salaries, changes',method:'manual',freq:'Monthly',risk:'gap'},
+  {from:'Excel HRIS',to:'Payroll — Myanmar',data:'Headcount, salaries, changes',method:'manual',freq:'Monthly',risk:'gap'},
+  {from:'Excel HRIS',to:'Payroll — Indonesia',data:'Headcount, salaries, changes',method:'manual',freq:'Monthly',risk:'gap'},
+  {from:'Excel HRIS',to:'Payroll — Thailand',data:'Headcount, salaries, changes',method:'manual',freq:'Monthly',risk:'gap'},
+  {from:'Payroll (all)',to:'Excel HRIS',data:'Actuals for cost tracking',method:'manual',freq:'Monthly',risk:'gap'},
+  {from:'Microsoft 365',to:'Excel HRIS',data:'None — separate systems',method:'none',freq:'N/A',risk:'gap'},
+  {from:'LMS Manual',to:'Excel HRIS',data:'Training completions',method:'manual',freq:'Ad hoc',risk:'gap'},
+  {from:'Workable ATS',to:'Microsoft 365',data:'Offer letters, job ads',method:'auto',freq:'Real-time',risk:'ok'},
+  {from:'Microsoft 365',to:'SharePoint HR',data:'Policy docs, templates',method:'auto',freq:'Real-time',risk:'ok'},
+];
+
+// ── RENDER SYSTEMS ────────────────────────────────────
+function renderSystems() {
+  const q = document.getElementById('sysSearch').value.toLowerCase();
+  const cat = document.getElementById('sysCategory').value;
+  const stat = document.getElementById('sysStatus').value;
+  const filtered = systems.filter(s =>
+    (!q || s.name.toLowerCase().includes(q) || s.vendor.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q)) &&
+    (!cat || s.category === cat) &&
+    (!stat || s.status === stat)
+  );
+  if(!filtered.length){
+    document.getElementById('systemsGrid').innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><div class="empty-text">No systems found</div><div class="empty-sub">Try adjusting your filters</div></div>`;
+    return;
+  }
+  document.getElementById('systemsGrid').innerHTML = filtered.map(s => {
+    const statusLabel = {live:'Live',partial:'Partial',manual:'Manual',planned:'Planned'}[s.status];
+    const statusClass = {live:'sb-live',partial:'sb-partial',manual:'sb-manual',planned:'sb-planned'}[s.status];
+    const dotClass = {live:'dot-live',partial:'dot-partial',manual:'dot-manual',planned:'dot-planned'}[s.status];
+    const iconBg = {HRIS:'#e0f2fe',Payroll:'#fef3cd',Recruitment:'#f0fdf4',Learning:'#faf5ff',Performance:'#fff7ed',Communication:'#e0f2fe',Analytics:'#f0f9ff',Finance:'#fef9c3'}[s.category]||'#f4f6f8';
+    const costDisplay = s.cost===0?'<span class="sys-cost free">Free / Included</span>':`<span class="sys-cost">$${s.cost.toLocaleString()} / yr</span>`;
+    const countryChips = s.countries.map(c=>`<span class="chip-country chip-${c.toLowerCase()}">${c}</span>`).join('');
+    return `<div class="sys-card" onclick="openSystemDetail('${s.id}')">
+      <div class="sys-card-top">
+        <div class="sys-icon" style="background:${iconBg}">${s.icon}</div>
+        <div class="sys-info">
+          <div class="sys-name">${s.name}</div>
+          <div class="sys-vendor">${s.vendor}</div>
+        </div>
+        <div class="sys-status-dot ${dotClass}"></div>
+      </div>
+      <div class="sys-card-body">
+        <div class="sys-meta-row">
+          <span class="sys-chip chip-cat">${s.category}</span>
+          <span class="status-badge ${statusClass}">${statusLabel}</span>
+          ${countryChips}
+        </div>
+        <div class="sys-desc">${s.desc.substring(0,110)}…</div>
+      </div>
+      <div class="sys-card-footer">
+        <div class="sys-footer-item">Owner: <span>${s.owner}</span></div>
+        ${costDisplay}
+      </div>
+    </div>`;
+  }).join('');
+  updateStats();
+}
+
+function openSystemDetail(id) {
+  const s = systems.find(x=>x.id===id); if(!s) return;
+  document.getElementById('detailTitle').textContent = s.name;
+  document.getElementById('detailVendor').textContent = s.vendor+' · '+s.category;
+  const statusClass = {live:'sb-live',partial:'sb-partial',manual:'sb-manual',planned:'sb-planned'}[s.status];
+  const statusLabel = {live:'Live & Active',partial:'Partial / Evaluation',manual:'Manual Workaround',planned:'Planned'}[s.status];
+  document.getElementById('detailBody').innerHTML = `
+    <div class="modal-section">
+      <div class="modal-section-title">Overview</div>
+      <div style="font-size:13px;color:var(--steel);line-height:1.7;margin-bottom:12px">${s.desc}</div>
+      <div class="modal-grid">
+        <div class="modal-field"><div class="modal-field-label">STATUS</div><div class="modal-field-value"><span class="status-badge ${statusClass}">${statusLabel}</span></div></div>
+        <div class="modal-field"><div class="modal-field-label">CATEGORY</div><div class="modal-field-value">${s.category}</div></div>
+        <div class="modal-field"><div class="modal-field-label">OWNER</div><div class="modal-field-value">${s.owner}</div></div>
+        <div class="modal-field"><div class="modal-field-label">ANNUAL COST</div><div class="modal-field-value">${s.cost===0?'Free / Included':'$'+s.cost.toLocaleString()}</div></div>
+        <div class="modal-field"><div class="modal-field-label">COUNTRIES</div><div class="modal-field-value">${s.countries.join(', ')}</div></div>
+        <div class="modal-field"><div class="modal-field-label">INTEGRATIONS</div><div class="modal-field-value">${s.integrations.length} defined</div></div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Risks & Flags</div>
+      <div style="background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:4px;padding:12px 14px;font-size:12.5px;color:var(--ink);line-height:1.7">${s.risk}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Known Integrations</div>
+      ${s.integrations.map(i=>`<div style="padding:7px 12px;background:var(--neutral-bg);border:1px solid var(--border);border-radius:3px;font-family:var(--fm);font-size:11px;color:var(--steel);margin-bottom:5px">→ ${i}</div>`).join('')}
+    </div>`;
+  document.getElementById('detailModal').classList.add('active');
+}
+
+function renderIntegrations() {
+  const riskMap = {ok:'int-auto',gap:'int-gap',planned:'int-planned',manual:'int-manual'};
+  const riskLabel = {ok:'Auto Sync',gap:'Manual Gap',planned:'Planned',manual:'Manual'};
+  const arrowStyle = {ok:'→',gap:'⚠ →',planned:'→',manual:'→'};
+  document.getElementById('integrationTable').innerHTML = integrations.map(i=>`
+    <tr style="border-bottom:1px solid var(--border);cursor:default" onmouseover="this.style.background='var(--electric-dim)'" onmouseout="this.style.background=''">
+      <td style="padding:10px 16px;font-family:var(--fm);font-size:11px;font-weight:600;color:var(--ink)">${i.from}</td>
+      <td style="padding:10px 16px;font-size:11px;color:var(--steel)">${arrowStyle[i.risk]} ${i.to}</td>
+      <td style="padding:10px 16px;font-size:12px;color:var(--ink)">${i.data}</td>
+      <td style="padding:10px 16px"><span class="int-type ${riskMap[i.risk]}">${riskLabel[i.risk]}</span></td>
+      <td style="padding:10px 16px;font-family:var(--fm);font-size:11px;color:var(--steel2)">${i.freq}</td>
+      <td style="padding:10px 16px">${i.risk==='gap'?'<span class="risk-tag risk-high">Gap</span>':i.risk==='ok'?'<span class="risk-tag risk-low">OK</span>':'<span class="risk-tag risk-medium">Partial</span>'}</td>
+    </tr>`).join('');
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = systems.length;
+  document.getElementById('statLive').textContent = systems.filter(s=>s.status==='live').length;
+  document.getElementById('statPartial').textContent = systems.filter(s=>s.status==='partial'||s.status==='manual').length;
+  document.getElementById('statPlanned').textContent = systems.filter(s=>s.status==='planned').length;
+  document.getElementById('statGaps').textContent = integrations.filter(i=>i.risk==='gap').length;
+  const totalCost = systems.reduce((a,s)=>a+s.cost,0);
+  document.getElementById('statCost').textContent = '$'+(totalCost/1000).toFixed(1)+'k';
+}
+
+function openAddModal() { document.getElementById('addModal').classList.add('active'); }
+function saveSystem() {
+  const name = document.getElementById('f_name').value.trim();
+  if(!name){showToast('⚠ System name is required');return;}
+  const countries = ['group','laos','myanmar','indonesia','thailand']
+    .filter(c=>document.getElementById('fc_'+c).checked)
+    .map(c=>c.charAt(0).toUpperCase()+c.slice(1));
+  systems.push({
+    id:'sys-'+Date.now(),name,vendor:document.getElementById('f_vendor').value||'—',
+    category:document.getElementById('f_category').value,status:document.getElementById('f_status').value,
+    icon:'🔧',countries:countries.length?countries:['Group'],
+    cost:parseInt(document.getElementById('f_cost').value)||0,
+    owner:document.getElementById('f_owner').value||'Group HR Manager',
+    desc:document.getElementById('f_desc').value||'No description provided.',
+    risk:document.getElementById('f_risk').value||'No risks logged.',
+    integrations:[]
+  });
+  document.getElementById('addModal').classList.remove('active');
+  renderSystems();
+  showToast('✓ System added: '+name);
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    const ids=['systems','architecture','integrations','ownership'];
+    b.classList.toggle('active',ids[i]===id);
+  });
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function switchPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelector('#page-'+id)?.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+}
+function closeModal(id,e){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('active');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+// Init
+renderSystems();
+renderIntegrations();
+</script>
+</body>
+</html>

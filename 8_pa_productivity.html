@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Productivity & Performance Analytics — People Analytics Tool 8</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f5;--surface:#fff;--surface2:#e8ecf2;
+  --border:#cdd4e0;--border2:#b8c2d4;
+  --ink:#0d1117;--ink2:#1a2332;--ink3:#3d4f6b;--ink4:#6b7d99;--ink5:#a0aec0;
+  --navy:#0a1628;
+  --blue:#1a6bdb;--blue2:#2979e8;--blue3:#4d94ff;
+  --blue-dim:rgba(26,107,219,0.08);--blue-border:rgba(26,107,219,0.22);
+  --electric:#3d8bff;--electric2:#5c9fff;
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --amber:#b8860b;--amber-dim:rgba(184,134,11,0.08);--amber-border:rgba(184,134,11,0.22);
+  --green:#1a7a4a;--green-dim:rgba(26,122,74,0.08);--green-border:rgba(26,122,74,0.22);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--blue),rgba(26,107,219,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:rgba(26,107,219,0.15);border:1px solid rgba(26,107,219,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f4ff;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(26,107,219,0.18);border-color:rgba(26,107,219,0.4);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--blue3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:40px 52px;max-width:1100px}
+.page.active{display:block}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--blue)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--blue);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cb{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.ca{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.cg{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.b{background:var(--blue-dim);border-color:var(--blue);color:var(--ink2)}
+.inf.a{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.inf.r{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.inf.g{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--navy);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+.vx{background:var(--navy);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f4ff;margin-bottom:8px;line-height:1.2}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+.br{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bl{font-size:12px;color:var(--ink3);width:110px;flex-shrink:0}
+.bt{flex:1;background:var(--surface2);border-radius:2px;height:20px;overflow:hidden}
+.bf{height:100%;border-radius:2px;display:flex;align-items:center;padding-left:8px}
+.bv{font-family:var(--fm);font-size:10px;font-weight:600;color:#fff;white-space:nowrap}
+.bc{font-family:var(--fm);font-size:10px;color:var(--ink5);margin-left:8px;white-space:nowrap}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kbl::before{background:var(--blue)}.kgr::before{background:var(--green)}
+.kam::before{background:var(--amber)}.krd::before{background:var(--red)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kbl .kv{color:var(--blue)}.kgr .kv{color:var(--green)}
+.kam .kv{color:var(--amber)}.krd .kv{color:var(--red)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.kt{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktb{background:var(--blue-dim);color:var(--blue)}.kta{background:var(--amber-dim);color:var(--amber)}
+.ktr{background:var(--red-dim);color:var(--red)}.ktg{background:var(--green-dim);color:var(--green)}
+.ci{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 12px;font-size:13px;color:#f0f4ff;font-family:var(--fb);outline:none;transition:border .13s;margin-bottom:10px}
+.ci:focus{border-color:rgba(26,107,219,0.5)}
+.cl{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">People Analytics · Tool 8 / 9</div>
+    <div class="sb-title">Productivity &amp;<br><em>Performance</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('delivery',this)"><span class="nav-num">02</span>Delivery Analytics</div>
+    <div class="nav-item" onclick="showPage('coaching',this)"><span class="nav-num">03</span>G4 Coaching Impact</div>
+    <div class="nav-item" onclick="showPage('grade',this)"><span class="nav-num">04</span>Grade Performance</div>
+    <div class="nav-item" onclick="showPage('sm',this)"><span class="nav-num">05</span>SM Effectiveness</div>
+    <div class="nav-item" onclick="showPage('revenue',this)"><span class="nav-num">06</span>Revenue per Employee</div>
+    <div class="nav-item" onclick="showPage('capability',this)"><span class="nav-num">07</span>Capability Index</div>
+    <div class="nav-item" onclick="showPage('coo',this)"><span class="nav-num">08</span>COO Performance Brief</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>People Analytics · Tool 8 of 9</strong>
+      Productivity &amp; Performance Analytics<br>
+      <span style="color:rgba(255,255,255,0.1)">People decisions drive delivery outcomes. This tool makes that connection visible.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview"   class="page active"></div>
+  <div id="page-delivery"   class="page"></div>
+  <div id="page-coaching"   class="page"></div>
+  <div id="page-grade"      class="page"></div>
+  <div id="page-sm"         class="page"></div>
+  <div id="page-revenue"    class="page"></div>
+  <div id="page-capability" class="page"></div>
+  <div id="page-coo"        class="page"></div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+// PAGES
+</script>
+</body>
+</html>
+<script>
+// ── PAGE 01 ──────────────────────────────────────────────────────
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">People Analytics · Tool 8 / 9 — Productivity & Performance Analytics</div>
+<div class="pt">Productivity &amp;<br><em>Performance</em></div>
+<p class="pd">Productivity analytics connects people decisions to operational outcomes. At Valentis, every key HR lever — coaching quality, conversion rates, SM effectiveness, grade mix — has a measurable delivery consequence. This tool makes that connection explicit, so Group HR speaks in the language the COO and CEO use: programme delivery percentage, revenue per employee, and operational output per rig.</p>
+<div class="vx">
+  <div class="vx-ey">The People–Performance Connection at Valentis</div>
+  <div class="vx-ti">Every delivery percentage point Valentis loses costs approximately $83,000 in annual revenue at current scale. Every G4 coaching gap costs $18K–$36K per year in avoidable attrition. The numbers are not abstract — they are management decisions.</div>
+  <div class="vx-bo">Productivity analytics at a 42-person mineral exploration company is not about building sophisticated workforce models — it is about drawing clear lines between people decisions and revenue outcomes. When Indonesia delivery dropped from 93% to 84% following G3 vacancies, that is a people analytics story: a staffing gap created a coaching capacity shortage, which reduced trainee throughput, which reduced operational output. Group HR's job is to see that chain before it happens — not after. This tool provides the measurement framework to do exactly that.</div>
+</div>
+<div class="krow">
+  <div class="kpi kam"><div class="kl">Group Delivery Rate</div><div class="kv">85%</div><div class="ks">Weighted avg · target ≥90%</div><div class="kt kta">Gap costs ~$415K/year</div></div>
+  <div class="kpi krd"><div class="kl">Indonesia Delivery</div><div class="kv">84%</div><div class="ks">Down from 93% · G3 vacancy driven</div><div class="kt ktr">−$74K delivery impact</div></div>
+  <div class="kpi kbl"><div class="kl">Revenue per Employee</div><div class="kv">$198K</div><div class="ks">$8.3M ÷ 42 employees</div><div class="kt ktb">Target: $185K+ at 65 FTE</div></div>
+  <div class="kpi kgr"><div class="kl">G4 Coaching Impact</div><div class="kv">+14pp</div><div class="ks">Thailand vs Myanmar conversion gap attributable to coaching quality</div><div class="kt ktg">Worth $18K–$36K/yr avoided cost</div></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Delivery Rate by Country — Q1 2026</div>
+    ${[{c:'Thailand',v:105,tgt:90,col:'var(--green)'},{c:'Indonesia',v:84,tgt:90,col:'var(--red)'},{c:'Laos',v:85,tgt:90,col:'var(--amber)'},{c:'Myanmar',v:80,tgt:90,col:'var(--red)'}].map(function(d){
+      var w=Math.min(d.v,100);
+      return '<div class="br"><span class="bl">'+d.c+'</span><div class="bt"><div class="bf" style="width:'+w+'%;background:'+d.col+'"><span class="bv">'+d.v+'%</span></div></div><span class="bc">'+(d.v>=d.tgt?'✓ On target':'⚠ Below '+d.tgt+'% target')+'</span></div>';
+    }).join('')}
+    <div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">Thailand is the only country at or above target. Myanmar and Indonesia are the primary delivery drags — both driven by people factors: G4 coaching quality (Myanmar) and G3 vacancy (Indonesia). Thailand performance benchmarks what is achievable with full staffing and high coaching quality.</div>
+  </div>
+  <div class="card">
+    <div class="ct">People Drivers of Delivery — Causal Map</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {driver:'G4 debrief frequency',outcome:'Trainee milestone speed → conversion rate → G3/G4 supply → delivery capacity',link:'Myanmar G4s averaging 1.2 debriefs/month vs Thailand 4.1 — explains 14pp conversion gap',col:'var(--red)'},
+        {driver:'G3 vacancy count',outcome:'G4 coaching capacity diverted to operations → trainee development slows → future pipeline shrinks',link:'Indonesia 3 open G3s → G4s covering operational gaps → G2→G3 velocity slowing',col:'var(--red)'},
+        {driver:'SM tenure and effectiveness',outcome:'SM quality drives G4 accountability, pipeline culture, country delivery consistency',link:'Thailand SM (benchmark) vs Indonesia SM (retention risk) — delivery 105% vs 84%',col:'var(--amber)'},
+        {driver:'Grade mix at site',outcome:'Sites with more G3/G4 relative to G1/G2 deliver higher output per employee — experience density matters',link:'Laos has best G3/G4 ratio (3:1) → 85% delivery despite older workforce',col:'var(--blue)'}
+      ].map(function(d){return '<div style="padding:9px 12px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:2px">'+d.driver+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:3px">→ '+d.outcome+'</div><div style="font-size:11.5px;color:var(--ink5);font-style:italic">'+d.link+'</div></div>';}).join('')}
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Performance Analytics — What This Tool Measures</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px">
+    ${[
+      {sec:'02',title:'Delivery Analytics',desc:'Programme delivery % by country and quarter. Root cause analysis of delivery gaps. Revenue impact per delivery percentage point.',col:'var(--blue)'},
+      {sec:'03',title:'G4 Coaching Impact',desc:'Debrief frequency vs conversion rate correlation. Coaching programme ROI. Myanmar vs Thailand coaching quality comparison.',col:'var(--blue)'},
+      {sec:'04',title:'Grade Performance',desc:'Output and delivery contribution by grade. Grade mix optimisation. Productivity per grade tier.',col:'var(--blue)'},
+      {sec:'05',title:'SM Effectiveness',desc:'Country delivery correlation with SM tenure and style. SM performance indicators. Succession quality assessment.',col:'var(--blue)'},
+      {sec:'06',title:'Revenue per Employee',desc:'Revenue per FTE by country and grade. Trajectory to 65 FTE. People cost ratio in revenue terms.',col:'var(--blue)'},
+      {sec:'07',title:'Capability Index',desc:'Composite capability score per country. Skill gap identification. Development programme effectiveness measurement.',col:'var(--blue)'},
+      {sec:'08',title:'COO Performance Brief',desc:'Ready-to-use COO narrative connecting people metrics to revenue and delivery outcomes.',col:'var(--blue)'}
+    ].slice(0,6).map(function(d){return '<div style="padding:14px;background:var(--surface2);border-radius:3px;border-top:3px solid '+d.col+'"><div style="font-family:var(--fm);font-size:9px;color:var(--blue);margin-bottom:5px">Section '+d.sec+'</div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px">'+d.title+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">'+d.desc+'</div></div>';}).join('')}
+  </div>
+</div>
+`;
+
+// ── PAGE 02 ──────────────────────────────────────────────────────
+document.getElementById('page-delivery').innerHTML=`
+<div class="pe">Section 02 — Delivery Analytics</div>
+<div class="pt">Delivery<br><em>Analytics</em></div>
+<p class="pd">Programme delivery percentage is the operational metric Valentis's COO and CEO measure performance against. Every HR decision that affects staffing levels, pipeline conversion, or SM effectiveness has a delivery consequence. This section maps delivery performance, quantifies the revenue cost of delivery gaps, and identifies the people levers that move the number.</p>
+<div class="vx">
+  <div class="vx-ey">The Delivery–Revenue Equation</div>
+  <div class="vx-ti">At $8.3M revenue and a group target of 90%, every delivery percentage point below target costs Valentis approximately $83,000 in annual revenue. The current 5pp group shortfall is a ~$415K gap.</div>
+  <div class="vx-bo">Delivery percentage is the ratio of actual programme output to target programme output. At 100%, every contracted rig-hour is delivered. Below 90%, Valentis is not meeting its contractual delivery commitments — which creates client relationship risk in addition to direct revenue loss. The group currently sits at 85% weighted average. Closing to 90% is primarily a people problem: fill Indonesia G3 vacancies, restore G4 coaching capacity, and improve Myanmar conversion.</div>
+</div>
+<div class="card">
+  <div class="ct">Delivery Performance — Country Trend</div>
+  <table class="dt">
+    <thead><tr><th>Country</th><th>Q1 2025</th><th>Q2 2025</th><th>Q3 2025</th><th>Q4 2025</th><th>Q1 2026</th><th>vs target</th><th>Primary driver</th></tr></thead>
+    <tbody>
+      ${[
+        {c:'Laos',q:[88,87,86,85,85],tgt:90,driver:'Gradually declining — ageing G4 cohort reducing coaching capacity. Retirement cliff approaching. Bench acceleration needed.'},
+        {c:'Myanmar',q:[82,81,80,79,80],tgt:90,driver:'Persistently below target. G4 coaching quality is the primary constraint — conversion at 58% means pipeline cannot sustain delivery growth.'},
+        {c:'Indonesia',q:[93,92,91,88,84],tgt:90,driver:'Significant decline — 3 G3 vacancies opened in Q4 2025 diverted G4s to operational cover. Urgent vacancy fill required.'},
+        {c:'Thailand',q:[100,103,104,105,105],tgt:90,driver:'Consistently above target. Full G4 staffing, high coaching quality, SM actively manages delivery. The benchmark.'},
+        {c:'Group wtd',q:[89,88,87,86,85],tgt:90,driver:'Gradual decline driven by Indonesia and Myanmar. Thailand offsets but cannot compensate entirely.'}
+      ].map(function(r){
+        var curr=r.q[4];
+        var col=curr>=r.tgt?'var(--green)':curr>=(r.tgt-5)?'var(--amber)':'var(--red)';
+        var trend=r.q[4]-r.q[0];
+        var trendStr=(trend>=0?'+':'')+trend+'pp vs Q1 2025';
+        return '<tr><td style="font-weight:700'+(r.c==='Group wtd'?';background:var(--surface2)':'')+'">' +r.c+'</td>'
+          +r.q.map(function(v,i){
+            var vc=v>=r.tgt?'var(--green)':v>=(r.tgt-5)?'var(--amber)':'var(--red)';
+            var fw=i===4?'font-weight:700;':'';
+            return '<td style="'+fw+'color:'+vc+'">'+v+'%</td>';
+          }).join('')
+          +'<td style="font-weight:700;color:'+col+'">'+(curr>=r.tgt?'+':''+(curr-r.tgt))+'pp</td>'
+          +'<td style="font-size:11.5px">'+r.driver+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Revenue Cost of Delivery Gap — by Country</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Each delivery percentage point below 90% represents lost contracted revenue. Calculated as: (target delivery% − actual delivery%) × country revenue contribution.</div>
+    <table class="dt">
+      <thead><tr><th>Country</th><th>Target</th><th>Actual</th><th>Gap</th><th>Country rev est.</th><th>Annual cost of gap</th></tr></thead>
+      <tbody>
+        ${[
+          {c:'Laos',tgt:90,act:85,rev:2.9},
+          {c:'Myanmar',tgt:90,act:80,rev:2.1},
+          {c:'Indonesia',tgt:90,act:84,rev:2.3},
+          {c:'Thailand',tgt:90,act:105,rev:1.0}
+        ].map(function(r){
+          var gap=r.act-r.tgt;
+          var cost=gap<0?Math.round(Math.abs(gap)/100*r.rev*1e6/1000)*1000:0;
+          var col=gap>=0?'var(--green)':gap>=-5?'var(--amber)':'var(--red)';
+          return '<tr><td style="font-weight:600">'+r.c+'</td>'
+            +'<td>'+r.tgt+'%</td>'
+            +'<td style="color:'+col+';font-weight:600">'+r.act+'%</td>'
+            +'<td style="color:'+col+';font-weight:700">'+(gap>=0?'+':'')+gap+'pp</td>'
+            +'<td>$'+r.rev.toFixed(1)+'M</td>'
+            +'<td style="font-weight:700;color:'+(cost>0?'var(--red)':'var(--green)')+'">'+(cost>0?'-$'+cost.toLocaleString():'Above target')+'</td>'
+            +'</tr>';
+        }).join('')}
+        <tr style="background:var(--surface2)"><td style="font-weight:700">Group</td><td>90%</td><td style="font-weight:700;color:var(--amber)">85%</td><td style="font-weight:700;color:var(--amber)">−5pp</td><td>$8.3M</td><td style="font-weight:700;color:var(--red)">~−$415K/yr</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">Myanmar carries the largest delivery gap (10pp below target) — but Indonesia's recent deterioration from 93% to 84% represents the fastest-moving risk and the most immediately recoverable through vacancy fills.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Delivery Recovery — What Closes the Gap</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {action:'Fill Indonesia G3 vacancies (3 positions)',impact:'+5–7pp Indonesia delivery recovery',timeframe:'Within 1 quarter of hire',rev:'~$115K–$161K annual revenue recovery',col:'var(--red)',priority:'Immediate'},
+        {action:'Myanmar G4 coaching programme → conversion 58%→70%',impact:'+2–3pp Myanmar delivery improvement',timeframe:'Q4 2026 (coaching programme timeline)',rev:'~$42K–$63K annual improvement',col:'var(--amber)',priority:'Q4 2026'},
+        {action:'Laos bench acceleration → G4 retirements covered',impact:'Prevent −3 to −5pp delivery drop (retirement cliff)',timeframe:'Q3–Q4 2027 (bench development)',rev:'Prevents ~$90K–$150K revenue loss',col:'var(--blue)',priority:'By June 2026'},
+        {action:'Group delivery to 90% (all interventions combined)',impact:'+5pp group delivery improvement',timeframe:'Q4 2026 if all interventions on track',rev:'~$415K annual recovery — full gap closure',col:'var(--green)',priority:'Q4 2026 target'}
+      ].map(function(d){return '<div style="padding:10px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:4px"><span style="font-weight:700;font-size:12.5px;color:var(--ink)">'+d.action+'</span><span class="chip '+(d.col==='var(--red)'?'cr':d.col==='var(--amber)'?'ca':d.col==='var(--green)'?'cg':'cb')+'" style="flex-shrink:0;margin-left:8px">'+d.priority+'</span></div><div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:3px">'+d.impact+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300">'+d.rev+' · '+d.timeframe+'</div></div>';}).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 03 ──────────────────────────────────────────────────────
+document.getElementById('page-coaching').innerHTML=`
+<div class="pe">Section 03 — G4 Coaching Impact</div>
+<div class="pt">G4 Coaching<br><em>Impact</em></div>
+<p class="pd">G4 coaching quality is Valentis's most important people productivity lever. The G4 debrief frequency — how often a G4 driller formally debriefs a trainee — is the single metric that best predicts whether a trainee converts from G1 to G2. This section measures coaching impact, quantifies the ROI of the G4 coaching programme, and tracks Myanmar's progress against the 70% conversion target.</p>
+<div class="vx">
+  <div class="vx-ey">The Coaching–Conversion Correlation</div>
+  <div class="vx-ti">Thailand G4s average 4.1 debriefs/month. Myanmar G4s average 1.2. This 3× difference in coaching intensity explains the 14pp conversion gap (72% vs 58%) between the two countries.</div>
+  <div class="vx-bo">The G4 coaching programme is a 6-week structured intervention that targets debrief frequency, rubric quality, and milestone preparation. It was designed specifically to move Myanmar from its current coaching pattern toward the Thailand standard. The programme's success measure is Myanmar G1→G2 conversion reaching ≥70% by Q4 2026. This section tracks the leading indicators — debrief frequency, rubric scores — that predict whether that outcome is achievable.</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">G4 Debrief Frequency — Country Comparison</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Target: ≥4 debriefs per G4 per month. This ensures each trainee receives at minimum one substantive coaching interaction per week.</div>
+    ${[
+      {c:'Thailand',v:4.1,tgt:4,col:'var(--green)',note:'Benchmark. SM actively tracks and holds G4s accountable monthly.'},
+      {c:'Laos',v:3.2,tgt:4,col:'var(--blue)',note:'Below target but functional. G4 retirement risk may reduce capacity further — monitor.'},
+      {c:'Indonesia',v:2.1,tgt:4,col:'var(--amber)',note:'G3 vacancies diverted G4 time to operations. Restoring to target requires G3 fills first.'},
+      {c:'Myanmar',v:1.2,tgt:4,col:'var(--red)',note:'Critical. Pre-coaching programme baseline. G4 coaching programme target: ≥4 by Q3 2026.'}
+    ].map(function(d){
+      var w=Math.round((d.v/5)*100);
+      return '<div style="margin-bottom:10px"><div class="br" style="margin-bottom:4px"><span class="bl">'+d.c+'</span><div class="bt"><div class="bf" style="width:'+w+'%;background:'+d.col+'"><span class="bv">'+d.v+'/mo</span></div></div><span class="bc">'+(d.v>=d.tgt?'✓':'Target: '+d.tgt+'/mo')+'</span></div><div style="font-size:11.5px;color:var(--ink4);padding-left:118px">'+d.note+'</div></div>';
+    }).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Coaching Frequency vs Conversion Rate — Correlation</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">The relationship between monthly debrief frequency and G1→G2 conversion rate across Valentis countries. Higher debrief frequency consistently predicts higher conversion.</div>
+    <div style="position:relative;height:200px;background:var(--surface2);border-radius:4px;margin-bottom:10px;padding:16px">
+      <div style="position:absolute;bottom:16px;left:16px;right:16px;height:1px;background:var(--border2)"></div>
+      <div style="position:absolute;left:16px;top:16px;bottom:16px;width:1px;background:var(--border2)"></div>
+      ${[
+        {c:'Thailand',x:82,y:80,conv:72,freq:4.1,col:'var(--green)'},
+        {c:'Laos',x:64,y:55,conv:68,freq:3.2,col:'var(--blue)'},
+        {c:'Indonesia',x:42,y:42,conv:63,freq:2.1,col:'var(--amber)'},
+        {c:'Myanmar',x:18,y:22,conv:58,freq:1.2,col:'var(--red)'}
+      ].map(function(d){
+        return '<div style="position:absolute;left:calc('+d.x+'%);bottom:calc('+d.y+'%);transform:translate(-50%,50%)">'
+          +'<div style="width:12px;height:12px;border-radius:50%;background:'+d.col+';border:2px solid #fff"></div>'
+          +'<div style="position:absolute;left:14px;top:-4px;font-size:10px;color:var(--ink3);white-space:nowrap;font-family:var(--fm)">'+d.c+' ('+d.freq+'/mo → '+d.conv+'%)</div>'
+          +'</div>';
+      }).join('')}
+      <div style="position:absolute;top:8px;left:20px;font-family:var(--fm);font-size:8px;color:var(--ink5)">Conv%</div>
+      <div style="position:absolute;bottom:4px;right:16px;font-family:var(--fm);font-size:8px;color:var(--ink5)">Debrief freq</div>
+    </div>
+    <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">The correlation is strong and linear: each additional debrief per month correlates with approximately 4–5pp improvement in G1→G2 conversion rate. Moving Myanmar from 1.2 to 4.0 debriefs/month (the coaching programme target) predicts a conversion improvement of approximately 11–14pp — consistent with the 70% target.</div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">G4 Coaching Programme — ROI Analysis</div>
+  <div class="g2" style="margin-bottom:0">
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Programme investment</div>
+      <table class="dt">
+        <thead><tr><th>Cost element</th><th>Estimate</th></tr></thead>
+        <tbody>
+          <tr><td>Group HR design and coordination time (40 hours)</td><td>$3,200</td></tr>
+          <tr><td>Thailand SM facilitation (6 sessions, video, ~12 hours)</td><td>$1,800 (opportunity cost)</td></tr>
+          <tr><td>Myanmar-language materials development</td><td>$2,500</td></tr>
+          <tr><td>G4 rubric assessment tool and tally sheets</td><td>$800</td></tr>
+          <tr><td>Travel (if any in-person sessions required)</td><td>$2,000–$4,000</td></tr>
+          <tr style="background:var(--surface2)"><td style="font-weight:700">Total programme investment</td><td style="font-weight:700;color:var(--blue)">~$10,300–$12,300</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--green);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Programme return (annual, once conversion reaches 70%)</div>
+      <table class="dt">
+        <thead><tr><th>Benefit element</th><th>Estimate</th></tr></thead>
+        <tbody>
+          <tr><td>Avoidable G1→G2 exits prevented (est. +2–3 per cohort × 2 cohorts/yr)</td><td>$7K–$18K saved</td></tr>
+          <tr><td>Additional G2 progressions → G4 supply in 3–4 years (1.2 additional G4/yr)</td><td>$25K–$48K avoided replacement cost</td></tr>
+          <tr><td>Myanmar delivery improvement (+2–3pp × $2.1M country revenue)</td><td>$42K–$63K revenue recovery</td></tr>
+          <tr><td>G4 coaching capacity freed (reduced re-sit rates, faster milestone completion)</td><td>$8K–$15K productivity gain</td></tr>
+          <tr style="background:var(--surface2)"><td style="font-weight:700">Total annual return</td><td style="font-weight:700;color:var(--green)">$82K–$144K/year</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;padding:12px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:12.5px;line-height:1.75">
+        <strong style="color:var(--green);display:block;margin-bottom:3px">ROI: 7–14× in year one. Payback: under 2 months.</strong>
+        <span style="color:var(--ink3);font-weight:300">The G4 coaching programme is the highest-ROI investment Group HR can make in 2026. The case to the COO is straightforward: $12K investment, $82K–$144K annual return, with the added benefit of closing the pipeline supply gap that threatens 65 FTE delivery.</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Myanmar Coaching Programme — Progress Tracker</div>
+  <table class="dt">
+    <thead><tr><th>Indicator</th><th>Pre-programme baseline</th><th>Q2 2026 target</th><th>Q3 2026 target</th><th>Q4 2026 success measure</th><th>How tracked</th></tr></thead>
+    <tbody>
+      ${[
+        {ind:'G4 debrief frequency (Myanmar)',base:'1.2/month',q2:'≥2.5/month',q3:'≥3.5/month',q4:'≥4/month',track:'Monthly tally sheet submitted by each G4 to Myo H. · reviewed by Group HR'},
+        {ind:'G4 rubric score (avg all dimensions)',base:'Baseline obs. Q1 2026',q2:'≥2.5/5 all G4s',q3:'≥3/5 all G4s',q4:'≥3/5 all dimensions — certification threshold',track:'G4 rubric observation by Thailand SM + Group HR quarterly'},
+        {ind:'G1→G2 conversion rate (Myanmar)',base:'58%',q2:'≥60%',q3:'≥65%',q4:'≥70% — programme success measure',track:'Pipeline log conversion field — calculated monthly'},
+        {ind:'Month-3 exits (Myanmar cohort)',base:'~35% of exits at month 3',q2:'Month-3 check-in compliance 100%',q3:'Month-3 exit rate ≤20%',q4:'Month-3 exit rate ≤15%',track:'Pipeline log exit_month field · Group HR weekly review during programme'},
+        {ind:'Myanmar delivery rate',base:'80%',q2:'≥82%',q3:'≥85%',q4:'≥88% (toward 90% group target)',track:'Monthly delivery report from Myo H. to COO'}
+      ].map(function(r){
+        return '<tr><td style="font-weight:600">'+r.ind+'</td><td style="color:var(--ink5)">'+r.base+'</td><td>'+r.q2+'</td><td>'+r.q3+'</td><td style="font-weight:600;color:var(--green)">'+r.q4+'</td><td style="font-size:11.5px">'+r.track+'</td></tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+`;
+</script>
+<script>
+// ── PAGE 04 ──────────────────────────────────────────────────────
+document.getElementById('page-grade').innerHTML=`
+<div class="pe">Section 04 — Grade Performance</div>
+<div class="pt">Grade<br><em>Performance</em></div>
+<p class="pd">Grade performance analytics examines productivity contribution by grade tier — how much operational output each grade level delivers, what the optimal grade mix looks like for a site, and how the current grade distribution across countries compares to the target state. Grade mix is a structural lever Group HR controls through pipeline intake and promotion timing.</p>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Productivity Contribution — by Grade</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Relative productivity index: G4 = 1.00 (full operational output as lead driller and coach). Lower grades contribute proportionally less direct operational output but build the pipeline.</div>
+    <table class="dt">
+      <thead><tr><th>Grade</th><th>Role</th><th>Productivity index</th><th>Primary value contribution</th><th>Cost per unit output</th></tr></thead>
+      <tbody>
+        ${[
+          {g:'G1',role:'Trainee',idx:0.10,contrib:'Pipeline investment. Absorbs G4 coaching time. Direct operational output near zero — value is future supply.',cpu:'Very high — training cost exceeds output'},
+          {g:'G2',role:"Driller's Asst",idx:0.35,contrib:'Supports G3/G4 operations. Begins contributing to rig output under supervision. Reduces G4 administrative load.',cpu:'High — still net investment stage'},
+          {g:'G3',role:'Junior Driller',idx:0.70,contrib:'Semi-independent operational output. Drills under G4 supervision. Contributes meaningfully to delivery percentage.',cpu:'Moderate — approaching cost-effective output'},
+          {g:'G4',role:'Senior Driller',idx:1.00,contrib:'Full operational output. Leads drilling teams. Coaches G1–G2. Primary driver of delivery percentage per rig.',cpu:'Low — highest value per $ of salary'},
+          {g:'G5',role:'Site Manager',idx:0.40,contrib:'Operational output is indirect — drives country delivery through G4 management, pipeline culture, and client relationships.',cpu:'Strategic — value in multiplier effect on site performance'}
+        ].map(function(r){
+          var w=Math.round(r.idx*100);
+          var col=r.idx>=0.7?'var(--green)':r.idx>=0.35?'var(--blue)':'var(--ink4)';
+          return '<tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">'+r.g+'</td>'
+            +'<td>'+r.role+'</td>'
+            +'<td><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:12px;background:var(--surface2);border-radius:2px;overflow:hidden"><div style="width:'+w+'%;height:100%;background:'+col+'"></div></div><span style="font-weight:700;font-family:var(--fm);font-size:11px">'+r.idx.toFixed(2)+'</span></div></td>'
+            +'<td style="font-size:11.5px">'+r.contrib+'</td>'
+            +'<td style="font-size:11.5px;color:'+col+'">'+r.cpu+'</td>'
+            +'</tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Grade Mix — Current vs Optimal</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Optimal grade mix for a Valentis site maximises delivery output while sustaining pipeline health. Current mix is skewed toward the development grades (G1–G2) relative to the operational grades (G3–G4).</div>
+    ${(function(){
+      var grades=[
+        {g:'G1',curr:8,opt:6,tot:42,col:'var(--ink4)'},
+        {g:'G2',curr:10,opt:9,tot:42,col:'var(--blue)'},
+        {g:'G3',curr:9,opt:12,tot:42,col:'var(--blue2)'},
+        {g:'G4',curr:7,opt:11,tot:42,col:'var(--green)'},
+        {g:'G5+',curr:8,opt:9,tot:42,col:'var(--amber)'}
+      ];
+      return '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">'
+        +grades.map(function(d){
+          var currPct=Math.round(d.curr/d.tot*100);
+          var optPct=Math.round(d.opt/d.tot*100);
+          return '<div style="text-align:center"><div style="font-family:var(--fm);font-size:9px;color:var(--ink5);margin-bottom:6px">'+d.g+'</div>'
+            +'<div style="position:relative;height:100px;background:var(--surface2);border-radius:3px;overflow:hidden">'
+            +'<div style="position:absolute;bottom:0;left:0;right:0;height:'+currPct+'%;background:'+d.col+';opacity:0.7"></div>'
+            +'<div style="position:absolute;bottom:0;left:30%;width:40%;height:'+optPct+'%;background:'+d.col+';border:2px solid #fff;border-radius:2px"></div>'
+            +'</div>'
+            +'<div style="margin-top:5px;font-size:10.5px;color:var(--ink3)">Now: <strong>'+d.curr+'</strong></div>'
+            +'<div style="font-size:10.5px;color:'+d.col+'">Target: <strong>'+d.opt+'</strong></div>'
+            +'</div>';
+        }).join('')
+        +'</div>'
+        +'<div style="margin-top:10px;font-size:12px;color:var(--ink5);font-family:var(--fm)">Filled bar = current · Outlined inner = optimal at 65 FTE</div>';
+    })()}
+    <div style="margin-top:12px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">The optimal state has more G3–G4 relative to G1–G2. This improves the weighted productivity index — more of the payroll is in grades that generate direct output. The pipeline intake schedule must be designed to build through G1–G2 now so G3–G4 supply materialises by 2027–2028.</div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Grade Mix by Country — Structural Analysis</div>
+  <table class="dt">
+    <thead><tr><th>Country</th><th>G1–G2 (pipeline tier)</th><th>G3–G4 (operational tier)</th><th>G5+ (leadership)</th><th>G3:G4 ratio</th><th>Delivery rate</th><th>Structural assessment</th></tr></thead>
+    <tbody>
+      ${[
+        {c:'Thailand',g12:1,g34:4,g5:2,ratio:'2:1',del:'105%',assess:'Best grade mix — high G3/G4 density, SM present, small G1/G2 draw on coaching capacity. Reference model.',col:'var(--green)'},
+        {c:'Laos',c12:7,g34:9,g5:1,ratio:'4:5',del:'85%',assess:'Good operational density. Retirement cliff threatens G4 tier. Bench acceleration critical to maintain this mix.',col:'var(--blue)'},
+        {c:'Myanmar',g12:6,g34:5,g5:1,ratio:'2:3',del:'80%',assess:'G1/G2 heavy relative to G3/G4 — high coaching demand, low output density. G4 coaching programme improves conversion to rebuild operational tier.',col:'var(--amber)'},
+        {c:'Indonesia',g12:4,g34:7,g5:1,ratio:'3:4',del:'84%',assess:'Would be healthy mix except 3 G3 vacancies distort it. With vacancies filled, this becomes near-optimal. Urgency is in the fill.',col:'var(--red)'}
+      ].map(function(r){
+        var g12=r.g12||r.c12;
+        return '<tr><td style="font-weight:600">'+r.c+'</td>'
+          +'<td>'+g12+' FTE</td>'
+          +'<td>'+r.g34+' FTE</td>'
+          +'<td>'+(r.g5||1)+' FTE</td>'
+          +'<td style="font-family:var(--fm);font-size:11px">'+r.ratio+'</td>'
+          +'<td style="font-weight:700;color:'+r.col+'">'+r.del+'</td>'
+          +'<td style="font-size:11.5px">'+r.assess+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── PAGE 05 ──────────────────────────────────────────────────────
+document.getElementById('page-sm').innerHTML=`
+<div class="pe">Section 05 — SM Effectiveness</div>
+<div class="pt">SM<br><em>Effectiveness</em></div>
+<p class="pd">Site Managers are the multiplier in the Valentis performance model. An effective SM sets the pipeline culture, holds G4s accountable to coaching standards, manages delivery against target, and reduces attrition through active engagement. An ineffective — or absent — SM is the single most impactful people risk at site level. This section provides the measurement framework, the country comparison, and the succession lens.</p>
+<div class="vx">
+  <div class="vx-ey">Why SM Effectiveness Is a Group HR Metric</div>
+  <div class="vx-ti">Thailand delivery is 105%. Myanmar delivery is 80%. The difference is not only coaching quality or grade mix — it is SM behaviour. The Thailand SM actively manages G4 debrief frequency. Myo H. does not (yet). This is a measurable, changeable, Group HR-influenceable gap.</div>
+  <div class="vx-bo">SM effectiveness is not about performance management in the traditional sense — it is about understanding what high-performing SMs do differently and building those behaviours into the role standard across all countries. Thailand's SM has demonstrated that Valentis can achieve 105% delivery with full staffing and active coaching accountability. The G4 coaching programme is partly a vehicle to institutionalise what Thailand does well in every country — with the SM as the accountability mechanism.</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">SM Effectiveness — Country Scorecard</div>
+    <table class="dt">
+      <thead><tr><th>Indicator</th><th>Thailand</th><th>Laos</th><th>Myanmar</th><th>Indonesia</th></tr></thead>
+      <tbody>
+        ${[
+          {ind:'Country delivery rate',th:'105%',la:'85%',mm:'80%',id:'84%',thc:'var(--green)',lac:'var(--blue)',mmc:'var(--red)',idc:'var(--amber)'},
+          {ind:'G4 debrief freq tracked monthly',th:'Yes',la:'Partial',mm:'No (pre-prog)',id:'No',thc:'var(--green)',lac:'var(--amber)',mmc:'var(--red)',idc:'var(--red)'},
+          {ind:'Pipeline log submission compliance',th:'100%',la:'85%',mm:'72%',id:'78%',thc:'var(--green)',lac:'var(--blue)',mmc:'var(--red)',idc:'var(--amber)'},
+          {ind:'Month-3 check-in compliance',th:'100%',la:'80%',mm:'55%',id:'70%',thc:'var(--green)',lac:'var(--blue)',mmc:'var(--red)',idc:'var(--amber)'},
+          {ind:'Attrition rate (country)',th:'10%',la:'18%',mm:'28%',id:'24%',thc:'var(--green)',lac:'var(--blue)',mmc:'var(--red)',idc:'var(--red)'},
+          {ind:'Retention risk level',th:'Low',la:'Low',mm:'High (Myo H.)',id:'Critical (Wirawan)',thc:'var(--green)',lac:'var(--green)',mmc:'var(--red)',idc:'var(--red)'},
+          {ind:'Change champion / sceptic',th:'Champion',la:'Neutral',mm:'Developing',id:'High Power Sceptic',thc:'var(--green)',lac:'var(--blue)',mmc:'var(--blue)',idc:'var(--amber)'}
+        ].map(function(r){
+          function cell(v,col){return '<td style="font-weight:600;color:'+col+'">'+v+'</td>';}
+          return '<tr><td style="font-weight:600">'+r.ind+'</td>'+cell(r.th,r.thc)+cell(r.la,r.lac)+cell(r.mm,r.mmc)+cell(r.id,r.idc)+'</tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">What High-Performing SMs Do — The Thailand Standard</div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">The Thailand SM demonstrates six behaviours that directly drive country-level performance outcomes. These are not personality traits — they are observable, trainable behaviours that can be built into the SM role expectation.</div>
+    ${[
+      {n:1,b:'Tracks G4 debrief frequency monthly without being asked',impact:'Direct: G4 frequency held at ≥4/month → conversion rate sustained at 72% → pipeline supply maintained'},
+      {n:2,b:'Conducts monthly pipeline review with all G4s',impact:'Identifies at-risk trainees before month-3 → enables early intervention → reduces exit rate'},
+      {n:3,b:'Celebrates grade progressions publicly at site',impact:'Makes the G1→G4 career pathway visible and desirable → increases trainee commitment beyond month 3'},
+      {n:4,b:'Frames all site conversations in pipeline language',impact:'G4s hear the connection between their coaching and site performance — changes coaching from obligation to strategic contribution'},
+      {n:5,b:'Proactively manages his own succession',impact:'Has identified a Country 5 deployment candidate from within his G4 team — no surprise vacancy, no operational disruption'},
+      {n:6,b:'Shares practices laterally with other SMs',impact:'Co-facilitates Myanmar G4 coaching programme — cross-site knowledge transfer at zero marginal cost'}
+    ].map(function(d){return '<div style="display:flex;gap:10px;margin-bottom:8px"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--green);line-height:1;flex-shrink:0;width:26px">'+d.n+'</div><div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px">'+d.b+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">'+d.impact+'</div></div></div>';}).join('')}
+  </div>
+</div>
+<div class="card">
+  <div class="ct">SM Succession — Country 5 Readiness Lens</div>
+  <table class="dt">
+    <thead><tr><th>SM</th><th>Country</th><th>Retention risk</th><th>Succession candidate identified</th><th>Country 5 suitability</th><th>Development priority</th></tr></thead>
+    <tbody>
+      ${[
+        {sm:'Thailand SM',c:'Thailand',ret:'Low',succ:'Yes — G4 identified for C5 deployment',c5:'High — strongest pipeline culture carrier; COO\'s first choice for C5 SM or G4 deployment',dev:'Support C5 preparation. Maintain as change champion for Myanmar programme.'},
+        {sm:'Laos SM',c:'Laos',ret:'Low',succ:'Informal — needs formalisation',c5:'Moderate — deep Valentis experience, retirement wave manager',dev:'Formalise succession planning. Bench acceleration plan ownership. C5 advisory role possible.'},
+        {sm:'Myo H.',c:'Myanmar',ret:'HIGH — retention conversation Sep 2026',succ:'None identified',c5:'Possible — if retained and interested',dev:'Retention first. G4 coaching programme co-lead builds engagement. C5 discussion as career offer in retention conversation.'},
+        {sm:'Wirawan S.',c:'Indonesia',ret:'CRITICAL — retention conv. Oct 2026',succ:'None identified (ID SM succession gap)',c5:'Possible if Country Director structure appeals',dev:'ID G3 vacancy fill → restore delivery → retention conversation with site competency restored. Thailand SM peer influence.'}
+      ].map(function(r){
+        var retCol=r.ret==='Low'?'var(--green)':r.ret.includes('HIGH')||r.ret.includes('CRITICAL')?'var(--red)':'var(--amber)';
+        return '<tr><td style="font-weight:700">'+r.sm+'</td>'
+          +'<td>'+r.c+'</td>'
+          +'<td style="font-weight:600;color:'+retCol+'">'+r.ret+'</td>'
+          +'<td style="font-size:11.5px">'+r.succ+'</td>'
+          +'<td style="font-size:11.5px">'+r.c5+'</td>'
+          +'<td style="font-size:11.5px">'+r.dev+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── PAGE 06 ──────────────────────────────────────────────────────
+document.getElementById('page-revenue').innerHTML=`
+<div class="pe">Section 06 — Revenue per Employee</div>
+<div class="pt">Revenue per<br><em>Employee</em></div>
+<p class="pd">Revenue per employee is the headline commercial productivity metric — it measures how much revenue each FTE generates on average and how efficiently Valentis converts its people investment into output. As the workforce grows to 65 FTE, Group HR must ensure revenue per employee does not decline — which means delivery improvement must outpace headcount growth.</p>
+<div class="krow">
+  <div class="kpi kbl"><div class="kl">Current Rev / Employee</div><div class="kv">$198K</div><div class="ks">$8.3M ÷ 42 FTE</div><div class="kt ktb">Q1 2026 baseline</div></div>
+  <div class="kpi krd"><div class="kl">Rev / Employee at 65 FTE (flat rev)</div><div class="kv">$128K</div><div class="ks">$8.3M ÷ 65 — if revenue does not grow</div><div class="kt ktr">35% decline — unacceptable</div></div>
+  <div class="kpi kgr"><div class="kl">Required Revenue at 65 FTE</div><div class="kv">$12.2M</div><div class="ks">To maintain $185K+ rev/employee</div><div class="kt ktg">47% revenue growth needed</div></div>
+  <div class="kpi kam"><div class="kl">Revenue Growth Required/Quarter</div><div class="kv">6.5%</div><div class="ks">To reach $12.2M over 6 quarters</div><div class="kt kta">Delivery improvement is the lever</div></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Revenue per Employee — Trajectory Scenarios</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Three scenarios showing how revenue per employee evolves as headcount grows to 65 FTE. The key variable is whether Valentis closes the delivery gap — revenue growth must accompany headcount growth.</div>
+    <table class="dt">
+      <thead><tr><th>Quarter</th><th>Headcount</th><th>Base (rev flat)</th><th>Base case ($+6.5%/qtr)</th><th>Optimistic ($+8%/qtr)</th></tr></thead>
+      <tbody>
+        ${[
+          {q:'Q1 2026',hc:42,base:8.3},
+          {q:'Q2 2026',hc:46},
+          {q:'Q3 2026',hc:50},
+          {q:'Q4 2026',hc:55},
+          {q:'Q1 2027',hc:60},
+          {q:'Q2 2027',hc:65}
+        ].map(function(r,i){
+          var flatRev=8.3;
+          var baseRev=Math.round(8.3*Math.pow(1.065,i)*10)/10;
+          var bullRev=Math.round(8.3*Math.pow(1.08,i)*10)/10;
+          var flatRPE=Math.round(flatRev*1e6/r.hc/1000)*1000;
+          var baseRPE=Math.round(baseRev*1e6/r.hc/1000)*1000;
+          var bullRPE=Math.round(bullRev*1e6/r.hc/1000)*1000;
+          var baseCol=baseRPE>=185000?'var(--green)':baseRPE>=160000?'var(--amber)':'var(--red)';
+          return '<tr><td style="font-weight:600;font-family:var(--fm);color:var(--blue)">'+r.q+'</td>'
+            +'<td>'+r.hc+'</td>'
+            +'<td style="color:var(--red)">$'+Math.round(flatRPE/1000)+'K</td>'
+            +'<td style="font-weight:600;color:'+baseCol+'">$'+Math.round(baseRPE/1000)+'K</td>'
+            +'<td style="color:var(--green)">$'+Math.round(bullRPE/1000)+'K</td>'
+            +'</tr>';
+        }).join('')}
+      </tbody>
+    </table>
+    <div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">The base case (6.5%/quarter revenue growth) maintains revenue per employee above $185K — the minimum acceptable level. This requires closing the 5pp delivery gap to 90% group target, which drives ~$415K additional revenue annually plus growth from new rig deployments.</div>
+  </div>
+  <div style="background:var(--navy);border-radius:4px;padding:22px">
+    <div style="font-family:var(--fm);font-size:8px;color:var(--electric2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Revenue per Employee Calculator</div>
+    <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:#f0f4ff;margin-bottom:14px">Model any headcount / revenue scenario</div>
+    <label class="cl">Annual revenue ($M)</label>
+    <input id="rpe-rev" class="ci" type="number" value="8.3" step="0.1" oninput="calcRPE()">
+    <label class="cl">Total headcount</label>
+    <input id="rpe-hc" class="ci" type="number" value="42" oninput="calcRPE()">
+    <label class="cl">People cost ratio (%)</label>
+    <input id="rpe-pcr" class="ci" type="number" value="43" step="0.5" oninput="calcRPE()">
+    <div id="rpe-result" style="background:rgba(255,255,255,0.05);border-radius:3px;padding:16px;margin-top:4px"></div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Revenue per Employee — Country Contribution Analysis</div>
+  <table class="dt">
+    <thead><tr><th>Country</th><th>Headcount</th><th>Est. revenue contribution</th><th>Rev / employee (country)</th><th>Delivery rate</th><th>Revenue at 90% delivery</th><th>Upside potential</th></tr></thead>
+    <tbody>
+      ${[
+        {c:'Laos',hc:14,rev:2.9,del:85},
+        {c:'Myanmar',hc:12,rev:2.1,del:80},
+        {c:'Indonesia',hc:11,rev:2.3,del:84},
+        {c:'Thailand',hc:5,rev:1.0,del:105}
+      ].map(function(r){
+        var rpe=Math.round(r.rev*1e6/r.hc/1000)*1000;
+        var adjRev=Math.round(r.rev*(90/r.del)*10)/10;
+        var upside=r.del<90?Math.round((adjRev-r.rev)*1e5)/1e5:0;
+        return '<tr><td style="font-weight:600">'+r.c+'</td>'
+          +'<td>'+r.hc+'</td>'
+          +'<td>$'+r.rev.toFixed(1)+'M</td>'
+          +'<td>$'+Math.round(rpe/1000)+'K</td>'
+          +'<td style="color:'+(r.del>=90?'var(--green)':r.del>=85?'var(--amber)':'var(--red)')+';font-weight:700">'+r.del+'%</td>'
+          +'<td style="color:var(--blue)">$'+adjRev.toFixed(2)+'M</td>'
+          +'<td style="color:var(--green);font-weight:700">'+(upside>0?'+$'+upside.toFixed(2)+'M':'Already above target')+'</td>'
+          +'</tr>';
+      }).join('')}
+      <tr style="background:var(--surface2)"><td style="font-weight:700">Group</td><td>42</td><td>$8.3M</td><td style="font-weight:700">$198K</td><td style="font-weight:700;color:var(--amber)">85%</td><td style="font-weight:700;color:var(--blue)">~$8.76M</td><td style="font-weight:700;color:var(--green)">+$460K at 90%</td></tr>
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── PAGE 07 ──────────────────────────────────────────────────────
+document.getElementById('page-capability').innerHTML=`
+<div class="pe">Section 07 — Capability Index</div>
+<div class="pt">Capability<br><em>Index</em></div>
+<p class="pd">The Valentis Capability Index is a composite measure of workforce readiness — combining grade mix, conversion rate, coaching quality, SM effectiveness, and bench strength into a single country-level score. It is designed to give Group HR and the COO a single-number read on whether a country's people capability is strong enough to sustain delivery and growth — and to identify which dimension needs investment first.</p>
+<div class="vx">
+  <div class="vx-ey">How the Capability Index Works</div>
+  <div class="vx-ti">Five dimensions · 20 points each · 100-point total. Score ≥80 = capability foundation for growth. Score 60–79 = functional with risks. Score below 60 = capability deficit requiring priority intervention.</div>
+  <div class="vx-bo">The Capability Index is a planning tool, not a performance rating. Its purpose is to surface which dimension is dragging a country's overall capability score — so Group HR can direct investment precisely. A country with a low coaching score needs G4 coaching programme intervention. A country with a low bench score needs accelerated development plans. The index translates multi-dimensional workforce complexity into a format the COO can act on.</div>
+</div>
+<div class="card">
+  <div class="ct">Capability Index — Q1 2026 Country Scores</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
+    ${[
+      {c:'Thailand',total:84,scores:{mix:18,conv:16,coach:18,sm:19,bench:13},col:'var(--green)'},
+      {c:'Laos',total:67,scores:{mix:16,conv:13,coach:14,sm:15,bench:9},col:'var(--blue)'},
+      {c:'Myanmar',total:52,scores:{mix:12,conv:8,coach:6,sm:11,bench:15},col:'var(--red)'},
+      {c:'Indonesia',total:58,scores:{mix:14,conv:11,coach:10,sm:12,bench:11},col:'var(--amber)'}
+    ].map(function(d){
+      var col=d.total>=80?'var(--green)':d.total>=60?'var(--amber)':'var(--red)';
+      var label=d.total>=80?'Strong':d.total>=60?'Functional':'Deficit';
+      return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:18px">'
+        +'<div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">'+d.c+'</div>'
+        +'<div style="font-family:var(--fd);font-size:52px;font-weight:800;color:'+col+';line-height:1">'+d.total+'</div>'
+        +'<div style="font-size:12px;color:var(--ink5);margin-bottom:10px">/ 100 · <span style="color:'+col+'">'+label+'</span></div>'
+        +Object.entries(d.scores).map(function(e){
+          var dim={mix:'Grade Mix',conv:'Conversion',coach:'Coaching',sm:'SM Effect.',bench:'Bench'}[e[0]];
+          var w=Math.round((e[1]/20)*100);
+          var bc=e[1]>=15?'var(--green)':e[1]>=10?'var(--amber)':'var(--red)';
+          return '<div style="margin-bottom:5px"><div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink5);margin-bottom:2px"><span>'+dim+'</span><span style="color:'+bc+';font-weight:700">'+e[1]+'/20</span></div>'
+            +'<div style="height:5px;background:var(--surface2);border-radius:2px;overflow:hidden"><div style="width:'+w+'%;height:100%;background:'+bc+'"></div></div>'
+            +'</div>';
+        }).join('')
+        +'</div>';
+    }).join('')}
+  </div>
+  <div class="inf b"><strong>Index interpretation for Group HR planning:</strong>Myanmar's coaching score (6/20) is the lowest single dimension across all countries — confirming the G4 coaching programme is the highest-priority capability investment. Laos's bench score (9/20) is the second lowest — confirming the June 2026 bench acceleration deadline is critical. Indonesia's SM effectiveness score (12/20) reflects Wirawan's retention risk — this will worsen if Wirawan exits without a succession plan.</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Capability Index — Scoring Rubric</div>
+    <table class="dt">
+      <thead><tr><th>Dimension</th><th>Max</th><th>20 (full score)</th><th>10–15 (functional)</th><th>Below 10 (deficit)</th></tr></thead>
+      <tbody>
+        ${[
+          {dim:'Grade Mix',max:20,high:'G3+G4 ≥50% of site headcount. G1/G2 not more than 2× G4 count.',mid:'G3+G4 35–50%. Adequate but improvement needed.',low:'G3+G4 below 35% or severe G1/G2 overload relative to coaching capacity.'},
+          {dim:'Conversion Rate',max:20,high:'G1→G2 conversion ≥70% (target). All transitions at or above benchmark.',mid:'G1→G2 60–70%. Below target but trajectory improving.',low:'G1→G2 below 60%. Pipeline leaking at first transition — urgent intervention.'},
+          {dim:'Coaching Quality',max:20,high:'G4 debrief frequency ≥4/month. Rubric scores ≥3/5 all G4s. Month-3 check-in compliance 100%.',mid:'Debrief frequency 2–4/month. Some G4s below rubric threshold.',low:'Debrief frequency below 2/month. No systematic check-in protocol. Rubric not used.'},
+          {dim:'SM Effectiveness',max:20,high:'Delivery ≥95%. Pipeline log 100% compliant. G4 accountability active. Change champion.',mid:'Delivery 85–95%. Partial pipeline compliance. SM engaged but inconsistent.',low:'Delivery below 85%. Pipeline log non-compliant. SM retention risk or known sceptic.'},
+          {dim:'Bench Strength',max:20,high:'≥2 G3 candidates G4-ready within 12 months. Succession plan formalised. No retirement cliff.',mid:'1 bench candidate identified. Succession informal. Some retirement risk.',low:'No bench candidate. Active retirement cliff. Succession gap unaddressed.'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:700">'+r.dim+'</td><td style="font-weight:700;font-family:var(--fm)">'+r.max+'</td><td style="font-size:11.5px;color:var(--green)">'+r.high+'</td><td style="font-size:11.5px;color:var(--amber)">'+r.mid+'</td><td style="font-size:11.5px;color:var(--red)">'+r.low+'</td></tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Capability Target — Q4 2026 vs Q2 2027</div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">The capability index should be tracked quarterly. The targets below reflect what each country should reach if the planned interventions execute on schedule.</div>
+    <table class="dt">
+      <thead><tr><th>Country</th><th>Q1 2026 (now)</th><th>Q4 2026 target</th><th>Q2 2027 target</th><th>Primary lever to close gap</th></tr></thead>
+      <tbody>
+        ${[
+          {c:'Thailand',now:84,q4:86,q2:88,lever:'Maintain. Country 5 deployment candidate identified — monitor bench score.'},
+          {c:'Laos',now:67,q4:72,q2:78,lever:'Bench acceleration plan (June 2026). External G3 hire. Retirement management.'},
+          {c:'Myanmar',now:52,q4:62,q2:72,lever:'G4 coaching programme — coaching score from 6→14 by Q4 2026 is the primary driver.'},
+          {c:'Indonesia',now:58,q4:68,q2:76,lever:'Fill G3 vacancies (grade mix + coaching score). SM retention (SM effectiveness score).'}
+        ].map(function(r){
+          function col(v){return v>=80?'var(--green)':v>=65?'var(--amber)':'var(--red)';}
+          return '<tr><td style="font-weight:600">'+r.c+'</td>'
+            +'<td style="font-weight:700;color:'+col(r.now)+'">'+r.now+'</td>'
+            +'<td style="color:'+col(r.q4)+'">'+r.q4+' <span style="color:var(--blue);font-size:10.5px">(+'+( r.q4-r.now)+')</span></td>'
+            +'<td style="color:'+col(r.q2)+';font-weight:700">'+r.q2+' <span style="font-size:10.5px;color:var(--green)">(+'+( r.q2-r.now)+')</span></td>'
+            +'<td style="font-size:11.5px">'+r.lever+'</td>'
+            +'</tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+// ── PAGE 08 ──────────────────────────────────────────────────────
+document.getElementById('page-coo').innerHTML=`
+<div class="pe">Section 08 — COO Performance Brief</div>
+<div class="pt">COO Performance<br><em>Brief</em></div>
+<p class="pd">The COO performance brief translates every productivity and performance metric in this tool into the language the COO uses — delivery percentages, revenue figures, and decision implications. Use this section to prepare for the monthly COO people brief or any ad hoc performance conversation.</p>
+<div class="card">
+  <div class="ct">Performance Decision Register — <em>What Requires COO Action</em></div>
+  <table class="dt">
+    <thead><tr><th>Issue</th><th>Revenue / delivery impact</th><th>COO action</th><th>Deadline</th></tr></thead>
+    <tbody>
+      ${[
+        {issue:'Indonesia G3 vacancies — 3 open 40+ days',impact:'Delivery dropped 93%→84%. Estimated $161K annual revenue impact per 7pp delivery gap. Each additional week: ~$3K further impact.',action:'Approve sourcing brief and expedited offer authority. Group HR to present 3 shortlisted candidates by end Q2 2026.',dl:'Q2 2026'},
+        {issue:'Myanmar G4 coaching programme — execution risk',impact:'G4 coaching programme ROI: $82K–$144K annual return on $12K investment. Failure to execute = Myanmar conversion stays at 58% = 14pp below Thailand, $63K+ delivery revenue lost annually.',action:'Review Q2 2026 debrief frequency data at monthly brief. Confirm G4 certification re-observation is scheduled Q3 2026. No additional decision required if on track.',dl:'Monthly review'},
+        {issue:'Group delivery at 85% — 5pp below target',impact:'5pp below 90% group target = ~$415K annual revenue gap. Indonesia and Myanmar are the primary contributors. Recovery plan is in motion — visibility required.',action:'Confirm timeline for Indonesia G3 fills and review Myanmar coaching progress Q3 2026. Adjust delivery targets if Country 5 launch shifts revenue baseline.',dl:'Q3 2026 review'},
+        {issue:'Laos retirement cliff — G4 capacity risk',impact:'3 G4 retirements within 3 years. Without bench activation and external hire: estimated $90K–$150K annual delivery revenue loss from Laos G4 capacity reduction.',action:'Approve Laos bench acceleration plan (Group HR to present). Approve Laos external G3 hire budget ($3K–$5K sourcing cost). Both required by June 2026.',dl:'June 2026'},
+        {issue:'SM retention — Myo H. and Wirawan',impact:'Replacement cost $130K–$250K each. SM loss in Myanmar or Indonesia at current pipeline stress would cascade delivery risk across the full planning period.',action:'Lead both retention conversations personally. Myo H. September 2026, Wirawan October 2026. Group HR prepares brief and attends both.',dl:'Sep–Oct 2026'}
+      ].map(function(r){
+        return '<tr><td style="font-weight:700">'+r.issue+'</td>'
+          +'<td style="color:var(--red);font-size:12.5px">'+r.impact+'</td>'
+          +'<td style="font-size:12.5px">'+r.action+'</td>'
+          +'<td style="font-weight:700;font-family:var(--fm);font-size:11px;color:var(--amber)">'+r.dl+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="card">
+  <div class="ct">COO Performance Narrative — <em>Ready-to-Use</em></div>
+  <div style="background:var(--surface2);padding:20px;border-radius:3px;font-size:13.5px;color:var(--ink3);line-height:2;font-weight:300">
+    <p style="margin-bottom:12px">"Group delivery is at 85% against the 90% target — a 5pp gap that represents approximately <strong style="color:var(--ink)">$415K in annual revenue</strong>. The gap is driven by two people factors: the three open G3 vacancies in Indonesia (which dropped delivery from 93% to 84% in that country) and Myanmar's G4 coaching quality issue (which keeps delivery at 80% and conversion at 58%)."</p>
+    <p style="margin-bottom:12px">"Both are recoverable. Filling the Indonesia G3 positions restores an estimated $115K–$161K of annual delivery revenue within one quarter of hire. The G4 coaching programme, launched this quarter, is tracking to improve Myanmar conversion from 58% toward 70% by Q4 2026 — which would add a further $42K–$63K in annual delivery improvement. <strong style="color:var(--ink)">Combined, these two actions close approximately 85% of the delivery gap.</strong>"</p>
+    <p style="margin-bottom:12px">"The third structural risk is the Laos G4 retirement cliff. Three of our five Laos G4s are retirement-eligible within three years. I am activating the accelerated bench plan for our two G3 candidates by June 2026 and commissioning an external G3 hire to bridge the gap. Without this, Laos delivery will begin declining from 2027 — reversing the Indonesia recovery gains."</p>
+    <p>"At the current trajectory, with all planned interventions executing on schedule, I forecast group delivery reaching 88–90% by Q4 2026 and revenue per employee maintained at $185K+ as we grow to 65 FTE. <strong style="color:var(--ink)">The workforce plan is sound — the risk is execution, not design.</strong> The two things that would derail it are: Indonesia G3 fills not happening before Q3 2026, and either SM retention conversation being deferred past the deadline."</p>
+  </div>
+</div>
+
+// Calculator functions
+`;
+
+// ── CALCULATORS ───────────────────────────────────────────────────
+function calcRPE(){
+  var rev=parseFloat(document.getElementById('rpe-rev').value)||8.3;
+  var hc=parseFloat(document.getElementById('rpe-hc').value)||42;
+  var pcr=parseFloat(document.getElementById('rpe-pcr').value)||43;
+  var rpe=Math.round(rev*1e6/hc/1000)*1000;
+  var pc=Math.round(rev*1e6*(pcr/100));
+  var rpeCol=rpe>=185000?'var(--green)':rpe>=150000?'var(--amber)':'var(--red)';
+  var pcrCol=pcr>=47?'var(--red)':pcr>=45?'var(--amber)':'var(--green)';
+  document.getElementById('rpe-result').innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:34px;font-weight:800;color:'+rpeCol+';line-height:1">$'+Math.round(rpe/1000)+'K</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:3px">REVENUE / EMPLOYEE</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:34px;font-weight:800;color:'+pcrCol+';line-height:1">'+pcr+'%</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:3px">PEOPLE COST RATIO</div></div>'
+    +'</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.35);line-height:1.7">'
+    +rpe/1000+'K rev/employee is '+(rpe>=185000?'at or above':'below')+' the $185K minimum target. People cost $'+Math.round(pc/1000)+'K at '+pcr+'% ratio.'
+    +'</div>';
+}
+calcRPE();
+</script>

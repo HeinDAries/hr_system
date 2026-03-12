@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Data Governance & Privacy Register — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0f1923; --navy:#1a2a3a; --navy2:#243447; --navy3:#2e3f52;
+  --electric:#0ea5e9; --electric2:#38bdf8; --electric-dim:rgba(14,165,233,0.1); --electric-border:rgba(14,165,233,0.28);
+  --cyan:#06b6d4; --cyan-dim:rgba(6,182,212,0.09);
+  --steel:#4a6080; --steel2:#6b8099; --mist:#f0f4f8; --white:#ffffff;
+  --border:#d4dce6; --neutral-bg:#f4f6f8;
+  --success:#0f7a3e; --success-bg:#e8f5ee; --success-border:rgba(15,122,62,0.25);
+  --warning:#b45309; --warning-bg:#fef3cd; --warning-border:rgba(180,83,9,0.25);
+  --danger:#c0392b; --danger-bg:#fdf0ef; --danger-border:rgba(192,57,43,0.25);
+  --purple:#6d28d9; --purple-bg:#f5f3ff; --purple-border:rgba(109,40,217,0.25);
+  --tag-laos:#1e5f74; --tag-myanmar:#6b3a2a; --tag-indonesia:#1a4731; --tag-thailand:#3b2a6e; --tag-group:#0f1923;
+  --sidebar-w:268px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--mist);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.6;display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--cyan),rgba(14,165,233,0.3),transparent)}
+.sb-logo{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:var(--electric-dim);border:1px solid var(--electric-border);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:9px}
+.sb-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#e8f4ff;line-height:1.1;margin-bottom:3px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:10px;color:rgba(255,255,255,0.18);font-family:var(--fm)}
+.sb-nav{padding:10px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.14);padding:0 10px;margin-bottom:4px;margin-top:10px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12px;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.55)}
+.nav-item.active{background:var(--electric-dim);border-color:var(--electric-border);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:18px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--electric)}
+.nav-status{margin-left:auto;font-family:var(--fm);font-size:8px;padding:1px 5px;border-radius:2px}
+.s-done{background:rgba(15,122,62,0.25);color:#6ecf94}
+.s-cur{background:var(--electric-dim);color:var(--electric2)}
+.s-soon{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.2)}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:10px 12px;font-size:10.5px;color:rgba(255,255,255,0.2);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}
+.top-header{background:var(--navy2);padding:0 44px;display:flex;align-items:center;justify-content:space-between;height:56px;border-bottom:3px solid var(--electric)}
+.th-left{display:flex;align-items:center;gap:14px}
+.th-badge{font-family:var(--fm);font-size:9px;color:var(--electric);letter-spacing:2px;border:1px solid var(--electric-border);padding:2px 8px;border-radius:2px}
+.th-title{font-family:var(--fd);font-size:16px;color:var(--white);font-weight:600}
+.th-meta{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.3)}
+.page-header{background:var(--white);padding:28px 44px 22px;border-bottom:1px solid var(--border)}
+.ph-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--electric);margin-bottom:8px}
+.ph-title{font-family:var(--fd);font-size:30px;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1}
+.ph-title em{font-style:italic;font-weight:400;color:var(--steel2)}
+.ph-desc{font-size:13px;color:var(--steel);max-width:660px;line-height:1.7;font-weight:300}
+.ph-tag{display:inline-block;margin-top:8px;font-family:var(--fm);font-size:9px;background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border);padding:3px 10px;border-radius:2px;letter-spacing:1px}
+
+/* ── STATS BAR ── */
+.stats-bar{background:var(--navy);padding:14px 44px;display:flex}
+.stat-item{flex:1;text-align:center;padding:0 12px;border-right:1px solid rgba(255,255,255,0.08)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:var(--fm);font-size:22px;font-weight:600;color:var(--electric2);display:block}
+.stat-num.green{color:#6ee7b7}.stat-num.red{color:#fca5a5}.stat-num.yellow{color:#fcd34d}.stat-num.cyan{color:var(--cyan)}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;margin-top:1px}
+
+/* ── TABS ── */
+.tab-bar{background:var(--white);padding:0 44px;display:flex;border-bottom:2px solid var(--border)}
+.tab-btn{padding:12px 20px;font-family:var(--fb);font-size:12px;font-weight:500;color:var(--steel);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab-btn.active{color:var(--electric);border-bottom-color:var(--electric);font-weight:600}
+.tab-btn:hover:not(.active){color:var(--ink)}
+.tab-content{display:none;padding:28px 44px 44px}
+.tab-content.active{display:block}
+
+/* ── DATA REGISTER TABLE ── */
+.register-wrap{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.reg-table{width:100%;border-collapse:collapse}
+.reg-th{padding:10px 14px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric2);background:var(--navy);white-space:nowrap}
+.reg-td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--ink);vertical-align:top}
+.reg-tr:hover .reg-td{background:var(--electric-dim);cursor:pointer}
+.reg-tr:last-child .reg-td{border-bottom:none}
+.reg-cat-row td{background:var(--navy2);padding:8px 14px;font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45);border-bottom:1px solid rgba(255,255,255,0.05)}
+
+/* ── CHIPS & BADGES ── */
+.chip{display:inline-flex;align-items:center;padding:2px 7px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:0.3px;margin:1px 2px 1px 0}
+.chip-laos{background:rgba(30,95,116,0.1);color:var(--tag-laos);border:1px solid rgba(30,95,116,0.25)}
+.chip-myanmar{background:rgba(107,58,42,0.1);color:var(--tag-myanmar);border:1px solid rgba(107,58,42,0.25)}
+.chip-indonesia{background:rgba(26,71,49,0.1);color:var(--tag-indonesia);border:1px solid rgba(26,71,49,0.25)}
+.chip-thailand{background:rgba(59,42,110,0.1);color:var(--tag-thailand);border:1px solid rgba(59,42,110,0.25)}
+.chip-group{background:rgba(15,25,35,0.07);color:var(--tag-group);border:1px solid rgba(15,25,35,0.18)}
+.sensitivity-badge{display:inline-block;padding:2px 8px;border-radius:2px;font-family:var(--fm);font-size:9px;font-weight:600}
+.sens-critical{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+.sens-sensitive{background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border)}
+.sens-internal{background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border)}
+.sens-public{background:var(--success-bg);color:var(--success);border:1px solid var(--success-border)}
+.risk-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px}
+.rd-high{background:#ef4444}.rd-medium{background:#f59e0b}.rd-low{background:#22c55e}
+
+/* ── COUNTRY LAW CARDS ── */
+.law-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.law-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.law-card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.law-flag{font-size:22px}
+.law-card-title{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--white)}
+.law-card-sub{font-size:10px;color:rgba(255,255,255,0.5);font-family:var(--fm);margin-top:2px}
+.law-table{width:100%;border-collapse:collapse}
+.law-th{padding:8px 14px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--steel2);background:var(--neutral-bg);border-bottom:1px solid var(--border)}
+.law-td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--ink);vertical-align:top;line-height:1.5}
+.law-tr:last-child .law-td{border-bottom:none}
+.law-status{display:inline-block;padding:2px 7px;border-radius:2px;font-family:var(--fm);font-size:9px;font-weight:600}
+.ls-compliant{background:var(--success-bg);color:var(--success);border:1px solid var(--success-border)}
+.ls-partial{background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border)}
+.ls-gap{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+.ls-na{background:var(--neutral-bg);color:var(--steel);border:1px solid var(--border)}
+
+/* ── RETENTION MATRIX ── */
+.retention-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ret-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.ret-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ret-title{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--ink)}
+.ret-period{font-family:var(--fm);font-size:10px;color:var(--electric);background:var(--electric-dim);border:1px solid var(--electric-border);padding:2px 8px;border-radius:2px}
+.ret-body{padding:12px 16px}
+.ret-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.ret-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.ret-field{font-size:12px;color:var(--ink);flex:1}
+.ret-basis{font-family:var(--fm);font-size:9px;color:var(--steel2)}
+
+/* ── BREACH PROTOCOL ── */
+.breach-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.breach-step{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:16px;position:relative}
+.breach-step.urgent{border-color:var(--danger);background:var(--danger-bg)}
+.bs-num{font-family:var(--fm);font-size:10px;font-weight:600;color:var(--electric);margin-bottom:8px}
+.bs-time{font-family:var(--fm);font-size:9px;padding:2px 8px;border-radius:2px;margin-bottom:8px;display:inline-block}
+.bst-urgent{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+.bst-soon{background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border)}
+.bst-normal{background:var(--neutral-bg);color:var(--steel);border:1px solid var(--border)}
+.bs-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.bs-desc{font-size:11.5px;color:var(--steel);line-height:1.6}
+.bs-owner{font-family:var(--fm);font-size:9px;color:var(--electric);margin-top:8px}
+.connector-h{position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:var(--electric);font-size:18px;z-index:1}
+
+/* ── CONSENT REGISTER ── */
+.consent-table{width:100%;border-collapse:collapse}
+.consent-th{padding:10px 14px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric2);background:var(--navy)}
+.consent-td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--ink);vertical-align:top}
+.consent-tr:hover .consent-td{background:var(--electric-dim)}
+
+/* ── CONTROLS ── */
+.controls-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.search-input{height:36px;padding:0 14px;border:1px solid var(--border);border-radius:4px;font-family:var(--fb);font-size:12px;color:var(--ink);background:var(--white);outline:none;width:220px;transition:border .15s}
+.search-input:focus{border-color:var(--electric)}
+.filter-select{height:36px;padding:0 12px;border:1px solid var(--border);border-radius:4px;font-family:var(--fb);font-size:12px;color:var(--steel);background:var(--white);cursor:pointer;outline:none}
+.btn{height:36px;padding:0 16px;border-radius:4px;font-family:var(--fb);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--electric);color:var(--white)}.btn-primary:hover{background:var(--electric2);color:var(--ink)}
+.btn-outline{background:var(--white);color:var(--navy);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--electric);color:var(--electric)}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,30,0.55);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--white);border-radius:8px;width:600px;max-width:94vw;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink)}
+.modal-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--steel);padding:2px 6px;border-radius:3px}
+.modal-close:hover{background:var(--neutral-bg)}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.modal-section{margin-bottom:16px}
+.modal-section-title{font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:8px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.modal-field{padding:10px 12px;background:var(--neutral-bg);border:1px solid var(--border);border-radius:4px}
+.modal-field-label{font-family:var(--fm);font-size:9px;color:var(--steel2);margin-bottom:3px}
+.modal-field-value{font-size:12.5px;color:var(--ink);font-weight:500;line-height:1.5}
+.form-group{margin-bottom:12px}
+.form-label{font-family:var(--fm);font-size:10px;color:var(--steel);display:block;margin-bottom:4px}
+.form-input,.form-select,.form-textarea{width:100%;padding:7px 11px;border:1px solid var(--border);border-radius:4px;font-family:var(--fb);font-size:12.5px;color:var(--ink);background:var(--white);outline:none;transition:border .15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--electric)}
+.form-textarea{resize:vertical;min-height:64px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-footer{padding:13px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--neutral-bg)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:4px;font-family:var(--fm);font-size:11px;border-left:3px solid var(--electric);opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">DEPT 11 · HR TECH</div>
+    <div class="sb-title">HR <em>Technology</em><br>& Digital HR</div>
+    <div class="sb-sub">VALENTIS GROUP · 2025</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Tools</div>
+    <div class="nav-item" onclick="showToast('→ Tool 1: Systems Inventory')"><span class="nav-num">01</span> Systems Inventory & Architecture<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 2: Data Flow Map')"><span class="nav-num">02</span> Integration & Data Flow Map<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 3: Vendor Evaluation')"><span class="nav-num">03</span> Vendor Evaluation Framework<span class="nav-status s-done">✓</span></div>
+    <div class="nav-item active"><span class="nav-num">04</span> Data Governance & Privacy Register<span class="nav-status s-cur">CURRENT</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 5 coming soon')"><span class="nav-num">05</span> Digital HR Roadmap Planner<span class="nav-status s-soon">SOON</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 6 coming soon')"><span class="nav-num">06</span> HR Tech ROI & Business Case Builder<span class="nav-status s-soon">SOON</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 7 coming soon')"><span class="nav-num">07</span> Automation & AI Opportunity Assessor<span class="nav-status s-soon">SOON</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 8 coming soon')"><span class="nav-num">08</span> Adoption & Change Readiness Tracker<span class="nav-status s-soon">SOON</span></div>
+    <div class="nav-item" onclick="showToast('→ Tool 9 coming soon')"><span class="nav-num">09</span> Digital HR Operating Model<span class="nav-status s-soon">SOON</span></div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note"><strong>Valentis Group</strong>28 employees · 4 countries<br>Laos · Myanmar · Indonesia · Thailand</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="top-header">
+    <div class="th-left">
+      <div class="th-badge">HR TECH · TOOL 04</div>
+      <div class="th-title">HR Data Governance & Privacy Register</div>
+    </div>
+    <div class="th-meta">VALENTIS GROUP · GROUP HR</div>
+  </div>
+
+  <div class="page-header">
+    <div class="ph-eyebrow">HR Technology & Digital HR</div>
+    <h1 class="ph-title">Data Governance &amp; <em>Privacy Register</em></h1>
+    <p class="ph-desc">Defines HR data ownership, classification, retention rules, and country-specific privacy obligations across Valentis's 4-country SE Asia operation. Covers PDPA (Thailand), Indonesia's PDP Law, and equivalent frameworks — translating compliance into practical HR data management standards.</p>
+    <div class="ph-tag">HR TECH · TOOL 04 OF 09</div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item"><span class="stat-num cyan" id="statFields">38</span><div class="stat-lbl">Data Fields Registered</div></div>
+    <div class="stat-item"><span class="stat-num red" id="statCritical">8</span><div class="stat-lbl">Critical Sensitivity</div></div>
+    <div class="stat-item"><span class="stat-num yellow" id="statGaps">6</span><div class="stat-lbl">Compliance Gaps</div></div>
+    <div class="stat-item"><span class="stat-num green" id="statCompliant">9</span><div class="stat-lbl">Compliant Items</div></div>
+    <div class="stat-item"><span class="stat-num" id="statLaws">4</span><div class="stat-lbl">Legal Frameworks</div></div>
+    <div class="stat-item"><span class="stat-num yellow">Medium</span><div class="stat-lbl">Overall Risk Level</div></div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('register')">Data Register</button>
+    <button class="tab-btn" onclick="switchTab('countrylaws')">Country Privacy Laws</button>
+    <button class="tab-btn" onclick="switchTab('retention')">Retention Schedule</button>
+    <button class="tab-btn" onclick="switchTab('breach')">Breach Protocol</button>
+    <button class="tab-btn" onclick="switchTab('consent')">Consent & Lawful Basis</button>
+  </div>
+
+  <!-- TAB: DATA REGISTER -->
+  <div class="tab-content active" id="tab-register">
+    <div class="controls-row">
+      <input class="search-input" type="text" placeholder="Search data fields…" id="regSearch" oninput="renderRegister()">
+      <select class="filter-select" id="regCat" onchange="renderRegister()">
+        <option value="">All Categories</option>
+        <option value="Identity">Identity</option>
+        <option value="Employment">Employment</option>
+        <option value="Compensation">Compensation</option>
+        <option value="Health & Safety">Health & Safety</option>
+        <option value="Performance">Performance</option>
+        <option value="Biometric">Biometric / Sensitive</option>
+        <option value="Financial">Financial</option>
+        <option value="Operational">Operational</option>
+      </select>
+      <select class="filter-select" id="regSens" onchange="renderRegister()">
+        <option value="">All Sensitivity Levels</option>
+        <option value="Critical">Critical</option>
+        <option value="Sensitive">Sensitive</option>
+        <option value="Internal">Internal</option>
+        <option value="Public">Public</option>
+      </select>
+      <button class="btn btn-outline" onclick="document.getElementById('regSearch').value='';document.getElementById('regCat').value='';document.getElementById('regSens').value='';renderRegister()">↺ Reset</button>
+      <button class="btn btn-primary" onclick="openAddField()">+ Add Field</button>
+    </div>
+    <div class="register-wrap">
+      <table class="reg-table">
+        <thead>
+          <tr>
+            <th class="reg-th">Data Field</th>
+            <th class="reg-th">Category</th>
+            <th class="reg-th">Sensitivity</th>
+            <th class="reg-th">Stored In</th>
+            <th class="reg-th">Countries</th>
+            <th class="reg-th">Lawful Basis</th>
+            <th class="reg-th">Retention</th>
+            <th class="reg-th">Risk</th>
+          </tr>
+        </thead>
+        <tbody id="registerBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: COUNTRY PRIVACY LAWS -->
+  <div class="tab-content" id="tab-countrylaws">
+    <div style="margin-bottom:20px;background:var(--electric-dim);border:1px solid var(--electric-border);border-radius:6px;padding:16px 20px">
+      <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:6px">Scope Note</div>
+      <div style="font-size:13px;color:var(--ink);line-height:1.7">Valentis operates in 4 SE Asian jurisdictions each with distinct data protection frameworks at varying stages of maturity. Thailand's PDPA (effective 2022) is the most comprehensive. Indonesia's PDP Law (2024) is the newest. Laos and Myanmar have limited formal data protection legislation — compliance defaults to international best practice and group HR policy.</div>
+    </div>
+    <div class="law-grid" id="lawGrid"></div>
+  </div>
+
+  <!-- TAB: RETENTION SCHEDULE -->
+  <div class="tab-content" id="tab-retention">
+    <div style="margin-bottom:20px;display:flex;gap:16px;flex-wrap:wrap">
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;padding:14px 18px;flex:1;min-width:200px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--electric);margin-bottom:5px">Retention Principle</div>
+        <div style="font-size:13px;color:var(--ink);line-height:1.7">Retain only what is <strong>necessary</strong> for the <strong>longest applicable legal obligation</strong> across all 4 countries. Where laws conflict, apply the longer period.</div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;padding:14px 18px;flex:1;min-width:200px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--warning);margin-bottom:5px">Current Gap</div>
+        <div style="font-size:13px;color:var(--ink);line-height:1.7">No formal deletion schedule exists. Employee data is retained <strong>indefinitely</strong> in Excel HRIS. This creates unnecessary risk for former employees' personal data.</div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;padding:14px 18px;flex:1;min-width:200px">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--success);margin-bottom:5px">Action Required</div>
+        <div style="font-size:13px;color:var(--ink);line-height:1.7">Implement deletion / anonymisation schedule for former employees. Review and purge records older than applicable retention periods. Assign quarterly review cadence to Group HR Manager.</div>
+      </div>
+    </div>
+    <div class="retention-grid" id="retentionGrid"></div>
+  </div>
+
+  <!-- TAB: BREACH PROTOCOL -->
+  <div class="tab-content" id="tab-breach">
+    <div style="background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:6px;padding:16px 20px;margin-bottom:24px;display:flex;gap:14px;align-items:flex-start">
+      <div style="font-size:24px">🚨</div>
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:5px">Data Breach Response — Time-Critical</div>
+        <div style="font-size:13px;color:var(--ink);line-height:1.7">Thailand PDPA requires notification to the PDPC within <strong>72 hours</strong> of becoming aware of a breach. Indonesia PDP Law requires notification within <strong>14 days</strong>. Laos and Myanmar: notify affected individuals and escalate to legal counsel. Time starts from the moment of discovery — not the moment the breach occurred.</div>
+      </div>
+    </div>
+    <div class="breach-steps" id="breachSteps"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+        <div style="padding:13px 18px;border-bottom:1px solid var(--border);background:var(--neutral-bg)">
+          <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink)">Breach Classification Matrix</div>
+        </div>
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr style="background:var(--navy)">
+            <th style="padding:9px 14px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--electric2)">Scenario</th>
+            <th style="padding:9px 14px;text-align:center;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--electric2)">Severity</th>
+            <th style="padding:9px 14px;text-align:left;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--electric2)">Response</th>
+          </tr></thead>
+          <tbody id="breachMatrix"></tbody>
+        </table>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+        <div style="padding:13px 18px;border-bottom:1px solid var(--border);background:var(--neutral-bg)">
+          <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink)">Key Contacts — Breach Response</div>
+        </div>
+        <div id="breachContacts" style="padding:4px 0"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: CONSENT & LAWFUL BASIS -->
+  <div class="tab-content" id="tab-consent">
+    <div style="margin-bottom:20px;background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:6px;padding:16px 20px">
+      <div style="font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--purple);margin-bottom:6px">Lawful Basis Framework</div>
+      <div style="font-size:13px;color:var(--ink);line-height:1.7">Most HR data processing at Valentis is lawful under <strong>contractual necessity</strong> (data needed to perform the employment contract) or <strong>legal obligation</strong> (data required by local labour law). Consent should only be relied upon where no other basis applies — it can be withdrawn, creating operational risk.</div>
+    </div>
+    <div class="register-wrap" style="margin-bottom:20px">
+      <table class="consent-table">
+        <thead>
+          <tr>
+            <th class="consent-th">Processing Activity</th>
+            <th class="consent-th">Data Used</th>
+            <th class="consent-th">Lawful Basis</th>
+            <th class="consent-th">Countries</th>
+            <th class="consent-th">Consent Required?</th>
+            <th class="consent-th">Where Documented</th>
+          </tr>
+        </thead>
+        <tbody id="consentBody"></tbody>
+      </table>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+      <div style="padding:13px 18px;border-bottom:1px solid var(--border);background:var(--neutral-bg)">
+        <div style="font-family:var(--fd);font-size:15px;font-weight:700;color:var(--ink)">Employee Rights Register</div>
+        <div style="font-size:11px;color:var(--steel);margin-top:2px">Rights employees hold over their HR data — and how Valentis will fulfil them</div>
+      </div>
+      <div id="rightsGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DATA FIELD DETAIL MODAL -->
+<div class="modal-overlay" id="fieldModal" onclick="closeModal('fieldModal',event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="fmTitle"></div>
+        <div id="fmSub" style="font-family:var(--fm);font-size:10px;color:var(--steel2);margin-top:3px"></div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('fieldModal').classList.remove('active')">✕</button>
+    </div>
+    <div class="modal-body" id="fmBody"></div>
+  </div>
+</div>
+
+<!-- ADD FIELD MODAL -->
+<div class="modal-overlay" id="addFieldModal" onclick="closeModal('addFieldModal',event)">
+  <div class="modal" style="width:520px">
+    <div class="modal-header">
+      <div class="modal-title">Register New Data Field</div>
+      <button class="modal-close" onclick="document.getElementById('addFieldModal').classList.remove('active')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Field Name *</label><input class="form-input" id="af_name" placeholder="e.g. Bank Account Number"></div>
+        <div class="form-group"><label class="form-label">Category *</label>
+          <select class="form-select" id="af_cat">
+            <option>Identity</option><option>Employment</option><option>Compensation</option>
+            <option>Health & Safety</option><option>Performance</option><option>Biometric</option>
+            <option>Financial</option><option>Operational</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Sensitivity</label>
+          <select class="form-select" id="af_sens">
+            <option value="Critical">Critical</option><option value="Sensitive">Sensitive</option>
+            <option value="Internal">Internal</option><option value="Public">Public</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Stored In</label>
+          <select class="form-select" id="af_stored">
+            <option>Excel HRIS</option><option>Payroll System</option><option>Workable ATS</option>
+            <option>Microsoft 365</option><option>Paper File</option><option>Multiple Systems</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Retention Period</label>
+        <select class="form-select" id="af_retention">
+          <option>7 years post-employment</option><option>5 years post-employment</option>
+          <option>3 years post-employment</option><option>Duration of employment</option>
+          <option>1 year post-application</option><option>Permanent</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Lawful Basis</label>
+        <select class="form-select" id="af_basis">
+          <option>Contractual necessity</option><option>Legal obligation</option>
+          <option>Legitimate interest</option><option>Consent</option><option>Vital interest</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Notes / Risk</label>
+        <textarea class="form-textarea" id="af_notes" placeholder="Any known risks, current gaps, or handling notes…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('addFieldModal').classList.remove('active')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveField()">Register Field</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+let dataFields = [
+  // Identity
+  {id:'df01',field:'Full Legal Name',cat:'Identity',sensitivity:'Internal',stored:'Excel HRIS',countries:['Group'],basis:'Contractual necessity',retention:'7 yrs post-employment',risk:'low',notes:'Required for contracts, payroll, and official documents. Ensure consistent spelling with passport.'},
+  {id:'df02',field:'Date of Birth',cat:'Identity',sensitivity:'Sensitive',stored:'Excel HRIS',countries:['Group'],basis:'Legal obligation',retention:'7 yrs post-employment',risk:'medium',notes:'Required for age verification, pension contributions, and statutory calculations. Treat as sensitive.'},
+  {id:'df03',field:'Nationality / Citizenship',cat:'Identity',sensitivity:'Sensitive',stored:'Excel HRIS',countries:['Group'],basis:'Legal obligation',retention:'7 yrs post-employment',risk:'medium',notes:'Required for work permit assessment and labour law applicability. Limited access — HR only.'},
+  {id:'df04',field:'Passport / National ID Number',cat:'Identity',sensitivity:'Critical',stored:'Excel HRIS + Paper',countries:['Group'],basis:'Legal obligation',retention:'7 yrs post-employment',risk:'high',notes:'Highest risk field. Currently stored in unsecured Excel and physical files. Requires encryption at rest and access logging. Priority for migration to secure HRIS.'},
+  {id:'df05',field:'Home Address',cat:'Identity',sensitivity:'Sensitive',stored:'Excel HRIS',countries:['Group'],basis:'Contractual necessity',retention:'7 yrs post-employment',risk:'medium',notes:'Required for contract, emergency contact, tax filings. Review access — currently visible to all HR users.'},
+  {id:'df06',field:'Personal Phone Number',cat:'Identity',sensitivity:'Sensitive',stored:'Excel HRIS + WhatsApp',countries:['Group'],basis:'Contractual necessity',retention:'Duration of employment',risk:'high',notes:'Personal numbers used informally via WhatsApp for site communications. Creates data breach risk via personal device usage. Policy gap.'},
+  // Employment
+  {id:'df07',field:'Grade (G1–G8)',cat:'Employment',sensitivity:'Internal',stored:'Excel HRIS',countries:['Group'],basis:'Contractual necessity',retention:'7 yrs post-employment',risk:'low',notes:'Core Valentis grade scale. Used for pay band assignment, training eligibility, and promotion tracking.'},
+  {id:'df08',field:'Start Date / Tenure',cat:'Employment',sensitivity:'Internal',stored:'Excel HRIS',countries:['Group'],basis:'Contractual necessity',retention:'7 yrs post-employment',risk:'low',notes:'Required for leave accrual, probation tracking, and statutory entitlements. Well-maintained in current system.'},
+  {id:'df09',field:'Contract Type',cat:'Employment',sensitivity:'Internal',stored:'Excel HRIS',countries:['Group'],basis:'Contractual necessity',retention:'7 yrs post-employment',risk:'low',notes:'Permanent, fixed-term, or trainee. Affects statutory obligations and termination procedures by country.'},
+  {id:'df10',field:'Termination Reason',cat:'Employment',sensitivity:'Sensitive',stored:'Excel HRIS',countries:['Group'],basis:'Legal obligation',retention:'7 yrs post-employment',risk:'medium',notes:'Sensitive — must be handled confidentially. Used for statutory reporting and potential employment claims. Access: HR Manager only.'},
+  {id:'df11',field:'Disciplinary Records',cat:'Employment',sensitivity:'Critical',stored:'Excel HRIS + Paper',countries:['Group'],basis:'Legal obligation',retention:'5 yrs post-employment',risk:'high',notes:'Highly sensitive. Currently stored inconsistently across paper files and Excel. Must be centralised in secure HRIS with strict access controls. Cannot be shared externally without legal advice.'},
+  {id:'df12',field:'Probation Status',cat:'Employment',sensitivity:'Internal',stored:'Excel HRIS',countries:['Group'],basis:'Contractual necessity',retention:'Duration of employment',risk:'low',notes:'Tracks 90-day probation periods. Critical for Myanmar month-3 attrition monitoring. Automated alerts required.'},
+  // Compensation
+  {id:'df13',field:'Base Salary',cat:'Compensation',sensitivity:'Critical',stored:'Payroll Systems',countries:['Laos','Myanmar','Indonesia','Thailand'],basis:'Contractual necessity',retention:'7 yrs post-employment',risk:'high',notes:'Stored in country payroll systems only — not in Group HRIS. Creates cost consolidation gap. Access: Country leads + Group HR Manager only. Never in email unencrypted.'},
+  {id:'df14',field:'Allowances & Benefits',cat:'Compensation',sensitivity:'Critical',stored:'Payroll Systems',countries:['Laos','Myanmar','Indonesia','Thailand'],basis:'Contractual necessity',retention:'7 yrs post-employment',risk:'high',notes:'Site allowances, housing, per diems. Country-specific. Not consolidated at group level — contributes to people cost tracking gap.'},
+  {id:'df15',field:'Bank Account Details',cat:'Financial',sensitivity:'Critical',stored:'Country Payroll',countries:['Laos','Myanmar','Indonesia','Thailand'],basis:'Contractual necessity',retention:'Duration of employment',risk:'high',notes:'Most sensitive financial data. Currently transmitted by email in some countries. Must be encrypted in transit and at rest. Strict need-to-know access only.'},
+  {id:'df16',field:'Tax File / TIN Number',cat:'Financial',sensitivity:'Critical',stored:'Country Payroll',countries:['Laos','Myanmar','Indonesia','Thailand'],basis:'Legal obligation',retention:'7 yrs post-employment',risk:'high',notes:'Statutory requirement for payroll processing. Country-specific identifiers. Must not leave the payroll system without encryption.'},
+  // Health & Safety
+  {id:'df17',field:'Medical / Health Certificates',cat:'Health & Safety',sensitivity:'Critical',stored:'Paper File',countries:['Group'],basis:'Legal obligation',retention:'5 yrs post-employment',risk:'high',notes:'Required for site access and statutory health screening. Currently paper-only. No digital backup. Risk of loss. Must be digitised and stored securely.'},
+  {id:'df18',field:'Accident / Incident Records',cat:'Health & Safety',sensitivity:'Sensitive',stored:'Paper File + Excel',countries:['Group'],basis:'Legal obligation',retention:'10 yrs post-incident',risk:'medium',notes:'Labour law in all 4 countries requires retention of incident records. Long retention period. Currently inconsistently maintained.'},
+  {id:'df19',field:'Emergency Contact Details',cat:'Health & Safety',sensitivity:'Sensitive',stored:'Paper File',countries:['Group'],basis:'Vital interest',retention:'Duration of employment',risk:'medium',notes:'Third-party data (not the employee\'s own). Extra care required. Must be updated annually. Currently not in Excel HRIS — paper only at sites.'},
+  // Performance
+  {id:'df20',field:'Performance Review Scores',cat:'Performance',sensitivity:'Sensitive',stored:'Excel / Word',countries:['Group'],basis:'Contractual necessity',retention:'5 yrs post-employment',risk:'medium',notes:'Used for promotion, pay review, and PIP decisions. Currently in ad hoc Word/Excel documents. Should be centralised in HRIS for defensibility.'},
+  {id:'df21',field:'Training Completions',cat:'Performance',sensitivity:'Internal',stored:'LMS Manual Tracker',countries:['Group'],basis:'Contractual necessity',retention:'7 yrs post-employment',risk:'low',notes:'G3→G4 milestone tracking. Currently in separate Excel tracker. Must be linked to HRIS for promotion readiness visibility.'},
+  {id:'df22',field:'Certification Records',cat:'Performance',sensitivity:'Internal',stored:'LMS Manual Tracker',countries:['Group'],basis:'Legal obligation',retention:'7 yrs post-expiry',risk:'medium',notes:'Statutory certifications (safety, drilling) have legal retention requirements. Expiry tracking gap — no automated alerts currently.'},
+  // Biometric
+  {id:'df23',field:'Fingerprint / Biometric ID',cat:'Biometric',sensitivity:'Critical',stored:'Site Access System',countries:['Myanmar','Indonesia'],basis:'Consent',retention:'Duration of employment',risk:'high',notes:'Special category data under most privacy frameworks. Biometric identifiers used for site access control at Myanmar and Indonesia sites. Explicit consent required. DPIA (Data Protection Impact Assessment) recommended.'},
+  // Operational
+  {id:'df24',field:'Work Permit / Visa Details',cat:'Operational',sensitivity:'Sensitive',stored:'Excel HRIS + Paper',countries:['Group'],basis:'Legal obligation',retention:'7 yrs post-employment',risk:'medium',notes:'Expiry tracking critical. Currently monitored manually. 30/60/90-day alerts required in HRIS. Permit expiry = immediate operational and legal risk.'},
+  {id:'df25',field:'Site Assignment / Rig',cat:'Operational',sensitivity:'Internal',stored:'Excel HRIS',countries:['Group'],basis:'Contractual necessity',retention:'Duration of employment',risk:'low',notes:'Used for scheduling, allowance calculations, and safety roster. Well-maintained in current system.'},
+];
+
+const countryLaws = [
+  {
+    country:'Thailand',flag:'🇹🇭',color:'#3b2a6e',
+    law:'Personal Data Protection Act (PDPA)',enacted:'2022',
+    status:'Most comprehensive SE Asia framework',
+    items:[
+      {obligation:'Data Subject Rights',detail:'Right to access, rectify, erase, restrict, object, and portability',status:'partial',action:'Establish formal request process for employees'},
+      {obligation:'Lawful Basis',detail:'Must identify and document lawful basis for each processing activity',status:'partial',action:'Complete consent/basis register (this tool)'},
+      {obligation:'Data Breach Notification',detail:'Notify PDPC within 72 hours; notify individuals if high risk',status:'gap',action:'Implement breach response protocol'},
+      {obligation:'Data Protection Officer',detail:'DPO required for large-scale processing of sensitive data',status:'gap',action:'Assess DPO requirement; may designate HR Manager'},
+      {obligation:'Cross-border Transfer',detail:'Adequate protection required for transfers outside Thailand',status:'partial',action:'Review data flows to Group HRIS/payroll'},
+      {obligation:'Privacy Notice',detail:'Employees must receive clear privacy notice at collection',status:'gap',action:'Draft and issue Employee Privacy Notice (Thailand)'},
+    ]
+  },
+  {
+    country:'Indonesia',flag:'🇮🇩',color:'#1a4731',
+    law:'Personal Data Protection Law (PDP Law)',enacted:'2024',
+    status:'New framework — 2-year transition until 2026',
+    items:[
+      {obligation:'Data Controller Registration',detail:'Controllers processing sensitive data must register with BSSN',status:'gap',action:'Assess registration requirement with local counsel'},
+      {obligation:'Employee Consent',detail:'Employment context: consent can be overridden by contractual necessity',status:'compliant',action:'Document contractual necessity as primary basis'},
+      {obligation:'Breach Notification',detail:'Notify authorities and individuals within 14 days',status:'gap',action:'Include Indonesia in breach protocol'},
+      {obligation:'Data Minimisation',detail:'Only collect data necessary for stated purpose',status:'partial',action:'Review payroll data fields for necessity'},
+      {obligation:'BPJS Data',detail:'BPJS registration data has specific retention and access rules',status:'compliant',action:'Maintain in payroll system per BPJS requirements'},
+      {obligation:'Transition Compliance',detail:'Full compliance required by October 2026',status:'partial',action:'Build compliance roadmap for 2025–2026'},
+    ]
+  },
+  {
+    country:'Laos',flag:'🇱🇦',color:'#1e5f74',
+    law:'Decree on Electronic Data and Electronic Documents',enacted:'2017',
+    status:'Limited framework — international best practice applies',
+    items:[
+      {obligation:'Labour Law Compliance',detail:'Labour Law 2013 governs employment records and retention',status:'compliant',action:'Maintain records per Labour Law requirements'},
+      {obligation:'Electronic Records',detail:'Electronic employment contracts valid under 2017 decree',status:'compliant',action:'Continue using e-contracts'},
+      {obligation:'Employee File Access',detail:'Employees entitled to view their employment records',status:'partial',action:'Establish process for record access requests'},
+      {obligation:'Data Localisation',detail:'No formal data localisation requirements currently',status:'compliant',action:'Monitor for legislative updates'},
+      {obligation:'Payroll Records',detail:'Payroll records must be retained for statutory period',status:'compliant',action:'Maintain 7-year retention in QuickBooks'},
+      {obligation:'Cross-border Transfer',detail:'No formal restrictions — apply group policy as minimum',status:'compliant',action:'Apply Valentis Group data transfer standards'},
+    ]
+  },
+  {
+    country:'Myanmar',flag:'🇲🇲',color:'#6b3a2a',
+    law:'Electronic Transactions Law + Labour Law',enacted:'2004 / 2013',
+    status:'Developing framework — international best practice applies',
+    items:[
+      {obligation:'Labour Law Records',detail:'Employment records required for 3 years minimum',status:'compliant',action:'Maintain records per Myanmar Labour Law'},
+      {obligation:'Social Security Data',detail:'SSB registration data has specific handling requirements',status:'compliant',action:'Maintain in local payroll system'},
+      {obligation:'Site Worker Privacy',detail:'No specific requirements — apply group policy',status:'partial',action:'Issue Myanmar-specific privacy guidance to site managers'},
+      {obligation:'Foreign Worker Permits',detail:'Work permit records for expats must be maintained',status:'compliant',action:'Track in HRIS permit module'},
+      {obligation:'Biometric Data',detail:'No specific law — consent and proportionality apply',status:'partial',action:'Obtain explicit consent for site fingerprint systems'},
+      {obligation:'Data Transfer',detail:'No formal restrictions — apply group policy',status:'compliant',action:'Apply Valentis Group data transfer standards'},
+    ]
+  },
+];
+
+const retentionData = [
+  {category:'Employment Contracts & Offer Letters',period:'7 years post-employment',basis:'Labour law across all 4 countries',fields:['Contract','Offer letter','Amendment letters','Grade change letters'],action:'Annual review and archive'},
+  {category:'Payroll & Compensation Records',period:'7 years post-employment',basis:'Tax authority requirements (all countries)',fields:['Payslips','Salary history','Allowances','Tax calculations','BPJS/SSF records'],action:'Maintained in country payroll systems'},
+  {category:'Disciplinary & Grievance Records',period:'5 years post-resolution',basis:'Limitation periods for employment claims',fields:['Warning letters','Disciplinary hearing notes','Investigation reports','Outcome letters'],action:'Secure storage, HR Manager access only'},
+  {category:'Performance Reviews & PIPs',period:'5 years post-employment',basis:'Employment claim limitation periods',fields:['Review forms','PIP documents','Improvement plans','Scores and ratings'],action:'Centralise in HRIS on implementation'},
+  {category:'Recruitment & Application Data',period:'1 year post-application (non-hires)',basis:'PDPA (Thailand), PDP Law (Indonesia)',fields:['CVs','Application forms','Interview notes','Assessment scores'],action:'Auto-delete in ATS after 12 months'},
+  {category:'Training & Certification Records',period:'7 years post-expiry (certifications)',basis:'Safety regulations + legal obligation',fields:['Completion records','Certificates','G3→G4 milestones','Induction records'],action:'Migrate to LMS; alert on expiry'},
+  {category:'Health & Safety Records',period:'10 years post-incident',basis:'Occupational health regulations',fields:['Incident reports','Medical certificates','Injury records','Risk assessments'],action:'Paper records to be digitised and archived'},
+  {category:'Work Permits & Visa Records',period:'7 years post-expiry',basis:'Immigration authority requirements',fields:['Permit copies','Visa records','Renewal applications','Approval letters'],action:'Track expiry in HRIS; secure physical copies'},
+  {category:'Biometric Data (Site Access)',period:'Delete within 30 days of termination',basis:'PDPA (Thailand), data minimisation principle',fields:['Fingerprint templates','Access logs','Biometric identifiers'],action:'Immediate deletion protocol on termination'},
+];
+
+const breachStepsData = [
+  {num:'01',title:'Identify & Contain',desc:'Stop the breach. Isolate affected systems. Preserve evidence. Notify Group HR Manager and COO immediately. Do not delete anything.',time:'0–4 Hours',timeClass:'bst-urgent',owner:'Discoverer + Group HR Manager',urgent:true},
+  {num:'02',title:'Assess & Classify',desc:'Determine: What data was affected? How many individuals? What countries? Was data accessed or just exposed? Use breach matrix to classify severity.',time:'4–24 Hours',timeClass:'bst-urgent',owner:'Group HR Manager + COO',urgent:true},
+  {num:'03',title:'Notify Authorities',desc:'Thailand PDPA: notify PDPC within 72 hrs. Indonesia PDP: notify within 14 days. Laos/Myanmar: notify local authorities as applicable. Use pre-drafted notification template.',time:'Within 72 Hours',timeClass:'bst-soon',owner:'Group HR Manager + Legal Counsel',urgent:false},
+  {num:'04',title:'Notify Individuals & Remediate',desc:'Notify affected employees where high risk to rights/freedoms. Implement technical fixes. Update access controls. Document all actions taken.',time:'72 Hours – 30 Days',timeClass:'bst-normal',owner:'Group HR Manager',urgent:false},
+];
+
+const breachMatrixData = [
+  {scenario:'Payroll file sent to wrong email',severity:'high',response:'Immediate recall, notify individual, log incident, assess external regulator notification'},
+  {scenario:'Excel HRIS accessed by unauthorised person',severity:'high',response:'Change all passwords, audit access log, notify HR Manager and COO within 4 hours'},
+  {scenario:'Laptop with HR data lost/stolen',severity:'high',response:'Remote wipe if possible, notify within 24 hours, assess regulatory notification'},
+  {scenario:'WhatsApp message with employee data intercepted',severity:'medium',response:'Assess exposure, notify individual if sensitive data exposed, log and review policy'},
+  {scenario:'Unauthorised access to ATS candidate data',severity:'medium',response:'Revoke access, notify affected candidates, review ATS permissions'},
+  {scenario:'Paper personnel file left unsecured',severity:'low',response:'Retrieve and secure immediately, log incident, brief site manager on file handling'},
+];
+
+const breachContactsData = [
+  {role:'Group HR Manager',name:'Ba',action:'First point of contact for all breaches. Leads response.'},
+  {role:'COO',name:'Valentis COO',action:'Notified within 4 hours of any high-severity breach.'},
+  {role:'Legal Counsel (Thailand)',name:'External',action:'Advise on PDPA notification. Contact within 24 hours.'},
+  {role:'Legal Counsel (Indonesia)',name:'External',action:'Advise on PDP Law notification. Contact within 48 hours.'},
+  {role:'IT Support',name:'Internal/External',action:'Technical containment and forensics support.'},
+];
+
+const consentData = [
+  {activity:'Payroll processing',data:'Salary, bank details, tax ID',basis:'Contractual necessity',countries:['Group'],consentReq:'No',doc:'Employment contract'},
+  {activity:'BPJS / SSF registration',data:'Personal ID, DOB, salary',basis:'Legal obligation',countries:['Indonesia','Thailand'],consentReq:'No',doc:'Statutory requirement'},
+  {activity:'Work permit application',data:'Passport, nationality, role',basis:'Legal obligation',countries:['Group'],consentReq:'No',doc:'Immigration law'},
+  {activity:'Performance review',data:'Review scores, PIP documents',basis:'Contractual necessity',countries:['Group'],consentReq:'No',doc:'Employment contract'},
+  {activity:'Training record keeping',data:'Completions, certifications',basis:'Legal obligation',countries:['Group'],consentReq:'No',doc:'Safety regulations'},
+  {activity:'Site biometric access',data:'Fingerprint template',basis:'Consent',countries:['Myanmar','Indonesia'],consentReq:'Yes — explicit',doc:'Biometric consent form'},
+  {activity:'Health certificate collection',data:'Medical screening results',basis:'Legal obligation',countries:['Group'],consentReq:'No',doc:'Site safety requirements'},
+  {activity:'Emergency contact storage',data:'Next of kin name & phone',basis:'Vital interest',countries:['Group'],consentReq:'Recommended',doc:'Employee data form'},
+  {activity:'Recruitment data retention (non-hires)',data:'CV, interview notes',basis:'Legitimate interest',countries:['Group'],consentReq:'Privacy notice',doc:'ATS privacy notice'},
+  {activity:'Reference checks',data:'Employment history, performance',basis:'Legitimate interest',countries:['Group'],consentReq:'Candidate informed',doc:'Application form notice'},
+];
+
+const rightsData = [
+  {right:'Right of Access',desc:'Employee can request a copy of all HR data held about them.',how:'Submit written request to HR Manager. Response within 30 days.',applies:['Thailand','Indonesia']},
+  {right:'Right to Rectification',desc:'Employee can request correction of inaccurate personal data.',how:'Submit correction request. HR to update within 14 days and confirm.',applies:['Thailand','Indonesia','Group Policy']},
+  {right:'Right to Erasure',desc:'Employee can request deletion of data no longer necessary.',how:'Assess against retention schedule. Delete where no legal basis to retain.',applies:['Thailand','Indonesia']},
+  {right:'Right to Object',desc:'Employee can object to processing based on legitimate interest.',how:'Document objection. Assess grounds. Respond within 30 days.',applies:['Thailand']},
+  {right:'Right to Restriction',desc:'Employee can request processing be limited pending dispute resolution.',how:'Freeze data usage while dispute is resolved. Document restriction.',applies:['Thailand','Indonesia']},
+  {right:'Right to Data Portability',desc:'Employee can request data in machine-readable format.',how:'Export from HRIS to CSV/JSON. Provide within 30 days of request.',applies:['Thailand']},
+];
+
+// ── RENDER REGISTER ───────────────────────────────────
+function renderRegister() {
+  const q = document.getElementById('regSearch').value.toLowerCase();
+  const cat = document.getElementById('regCat').value;
+  const sens = document.getElementById('regSens').value;
+  const filtered = dataFields.filter(d =>
+    (!q || d.field.toLowerCase().includes(q) || d.notes.toLowerCase().includes(q)) &&
+    (!cat || d.cat === cat) &&
+    (!sens || d.sensitivity === sens)
+  );
+  const sensClass = {Critical:'sens-critical',Sensitive:'sens-sensitive',Internal:'sens-internal',Public:'sens-public'};
+  const byCat = {};
+  filtered.forEach(d => { if(!byCat[d.cat]) byCat[d.cat]=[]; byCat[d.cat].push(d); });
+  let html = '';
+  Object.entries(byCat).forEach(([cat,items]) => {
+    html += `<tr class="reg-cat-row"><td colspan="8">${cat} (${items.length})</td></tr>`;
+    items.forEach(d => {
+      const riskDot = {high:'rd-high',medium:'rd-medium',low:'rd-low'}[d.risk];
+      const countryChips = d.countries.map(c=>`<span class="chip chip-${c.toLowerCase()}">${c}</span>`).join('');
+      html += `<tr class="reg-tr" onclick="openFieldDetail('${d.id}')">
+        <td class="reg-td" style="font-weight:600">${d.field}</td>
+        <td class="reg-td">${d.cat}</td>
+        <td class="reg-td"><span class="sensitivity-badge ${sensClass[d.sensitivity]}">${d.sensitivity}</span></td>
+        <td class="reg-td" style="font-family:var(--fm);font-size:11px;color:var(--steel)">${d.stored}</td>
+        <td class="reg-td">${countryChips}</td>
+        <td class="reg-td" style="font-size:11px;color:var(--steel)">${d.basis}</td>
+        <td class="reg-td" style="font-family:var(--fm);font-size:10px;color:var(--steel2);white-space:nowrap">${d.retention}</td>
+        <td class="reg-td"><span class="risk-dot ${riskDot}"></span>${d.risk.charAt(0).toUpperCase()+d.risk.slice(1)}</td>
+      </tr>`;
+    });
+  });
+  document.getElementById('registerBody').innerHTML = html || '<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--steel)">No fields match your filters.</td></tr>';
+  updateStats();
+}
+
+function openFieldDetail(id) {
+  const d = dataFields.find(x=>x.id===id); if(!d) return;
+  const sensClass = {Critical:'sens-critical',Sensitive:'sens-sensitive',Internal:'sens-internal',Public:'sens-public'};
+  const riskColor = {high:'var(--danger)',medium:'var(--warning)',low:'var(--success)'};
+  document.getElementById('fmTitle').textContent = d.field;
+  document.getElementById('fmSub').textContent = d.cat + ' · ' + d.stored;
+  document.getElementById('fmBody').innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+      <span class="sensitivity-badge ${sensClass[d.sensitivity]}">${d.sensitivity}</span>
+      <span style="font-family:var(--fm);font-size:9px;padding:2px 8px;border-radius:2px;background:${d.risk==='high'?'var(--danger-bg)':d.risk==='medium'?'var(--warning-bg)':'var(--success-bg)'};color:${riskColor[d.risk]};border:1px solid ${d.risk==='high'?'var(--danger-border)':d.risk==='medium'?'var(--warning-border)':'var(--success-border)'};font-weight:600">${d.risk.toUpperCase()} RISK</span>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Field Details</div>
+      <div class="modal-grid">
+        <div class="modal-field"><div class="modal-field-label">CATEGORY</div><div class="modal-field-value">${d.cat}</div></div>
+        <div class="modal-field"><div class="modal-field-label">STORED IN</div><div class="modal-field-value">${d.stored}</div></div>
+        <div class="modal-field"><div class="modal-field-label">LAWFUL BASIS</div><div class="modal-field-value">${d.basis}</div></div>
+        <div class="modal-field"><div class="modal-field-label">RETENTION PERIOD</div><div class="modal-field-value">${d.retention}</div></div>
+        <div class="modal-field" style="grid-column:1/-1"><div class="modal-field-label">COUNTRIES APPLICABLE</div><div class="modal-field-value">${d.countries.join(', ')}</div></div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Handling Notes & Risk</div>
+      <div style="background:var(--neutral-bg);border:1px solid var(--border);border-radius:4px;padding:12px 14px;font-size:13px;color:var(--ink);line-height:1.8">${d.notes}</div>
+    </div>`;
+  document.getElementById('fieldModal').classList.add('active');
+}
+
+// ── RENDER COUNTRY LAWS ───────────────────────────────
+function renderCountryLaws() {
+  const statusClass = {compliant:'ls-compliant',partial:'ls-partial',gap:'ls-gap','n/a':'ls-na'};
+  const statusLabel = {compliant:'COMPLIANT',partial:'PARTIAL',gap:'GAP','n/a':'N/A'};
+  document.getElementById('lawGrid').innerHTML = countryLaws.map(cl=>`
+    <div class="law-card">
+      <div class="law-card-header" style="background:${cl.color}">
+        <div class="law-flag">${cl.flag}</div>
+        <div>
+          <div class="law-card-title">${cl.country}</div>
+          <div class="law-card-sub">${cl.law} · ${cl.enacted}</div>
+          <div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.5);margin-top:2px">${cl.status}</div>
+        </div>
+      </div>
+      <table class="law-table">
+        <thead><tr>
+          <th class="law-th">Obligation</th>
+          <th class="law-th">Detail</th>
+          <th class="law-th" style="text-align:center">Status</th>
+          <th class="law-th">Action Required</th>
+        </tr></thead>
+        <tbody>
+          ${cl.items.map(item=>`<tr class="law-tr">
+            <td class="law-td" style="font-weight:600;white-space:nowrap">${item.obligation}</td>
+            <td class="law-td" style="font-size:11.5px;color:var(--steel)">${item.detail}</td>
+            <td class="law-td" style="text-align:center"><span class="law-status ${statusClass[item.status]||'ls-na'}">${statusLabel[item.status]||item.status.toUpperCase()}</span></td>
+            <td class="law-td" style="font-size:11.5px;color:var(--ink)">${item.action}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`).join('');
+}
+
+// ── RENDER RETENTION ──────────────────────────────────
+function renderRetention() {
+  document.getElementById('retentionGrid').innerHTML = retentionData.map(r=>`
+    <div class="ret-card">
+      <div class="ret-header">
+        <div class="ret-title">${r.category}</div>
+        <div class="ret-period">${r.period}</div>
+      </div>
+      <div class="ret-body">
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--steel2);margin-bottom:6px">COVERS</div>
+        ${r.fields.map(f=>`<div class="ret-row"><span class="ret-field">${f}</span></div>`).join('')}
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--electric);margin-top:10px;margin-bottom:4px">BASIS</div>
+        <div style="font-size:11.5px;color:var(--steel)">${r.basis}</div>
+        <div style="margin-top:8px;padding:7px 10px;background:var(--electric-dim);border:1px solid var(--electric-border);border-radius:3px;font-size:11px;color:var(--ink)">→ ${r.action}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── RENDER BREACH ─────────────────────────────────────
+function renderBreach() {
+  document.getElementById('breachSteps').innerHTML = breachStepsData.map((s,i)=>`
+    <div class="breach-step ${s.urgent?'urgent':''}">
+      ${i<breachStepsData.length-1?'<div class="connector-h">→</div>':''}
+      <div class="bs-num">STEP ${s.num}</div>
+      <span class="bs-time ${s.timeClass}">${s.time}</span>
+      <div class="bs-title">${s.title}</div>
+      <div class="bs-desc">${s.desc}</div>
+      <div class="bs-owner">👤 ${s.owner}</div>
+    </div>`).join('');
+
+  const sevColor = {high:'var(--danger)',medium:'var(--warning)',low:'var(--success)'};
+  const sevBg = {high:'var(--danger-bg)',medium:'var(--warning-bg)',low:'var(--success-bg)'};
+  document.getElementById('breachMatrix').innerHTML = breachMatrixData.map(b=>`
+    <tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:9px 14px;font-size:12px;color:var(--ink)">${b.scenario}</td>
+      <td style="padding:9px 14px;text-align:center"><span style="font-family:var(--fm);font-size:9px;font-weight:600;padding:2px 8px;border-radius:2px;background:${sevBg[b.severity]};color:${sevColor[b.severity]}">${b.severity.toUpperCase()}</span></td>
+      <td style="padding:9px 14px;font-size:11.5px;color:var(--steel);line-height:1.5">${b.response}</td>
+    </tr>`).join('');
+
+  document.getElementById('breachContacts').innerHTML = breachContactsData.map(c=>`
+    <div style="display:flex;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);align-items:flex-start">
+      <div style="font-size:18px">👤</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink)">${c.role} — <span style="font-weight:400;color:var(--steel)">${c.name}</span></div>
+        <div style="font-size:11.5px;color:var(--steel);margin-top:2px">${c.action}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── RENDER CONSENT ────────────────────────────────────
+function renderConsent() {
+  const ccMap = {Laos:'chip-laos',Myanmar:'chip-myanmar',Indonesia:'chip-indonesia',Thailand:'chip-thailand',Group:'chip-group'};
+  document.getElementById('consentBody').innerHTML = consentData.map(c=>`
+    <tr class="consent-tr">
+      <td class="consent-td" style="font-weight:600">${c.activity}</td>
+      <td class="consent-td" style="font-size:11.5px;color:var(--steel)">${c.data}</td>
+      <td class="consent-td"><span style="font-family:var(--fm);font-size:9px;padding:2px 7px;border-radius:2px;background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border)">${c.basis}</span></td>
+      <td class="consent-td">${c.countries.map(x=>`<span class="chip ${ccMap[x]||'chip-group'}">${x}</span>`).join('')}</td>
+      <td class="consent-td"><span style="font-family:var(--fm);font-size:9px;font-weight:600;padding:2px 7px;border-radius:2px;background:${c.consentReq==='No'?'var(--success-bg)':c.consentReq.includes('Yes')?'var(--warning-bg)':'var(--electric-dim)'};color:${c.consentReq==='No'?'var(--success)':c.consentReq.includes('Yes')?'var(--warning)':'var(--electric)'};border:1px solid ${c.consentReq==='No'?'var(--success-border)':c.consentReq.includes('Yes')?'var(--warning-border)':'var(--electric-border)'}">${c.consentReq}</span></td>
+      <td class="consent-td" style="font-size:11.5px;color:var(--steel)">${c.doc}</td>
+    </tr>`).join('');
+
+  document.getElementById('rightsGrid').innerHTML = rightsData.map(r=>`
+    <div style="padding:14px 16px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+      <div style="font-family:var(--fd);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:5px">${r.right}</div>
+      <div style="font-size:12px;color:var(--steel);line-height:1.6;margin-bottom:8px">${r.desc}</div>
+      <div style="font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--electric);margin-bottom:4px">HOW TO FULFIL</div>
+      <div style="font-size:11.5px;color:var(--ink);line-height:1.5;margin-bottom:8px">${r.how}</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap">${r.applies.map(a=>{
+        const ccls = a==='Thailand'?'chip-thailand':a==='Indonesia'?'chip-indonesia':a==='Laos'?'chip-laos':a==='Myanmar'?'chip-myanmar':'chip-group';
+        return `<span class="chip ${ccls}">${a}</span>`;
+      }).join('')}</div>
+    </div>`).join('');
+}
+
+// ── ADD FIELD ─────────────────────────────────────────
+function openAddField() { document.getElementById('addFieldModal').classList.add('active'); }
+function saveField() {
+  const name = document.getElementById('af_name').value.trim();
+  if(!name){showToast('⚠ Field name required');return;}
+  dataFields.push({
+    id:'df'+String(dataFields.length+1).padStart(2,'0'),
+    field:name,
+    cat:document.getElementById('af_cat').value,
+    sensitivity:document.getElementById('af_sens').value,
+    stored:document.getElementById('af_stored').value,
+    countries:['Group'],
+    basis:document.getElementById('af_basis').value,
+    retention:document.getElementById('af_retention').value,
+    risk:'medium',
+    notes:document.getElementById('af_notes').value||'—'
+  });
+  document.getElementById('addFieldModal').classList.remove('active');
+  renderRegister();
+  showToast('✓ Field registered: '+name);
+}
+
+function updateStats() {
+  document.getElementById('statFields').textContent = dataFields.length;
+  document.getElementById('statCritical').textContent = dataFields.filter(d=>d.sensitivity==='Critical').length;
+  document.getElementById('statGaps').textContent = countryLaws.flatMap(c=>c.items).filter(i=>i.status==='gap').length;
+  document.getElementById('statCompliant').textContent = countryLaws.flatMap(c=>c.items).filter(i=>i.status==='compliant').length;
+}
+
+function switchTab(id) {
+  const tabs = ['register','countrylaws','retention','breach','consent'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='countrylaws') renderCountryLaws();
+  if(id==='retention') renderRetention();
+  if(id==='breach') renderBreach();
+  if(id==='consent') renderConsent();
+}
+function closeModal(id,e){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('active');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+// Init
+renderRegister();
+updateStats();
+</script>
+</body>
+</html>

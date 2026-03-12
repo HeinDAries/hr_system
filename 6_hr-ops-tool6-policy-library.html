@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Policy Library & Version Control — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --slate: #2d3142;
+    --amber: #c9802a;
+    --amber-light: #e8a84a;
+    --amber-pale: #fdf3e3;
+    --steel: #4a5568;
+    --mist: #f4f5f7;
+    --white: #ffffff;
+    --border: #dde1ea;
+    --success: #2d7d46;
+    --success-bg: #edf7f1;
+    --warning: #b45309;
+    --warning-bg: #fef3cd;
+    --danger: #b91c1c;
+    --danger-bg: #fef2f2;
+    --info: #1e5f74;
+    --info-bg: #e8f4f8;
+    --purple: #5b21b6;
+    --purple-bg: #ede9fe;
+    --tag-laos: #1e5f74;
+    --tag-myanmar: #6b3a2a;
+    --tag-indonesia: #1a4731;
+    --tag-thailand: #3b2a6e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--mist); color: var(--ink); min-height: 100vh; }
+
+  .header { background: var(--slate); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--amber); }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .dept-badge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--amber); letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--amber); padding: 3px 8px; border-radius: 2px; }
+  .header-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); font-weight: 600; }
+  .header-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8899aa; letter-spacing: 1px; }
+
+  .tool-header { background: var(--white); padding: 28px 40px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  .tool-title-block h1 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .tool-title-block p { font-size: 13px; color: var(--steel); max-width: 600px; line-height: 1.6; }
+  .tool-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber-light); padding: 4px 10px; border-radius: 2px; letter-spacing: 1px; white-space: nowrap; margin-top: 4px; }
+
+  .stats-bar { background: var(--slate); padding: 16px 40px; display: flex; }
+  .stat-item { flex: 1; text-align: center; padding: 0 14px; border-right: 1px solid rgba(255,255,255,0.1); }
+  .stat-item:last-child { border-right: none; }
+  .stat-number { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; color: var(--amber-light); display: block; }
+  .stat-number.red { color: #f87171; }
+  .stat-number.green { color: #6ee7b7; }
+  .stat-number.yellow { color: #fcd34d; }
+  .stat-label { font-size: 11px; color: #99aabb; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .main { padding: 28px 40px; display: flex; flex-direction: column; gap: 24px; }
+
+  .tab-bar { display: flex; border-bottom: 2px solid var(--border); }
+  .tab-btn { padding: 10px 22px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--steel); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--ink); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .controls-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .search-box { flex: 1; min-width: 200px; display: flex; align-items: center; background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 0 14px; gap: 8px; height: 38px; }
+  .search-box input { border: none; outline: none; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); flex: 1; background: transparent; }
+  .filter-select { height: 38px; padding: 0 12px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: var(--steel); background: var(--white); cursor: pointer; outline: none; }
+  .btn { height: 38px; padding: 0 18px; border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--amber); color: var(--white); }
+  .btn-primary:hover { background: var(--amber-light); }
+  .btn-outline { background: var(--white); color: var(--slate); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* POLICY CARDS */
+  .policy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .policy-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s; display: flex; flex-direction: column; }
+  .policy-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: var(--amber); }
+  .policy-card-top { padding: 16px 18px 12px; flex: 1; }
+  .policy-card-id { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #aab; letter-spacing: 1px; margin-bottom: 6px; }
+  .policy-card-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--ink); line-height: 1.3; margin-bottom: 6px; }
+  .policy-card-desc { font-size: 12px; color: var(--steel); line-height: 1.5; margin-bottom: 10px; }
+  .policy-card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .cat-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 2px; font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+  .cat-employment { background: #ede9fe; color: #5b21b6; }
+  .cat-conduct { background: var(--info-bg); color: var(--info); }
+  .cat-safety { background: var(--warning-bg); color: var(--warning); }
+  .cat-leave { background: var(--success-bg); color: var(--success); }
+  .cat-compensation { background: var(--amber-pale); color: var(--amber); }
+  .cat-performance { background: #fce7f3; color: #9d174d; }
+  .cat-operations { background: var(--mist); color: var(--steel); }
+  .cat-termination { background: var(--danger-bg); color: var(--danger); }
+
+  .scope-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 2px; font-family: 'IBM Plex Mono', monospace; }
+  .scope-group { background: var(--slate); color: var(--amber-light); }
+  .scope-country { background: var(--mist); color: var(--steel); }
+
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .sd-current { background: var(--success); }
+  .sd-review { background: var(--warning); }
+  .sd-draft { background: #aab; }
+  .sd-retired { background: var(--danger); }
+
+  .policy-card-footer { padding: 10px 18px; background: var(--mist); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .pf-version { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--amber); font-weight: 500; }
+  .pf-date { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--steel); }
+  .pf-status { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; }
+  .pfs-current { color: var(--success); }
+  .pfs-review { color: var(--warning); }
+  .pfs-draft { color: #aab; }
+
+  /* ACK TABLE */
+  .table-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .table-card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .table-card-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--steel); letter-spacing: 1.5px; text-transform: uppercase; }
+  .record-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--amber); }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--mist); padding: 10px 14px; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--steel); letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border); font-weight: 500; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--amber-pale); }
+  td { padding: 10px 14px; font-size: 12.5px; color: var(--ink); vertical-align: middle; }
+
+  .country-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 2px; color: var(--white); }
+  .ct-laos { background: var(--tag-laos); }
+  .ct-myanmar { background: var(--tag-myanmar); }
+  .ct-indonesia { background: var(--tag-indonesia); }
+  .ct-thailand { background: var(--tag-thailand); }
+  .ct-group { background: var(--slate); }
+
+  .ack-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 10px; }
+  .ack-done { background: var(--success-bg); color: var(--success); }
+  .ack-pending { background: var(--warning-bg); color: var(--warning); }
+  .ack-overdue { background: var(--danger-bg); color: var(--danger); }
+
+  .comp-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .comp-bar { flex: 1; max-width: 80px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .cb-fill { height: 100%; border-radius: 3px; }
+  .cbf-high { background: var(--success); }
+  .cbf-med { background: var(--amber); }
+  .cbf-low { background: var(--danger); }
+  .comp-pct { font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+
+  .action-btns { display: flex; gap: 6px; }
+  .icon-btn { width: 28px; height: 28px; border-radius: 3px; border: 1px solid var(--border); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; color: var(--steel); }
+  .icon-btn:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-pale); }
+
+  /* VERSION HISTORY */
+  .version-timeline { position: relative; padding-left: 28px; }
+  .version-timeline::before { content:''; position:absolute; left:9px; top:8px; bottom:8px; width:2px; background: var(--border); }
+  .version-entry { position: relative; margin-bottom: 20px; }
+  .version-dot { position: absolute; left: -23px; top: 4px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--white); }
+  .vd-current { background: var(--success); box-shadow: 0 0 0 2px var(--success); }
+  .vd-old { background: var(--steel); }
+  .vd-draft { background: var(--amber); }
+  .version-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .version-num { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; color: var(--ink); }
+  .version-date { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--steel); }
+  .version-by { font-size: 11px; color: var(--steel); }
+  .version-changes { font-size: 12.5px; color: var(--ink); line-height: 1.5; background: var(--mist); padding: 8px 12px; border-radius: 4px; border-left: 3px solid var(--border); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,26,46,0.6); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--white); border-radius: 8px; width: 100%; max-width: 780px; max-height: 92vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .modal-sm { max-width: 560px; }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--white); z-index: 1; }
+  .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); }
+  .modal-close { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 16px; color: var(--steel); display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: var(--mist); }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--mist); border-radius: 0 0 8px 8px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-full { grid-column: 1 / -1; }
+  .form-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--amber-pale); }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 11px; font-weight: 500; color: var(--steel); }
+  .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.15s; background: var(--white); }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--amber); }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+  .form-divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+  /* POLICY DETAIL */
+  .policy-detail-hero { background: var(--slate); padding: 20px 24px; border-radius: 4px; margin-bottom: 20px; }
+  .pdh-id { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #8899aa; letter-spacing: 1px; margin-bottom: 6px; }
+  .pdh-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  .pdh-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .detail-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; margin-top: 20px; padding-bottom: 5px; border-bottom: 1px solid var(--amber-pale); }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .detail-item .detail-label { font-size: 10px; color: var(--steel); font-weight: 500; text-transform: uppercase; margin-bottom: 3px; }
+  .detail-item .detail-value { font-size: 13px; color: var(--ink); line-height: 1.4; }
+
+  /* ACK PROGRESS RING - lightweight */
+  .ack-ring-wrap { display: flex; align-items: center; gap: 14px; background: var(--mist); padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; }
+  .ack-ring-stat { text-align: center; }
+  .ack-ring-num { font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 500; color: var(--ink); }
+  .ack-ring-label { font-size: 10px; color: var(--steel); margin-top: 2px; }
+  .ack-ring-bar { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .ack-ring-fill { height: 100%; border-radius: 4px; background: var(--success); transition: width 0.4s; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--slate); color: var(--white); padding: 12px 20px; border-radius: 6px; font-size: 13px; border-left: 3px solid var(--amber); display: none; z-index: 200; }
+  .toast.show { display: block; animation: fadeUp 0.2s ease; }
+  @keyframes fadeUp { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  @media (max-width: 900px) {
+    .header, .tool-header, .main, .stats-bar { padding-left: 16px; padding-right: 16px; }
+    .policy-grid { grid-template-columns: 1fr; }
+    .form-grid, .detail-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="dept-badge">HR OPS · D9</div>
+    <div class="header-title">Valentis Group — HR Operations & Compliance</div>
+  </div>
+  <div class="header-meta">TOOL 06 / 09 &nbsp;·&nbsp; POLICY LIBRARY</div>
+</div>
+
+<div class="tool-header">
+  <div class="tool-title-block">
+    <h1>HR Policy Library & Version Control</h1>
+    <p>Central register of all Valentis Group HR policies — group-wide and country-specific. Tracks effective dates, version history, review cycles, owner accountability, and employee acknowledgement status per policy.</p>
+  </div>
+  <div class="tool-tag">HR OPS · TOOL 6 OF 9</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-number" id="sTotal">—</span><div class="stat-label">Total Policies</div></div>
+  <div class="stat-item"><span class="stat-number green" id="sCurrent">—</span><div class="stat-label">Current</div></div>
+  <div class="stat-item"><span class="stat-number yellow" id="sReview">—</span><div class="stat-label">Due for Review</div></div>
+  <div class="stat-item"><span class="stat-number" id="sDraft">—</span><div class="stat-label">In Draft</div></div>
+  <div class="stat-item"><span class="stat-number green" id="sAckRate">—</span><div class="stat-label">Avg. Ack. Rate</div></div>
+  <div class="stat-item"><span class="stat-number red" id="sAckGap">—</span><div class="stat-label">Outstanding Acks.</div></div>
+</div>
+
+<div class="main">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('library')">Policy Library</button>
+    <button class="tab-btn" onclick="switchTab('acknowledgements')">Acknowledgements</button>
+    <button class="tab-btn" onclick="switchTab('review')">Review Schedule</button>
+  </div>
+
+  <!-- TAB 1: LIBRARY -->
+  <div class="tab-content active" id="tab-library">
+    <div class="controls-row">
+      <div class="search-box">
+        <span style="color:#99aabb;font-size:14px;">⌕</span>
+        <input type="text" id="libSearch" placeholder="Search policy title, keyword…" oninput="filterLibrary()">
+      </div>
+      <select class="filter-select" id="flCat" onchange="filterLibrary()">
+        <option value="">All Categories</option>
+        <option>Employment</option><option>Code of Conduct</option><option>Health & Safety</option>
+        <option>Leave</option><option>Compensation</option><option>Performance</option>
+        <option>Operations</option><option>Termination</option>
+      </select>
+      <select class="filter-select" id="flScope" onchange="filterLibrary()">
+        <option value="">All Scopes</option>
+        <option value="Group-Wide">Group-Wide</option>
+        <option value="Laos">Laos</option><option value="Myanmar">Myanmar</option>
+        <option value="Indonesia">Indonesia</option><option value="Thailand">Thailand</option>
+      </select>
+      <select class="filter-select" id="flStatus" onchange="filterLibrary()">
+        <option value="">All Statuses</option>
+        <option>Current</option><option>Under Review</option><option>Draft</option><option>Retired</option>
+      </select>
+      <button class="btn btn-primary" onclick="openAddPolicy()">+ Add Policy</button>
+      <button class="btn btn-outline" onclick="exportLibrary()">↓ Export</button>
+    </div>
+    <div class="policy-grid" id="policyGrid"></div>
+  </div>
+
+  <!-- TAB 2: ACKNOWLEDGEMENTS -->
+  <div class="tab-content" id="tab-acknowledgements">
+    <div class="controls-row">
+      <div class="search-box">
+        <span style="color:#99aabb;font-size:14px;">⌕</span>
+        <input type="text" id="ackSearch" placeholder="Search employee…" oninput="filterAck()">
+      </div>
+      <select class="filter-select" id="faPolicy" onchange="filterAck()">
+        <option value="">All Policies</option>
+      </select>
+      <select class="filter-select" id="faCountry" onchange="filterAck()">
+        <option value="">All Countries</option>
+        <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option>
+      </select>
+      <select class="filter-select" id="faStatus" onchange="filterAck()">
+        <option value="">All Ack. Status</option>
+        <option value="Acknowledged">Acknowledged</option>
+        <option value="Pending">Pending</option>
+        <option value="Overdue">Overdue</option>
+      </select>
+      <button class="btn btn-outline" onclick="sendReminders()">↗ Send Reminders</button>
+    </div>
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">Acknowledgement Tracker</span>
+        <span class="record-count" id="ackCount"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>EMPLOYEE</th>
+            <th>COUNTRY</th>
+            <th>GRADE</th>
+            <th>POLICY</th>
+            <th>VERSION</th>
+            <th>REQUIRED BY</th>
+            <th>ACKNOWLEDGED</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="ackTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3: REVIEW SCHEDULE -->
+  <div class="tab-content" id="tab-review">
+    <div id="reviewContent"></div>
+  </div>
+</div>
+
+<!-- POLICY DETAIL MODAL -->
+<div class="modal-overlay" id="policyDetailModal" onclick="closeMod('policyDetailModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="pdTitle">Policy Detail</h2>
+      <button class="modal-close" onclick="closeDirect('policyDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="pdBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('policyDetailModal')">Close</button>
+      <button class="btn btn-primary" id="pdEditBtn">Edit Policy</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT POLICY MODAL -->
+<div class="modal-overlay" id="addPolicyModal" onclick="closeMod('addPolicyModal',event)">
+  <div class="modal modal-sm" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="apTitle">Add Policy</h2>
+      <button class="modal-close" onclick="closeDirect('addPolicyModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title" style="margin-top:0;">Policy Details</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Policy ID *</label><input type="text" id="ap_id" placeholder="e.g. POL-GRP-012"></div>
+        <div class="form-group"><label>Version *</label><input type="text" id="ap_version" placeholder="e.g. v1.0"></div>
+        <div class="form-group form-full"><label>Policy Title *</label><input type="text" id="ap_title" placeholder="e.g. Anti-Harassment Policy"></div>
+        <div class="form-group form-full"><label>Description</label><textarea id="ap_desc" placeholder="Brief description of scope and purpose…"></textarea></div>
+        <div class="form-group"><label>Category *</label>
+          <select id="ap_cat">
+            <option>Employment</option><option>Code of Conduct</option><option>Health & Safety</option>
+            <option>Leave</option><option>Compensation</option><option>Performance</option>
+            <option>Operations</option><option>Termination</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Scope *</label>
+          <select id="ap_scope">
+            <option>Group-Wide</option><option>Laos</option><option>Myanmar</option>
+            <option>Indonesia</option><option>Thailand</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Status</label>
+          <select id="ap_status">
+            <option>Current</option><option>Under Review</option><option>Draft</option><option>Retired</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Owner</label><input type="text" id="ap_owner" placeholder="e.g. Group HR Manager" value="Group HR Manager"></div>
+        <div class="form-group"><label>Effective Date *</label><input type="date" id="ap_effective"></div>
+        <div class="form-group"><label>Next Review Date</label><input type="date" id="ap_nextreview"></div>
+        <div class="form-group form-full"><label>Applies To</label><input type="text" id="ap_applies" placeholder="e.g. All employees; Site staff only"></div>
+        <div class="form-group form-full"><label>Change Notes (this version)</label><textarea id="ap_changes" placeholder="Summary of changes in this version…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('addPolicyModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePolicy()">Save Policy</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let editingPolicyId = null;
+
+const policies = [
+  {
+    id:'POL-GRP-001', title:'Group Employment Policy', version:'v1.3', category:'Employment', scope:'Group-Wide',
+    status:'Current', owner:'Group HR Manager', effective:'2024-01-01', nextReview:'2025-06-01',
+    appliesTo:'All employees across all four countries',
+    description:'Establishes the framework for employment conditions, probation periods, contract types, and fundamental employee rights at Valentis Group.',
+    changes:[
+      { version:'v1.3', date:'2024-01-01', by:'Group HR Manager', notes:'Updated probation structure to align with Omnibus Law changes in Indonesia.' },
+      { version:'v1.2', date:'2023-01-01', by:'Group HR Manager', notes:'Added trainee contract category. Aligned G1–G8 grade definitions.' },
+      { version:'v1.1', date:'2022-06-01', by:'Group HR Manager', notes:'Minor amendments to multi-country definitions.' },
+      { version:'v1.0', date:'2021-01-01', by:'Group HR Manager', notes:'Initial issue.' },
+    ]
+  },
+  {
+    id:'POL-GRP-002', title:'Code of Conduct & Ethics', version:'v2.1', category:'Code of Conduct', scope:'Group-Wide',
+    status:'Current', owner:'CEO', effective:'2023-07-01', nextReview:'2025-07-01',
+    appliesTo:'All employees — mandatory acknowledgement required',
+    description:'Defines Valentis Group\'s standards for professional behaviour, ethical conduct, anti-corruption, and conflict of interest obligations.',
+    changes:[
+      { version:'v2.1', date:'2023-07-01', by:'CEO', notes:'Strengthened anti-bribery provisions. Added whistleblower protections.' },
+      { version:'v2.0', date:'2022-01-01', by:'CEO', notes:'Full revision. Added conflict of interest framework.' },
+      { version:'v1.0', date:'2019-01-01', by:'Group HR Manager', notes:'Initial issue.' },
+    ]
+  },
+  {
+    id:'POL-GRP-003', title:'Occupational Health & Safety Policy', version:'v1.2', category:'Health & Safety', scope:'Group-Wide',
+    status:'Under Review', owner:'COO', effective:'2023-01-01', nextReview:'2025-03-31',
+    appliesTo:'All employees — mandatory for site staff',
+    description:'Establishes OHS obligations, site safety standards, PPE requirements, incident reporting procedures, and employer duty of care across all Valentis operations.',
+    changes:[
+      { version:'v1.2', date:'2023-01-01', by:'COO', notes:'Added drill site-specific hazard protocols. Updated incident reporting flow.' },
+      { version:'v1.1', date:'2021-06-01', by:'COO', notes:'Aligned with Laos and Indonesia site regulations.' },
+      { version:'v1.0', date:'2020-01-01', by:'COO', notes:'Initial issue.' },
+    ]
+  },
+  {
+    id:'POL-GRP-004', title:'Leave & Absence Management Policy', version:'v1.1', category:'Leave', scope:'Group-Wide',
+    status:'Current', owner:'Group HR Manager', effective:'2024-03-01', nextReview:'2026-03-01',
+    appliesTo:'All employees — country-specific entitlements apply',
+    description:'Defines leave types, entitlement accrual rules, approval workflows, and absence management procedures across all four jurisdictions.',
+    changes:[
+      { version:'v1.1', date:'2024-03-01', by:'Group HR Manager', notes:'Added country-specific entitlement schedules as appendices.' },
+      { version:'v1.0', date:'2022-01-01', by:'Group HR Manager', notes:'Initial issue.' },
+    ]
+  },
+  {
+    id:'POL-GRP-005', title:'Compensation & Grading Framework', version:'v2.0', category:'Compensation', scope:'Group-Wide',
+    status:'Current', owner:'Group HR Manager', effective:'2024-07-01', nextReview:'2025-12-01',
+    appliesTo:'All employees — G1 through G8',
+    description:'Defines the G1–G8 grade structure, salary bands, allowances, review cycle, and total rewards philosophy for Valentis Group.',
+    changes:[
+      { version:'v2.0', date:'2024-07-01', by:'Group HR Manager', notes:'Full revision. Introduced site vs. office allowance differentials. Updated G3/G4 progression criteria.' },
+      { version:'v1.1', date:'2022-07-01', by:'Group HR Manager', notes:'Adjusted salary bands for inflation.' },
+      { version:'v1.0', date:'2020-01-01', by:'Group HR Manager', notes:'Initial issue.' },
+    ]
+  },
+  {
+    id:'POL-GRP-006', title:'Performance Management Policy', version:'v1.0', category:'Performance', scope:'Group-Wide',
+    status:'Draft', owner:'Group HR Manager', effective:null, nextReview:null,
+    appliesTo:'All employees — draft under consultation',
+    description:'Establishes the annual performance review cycle, goal-setting framework, rating scale, and performance improvement process.',
+    changes:[
+      { version:'v1.0 (Draft)', date:'2025-02-01', by:'Group HR Manager', notes:'Initial draft. Under stakeholder review with COO and Country Manager.' },
+    ]
+  },
+  {
+    id:'POL-GRP-007', title:'Disciplinary & Grievance Policy', version:'v1.2', category:'Code of Conduct', scope:'Group-Wide',
+    status:'Current', owner:'Group HR Manager', effective:'2023-04-01', nextReview:'2025-04-01',
+    appliesTo:'All employees',
+    description:'Sets out the disciplinary procedures, warnings framework, and grievance resolution process. Ensures consistent, fair treatment across all jurisdictions.',
+    changes:[
+      { version:'v1.2', date:'2023-04-01', by:'Group HR Manager', notes:'Added mediation step before formal process. Updated Myanmar-specific procedures.' },
+      { version:'v1.1', date:'2022-01-01', by:'Group HR Manager', notes:'Minor amendments.' },
+      { version:'v1.0', date:'2020-06-01', by:'Group HR Manager', notes:'Initial issue.' },
+    ]
+  },
+  {
+    id:'POL-GRP-008', title:'Termination & Separation Policy', version:'v1.1', category:'Termination', scope:'Group-Wide',
+    status:'Current', owner:'Group HR Manager', effective:'2024-01-01', nextReview:'2026-01-01',
+    appliesTo:'All employees',
+    description:'Governs voluntary and involuntary separation processes, notice periods, severance entitlements, and post-employment obligations.',
+    changes:[
+      { version:'v1.1', date:'2024-01-01', by:'Group HR Manager', notes:'Updated Indonesia severance calculation to align with Omnibus Law.' },
+      { version:'v1.0', date:'2021-01-01', by:'Group HR Manager', notes:'Initial issue.' },
+    ]
+  },
+  {
+    id:'POL-GRP-009', title:'Driller Trainee Development Policy', version:'v1.0', category:'Operations', scope:'Group-Wide',
+    status:'Current', owner:'Group HR Manager', effective:'2023-06-01', nextReview:'2025-06-01',
+    appliesTo:'G2 Trainee Drillers and G3 Drillers; Site Managers',
+    description:'Formalises the 18–24 month G2-to-G3 development pathway, training milestones, competency sign-off criteria, and site manager accountability for the driller pipeline.',
+    changes:[
+      { version:'v1.0', date:'2023-06-01', by:'Group HR Manager', notes:'Initial issue. Created to address driller attrition and formalise pipeline development.' },
+    ]
+  },
+  {
+    id:'POL-GRP-010', title:'Recruitment & Selection Policy', version:'v1.2', category:'Employment', scope:'Group-Wide',
+    status:'Current', owner:'Group HR Manager', effective:'2024-02-01', nextReview:'2026-02-01',
+    appliesTo:'All hiring managers; HR function',
+    description:'Defines the end-to-end recruitment process, job posting standards, interview and selection methodology, and offer approval authority.',
+    changes:[
+      { version:'v1.2', date:'2024-02-01', by:'Group HR Manager', notes:'Added site-specific sourcing guidance. Updated Indonesia RPTKA requirements for foreign hires.' },
+      { version:'v1.1', date:'2022-04-01', by:'Group HR Manager', notes:'Added structured interview templates.' },
+      { version:'v1.0', date:'2020-01-01', by:'Group HR Manager', notes:'Initial issue.' },
+    ]
+  },
+  {
+    id:'POL-MM-001', title:'Myanmar Site Operations Code', version:'v1.1', category:'Operations', scope:'Myanmar',
+    status:'Current', owner:'COO', effective:'2023-09-01', nextReview:'2025-09-01',
+    appliesTo:'All Myanmar site employees',
+    description:'Country-specific operational code covering site rules, camp conduct, roster management, and welfare obligations specific to the Mandalay exploration site.',
+    changes:[
+      { version:'v1.1', date:'2023-09-01', by:'COO', notes:'Updated camp welfare provisions. Added month-3 trainee welfare check requirement.' },
+      { version:'v1.0', date:'2021-06-01', by:'COO', notes:'Initial issue.' },
+    ]
+  },
+  {
+    id:'POL-ID-001', title:'Indonesia BPJS & Social Security Policy', version:'v1.0', category:'Compensation', scope:'Indonesia',
+    status:'Current', owner:'Siti Rahayu', effective:'2022-01-01', nextReview:'2025-12-01',
+    appliesTo:'All Indonesia employees',
+    description:'Covers mandatory BPJS Ketenagakerjaan and BPJS Kesehatan enrollment, contribution rates, and employee obligations under Indonesian social security law.',
+    changes:[
+      { version:'v1.0', date:'2022-01-01', by:'Siti Rahayu', notes:'Initial issue following Indonesia entity establishment.' },
+    ]
+  },
+];
+
+// ── ACKNOWLEDGEMENT DATA ──────────────────────────────────────────
+// Key policies requiring ack: POL-GRP-001, POL-GRP-002, POL-GRP-003, POL-GRP-005, POL-GRP-009
+const ackPolicyIds = ['POL-GRP-001','POL-GRP-002','POL-GRP-003','POL-GRP-005','POL-GRP-009'];
+const empList = [
+  { id:'VTG-LA-001', name:'Bounmy Phommasack',    country:'Laos',      grade:'G4' },
+  { id:'VTG-LA-002', name:'Khamla Sysouphanthong',country:'Laos',      grade:'G4' },
+  { id:'VTG-LA-003', name:'Phonesavanh Boupha',   country:'Laos',      grade:'G4' },
+  { id:'VTG-LA-004', name:'Sven Andersen',         country:'Laos',     grade:'G3' },
+  { id:'VTG-MM-008', name:'Kyaw Zin Thant',        country:'Myanmar',  grade:'G4' },
+  { id:'VTG-MM-009', name:'Aung Myint Kyaw',       country:'Myanmar',  grade:'G3' },
+  { id:'VTG-MM-010', name:'Zaw Lin Oo',            country:'Myanmar',  grade:'G3' },
+  { id:'VTG-MM-016', name:'Htet Aung',             country:'Myanmar',  grade:'G2' },
+  { id:'VTG-MM-028', name:'Tin Maung Win',         country:'Myanmar',  grade:'G2' },
+  { id:'VTG-ID-017', name:'Budi Santoso',          country:'Indonesia',grade:'G4' },
+  { id:'VTG-ID-018', name:'Arif Budiman',          country:'Indonesia',grade:'G3' },
+  { id:'VTG-ID-022', name:'Siti Rahayu',           country:'Indonesia',grade:'G5' },
+  { id:'VTG-TH-023', name:'Somchai Rattana',       country:'Thailand', grade:'G8' },
+  { id:'VTG-TH-024', name:'Nattaporn Suksawat',   country:'Thailand',  grade:'G7' },
+  { id:'VTG-TH-027', name:'Kasem Wongchai',        country:'Thailand', grade:'G7' },
+];
+
+// Generate ack records
+let ackRecords = [];
+let ackIdCounter = 1;
+ackPolicyIds.forEach(polId => {
+  const pol = policies.find(p=>p.id===polId);
+  empList.forEach(emp => {
+    // Simulate realistic ack states
+    const rand = Math.random();
+    let status, ackDate;
+    if (polId==='POL-GRP-001' || polId==='POL-GRP-005') {
+      status = rand > 0.15 ? 'Acknowledged' : 'Pending';
+      ackDate = status==='Acknowledged' ? '2024-08-15' : null;
+    } else if (polId==='POL-GRP-002') {
+      status = rand > 0.1 ? 'Acknowledged' : (rand > 0.05 ? 'Pending' : 'Overdue');
+      ackDate = status==='Acknowledged' ? '2023-08-01' : null;
+    } else if (polId==='POL-GRP-003') {
+      // OHS — some gaps esp new hires
+      status = (emp.grade==='G2' && (emp.country==='Myanmar')) ? (rand>0.4?'Pending':'Overdue') : (rand>0.2?'Acknowledged':'Pending');
+      ackDate = status==='Acknowledged' ? '2023-03-01' : null;
+    } else {
+      status = rand > 0.2 ? 'Acknowledged' : 'Pending';
+      ackDate = status==='Acknowledged' ? '2023-07-15' : null;
+    }
+    ackRecords.push({
+      ackId: `ACK-${String(ackIdCounter++).padStart(3,'0')}`,
+      empId: emp.id, empName: emp.name, country: emp.country, grade: emp.grade,
+      policyId: polId, policyTitle: pol.title, version: pol.version,
+      requiredBy: '2024-12-31', ackDate, status
+    });
+  });
+});
+
+let filteredPolicies = [...policies];
+let filteredAck = [...ackRecords];
+
+// ── RENDER LIBRARY ──────────────────────────────────────────
+function renderLibrary(data) {
+  const catClass = {'Employment':'cat-employment','Code of Conduct':'cat-conduct','Health & Safety':'cat-safety','Leave':'cat-leave','Compensation':'cat-compensation','Performance':'cat-performance','Operations':'cat-operations','Termination':'cat-termination'};
+  const statusDot = {'Current':'sd-current','Under Review':'sd-review','Draft':'sd-draft','Retired':'sd-retired'};
+  const statusLabel = {'Current':'pfs-current','Under Review':'pfs-review','Draft':'pfs-draft'};
+  const grid = document.getElementById('policyGrid');
+  grid.innerHTML = data.map(p => {
+    const scopeIsGroup = p.scope==='Group-Wide';
+    return `
+      <div class="policy-card" onclick="openPolicyDetail('${p.id}')">
+        <div class="policy-card-top">
+          <div class="policy-card-id">${p.id}</div>
+          <div class="policy-card-title">${p.title}</div>
+          <div class="policy-card-desc">${p.description.length>100?p.description.slice(0,100)+'…':p.description}</div>
+          <div class="policy-card-tags">
+            <span class="cat-badge ${catClass[p.category]||''}">${p.category}</span>
+            <span class="scope-badge ${scopeIsGroup?'scope-group':'scope-country'}">${p.scope}</span>
+            ${ackPolicyIds.includes(p.id)?`<span style="font-size:10px;padding:2px 7px;border-radius:2px;background:var(--amber-pale);color:var(--amber);font-family:'IBM Plex Mono',monospace;">ACK REQUIRED</span>`:''}
+          </div>
+        </div>
+        <div class="policy-card-footer">
+          <span class="pf-version">${p.version}</span>
+          <span class="pf-date">${p.effective?fmtDate(p.effective):'Draft'}</span>
+          <span class="pf-status ${statusLabel[p.status]||''}">
+            <span class="status-dot ${statusDot[p.status]||'sd-draft'}"></span>
+            ${p.status}
+          </span>
+        </div>
+      </div>`;
+  }).join('');
+  updateStats();
+}
+
+function filterLibrary() {
+  const q = document.getElementById('libSearch').value.toLowerCase();
+  const cat = document.getElementById('flCat').value;
+  const scope = document.getElementById('flScope').value;
+  const status = document.getElementById('flStatus').value;
+  filteredPolicies = policies.filter(p => {
+    const mq = !q || p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) || p.id.toLowerCase().includes(q);
+    const mc = !cat || p.category === cat;
+    const ms = !scope || p.scope === scope;
+    const mst = !status || p.status === status;
+    return mq && mc && ms && mst;
+  });
+  renderLibrary(filteredPolicies);
+}
+
+function updateStats() {
+  const current = policies.filter(p=>p.status==='Current').length;
+  const review = policies.filter(p=>p.status==='Under Review').length;
+  const draft = policies.filter(p=>p.status==='Draft').length;
+  const totalAck = ackRecords.length;
+  const doneAck = ackRecords.filter(a=>a.status==='Acknowledged').length;
+  const pendingAck = ackRecords.filter(a=>a.status!=='Acknowledged').length;
+  const avgAck = totalAck ? Math.round(doneAck/totalAck*100) : 0;
+  document.getElementById('sTotal').textContent = policies.length;
+  document.getElementById('sCurrent').textContent = current;
+  document.getElementById('sReview').textContent = review;
+  document.getElementById('sDraft').textContent = draft;
+  document.getElementById('sAckRate').textContent = avgAck+'%';
+  document.getElementById('sAckGap').textContent = pendingAck;
+}
+
+// ── POLICY DETAIL ──────────────────────────────────────────
+function openPolicyDetail(id) {
+  const p = policies.find(x=>x.id===id);
+  if (!p) return;
+  const catClass = {'Employment':'cat-employment','Code of Conduct':'cat-conduct','Health & Safety':'cat-safety','Leave':'cat-leave','Compensation':'cat-compensation','Performance':'cat-performance','Operations':'cat-operations','Termination':'cat-termination'};
+  const scopeIsGroup = p.scope==='Group-Wide';
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'};
+  const acks = ackRecords.filter(a=>a.policyId===id);
+  const doneAck = acks.filter(a=>a.status==='Acknowledged').length;
+  const ackPct = acks.length ? Math.round(doneAck/acks.length*100) : null;
+
+  document.getElementById('pdTitle').textContent = p.title;
+  document.getElementById('pdBody').innerHTML = `
+    <div class="policy-detail-hero">
+      <div class="pdh-id">${p.id} &nbsp;·&nbsp; ${p.version}</div>
+      <div class="pdh-title">${p.title}</div>
+      <div class="pdh-tags">
+        <span class="cat-badge ${catClass[p.category]||''}">${p.category}</span>
+        <span class="scope-badge ${scopeIsGroup?'scope-group':'scope-country'}">${p.scope}</span>
+        ${!scopeIsGroup?`<span class="country-tag ${ctClass[p.scope]||''}" style="font-size:10px;">${p.scope}</span>`:''}
+      </div>
+    </div>
+
+    <div style="font-size:13px;color:var(--steel);line-height:1.6;margin-bottom:4px;">${p.description}</div>
+
+    <div class="detail-section-title">Policy Information</div>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">${p.status}</div></div>
+      <div class="detail-item"><div class="detail-label">Owner</div><div class="detail-value">${p.owner}</div></div>
+      <div class="detail-item"><div class="detail-label">Effective Date</div><div class="detail-value">${p.effective?fmtDate(p.effective):'Not yet effective (Draft)'}</div></div>
+      <div class="detail-item"><div class="detail-label">Next Review</div><div class="detail-value">${p.nextReview?fmtDate(p.nextReview):'—'}</div></div>
+      <div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Applies To</div><div class="detail-value">${p.appliesTo}</div></div>
+    </div>
+
+    ${ackPct!==null?`
+    <div class="detail-section-title">Acknowledgement Status</div>
+    <div class="ack-ring-wrap">
+      <div class="ack-ring-stat"><div class="ack-ring-num">${doneAck}/${acks.length}</div><div class="ack-ring-label">Employees acknowledged</div></div>
+      <div class="ack-ring-bar"><div class="ack-ring-fill" style="width:${ackPct}%"></div></div>
+      <div class="ack-ring-stat"><div class="ack-ring-num" style="color:${ackPct>=80?'var(--success)':'var(--warning)'};">${ackPct}%</div><div class="ack-ring-label">Completion rate</div></div>
+    </div>`:''}
+
+    <div class="detail-section-title">Version History</div>
+    <div class="version-timeline">
+      ${p.changes.map((c,i)=>`
+        <div class="version-entry">
+          <div class="version-dot ${i===0?(p.status==='Draft'?'vd-draft':'vd-current'):'vd-old'}"></div>
+          <div class="version-header">
+            <span class="version-num">${c.version}</span>
+            <span class="version-date">${fmtDate(c.date)}</span>
+            <span class="version-by">— ${c.by}</span>
+            ${i===0&&p.status!=='Draft'?`<span style="font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--success-bg);color:var(--success);padding:2px 7px;border-radius:2px;">CURRENT</span>`:''}
+          </div>
+          <div class="version-changes">${c.notes}</div>
+        </div>`).join('')}
+    </div>`;
+
+  document.getElementById('pdEditBtn').onclick = () => { closeDirect('policyDetailModal'); openEditPolicy(id); };
+  document.getElementById('policyDetailModal').classList.add('active');
+}
+
+// ── ADD/EDIT POLICY ──────────────────────────────────────────
+function openAddPolicy() {
+  editingPolicyId = null;
+  document.getElementById('apTitle').textContent = 'Add Policy';
+  ['ap_id','ap_version','ap_title','ap_desc','ap_applies','ap_changes','ap_owner'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('ap_owner').value='Group HR Manager';
+  document.getElementById('ap_effective').value='';
+  document.getElementById('ap_nextreview').value='';
+  document.getElementById('ap_status').value='Current';
+  document.getElementById('addPolicyModal').classList.add('active');
+}
+function openEditPolicy(id) {
+  const p = policies.find(x=>x.id===id);
+  if (!p) return;
+  editingPolicyId = id;
+  document.getElementById('apTitle').textContent = `Edit — ${p.id}`;
+  document.getElementById('ap_id').value = p.id;
+  document.getElementById('ap_version').value = p.version;
+  document.getElementById('ap_title').value = p.title;
+  document.getElementById('ap_desc').value = p.description;
+  document.getElementById('ap_cat').value = p.category;
+  document.getElementById('ap_scope').value = p.scope;
+  document.getElementById('ap_status').value = p.status;
+  document.getElementById('ap_owner').value = p.owner;
+  document.getElementById('ap_effective').value = p.effective||'';
+  document.getElementById('ap_nextreview').value = p.nextReview||'';
+  document.getElementById('ap_applies').value = p.appliesTo;
+  document.getElementById('addPolicyModal').classList.add('active');
+}
+function savePolicy() {
+  const title = document.getElementById('ap_title').value.trim();
+  if (!title) { showToast('⚠ Policy title is required'); return; }
+  if (editingPolicyId) {
+    const p = policies.find(x=>x.id===editingPolicyId);
+    if (p) {
+      p.title = title;
+      p.version = document.getElementById('ap_version').value;
+      p.category = document.getElementById('ap_cat').value;
+      p.scope = document.getElementById('ap_scope').value;
+      p.status = document.getElementById('ap_status').value;
+      p.owner = document.getElementById('ap_owner').value;
+      p.effective = document.getElementById('ap_effective').value||null;
+      p.nextReview = document.getElementById('ap_nextreview').value||null;
+      p.appliesTo = document.getElementById('ap_applies').value;
+      p.description = document.getElementById('ap_desc').value;
+    }
+    showToast('✓ Policy updated');
+  } else {
+    const notes = document.getElementById('ap_changes').value||'Initial issue.';
+    policies.push({
+      id: document.getElementById('ap_id').value||`POL-NEW-${policies.length+1}`,
+      title, version: document.getElementById('ap_version').value||'v1.0',
+      category: document.getElementById('ap_cat').value, scope: document.getElementById('ap_scope').value,
+      status: document.getElementById('ap_status').value, owner: document.getElementById('ap_owner').value,
+      effective: document.getElementById('ap_effective').value||null, nextReview: document.getElementById('ap_nextreview').value||null,
+      appliesTo: document.getElementById('ap_applies').value||'All employees',
+      description: document.getElementById('ap_desc').value||'—',
+      changes:[{ version: document.getElementById('ap_version').value||'v1.0', date:'2025-03-10', by: document.getElementById('ap_owner').value||'Group HR Manager', notes }]
+    });
+    showToast('✓ Policy added to library');
+  }
+  filteredPolicies = [...policies];
+  renderLibrary(filteredPolicies); updateStats(); closeDirect('addPolicyModal');
+}
+
+// ── RENDER ACKNOWLEDGEMENTS ──────────────────────────────────────────
+function renderAck(data) {
+  const tbody = document.getElementById('ackTableBody');
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'};
+  const ackClass = {Acknowledged:'ack-done',Pending:'ack-pending',Overdue:'ack-overdue'};
+  tbody.innerHTML = data.map(a => `
+    <tr>
+      <td><div style="font-weight:600;font-size:13px;">${a.empName}</div><div style="font-size:11px;color:var(--steel);">${a.empId}</div></td>
+      <td><span class="country-tag ${ctClass[a.country]||''}">${a.country}</span></td>
+      <td><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--slate);color:var(--amber-light);padding:3px 8px;border-radius:2px;">${a.grade}</span></td>
+      <td><div style="font-size:12.5px;font-weight:500;">${a.policyTitle}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--steel);">${a.policyId}</div></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${a.version}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(a.requiredBy)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:${a.ackDate?'var(--success)':'#aab'};">${a.ackDate?fmtDate(a.ackDate):'—'}</td>
+      <td><span class="ack-pill ${ackClass[a.status]||''}">${a.status==='Acknowledged'?'✓ '+a.status:a.status}</span></td>
+      <td>
+        ${a.status!=='Acknowledged'
+          ? `<button class="icon-btn" title="Mark Acknowledged" onclick="markAck('${a.ackId}')">✓</button>`
+          : `<span style="font-size:11px;color:#aab;">—</span>`}
+      </td>
+    </tr>`).join('');
+  document.getElementById('ackCount').textContent = `${data.length} records`;
+}
+
+function populateAckPolicyFilter() {
+  const sel = document.getElementById('faPolicy');
+  sel.innerHTML = `<option value="">All Policies</option>` +
+    ackPolicyIds.map(id=>{const p=policies.find(x=>x.id===id); return p?`<option value="${id}">${p.title}</option>`:''}).join('');
+}
+
+function filterAck() {
+  const q = document.getElementById('ackSearch').value.toLowerCase();
+  const pol = document.getElementById('faPolicy').value;
+  const country = document.getElementById('faCountry').value;
+  const status = document.getElementById('faStatus').value;
+  filteredAck = ackRecords.filter(a => {
+    const mq = !q || a.empName.toLowerCase().includes(q);
+    const mp = !pol || a.policyId === pol;
+    const mc = !country || a.country === country;
+    const ms = !status || a.status === status;
+    return mq && mp && mc && ms;
+  });
+  renderAck(filteredAck);
+}
+
+function markAck(ackId) {
+  const a = ackRecords.find(x=>x.ackId===ackId);
+  if (a) { a.status='Acknowledged'; a.ackDate='2025-03-10'; filterAck(); updateStats(); showToast(`✓ Acknowledgement recorded for ${a.empName}`); }
+}
+
+function sendReminders() {
+  const pending = ackRecords.filter(a=>a.status!=='Acknowledged').length;
+  showToast(`↗ Reminder notifications queued for ${pending} outstanding acknowledgements`);
+}
+
+// ── REVIEW SCHEDULE ──────────────────────────────────────────
+function renderReviewSchedule() {
+  const overdue = policies.filter(p=>p.nextReview&&new Date(p.nextReview)<new Date('2025-03-10')&&p.status!=='Retired');
+  const due90 = policies.filter(p=>p.nextReview&&new Date(p.nextReview)>=new Date('2025-03-10')&&daysBetween('2025-03-10',p.nextReview)<=90);
+  const upcoming = policies.filter(p=>p.nextReview&&daysBetween('2025-03-10',p.nextReview)>90);
+  const noDue = policies.filter(p=>!p.nextReview);
+
+  const reviewBlock = (title, items, color) => {
+    if (!items.length) return '';
+    return `
+      <div style="margin-bottom:24px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${color};margin-bottom:12px;padding-bottom:5px;border-bottom:1px solid var(--border);">${title} (${items.length})</div>
+        <table style="width:100%;border-collapse:collapse;">
+          <thead><tr>
+            ${['Policy','Version','Scope','Owner','Next Review','Days'].map(h=>`<th style="background:var(--mist);padding:9px 14px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--steel);border-bottom:1px solid var(--border);">${h}</th>`).join('')}
+          </tr></thead>
+          <tbody>
+            ${items.map(p=>{
+              const days = p.nextReview ? daysBetween('2025-03-10',p.nextReview) : null;
+              const dColor = days<0?'var(--danger)':days<=90?'var(--warning)':'var(--success)';
+              return `<tr style="border-bottom:1px solid var(--border);">
+                <td style="padding:9px 14px;"><div style="font-weight:600;font-size:13px;">${p.title}</div><div style="font-size:11px;color:var(--steel);">${p.id}</div></td>
+                <td style="padding:9px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;">${p.version}</td>
+                <td style="padding:9px 14px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 7px;border-radius:2px;${p.scope==='Group-Wide'?'background:var(--slate);color:var(--amber-light)':'background:var(--mist);color:var(--steel)'};">${p.scope}</span></td>
+                <td style="padding:9px 14px;font-size:12px;">${p.owner}</td>
+                <td style="padding:9px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;">${p.nextReview?fmtDate(p.nextReview):'—'}</td>
+                <td style="padding:9px 14px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:${dColor};">${days!==null?(days<0?Math.abs(days)+'d overdue':days+'d'):'—'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  };
+
+  document.getElementById('reviewContent').innerHTML = `
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:6px;padding:20px;">
+      ${reviewBlock('🔴 Overdue — Review Past Due', overdue, 'var(--danger)')}
+      ${reviewBlock('⚠ Due Within 90 Days', due90, 'var(--warning)')}
+      ${reviewBlock('✓ Upcoming (>90 Days)', upcoming, 'var(--success)')}
+      ${reviewBlock('ℹ No Review Date Set (Draft / New)', noDue, '#aab')}
+    </div>`;
+}
+
+function daysBetween(a,b) { return Math.round((new Date(b)-new Date(a))/86400000); }
+function fmtDate(d) { if(!d) return '—'; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+
+function exportLibrary() {
+  const headers=['ID','Title','Category','Scope','Version','Status','Owner','Effective','Next Review'];
+  const rows=filteredPolicies.map(p=>[p.id,p.title,p.category,p.scope,p.version,p.status,p.owner,p.effective||'',p.nextReview||'']);
+  const csv=[headers.join(','),...rows.map(r=>r.map(v=>`"${v}"`).join(','))].join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='valentis-policy-library.csv'; a.click(); showToast('✓ Library exported');
+}
+function switchTab(id) {
+  const tabs=['library','acknowledgements','review'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function closeMod(id,e) { if(e.target===document.getElementById(id)) closeDirect(id); }
+function closeDirect(id) { document.getElementById(id).classList.remove('active'); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+
+renderLibrary(policies);
+populateAckPolicyFilter();
+renderAck(ackRecords);
+renderReviewSchedule();
+</script>
+</body>
+</html>

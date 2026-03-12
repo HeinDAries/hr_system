@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Reporting & Storytelling — People Analytics Tool 9</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f5;--surface:#fff;--surface2:#e8ecf2;
+  --border:#cdd4e0;--border2:#b8c2d4;
+  --ink:#0d1117;--ink2:#1a2332;--ink3:#3d4f6b;--ink4:#6b7d99;--ink5:#a0aec0;
+  --navy:#0a1628;
+  --blue:#1a6bdb;--blue2:#2979e8;--blue3:#4d94ff;
+  --blue-dim:rgba(26,107,219,0.08);--blue-border:rgba(26,107,219,0.22);
+  --electric:#3d8bff;--electric2:#5c9fff;
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --amber:#b8860b;--amber-dim:rgba(184,134,11,0.08);--amber-border:rgba(184,134,11,0.22);
+  --green:#1a7a4a;--green-dim:rgba(26,122,74,0.08);--green-border:rgba(26,122,74,0.22);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--blue),rgba(26,107,219,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:rgba(26,107,219,0.15);border:1px solid rgba(26,107,219,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f4ff;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(26,107,219,0.18);border-color:rgba(26,107,219,0.4);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--blue3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:40px 52px;max-width:1100px}
+.page.active{display:block}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--blue)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--blue);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cb{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.ca{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.cg{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.b{background:var(--blue-dim);border-color:var(--blue);color:var(--ink2)}
+.inf.a{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.inf.r{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.inf.g{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--navy);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+.vx{background:var(--navy);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f4ff;margin-bottom:8px;line-height:1.2}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kbl::before{background:var(--blue)}.kgr::before{background:var(--green)}
+.kam::before{background:var(--amber)}.krd::before{background:var(--red)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kbl .kv{color:var(--blue)}.kgr .kv{color:var(--green)}
+.kam .kv{color:var(--amber)}.krd .kv{color:var(--red)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.kt{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktb{background:var(--blue-dim);color:var(--blue)}.kta{background:var(--amber-dim);color:var(--amber)}
+.ktr{background:var(--red-dim);color:var(--red)}.ktg{background:var(--green-dim);color:var(--green)}
+/* Narrative template styles */
+.story-block{border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px}
+.story-header{background:var(--navy);padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.story-title{font-family:var(--fd);font-size:17px;font-weight:700;color:#f0f4ff}
+.story-body{padding:20px 22px;background:var(--surface)}
+.story-section{margin-bottom:14px}
+.story-label{font-family:var(--fm);font-size:7.5px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:5px}
+.story-text{font-size:13.5px;color:var(--ink2);line-height:1.9;font-weight:300}
+.story-text strong{font-weight:700;color:var(--ink)}
+/* Viz principle cards */
+.viz-card{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:16px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start}
+.viz-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.viz-title{font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px}
+.viz-desc{font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7}
+/* Before/after comparison */
+.ba-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.ba-box{border-radius:4px;padding:16px 18px;border:1px solid}
+.ba-bad{background:#fff8f8;border-color:var(--red-border)}
+.ba-good{background:#f4fbf7;border-color:var(--green-border)}
+.ba-label{font-family:var(--fm);font-size:7.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px}
+.ba-bad .ba-label{color:var(--red)}
+.ba-good .ba-label{color:var(--green)}
+.ba-text{font-size:13px;color:var(--ink2);line-height:1.75;font-weight:300;font-style:italic}
+/* Cadence timeline */
+.cadence-row{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.cadence-cell{flex:1;padding:14px;border-right:1px solid var(--border);background:var(--surface)}
+.cadence-cell:last-child{border-right:none}
+.cadence-freq{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:5px}
+.cadence-title{font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:5px}
+.cadence-items{font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.7}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx,.page.active .story-block,.page.active .cadence-row{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">People Analytics · Tool 9 / 9</div>
+    <div class="sb-title">HR Reporting &amp;<br><em>Storytelling</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('language',this)"><span class="nav-num">02</span>The Language Shift</div>
+    <div class="nav-item" onclick="showPage('templates',this)"><span class="nav-num">03</span>Report Templates</div>
+    <div class="nav-item" onclick="showPage('viz',this)"><span class="nav-num">04</span>Data Visualisation</div>
+    <div class="nav-item" onclick="showPage('narrative',this)"><span class="nav-num">05</span>Narrative Frameworks</div>
+    <div class="nav-item" onclick="showPage('cadence',this)"><span class="nav-num">06</span>Reporting Cadence</div>
+    <div class="nav-item" onclick="showPage('coo',this)"><span class="nav-num">07</span>COO/CEO Brief Builder</div>
+    <div class="nav-item" onclick="showPage('maturity',this)"><span class="nav-num">08</span>Reporting Maturity</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>People Analytics · Tool 9 of 9</strong>
+      HR Reporting &amp; Storytelling<br>
+      <span style="color:rgba(255,255,255,0.1)">Data earns influence only when leadership understands what it means and what to do next.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview"  class="page active"></div>
+  <div id="page-language"  class="page"></div>
+  <div id="page-templates" class="page"></div>
+  <div id="page-viz"       class="page"></div>
+  <div id="page-narrative" class="page"></div>
+  <div id="page-cadence"   class="page"></div>
+  <div id="page-coo"       class="page"></div>
+  <div id="page-maturity"  class="page"></div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+</script>
+
+<script>
+// ── PAGE 01: OVERVIEW ──────────────────────────────────────────────
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">People Analytics · Tool 9 / 9 — HR Reporting &amp; Storytelling</div>
+<div class="pt">HR Reporting &amp;<br><em>Storytelling</em></div>
+<p class="pd">Data without narrative is noise. This tool converts Valentis's people analytics into the language COOs and CEOs act on — business outcomes, financial consequences, and clear decisions. Every report template, visualisation principle, and narrative framework here is designed for one purpose: giving Group HR a credible seat at the leadership table.</p>
+<div class="vx">
+  <div class="vx-ey">The Credibility Gap — and How Storytelling Closes It</div>
+  <div class="vx-ti">The COO does not read attrition tables. He reads delivery percentages and cost overruns. HR's job is to build the bridge between the two — in one slide, in 90 seconds, with a clear recommendation.</div>
+  <div class="vx-bo">At 42 staff, Valentis's leadership team does not have bandwidth for HR dashboards. The COO needs to know three things from every HR update: what is the workforce risk right now, what does it cost if we ignore it, and what does HR recommend we do. Every other data point is background. Storytelling is not about simplifying — it is about selecting the two numbers that create urgency, and the one action that resolves it. This tool builds Group HR's capability to do exactly that, consistently, across every reporting cycle.</div>
+</div>
+<div class="krow">
+  <div class="kpi kbl"><div class="kl">Report Templates</div><div class="kv">5</div><div class="ks">COO brief, CEO summary, monthly HR report, board pack, country scorecard</div><div class="kt ktb">All in this tool</div></div>
+  <div class="kpi kgr"><div class="kl">Viz Principles</div><div class="kv">8</div><div class="ks">Core rules for presenting people data to non-HR leadership audiences</div><div class="kt ktg">With before/after examples</div></div>
+  <div class="kpi kam"><div class="kl">Narrative Frameworks</div><div class="kv">4</div><div class="ks">Situation–Complication–Resolution, BLUF, Risk–Cost–Action, Trend–Driver–Response</div><div class="kt kta">With real Valentis examples</div></div>
+  <div class="kpi krd"><div class="kl">Reporting Cadence</div><div class="kv">3</div><div class="ks">Monthly, quarterly, and annual reporting rhythms with audience mapping</div><div class="kt ktr">Fully mapped to Valentis calendar</div></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">What This Tool Covers</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {n:'02',t:'The Language Shift',d:'How to stop talking HR and start talking business. Translating attrition, headcount, and pipeline into delivery, revenue, and risk.'},
+        {n:'03',t:'Report Templates',d:'Five ready-to-use report templates for COO monthly brief, CEO summary, board HR pack, country scorecard, and monthly HR operations report.'},
+        {n:'04',t:'Data Visualisation Principles',d:'Eight core rules for presenting people data. Before-and-after examples. Chart selection guide for HR metrics.'},
+        {n:'05',t:'Narrative Frameworks',d:'Four proven frameworks for structuring HR narratives that create urgency and drive decisions. With applied Valentis examples.'},
+        {n:'06',t:'Reporting Cadence',d:'Monthly, quarterly, and annual reporting rhythms mapped to audience, purpose, and the Valentis operating calendar.'},
+        {n:'07',t:'COO/CEO Brief Builder',d:'Step-by-step construction of a COO/CEO-ready people brief in one page. The template that positions HR as a strategic function.'},
+        {n:'08',t:'Reporting Maturity',d:'Where Valentis sits on the HR reporting maturity curve and the 12-month roadmap to move from compliance reporting to strategic narrative.'}
+      ].map(function(d){return '<div style="padding:10px 14px;background:var(--surface2);border-radius:3px;display:flex;gap:12px;align-items:flex-start"><span style="font-family:var(--fm);font-size:9px;color:var(--blue);flex-shrink:0;padding-top:2px">'+d.n+'</span><div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px">'+d.t+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">'+d.d+'</div></div></div>';}).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Why This Matters <em>Right Now</em></div>
+    <div style="font-size:13.5px;color:var(--ink3);font-weight:300;line-height:1.9;margin-bottom:12px">HR at Valentis is currently perceived as administrative. The tools in the People Analytics suite (Tools 1–8) generate the data. Tool 9 is the final conversion: turning that data into influence.</div>
+    <div class="inf b"><strong>The Strategic Opportunity</strong>When Group HR walks into the COO's office with a one-page brief that says "Indonesia delivery dropped 9pp and it will cost $207K this year unless we fill three G3 roles by April — here is the hiring plan" — that is not an HR report. That is a P&amp;L conversation. That is the conversation that gets HR a seat at the ExCo table.</div>
+    <div class="inf a"><strong>The Current Gap</strong>Most HR teams report inputs (headcount, training hours, policies completed). Leadership teams make decisions based on outputs (delivery rates, revenue, cost). The gap between what HR measures and what leadership values is where HR credibility is lost. This tool closes that gap at Valentis.</div>
+    <div class="inf g"><strong>The 12-Month Target</strong>By Q4 2026, Group HR should be producing a monthly one-page COO brief, a quarterly people scorecard for the CEO, and an annual board pack that all speak in revenue and delivery language — with zero HR jargon. This tool is the playbook to get there.</div>
+  </div>
+</div>
+`;
+
+// ── PAGE 02: THE LANGUAGE SHIFT ──────────────────────────────────
+document.getElementById('page-language').innerHTML=`
+<div class="pe">Section 02 — The Language Shift</div>
+<div class="pt">The<br><em>Language Shift</em></div>
+<p class="pd">HR speaks in inputs. Leadership speaks in outcomes. Every time HR reports headcount instead of delivery capacity, training hours instead of capability uplift, or attrition rate instead of revenue cost of turnover — it reinforces the perception that HR is administrative. The language shift is the single highest-leverage change Group HR can make.</p>
+<div class="vx">
+  <div class="vx-ey">The Core Translation Rule at Valentis</div>
+  <div class="vx-ti">Every HR metric must answer one of three COO questions: Does it affect delivery? Does it affect cost? Does it create a risk I need to act on now?</div>
+  <div class="vx-bo">If your people metric cannot answer at least one of those three questions directly, it belongs in the HR operations report — not in the COO or CEO brief. The discipline of filtering is what separates strategic HR reporting from compliance reporting. At 42 staff, every metric you present to the COO should be actionable. Presenting 12 data points means leadership will remember zero of them. Presenting two — with a cost figure and a recommendation — means the COO leaves the meeting knowing what to approve.</div>
+</div>
+<div class="card">
+  <div class="ct">HR Language to Business Language — Translation Table</div>
+  <table class="dt">
+    <thead><tr><th>HR Language (Don't Use)</th><th>Business Language (Use This)</th><th>Why It Matters to COO/CEO</th><th>Valentis Example</th></tr></thead>
+    <tbody>
+      ${[
+        {hr:'Attrition rate: 28%',biz:'We are losing 1 in 4 staff annually — at $18K replacement cost each, that is $126K in unplanned annual spend.',why:'Converts a percentage into a direct cost line the CFO and COO can act on.',ex:'Myanmar G1–G3 attrition at 28% = $126K annual replacement burden plus delivery drag.'},
+        {hr:'Headcount: 42',biz:'Delivery capacity at current headcount supports 85% programme delivery. Hitting 90% target requires 3 additional G3 positions.',why:'Headcount is meaningless without linking it to what operations actually need.',ex:'Indonesia: 3 G3 vacancies are directly responsible for the −9pp delivery decline since Q3 2025.'},
+        {hr:'Training hours: 1,240 hours logged',biz:'G1 conversion rate improved from 52% to 64% in countries where structured coaching was implemented.',why:'Hours measure effort. Conversion rates measure impact. Leadership buys outcomes.',ex:'Thailand G4 coaching → 72% G1 conversion. Myanmar no structured coaching → 58% conversion. 14pp gap.'},
+        {hr:'Recruitment pipeline: 18 candidates',biz:'At current conversion, we will fill 2 of 3 Indonesia G3 vacancies by June — leaving 1 open through Q3 and costing ~$69K in continued delivery loss.',why:'Pipeline volume is meaningless without conversion. Show the fill timeline and its cost.',ex:'Current pipeline predicts 67% fill rate. Indonesia G3 vacancy 3 will remain open until Q4 2026.'},
+        {hr:'Bench strength: G4 succession covers 3 of 5 SM roles',biz:'Two SM positions have no internal successor ready. External hire at this level costs $28K–$42K and takes 3–5 months — creating a delivery gap during transition.',why:'Succession gap has a price tag. Leadership responds to cost and timeline, not coverage ratios.',ex:'Laos SM retirement projected Q2 2027. No ready-now successor. Bench development must start Q2 2026.'},
+        {hr:'Pay equity review completed',biz:'Grade band compression identified in G3 Myanmar. At current pay relativity, G3 voluntary exit risk is 2× the group average within 12 months.',why:'Compliance language has no urgency. Risk language with a timeline creates urgency.',ex:'G3 Myanmar median pay is 11% below G3 band midpoint. Attrition risk window: next 12 months.'},
+        {hr:'Performance review cycle complete: 84% completion',biz:'16% of staff (7 people) have no documented performance baseline going into Q2. That is 7 people we cannot manage out or promote without creating legal exposure.',why:'Completion rates are HR metrics. Legal and commercial exposure is leadership language.',ex:'Myanmar: 3 of 5 uncompleted reviews are in G1–G2. Performance documentation gap creates ER risk.'},
+      ].map(function(r){return '<tr><td style="color:var(--red);font-style:italic;font-size:12px;font-weight:300">'+r.hr+'</td><td style="font-weight:500;font-size:12.5px">'+r.biz+'</td><td style="font-size:12px;font-weight:300">'+r.why+'</td><td style="font-size:11.5px;font-weight:300;color:var(--blue)">'+r.ex+'</td></tr>';}).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">The Three Questions Test</div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Before including any metric in a COO or CEO brief, run it through this filter. It must pass at least one test to earn a place in the executive report.</div>
+    ${[
+      {q:'Does it affect delivery?',desc:'Can this metric be traced to a change in programme delivery percentage in any country? If yes → include with the delivery impact quantified.',col:'var(--blue)',ex:'G3 vacancies → Indonesia delivery −9pp → $207K annual revenue impact'},
+      {q:'Does it affect cost?',desc:'Does this metric represent unplanned spend, avoidable cost, or a financial exposure? If yes → include with the dollar figure.',col:'var(--amber)',ex:'Attrition 28% × $18K replacement = $126K unplanned annual cost'},
+      {q:'Does it create a risk requiring action?',desc:'Is there a decision the COO or CEO needs to make within the next 30–90 days to prevent a future problem? If yes → include with the decision and timeline.',col:'var(--red)',ex:'Laos SM succession gap: no successor ready. Decision needed by June 2026 to start bench development.'},
+    ].map(function(d){return '<div style="padding:12px 16px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0;margin-bottom:8px"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px">'+d.q+'</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:5px">'+d.desc+'</div><div style="font-family:var(--fm);font-size:10px;color:'+d.col+'">'+ d.ex+'</div></div>';}).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Words That Lose Credibility <em>Immediately</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Avoid these terms in any COO or CEO-facing communication. They signal HR is reporting activity, not managing outcomes.</div>
+    ${[
+      {word:'"We are aligning..."',replace:'Replace with: "We have completed / we will complete by [date]"'},
+      {word:'"Initiatives are ongoing..."',replace:'Replace with: "The programme is on track to deliver [outcome] by [date]"'},
+      {word:'"Headcount utilisation..."',replace:'Replace with: "Delivery capacity / operational coverage"'},
+      {word:'"HR is working closely with..."',replace:'Replace with: "We have agreed with [name] that [action] will be done by [date]"'},
+      {word:'"Attrition is within industry norms..."',replace:'Replace with: "Attrition costs $126K annually — here is the retention plan"'},
+      {word:'"We are monitoring the situation..."',replace:'Replace with: "The risk is [X]. If we do not act by [date], the cost is [Y]. Our recommendation is [Z]."'},
+      {word:'"Talent pipeline is healthy..."',replace:'Replace with: "We will fill [X] of [Y] vacancies by [date]. Gap of [Z] positions remains open through [quarter]."'},
+    ].map(function(d){return '<div style="margin-bottom:8px;padding:10px 14px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:11px;color:var(--red);font-weight:600;margin-bottom:3px">'+d.word+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300">'+d.replace+'</div></div>';}).join('')}
+  </div>
+</div>
+`;
+
+// ── PAGE 03: REPORT TEMPLATES ─────────────────────────────────────
+document.getElementById('page-templates').innerHTML=`
+<div class="pe">Section 03 — Report Templates</div>
+<div class="pt">Report<br><em>Templates</em></div>
+<p class="pd">Five purpose-built report templates for Valentis Group HR. Each is structured for a specific audience and decision context. Use these as the standard formats for all executive HR reporting — they are designed to take no more than 15 minutes to populate once the data from Tools 1–8 is current.</p>
+
+<div class="tabs" data-tabs>
+  <div class="tab active" onclick="showTab('t-coo',this)">COO Monthly Brief</div>
+  <div class="tab" onclick="showTab('t-ceo',this)">CEO Summary</div>
+  <div class="tab" onclick="showTab('t-board',this)">Board HR Pack</div>
+  <div class="tab" onclick="showTab('t-country',this)">Country Scorecard</div>
+  <div class="tab" onclick="showTab('t-ops',this)">Monthly Ops Report</div>
+</div>
+
+<div id="tb-t-coo" class="tb active">
+  <div class="story-block">
+    <div class="story-header"><div class="story-title">COO Monthly People Brief — One Page</div><span class="chip cb">Monthly · 1 page · 90 seconds to read</span></div>
+    <div class="story-body">
+      <div class="g2" style="margin-bottom:0">
+        <div>
+          <div class="story-section">
+            <div class="story-label">Section 1 — Headline Number (1 sentence)</div>
+            <div class="story-text"><strong>Template:</strong> Group delivery capacity is at [X]% — [above/below] the 90% target — driven by [primary people factor].</div>
+          </div>
+          <div class="story-section">
+            <div class="story-label">Section 2 — The Risk (2–3 sentences)</div>
+            <div class="story-text"><strong>Template:</strong> The primary workforce risk this month is [risk]. If unaddressed by [date], the estimated impact is [cost/delivery consequence]. The risk is [escalating/stable/improving].</div>
+          </div>
+          <div class="story-section">
+            <div class="story-label">Section 3 — What HR Is Doing (2 sentences)</div>
+            <div class="story-text"><strong>Template:</strong> HR has [action taken / in progress]. We expect [outcome] by [date].</div>
+          </div>
+          <div class="story-section">
+            <div class="story-label">Section 4 — Decision Required (1 sentence + options)</div>
+            <div class="story-text"><strong>Template:</strong> COO decision required: [specific decision]. Option A: [action, cost, timeline]. Option B: [action, cost, timeline]. HR recommends Option [A/B].</div>
+          </div>
+        </div>
+        <div>
+          <div class="story-section">
+            <div class="story-label">Valentis Example — March 2026</div>
+            <div style="background:var(--navy);border-radius:4px;padding:16px 18px">
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--electric2);margin-bottom:8px">COO People Brief · March 2026</div>
+              <div style="font-size:13px;color:#f0f4ff;line-height:1.8;font-weight:300">
+                <p style="margin-bottom:8px"><strong style="color:var(--electric2)">Headline:</strong> Group delivery is at 85% — 5pp below the 90% target — driven by three unfilled G3 positions in Indonesia.</p>
+                <p style="margin-bottom:8px"><strong style="color:var(--amber)">Risk:</strong> Indonesia delivery has declined from 93% to 84% since Q3 2025. Each quarter the vacancies remain open, delivery drops a further 2–3pp. The annual revenue cost of the current gap is $207K. Risk is escalating.</p>
+                <p style="margin-bottom:8px"><strong style="color:var(--blue3)">HR Action:</strong> Three G3 candidates are in final-stage interviews. We expect two offers accepted by 15 April. Position 3 remains at sourcing stage — external agency activated.</p>
+                <p><strong style="color:var(--green)">Decision Required:</strong> Approve salary for G3 Position 3 at $2,000/month above band midpoint to close the sourcing gap. Cost: $4,000 additional annual spend. Benefit: reduces delivery recovery timeline by one quarter (~$52K delivery upside). HR recommends approval.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="inf b" style="margin-top:12px"><strong>Formatting Rules for COO Brief</strong>Never exceed one page. No bullet point lists longer than 3 items. Always include one dollar figure. Always end with a specific decision — never "for your information." If there is no decision required this month, frame it as: "No COO decision required this month — here is the status of last month's decision." Time to read must be under 2 minutes.</div>
+    </div>
+  </div>
+</div>
+
+<div id="tb-t-ceo" class="tb">
+  <div class="story-block">
+    <div class="story-header"><div class="story-title">CEO Quarterly People Summary — Half Page</div><span class="chip cb">Quarterly · half page · 60 seconds to read</span></div>
+    <div class="story-body">
+      <div class="inf a"><strong>Purpose</strong>The CEO sees the people function quarterly — not monthly. This report must answer: is HR a strategic asset or a management problem? It is not a status report. It is a credibility statement backed by two or three numbers.</div>
+      <div class="g2">
+        <div>
+          <div class="story-section">
+            <div class="story-label">Structure</div>
+            <div style="display:grid;gap:6px">
+              ${[
+                {n:'1',t:'The Quarter in One Line',d:'Delivery capacity, headcount change, and the one headline people event of the quarter — in one sentence.'},
+                {n:'2',t:'The Number That Matters',d:'One financial or operational figure that quantifies the people function\'s contribution or risk this quarter.'},
+                {n:'3',t:'What Changed',d:'One thing that improved, one thing that deteriorated, and what HR did about both.'},
+                {n:'4',t:'The Quarter Ahead',d:'One risk, one opportunity, and one decision the CEO may need to be involved in.'},
+              ].map(function(d){return '<div style="padding:9px 12px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;color:var(--blue);margin-bottom:3px">0'+d.n+'</div><div style="font-weight:700;font-size:12.5px;margin-bottom:2px">'+d.t+'</div><div style="font-size:12px;font-weight:300;color:var(--ink3)">'+d.d+'</div></div>';}).join('')}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="story-label">Q1 2026 Example</div>
+          <div style="background:var(--navy);border-radius:4px;padding:16px 18px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--electric2);margin-bottom:10px">CEO People Summary · Q1 2026</div>
+            <div style="font-size:12.5px;color:#f0f4ff;line-height:1.85;font-weight:300">
+              <p style="margin-bottom:8px"><strong style="color:var(--electric2)">Q1 in one line:</strong> 42-person workforce delivered 85% programme output against 90% target — 3pp below Q4 2025 — driven by three Indonesia G3 vacancies opened in December.</p>
+              <p style="margin-bottom:8px"><strong style="color:var(--amber)">The number that matters:</strong> Workforce-driven delivery gap is currently costing Valentis $415K in annual revenue. HR's Q2 hiring plan closes $207K of that gap.</p>
+              <p style="margin-bottom:8px"><strong style="color:var(--blue3)">What changed:</strong> Thailand reached 105% delivery — the benchmark for a well-staffed, well-coached country operation. Indonesia deteriorated 9pp — the most significant operational people risk in the group.</p>
+              <p><strong style="color:var(--green)">Q2 ahead:</strong> Risk: Laos G4 retirement cliff (Q3 2027) — bench development must start now. Opportunity: Thailand SM model replicable to Myanmar. Decision: CEO awareness — Indonesia G3 salary exception approved at COO level.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tb-t-board" class="tb">
+  <div class="story-block">
+    <div class="story-header"><div class="story-title">Board HR Pack — Annual / Semi-Annual</div><span class="chip cm">Annual · 3–5 pages · Board-level language</span></div>
+    <div class="story-body">
+      <div class="inf b"><strong>Purpose</strong>The board HR pack positions the people function as a governance priority — not just an operational function. It demonstrates that HR has a plan, the plan is being executed, and people risk is being actively managed. Three to five pages maximum. No HR jargon. Every section connects to company strategy or financial performance.</div>
+      <div style="display:grid;gap:8px">
+        ${[
+          {n:'01',t:'People at a Glance',d:'One-page summary: headcount, delivery correlation, attrition cost, pipeline health, pay cost as % of revenue. Five numbers. No paragraphs.',audience:'Full board'},
+          {n:'02',t:'Workforce Risks & Mitigations',d:'The three most significant people risks, their financial exposure, and the HR mitigation plan with milestones. Framed as risk management — not HR activity.',audience:'Board risk committee'},
+          {n:'03',t:'Talent & Succession',d:'G4+ succession coverage, SM readiness, and the one structural talent gap that poses a strategic risk to the group. One page.',audience:'CEO + Chairman'},
+          {n:'04',t:'People Cost vs Delivery Return',d:'People cost as % of revenue by country. Revenue per employee trend. ROI on key people investments made in the year.',audience:'CFO + Board'},
+          {n:'05',t:'HR Plan — Year Ahead',d:'Three to five HR priorities for the coming year, each with a delivery metric. No initiatives without measurable outcomes. No more than one page.',audience:'Full board'},
+        ].map(function(d){return '<div style="padding:12px 16px;background:var(--surface2);border-radius:3px;display:flex;gap:14px;align-items:flex-start"><div style="font-family:var(--fm);font-size:11px;color:var(--blue);flex-shrink:0;padding-top:3px">'+d.n+'</div><div style="flex:1"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><span style="font-weight:700;font-size:13px;color:var(--ink)">'+d.t+'</span><span class="chip cm">'+d.audience+'</span></div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">'+d.d+'</div></div></div>';}).join('')}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tb-t-country" class="tb">
+  <div class="story-block">
+    <div class="story-header"><div class="story-title">Country HR Scorecard — Monthly</div><span class="chip cg">Monthly · 1 page per country · Country Manager + COO</span></div>
+    <div class="story-body">
+      <div class="inf g"><strong>Purpose</strong>Each country operation gets one page. The Country Manager uses it to understand their workforce health. The COO uses it to compare countries. It is the same format for all four countries — so leadership can read across them in parallel without relearning each one.</div>
+      <div class="g2">
+        <div>
+          <div style="background:var(--navy);border-radius:4px;padding:16px 18px;margin-bottom:10px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--electric2);margin-bottom:8px">Country Scorecard Format</div>
+            ${[
+              {label:'Delivery Rate',format:'Actual vs target · trend arrow vs last month'},
+              {label:'Headcount',format:'Actual vs establishment · vacancies flagged in red'},
+              {label:'Attrition (12-month rolling)',format:'Rate + annualised cost of attrition'},
+              {label:'Pipeline Health',format:'G1 inflow · G1→G3 conversion rate · months of bench cover'},
+              {label:'Coaching Quality',format:'G4 coaching hours per G1 trainee · conversion rate impact'},
+              {label:'Top Risk This Month',format:'One sentence + recommended action + decision owner'},
+              {label:'Month-on-Month Status',format:'Green / Amber / Red for each metric + direction of travel'},
+            ].map(function(d){return '<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.07)"><div style="font-family:var(--fm);font-size:10px;color:var(--electric2);flex-shrink:0;width:36px">→</div><div><div style="font-size:12px;color:#f0f4ff;font-weight:600;margin-bottom:1px">'+d.label+'</div><div style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:300">'+d.format+'</div></div></div>';}).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="story-label">Thailand Example — March 2026</div>
+          <table class="dt">
+            <thead><tr><th>Metric</th><th>Value</th><th>Status</th></tr></thead>
+            <tbody>
+              ${[
+                {m:'Delivery Rate',v:'105% (↑ vs 103% Feb)',s:'🟢 Above target'},
+                {m:'Headcount',v:'11 of 11 established',s:'🟢 Fully staffed'},
+                {m:'Attrition (12m)',v:'8% · $18K annual cost',s:'🟢 Below group avg'},
+                {m:'G1 Inflow',v:'3 new hires Q1',s:'🟢 Pipeline healthy'},
+                {m:'G1→G3 Conversion',v:'72% (group best)',s:'🟢 Benchmark'},
+                {m:'G4 Coaching',v:'4.2 hrs/trainee/month',s:'🟢 Highest in group'},
+                {m:'Top Risk',v:'SM departure risk (informal signal)',s:'🟡 Monitor'},
+              ].map(function(d){return '<tr><td style="font-weight:600;font-size:12px">'+d.m+'</td><td style="font-size:12px;font-weight:300">'+d.v+'</td><td style="font-size:11.5px">'+d.s+'</td></tr>';}).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tb-t-ops" class="tb">
+  <div class="story-block">
+    <div class="story-header"><div class="story-title">Monthly HR Operations Report — Internal</div><span class="chip cm">Monthly · 3–4 pages · HR team + Group HR Head</span></div>
+    <div class="story-body">
+      <div class="inf b"><strong>Purpose</strong>The internal monthly ops report is the only place where HR input metrics (compliance completions, recruitment pipeline stage, training hours) belong. It is not for COO or CEO consumption — it is the HR team's management tool. Keep it complete but keep it internal.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        ${[
+          {t:'Recruitment',items:['Active roles by country','Pipeline stage breakdown','Offer/acceptance rate','Average time to fill','Agency spend YTD']},
+          {t:'Performance',items:['Review cycle completion %','PIP activity (count, no names)','Probation decisions','Grade progression reviews due','Documentation status']},
+          {t:'Compliance',items:['Contract renewals due 30/60 days','Work permit status by country','Policy acknowledgement %','Training compliance completions','ER case log (active)']},
+          {t:'Payroll & C&B',items:['Payroll processed — all countries','Exception flagged (count only)','Benefits enrolment status','Grade band adherence check','Upcoming pay review dates']},
+          {t:'L&D Activity',items:['Training hours delivered','Programmes in progress','G4 coaching sessions logged','LMS completion rates','Budget utilised YTD']},
+          {t:'HR Operations',items:['Onboarding in progress','Offboarding completed','System update status','Policy changes effective','Next month priorities']},
+        ].map(function(d){return '<div style="background:var(--surface2);border-radius:4px;padding:14px"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">'+d.t+'</div>'+d.items.map(function(i){return '<div style="font-size:12px;color:var(--ink3);font-weight:300;padding:3px 0;border-bottom:1px solid var(--border)">'+i+'</div>';}).join('')+'</div>';}).join('')}
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 04: DATA VISUALISATION ──────────────────────────────────
+document.getElementById('page-viz').innerHTML=`
+<div class="pe">Section 04 — Data Visualisation Principles</div>
+<div class="pt">Data<br><em>Visualisation</em></div>
+<p class="pd">The chart that takes 10 seconds to understand earns credibility. The chart that requires explanation loses it. Eight principles for presenting people data to leadership audiences — with before-and-after examples from Valentis metrics.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Visualisation Prime Directive</div>
+  <div class="vx-ti">Every chart in a COO or CEO report must communicate its conclusion in the title — not in the legend. The COO should read the chart title and already know what the chart says before looking at the data.</div>
+  <div class="vx-bo">Bad title: "Attrition Rate by Country Q1 2026." Good title: "Myanmar and Indonesia Attrition Is Driving $126K in Annual Unplanned Replacement Cost." The data is the same. The first title requires interpretation. The second title is already interpreted — it tells the COO what to think, then the chart confirms it with evidence. Group HR should never produce a chart where the title is just a description of what is in the chart.</div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">The 8 Visualisation Principles</div>
+    ${[
+      {n:'01',t:'Title = Conclusion, Not Description',d:'The chart title states the finding. The chart provides the evidence. Never reverse this order.',icon:'📌'},
+      {n:'02',t:'One Chart, One Message',d:'If a chart needs two sentences of explanation, it is two charts. At executive level, complexity is a credibility killer.',icon:'🎯'},
+      {n:'03',t:'Colour Has Meaning — Use It Consistently',d:'Red = below target or risk. Amber = watch. Green = on track or above target. Never use colours decoratively.',icon:'🎨'},
+      {n:'04',t:'Always Show the Target',d:'A number without a benchmark means nothing. Every metric in a COO report needs a target line, a prior period, or a group average.',icon:'📏'},
+      {n:'05',t:'Label the Data Points, Not Just the Axes',d:'At executive level, readers should not have to read the axis and then look up a bar. Put the value on the bar or point.',icon:'🏷'},
+      {n:'06',t:'Order by Relevance, Not Alphabetically',d:'Sort countries or grades by the metric that matters — worst to best or highest risk first. Alphabetical ordering is an admin habit.',icon:'↕️'},
+      {n:'07',t:'Trend Lines Beat Single Data Points',d:'Show direction, not just position. A 93% → 84% → 84% Indonesia trend is a crisis story. Just showing 84% misses the urgency.',icon:'📈'},
+      {n:'08',t:'Tables Are for Ops Reports — Not COO Briefs',d:'Tables require reading. Charts create instant understanding. If you need a table in a COO brief, it should have no more than 4 rows and 3 columns.',icon:'📊'},
+    ].map(function(d){return '<div class="viz-card"><div class="viz-icon">'+d.icon+'</div><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-family:var(--fm);font-size:8px;color:var(--blue)">'+d.n+'</span><span class="viz-title">'+d.t+'</span></div><div class="viz-desc">'+d.d+'</div></div></div>';}).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Chart Type Selector — <em>HR Metrics</em></div>
+    <table class="dt">
+      <thead><tr><th>What You Want to Show</th><th>Use This Chart</th><th>Avoid</th></tr></thead>
+      <tbody>
+        ${[
+          {want:'Delivery rate by country vs target',use:'Horizontal bar chart with target line overlay',avoid:'Pie chart — cannot show a target'},
+          {want:'Attrition trend over time',use:'Line chart with 4–6 time periods shown',avoid:'Single number without trend context'},
+          {want:'Pipeline conversion funnel',use:'Funnel / waterfall chart — shows drop-off at each stage',avoid:'Bar chart — loses the sequential flow logic'},
+          {want:'Pay band distribution',use:'Box-and-whisker or dot plot by grade',avoid:'Table with averages only — hides outliers'},
+          {want:'Country comparison on multiple metrics',use:'Radar / spider chart or small multiples',avoid:'Single combined bar — too cluttered'},
+          {want:'Headcount vs vacancy by country',use:'Stacked bar (filled vs open)',avoid:'Table — too slow to read comparatively'},
+          {want:'Cost of attrition over time',use:'Area chart with cost annotations at key events',avoid:'Line chart without annotations — loses story'},
+          {want:'Succession coverage by role',use:'Heat map (green/amber/red grid)',avoid:'Text table — cannot spot patterns at a glance'},
+        ].map(function(d){return '<tr><td style="font-size:12px;font-weight:500">'+d.want+'</td><td style="font-size:12px;font-weight:300;color:var(--green)">'+d.use+'</td><td style="font-size:11.5px;font-weight:300;color:var(--red)">'+d.avoid+'</td></tr>';}).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Before &amp; After — <em>Real Valentis Examples</em></div>
+  ${[
+    {
+      label:'Attrition Reporting',
+      bad:'Attrition Rate by Country Q1 2026: Myanmar 28%, Indonesia 22%, Laos 14%, Thailand 8%. Group average: 18%.',
+      good:'"Myanmar and Indonesia Account for 78% of Group\'s $126K Annual Attrition Cost" — bar chart ordered worst to best, with dollar cost annotated on each bar, target line at 15%, and trend arrows showing direction vs prior quarter.'
+    },
+    {
+      label:'Pipeline Reporting',
+      bad:'G1 Pipeline: 12 candidates in assessment, 8 in final interview, 5 offers made, 3 accepted. Current headcount: 42.',
+      good:'"At Current Conversion, We Close 2 of 3 Indonesia Vacancies by June — Position 3 Remains Open Through Q3" — funnel chart with conversion rates at each stage, annotated with the timeline to fill and the delivery cost of the remaining gap.'
+    },
+    {
+      label:'Delivery vs People Metrics',
+      bad:'HR Update: Coaching hours increased 12% QoQ. G4 participation in structured coaching programme: 68%. G1 training completion: 84%.',
+      good:'"Countries with Structured G4 Coaching Deliver 14pp Higher G1 Conversion — Thailand 72% vs Myanmar 58%" — side-by-side bar chart, annotated with what that 14pp gap costs in attrition and delivery.'
+    },
+  ].map(function(d){return '<div style="margin-bottom:14px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:7px">'+d.label+'</div><div class="ba-wrap"><div class="ba-box ba-bad"><div class="ba-label">❌ Current Approach (Input-Focused)</div><div class="ba-text">'+d.bad+'</div></div><div class="ba-box ba-good"><div class="ba-label">✓ Storytelling Approach (Outcome-Focused)</div><div class="ba-text">'+d.good+'</div></div></div></div>';}).join('')}
+</div>
+`;
+
+// ── PAGE 05: NARRATIVE FRAMEWORKS ────────────────────────────────
+document.getElementById('page-narrative').innerHTML=`
+<div class="pe">Section 05 — Narrative Frameworks</div>
+<div class="pt">Narrative<br><em>Frameworks</em></div>
+<p class="pd">A framework is the skeleton of a persuasive argument. These four frameworks are battle-tested for executive communication. Each one is designed to create urgency and drive a specific type of decision. Applied Valentis examples are included for each.</p>
+
+<div class="tabs" data-tabs>
+  <div class="tab active" onclick="showTab('nf-scr',this)">Situation–Complication–Resolution</div>
+  <div class="tab" onclick="showTab('nf-bluf',this)">BLUF</div>
+  <div class="tab" onclick="showTab('nf-rca',this)">Risk–Cost–Action</div>
+  <div class="tab" onclick="showTab('nf-tdr',this)">Trend–Driver–Response</div>
+</div>
+
+<div id="tb-nf-scr" class="tb active">
+  <div class="story-block">
+    <div class="story-header"><div class="story-title">Situation–Complication–Resolution (SCR)</div><span class="chip cb">Best for: Monthly COO briefings, board presentations</span></div>
+    <div class="story-body">
+      <div class="g2">
+        <div>
+          <div class="story-section"><div class="story-label">Structure</div>
+            <div style="display:grid;gap:6px">
+              ${[
+                {n:'S',t:'Situation',d:'What is the current state? State the facts without evaluation. One to two sentences maximum. This is shared context — the COO already knows most of it.'},
+                {n:'C',t:'Complication',d:'What has changed, gone wrong, or become urgent? This is the pivot from context to problem. The complication creates the reason the COO needs to read the rest.'},
+                {n:'R',t:'Resolution',d:'What should be done, who does it, by when, and what does it cost or save? The resolution is the reason you are in the room. Never leave this vague.'},
+              ].map(function(d){return '<div style="padding:12px 14px;border-left:3px solid var(--blue);background:var(--surface2);border-radius:0 3px 3px 0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-family:var(--fm);font-size:18px;font-weight:700;color:var(--blue)">'+d.n+'</span><span style="font-weight:700;font-size:13px">'+d.t+'</span></div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">'+d.d+'</div></div>';}).join('')}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="story-section"><div class="story-label">Valentis Example — Indonesia Delivery</div>
+            <div style="background:var(--navy);border-radius:4px;padding:16px 18px">
+              <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--electric2);margin-bottom:10px">SCR Applied · Indonesia G3 Vacancy Crisis</div>
+              <div style="font-size:13px;color:#f0f4ff;line-height:1.85;font-weight:300">
+                <p style="margin-bottom:10px"><strong style="color:#a8c8ff">Situation:</strong> Indonesia has operated at 90–93% delivery for the past 8 quarters. The country is the group's second-largest revenue contributor at $2.3M annually and has historically required minimal HR intervention.</p>
+                <p style="margin-bottom:10px"><strong style="color:var(--amber)">Complication:</strong> Three G3 positions became vacant in Q4 2025. Without G3 supervisors, G4 coaches have been redirected to operational cover — removing the coaching capacity that sustains G1 conversion. Delivery has dropped from 93% to 84% in two quarters. At current trajectory, Indonesia will exit Q2 2026 below 80% — a level not seen since 2022. The annual revenue cost of remaining at 84% is $207K.</p>
+                <p><strong style="color:var(--green)">Resolution:</strong> HR recommends immediate approval of three G3 hires at a combined annual cost of $72K in salary. Two candidates are at offer stage. Projected delivery recovery to 90%+ by Q4 2026 recovers $160K of the $207K annual gap — a 2.2× return on the hiring investment in Year 1 alone. Decision required: approve the salary exception for G3 Position 3, which is $2K above band midpoint to close the market sourcing gap.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tb-nf-bluf" class="tb">
+  <div class="story-block">
+    <div class="story-header"><div class="story-title">BLUF — Bottom Line Up Front</div><span class="chip cg">Best for: Email briefings, one-paragraph updates, crisis communications</span></div>
+    <div class="story-body">
+      <div class="inf g"><strong>When to Use BLUF</strong>Use BLUF when you need a fast decision from a time-constrained leader who may not read past the first paragraph. The entire message is in sentence one. Everything after is support. If the COO reads only the first sentence, they have the complete picture.</div>
+      <div class="g2">
+        <div>
+          <div class="story-section"><div class="story-label">Structure</div>
+            <div style="display:grid;gap:6px">
+              <div style="padding:12px 14px;background:var(--surface2);border-radius:3px;border-top:3px solid var(--blue)"><div style="font-weight:700;font-size:13px;margin-bottom:4px">Sentence 1 — The Complete Message</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">State the situation, the implication, and the action required in one sentence. Maximum 40 words.</div></div>
+              <div style="padding:12px 14px;background:var(--surface2);border-radius:3px;border-top:3px solid var(--blue)"><div style="font-weight:700;font-size:13px;margin-bottom:4px">Sentences 2–4 — The Evidence</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Three supporting data points that back the headline. One financial figure. One timeline. One recommendation.</div></div>
+              <div style="padding:12px 14px;background:var(--surface2);border-radius:3px;border-top:3px solid var(--blue)"><div style="font-weight:700;font-size:13px;margin-bottom:4px">Final Line — The Ask</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">One specific decision, approval, or action requested. Never "please advise" — state what you need.</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="story-label">Valentis BLUF Example — Laos Succession Risk</div>
+          <div style="background:var(--navy);border-radius:4px;padding:16px 18px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--electric2);margin-bottom:10px">Email to COO · Subject: Laos SM Succession — Action Required</div>
+            <div style="font-size:13px;color:#f0f4ff;line-height:1.9;font-weight:300">
+              <p style="margin-bottom:8px"><strong style="color:var(--electric2)">BLUF:</strong> The Laos SM is expected to retire in Q2 2027 and there is currently no internal successor ready — HR recommends starting bench development for two G4 candidates immediately to avoid a $42K external hire and 3-month delivery transition gap.</p>
+              <p style="margin-bottom:8px">The two most senior G4s in Laos are technically qualified but have not been assessed for SM-level responsibilities. At current development pace, neither reaches SM readiness before Q2 2027. External hire at SM level takes 3–5 months, costs $28K–$42K, and typically reduces country delivery 8–12pp during the transition period.</p>
+              <p style="margin-bottom:8px">HR proposes a 12-month SM development programme starting April 2026, covering two candidates. Cost: $6K in facilitated coaching and assessment. This creates a ready-now internal successor by Q2 2027 and eliminates the external hire cost entirely.</p>
+              <p><strong style="color:var(--green)">Ask:</strong> Approval to begin the SM development programme for the two named candidates from April 2026. Budget: $6K, drawn from the L&amp;D allocation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tb-nf-rca" class="tb">
+  <div class="story-block">
+    <div class="story-header"><div class="story-title">Risk–Cost–Action (RCA)</div><span class="chip ca">Best for: Risk briefings, budget justifications, escalation memos</span></div>
+    <div class="story-body">
+      <div class="inf a"><strong>When to Use RCA</strong>RCA is the framework for when you need a leader to act before something goes wrong — not after. It works because it converts an abstract people risk into a concrete financial exposure, then immediately provides the resolution. Leaders who will not act on risk will often act when they see the cost of inaction.</div>
+      <div class="g2">
+        <div>
+          <div class="story-label">Structure</div>
+          ${[
+            {t:'Risk',d:'Name the specific risk in one sentence. Avoid "talent risk" generalities — name the exact exposure: which grade, which country, which timeline, which business consequence.',col:'var(--red)'},
+            {t:'Cost of Inaction',d:'Quantify what happens if the risk is not addressed. Use a range if exact figures are unavailable. Two figures: the direct cost and the indirect operational consequence.',col:'var(--amber)'},
+            {t:'Action',d:'The specific HR intervention: what it is, who owns it, what it costs, and when it delivers. End with the decision the leader needs to make — never leave the action ambiguous.',col:'var(--green)'},
+          ].map(function(d){return '<div style="padding:12px 16px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0;margin-bottom:8px"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px">'+d.t+'</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">'+d.d+'</div></div>';}).join('')}
+        </div>
+        <div>
+          <div class="story-label">Example — Myanmar G4 Coaching Quality</div>
+          <div style="background:var(--navy);border-radius:4px;padding:16px 18px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--electric2);margin-bottom:10px">RCA Applied · Myanmar</div>
+            <div style="font-size:13px;color:#f0f4ff;line-height:1.85;font-weight:300">
+              <p style="margin-bottom:8px"><strong style="color:var(--red)">Risk:</strong> Myanmar G4 coaches are producing a 58% G1→G3 conversion rate — 14pp below Thailand's 72% benchmark — because there is no structured coaching programme or quality standard. This means Myanmar cannot organically grow its own operational talent, creating permanent dependency on external recruitment at $18K per hire.</p>
+              <p style="margin-bottom:8px"><strong style="color:var(--amber)">Cost of Inaction:</strong> At 28% attrition and 58% conversion, Myanmar will need 8–10 external G1 hires per year indefinitely, costing $144K–$180K annually in replacement costs alone. Additionally, Myanmar delivery will remain capped at 80–82% because internal conversion cannot sustain operational growth — a $168K annual delivery gap at current revenue scale.</p>
+              <p><strong style="color:var(--green)">Action:</strong> HR proposes a G4 Structured Coaching Programme (modelled on Thailand) running Q3–Q4 2026. Cost: $8K (Thailand SM facilitation, coaching tools, quarterly assessments). Projected outcome: Myanmar conversion improves to 68–72% within 12 months, reducing external hire dependency by 40% and recovering $58K–$72K in annual replacement costs. Decision required: approve the programme budget and release Thailand SM for two facilitation visits.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tb-nf-tdr" class="tb">
+  <div class="story-block">
+    <div class="story-header"><div class="story-title">Trend–Driver–Response (TDR)</div><span class="chip cb">Best for: Monthly briefings, quarterly reviews, when data shows a direction</span></div>
+    <div class="story-body">
+      <div class="inf b"><strong>When to Use TDR</strong>TDR is the framework for when something is changing over time. It prevents leadership from treating a trend as a one-off event. The trend creates urgency. The driver creates understanding. The response creates confidence that HR is ahead of it.</div>
+      <div class="g2">
+        <div>
+          <div class="story-label">Structure</div>
+          ${[
+            {t:'Trend',d:'What is moving, in which direction, and over what time period? State the direction of travel — not just the current position. One sentence with numbers.',col:'var(--blue)'},
+            {t:'Driver',d:'Why is this trend happening? Name the specific people factor driving the movement. Avoid "multiple factors" — identify the primary driver even if secondary ones exist.',col:'var(--amber)'},
+            {t:'Response',d:'What is HR doing about the trend, and what is the projected trajectory if the response is effective? Show the recovery timeline, not just the intervention.',col:'var(--green)'},
+          ].map(function(d){return '<div style="padding:12px 16px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0;margin-bottom:8px"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px">'+d.t+'</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">'+d.d+'</div></div>';}).join('')}
+        </div>
+        <div>
+          <div class="story-label">Example — Laos Delivery Trend</div>
+          <div style="background:var(--navy);border-radius:4px;padding:16px 18px">
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--electric2);margin-bottom:10px">TDR Applied · Laos</div>
+            <div style="font-size:13px;color:#f0f4ff;line-height:1.85;font-weight:300">
+              <p style="margin-bottom:8px"><strong style="color:var(--blue3)">Trend:</strong> Laos delivery has declined steadily from 88% in Q1 2025 to 85% in Q1 2026 — a 3pp drop over four consecutive quarters. At this trajectory, Laos crosses below the 90% target permanently by Q3 2026 without intervention.</p>
+              <p style="margin-bottom:8px"><strong style="color:var(--amber)">Driver:</strong> The primary driver is an ageing G4 cohort with no bench replacement scheduled. Three of Laos's five G4 coaches are within 18 months of retirement age. As their coaching hours naturally reduce, G1 conversion rates have begun to fall. This is a structural workforce composition problem — not a performance problem.</p>
+              <p><strong style="color:var(--green)">Response:</strong> HR is accelerating G3→G4 promotion for two qualified candidates. The first promotion is targeted for Q2 2026, adding one replacement G4 coach before the first retirement. If the bench programme proceeds on schedule, Laos delivery stabilises at 86–88% through the retirement transition and recovers to 90%+ by Q1 2027. The cost of inaction — allowing delivery to fall to 82% — is approximately $145K annually in forgone revenue.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 06: REPORTING CADENCE ────────────────────────────────────
+document.getElementById('page-cadence').innerHTML=`
+<div class="pe">Section 06 — Reporting Cadence</div>
+<div class="pt">Reporting<br><em>Cadence</em></div>
+<p class="pd">The right report at the wrong time is useless. This section maps every HR report to its audience, frequency, purpose, and the Valentis operating calendar. Cadence is not bureaucracy — it is the rhythm that makes HR visible at the right moments.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Cadence Principle</div>
+  <div class="vx-ti">Group HR should be the function that leadership hears from on a predictable rhythm — not the function that sends a report when something goes wrong. Predictable reporting builds credibility. Crisis-only reporting builds the perception that HR is reactive.</div>
+  <div class="vx-bo">At Valentis's current scale, the ideal reporting cadence is: monthly COO brief (one page, 90 seconds), quarterly CEO summary (half page), quarterly country scorecard (one page per country), and annual board pack. The monthly HR ops report is internal only. Total leadership-facing reporting time per month: approximately 15–20 minutes of preparation and 5 minutes of presentation. That is the right ratio for a 42-person company.</div>
+</div>
+
+<div class="cadence-row">
+  <div class="cadence-cell"><div class="cadence-freq">Monthly</div><div class="cadence-title">COO People Brief</div><div class="cadence-items">• 1 page, 90 seconds to read<br>• 2–3 metrics + 1 decision<br>• Audience: COO (primary), Group HR Head<br>• Delivered: First Monday of month<br>• Prep time: 15 minutes (data from Tools 1–8)</div></div>
+  <div class="cadence-cell"><div class="cadence-freq">Monthly</div><div class="cadence-title">Country Scorecard</div><div class="cadence-items">• 1 page per country (4 total)<br>• Fixed format, 7 metrics<br>• Audience: Country Manager + COO<br>• Delivered: First Monday of month<br>• Prep time: 20 minutes total</div></div>
+  <div class="cadence-cell"><div class="cadence-freq">Monthly</div><div class="cadence-title">HR Ops Report (Internal)</div><div class="cadence-items">• 3–4 pages<br>• Full input metrics<br>• Audience: HR team + Group HR Head<br>• Delivered: First Friday of month<br>• Prep time: 45–60 minutes</div></div>
+  <div class="cadence-cell"><div class="cadence-freq">Quarterly</div><div class="cadence-title">CEO People Summary</div><div class="cadence-items">• Half page, 4 sections<br>• Quarter review + quarter ahead<br>• Audience: CEO (primary)<br>• Delivered: First week of new quarter<br>• Prep time: 20 minutes</div></div>
+</div>
+<div class="cadence-row">
+  <div class="cadence-cell"><div class="cadence-freq">Quarterly</div><div class="cadence-title">People Analytics Review</div><div class="cadence-items">• Full analytics update from Tools 1–8<br>• Trend analysis, predictive flags<br>• Audience: COO + Group HR Head<br>• Delivered: End of quarter<br>• Prep time: 2 hours (full refresh)</div></div>
+  <div class="cadence-cell"><div class="cadence-freq">Semi-Annual</div><div class="cadence-title">Board HR Pack</div><div class="cadence-items">• 3–5 pages<br>• People risk + succession + cost<br>• Audience: Board of Directors<br>• Delivered: Before board meeting<br>• Prep time: 3–4 hours</div></div>
+  <div class="cadence-cell"><div class="cadence-freq">Annual</div><div class="cadence-title">HR Strategy Review</div><div class="cadence-items">• Full year review + year ahead plan<br>• People cost ROI analysis<br>• Audience: CEO + COO + Board<br>• Delivered: December (for Jan planning)<br>• Prep time: Full day</div></div>
+  <div class="cadence-cell"><div class="cadence-freq">Ad Hoc</div><div class="cadence-title">Crisis / Escalation Brief</div><div class="cadence-items">• BLUF format (1 paragraph)<br>• Risk + cost + decision<br>• Audience: COO or CEO direct<br>• Delivered: Within 24 hours of event<br>• Prep time: 20–30 minutes</div></div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Valentis Operating Calendar — HR Reporting Map</div>
+    <table class="dt">
+      <thead><tr><th>Month</th><th>Report</th><th>Key Content Priority</th></tr></thead>
+      <tbody>
+        ${[
+          {m:'January',r:'COO Brief · HR Ops · CEO Q4 Summary',c:'Year-end attrition close-out · Annual pay review outcomes · Q1 hiring plan'},
+          {m:'February',r:'COO Brief · HR Ops · Country Scorecards',c:'Recruitment pipeline update · Q1 delivery trajectory · G4 coaching Q1 assessment'},
+          {m:'March',r:'COO Brief · HR Ops · Country Scorecards',c:'Q1 close · Pipeline conversion review · Any salary exception approvals'},
+          {m:'April',r:'COO Brief · HR Ops · CEO Q1 Summary · People Analytics Quarterly Review',c:'Q1 delivery vs people correlation · Attrition cost YTD · Q2 bench actions'},
+          {m:'May',r:'COO Brief · HR Ops · Country Scorecards',c:'Mid-year succession review begins · Myanmar coaching programme progress · Indonesia vacancy status'},
+          {m:'June',r:'COO Brief · HR Ops · Country Scorecards · Semi-Annual Board Pack',c:'H1 people cost vs budget · SM succession readiness · Laos retirement cliff update'},
+          {m:'July',r:'COO Brief · HR Ops · CEO Q2 Summary · People Analytics Quarterly Review',c:'H1 review · Mid-year attrition analysis · G3→G4 promotion cycle'},
+          {m:'August',r:'COO Brief · HR Ops · Country Scorecards',c:'Budget season preparation · Headcount plan for next year · Pay band review'},
+          {m:'September',r:'COO Brief · HR Ops · Country Scorecards',c:'Q3 delivery update · Pipeline health for Q4 · Bench strength review'},
+          {m:'October',r:'COO Brief · HR Ops · CEO Q3 Summary · People Analytics Quarterly Review',c:'Q3 close · Performance management cycle · Year-end headcount plan finalised'},
+          {m:'November',r:'COO Brief · HR Ops · Country Scorecards',c:'Annual pay review preparation · Board pack preparation · Attrition prediction for next year'},
+          {m:'December',r:'COO Brief · HR Ops · Country Scorecards · Annual Board Pack · HR Strategy Review',c:'Full year close · Board presentation · HR plan for next year'},
+        ].map(function(d){return '<tr><td style="font-weight:700;font-size:12px">'+d.m+'</td><td style="font-size:11.5px;color:var(--blue);font-weight:300">'+d.r+'</td><td style="font-size:11.5px;font-weight:300">'+d.c+'</td></tr>';}).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Cadence <em>Discipline</em> — Common Failures</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {f:'Reporting only when something goes wrong',fix:'Set a fixed delivery schedule. The COO should expect your brief on the first Monday of every month — not only when there is a crisis. Predictability is credibility.',col:'var(--red)'},
+        {f:'Sending the same format to all audiences',fix:'The COO brief, the CEO summary, and the Board pack are three completely different documents. Audience, depth, and language must be calibrated per reader.',col:'var(--red)'},
+        {f:'Reporting past the agreed deadline',fix:'A late HR report signals HR cannot manage its own operations. Set internal deadlines 2 days before the external deadline. Never miss an executive reporting cycle.',col:'var(--amber)'},
+        {f:'Adding more metrics each month to show value',fix:'More metrics = less clarity. The standard is: same format, same metrics, every month — with updated numbers. Consistency is what makes trends visible.',col:'var(--amber)'},
+        {f:'Sending reports without a verbal briefing',fix:'Reports are the backup. The conversation is the primary. Always present the COO brief in person or on a call — even if it takes 5 minutes. That 5 minutes is where HR earns its seat.',col:'var(--blue)'},
+      ].map(function(d){return '<div style="padding:10px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:12.5px;color:var(--red);margin-bottom:3px">❌ '+d.f+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">'+d.fix+'</div></div>';}).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 07: COO/CEO BRIEF BUILDER ────────────────────────────────
+document.getElementById('page-coo').innerHTML=`
+<div class="pe">Section 07 — COO/CEO Brief Builder</div>
+<div class="pt">COO/CEO<br><em>Brief Builder</em></div>
+<p class="pd">The brief builder is a step-by-step guide for constructing a COO or CEO-ready people brief in under 20 minutes. Follow the six steps in sequence. At the end, you have a one-page brief that positions HR as a strategic function — not a reporting function.</p>
+<div class="vx">
+  <div class="vx-ey">The Brief Builder Philosophy</div>
+  <div class="vx-ti">A good COO brief has exactly three things: the one metric that matters this month, what it costs or risks if ignored, and the one decision HR needs to move forward. Everything else is background noise.</div>
+  <div class="vx-bo">Group HR should be able to produce the COO brief in 20 minutes once the data from Tools 1–8 is current. The discipline is not in the writing — it is in the selection. Most HR teams write everything they know. The COO brief is what you select from everything you know to create urgency and drive a specific decision.</div>
+</div>
+<div class="card">
+  <div class="ct">Six-Step Brief Builder</div>
+  <div style="display:grid;gap:10px">
+    ${[
+      {n:'01',t:'Select the Headline Metric',d:'Pull the one metric from Tools 1–8 that has moved most significantly this month, or that is closest to a decision threshold. This becomes your lead. In most Valentis months this will be: group delivery rate, Indonesia vacancy status, or Myanmar attrition cost.',action:'Input: Current group delivery rate vs target. Output: "Group delivery at [X]% — [above/below] 90% target."',col:'var(--blue)'},
+      {n:'02',t:'Quantify the Business Impact',d:'Translate the headline metric into a dollar figure or delivery consequence. Use the cost calculators in Tools 4 and 8. If the metric is improving, show the value of that improvement. If it is deteriorating, show the cost of inaction.',action:'Input: Delivery gap in pp. Output: "Current gap costs Valentis $[X]K annually in forgone revenue."',col:'var(--blue)'},
+      {n:'03',t:'Identify the People Driver',d:'Name the specific workforce factor causing the metric movement. Not "talent challenges" — name the grade, the country, and the mechanism. The COO needs to understand the causal chain in one sentence.',action:'Input: Root cause from Tools 2/4/5. Output: "[X] G3 vacancies in Indonesia → G4s redirected to ops cover → G1 conversion drops → delivery declines."',col:'var(--blue)'},
+      {n:'04',t:'State What HR Is Doing',d:'Two sentences maximum. What action has HR taken or initiated? What is the expected outcome and timeline? This is your evidence of being ahead of the problem — not just reporting on it.',action:'Input: Current HR activity log. Output: "HR has [action]. We expect [outcome] by [date]."',col:'var(--amber)'},
+      {n:'05',t:'Identify the COO Decision',d:'Every brief must end with a specific decision — an approval, a resource release, a timeline endorsement, or an exception authorisation. If there is no decision this month, state the status of last month\'s decision and the next decision milestone.',action:'Input: What HR cannot proceed on without COO input. Output: "Decision required: [specific ask]. HR recommends [option]."',col:'var(--amber)'},
+      {n:'06',t:'Apply the Language Test',d:'Read every sentence. Replace any HR term with the business language equivalent. Remove any metric that does not connect to delivery, cost, or risk. If a sentence could be cut without losing a decision-critical fact — cut it.',action:'Test: Does every sentence answer one of: Does it affect delivery? Does it affect cost? Does it create a risk?',col:'var(--green)'},
+    ].map(function(d){return '<div style="padding:14px 16px;background:var(--surface2);border-radius:4px;display:flex;gap:16px;align-items:flex-start;border-top:3px solid '+d.col+'"><div style="font-family:var(--fm);font-size:13px;font-weight:700;color:'+d.col+';flex-shrink:0;padding-top:2px">'+d.n+'</div><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px">'+d.t+'</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:5px">'+d.d+'</div><div style="font-size:11.5px;font-family:var(--fm);color:'+d.col+';background:rgba(0,0,0,0.04);padding:6px 10px;border-radius:2px">'+d.action+'</div></div></div>';}).join('')}
+  </div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Brief Builder Quality Checklist</div>
+    <div style="display:grid;gap:5px;margin-top:4px">
+      ${[
+        'One page maximum — if it is longer, cut it',
+        'Title or opening sentence states the headline metric AND its business consequence',
+        'At least one dollar figure is included',
+        'The people driver is named specifically (grade + country + mechanism)',
+        'HR\'s current action is stated with a timeline',
+        'A specific COO/CEO decision is requested — not "for your information"',
+        'No HR jargon (attrition rate, headcount utilisation, completion %) without translation',
+        'The brief can be read in under 90 seconds',
+        'The brief could stand alone if forwarded to the CEO without explanation',
+        'The action requested is specific enough that a Yes/No decision is possible',
+      ].map(function(t,i){return '<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 10px;background:var(--surface2);border-radius:3px"><span style="color:var(--green);flex-shrink:0;margin-top:1px">☐</span><span style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.5">'+t+'</span></div>';}).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Common Brief <em>Mistakes</em> — and Fixes</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {m:'Opening with context instead of conclusion',fix:'Start with the metric and its consequence. The COO already knows the context.'},
+        {m:'Presenting 6–8 metrics instead of 1–2',fix:'Select the one metric that most needs a decision this month. The others belong in the ops report.'},
+        {m:'Reporting without a recommendation',fix:'Never end a brief with data. End with: "HR recommends [option]. Decision needed by [date]."'},
+        {m:'"We are working on this" without a timeline',fix:'"HR is working on" is credibility-destroying. Replace with: "HR has done X. By [date] we will have Y."'},
+        {m:'Using the same brief format for COO and CEO',fix:'The COO wants operational decisions. The CEO wants strategic picture. Different audience, different brief.'},
+        {m:'Sending the brief without a verbal walk-through',fix:'The brief is the visual aid. The 5-minute conversation is the actual briefing. Never send without following up.'},
+      ].map(function(d){return '<div style="padding:9px 12px;background:#fff8f0;border:1px solid var(--amber-border);border-radius:3px"><div style="font-weight:700;font-size:12px;color:var(--amber);margin-bottom:3px">⚠ '+d.m+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">'+d.fix+'</div></div>';}).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 08: REPORTING MATURITY ───────────────────────────────────
+document.getElementById('page-maturity').innerHTML=`
+<div class="pe">Section 08 — Reporting Maturity</div>
+<div class="pt">Reporting<br><em>Maturity</em></div>
+<p class="pd">HR reporting maturity is the measure of how closely HR's reports connect to what leadership actually uses to make decisions. Most HR teams sit at Level 1 or 2. The target for Valentis Group HR by Q4 2026 is Level 4.</p>
+<div class="card">
+  <div class="ct">HR Reporting Maturity Model — <em>5 Levels</em></div>
+  <table class="dt">
+    <thead><tr><th>Level</th><th>What HR Reports</th><th>What Leadership Hears</th><th>Credibility</th><th>Valentis Target</th></tr></thead>
+    <tbody>
+      ${[
+        {l:'Level 1 · Compliance',what:'Headcount, contract renewals, training completions, HR process status',hear:'HR is keeping the lights on. No decision required.',cred:'Administrative',target:'Current state — March 2026',col:'var(--red)'},
+        {l:'Level 2 · Activity',what:'Attrition rate, recruitment pipeline volume, survey scores, L&D hours',hear:'HR is busy. Numbers are moving. Not sure what to do with this.',cred:'Reporting function',target:'Target Q2 2026',col:'var(--amber)'},
+        {l:'Level 3 · Insights',what:'Attrition cost, delivery correlation, pipeline conversion with trends and comparisons',hear:'HR has identified something important. We should pay attention.',cred:'Analytical function',target:'Target Q3 2026',col:'var(--amber)'},
+        {l:'Level 4 · Strategic',what:'People decisions and their financial consequence. Recommendations with ROI. Predictive risk flags with mitigation plans.',hear:'HR is managing a function that affects our P&amp;L. We need them in ExCo.',cred:'Strategic partner',target:'Target Q4 2026',col:'var(--green)'},
+        {l:'Level 5 · Predictive',what:'Forward modelling — workforce supply projections, delivery scenario analysis, attrition prediction with early warning triggers',hear:'HR sees around corners. They are setting our workforce agenda, not responding to it.',cred:'C-suite peer',target:'2027+ aspiration',col:'var(--blue)'},
+      ].map(function(d){return '<tr style="border-left:3px solid '+d.col+'"><td style="font-weight:700;font-size:12px;color:'+d.col+'">'+d.l+'</td><td style="font-size:12px;font-weight:300">'+d.what+'</td><td style="font-size:12px;font-weight:300;font-style:italic">'+d.hear+'</td><td style="font-size:11.5px"><span class="chip '+(d.col==='var(--red)'?'cr':d.col==='var(--amber)'?'ca':d.col==='var(--green)'?'cg':'cb')+'">'+d.cred+'</span></td><td style="font-size:11.5px;font-weight:600">'+d.target+'</td></tr>';}).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">12-Month Maturity Roadmap — <em>Valentis</em></div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {q:'Q2 2026 (Apr–Jun)',level:'Level 2 → Level 3',actions:['Standardise country scorecards — same format, same 7 metrics, every country','Launch monthly COO brief in SCR format','Connect attrition data to cost figure in all reports','First full quarterly people analytics review delivered to COO'],col:'var(--amber)'},
+        {q:'Q3 2026 (Jul–Sep)',level:'Level 3 → Level 4',actions:['Add delivery–people correlation to all monthly briefs','First CEO quarterly summary delivered in BLUF format','Board HR pack template finalised','ROI tracking on key HR investments (Indonesia hires, Myanmar coaching) begins'],col:'var(--amber)'},
+        {q:'Q4 2026 (Oct–Dec)',level:'Establish at Level 4',actions:['First full-year board HR pack presented at December board','COO brief consistently producing decisions — track decision rate','People cost vs revenue dashboard operational','HR invited to present at ExCo (trigger: Level 4 credibility achieved)'],col:'var(--green)'},
+        {q:'2027 Aspiration',level:'Level 4 → Level 5',actions:['Predictive attrition model operational (Tools 4 + historical data)','Workforce supply-demand model producing 12-month projections','HR sets workforce agenda — not just responds to operational requests','Group HR Head positioned as strategic C-suite peer'],col:'var(--blue)'},
+      ].map(function(d){return '<div style="padding:12px 16px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-weight:700;font-size:13px;color:var(--ink)">'+d.q+'</span><span class="chip '+(d.col==='var(--amber)'?'ca':d.col==='var(--green)'?'cg':'cb')+'">'+d.level+'</span></div><div style="display:grid;gap:3px">'+d.actions.map(function(a){return '<div style="font-size:12px;color:var(--ink3);font-weight:300">→ '+a+'</div>';}).join('')+'</div></div>';}).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Measuring Maturity Progress</div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">These are the observable signals that Valentis HR is advancing through the maturity levels. Track them quarterly.</div>
+    <table class="dt">
+      <thead><tr><th>Signal</th><th>Level 2</th><th>Level 3</th><th>Level 4</th></tr></thead>
+      <tbody>
+        ${[
+          {s:'COO asks for HR input',l2:'Rarely — HR provides reports on request',l3:'Sometimes — COO reads monthly brief',l4:'Consistently — HR in COO\'s planning calendar'},
+          {s:'Report leads with',l2:'Process updates and completion rates',l3:'Metric trends with context',l4:'Business consequence and recommendation'},
+          {s:'Decision rate per brief',l2:'0–1 decisions per quarter',l3:'1 decision per report',l4:'COO decision culture — expects the ask'},
+          {s:'HR language in report',l2:'Attrition %, headcount, training hours',l3:'Cost of attrition, delivery impact, pipeline health',l4:'P&L terms — revenue impact, cost avoidance, ROI'},
+          {s:'ExCo visibility',l2:'HR presents when invited (rarely)',l3:'HR presents at quarterly review',l4:'HR on ExCo agenda monthly'},
+        ].map(function(d){return '<tr><td style="font-weight:600;font-size:12px">'+d.s+'</td><td style="font-size:11.5px;color:var(--red);font-weight:300">'+d.l2+'</td><td style="font-size:11.5px;color:var(--amber);font-weight:300">'+d.l3+'</td><td style="font-size:11.5px;color:var(--green);font-weight:600">'+d.l4+'</td></tr>';}).join('')}
+      </tbody>
+    </table>
+    <div class="inf b" style="margin-top:12px"><strong>The Final Test</strong>You are at Level 4 when the COO asks HR a question and then acts on the answer — without asking for a second opinion. That is the moment HR has become a trusted strategic function. At Valentis, that is the 12-month target.</div>
+  </div>
+</div>
+`;
+</script>
+</body>
+</html>

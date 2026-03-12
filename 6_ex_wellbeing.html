@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wellbeing & Site Welfare — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral:#c0533a; --coral2:#d4664c; --coral-dim:rgba(192,83,58,0.08);
+  --teal:#1a5f6a; --teal2:#226673; --teal-dim:rgba(26,95,106,0.08);
+  --gold:#b8962e; --gold2:#c9a93a; --gold-dim:rgba(184,150,46,0.10);
+  --cream:#faf6f0; --cream2:#f3ede4;
+  --ink:#1c1a17; --ink2:#2e2b26; --ink3:#4a4540; --ink4:#6b6560; --ink5:#9a9390;
+  --surface:#ffffff; --surface2:#f7f2eb; --surface3:#ede7dd;
+  --green:#2d7a4a; --green-dim:rgba(45,122,74,0.10);
+  --red:#b03a2e; --red-dim:rgba(176,58,46,0.08);
+  --amber:#c47a1e; --amber-dim:rgba(196,122,30,0.10);
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fs:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono',monospace;
+  --r:4px; --r2:8px; --r3:12px;
+  --sh:0 1px 3px rgba(28,26,23,0.08),0 4px 12px rgba(28,26,23,0.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:var(--fs);background:var(--cream);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+
+.topbar{background:var(--ink);color:var(--cream);padding:0 28px;height:44px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-left{display:flex;align-items:center;gap:16px}
+.tb-logo{font-family:var(--fm);font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase}
+.tb-sep{width:1px;height:18px;background:rgba(250,246,240,0.15)}
+.tb-title{font-family:var(--fs);font-size:11px;color:rgba(250,246,240,0.6);letter-spacing:0.04em}
+.tb-right{font-family:var(--fm);font-size:9px;color:rgba(250,246,240,0.35);letter-spacing:0.06em}
+
+.header{background:var(--surface);border-bottom:1px solid var(--surface3);padding:28px 28px 0}
+.header-meta{font-family:var(--fm);font-size:9px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px}
+.header-title{font-family:var(--fd);font-size:38px;font-weight:300;color:var(--ink);line-height:1.1;margin-bottom:4px}
+.header-title em{color:var(--coral);font-style:italic}
+.header-sub{font-size:12px;color:var(--ink4);font-weight:300;margin-bottom:20px;max-width:640px;line-height:1.6}
+.nav{display:flex;gap:0;border-top:1px solid var(--surface3);overflow-x:auto}
+.nav-item{font-family:var(--fs);font-size:11px;font-weight:500;color:var(--ink4);padding:11px 18px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .18s;letter-spacing:0.02em}
+.nav-item:hover{color:var(--coral)}
+.nav-item.active{color:var(--coral);border-bottom-color:var(--coral)}
+
+.main{flex:1;padding:28px;max-width:1100px;width:100%}
+.page{display:none}.page.active{display:block}
+
+.card{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--r2);padding:20px 24px;margin-bottom:16px;box-shadow:var(--sh)}
+.card:last-child{margin-bottom:0}
+.ct{font-family:var(--fd);font-size:19px;font-weight:500;color:var(--ink);margin-bottom:14px}
+.ct em{color:var(--coral);font-style:italic}
+
+.pe{font-family:var(--fm);font-size:9px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px}
+.pt{font-family:var(--fd);font-size:32px;font-weight:300;color:var(--ink);line-height:1.15;margin-bottom:12px}
+.pt em{color:var(--coral);font-style:italic}
+.pd{font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;max-width:740px;margin-bottom:20px}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+
+.kpi{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--r2);padding:16px 18px;box-shadow:var(--sh)}
+.kpi-label{font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-family:var(--fd);font-size:30px;font-weight:500;line-height:1}
+.kpi-val.coral{color:var(--coral)} .kpi-val.teal{color:var(--teal)} .kpi-val.gold{color:var(--gold)} .kpi-val.green{color:var(--green)}
+.kpi-sub{font-size:11px;color:var(--ink4);margin-top:6px;font-weight:300;line-height:1.4}
+
+.tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:1px solid var(--surface3)}
+.tab{font-family:var(--fs);font-size:11px;font-weight:500;color:var(--ink4);padding:9px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.tab:hover{color:var(--coral)}
+.tab.active{color:var(--coral);border-bottom-color:var(--coral)}
+.tb{display:none}.tb.active{display:block}
+
+.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt th{font-family:var(--fm);font-size:8.5px;font-weight:500;color:var(--ink5);letter-spacing:0.08em;text-transform:uppercase;padding:8px 10px;text-align:left;border-bottom:1px solid var(--surface3);background:var(--cream2)}
+.dt td{padding:9px 10px;border-bottom:1px solid var(--surface3);color:var(--ink3);vertical-align:top;line-height:1.45}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--cream2)}
+
+.chip{display:inline-block;font-family:var(--fm);font-size:8px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:2px 7px;border-radius:2px}
+.ch-cr{background:var(--coral-dim);color:var(--coral)} .ch-tl{background:var(--teal-dim);color:var(--teal)}
+.ch-gd{background:var(--gold-dim);color:var(--gold)} .ch-gn{background:var(--green-dim);color:var(--green)}
+.ch-rd{background:var(--red-dim);color:var(--red)} .ch-am{background:var(--amber-dim);color:var(--amber)}
+
+/* ── WELFARE DOMAIN CARD ── */
+.domain{border-left:4px solid;padding:14px 18px;border-radius:0 var(--r2) var(--r2) 0;margin-bottom:10px;background:var(--surface2)}
+.domain-label{font-family:var(--fm);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.domain-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.domain-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55}
+
+/* ── RISK ROW ── */
+.risk-row{display:flex;gap:12px;align-items:baseline;padding:10px 14px;border-radius:var(--r);margin-bottom:6px}
+.risk-row.high{background:var(--red-dim);border-left:3px solid var(--red)}
+.risk-row.med{background:var(--amber-dim);border-left:3px solid var(--amber)}
+.risk-row.low{background:var(--green-dim);border-left:3px solid var(--green)}
+.risk-label{font-family:var(--fm);font-size:9px;font-weight:500;min-width:36px;letter-spacing:0.05em}
+.risk-text{font-size:12.5px;color:var(--ink);font-weight:400;line-height:1.45;flex:1}
+.risk-owner{font-family:var(--fm);font-size:9px;color:var(--ink5);text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap}
+
+/* ── PROTOCOL STEP ── */
+.pstep{display:flex;gap:14px;margin-bottom:12px}
+.pstep-num{font-family:var(--fd);font-size:24px;font-weight:300;color:var(--teal);min-width:28px;line-height:1.1}
+.pstep-body{flex:1}
+.pstep-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.pstep-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55}
+
+/* ── STANDARD ROW ── */
+.std-row{padding:10px 14px;background:var(--surface2);border-radius:var(--r);margin-bottom:6px;border-left:3px solid var(--teal)}
+.std-title{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.std-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5}
+
+/* ── FORMULA ── */
+.formula{background:var(--ink);border-radius:var(--r2);padding:14px 18px;margin:12px 0;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.formula-label{font-family:var(--fm);font-size:8.5px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.formula-eq{font-family:var(--fm);font-size:13px;color:var(--cream);letter-spacing:0.03em}
+.formula-note{font-size:11px;color:rgba(250,246,240,0.5);font-weight:300;line-height:1.5;max-width:340px;text-align:right}
+
+/* ── INSIGHT ── */
+.insight{background:var(--teal-dim);border:1px solid rgba(26,95,106,0.15);border-radius:var(--r2);padding:14px 18px;margin:12px 0}
+.insight-label{font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px}
+.insight-body{font-size:12.5px;color:var(--ink);font-weight:400;line-height:1.6}
+
+/* ── TIMELINE ── */
+.tl-item{display:flex;gap:16px;margin-bottom:14px}
+.tl-dot-col{display:flex;flex-direction:column;align-items:center;min-width:28px}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:4px}
+.tl-line{flex:1;width:1px;background:var(--surface3)}
+.tl-content{flex:1;padding-bottom:4px}
+.tl-when{font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:3px}
+.tl-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.tl-body{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5}
+
+.footer{background:var(--ink2);color:rgba(250,246,240,0.35);font-family:var(--fm);font-size:9px;padding:14px 28px;display:flex;justify-content:space-between;letter-spacing:0.05em;margin-top:auto}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-left">
+    <div class="tb-logo">Valentis Group</div>
+    <div class="tb-sep"></div>
+    <div class="tb-title">Employee Experience &amp; Culture · Tool 06 of 08</div>
+  </div>
+  <div class="tb-right">GROUP HR · CONFIDENTIAL</div>
+</div>
+
+<div class="header">
+  <div class="header-meta">EX &amp; Culture Department · Wellbeing &amp; Site Welfare</div>
+  <div class="header-title">Wellbeing &amp; <em>Site Welfare</em></div>
+  <div class="header-sub">A practical framework for protecting the physical safety, psychological health, and living conditions of Valentis employees across four remote operating sites. Wellbeing at Valentis is an operational issue, not a wellness programme — it directly affects retention, productivity, and the company&rsquo;s ability to operate responsibly across multiple jurisdictions.</div>
+  <nav class="nav">
+    <div class="nav-item active" onclick="showPage('page-overview',this)">01 Overview</div>
+    <div class="nav-item" onclick="showPage('page-framework',this)">02 Framework</div>
+    <div class="nav-item" onclick="showPage('page-physical',this)">03 Physical Safety</div>
+    <div class="nav-item" onclick="showPage('page-psych',this)">04 Psychological Health</div>
+    <div class="nav-item" onclick="showPage('page-living',this)">05 Site Living Standards</div>
+    <div class="nav-item" onclick="showPage('page-rotation',this)">06 Rotation &amp; Leave</div>
+    <div class="nav-item" onclick="showPage('page-metrics',this)">07 Metrics</div>
+    <div class="nav-item" onclick="showPage('page-coo',this)">08 COO Brief</div>
+  </nav>
+</div>
+
+<div class="main">
+  <div id="page-overview" class="page active"></div>
+  <div id="page-framework" class="page"></div>
+  <div id="page-physical" class="page"></div>
+  <div id="page-psych" class="page"></div>
+  <div id="page-living" class="page"></div>
+  <div id="page-rotation" class="page"></div>
+  <div id="page-metrics" class="page"></div>
+  <div id="page-coo" class="page"></div>
+</div>
+
+<div class="footer">
+  <span>Valentis Group · Employee Experience &amp; Culture · Tool 06 — Wellbeing &amp; Site Welfare</span>
+  <span>Group HR Manager · Confidential</span>
+</div>
+
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+function showTab(id,el){
+  const parent=el.closest('.card')||el.closest('.page');
+  parent.querySelectorAll('.tb').forEach(t=>t.classList.remove('active'));
+  parent.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tb-'+id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
+<script>
+// PAGE 01 — Overview
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">Section 01 — Overview</div>
+<div class="pt">Wellbeing &amp;<br><em>Site Welfare</em></div>
+<p class="pd">Valentis employees work in physically demanding, remote, and isolated conditions. Wellbeing is not a corporate benefit — it is a duty of care with direct consequences for safety, retention, and operational continuity. A site welfare failure that results in injury, illness, or attrition costs far more than the investment required to prevent it.</p>
+
+<div class="g4">
+  <div class="kpi"><div class="kpi-label">D3 Belonging &amp; Safety (Group)</div><div class="kpi-val coral">6.1<span style="font-size:16px">/10</span></div><div class="kpi-sub">Wellbeing is a primary driver of D3 — gap of 0.9 pts to target</div></div>
+  <div class="kpi"><div class="kpi-label">Myanmar D3 Score</div><div class="kpi-val coral">4.4<span style="font-size:16px">/10</span></div><div class="kpi-sub">Lowest in group — isolation + no check-in protocol</div></div>
+  <div class="kpi"><div class="kpi-label">Return-from-Leave Risk</div><div class="kpi-val gold">High</div><div class="kpi-sub">No formal return protocol at any site — known attrition trigger</div></div>
+  <div class="kpi"><div class="kpi-label">Welfare Domains</div><div class="kpi-val teal">4</div><div class="kpi-sub">Physical · Psychological · Living Standards · Rotation &amp; Leave</div></div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Why Wellbeing is an <em>Operational Issue</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;margin-bottom:12px">Valentis field employees work rotational schedules in remote mineral exploration sites across four countries. Most are separated from family for weeks at a time. The combination of physical risk, isolation, fatigue, and limited access to support services creates a wellbeing environment that requires active management — not passive policy.</p>
+    <div style="display:grid;gap:7px">
+      <div style="display:flex;gap:10px;align-items:baseline"><span class="chip ch-cr">Safety</span><span style="font-size:12px;color:var(--ink3);font-weight:300">Drilling and extraction carry inherent physical risk. A fatigued or psychologically distressed employee is a safety risk to themselves and their colleagues.</span></div>
+      <div style="display:flex;gap:10px;align-items:baseline"><span class="chip ch-gd">Retention</span><span style="font-size:12px;color:var(--ink3);font-weight:300">Return-from-leave is the second-highest attrition risk point after month-3. Employees who feel the site does not care for them are unlikely to return from a break.</span></div>
+      <div style="display:flex;gap:10px;align-items:baseline"><span class="chip ch-tl">Compliance</span><span style="font-size:12px;color:var(--ink3);font-weight:300">Operating across Laos, Myanmar, Indonesia, and Thailand requires compliance with four jurisdictions&rsquo; occupational health and labour welfare regulations.</span></div>
+      <div style="display:flex;gap:10px;align-items:baseline"><span class="chip ch-gn">Culture</span><span style="font-size:12px;color:var(--ink3);font-weight:300">We Belong is hollow if people do not feel physically and psychologically safe at their site. Wellbeing is the infrastructure behind the culture pillar.</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Wellbeing Risk by <em>Site</em></div>
+    <table class="dt">
+      <thead><tr><th>Site</th><th>D3 Score</th><th>Primary risk</th><th>Return-from-leave protocol</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Thailand</strong></td><td style="color:var(--green);font-weight:700">8.1</td><td style="color:var(--ink4)">SM key-person dependency</td><td><span class="chip ch-gn">Active</span></td><td><span class="chip ch-gn">Low</span></td></tr>
+        <tr><td><strong>Laos</strong></td><td style="color:var(--gold);font-weight:700">6.8</td><td style="color:var(--ink4)">G4 retirement — cohort disruption</td><td><span class="chip ch-am">Informal</span></td><td><span class="chip ch-am">Medium</span></td></tr>
+        <tr><td><strong>Indonesia</strong></td><td style="color:var(--coral);font-weight:700">5.3</td><td style="color:var(--ink4)">Overwork from G3 vacancies</td><td><span class="chip ch-rd">Absent</span></td><td><span class="chip ch-cr">High</span></td></tr>
+        <tr><td><strong>Myanmar</strong></td><td style="color:var(--red);font-weight:700">4.4</td><td style="color:var(--ink4)">Isolation + no wellbeing infrastructure</td><td><span class="chip ch-rd">Absent</span></td><td><span class="chip ch-rd">Critical</span></td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;font-size:12px;color:var(--ink4);font-weight:300;line-height:1.55">Return-from-leave is classified absent where no SM-led check-in occurs within the first week back. This is a known attrition trigger at Myanmar and Indonesia sites — employees who feel invisible on return are significantly more likely to exit within 30 days.</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">The Four <em>Wellbeing Domains</em></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="padding:14px 18px;background:var(--red-dim);border-radius:var(--r2);border-left:4px solid var(--red)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Domain 1</div>
+      <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px">Physical Safety &amp; Health</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55">Occupational health standards, injury prevention, fatigue management, medical access, and emergency response capability at site level.</div>
+    </div>
+    <div style="padding:14px 18px;background:var(--teal-dim);border-radius:var(--r2);border-left:4px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Domain 2</div>
+      <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px">Psychological Health</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55">Isolation management, distress signals, SM mental health awareness, check-in protocols, and access to support for employees experiencing psychological difficulty.</div>
+    </div>
+    <div style="padding:14px 18px;background:var(--gold-dim);border-radius:var(--r2);border-left:4px solid var(--gold)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Domain 3</div>
+      <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px">Site Living Standards</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55">Accommodation, food, connectivity, rest facilities, and personal hygiene standards at Valentis-operated sites. The physical environment shapes psychological experience.</div>
+    </div>
+    <div style="padding:14px 18px;background:var(--coral-dim);border-radius:var(--r2);border-left:4px solid var(--coral)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--coral);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Domain 4</div>
+      <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px">Rotation &amp; Leave Management</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55">Roster design, leave entitlements, return-from-leave protocols, and the management of extended absence requests across four operating jurisdictions.</div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+<script>
+// PAGE 02 — Framework
+document.getElementById('page-framework').innerHTML=`
+<div class="pe">Section 02 — Framework</div>
+<div class="pt">Wellbeing<br><em>Framework</em></div>
+<p class="pd">The Valentis Wellbeing Framework sits at the intersection of duty of care, operational risk management, and cultural integrity. It defines standards, assigns accountability, and establishes the monitoring cadence that makes wellbeing a managed system rather than a reactive one.</p>
+
+<div class="card">
+  <div class="ct">Framework <em>Principles</em></div>
+  <div style="display:grid;gap:10px">
+    <div style="display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start;padding:13px 16px;background:var(--red-dim);border-radius:var(--r2);border-left:4px solid var(--red)">
+      <div style="font-family:var(--fd);font-size:26px;font-weight:300;color:var(--red);line-height:1">W1</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px">Wellbeing is a line-management responsibility, not a central HR function</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">The SM is the primary wellbeing manager for every person on their site. Group HR sets standards, provides tools, and monitors compliance — but the SM is the one who sees the employee every day. Wellbeing failures most often happen when SMs are not equipped or are not looking.</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start;padding:13px 16px;background:var(--teal-dim);border-radius:var(--r2);border-left:4px solid var(--teal)">
+      <div style="font-family:var(--fd);font-size:26px;font-weight:300;color:var(--teal);line-height:1">W2</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px">Prevention is cheaper than response — always</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">A return-from-leave check-in takes 10 minutes and prevents a 30-day attrition cycle costing $8K&ndash;$18K. Fatigue monitoring prevents a medical evacuation. Isolation check-ins prevent month-3 exits. Every wellbeing protocol in this framework exists because the cost of not having it exceeds the cost of maintaining it.</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start;padding:13px 16px;background:var(--gold-dim);border-radius:var(--r2);border-left:4px solid var(--gold)">
+      <div style="font-family:var(--fd);font-size:26px;font-weight:300;color:var(--gold);line-height:1">W3</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px">Standards must be consistent across all four countries</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">A Valentis employee in Myanmar should have access to the same quality of wellbeing standard as a Valentis employee in Thailand. Country-factor pay differentials exist — wellbeing standards do not. Where local law sets a higher standard, local law governs. Where Valentis standards are higher, Valentis standards govern.</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start;padding:13px 16px;background:var(--coral-dim);border-radius:var(--r2);border-left:4px solid var(--coral)">
+      <div style="font-family:var(--fd);font-size:26px;font-weight:300;color:var(--coral);line-height:1">W4</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px">Psychological safety and physical safety are inseparable</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">An employee who does not feel safe raising a concern is not psychologically safe — and an employee who is not psychologically safe will not raise a physical safety concern either. The two domains reinforce each other. The SM who builds psychological safety also builds the reporting culture that keeps people physically safe.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Accountability <em>Structure</em></div>
+    <table class="dt">
+      <thead><tr><th>Level</th><th>Role</th><th>Wellbeing responsibility</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip ch-rd">Primary</span></td><td><strong>Site Manager</strong></td><td>Day-to-day wellbeing observation. Return-from-leave check-ins. Fatigue monitoring. First responder for distress signals. Escalation to Group HR.</td></tr>
+        <tr><td><span class="chip ch-cr">Design</span></td><td><strong>Group HR</strong></td><td>Framework design and standards. SM training on wellbeing protocols. Monthly monitoring of wellbeing metrics. Escalation support. Annual site welfare review.</td></tr>
+        <tr><td><span class="chip ch-gd">Governance</span></td><td><strong>COO</strong></td><td>Quarterly wellbeing brief from Group HR. Approval of site welfare capital investments. Accountability for company-wide safety culture.</td></tr>
+        <tr><td><span class="chip ch-tl">Peer</span></td><td><strong>G4 Senior Driller</strong></td><td>Informal wellbeing presence for G1&ndash;G3 team members. First point of contact for issues below SM threshold. Buddy system support for new entrants.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Monitoring <em>Cadence</em></div>
+    <div style="display:grid;gap:7px">
+      <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--red)">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Daily — SM</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Visual check of team physical and emotional state at daily briefing. No formal instrument — SM observation and informal conversation.</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--coral)">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--coral);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Weekly — SM</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">SM wellbeing scan — any absences, injury reports, visible distress signals, return-from-leave employees in their first week back.</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--gold)">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Monthly — Group HR</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">SM wellbeing report. Absence rate, injury log, fatigue incidents, return-from-leave compliance. Review of D3 pulse score movement.</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--teal)">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Quarterly — Group HR + COO</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Wellbeing dashboard included in COO people brief. Site welfare audit results. Any escalated incidents or systemic issues flagged.</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--ink3)">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Annual — Full Site Welfare Audit</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Group HR conducts or commissions site welfare audit at each country. Reviews accommodation, food, safety equipment, fatigue protocols, medical access, and living standards compliance.</div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+<script>
+// PAGE 03 — Physical Safety
+document.getElementById('page-physical').innerHTML=`
+<div class="pe">Section 03 — Physical Safety</div>
+<div class="pt">Physical Safety<br>&amp; <em>Health</em></div>
+<p class="pd">Drilling and mineral exploration carry inherent physical risk. Physical safety at Valentis is governed by local occupational health law in each country, supplemented by Valentis group standards where local law sets a lower bar. This section defines those standards, the site-level protocols, and the escalation path when they are breached.</p>
+
+<div class="card">
+  <div class="ct">Physical Safety <em>Standards</em></div>
+  <div style="display:grid;gap:8px">
+    <div class="std-row"><div class="std-title">PPE provision and compliance</div><div class="std-desc">Full PPE kit provided to every employee on day one at company cost. SM accountable for 100% PPE compliance during drilling operations. G4 responsible for monitoring G1&ndash;G3 compliance during supervised work. Any PPE non-compliance is a same-day SM report to Group HR.</div></div>
+    <div class="std-row"><div class="std-title">Fatigue management — shift limits</div><div class="std-desc">Maximum 10 consecutive working hours per shift. Maximum 6 consecutive working days before a mandatory rest day. Double-shift requests require SM approval and are capped at 2 per employee per month. G3 vacancy periods (Indonesia current state) create fatigue risk when G4s cover extended shifts — this must be actively monitored and reported.</div></div>
+    <div class="std-row"><div class="std-title">Medical access standard</div><div class="std-desc">Every Valentis site must have: a first aid kit checked monthly, a named first aid officer (SM or designated G4), documented evacuation route to nearest medical facility, and emergency contact numbers posted visibly. Group HR audits compliance annually. Sites not meeting this standard are flagged to COO immediately.</div></div>
+    <div class="std-row"><div class="std-title">Incident reporting protocol</div><div class="std-desc">Any injury, near-miss, or occupational illness reported to SM within 1 hour. SM reports to Group HR within 24 hours. Group HR classifies the incident (recordable / non-recordable) and determines whether COO notification is required. All incidents logged in the group safety register regardless of severity.</div></div>
+    <div class="std-row"><div class="std-title">Heat and environmental exposure</div><div class="std-desc">Site-specific heat and environmental exposure protocols developed for each country. Water access, shade breaks, and acclimatisation periods for new site entrants are mandatory. SM responsible for modifying work schedules during extreme weather events. New G1 trainees receive environmental induction within first 48 hours on site.</div></div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Site Safety <em>Risk Register</em></div>
+    <div style="display:grid;gap:6px">
+      <div class="risk-row high"><span class="risk-label" style="color:var(--red)">HIGH</span><div class="risk-text"><strong>Indonesia — G4s covering G3 shifts.</strong> Extended shifts compressing rest periods. Fatigue risk elevated. G3 vacancy fills are the resolution — interim: SM monitors shift length weekly, no double shifts approved until G3 complement restored.</div><span class="risk-owner">Wirawan</span></div>
+      <div class="risk-row high"><span class="risk-label" style="color:var(--red)">HIGH</span><div class="risk-text"><strong>Myanmar — No documented safety protocols at site level.</strong> Absence of written procedures means compliance is entirely SM-dependent. Group HR to provide Myanmar-language safety protocol cards to Myo H. for distribution by May 2026.</div><span class="risk-owner">Group HR</span></div>
+      <div class="risk-row med"><span class="risk-label" style="color:var(--amber)">MED</span><div class="risk-text"><strong>Laos — G4 retirement reduces experienced safety officer coverage.</strong> Retiring G4s hold institutional knowledge of site-specific hazards. Exit knowledge-transfer must include safety protocol documentation before departure.</div><span class="risk-owner">Laos SM</span></div>
+      <div class="risk-row low"><span class="risk-label" style="color:var(--green)">LOW</span><div class="risk-text"><strong>Thailand — All safety standards met. Benchmark site.</strong> PPE compliance 100%. No recordable incidents in 12 months. First aid officer trained and current. Site used as the physical safety reference for other countries.</div><span class="risk-owner">Monitor</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Emergency Response <em>Protocol</em></div>
+    <div style="display:grid;gap:8px">
+      <div class="pstep"><div class="pstep-num">01</div><div class="pstep-body"><div class="pstep-title">Immediate response (SM or G4 first aider)</div><div class="pstep-desc">Secure the scene. Administer first aid. Call emergency services if required. Do not move injured employee unless immediate danger. All team members return to safe zone.</div></div></div>
+      <div class="pstep"><div class="pstep-num">02</div><div class="pstep-body"><div class="pstep-title">Notify Group HR — within 1 hour</div><div class="pstep-desc">SM contacts Group HR by phone. Provides: employee ID, nature of incident, current condition, action taken, whether emergency services called. Group HR activates response support.</div></div></div>
+      <div class="pstep"><div class="pstep-num">03</div><div class="pstep-body"><div class="pstep-title">Evacuation if required</div><div class="pstep-desc">Group HR coordinates medical evacuation using pre-approved route for that site. Insurance and emergency contact documentation held by Group HR for all active employees. Country-specific evacuation contacts posted in SM emergency folder.</div></div></div>
+      <div class="pstep"><div class="pstep-num">04</div><div class="pstep-body"><div class="pstep-title">Incident report within 24 hours</div><div class="pstep-desc">SM submits written incident report to Group HR. Group HR classifies and logs. COO notified of any recordable incident within 48 hours. Corrective action plan within 5 working days.</div></div></div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+<script>
+// PAGE 04 — Psychological Health
+document.getElementById('page-psych').innerHTML=`
+<div class="pe">Section 04 — Psychological Health</div>
+<div class="pt">Psychological<br><em>Health</em></div>
+<p class="pd">Remote site work is psychologically demanding. Separation from family, limited social contact, physically gruelling conditions, and the absence of private space create a psychological stress environment that is distinct from office-based work. This section provides the SM awareness framework, distress signal guide, and check-in protocols for managing psychological health at Valentis sites.</p>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Isolation Risk — <em>Valentis Context</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:12px">The psychological risk profile at Valentis is specific to remote rotational work. Employees are away from home for weeks at a time, often in locations with limited phone connectivity, limited privacy, and limited recreational options. The risk is highest at three predictable points:</p>
+    <div style="display:grid;gap:7px">
+      <div style="padding:10px 14px;background:var(--red-dim);border-radius:var(--r);border-left:3px solid var(--red)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Risk Point 1 — Weeks 2&ndash;5 (new entrant)</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">The initial adjustment period. Novelty of the role has worn off but the individual is not yet integrated into the team. Homesickness peaks. Month-3 check-in is designed specifically to intercept this window.</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--amber-dim);border-radius:var(--r);border-left:3px solid var(--amber)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--amber);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Risk Point 2 — Return from extended leave</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">The first week back is psychologically difficult. The employee has re-attached to family and home. The abruptness of the return without acknowledgement makes the transition harder. Return-from-leave protocol is the intervention.</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--amber-dim);border-radius:var(--r);border-left:3px solid var(--amber)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--amber);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Risk Point 3 — Extended deployment (6+ months continuous)</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Cumulative fatigue and isolation. Most acute for G4s and SMs who carry the greatest responsibility. Country 5 deployment planning must include explicit psychological health monitoring for deployed individuals.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">SM <em>Distress Signal Guide</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:12px">SMs are not mental health professionals. They do not diagnose — they observe and respond. These are the signals Group HR trains SMs to recognise and act on.</p>
+    <div style="display:grid;gap:6px">
+      <div style="padding:9px 14px;background:var(--red-dim);border-radius:var(--r);border-left:3px solid var(--red)">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Act immediately</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Direct statement of self-harm or hopelessness &middot; Uncharacteristic aggression or breakdown &middot; Refusal to eat or engage over several days &middot; Any safety behaviour that suggests deliberate self-endangerment</div>
+      </div>
+      <div style="padding:9px 14px;background:var(--amber-dim);border-radius:var(--r);border-left:3px solid var(--amber)">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--amber);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Check in within 24 hours</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Sudden withdrawal from team interaction &middot; Decline in work quality after a period of stability &middot; Disclosure of significant personal stress (family illness, relationship breakdown) &middot; Employee returns from leave visibly distressed</div>
+      </div>
+      <div style="padding:9px 14px;background:var(--gold-dim);border-radius:var(--r);border-left:3px solid var(--gold)">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px">Monitor and note</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Increased sick day frequency &middot; Asking repeated questions about leave entitlements &middot; Reduced participation in team moments &middot; Complaints about site conditions escalating in frequency</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Return-from-Leave <em>Protocol</em></div>
+  <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:14px">Return-from-leave is the second-highest voluntary attrition trigger at remote mining sites globally, after the initial adjustment period. The protocol below is mandatory for all Valentis sites. It takes 10&ndash;15 minutes and has measurable impact on 30-day retention.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div>
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--coral);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:10px">Day 1 — Return day</div>
+      <div style="display:grid;gap:8px">
+        <div class="pstep"><div class="pstep-num" style="color:var(--coral)">01</div><div class="pstep-body"><div class="pstep-title">SM personally greets the returning employee</div><div class="pstep-desc">Not a group briefing. A private or semi-private moment. &ldquo;Welcome back. How was your time at home?&rdquo; First question is about the person, not the work.</div></div></div>
+        <div class="pstep"><div class="pstep-num" style="color:var(--coral)">02</div><div class="pstep-body"><div class="pstep-title">Brief the returning employee on what changed</div><div class="pstep-desc">2&ndash;3 sentences on what happened at site during their absence. They should not return to a site they do not recognise. Prevents the disorientation that amplifies the psychological difficulty of return.</div></div></div>
+        <div class="pstep"><div class="pstep-num" style="color:var(--coral)">03</div><div class="pstep-body"><div class="pstep-title">Practical needs check</div><div class="pstep-desc">Equipment ready, accommodation confirmed, any paperwork outstanding. Practical friction on the first day back is a powerful negative signal. Remove it before they arrive.</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:10px">Day 3&ndash;5 — First week check-in</div>
+      <div style="display:grid;gap:8px">
+        <div class="pstep"><div class="pstep-num" style="color:var(--teal)">04</div><div class="pstep-body"><div class="pstep-title">SM private check-in (10 minutes)</div><div class="pstep-desc">Three questions: How are you settling back in? Is there anything from home that is on your mind? Is there anything you need from me this week? These questions create the opening — the employee decides how much to share.</div></div></div>
+        <div class="pstep"><div class="pstep-num" style="color:var(--teal)">05</div><div class="pstep-body"><div class="pstep-title">SM flags any concern to Group HR within 24 hours</div><div class="pstep-desc">If the returning employee disclosed significant personal stress or showed distress signals, SM contacts Group HR the same day. Group HR advises on next steps — no diagnosis, just support coordination.</div></div></div>
+        <div class="pstep"><div class="pstep-num" style="color:var(--teal)">06</div><div class="pstep-body"><div class="pstep-title">Log the return check-in</div><div class="pstep-desc">SM records completion in the monthly wellbeing log submitted to Group HR. Compliance target: 100% of return-from-leave events receive day-1 greeting and day-3&ndash;5 check-in.</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:14px">
+    <div class="insight-label">Implementation Priority</div>
+    <div class="insight-body">Return-from-leave protocol is currently absent at Myanmar and Indonesia. It requires no budget — only SM training and compliance monitoring. Group HR introduces this protocol to Myo H. and Wirawan in April 2026 as part of the SM wellbeing briefing. It should be operational at both sites before the next scheduled leave cycle.</div>
+  </div>
+</div>
+`;
+</script>
+<script>
+// PAGE 05 — Site Living Standards
+document.getElementById('page-living').innerHTML=`
+<div class="pe">Section 05 — Site Living Standards</div>
+<div class="pt">Site Living<br><em>Standards</em></div>
+<p class="pd">The physical environment in which people live during their rotation shapes their psychological experience, their sleep quality, their physical health, and their willingness to return after leave. Poor living standards are a silent attrition driver — they rarely appear in exit interviews but consistently appear in engagement data as a D3 (Belonging &amp; Safety) suppressor.</p>
+
+<div class="card">
+  <div class="ct">Valentis Site Welfare <em>Minimum Standards</em></div>
+  <div style="display:grid;gap:8px">
+    <div style="display:grid;grid-template-columns:200px 1fr auto;gap:12px;align-items:start;padding:11px 16px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--teal)">
+      <div style="font-size:12.5px;font-weight:700;color:var(--ink)">Accommodation</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Individual sleeping space with a lockable storage area. Minimum 6 hours of undisturbed rest period per 24-hour cycle. Shared dormitory acceptable but no more than 4 per room. Bedding cleaned minimum fortnightly.</div>
+      <div style="text-align:right"><span class="chip ch-tl">Mandatory</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:200px 1fr auto;gap:12px;align-items:start;padding:11px 16px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--teal)">
+      <div style="font-size:12.5px;font-weight:700;color:var(--ink)">Food and nutrition</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Three meals per day provided at company cost during rotation. Meals must reflect local dietary norms and include at least one cooked meal per day. Dietary restrictions documented at onboarding and accommodated.</div>
+      <div style="text-align:right"><span class="chip ch-tl">Mandatory</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:200px 1fr auto;gap:12px;align-items:start;padding:11px 16px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--teal)">
+      <div style="font-size:12.5px;font-weight:700;color:var(--ink)">Sanitation and hygiene</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Access to clean running water, showers, and sanitation facilities. Hygiene supplies (soap, basic toiletries) provided at company cost. Laundry facilities or service available minimum once per week.</div>
+      <div style="text-align:right"><span class="chip ch-tl">Mandatory</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:200px 1fr auto;gap:12px;align-items:start;padding:11px 16px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--gold)">
+      <div style="font-size:12.5px;font-weight:700;color:var(--ink)">Connectivity</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Access to phone signal or Wi-Fi for a minimum of 30 minutes per day during non-working hours. This is not a luxury — contact with family is a psychological health necessity for rotational workers. Where satellite connectivity is cost-prohibitive, shared terminal access is acceptable.</div>
+      <div style="text-align:right"><span class="chip ch-gd">Target</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:200px 1fr auto;gap:12px;align-items:start;padding:11px 16px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--gold)">
+      <div style="font-size:12.5px;font-weight:700;color:var(--ink)">Rest and recreation</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">A designated non-work space for rest and social time. Minimum: a covered area away from the work zone with seating. Preferred: a communal space with recreational activity options (cards, TV, books). Rest space quality correlates directly with D3 scores.</div>
+      <div style="text-align:right"><span class="chip ch-gd">Target</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:200px 1fr auto;gap:12px;align-items:start;padding:11px 16px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--coral)">
+      <div style="font-size:12.5px;font-weight:700;color:var(--ink)">Privacy and dignity</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Every employee must have a space where they can make a phone call privately. Shared sleeping spaces must have curtains or partitions where rooms exceed 2 people. Personal property must be secured and respected by all site occupants.</div>
+      <div style="text-align:right"><span class="chip ch-tl">Mandatory</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Site Living Standards — Country <em>Assessment</em></div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('ls-th',this)">Thailand</div>
+    <div class="tab" onclick="showTab('ls-la',this)">Laos</div>
+    <div class="tab" onclick="showTab('ls-id',this)">Indonesia</div>
+    <div class="tab" onclick="showTab('ls-mm',this)">Myanmar</div>
+  </div>
+
+  <div id="tb-ls-th" class="tb active">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><span class="chip ch-gn" style="font-size:9px;padding:3px 10px">All Standards Met</span><span style="font-size:12px;color:var(--ink4);font-weight:300">Thailand site meets or exceeds all mandatory and target standards. Reference site for group welfare audit.</span></div>
+    <table class="dt"><thead><tr><th>Standard</th><th>Status</th><th>Notes</th></tr></thead><tbody>
+      <tr><td>Accommodation</td><td><span class="chip ch-gn">Met</span></td><td>Private rooms available for G4+. Shared max 2 per room for G1&ndash;G3. Lockable storage for all.</td></tr>
+      <tr><td>Food and nutrition</td><td><span class="chip ch-gn">Met</span></td><td>3 meals/day, locally catered, high satisfaction in D3 pulse comments.</td></tr>
+      <tr><td>Connectivity</td><td><span class="chip ch-gn">Met</span></td><td>Wi-Fi available in communal area. Daily access unrestricted.</td></tr>
+      <tr><td>Rest and recreation</td><td><span class="chip ch-gn">Met</span></td><td>Dedicated recreation room with TV, seating, and sporting equipment.</td></tr>
+      <tr><td>Privacy</td><td><span class="chip ch-gn">Met</span></td><td>Private phone call area designated. Shower and sanitation ratio adequate.</td></tr>
+    </tbody></table>
+  </div>
+
+  <div id="tb-ls-la" class="tb">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><span class="chip ch-am" style="font-size:9px;padding:3px 10px">Mostly Met — Connectivity Gap</span><span style="font-size:12px;color:var(--ink4);font-weight:300">Laos site meets mandatory standards. Connectivity is the primary gap — limited signal affects family contact frequency.</span></div>
+    <table class="dt"><thead><tr><th>Standard</th><th>Status</th><th>Notes</th></tr></thead><tbody>
+      <tr><td>Accommodation</td><td><span class="chip ch-gn">Met</span></td><td>Adequate. 2&ndash;3 per room. Lockable storage available.</td></tr>
+      <tr><td>Food and nutrition</td><td><span class="chip ch-gn">Met</span></td><td>3 meals/day. Lao dietary norms followed. No significant complaints in survey data.</td></tr>
+      <tr><td>Connectivity</td><td><span class="chip ch-rd">Gap</span></td><td>Limited satellite signal. Family contact difficult. Group HR to investigate shared terminal or signal booster by Q3 2026.</td></tr>
+      <tr><td>Rest and recreation</td><td><span class="chip ch-am">Partial</span></td><td>Covered rest area exists but no recreational equipment. Low-cost improvement opportunity ($200&ndash;$400).</td></tr>
+      <tr><td>Privacy</td><td><span class="chip ch-gn">Met</span></td><td>Basic privacy met. No complaints in engagement data.</td></tr>
+    </tbody></table>
+  </div>
+
+  <div id="tb-ls-id" class="tb">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><span class="chip ch-cr" style="font-size:9px;padding:3px 10px">Multiple Gaps — Overwork Compounding</span><span style="font-size:12px;color:var(--ink4);font-weight:300">G3 vacancies mean extended shifts are reducing rest and recovery time below the standard. Structural fix (hire G3s) is the root cause resolution.</span></div>
+    <table class="dt"><thead><tr><th>Standard</th><th>Status</th><th>Notes</th></tr></thead><tbody>
+      <tr><td>Accommodation</td><td><span class="chip ch-gn">Met</span></td><td>Adequate for current headcount. Will need review if headcount increases to fill G3 vacancies.</td></tr>
+      <tr><td>Food and nutrition</td><td><span class="chip ch-gn">Met</span></td><td>Met. No significant complaints.</td></tr>
+      <tr><td>Rest period</td><td><span class="chip ch-rd">Breached</span></td><td>G4s covering G3 shifts. Rest periods compressed below 6-hour standard on double-shift days. Immediate SM monitoring required.</td></tr>
+      <tr><td>Connectivity</td><td><span class="chip ch-am">Partial</span></td><td>Available but inconsistent. SM to confirm daily minimum access is maintained during extended operations.</td></tr>
+      <tr><td>Privacy</td><td><span class="chip ch-gn">Met</span></td><td>Met.</td></tr>
+    </tbody></table>
+  </div>
+
+  <div id="tb-ls-mm" class="tb">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><span class="chip ch-rd" style="font-size:9px;padding:3px 10px">Multiple Gaps — Full Welfare Audit Required</span><span style="font-size:12px;color:var(--ink4);font-weight:300">Myanmar has the lowest D3 score (4.4) and the least welfare infrastructure documentation. A full welfare audit is required in Q2 2026.</span></div>
+    <table class="dt"><thead><tr><th>Standard</th><th>Status</th><th>Notes</th></tr></thead><tbody>
+      <tr><td>Accommodation</td><td><span class="chip ch-am">Unverified</span></td><td>No documented assessment. Site audit will confirm. Myo H. briefed to prepare pre-audit welfare checklist.</td></tr>
+      <tr><td>Food and nutrition</td><td><span class="chip ch-am">Unverified</span></td><td>Verbal confirmation from Myo H. that meals are provided. Formal standard documentation absent.</td></tr>
+      <tr><td>Connectivity</td><td><span class="chip ch-rd">Gap</span></td><td>Signal unreliable. No family contact protocol in place. Likely contributor to D3 score of 4.4 and month-3 attrition.</td></tr>
+      <tr><td>Rest and recreation</td><td><span class="chip ch-rd">Gap</span></td><td>No documented rest space. No recreational provision. Isolation risk elevated without structured non-work time.</td></tr>
+      <tr><td>Safety documentation</td><td><span class="chip ch-rd">Absent</span></td><td>No written safety protocols documented at site level. Group HR provides Myanmar-language safety cards by May 2026.</td></tr>
+    </tbody></table>
+  </div>
+</div>
+`;
+</script>
+<script>
+// PAGE 06 — Rotation & Leave
+document.getElementById('page-rotation').innerHTML=`
+<div class="pe">Section 06 — Rotation &amp; Leave</div>
+<div class="pt">Rotation &amp;<br><em>Leave Management</em></div>
+<p class="pd">Rotation design and leave management are among the most direct wellbeing levers available to Group HR. A poorly designed roster creates cumulative fatigue and resentment. A well-designed one creates a predictable rhythm that employees can plan their lives around — which is itself a wellbeing provision. This section defines Valentis rotation standards, leave entitlements, and the leave management protocols for all four countries.</p>
+
+<div class="card">
+  <div class="ct">Rotation <em>Standards</em></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div>
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--coral);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:10px">Standard Rotation Model</div>
+      <div style="display:grid;gap:7px">
+        <div class="std-row"><div class="std-title">Rotation cycle</div><div class="std-desc">4 weeks on / 2 weeks off (preferred). Where operational requirements require deviation, minimum is 3 weeks on / 1 week off. Deviations above 6 consecutive weeks on site require Group HR approval and SM wellbeing monitoring log.</div></div>
+        <div class="std-row"><div class="std-title">Shift design</div><div class="std-desc">Maximum 10 hours per shift. Maximum 6 consecutive working days. Minimum 8 hours between shifts. Double-shift cap: 2 per employee per month. G3 vacancy exception: monitored weekly by SM, reported monthly to Group HR.</div></div>
+        <div class="std-row"><div class="std-title">Rotation predictability</div><div class="std-desc">Rotation dates communicated minimum 3 weeks in advance. Changes to rotation schedule notified minimum 2 weeks in advance except in operational emergency. Predictability is a wellbeing provision — employees plan family commitments around it.</div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:10px">Fatigue Risk Monitoring</div>
+      <div style="display:grid;gap:7px">
+        <div style="padding:10px 14px;background:var(--red-dim);border-radius:var(--r);border-left:3px solid var(--red)">
+          <div style="font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:2px">Red flag: 6+ weeks continuous</div>
+          <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">SM notifies Group HR. Employee welfare check within 48 hours. Leave must be scheduled within the next 2 weeks unless employee formally waives in writing.</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--amber-dim);border-radius:var(--r);border-left:3px solid var(--amber)">
+          <div style="font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:2px">Amber: 5 weeks continuous</div>
+          <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">SM conducts informal wellbeing check-in. Leave date confirmed and communicated to employee. SM monitors work quality and engagement.</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--teal-dim);border-radius:var(--r);border-left:3px solid var(--teal)">
+          <div style="font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:2px">Standard: 4 weeks on</div>
+          <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Normal rotation. SM daily observation. Return-from-leave protocol applies at all rotation cycles regardless of length.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Leave Entitlements &amp; <em>Country Standards</em></div>
+  <table class="dt">
+    <thead><tr><th>Country</th><th>Annual leave (statutory)</th><th>Valentis standard</th><th>Sick leave</th><th>Emergency leave</th><th>Leave advance notice</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Thailand</strong></td><td>6 days/yr (statutory minimum)</td><td>14 days/yr + rotation leave</td><td>30 days/yr (paid)</td><td>Up to 5 days for family emergency</td><td>2 weeks preferred</td></tr>
+      <tr><td><strong>Laos</strong></td><td>15 days/yr (statutory)</td><td>15 days/yr + rotation leave</td><td>30 days/yr (paid)</td><td>Up to 5 days for family emergency</td><td>2 weeks preferred</td></tr>
+      <tr><td><strong>Indonesia</strong></td><td>12 days/yr (statutory)</td><td>14 days/yr + rotation leave</td><td>12 days/yr (paid, statutory)</td><td>Up to 5 days for family emergency</td><td>2 weeks preferred</td></tr>
+      <tr><td><strong>Myanmar</strong></td><td>10 days/yr (statutory)</td><td>14 days/yr + rotation leave</td><td>30 days/yr (paid)</td><td>Up to 5 days for family emergency</td><td>2 weeks preferred</td></tr>
+    </tbody>
+  </table>
+  <div style="margin-top:10px;font-size:12px;color:var(--ink4);font-weight:300;line-height:1.55">Valentis standard applies where it exceeds the statutory minimum. &ldquo;Rotation leave&rdquo; refers to the off-rotation period (2 weeks in a standard 4/2 cycle) — this is over and above statutory leave entitlements. Emergency leave does not require advance notice and is approved by Group HR within 4 hours.</div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Leave Management <em>Protocol</em></div>
+    <div style="display:grid;gap:8px">
+      <div class="pstep"><div class="pstep-num">01</div><div class="pstep-body"><div class="pstep-title">Leave request — minimum 2 weeks prior</div><div class="pstep-desc">Employee submits leave request to SM. SM approves or declines within 5 working days. Declines must cite operational reason and offer alternative dates.</div></div></div>
+      <div class="pstep"><div class="pstep-num">02</div><div class="pstep-body"><div class="pstep-title">SM cover plan before employee departs</div><div class="pstep-desc">SM confirms coverage plan before any leave is approved. For G4 leave, SM confirms G3 bench is adequate to maintain safety standards during absence.</div></div></div>
+      <div class="pstep"><div class="pstep-num">03</div><div class="pstep-body"><div class="pstep-title">Leave balance tracking — monthly</div><div class="pstep-desc">Group HR tracks leave balances monthly. Any employee with &gt;10 days accrued leave and no leave scheduled is flagged. Uncapped leave accrual creates a liability and a wellbeing risk.</div></div></div>
+      <div class="pstep"><div class="pstep-num">04</div><div class="pstep-body"><div class="pstep-title">Return-from-leave protocol activated</div><div class="pstep-desc">On return date, SM activates return-from-leave protocol (Section 04). Compliance logged monthly to Group HR. Non-compliance is a SM performance issue.</div></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Country 5 <em>Deployment Consideration</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:12px">Country 5 deployment (target Q2 2027) will require specific wellbeing provisions for the initial deployment team, who will be establishing a new site with minimal infrastructure. Group HR must plan for:</p>
+    <div style="display:grid;gap:7px">
+      <div style="padding:10px 14px;background:var(--coral-dim);border-radius:var(--r);border-left:3px solid var(--coral)">
+        <div style="font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:2px">Extended isolation risk</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">First deployment team at a new site has no established community. Weekly Group HR check-in call (not SM-to-employee — Group HR to SM) during the first 90 days is mandatory.</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--amber-dim);border-radius:var(--r);border-left:3px solid var(--amber)">
+        <div style="font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:2px">Welfare infrastructure timeline</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Mandatory welfare standards (accommodation, food, sanitation) must be operational before any employee deploys. No employee deploys to a site that does not meet minimum standards — even temporarily.</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--teal-dim);border-radius:var(--r);border-left:3px solid var(--teal)">
+        <div style="font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:2px">Enhanced rotation for pioneer team</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Country 5 pioneer team receives enhanced rotation (3 weeks on / 2 weeks off minimum) for the first 6 months. Additional cost is offset by the reduced attrition risk and the importance of retaining the site establishment team.</div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+<script>
+// PAGE 07 — Metrics
+document.getElementById('page-metrics').innerHTML=`
+<div class="pe">Section 07 — Metrics</div>
+<div class="pt">Wellbeing<br><em>Metrics</em></div>
+<p class="pd">Wellbeing metrics at Valentis are deliberately operational — they connect physical and psychological safety directly to attrition risk, productivity, and safety performance. All metrics are collectable from existing data sources with no additional tooling required.</p>
+
+<div class="g4">
+  <div class="kpi"><div class="kpi-label">D3 Score Target</div><div class="kpi-val teal">7.0<span style="font-size:16px">/10</span></div><div class="kpi-sub">Group-wide by Q4 2026. Current: 6.1</div></div>
+  <div class="kpi"><div class="kpi-label">Recordable Incidents</div><div class="kpi-val gold">Target<span style="font-size:16px"> 0</span></div><div class="kpi-sub">Zero recordable incidents per site per year</div></div>
+  <div class="kpi"><div class="kpi-label">Return-from-Leave Compliance</div><div class="kpi-val coral">0%<span style="font-size:16px"> now</span></div><div class="kpi-sub">Target 100% by Q3 2026 at all sites</div></div>
+  <div class="kpi"><div class="kpi-label">Rest Period Compliance</div><div class="kpi-val coral">Breached<span style="font-size:16px"> (ID)</span></div><div class="kpi-sub">Indonesia rest period below standard — G3 hire resolves</div></div>
+</div>
+
+<div class="card">
+  <div class="ct">Wellbeing Metrics <em>Register</em></div>
+  <table class="dt">
+    <thead><tr><th>Metric</th><th>Definition</th><th>Target</th><th>Frequency</th><th>Source</th><th>Owner</th></tr></thead>
+    <tbody>
+      <tr><td><strong>D3 engagement score</strong></td><td>Annual census + quarterly pulse score for Belonging &amp; Safety driver</td><td>7.0 group / 6.5 min per site</td><td>Annual + Quarterly</td><td>Engagement surveys</td><td>Group HR</td></tr>
+      <tr><td><strong>Recordable incidents</strong></td><td>Any injury, occupational illness, or near-miss requiring medical attention beyond first aid</td><td>0 per site per year</td><td>Per event (logged monthly)</td><td>SM incident log</td><td>Group HR</td></tr>
+      <tr><td><strong>Rest period compliance</strong></td><td>% of shift rosters meeting the 6-hr rest period standard and 6-day consecutive work cap</td><td>100%</td><td>Monthly</td><td>SM roster report</td><td>Group HR</td></tr>
+      <tr><td><strong>Return-from-leave protocol compliance</strong></td><td>% of return-from-leave events receiving day-1 greeting and day-3&ndash;5 check-in</td><td>100% by Q3 2026</td><td>Monthly</td><td>SM wellbeing log</td><td>Group HR</td></tr>
+      <tr><td><strong>Sick day rate</strong></td><td>Total sick days per site &divide; total working days &times; 100. Tracked by site and grade.</td><td>&lt;3% per site</td><td>Monthly</td><td>Attendance records</td><td>Group HR</td></tr>
+      <tr><td><strong>Medical evacuation count</strong></td><td>Number of medical evacuations per year per site</td><td>0 (prevention target)</td><td>Per event</td><td>SM report + insurance</td><td>Group HR + COO</td></tr>
+      <tr><td><strong>Welfare standard compliance</strong></td><td>% of mandatory welfare standards met at site level (assessed via annual audit)</td><td>100% mandatory / &ge;80% target</td><td>Annual</td><td>Site welfare audit</td><td>Group HR</td></tr>
+      <tr><td><strong>Leave utilisation rate</strong></td><td>% of annual leave entitlement taken by employees in each calendar year</td><td>&ge;80% per site</td><td>Annual</td><td>Leave records</td><td>Group HR</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">SM Monthly Wellbeing <em>Report</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:10px">SM submits this report to Group HR by the 5th of each month. Designed to complete in under 10 minutes. The data feeds the Group HR wellbeing dashboard and the COO quarterly brief.</p>
+    <table class="dt">
+      <thead><tr><th>Field</th><th>Entry</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Incidents this month</strong></td><td style="color:var(--ink4);font-style:italic">Number + brief description of any recordable or near-miss events</td></tr>
+        <tr><td><strong>Rest period breaches</strong></td><td style="color:var(--ink4);font-style:italic">Any employee working beyond shift limits this month? Y/N. If Y, employee ID and reason.</td></tr>
+        <tr><td><strong>Return-from-leave check-ins</strong></td><td style="color:var(--ink4);font-style:italic">Number of returns this month. Check-in completed for each? Y/N. Any concern flags?</td></tr>
+        <tr><td><strong>Distress signals observed</strong></td><td style="color:var(--ink4);font-style:italic">Any employees showing signals from the SM distress guide? Y/N. If Y, action taken.</td></tr>
+        <tr><td><strong>Sick days this month</strong></td><td style="color:var(--ink4);font-style:italic">Total sick days by employee ID (not reason). Group HR calculates site rate.</td></tr>
+        <tr><td><strong>Welfare concerns</strong></td><td style="color:var(--ink4);font-style:italic">Any accommodation, food, connectivity, or safety equipment issues this month?</td></tr>
+        <tr><td><strong>SM observation note</strong></td><td style="color:var(--ink4);font-style:italic">Optional: 2&ndash;3 sentences on overall team wellbeing this month. Qualitative signal.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Wellbeing Investment <em>Planner</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:10px">Estimated annual cost of bringing all sites to full welfare standard compliance.</p>
+    <table class="dt">
+      <thead><tr><th>Investment item</th><th>Site</th><th>Est. cost</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr><td>Myanmar welfare audit + documentation</td><td>Myanmar</td><td>~$500</td><td><span class="chip ch-rd">Urgent</span></td></tr>
+        <tr><td>Myanmar safety protocol cards (local language)</td><td>Myanmar</td><td>~$200</td><td><span class="chip ch-rd">Urgent</span></td></tr>
+        <tr><td>Myanmar rest/recreation space improvement</td><td>Myanmar</td><td>~$800</td><td><span class="chip ch-cr">High</span></td></tr>
+        <tr><td>Myanmar connectivity (shared terminal or booster)</td><td>Myanmar</td><td>~$1,500</td><td><span class="chip ch-cr">High</span></td></tr>
+        <tr><td>Laos connectivity improvement</td><td>Laos</td><td>~$800</td><td><span class="chip ch-am">Medium</span></td></tr>
+        <tr><td>Laos rest/recreation equipment</td><td>Laos</td><td>~$300</td><td><span class="chip ch-am">Medium</span></td></tr>
+        <tr><td>SM wellbeing training (all 4 SMs)</td><td>Group</td><td>~$600</td><td><span class="chip ch-cr">High</span></td></tr>
+        <tr><td>Return-from-leave protocol rollout materials</td><td>Group</td><td>~$0</td><td><span class="chip ch-rd">Urgent</span></td></tr>
+        <tr style="background:var(--gold-dim)"><td><strong>Total estimated investment</strong></td><td>&mdash;</td><td><strong>~$4,700</strong></td><td style="font-weight:600">Year 1 priority</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+</script>
+<script>
+// PAGE 08 — COO Brief
+document.getElementById('page-coo').innerHTML=`
+<div class="pe">Section 08 — COO Brief</div>
+<div class="pt">COO Wellbeing<br><em>Brief</em></div>
+<p class="pd">The wellbeing COO brief is structured around duty of care, operational risk, and a specific budget request. Group HR presents this in the Q2 2026 people brief — framed not as a welfare programme but as the risk management infrastructure that protects the business from safety incidents, operational disruptions, and the legal exposure of operating below welfare standards in four jurisdictions.</p>
+
+<div class="card">
+  <div class="ct">COO Wellbeing Brief — <em>Q2 2026</em></div>
+  <div style="background:var(--ink);border-radius:var(--r2);padding:24px 28px">
+    <div style="font-family:var(--fm);font-size:8.5px;color:var(--coral);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px">VALENTIS GROUP · PEOPLE BRIEF · Q2 2026</div>
+    <div style="font-family:var(--fd);font-size:26px;font-weight:300;color:var(--cream);margin-bottom:20px">Wellbeing &amp; Site Welfare</div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
+      <div style="padding:14px 16px;background:rgba(250,246,240,0.06);border-radius:var(--r2);border-top:2px solid var(--red)">
+        <div style="font-family:var(--fm);font-size:8px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Sites Below Standard</div>
+        <div style="font-family:var(--fd);font-size:32px;color:var(--red);font-weight:500">2<span style="font-size:16px;font-weight:300"> of 4</span></div>
+        <div style="font-size:11px;color:rgba(250,246,240,0.55);margin-top:4px;font-weight:300">Myanmar (critical) &amp; Indonesia (rest period breach)</div>
+      </div>
+      <div style="padding:14px 16px;background:rgba(250,246,240,0.06);border-radius:var(--r2);border-top:2px solid var(--gold)">
+        <div style="font-family:var(--fm);font-size:8px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Return-from-Leave Protocol</div>
+        <div style="font-family:var(--fd);font-size:32px;color:var(--gold);font-weight:500">0%<span style="font-size:16px;font-weight:300"> compliance</span></div>
+        <div style="font-size:11px;color:rgba(250,246,240,0.55);margin-top:4px;font-weight:300">No site has a formal protocol — known attrition trigger</div>
+      </div>
+      <div style="padding:14px 16px;background:rgba(250,246,240,0.06);border-radius:var(--r2);border-top:2px solid var(--teal)">
+        <div style="font-family:var(--fm);font-size:8px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Total Investment Required</div>
+        <div style="font-family:var(--fd);font-size:32px;color:var(--teal);font-weight:500">~$4.7K</div>
+        <div style="font-size:11px;color:rgba(250,246,240,0.55);margin-top:4px;font-weight:300">Year 1 priority welfare improvements across 4 sites</div>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:12px;margin-bottom:20px">
+      <div style="padding:14px 18px;background:rgba(192,83,58,0.15);border-radius:var(--r2);border-left:3px solid var(--coral)">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--coral);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Risk 01 — Myanmar Welfare Deficit</div>
+        <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px">No documented welfare standards, no connectivity, no rest space, no safety protocols at site level. Full welfare audit required Q2 2026.</div>
+        <div style="font-size:12px;color:rgba(250,246,240,0.65);font-weight:300;line-height:1.55">Myanmar D3 score is 4.4 — the lowest in the group. Isolation and absence of basic psychological comfort provisions are primary contributors. This is a retention risk (correlated with 42% trainee attrition) and a legal exposure risk in Myanmar jurisdiction. The $2,500 Myanmar-specific welfare investment is the minimum required to reach basic compliance and begin D3 recovery.</div>
+      </div>
+      <div style="padding:14px 18px;background:rgba(196,122,30,0.12);border-radius:var(--r2);border-left:3px solid var(--gold)">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Risk 02 — Indonesia Rest Period Breach</div>
+        <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px">G4s covering G3 shifts are working below the 6-hour rest standard. This is a safety risk and a legal exposure in Indonesian labour law.</div>
+        <div style="font-size:12px;color:rgba(250,246,240,0.65);font-weight:300;line-height:1.55">The root cause is the three open G3 vacancies. Resolution requires hiring, not a welfare investment. Until G3s are in seat, Wirawan must submit weekly shift compliance reports to Group HR. Any double-shift approval is logged and approved by Group HR. The board is aware that vacancy-driven overwork is an active compliance risk.</div>
+      </div>
+    </div>
+
+    <div style="padding:14px 18px;background:rgba(26,95,106,0.2);border-radius:var(--r2);border-left:3px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Decision Requested</div>
+      <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px">Approve $4,700 site welfare investment for FY2026. Confirm G3 Indonesia hiring remains Q2 2026 priority to resolve rest period breach.</div>
+      <div style="font-size:12px;color:rgba(250,246,240,0.65);font-weight:300;line-height:1.55">The $4,700 covers Myanmar audit, safety cards, connectivity, rest space, Laos connectivity, and SM wellbeing training for all four countries. This investment is substantially less than the cost of a single medical evacuation ($10K&ndash;$25K in a remote location), a single attrition-related replacement ($8K&ndash;$18K), or a labour law compliance fine in any of the four jurisdictions. Group HR is requesting this as a risk management investment, not a welfare benefit.</div>
+    </div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Implementation <em>Timeline</em></div>
+    <div style="display:grid;gap:0">
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">April 2026</div><div class="tl-title">Return-from-leave protocol — all sites</div><div class="tl-body">Group HR briefs all four SMs on the protocol. Myo H. and Wirawan receive protocol guide in local language. Compliance tracking begins immediately.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">May 2026</div><div class="tl-title">Myanmar safety protocol cards distributed</div><div class="tl-body">Myanmar-language safety cards produced and distributed to Myo H. for site posting. Emergency contacts, first aid procedures, evacuation route documented.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--coral)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q2 2026</div><div class="tl-title">Myanmar full welfare audit</div><div class="tl-body">Group HR conducts or commissions welfare audit at Myanmar site. Accommodation, food, sanitation, rest space, and safety standards assessed against Valentis minimum. Remediation plan produced.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--gold)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q2&ndash;Q3 2026</div><div class="tl-title">SM wellbeing training — all four SMs</div><div class="tl-body">Group HR delivers 2-hour SM wellbeing briefing covering distress signal guide, return-from-leave protocol, fatigue monitoring, and monthly reporting requirements.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q3 2026</div><div class="tl-title">Myanmar connectivity + rest space improvements</div><div class="tl-body">Shared terminal or connectivity solution installed. Rest space designated and equipped. D3 impact visible in Q3 2026 pulse survey.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot"></div></div>
+        <div class="tl-content"><div class="tl-when">Q4 2026</div><div class="tl-title">Full welfare audit — all four sites</div><div class="tl-body">Annual site welfare audit at all four countries. Results feed into January 2027 engagement census preparation. Country 5 welfare standard plan initiated.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Welfare Investment vs <em>Risk Cost</em></div>
+    <div class="formula">
+      <div><div class="formula-label">Cost comparison</div><div class="formula-eq">$4,700 welfare investment vs $10K&ndash;$25K single medical evacuation</div></div>
+      <div class="formula-note">The welfare programme pays back if it prevents a single evacuation, a single attrition replacement, or a single labour law fine across the group</div>
+    </div>
+    <table class="dt" style="margin-top:12px">
+      <thead><tr><th>Risk event</th><th>Estimated cost</th><th>Welfare investment mitigates?</th></tr></thead>
+      <tbody>
+        <tr><td>Medical evacuation (remote site)</td><td>$10K&ndash;$25K</td><td style="color:var(--green);font-weight:600">Yes — fatigue + safety protocols</td></tr>
+        <tr><td>G3 attrition from isolation</td><td>$8K&ndash;$18K</td><td style="color:var(--green);font-weight:600">Yes — connectivity + check-ins</td></tr>
+        <tr><td>Labour law fine (Indonesia rest breach)</td><td>$5K&ndash;$50K+</td><td style="color:var(--green);font-weight:600">Yes — rest period monitoring</td></tr>
+        <tr><td>Reputational damage (welfare story)</td><td>Unquantified</td><td style="color:var(--teal);font-weight:600">Partially — standards documentation</td></tr>
+        <tr><td>G4 coaching programme undermined by sick rate</td><td>$18K&ndash;$36K</td><td style="color:var(--green);font-weight:600">Yes — physical + psychological health</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+</script>

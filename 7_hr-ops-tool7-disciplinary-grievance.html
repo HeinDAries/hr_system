@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disciplinary & Grievance Case Tracker — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e; --slate: #2d3142; --amber: #c9802a; --amber-light: #e8a84a;
+    --amber-pale: #fdf3e3; --steel: #4a5568; --mist: #f4f5f7; --white: #ffffff;
+    --border: #dde1ea; --success: #2d7d46; --success-bg: #edf7f1;
+    --warning: #b45309; --warning-bg: #fef3cd; --danger: #b91c1c; --danger-bg: #fef2f2;
+    --info: #1e5f74; --info-bg: #e8f4f8; --purple: #5b21b6; --purple-bg: #ede9fe;
+    --tag-laos: #1e5f74; --tag-myanmar: #6b3a2a; --tag-indonesia: #1a4731; --tag-thailand: #3b2a6e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--mist); color: var(--ink); min-height: 100vh; }
+
+  .header { background: var(--slate); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--amber); }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .dept-badge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--amber); letter-spacing: 2px; border: 1px solid var(--amber); padding: 3px 8px; border-radius: 2px; }
+  .header-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); font-weight: 600; }
+  .header-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8899aa; letter-spacing: 1px; }
+
+  .tool-header { background: var(--white); padding: 28px 40px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  .tool-title-block h1 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .tool-title-block p { font-size: 13px; color: var(--steel); max-width: 600px; line-height: 1.6; }
+  .tool-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber-light); padding: 4px 10px; border-radius: 2px; letter-spacing: 1px; white-space: nowrap; margin-top: 4px; }
+
+  .stats-bar { background: var(--slate); padding: 16px 40px; display: flex; }
+  .stat-item { flex: 1; text-align: center; padding: 0 14px; border-right: 1px solid rgba(255,255,255,0.1); }
+  .stat-item:last-child { border-right: none; }
+  .stat-number { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; color: var(--amber-light); display: block; }
+  .stat-number.red { color: #f87171; } .stat-number.green { color: #6ee7b7; } .stat-number.yellow { color: #fcd34d; }
+  .stat-label { font-size: 11px; color: #99aabb; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .main { padding: 28px 40px; display: flex; flex-direction: column; gap: 24px; }
+  .tab-bar { display: flex; border-bottom: 2px solid var(--border); }
+  .tab-btn { padding: 10px 22px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--steel); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--ink); }
+  .tab-content { display: none; } .tab-content.active { display: block; }
+
+  .controls-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .search-box { flex: 1; min-width: 200px; display: flex; align-items: center; background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 0 14px; gap: 8px; height: 38px; }
+  .search-box input { border: none; outline: none; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); flex: 1; background: transparent; }
+  .filter-select { height: 38px; padding: 0 12px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: var(--steel); background: var(--white); cursor: pointer; outline: none; }
+  .btn { height: 38px; padding: 0 18px; border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--amber); color: var(--white); } .btn-primary:hover { background: var(--amber-light); }
+  .btn-outline { background: var(--white); color: var(--slate); border: 1px solid var(--border); } .btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+  .btn-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid #fca5a5; } .btn-danger:hover { background: var(--danger); color: var(--white); }
+
+  .table-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .table-card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .table-card-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--steel); letter-spacing: 1.5px; text-transform: uppercase; }
+  .record-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--amber); }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--mist); padding: 10px 14px; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--steel); letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border); font-weight: 500; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--amber-pale); }
+  td { padding: 10px 14px; font-size: 12.5px; color: var(--ink); vertical-align: middle; }
+
+  .country-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 2px; color: var(--white); }
+  .ct-laos { background: var(--tag-laos); } .ct-myanmar { background: var(--tag-myanmar); }
+  .ct-indonesia { background: var(--tag-indonesia); } .ct-thailand { background: var(--tag-thailand); }
+  .grade-badge { font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 2px; background: var(--slate); color: var(--amber-light); }
+
+  /* CASE TYPE & STATUS PILLS */
+  .case-type { display: inline-block; font-size: 10px; padding: 3px 9px; border-radius: 2px; font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+  .ct-disciplinary { background: var(--danger-bg); color: var(--danger); }
+  .ct-grievance { background: var(--info-bg); color: var(--info); }
+  .ct-misconduct { background: #fef3cd; color: #92400e; }
+  .ct-performance { background: var(--purple-bg); color: var(--purple); }
+  .ct-appeal { background: var(--mist); color: var(--steel); border: 1px solid var(--border); }
+
+  .case-stage { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 10px; font-family: 'IBM Plex Mono', monospace; }
+  .cs-open      { background: var(--warning-bg); color: var(--warning); }
+  .cs-active    { background: var(--info-bg); color: var(--info); }
+  .cs-pending   { background: #ede9fe; color: #5b21b6; }
+  .cs-resolved  { background: var(--success-bg); color: var(--success); }
+  .cs-closed    { background: var(--mist); color: var(--steel); }
+  .cs-escalated { background: var(--danger-bg); color: var(--danger); }
+
+  .severity-pip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+  .sev-low   { color: var(--success); }
+  .sev-med   { color: var(--warning); }
+  .sev-high  { color: var(--danger); }
+
+  .action-btns { display: flex; gap: 6px; }
+  .icon-btn { width: 28px; height: 28px; border-radius: 3px; border: 1px solid var(--border); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; color: var(--steel); }
+  .icon-btn:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-pale); }
+
+  /* DASHBOARD CARDS */
+  .dash-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+  .dash-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 16px 20px; }
+  .dc-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--steel); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .dc-num { font-family: 'IBM Plex Mono', monospace; font-size: 28px; font-weight: 500; color: var(--ink); line-height: 1; }
+  .dc-sub { font-size: 11px; color: var(--steel); margin-top: 5px; }
+
+  .country-summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .cs-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .cs-header { padding: 10px 14px; }
+  .cs-country { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--white); }
+  .cs-body { padding: 12px 14px; }
+  .cs-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px dotted var(--border); font-size: 12px; }
+  .cs-row:last-child { border-bottom: none; }
+  .cs-row-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; }
+
+  /* TIMELINE */
+  .timeline-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px; }
+  .tl-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; padding-bottom: 5px; border-bottom: 1px solid var(--amber-pale); }
+  .tl-list { position: relative; padding-left: 28px; }
+  .tl-list::before { content:''; position:absolute; left:9px; top:8px; bottom:8px; width:2px; background: var(--border); }
+  .tl-entry { position: relative; margin-bottom: 18px; }
+  .tl-dot { position: absolute; left:-23px; top:4px; width:12px; height:12px; border-radius:50%; border:2px solid var(--white); }
+  .tld-open { background: var(--warning); }
+  .tld-action { background: var(--info); }
+  .tld-resolved { background: var(--success); }
+  .tld-escalated { background: var(--danger); }
+  .tl-date { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--steel); }
+  .tl-text { font-size:12.5px; color:var(--ink); margin-top:2px; line-height:1.5; }
+  .tl-by { font-size:11px; color:var(--steel); font-style:italic; }
+
+  /* PROCESS GUIDE */
+  .process-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .proc-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .proc-header { padding: 14px 18px; }
+  .proc-title { font-family:'Playfair Display',serif; font-size:16px; font-weight:700; color:var(--white); }
+  .proc-subtitle { font-size:11px; color:rgba(255,255,255,0.65); margin-top:2px; font-family:'IBM Plex Mono',monospace; }
+  .proc-body { padding: 14px 18px; }
+  .proc-step { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+  .proc-step:last-child { margin-bottom: 0; }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--amber); color: var(--white); font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .step-content .step-title { font-size:13px; font-weight:600; color:var(--ink); }
+  .step-content .step-detail { font-size:12px; color:var(--steel); margin-top:2px; line-height:1.4; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,26,46,0.6); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--white); border-radius: 8px; width: 100%; max-width: 720px; max-height: 92vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .modal-sm { max-width: 580px; }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--white); z-index: 1; }
+  .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); }
+  .modal-close { width:32px; height:32px; border-radius:4px; border:1px solid var(--border); background:none; cursor:pointer; font-size:16px; color:var(--steel); display:flex; align-items:center; justify-content:center; }
+  .modal-close:hover { background: var(--mist); }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--mist); border-radius: 0 0 8px 8px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-full { grid-column: 1 / -1; }
+  .form-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--amber-pale); }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 11px; font-weight: 500; color: var(--steel); }
+  .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; background: var(--white); }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--amber); }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+
+  /* CASE DETAIL */
+  .case-detail-hero { background: var(--slate); padding: 18px 22px; border-radius: 4px; margin-bottom: 18px; }
+  .cdh-id { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#8899aa; letter-spacing:1px; margin-bottom:5px; }
+  .cdh-title { font-family:'Playfair Display',serif; font-size:19px; font-weight:700; color:var(--white); margin-bottom:8px; }
+  .cdh-tags { display:flex; flex-wrap:wrap; gap:6px; }
+  .detail-section-title { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--amber); margin-bottom:10px; margin-top:18px; padding-bottom:5px; border-bottom:1px solid var(--amber-pale); }
+  .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .detail-item .dl { font-size:10px; color:var(--steel); text-transform:uppercase; margin-bottom:3px; }
+  .detail-item .dv { font-size:13px; color:var(--ink); line-height:1.4; }
+
+  /* UPDATE LOG */
+  .update-input-row { display:flex; gap:10px; align-items:flex-start; margin-bottom:16px; }
+  .update-input-row textarea { flex:1; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:var(--ink); outline:none; resize:none; height:52px; }
+  .update-input-row textarea:focus { border-color:var(--amber); }
+
+  .conf-badge { display:inline-block; font-size:10px; padding:2px 7px; border-radius:2px; font-family:'IBM Plex Mono',monospace; background:#fce7f3; color:#9d174d; }
+
+  .toast { position:fixed; bottom:24px; right:24px; background:var(--slate); color:var(--white); padding:12px 20px; border-radius:6px; font-size:13px; border-left:3px solid var(--amber); display:none; z-index:200; }
+  .toast.show { display:block; animation:fadeUp 0.2s ease; }
+  @keyframes fadeUp { from{transform:translateY(8px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+
+  @media(max-width:1000px) { .dash-row,.country-summary-grid,.process-grid { grid-template-columns:1fr 1fr; } .header,.tool-header,.main,.stats-bar { padding-left:16px; padding-right:16px; } }
+  @media(max-width:640px) { .dash-row,.country-summary-grid,.process-grid,.form-grid,.detail-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="dept-badge">HR OPS · D9</div>
+    <div class="header-title">Valentis Group — HR Operations & Compliance</div>
+  </div>
+  <div class="header-meta">TOOL 07 / 09 &nbsp;·&nbsp; DISCIPLINARY & GRIEVANCE</div>
+</div>
+
+<div class="tool-header">
+  <div class="tool-title-block">
+    <h1>Disciplinary & Grievance Case Tracker</h1>
+    <p>Confidential register of all disciplinary and grievance cases across Valentis operations. Tracks case type, severity, stage, timelines, actions, and resolution outcomes — with full audit trail per case.</p>
+  </div>
+  <div class="tool-tag">HR OPS · TOOL 7 OF 9</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-number yellow" id="sOpen">—</span><div class="stat-label">Open Cases</div></div>
+  <div class="stat-item"><span class="stat-number red" id="sEscalated">—</span><div class="stat-label">Escalated</div></div>
+  <div class="stat-item"><span class="stat-number" id="sDisciplinary">—</span><div class="stat-label">Disciplinary</div></div>
+  <div class="stat-item"><span class="stat-number" id="sGrievance">—</span><div class="stat-label">Grievance</div></div>
+  <div class="stat-item"><span class="stat-number green" id="sResolved">—</span><div class="stat-label">Resolved YTD</div></div>
+  <div class="stat-item"><span class="stat-number" id="sAvgDays">—</span><div class="stat-label">Avg. Days to Close</div></div>
+</div>
+
+<div class="main">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('cases')">Case Register</button>
+    <button class="tab-btn" onclick="switchTab('dashboard')">Dashboard</button>
+    <button class="tab-btn" onclick="switchTab('process')">Process Guide</button>
+  </div>
+
+  <!-- TAB 1: CASE REGISTER -->
+  <div class="tab-content active" id="tab-cases">
+    <div class="controls-row">
+      <div class="search-box">
+        <span style="color:#99aabb;font-size:14px;">⌕</span>
+        <input type="text" id="caseSearch" placeholder="Search case ID, employee, description…" oninput="filterCases()">
+      </div>
+      <select class="filter-select" id="fcType" onchange="filterCases()">
+        <option value="">All Types</option>
+        <option>Disciplinary</option><option>Grievance</option><option>Misconduct</option>
+        <option>Performance</option><option>Appeal</option>
+      </select>
+      <select class="filter-select" id="fcCountry" onchange="filterCases()">
+        <option value="">All Countries</option>
+        <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option>
+      </select>
+      <select class="filter-select" id="fcStage" onchange="filterCases()">
+        <option value="">All Stages</option>
+        <option>Open</option><option>Active</option><option>Pending Decision</option>
+        <option>Resolved</option><option>Closed</option><option>Escalated</option>
+      </select>
+      <select class="filter-select" id="fcSev" onchange="filterCases()">
+        <option value="">All Severities</option>
+        <option>Low</option><option>Medium</option><option>High</option>
+      </select>
+      <button class="btn btn-primary" onclick="openNewCase()">+ New Case</button>
+      <button class="btn btn-outline" onclick="exportCases()">↓ Export</button>
+    </div>
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">Case Register — Confidential</span>
+        <span class="record-count" id="caseCount"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>CASE ID</th><th>EMPLOYEE</th><th>COUNTRY</th><th>TYPE</th>
+            <th>SUBJECT</th><th>SEVERITY</th><th>OPENED</th><th>STAGE</th>
+            <th>CASE MANAGER</th><th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="caseTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 2: DASHBOARD -->
+  <div class="tab-content" id="tab-dashboard">
+    <div class="dash-row">
+      <div class="dash-card" style="border-left:4px solid var(--warning);">
+        <div class="dc-label">Open Cases</div>
+        <div class="dc-num" id="dOpen">—</div>
+        <div class="dc-sub">Requiring action</div>
+      </div>
+      <div class="dash-card" style="border-left:4px solid var(--danger);">
+        <div class="dc-label">Escalated</div>
+        <div class="dc-num" id="dEscalated" style="color:var(--danger);">—</div>
+        <div class="dc-sub">COO / CEO involvement</div>
+      </div>
+      <div class="dash-card" style="border-left:4px solid var(--amber);">
+        <div class="dc-label">Avg. Resolution Time</div>
+        <div class="dc-num" id="dAvgDays">—</div>
+        <div class="dc-sub">Working days</div>
+      </div>
+      <div class="dash-card" style="border-left:4px solid var(--success);">
+        <div class="dc-label">Resolved YTD</div>
+        <div class="dc-num" id="dResolved" style="color:var(--success);">—</div>
+        <div class="dc-sub">2025</div>
+      </div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:12px;padding-bottom:5px;border-bottom:1px solid var(--amber-pale);">CASE ACTIVITY BY COUNTRY</div>
+    <div class="country-summary-grid" id="countrySummaryGrid"></div>
+  </div>
+
+  <!-- TAB 3: PROCESS GUIDE -->
+  <div class="tab-content" id="tab-process">
+    <div style="font-size:13px;color:var(--steel);line-height:1.6;margin-bottom:16px;">Standard Valentis Group procedures for handling disciplinary and grievance matters. All cases must follow these steps to ensure consistency, procedural fairness, and compliance with local labour law.</div>
+    <div class="process-grid" id="processGrid"></div>
+  </div>
+</div>
+
+<!-- CASE DETAIL MODAL -->
+<div class="modal-overlay" id="caseDetailModal" onclick="closeMod('caseDetailModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="cdModalTitle">Case Detail</h2>
+      <button class="modal-close" onclick="closeDirect('caseDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="cdBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('caseDetailModal')">Close</button>
+      <button class="btn btn-primary" id="cdProgressBtn">Update Stage</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW CASE MODAL -->
+<div class="modal-overlay" id="newCaseModal" onclick="closeMod('newCaseModal',event)">
+  <div class="modal modal-sm" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Open New Case</h2>
+      <button class="modal-close" onclick="closeDirect('newCaseModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title" style="margin-top:0;">Case Information</div>
+      <div class="form-grid">
+        <div class="form-group form-full"><label>Employee Name *</label><input type="text" id="nc_emp" placeholder="Full name"></div>
+        <div class="form-group"><label>Employee ID</label><input type="text" id="nc_id" placeholder="VTG-XX-000"></div>
+        <div class="form-group"><label>Country *</label>
+          <select id="nc_country"><option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option></select>
+        </div>
+        <div class="form-group"><label>Grade</label>
+          <select id="nc_grade"><option>G1</option><option>G2</option><option>G3</option><option>G4</option><option>G5</option><option>G6</option><option>G7</option><option>G8</option></select>
+        </div>
+        <div class="form-group"><label>Case Type *</label>
+          <select id="nc_type"><option>Disciplinary</option><option>Grievance</option><option>Misconduct</option><option>Performance</option><option>Appeal</option></select>
+        </div>
+        <div class="form-group"><label>Severity *</label>
+          <select id="nc_sev"><option>Low</option><option>Medium</option><option>High</option></select>
+        </div>
+        <div class="form-group form-full"><label>Subject / Matter *</label><input type="text" id="nc_subject" placeholder="Brief description of the matter"></div>
+        <div class="form-group form-full"><label>Case Details</label><textarea id="nc_details" placeholder="Provide full details of the incident or grievance…"></textarea></div>
+        <div class="form-group"><label>Date Opened *</label><input type="date" id="nc_date" value="2025-03-10"></div>
+        <div class="form-group"><label>Case Manager</label><input type="text" id="nc_manager" value="Group HR Manager"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('newCaseModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCase()">Open Case</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const stageOrder = ['Open','Active','Pending Decision','Resolved','Closed','Escalated'];
+const stageNext  = {Open:'Active', Active:'Pending Decision', 'Pending Decision':'Resolved', Resolved:'Closed', Escalated:'Resolved'};
+
+let cases = [
+  {
+    caseId:'CASE-D-001', empName:'Zaw Lin Oo', empId:'VTG-MM-010', country:'Myanmar', grade:'G3',
+    type:'Disciplinary', severity:'Medium', subject:'Repeated unauthorised absence from site',
+    details:'Employee was absent from site duties on three separate occasions (Feb 12, Feb 18, Mar 1) without prior notice or approved leave. Site Manager raised formal complaint after verbal warnings failed to produce change in behaviour.',
+    opened:'2025-03-05', manager:'Group HR Manager', stage:'Active',
+    log:[
+      { date:'2025-03-05', action:'Case opened. Employee notified of formal process.', by:'Group HR Manager', type:'open' },
+      { date:'2025-03-07', action:'Investigation meeting held with employee and Site Manager. Employee acknowledged absences, cited personal circumstances.', by:'Group HR Manager', type:'action' },
+    ]
+  },
+  {
+    caseId:'CASE-D-002', empName:'Khin Zaw', empId:'VTG-MM-015', country:'Myanmar', grade:'G1',
+    type:'Misconduct', severity:'High', subject:'Failure to follow site safety procedures — PPE violation',
+    details:'Employee observed operating drill equipment without mandatory PPE on two occasions (Feb 25, Mar 3). Both incidents witnessed by Site Manager and a G4 colleague. Second incident occurred after a formal verbal warning was issued following the first.',
+    opened:'2025-03-06', manager:'Group HR Manager', stage:'Escalated',
+    log:[
+      { date:'2025-03-06', action:'Case opened following second PPE violation. Severity upgraded to High.', by:'Group HR Manager', type:'open' },
+      { date:'2025-03-07', action:'Verbal warning formally documented. Employee placed on supervised duties pending investigation.', by:'Group HR Manager', type:'action' },
+      { date:'2025-03-09', action:'Case escalated to COO due to safety risk severity and repeat nature of breach.', by:'Group HR Manager', type:'escalated' },
+    ]
+  },
+  {
+    caseId:'CASE-G-001', empName:'Hlaing Min Oo', empId:'VTG-MM-014', country:'Myanmar', grade:'G1',
+    type:'Grievance', severity:'Medium', subject:'Complaint regarding workload allocation and site roster',
+    details:'Employee raised a formal grievance regarding what they describe as disproportionate workload allocation relative to peers at the same grade level. Claims roster scheduling has consistently placed them on longer shifts than comparable G1 employees over the past two months.',
+    opened:'2025-02-20', manager:'Group HR Manager', stage:'Pending Decision',
+    log:[
+      { date:'2025-02-20', action:'Formal grievance received in writing from employee.', by:'Group HR Manager', type:'open' },
+      { date:'2025-02-24', action:'Investigation commenced. Roster data for Jan–Feb reviewed.', by:'Group HR Manager', type:'action' },
+      { date:'2025-03-01', action:'Meeting held with Site Manager to discuss roster management practices.', by:'Group HR Manager', type:'action' },
+      { date:'2025-03-07', action:'Meeting held with employee. Preliminary findings shared. Decision pending.', by:'Group HR Manager', type:'action' },
+    ]
+  },
+  {
+    caseId:'CASE-D-003', empName:'Viengkham Xayavong', empId:'VTG-LA-005', country:'Laos', grade:'G2',
+    type:'Performance', severity:'Low', subject:'Failure to meet probationary performance benchmarks — Month 3',
+    details:'Employee is in the first year of service and has not met the expected competency milestones at the 3-month review point. Specific gaps identified in: equipment handling technique, safety induction knowledge test score (48%), and punctuality (8 late arrivals in 60 days).',
+    opened:'2025-02-15', manager:'Group HR Manager', stage:'Active',
+    log:[
+      { date:'2025-02-15', action:'Performance concern raised by Site Manager at 3-month probation review.', by:'Group HR Manager', type:'open' },
+      { date:'2025-02-20', action:'Formal performance improvement conversation held with employee. Development plan issued.', by:'Group HR Manager', type:'action' },
+    ]
+  },
+  {
+    caseId:'CASE-G-002', empName:'Arif Budiman', empId:'VTG-ID-018', country:'Indonesia', grade:'G3',
+    type:'Grievance', severity:'Low', subject:'Query regarding BPJS contribution deductions',
+    details:'Employee raised a formal query regarding discrepancies noted in BPJS Ketenagakerjaan contribution deductions over the past three months. Employee believes deductions have been applied at incorrect rate. Under Indonesian law this must be formally investigated and responded to within 14 working days.',
+    opened:'2025-03-01', manager:'Siti Rahayu', stage:'Active',
+    log:[
+      { date:'2025-03-01', action:'Formal grievance received. Payroll records requested from finance.', by:'Siti Rahayu', type:'open' },
+      { date:'2025-03-05', action:'Payroll data for last 3 months obtained. Initial review in progress.', by:'Siti Rahayu', type:'action' },
+    ]
+  },
+  {
+    caseId:'CASE-D-004', empName:'Htet Aung', empId:'VTG-MM-016', country:'Myanmar', grade:'G2',
+    type:'Disciplinary', severity:'Low', subject:'Delay in returning signed contract documentation',
+    details:'Employee has not returned signed employment contract despite three requests over a 6-week period. Not a conduct issue per se, but requires formal follow-up given compliance obligations. Employee has verbally confirmed intent to remain employed.',
+    opened:'2025-02-28', manager:'Group HR Manager', stage:'Open',
+    log:[
+      { date:'2025-02-28', action:'Case opened after third written request for signed contract went unacknowledged.', by:'Group HR Manager', type:'open' },
+    ]
+  },
+  {
+    caseId:'CASE-G-003', empName:'Bounmy Phommasack', empId:'VTG-LA-001', country:'Laos', grade:'G4',
+    type:'Grievance', severity:'Low', subject:'Request for review of G4 salary band placement',
+    details:'Employee submitted a formal grievance requesting review of their salary band positioning within the G4 range. Employee presents 7 years of service and claims their current placement does not reflect market comparators for the Vientiane area. Employee references Article 76 of the Lao Labour Law on fair wages.',
+    opened:'2025-01-20', manager:'Group HR Manager', stage:'Resolved',
+    log:[
+      { date:'2025-01-20', action:'Formal grievance received.', by:'Group HR Manager', type:'open' },
+      { date:'2025-01-25', action:'Market salary benchmarking review initiated.', by:'Group HR Manager', type:'action' },
+      { date:'2025-02-05', action:'Benchmarking complete. Salary positioning reviewed with COO.', by:'Group HR Manager', type:'action' },
+      { date:'2025-02-12', action:'Resolution meeting held. Mid-band adjustment approved effective March 1. Employee accepted outcome.', by:'Group HR Manager', type:'resolved' },
+    ],
+    resolution:'Mid-band salary adjustment approved. Effective March 1, 2025.', closedDate:'2025-02-12'
+  },
+  {
+    caseId:'CASE-D-005', empName:'Thurein Aung', empId:'VTG-MM-013', country:'Myanmar', grade:'G2',
+    type:'Disciplinary', severity:'Low', subject:'Minor time-keeping issue — recurring late arrivals to morning briefing',
+    details:'Employee has been late to mandatory morning safety briefings on 6 occasions across January–February 2025. Verbal warning issued by Site Manager in January did not result in sustained improvement.',
+    opened:'2025-02-10', manager:'Group HR Manager', stage:'Closed',
+    log:[
+      { date:'2025-02-10', action:'Case opened. First written warning issued.', by:'Group HR Manager', type:'open' },
+      { date:'2025-02-18', action:'Follow-up review: no further incidents in 8-day monitoring period.', by:'Group HR Manager', type:'action' },
+      { date:'2025-03-02', action:'Case closed. No further incidents. Written warning remains on file for 12 months.', by:'Group HR Manager', type:'resolved' },
+    ],
+    resolution:'First written warning issued. No further incidents. Case closed with warning on file.', closedDate:'2025-03-02'
+  },
+];
+
+let filteredCases = [...cases];
+
+// ── RENDER CASES ──────────────────────────────────────────
+function renderCases(data) {
+  const typeClass = {Disciplinary:'ct-disciplinary',Grievance:'ct-grievance',Misconduct:'ct-misconduct',Performance:'ct-performance',Appeal:'ct-appeal'};
+  const stageClass = {Open:'cs-open',Active:'cs-active','Pending Decision':'cs-pending',Resolved:'cs-resolved',Closed:'cs-closed',Escalated:'cs-escalated'};
+  const sevClass = {Low:'sev-low',Medium:'sev-med',High:'sev-high'};
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'};
+  const sevIcon = {Low:'●',Medium:'◆',High:'▲'};
+  const tbody = document.getElementById('caseTableBody');
+  tbody.innerHTML = data.map(c=>`
+    <tr onclick="openCaseDetail('${c.caseId}')">
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);">${c.caseId}</td>
+      <td><div style="font-weight:600;font-size:13px;">${c.empName}</div><div style="font-size:11px;color:var(--steel);">${c.empId} · ${c.grade}</div></td>
+      <td><span class="country-tag ${ctClass[c.country]||''}">${c.country}</span></td>
+      <td><span class="case-type ${typeClass[c.type]||''}">${c.type}</span></td>
+      <td style="font-size:12.5px;max-width:160px;">${c.subject}</td>
+      <td><span class="severity-pip ${sevClass[c.severity]||''}">${sevIcon[c.severity]} ${c.severity}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(c.opened)}</td>
+      <td><span class="case-stage ${stageClass[c.stage]||''}">${c.stage}</span></td>
+      <td style="font-size:12px;">${c.manager}</td>
+      <td onclick="event.stopPropagation()">
+        <div class="action-btns">
+          <button class="icon-btn" title="View Detail" onclick="openCaseDetail('${c.caseId}')">◉</button>
+          ${['Resolved','Closed'].includes(c.stage)?'':
+            `<button class="icon-btn" title="Progress Stage" onclick="progressStage('${c.caseId}')">→</button>`}
+        </div>
+      </td>
+    </tr>`).join('');
+  document.getElementById('caseCount').textContent = `${data.length} of ${cases.length} cases`;
+  updateStats();
+}
+
+function filterCases() {
+  const q = document.getElementById('caseSearch').value.toLowerCase();
+  const type = document.getElementById('fcType').value;
+  const country = document.getElementById('fcCountry').value;
+  const stage = document.getElementById('fcStage').value;
+  const sev = document.getElementById('fcSev').value;
+  filteredCases = cases.filter(c=>{
+    const mq = !q || c.empName.toLowerCase().includes(q) || c.caseId.toLowerCase().includes(q) || c.subject.toLowerCase().includes(q);
+    return mq && (!type||c.type===type) && (!country||c.country===country) && (!stage||c.stage===stage) && (!sev||c.severity===sev);
+  });
+  renderCases(filteredCases);
+}
+
+function updateStats() {
+  const open = cases.filter(c=>!['Resolved','Closed'].includes(c.stage)).length;
+  const esc = cases.filter(c=>c.stage==='Escalated').length;
+  const disc = cases.filter(c=>['Disciplinary','Misconduct'].includes(c.type)).length;
+  const griev = cases.filter(c=>c.type==='Grievance').length;
+  const res = cases.filter(c=>['Resolved','Closed'].includes(c.stage)).length;
+  const closed = cases.filter(c=>c.closedDate);
+  const avgDays = closed.length ? Math.round(closed.reduce((a,c)=>a+daysBetween(c.opened,c.closedDate),0)/closed.length) : '—';
+  document.getElementById('sOpen').textContent = open;
+  document.getElementById('sEscalated').textContent = esc;
+  document.getElementById('sDisciplinary').textContent = disc;
+  document.getElementById('sGrievance').textContent = griev;
+  document.getElementById('sResolved').textContent = res;
+  document.getElementById('sAvgDays').textContent = typeof avgDays==='number'?avgDays+'d':avgDays;
+  document.getElementById('dOpen').textContent = open;
+  document.getElementById('dEscalated').textContent = esc;
+  document.getElementById('dAvgDays').textContent = typeof avgDays==='number'?avgDays+'d':avgDays;
+  document.getElementById('dResolved').textContent = res;
+}
+
+// ── CASE DETAIL ──────────────────────────────────────────
+function openCaseDetail(id) {
+  const c = cases.find(x=>x.caseId===id);
+  if (!c) return;
+  const typeClass = {Disciplinary:'ct-disciplinary',Grievance:'ct-grievance',Misconduct:'ct-misconduct',Performance:'ct-performance',Appeal:'ct-appeal'};
+  const stageClass = {Open:'cs-open',Active:'cs-active','Pending Decision':'cs-pending',Resolved:'cs-resolved',Closed:'cs-closed',Escalated:'cs-escalated'};
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'};
+  const tlClass = {open:'tld-open',action:'tld-action',resolved:'tld-resolved',escalated:'tld-escalated'};
+  const canProgress = !['Resolved','Closed'].includes(c.stage);
+
+  document.getElementById('cdModalTitle').textContent = c.caseId;
+  document.getElementById('cdBody').innerHTML = `
+    <div class="case-detail-hero">
+      <div class="cdh-id">${c.caseId} &nbsp;·&nbsp; Opened ${fmtDate(c.opened)}</div>
+      <div class="cdh-title">${c.subject}</div>
+      <div class="cdh-tags">
+        <span class="case-type ${typeClass[c.type]||''}">${c.type}</span>
+        <span class="case-stage ${stageClass[c.stage]||''}">${c.stage}</span>
+        <span class="country-tag ${ctClass[c.country]||''}">${c.country}</span>
+        <span class="conf-badge">CONFIDENTIAL</span>
+      </div>
+    </div>
+    <div class="detail-section-title">Case Information</div>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="dl">Employee</div><div class="dv">${c.empName} (${c.empId})</div></div>
+      <div class="detail-item"><div class="dl">Grade</div><div class="dv">${c.grade}</div></div>
+      <div class="detail-item"><div class="dl">Severity</div><div class="dv">${c.severity}</div></div>
+      <div class="detail-item"><div class="dl">Case Manager</div><div class="dv">${c.manager}</div></div>
+      ${c.resolution?`<div class="detail-item" style="grid-column:1/-1;"><div class="dl">Resolution</div><div class="dv">${c.resolution}</div></div>`:''}
+    </div>
+    <div class="detail-section-title">Case Details</div>
+    <div style="font-size:13px;color:var(--ink);line-height:1.6;background:var(--mist);padding:12px 16px;border-radius:4px;">${c.details}</div>
+    <div class="detail-section-title">Case Log & Actions</div>
+    ${canProgress?`<div class="update-input-row">
+      <textarea id="logInput_${c.caseId}" placeholder="Add a case note or action taken…"></textarea>
+      <button class="btn btn-primary" style="height:52px;" onclick="addLogEntry('${c.caseId}')">+ Add Note</button>
+    </div>`:''}
+    <div class="tl-list" id="logList_${c.caseId}">
+      ${c.log.map(e=>`
+        <div class="tl-entry">
+          <div class="tl-dot ${tlClass[e.type]||'tld-action'}"></div>
+          <div class="tl-date">${fmtDate(e.date)}</div>
+          <div class="tl-text">${e.action}</div>
+          <div class="tl-by">— ${e.by}</div>
+        </div>`).join('')}
+    </div>`;
+
+  const progressBtn = document.getElementById('cdProgressBtn');
+  if (canProgress && stageNext[c.stage]) {
+    progressBtn.style.display = 'inline-flex';
+    progressBtn.textContent = `→ Progress to: ${stageNext[c.stage]}`;
+    progressBtn.onclick = () => { progressStage(id); closeDirect('caseDetailModal'); };
+  } else {
+    progressBtn.style.display = 'none';
+  }
+  document.getElementById('caseDetailModal').classList.add('active');
+}
+
+function addLogEntry(caseId) {
+  const c = cases.find(x=>x.caseId===caseId);
+  const inp = document.getElementById(`logInput_${caseId}`);
+  const text = inp?.value.trim();
+  if (!text) { showToast('⚠ Enter a note before adding'); return; }
+  c.log.push({ date:'2025-03-10', action:text, by:'Group HR Manager', type:'action' });
+  inp.value = '';
+  // refresh log list
+  const tlClass = {open:'tld-open',action:'tld-action',resolved:'tld-resolved',escalated:'tld-escalated'};
+  document.getElementById(`logList_${caseId}`).innerHTML = c.log.map(e=>`
+    <div class="tl-entry">
+      <div class="tl-dot ${tlClass[e.type]||'tld-action'}"></div>
+      <div class="tl-date">${fmtDate(e.date)}</div>
+      <div class="tl-text">${e.action}</div>
+      <div class="tl-by">— ${e.by}</div>
+    </div>`).join('');
+  showToast('✓ Note added to case log');
+}
+
+function progressStage(caseId) {
+  const c = cases.find(x=>x.caseId===caseId);
+  if (!c || !stageNext[c.stage]) return;
+  const next = stageNext[c.stage];
+  c.stage = next;
+  if (['Resolved','Closed'].includes(next)) c.closedDate = '2025-03-10';
+  c.log.push({ date:'2025-03-10', action:`Stage progressed to: ${next}.`, by:'Group HR Manager', type: next==='Resolved'?'resolved':'action' });
+  filteredCases = [...cases]; renderCases(filteredCases);
+  showToast(`✓ ${caseId} progressed to: ${next}`);
+}
+
+// ── DASHBOARD ──────────────────────────────────────────
+function renderDashboard() {
+  const countries = ['Laos','Myanmar','Indonesia','Thailand'];
+  const ctColors = {Laos:'background:#1e5f74',Myanmar:'background:#6b3a2a',Indonesia:'background:#1a4731',Thailand:'background:#3b2a6e'};
+  document.getElementById('countrySummaryGrid').innerHTML = countries.map(c=>{
+    const cc = cases.filter(x=>x.country===c);
+    const open = cc.filter(x=>!['Resolved','Closed'].includes(x.stage)).length;
+    const disc = cc.filter(x=>['Disciplinary','Misconduct'].includes(x.type)).length;
+    const griev = cc.filter(x=>x.type==='Grievance').length;
+    const esc = cc.filter(x=>x.stage==='Escalated').length;
+    const res = cc.filter(x=>['Resolved','Closed'].includes(x.stage)).length;
+    return `<div class="cs-card">
+      <div class="cs-header" style="${ctColors[c]}"><div class="cs-country">${c}</div></div>
+      <div class="cs-body">
+        <div class="cs-row"><span>Total Cases</span><span class="cs-row-val">${cc.length}</span></div>
+        <div class="cs-row"><span>Open / Active</span><span class="cs-row-val" style="color:var(--warning);">${open}</span></div>
+        <div class="cs-row"><span>Disciplinary</span><span class="cs-row-val">${disc}</span></div>
+        <div class="cs-row"><span>Grievance</span><span class="cs-row-val">${griev}</span></div>
+        <div class="cs-row"><span>Escalated</span><span class="cs-row-val" style="color:${esc?'var(--danger)':'inherit'};">${esc}</span></div>
+        <div class="cs-row"><span>Resolved/Closed</span><span class="cs-row-val" style="color:var(--success);">${res}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── PROCESS GUIDE ──────────────────────────────────────────
+function renderProcess() {
+  const processes = [
+    {
+      title:'Disciplinary Process', color:'background:#6b3a2a', subtitle:'For misconduct, policy breach, and performance failure',
+      steps:[
+        { title:'Fact-Finding', detail:'Gather all evidence. Speak to witnesses. Review documentation. Do not pre-judge.' },
+        { title:'Notification', detail:'Issue written notice to employee outlining the allegation and their right to respond.' },
+        { title:'Investigation Meeting', detail:'Conduct meeting with employee. Employee may bring a support person. Record minutes.' },
+        { title:'Decision', detail:'Review all evidence. Issue appropriate outcome: no action, verbal warning, written warning, final written warning, or termination.' },
+        { title:'Outcome Letter', detail:'Issue outcome in writing within 5 working days of the meeting. State right of appeal.' },
+        { title:'Appeal (if raised)', detail:'Employee has 5 working days to appeal. Escalate to next level manager or COO.' },
+        { title:'Close & File', detail:'File all case documentation. Note warning expiry dates. Update case register.' },
+      ]
+    },
+    {
+      title:'Grievance Process', color:'background:#1e5f74', subtitle:'For employee complaints, disputes, and formal concerns',
+      steps:[
+        { title:'Grievance Received', detail:'Employee submits grievance in writing. Acknowledge receipt within 2 working days.' },
+        { title:'Initial Assessment', detail:'Assess validity and severity. Determine appropriate investigation level and case manager.' },
+        { title:'Investigation', detail:'Gather relevant facts. Review documents and rosters. Interview involved parties separately.' },
+        { title:'Meeting with Employee', detail:'Hold a formal meeting to discuss findings. Employee may bring a support person.' },
+        { title:'Resolution Decision', detail:'HR Manager determines resolution. Outcomes may include: apology, policy change, salary review, process adjustment.' },
+        { title:'Written Response', detail:'Issue formal written response within 10 working days of grievance receipt. State outcome and rationale.' },
+        { title:'Appeal (if raised)', detail:'Employee may appeal to COO within 5 working days of receiving the resolution letter.' },
+      ]
+    }
+  ];
+  document.getElementById('processGrid').innerHTML = processes.map(p=>`
+    <div class="proc-card">
+      <div class="proc-header" style="${p.color}">
+        <div class="proc-title">${p.title}</div>
+        <div class="proc-subtitle">${p.subtitle}</div>
+      </div>
+      <div class="proc-body">
+        ${p.steps.map((s,i)=>`
+          <div class="proc-step">
+            <div class="step-num">${i+1}</div>
+            <div class="step-content">
+              <div class="step-title">${s.title}</div>
+              <div class="step-detail">${s.detail}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ── NEW CASE ──────────────────────────────────────────
+function openNewCase() {
+  document.getElementById('nc_emp').value='';
+  document.getElementById('nc_id').value='';
+  document.getElementById('nc_subject').value='';
+  document.getElementById('nc_details').value='';
+  document.getElementById('newCaseModal').classList.add('active');
+}
+function saveCase() {
+  const emp = document.getElementById('nc_emp').value.trim();
+  const subj = document.getElementById('nc_subject').value.trim();
+  if (!emp||!subj) { showToast('⚠ Employee name and subject required'); return; }
+  const disc = cases.filter(c=>c.type==='Disciplinary').length;
+  const griev = cases.filter(c=>c.type==='Grievance').length;
+  const type = document.getElementById('nc_type').value;
+  const prefix = ['Disciplinary','Misconduct','Performance','Appeal'].includes(type)?'D':'G';
+  const num = prefix==='D'?disc+1:griev+1;
+  const caseId = `CASE-${prefix}-${String(num).padStart(3,'0')}`;
+  cases.push({
+    caseId, empName:emp, empId:document.getElementById('nc_id').value||'—',
+    country:document.getElementById('nc_country').value, grade:document.getElementById('nc_grade').value,
+    type, severity:document.getElementById('nc_sev').value,
+    subject:subj, details:document.getElementById('nc_details').value||'Details to be completed.',
+    opened:document.getElementById('nc_date').value||'2025-03-10',
+    manager:document.getElementById('nc_manager').value||'Group HR Manager',
+    stage:'Open',
+    log:[{ date:'2025-03-10', action:`Case opened: ${subj}`, by:document.getElementById('nc_manager').value||'Group HR Manager', type:'open' }]
+  });
+  filteredCases=[...cases]; renderCases(filteredCases); renderDashboard(); updateStats();
+  closeDirect('newCaseModal'); showToast(`✓ ${caseId} opened for ${emp}`);
+}
+
+function exportCases() {
+  const headers=['Case ID','Employee','Country','Grade','Type','Severity','Subject','Opened','Stage','Manager'];
+  const rows=filteredCases.map(c=>[c.caseId,c.empName,c.country,c.grade,c.type,c.severity,c.subject,c.opened,c.stage,c.manager]);
+  const csv=[headers.join(','),...rows.map(r=>r.map(v=>`"${v}"`).join(','))].join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='valentis-cases-confidential.csv'; a.click(); showToast('✓ Case register exported');
+}
+
+function daysBetween(a,b) { return Math.round((new Date(b)-new Date(a))/86400000); }
+function fmtDate(d) { if(!d) return '—'; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function switchTab(id) {
+  const tabs=['cases','dashboard','process'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function closeMod(id,e) { if(e.target===document.getElementById(id)) closeDirect(id); }
+function closeDirect(id) { document.getElementById(id).classList.remove('active'); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+
+renderCases(cases);
+renderDashboard();
+renderProcess();
+updateStats();
+</script>
+</body>
+</html>

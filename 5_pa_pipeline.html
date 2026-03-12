@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talent Pipeline Analytics — People Analytics Tool 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f5;--surface:#fff;--surface2:#e8ecf2;
+  --border:#cdd4e0;--border2:#b8c2d4;
+  --ink:#0d1117;--ink2:#1a2332;--ink3:#3d4f6b;--ink4:#6b7d99;--ink5:#a0aec0;
+  --navy:#0a1628;
+  --blue:#1a6bdb;--blue2:#2979e8;--blue3:#4d94ff;
+  --blue-dim:rgba(26,107,219,0.08);--blue-border:rgba(26,107,219,0.22);
+  --electric:#3d8bff;--electric2:#5c9fff;
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --amber:#b8860b;--amber-dim:rgba(184,134,11,0.08);--amber-border:rgba(184,134,11,0.22);
+  --green:#1a7a4a;--green-dim:rgba(26,122,74,0.08);--green-border:rgba(26,122,74,0.22);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--blue),rgba(26,107,219,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:rgba(26,107,219,0.15);border:1px solid rgba(26,107,219,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f4ff;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(26,107,219,0.18);border-color:rgba(26,107,219,0.4);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--blue3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:40px 52px;max-width:1100px}
+.page.active{display:block}
+/* typography */
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--blue)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+/* cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--blue);font-weight:400}
+/* grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+/* chips */
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cb{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.ca{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.cg{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+/* info boxes */
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.b{background:var(--blue-dim);border-color:var(--blue);color:var(--ink2)}
+.inf.a{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.inf.r{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.inf.g{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+/* tables */
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--navy);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+/* dark panels */
+.vx{background:var(--navy);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f4ff;margin-bottom:8px;line-height:1.2}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.85}
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+/* bars */
+.br{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bl{font-size:12px;color:var(--ink3);width:96px;flex-shrink:0}
+.bt{flex:1;background:var(--surface2);border-radius:2px;height:20px;overflow:hidden}
+.bf{height:100%;border-radius:2px;display:flex;align-items:center;padding-left:8px}
+.bv{font-family:var(--fm);font-size:10px;font-weight:600;color:#fff;white-space:nowrap}
+.bc{font-family:var(--fm);font-size:10px;color:var(--ink5);margin-left:8px;white-space:nowrap}
+/* kpi row */
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kbl::before{background:var(--blue)}
+.kgr::before{background:var(--green)}
+.kam::before{background:var(--amber)}
+.krd::before{background:var(--red)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kbl .kv{color:var(--blue)}
+.kgr .kv{color:var(--green)}
+.kam .kv{color:var(--amber)}
+.krd .kv{color:var(--red)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.kt{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktb{background:var(--blue-dim);color:var(--blue)}
+.kta{background:var(--amber-dim);color:var(--amber)}
+.ktr{background:var(--red-dim);color:var(--red)}
+.ktg{background:var(--green-dim);color:var(--green)}
+/* calc inputs */
+.ci{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 12px;font-size:13px;color:#f0f4ff;font-family:var(--fb);outline:none;transition:border .13s;margin-bottom:10px}
+.ci:focus{border-color:rgba(26,107,219,0.5)}
+.cl{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;display:block}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btnb{background:var(--blue);color:#fff}
+.btnb:hover{background:var(--blue2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">People Analytics · Tool 5 / 9</div>
+    <div class="sb-title">Talent Pipeline<br><em>Analytics</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Pipeline Overview</div>
+    <div class="nav-item" onclick="showPage('funnel',this)"><span class="nav-num">02</span>Conversion Funnel</div>
+    <div class="nav-item" onclick="showPage('velocity',this)"><span class="nav-num">03</span>Stage Velocity</div>
+    <div class="nav-item" onclick="showPage('country',this)"><span class="nav-num">04</span>Country Comparison</div>
+    <div class="nav-item" onclick="showPage('bench',this)"><span class="nav-num">05</span>Bench Strength</div>
+    <div class="nav-item" onclick="showPage('laos',this)"><span class="nav-num">06</span>Laos Retirement Risk</div>
+    <div class="nav-item" onclick="showPage('cohort',this)"><span class="nav-num">07</span>Cohort Tracker</div>
+    <div class="nav-item" onclick="showPage('intake',this)"><span class="nav-num">08</span>Intake Planner</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>People Analytics · Tool 5 of 9</strong>
+      Talent Pipeline Analytics<br>
+      <span style="color:rgba(255,255,255,0.1)">The G1→G4 pipeline is Valentis's operational supply chain. This tool measures it like one.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview"  class="page active"></div>
+  <div id="page-funnel"    class="page"></div>
+  <div id="page-velocity"  class="page"></div>
+  <div id="page-country"   class="page"></div>
+  <div id="page-bench"     class="page"></div>
+  <div id="page-laos"      class="page"></div>
+  <div id="page-cohort"    class="page"></div>
+  <div id="page-intake"    class="page"></div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+// INJECT_PAGES
+</script>
+</body>
+</html>
+<script>
+// ── PAGE 01 ─────────────────────────────────────────────────────
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">People Analytics · Tool 5 / 9 — Talent Pipeline Analytics</div>
+<div class="pt">Talent Pipeline<br><em>Analytics</em></div>
+<p class="pd">The G1→G4 driller development pipeline is Valentis's operational supply chain. Every productive rig-hour depends on having enough trained drillers at G3 and G4. This tool measures the pipeline the way a supply chain is measured: conversion rates, stage velocity, bench strength, retirement exposure, cohort tracking, and intake planning.</p>
+<div class="vx">
+  <div class="vx-ey">Why the Pipeline Is the Most Critical HR Metric at Valentis</div>
+  <div class="vx-ti">A G4 driller takes 42–60 months to develop from G1. You cannot hire one when you need one. You must grow them before you need them.</div>
+  <div class="vx-bo">The G1→G4 development pathway takes 42–60 months: ~18 months to G2, 12–18 additional months to G3, and 18–24 more to G4 qualification. The pipeline today determines operational capacity 3–5 years from now. A conversion rate drop in Q1 2026 does not hurt delivery in Q1 2026 — it hurts delivery in 2029. This lag means pipeline health must be managed prospectively, not reactively. The metrics in this tool are early warning instruments for future operational risk.</div>
+</div>
+<div class="krow">
+  <div class="kpi kbl"><div class="kl">Active Pipeline (G1–G3)</div><div class="kv">27</div><div class="ks">Across all 4 countries · target 38 by Q2 2027</div><div class="kt ktb">Net gap: 11 candidates</div></div>
+  <div class="kpi krd"><div class="kl">Group Conversion Rate</div><div class="kv">63%</div><div class="ks">Weighted avg · target ≥70%</div><div class="kt ktr">Myanmar 58% — critical</div></div>
+  <div class="kpi kam"><div class="kl">Avg Stage Velocity G3→G4</div><div class="kv">22mo</div><div class="ks">Target ≤24mo · currently within range</div><div class="kt kta">Laos retirement cliff risk</div></div>
+  <div class="kpi kgr"><div class="kl">G4 Bench Strength (Group)</div><div class="kv">4</div><div class="ks">G3s G4-ready within 12 months</div><div class="kt ktg">LA:2 · MM:1 · ID:1</div></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Pipeline Population — All Countries</div>
+    <div class="br"><span class="bl">G1 Trainees</span><div class="bt"><div class="bf" style="width:80%;background:var(--ink4)"><span class="bv">8</span></div></div><span class="bc">~18mo to G2</span></div>
+    <div class="br"><span class="bl">G2 Drillers Asst</span><div class="bt"><div class="bf" style="width:100%;background:var(--blue)"><span class="bv">10</span></div></div><span class="bc">~12–18mo to G3</span></div>
+    <div class="br"><span class="bl">G3 Junior</span><div class="bt"><div class="bf" style="width:90%;background:var(--blue2)"><span class="bv">9</span></div></div><span class="bc">~18–24mo to G4</span></div>
+    <div class="br"><span class="bl">G4 Senior</span><div class="bt"><div class="bf" style="width:70%;background:var(--green)"><span class="bv">7</span></div></div><span class="bc">Operational</span></div>
+    <div style="margin-top:12px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">G2 is the largest cohort (10) — positive leading indicator for G3 supply in 12–18 months. G4 population (7) is the operational base; 65 FTE target needs ~10–11 G4s. The shortfall is real but closeable with the current pipeline trajectory if intake increases.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Pipeline Risk Summary</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:12.5px"><strong style="color:var(--red);display:block;margin-bottom:2px">Myanmar conversion 58% — critical</strong><span style="color:var(--ink3);font-weight:300">Every cohort loses ~3 trainees more than target. G4 coaching programme target: ≥70% by Q4 2026.</span></div>
+      <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:12.5px"><strong style="color:var(--red);display:block;margin-bottom:2px">Laos G4 retirement cliff</strong><span style="color:var(--ink3);font-weight:300">3 retirements within 3 years. Only 2 G3 bench candidates. Net −1 G4 by 2027 without intervention. June 2026 deadline.</span></div>
+      <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:12.5px"><strong style="color:var(--red);display:block;margin-bottom:2px">Indonesia G3 vacancies — 3 open 40+ days</strong><span style="color:var(--ink3);font-weight:300">Delivery dropped 93%→84%. Sourcing escalation required immediately.</span></div>
+      <div style="padding:10px 14px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px;font-size:12.5px"><strong style="color:var(--amber);display:block;margin-bottom:2px">Net pipeline gap: 11 candidates</strong><span style="color:var(--ink3);font-weight:300">Current pipeline will not reach 65 FTE without increased intake. Intake planner in Section 08 models the required cohort schedule.</span></div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Pipeline as Supply Chain — End-to-End View</div>
+  <div style="display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr;gap:0;align-items:center;margin:10px 0">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:14px 12px;text-align:center"><div style="font-family:var(--fm);font-size:9px;color:var(--ink5);letter-spacing:1px;margin-bottom:4px">G1</div><div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--ink4);line-height:1">8</div><div style="font-size:11px;color:var(--ink4);font-weight:300;margin:3px 0">Trainee</div><div style="font-family:var(--fm);font-size:9px;color:var(--ink5)">18 months</div><div style="margin-top:7px;padding:3px 6px;background:rgba(0,0,0,0.04);border-radius:2px;font-size:10px;color:var(--ink4)">Month-3 risk</div></div>
+    <div style="text-align:center"><div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--red)">63%</div><div style="font-size:18px;color:var(--ink5)">→</div></div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:14px 12px;text-align:center"><div style="font-family:var(--fm);font-size:9px;color:var(--ink5);letter-spacing:1px;margin-bottom:4px">G2</div><div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--blue);line-height:1">10</div><div style="font-size:11px;color:var(--ink4);font-weight:300;margin:3px 0">Driller Asst</div><div style="font-family:var(--fm);font-size:9px;color:var(--ink5)">12–18 months</div><div style="margin-top:7px;padding:3px 6px;background:var(--blue-dim);border-radius:2px;font-size:10px;color:var(--blue)">Good supply</div></div>
+    <div style="text-align:center"><div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--amber)">75%</div><div style="font-size:18px;color:var(--ink5)">→</div></div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:14px 12px;text-align:center"><div style="font-family:var(--fm);font-size:9px;color:var(--ink5);letter-spacing:1px;margin-bottom:4px">G3</div><div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--blue2);line-height:1">9</div><div style="font-size:11px;color:var(--ink4);font-weight:300;margin:3px 0">Junior Driller</div><div style="font-family:var(--fm);font-size:9px;color:var(--ink5)">18–24 months</div><div style="margin-top:7px;padding:3px 6px;background:var(--red-dim);border-radius:2px;font-size:10px;color:var(--red)">ID vacancies</div></div>
+    <div style="text-align:center"><div style="font-family:var(--fd);font-size:18px;font-weight:800;color:var(--green)">78%</div><div style="font-size:18px;color:var(--ink5)">→</div></div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:14px 12px;text-align:center"><div style="font-family:var(--fm);font-size:9px;color:var(--ink5);letter-spacing:1px;margin-bottom:4px">G4</div><div style="font-family:var(--fd);font-size:38px;font-weight:800;color:var(--green);line-height:1">7</div><div style="font-size:11px;color:var(--ink4);font-weight:300;margin:3px 0">Senior Driller</div><div style="font-family:var(--fm);font-size:9px;color:var(--ink5)">Operational</div><div style="margin-top:7px;padding:3px 6px;background:var(--amber-dim);border-radius:2px;font-size:10px;color:var(--amber)">Laos cliff risk</div></div>
+  </div>
+  <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8;margin-top:6px">Compound conversion: 8 G1 trainees → ~5 G2 → ~4 G3 → ~2–3 G4 over 42–60 months. To produce 3–4 new G4s needed by 2027, Valentis must have 12–16 G1 trainees entering now. The intake planner in Section 08 models the required schedule.</div>
+</div>
+`;
+</script>
+<script>
+// ── PAGE 02 ─────────────────────────────────────────────────────
+document.getElementById('page-funnel').innerHTML=`
+<div class="pe">Section 02 — Conversion Funnel</div>
+<div class="pt">Conversion<br><em>Funnel</em></div>
+<p class="pd">Conversion rate is the pipeline's health metric. At Valentis, rates vary significantly by country and transition stage. This section details conversion at every transition point and identifies where the pipeline leaks most — and what each leak costs in future G4 supply.</p>
+<div class="vx">
+  <div class="vx-ey">The Compound Conversion Problem</div>
+  <div class="vx-ti">A 58% Myanmar G1→G2 conversion means 4 of every 10 trainees never reach G2. Across 42–60 months of development time, every dropped trainee is a multi-year pipeline investment destroyed.</div>
+  <div class="vx-bo">Conversion rates compound. A 63% group conversion at G1→G2 does not mean 37% are lost forever — some are recoverable. But those lost at month 3, before completing the first milestone, represent the highest-cost loss: full onboarding investment, zero operational return. The funnel below shows where Valentis loses candidates at each transition and what the cumulative effect on G4 supply looks like 3–5 years from now.</div>
+</div>
+<div class="card">
+  <div class="ct">Conversion by Country — <em>All Transitions</em></div>
+  <div style="overflow-x:auto">
+  <table class="dt">
+    <thead><tr><th>Country</th><th>G1 Intake (cohort)</th><th>G1→G2 Conv%</th><th>→G2 output</th><th>G2→G3 Conv%</th><th>→G3 output</th><th>G3→G4 Conv%</th><th>→G4 output</th><th>End-to-end rate</th></tr></thead>
+    <tbody>
+      ${[
+        {c:'Laos',g1:8,c12:68,c23:78,c34:80},
+        {c:'Myanmar',g1:8,c12:58,c23:72,c34:82,flag:true},
+        {c:'Indonesia',g1:8,c12:63,c23:74,c34:79},
+        {c:'Thailand',g1:6,c12:72,c23:80,c34:85,best:true},
+        {c:'Group avg',g1:8,c12:63,c23:75,c34:78,group:true}
+      ].map(function(r){
+        var g2=Math.round(r.g1*(r.c12/100)*10)/10;
+        var g3=Math.round(g2*(r.c23/100)*10)/10;
+        var g4=Math.round(g3*(r.c34/100)*10)/10;
+        var e2e=Math.round(r.c12*r.c23*r.c34/10000);
+        var col12=r.c12>=70?'var(--green)':r.c12>=60?'var(--amber)':'var(--red)';
+        var col23=r.c23>=75?'var(--green)':r.c23>=65?'var(--amber)':'var(--red)';
+        var col34=r.c34>=78?'var(--green)':r.c34>=70?'var(--amber)':'var(--red)';
+        var style=r.group?'font-weight:700;':'';
+        var badge=r.flag?'<span class="chip cr" style="margin-left:6px">Critical</span>':r.best?'<span class="chip cg" style="margin-left:6px">Benchmark</span>':'';
+        return '<tr><td style="font-weight:600">'+r.c+badge+'</td><td>'+r.g1+'</td><td style="font-weight:700;color:'+col12+'">'+r.c12+'%</td><td>'+g2+'</td><td style="font-weight:700;color:'+col23+'">'+r.c23+'%</td><td>'+g3+'</td><td style="font-weight:700;color:'+col34+'">'+r.c34+'%</td><td style="font-weight:700;color:var(--green)">'+g4+'</td><td style="'+style+'font-weight:700">~'+e2e+'%</td></tr>';
+      }).join('')}
+    </tbody>
+  </table>
+  </div>
+  <div style="margin-top:12px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">End-to-end rate = the percentage of G1 trainees who eventually reach G4. At Myanmar's current rates (~34%), roughly 1 in 3 trainees makes it to G4. At Thailand's rates (~49%), nearly 1 in 2. The difference between Myanmar and Thailand in end-to-end rate is primarily explained by the G1→G2 conversion gap (58% vs 72%) — which is the coaching quality problem the G4 coaching programme targets.</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">G1→G2 — The Critical Transition</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+      ${[{c:'Laos',v:68},{c:'Myanmar',v:58},{c:'Indonesia',v:63},{c:'Thailand',v:72}].map(function(d){
+        var col=d.v>=70?'var(--green)':d.v>=60?'var(--amber)':'var(--red)';
+        return '<div style="padding:12px;background:var(--surface2);border-radius:3px;text-align:center"><div style="font-family:var(--fd);font-size:34px;font-weight:800;color:'+col+';line-height:1">'+d.v+'%</div><div style="font-family:var(--fm);font-size:9px;color:var(--ink5);margin-top:4px">'+d.c.toUpperCase()+'</div></div>';
+      }).join('')}
+    </div>
+    <div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:.5px;margin:10px 0 4px;text-transform:uppercase">Target: ≥70%</div>
+    <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">The month-3 window drives the G1→G2 gap. Myanmar is 12 percentage points below target — the G4 coaching programme must close this by Q4 2026. Indonesia (7pp below) will improve through sourcing quality and the allowance review.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Projected G4 Output — 5-Year Horizon</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">If Myanmar improves to 70% G1→G2 conversion, the compound effect on 5-year G4 supply is significant. The delta below shows the difference between current trajectory and target trajectory, per cohort of 8.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="padding:14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;text-align:center">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase">Current (58% G1→G2)</div>
+        <div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--red);line-height:1">~2.8</div>
+        <div style="font-size:12px;color:var(--ink4);font-weight:300;margin-top:4px">G4s per cohort of 8</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6;margin-top:8px">58% × 72% × 82% = ~34% end-to-end</div>
+      </div>
+      <div style="padding:14px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;text-align:center">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--green);letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase">Target (70% G1→G2)</div>
+        <div style="font-family:var(--fd);font-size:42px;font-weight:800;color:var(--green);line-height:1">~3.4</div>
+        <div style="font-size:12px;color:var(--ink4);font-weight:300;margin-top:4px">G4s per cohort of 8</div>
+        <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6;margin-top:8px">70% × 72% × 82% = ~41% end-to-end</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding:10px 12px;background:var(--blue-dim);border-left:3px solid var(--blue);border-radius:0 3px 3px 0;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Improving Myanmar G1→G2 from 58% to 70% delivers approximately +0.6 additional G4s per cohort. At 2 cohorts per year, this is +1.2 G4s/year — directly closing the operational capacity gap without any increase in intake volume.</div>
+  </div>
+</div>
+`;
+
+// ── PAGE 03 ─────────────────────────────────────────────────────
+document.getElementById('page-velocity').innerHTML=`
+<div class="pe">Section 03 — Stage Velocity</div>
+<div class="pt">Stage<br><em>Velocity</em></div>
+<p class="pd">Velocity is how fast candidates move through each development stage. Low velocity means the pipeline is slower than it needs to be — candidates are in grade longer than the standard, G4 supply arrives late, and retirement gaps widen. This section maps current velocity, identifies where stalls occur, and specifies the levers Group HR can pull to accelerate progression.</p>
+<div class="card">
+  <div class="ct">Stage Duration — Current vs Target</div>
+  <table class="dt">
+    <thead><tr><th>Stage</th><th>Target duration</th><th>Current avg</th><th>Laos</th><th>Myanmar</th><th>Indonesia</th><th>Thailand</th><th>Velocity signal</th></tr></thead>
+    <tbody>
+      ${[
+        {stage:'G1→G2',target:'18 months',la:'17mo',mm:'21mo',id:'19mo',th:'16mo',avg:'18mo',signal:'Myanmar slow — G4 coaching gap delays early milestone completion',col:'var(--amber)'},
+        {stage:'G2→G3',target:'12–18 months',la:'15mo',mm:'17mo',id:'16mo',th:'14mo',avg:'16mo',signal:'All countries within target range. G2→G3 is the most consistent stage.',col:'var(--green)'},
+        {stage:'G3→G4',target:'18–24 months',la:'22mo',mm:'20mo',id:'23mo',th:'18mo',avg:'22mo',signal:'Within target but Laos G3s must reach G4 faster — retirement cliff creates urgency to compress this stage for identified bench candidates.',col:'var(--amber)'},
+        {stage:'Total G1→G4',target:'42–60 months',la:'54mo',mm:'58mo',id:'58mo',th:'48mo',avg:'56mo',signal:'Myanmar and Indonesia are at the slow end of the acceptable range. Thailand demonstrates the achievable upper target.',col:'var(--amber)'}
+      ].map(function(r){
+        return '<tr><td style="font-weight:600;color:var(--blue);font-family:var(--fm)">'+r.stage+'</td><td>'+r.target+'</td><td style="font-weight:600">'+r.avg+'</td><td>'+r.la+'</td><td style="color:'+(r.mm.includes('21')||r.mm.includes('58')?'var(--amber)':'var(--ink3)')+'">'+r.mm+'</td><td>'+r.id+'</td><td style="color:var(--green)">'+r.th+'</td><td style="color:'+r.col+'">'+r.signal+'</td></tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">What Slows the Pipeline</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {title:'G4 debrief frequency too low',desc:'The most direct velocity driver. G4s who conduct fewer than 3 debriefs/month mean trainees receive milestone feedback too infrequently to accelerate. A missed debrief week is a week of stalled milestone progress.',col:'var(--red)'},
+        {title:'Milestone sign-off bottleneck',desc:'In some countries, milestone sign-off requires SM availability that is limited by site operational demands. G3 and G4 milestone confirmations in particular require SM or senior G4 co-sign — scheduling this is a real velocity bottleneck.',col:'var(--amber)'},
+        {title:'G3 vacancy cascade (Indonesia)',desc:'Three open G3 positions in Indonesia mean available G4s are covering operational duties rather than coaching. This diverts coaching capacity away from G2 trainees and slows G2→G3 velocity for the whole country.',col:'var(--red)'},
+        {title:'Language comprehension gaps (Myanmar)',desc:'Trainees who do not fully understand milestone standards take longer to demonstrate competency. Myanmar-language materials are the direct fix — expected to improve G1→G2 velocity from 21mo toward 18mo.',col:'var(--amber)'}
+      ].map(function(d){return '<div style="padding:10px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:600;font-size:13px;color:var(--ink);margin-bottom:3px">'+d.title+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.desc+'</div></div>';}).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Velocity Acceleration Levers</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {title:'G4 debrief frequency target: 4/month',desc:'The simplest velocity lever. G4 coaching programme establishes 4 debriefs/month as the standard and measures compliance via monthly tally sheet. Moving Myanmar from 1.2→4 debriefs/month is expected to shorten G1→G2 from 21mo to 18mo.',col:'var(--green)',tag:'Highest impact'},
+        {title:'Accelerated G3→G4 pathway (Laos bench)',desc:'For the 2 identified G3 bench candidates in Laos, activate an accelerated development plan that compresses G3→G4 from 22mo to 16–18mo through increased G4 exposure, cross-site experience, and priority milestone scheduling.',col:'var(--blue)',tag:'Laos only'},
+        {title:'Milestone pre-assessment prep',desc:'G4s brief trainees on milestone standards 2 weeks before assessment dates, reducing re-sit rates and assessment delays. Reduces average time-in-grade by 4–6 weeks per milestone failed.',col:'var(--blue)',tag:'All countries'},
+        {title:'Fill Indonesia G3 vacancies',desc:'Every day the G3 vacancies are open, G4 coaching capacity is diverted. Filling all three positions would free G4s from operational cover duties and restore G2→G3 coaching velocity.',col:'var(--amber)',tag:'Indonesia urgent'}
+      ].map(function(d){return '<div style="padding:10px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px"><span style="font-weight:600;font-size:13px;color:var(--ink)">'+d.title+'</span><span class="chip cb" style="flex-shrink:0;margin-left:8px">'+d.tag+'</span></div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.desc+'</div></div>';}).join('')}
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Velocity Impact — Time-to-G4 Scenarios</div>
+  <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">The table below shows the projected time-to-G4 under current velocity vs. the impact of targeted velocity interventions. Applied to the Laos retirement crisis specifically.</div>
+  <table class="dt">
+    <thead><tr><th>Scenario</th><th>G1→G2</th><th>G2→G3</th><th>G3→G4</th><th>Total</th><th>Laos G4 by</th><th>Covers retirements?</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">Current trajectory (Laos)</td><td>17mo</td><td>15mo</td><td>22mo</td><td>54mo</td><td>Early 2030 (for current G1s)</td><td style="color:var(--red);font-weight:600">No — first Laos retirement 2027</td></tr>
+      <tr><td style="font-weight:600">Bench candidates only (G3→G4 acceleration)</td><td>—</td><td>—</td><td>16–18mo</td><td>—</td><td>Late 2027 (for current G3 bench)</td><td style="color:var(--amber);font-weight:600">Partially — covers 1–2 of 3 retirements</td></tr>
+      <tr><td style="font-weight:600">Full acceleration (all levers)</td><td>16mo</td><td>14mo</td><td>16mo</td><td>46mo</td><td>Late 2029 (for current G1s)</td><td style="color:var(--amber);font-weight:600">Too late for 2027 gap — bench plan is the only option</td></tr>
+      <tr style="background:var(--blue-dim)"><td style="font-weight:600;color:var(--blue)">Recommended: Activate bench plan + external G3 hire</td><td>—</td><td>—</td><td>16–18mo</td><td>—</td><td>Q3–Q4 2027 for bench + hired G3</td><td style="color:var(--green);font-weight:600">Yes — covers all 3 retirements with combined plan</td></tr>
+    </tbody>
+  </table>
+  <div class="inf b" style="margin-top:12px;margin-bottom:0"><strong>The Laos retirement cliff cannot be solved by velocity alone.</strong>Even maximally accelerated internal development reaches G4 too late to cover the first 2027 retirements. The bench acceleration plan (June 2026 activation) must be combined with at least one external G3 hire targeted for Laos. Group HR must make this case to the COO by Q2 2026.</div>
+</div>
+`;
+
+// ── PAGE 04 ─────────────────────────────────────────────────────
+document.getElementById('page-country').innerHTML=`
+<div class="pe">Section 04 — Country Comparison</div>
+<div class="pt">Country<br><em>Comparison</em></div>
+<p class="pd">Four countries, four pipeline profiles. This section puts Laos, Myanmar, Indonesia, and Thailand side by side across every key pipeline metric — to identify what Thailand is doing right that Myanmar and Indonesia can replicate, and to track each country's pipeline trajectory toward the 65 FTE target.</p>
+<div class="card">
+  <div class="ct">Pipeline Scorecard — All Countries Q1 2026</div>
+  <div style="overflow-x:auto">
+  <table class="dt">
+    <thead><tr><th>Metric</th><th>Laos</th><th>Myanmar</th><th>Indonesia</th><th>Thailand</th><th>Group target</th></tr></thead>
+    <tbody>
+      ${[
+        {metric:'Active headcount',la:'14',mm:'12',id:'11',th:'5',tgt:'65 (group) by Q2 2027'},
+        {metric:'G1–G3 pipeline',la:'11',mm:'8',id:'7',th:'1',tgt:'38 total by Q2 2027',flag:{la:false,mm:false,id:true,th:false}},
+        {metric:'G4 senior drillers',la:'5',mm:'3',id:'4',th:'2',tgt:'10–11 group by Q2 2027'},
+        {metric:'G1→G2 conv%',la:'68%',mm:'58%',id:'63%',th:'72%',tgt:'≥70% all countries',rflag:{mm:true}},
+        {metric:'Avg G1→G2 velocity',la:'17mo',mm:'21mo',id:'19mo',th:'16mo',tgt:'≤18mo',rflag:{mm:true}},
+        {metric:'Rolling attrition',la:'18%',mm:'28%',id:'24%',th:'10%',tgt:'≤20%',rflag:{mm:true,id:true}},
+        {metric:'Delivery %',la:'85%',mm:'80%',id:'84%',th:'105%',tgt:'≥90%',aflag:{la:true,mm:true,id:true}},
+        {metric:'Bench strength (G3→G4 ready)',la:'2',mm:'1',id:'1',th:'0',tgt:'1 per country minimum',rflag:{th:true}},
+        {metric:'Open G3 vacancies',la:'0',mm:'0',id:'3',th:'0',tgt:'0',rflag:{id:true}},
+        {metric:'SM retention risk',la:'Low',mm:'High (Myo H.)',id:'Critical (Wirawan)',th:'Low',tgt:'All retained to 2027',rflag:{mm:true,id:true}},
+        {metric:'Pipeline status',la:'Monitor',mm:'Critical',id:'At Risk',th:'Healthy',tgt:'—'}
+      ].map(function(r){
+        function cell(v,isRed,isAmber){
+          var col=isRed?'color:var(--red);font-weight:700':isAmber?'color:var(--amber);font-weight:600':'';
+          return '<td style="'+col+'">'+v+'</td>';
+        }
+        return '<tr><td style="font-weight:600">'+r.metric+'</td>'
+          +cell(r.la,r.rflag&&r.rflag.la,r.aflag&&r.aflag.la)
+          +cell(r.mm,r.rflag&&r.rflag.mm,r.aflag&&r.aflag.mm)
+          +cell(r.id,r.rflag&&r.rflag.id,r.aflag&&r.aflag.id)
+          +cell(r.th,r.rflag&&r.rflag.th,r.aflag&&r.aflag.th)
+          +'<td style="color:var(--blue);font-size:11.5px">'+r.tgt+'</td></tr>';
+      }).join('')}
+    </tbody>
+  </table>
+  </div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Thailand — <em>What the Benchmark Looks Like</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Thailand operates with 72% G1→G2 conversion, 10% attrition, and 105% delivery against target. The SM is a change champion and actively supports the G4 coaching programme as a co-facilitator. What makes Thailand different:</div>
+    ${[
+      'Full G4 staffing — no coaching capacity diverted to operations cover',
+      'Thailand SM actively monitors G4 debrief frequency monthly and holds G4s accountable',
+      'Small cohort size (≤6 trainees) means each trainee receives higher G4 contact time per month',
+      'No language barrier — training materials and G4 debriefs fully in the local language',
+      'SM has personally built the career pathway culture — trainees arrive understanding the G1→G4 progression and its financial rewards'
+    ].map(function(t,i){return '<div style="display:flex;gap:10px;margin-bottom:7px;font-size:13px"><span style="color:var(--green);font-weight:700;flex-shrink:0">'+(i+1)+'.</span><span style="color:var(--ink3);font-weight:300;line-height:1.65">'+t+'</span></div>';}).join('')}
+    <div style="margin-top:12px;padding:12px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:3px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--green);display:block;margin-bottom:4px">Application to Myanmar:</strong>Items 1, 3, and 4 are directly transferable. The G4 coaching programme is designed to bring Myanmar toward Thailand's coaching quality standard. The Thailand SM co-facilitating the programme is the transfer mechanism.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Country Pipeline — Priority Actions Q2 2026</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {country:'Laos',col:'var(--amber)',priority:'HIGH',actions:['Activate accelerated G3→G4 plan for 2 bench candidates — June 2026 deadline','Commission external G3 hire targeted for Laos — sourcing brief to TA by Q2 2026','Laos SM succession plan for Country 5 expansion — G4 candidate identified Q4 2026']},
+        {country:'Myanmar',col:'var(--red)',priority:'CRITICAL',actions:['G4 coaching programme cohort 1 — track debrief frequency monthly','Myanmar-language milestone cards — complete Q2 2026','Month-3 check-in compliance — 100% target. Group HR reviews weekly during programme.','Success measure: Myanmar conversion ≥70% Q4 2026']},
+        {country:'Indonesia',col:'var(--red)',priority:'CRITICAL',actions:['Fill 3 open G3 vacancies — sourcing escalation now. Each week costs $1,500–$2,500','Site allowance review business case to COO — Q2 2026','Wirawan retention conversation — October 2026. COO must lead.']},
+        {country:'Thailand',col:'var(--green)',priority:'MAINTAIN',actions:['Continue Thailand SM co-facilitation of Myanmar G4 programme — high-value cross-country deployment','Identify Country 5 G4 deployment candidate from Thailand G4 cohort — Q4 2026','Document Thailand pipeline practices as playbook for all countries']}
+      ].map(function(d){
+        var chipCls=d.priority==='CRITICAL'?'cr':d.priority==='HIGH'?'ca':d.priority==='MAINTAIN'?'cg':'cb';
+        return '<div style="padding:12px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><span style="font-weight:700;font-size:13px;color:var(--ink)">'+d.country+'</span><span class="chip '+chipCls+'">'+d.priority+'</span></div>'+d.actions.map(function(a){return '<div style="display:flex;gap:8px;font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px"><span style="color:var(--blue)">→</span>'+a+'</div>';}).join('')+'</div>';
+      }).join('')}
+    </div>
+  </div>
+</div>
+`;
+</script>
+<script>
+// ── PAGE 05 ─────────────────────────────────────────────────────
+document.getElementById('page-bench').innerHTML=`
+<div class="pe">Section 05 — Bench Strength</div>
+<div class="pt">Bench<br><em>Strength</em></div>
+<p class="pd">Bench strength measures how many G3 candidates are within 12 months of G4 qualification — the pipeline's readiness reserve. At Valentis, bench strength is the most direct indicator of future operational capacity risk. A bench of zero in any country means a G4 exit becomes immediately critical. This section maps bench strength, identifies G4-ready candidates, and specifies the development plans to build bench where it is weak.</p>
+<div class="vx">
+  <div class="vx-ey">Bench Strength Definition</div>
+  <div class="vx-ti">Bench strength = number of G3 candidates assessed as G4-ready within 12 months. Not all G3s qualify — only those with confirmed milestone completion pace and G4 coaching observation record.</div>
+  <div class="vx-bo">A G3 candidate is bench-strength eligible when: (1) all G3 milestones are on track or complete, (2) G4 observation hours are ≥80% of requirement, (3) G4 has rated candidate ≥3/5 on coaching rubric at latest assessment, and (4) SM has endorsed for G4 consideration. Candidates who meet all four criteria are classified as G4-ready within 12 months. Candidates meeting 2–3 criteria are classified as G4-ready within 12–24 months (development pipeline, not bench strength).</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+  ${[
+    {c:'Laos',bench:2,g3:4,g4positions:5,retirement:3,col:'var(--red)',status:'Critical deficit',note:'2 bench vs 3 retirements = net −1 G4 by 2027'},
+    {c:'Myanmar',bench:1,g3:2,g4positions:3,retirement:0,col:'var(--amber)',status:'Thin — watch closely',note:'1 bench candidate. No retirement risk but low absolute supply.'},
+    {c:'Indonesia',bench:1,g3:3,g4positions:4,retirement:0,col:'var(--amber)',status:'Thin — G3 vacancies compound',note:'3 open G3 vacancies depressing pipeline flow. 1 bench candidate only.'},
+    {c:'Thailand',bench:0,g3:0,g4positions:2,retirement:0,col:'var(--blue)',status:'No bench — small country',note:'Country too small to maintain bench. G4 exits would require cross-country deployment.'}
+  ].map(function(d){
+    return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px">'
+      +'<div style="font-family:var(--fm);font-size:9px;color:var(--blue);letter-spacing:1.5px;margin-bottom:6px">'+d.c.toUpperCase()+'</div>'
+      +'<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">'
+      +'<div style="font-family:var(--fd);font-size:44px;font-weight:800;color:'+d.col+';line-height:1">'+d.bench+'</div>'
+      +'<div style="font-size:13px;color:var(--ink4);font-weight:300">/ '+d.g4positions+' G4 positions</div>'
+      +'</div>'
+      +'<div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-bottom:8px;letter-spacing:.5px">BENCH-READY CANDIDATES</div>'
+      +'<div style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:10px">'
+      +'<div>Active G3s: <strong style="color:var(--ink)">'+d.g3+'</strong></div>'
+      +(d.retirement>0?'<div>Retirements (3yr): <strong style="color:var(--red)">'+d.retirement+'</strong></div>':'')
+      +'</div>'
+      +'<div style="padding:6px 10px;border-radius:2px;background:var(--surface2);font-size:11.5px;color:var(--ink3);line-height:1.5;margin-bottom:6px">'+d.note+'</div>'
+      +'<span class="chip '+(d.col==='var(--red)'?'cr':d.col==='var(--amber)'?'ca':d.col==='var(--green)'?'cg':'cb')+'">'+d.status+'</span>'
+      +'</div>';
+  }).join('')}
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">G4-Ready Assessment Criteria</div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">A G3 candidate is classified as bench-ready (G4-ready within 12 months) when all four criteria are met. Assessment is conducted by SM with G4 input quarterly.</div>
+    <table class="dt">
+      <thead><tr><th>#</th><th>Criterion</th><th>Standard</th><th>Evidence source</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:700;color:var(--blue)">1</td><td style="font-weight:600">G3 milestone completion</td><td>All G3 milestones complete or on-track within 2 months of expected completion. No milestone stall ≥3 months.</td><td>Pipeline log — milestone_completion field</td></tr>
+        <tr><td style="font-weight:700;color:var(--blue)">2</td><td style="font-weight:600">G4 observation hours</td><td>≥80% of required G4 observation hours logged. G4 has observed candidate in all key operational scenarios.</td><td>G4 observation log — submitted to SM monthly</td></tr>
+        <tr><td style="font-weight:700;color:var(--blue)">3</td><td style="font-weight:600">G4 coaching rubric rating</td><td>≥3/5 on all dimensions of G4 coaching rubric at most recent assessment. No dimension rated ≤2.</td><td>G4 coaching rubric scorecard (coaching programme output)</td></tr>
+        <tr><td style="font-weight:700;color:var(--blue)">4</td><td style="font-weight:600">SM endorsement</td><td>SM has formally confirmed candidate is ready for G4 consideration in the next quarterly pipeline review. Endorsement documented in pipeline log.</td><td>Pipeline log — bench_strength_status field</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Bench Development Plan — <em>Laos Priority</em></div>
+    <div class="inf r"><strong>June 2026 deadline — Laos bench acceleration must be activated.</strong>If development plans are not activated by June 2026, the first Laos retirement (earliest: Q1 2027) will leave Valentis with a live G4 vacancy in its largest country with no internal candidate available to fill it.</div>
+    <table class="dt">
+      <thead><tr><th>Action</th><th>Owner</th><th>By</th></tr></thead>
+      <tbody>
+        <tr><td>Formally assess the 2 Laos G3 bench candidates against all four G4-ready criteria. Identify gaps. Design individual development plans to close gaps by Q4 2026.</td><td>Laos SM + Group HR</td><td>June 2026</td></tr>
+        <tr><td>Activate accelerated G3→G4 pathway: increase G4 observation hours target, schedule cross-site exposure (Laos + one other country), priority milestone scheduling with SM availability committed in advance.</td><td>Laos SM (lead) · Group HR (design, track)</td><td>July 2026</td></tr>
+        <tr><td>Commission external G3 hire targeted for Laos — sourcing brief to TA function. Minimum 3 years' G3-equivalent experience required. Country 5 experience desirable.</td><td>Group HR (brief) · TA (source)</td><td>Q2 2026</td></tr>
+        <tr><td>Monthly bench strength update in COO pipeline report: Laos bench candidate progress vs accelerated plan milestones.</td><td>Group HR</td><td>Monthly from July 2026</td></tr>
+        <tr><td>Quarterly re-assessment of all bench candidates — confirm G4-ready status or update timeline. Update pipeline log bench_strength field.</td><td>Group HR + SMs</td><td>Quarterly</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+// ── PAGE 06 ─────────────────────────────────────────────────────
+document.getElementById('page-laos').innerHTML=`
+<div class="pe">Section 06 — Laos Retirement Risk</div>
+<div class="pt">Laos Retirement<br><em>Risk</em></div>
+<p class="pd">The Laos senior driller retirement cliff is the most significant long-term structural risk in the Valentis pipeline. Three of five G4 drillers in Laos — Valentis's largest country — face retirement within three years. This section models the risk, maps the available responses, and specifies the action plan that must be activated by June 2026 to avoid a structural delivery crisis by 2027.</p>
+<div class="vx">
+  <div class="vx-ey">The Retirement Cliff — What It Means for Operations</div>
+  <div class="vx-ti">Laos has 5 G4 senior drillers. 3 are retirement-risk within 3 years. Bench strength is 2 G3 candidates. Net position: −1 senior driller by 2027 without intervention.</div>
+  <div class="vx-bo">Without intervention, Laos will retire 3 G4s between 2027 and 2029. The current pipeline can develop 2 G3s to G4 within that window under the accelerated plan. The gap is at least 1 G4 — and potentially 2 if the first retirements cluster in 2027. This gap would reduce Laos operational capacity by 20–40%, directly impacting programme delivery in Valentis's largest country. At $8.3M group revenue and Laos contributing ~30–35%, the delivery risk is $500K–$900K over the exposure period. This is not a theoretical future risk — it is an operational planning certainty.</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+  ${[
+    {label:'Laos G4 headcount',val:'5',note:'Total senior drillers currently active in Laos',col:'var(--ink)'},
+    {label:'Retirement risk within 3yr',val:'3',note:'3 G4s avg age 51 — retirement-risk by 2027–2029',col:'var(--red)'},
+    {label:'G3 bench candidates',val:'2',note:'G3s assessed G4-ready within 12 months under accelerated plan',col:'var(--amber)'}
+  ].map(function(d){return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;text-align:center"><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">'+d.label+'</div><div style="font-family:var(--fd);font-size:52px;font-weight:800;color:'+d.col+';line-height:1">'+d.val+'</div><div style="font-size:12px;color:var(--ink4);font-weight:300;margin-top:8px;line-height:1.5">'+d.note+'</div></div>';}).join('')}
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Retirement Cliff Timeline</div>
+    <div style="margin-bottom:12px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Illustrative retirement timeline based on avg age 51 cohort. Exact timing will vary — plan for the earliest scenario.</div>
+    ${[
+      {yr:'2026',event:'Bench acceleration plan activated (June deadline). External G3 hire sourced. No retirements yet. Window to act.', col:'var(--blue)',status:'Action year'},
+      {yr:'2027',event:'First retirement likely. If accelerated bench plan activated June 2026: first G3 candidate may reach G4 by late 2027. External hire fills the gap if bench is insufficient. Critical cover year.', col:'var(--amber)',status:'First risk'},
+      {yr:'2028',event:'Second retirement likely. If both bench candidates graduate G4 by 2027–28 (accelerated plan) + external hire: Laos net G4 stable. If bench plan not activated in 2026: 2-position deficit.', col:'var(--red)',status:'Peak exposure'},
+      {yr:'2029',event:'Third retirement likely. By this year, current G2s (if conversion targets met) will be reaching G3. New G1s recruited 2026–27 will be at G2–G3. If pipeline intake increased now, supply normalises.', col:'var(--blue)',status:'Recovery begins'}
+    ].map(function(d){return '<div style="display:flex;gap:12px;margin-bottom:8px"><div style="text-align:center;width:52px;flex-shrink:0"><div style="font-family:var(--fd);font-size:20px;font-weight:800;color:'+d.col+';line-height:1">'+d.yr+'</div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:2px;line-height:1.3">'+d.status+'</div></div><div style="padding:10px 12px;background:var(--surface2);border-radius:3px;flex:1;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.event+'</div></div>';}).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Response Options — Ranked by Feasibility</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {rank:1,title:'Internal bench acceleration (primary)',desc:'Activate accelerated G3→G4 development plans for 2 identified Laos G3 bench candidates. Target G4 confirmation Q3–Q4 2027. Requires: June 2026 plan activation, increased G4 observation hours, cross-site exposure, priority milestone scheduling.',feasibility:'High — within HR control. June 2026 is the activation deadline.',col:'var(--green)'},
+        {rank:2,title:'External G3 hire (bridge)',desc:'Source and hire one external G3 driller targeted for Laos. Minimum 3 years G3-equivalent experience. This covers the 2027 gap while internal bench completes G4 development. Country 5 experience desirable — may double as Country 5 deployment candidate.',feasibility:'Medium — requires COO sourcing approval and TA activation by Q2 2026.',col:'var(--blue)'},
+        {rank:3,title:'Cross-country G4 deployment (contingency)',desc:'If bench plan and external hire are both insufficient by 2027, deploy a G4 from another country (Thailand preferred — benchmark site) to Laos on a 6–12 month assignment to cover the retirement gap. Requires Thailand SM agreement and Group HR international mobility framework.',feasibility:'Low preference — disrupts Thailand pipeline and has accommodation/cost implications. Use only if options 1 and 2 fail.',col:'var(--amber)'},
+        {rank:4,title:'Retention of retirement-eligible G4s (partial)',desc:'Where individual Laos G4 retirement-risk candidates are willing, discuss extended working arrangements (reduced hours, advisory/coaching role, 12–24 month extension with enhanced benefits). Cannot be assumed — some may not want to extend. Can buy time for bench development.',feasibility:'Variable — must be explored individually by Laos SM. Not a guaranteed option.',col:'var(--amber)'}
+      ].map(function(d){return '<div style="padding:10px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px"><span style="font-family:var(--fd);font-size:22px;font-weight:800;color:'+d.col+';line-height:1">'+d.rank+'</span><span style="font-weight:600;font-size:13px;color:var(--ink)">'+d.title+'</span></div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:6px">'+d.desc+'</div><div style="font-size:11.5px;color:var(--ink4);font-style:italic">Feasibility: '+d.feasibility+'</div></div>';}).join('')}
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Laos Retirement Risk — <em>COO Brief</em></div>
+  <div style="background:var(--surface2);padding:18px;border-radius:3px;font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300">
+    <p style="margin-bottom:10px">"Laos is Valentis's largest country — 14 of 42 current employees, 35% of revenue contribution. It faces a structural senior driller shortage beginning in 2027, when the first of three retirement-eligible G4s (average age 51) reaches retirement age. The current internal pipeline provides 2 G3 bench candidates who can reach G4 under an accelerated plan — but this covers only 2 of 3 retirements. The gap is at minimum 1 G4 position from 2027 onward."</p>
+    <p style="margin-bottom:10px">"Without intervention, this gap reduces Laos operational capacity by 20% and programme delivery by an estimated 8–12 percentage points from Q1 2027. At current revenue this represents approximately <strong style="color:var(--red)">$200K–$350K in annual delivery impact</strong>."</p>
+    <p>"Two actions are required from Group HR by <strong style="color:var(--ink)">Q2 2026</strong>: (1) activate the accelerated G3→G4 development plan for the 2 Laos bench candidates, and (2) commission an external G3 hire for Laos to bridge the supply gap. Both require COO approval and budget sign-off. The alternative is managing a live G4 vacancy in the largest country from Q1 2027 — at a cost that makes both interventions self-funding."</p>
+  </div>
+</div>
+`;
+
+// ── PAGE 07 ─────────────────────────────────────────────────────
+document.getElementById('page-cohort').innerHTML=`
+<div class="pe">Section 07 — Cohort Tracker</div>
+<div class="pt">Cohort<br><em>Tracker</em></div>
+<p class="pd">The cohort tracker monitors each intake cohort from G1 start through to G4 qualification — tracking milestone completion, conversion status, velocity, and at-risk flags. This is the operational view of the pipeline: not aggregate statistics but individual cohort trajectories.</p>
+<div class="inf b"><strong>How to use the cohort tracker.</strong>Each row represents one intake cohort (a group of trainees who started together). The tracker shows where each cohort is in the pipeline, how many have progressed at each stage, and whether the cohort is on-track, slow, or at risk. Group HR updates the cohort tracker each quarter from the pipeline log.</div>
+<div class="card">
+  <div class="ct">Active Cohort Register — <em>Illustrative Q1 2026</em></div>
+  <table class="dt">
+    <thead><tr><th>Cohort ID</th><th>Country</th><th>Intake</th><th>Started</th><th>Current stage</th><th>Started count</th><th>Active count</th><th>Conv rate</th><th>Velocity</th><th>Status</th><th>Key flag</th></tr></thead>
+    <tbody>
+      ${[
+        {id:'LA-2024-A',c:'Laos',intake:'Q3 2024',started:'July 2024',stage:'G2',s:5,a:4,conv:80,vel:'On track',status:'cg',statusTxt:'On Track',flag:'1 candidate at MEDIUM at-risk (milestone stall). Monitoring.'},
+        {id:'MM-2024-A',c:'Myanmar',intake:'Q3 2024',started:'Aug 2024',stage:'G1/G2',s:8,a:5,conv:63,vel:'Slow — 21mo avg G1→G2',status:'cr',statusTxt:'At Risk',flag:'3 month-3 exits in first 90 days. G4 coaching programme started Q1 2026. Check-in system now active. 1 HIGH risk candidate — intervention plan active.'},
+        {id:'ID-2024-A',c:'Indonesia',intake:'Q4 2024',started:'Oct 2024',stage:'G1',s:6,a:4,conv:67,vel:'Slightly slow',status:'ca',statusTxt:'Monitor',flag:'2 exits. 1 MEDIUM at-risk candidate. Site allowance review pending. G3 vacancy creating G4 coaching capacity shortage.'},
+        {id:'LA-2023-A',c:'Laos',intake:'Q2 2023',started:'May 2023',stage:'G2/G3',s:6,a:5,conv:83,vel:'On track',status:'cg',statusTxt:'On Track',flag:'All G3 milestones on track. 2 candidates on bench acceleration plan — target G4 by Q3 2027.'},
+        {id:'MM-2023-A',c:'Myanmar',intake:'Q1 2023',started:'Feb 2023',stage:'G3',s:8,a:4,conv:50,vel:'Slow',status:'cr',statusTxt:'Critical',flag:'Pre-programme cohort — low conversion reflects pre-G4-coaching era. 1 G3 bench candidate identified. This cohort informs baseline for coaching programme impact measurement.'},
+        {id:'ID-2023-A',c:'Indonesia',intake:'Q3 2023',started:'Aug 2023',stage:'G2/G3',s:7,a:5,conv:71,vel:'On track',status:'ca',statusTxt:'Monitor',flag:'1 G3 candidate nearing G3 completion. Bench assessment due Q2 2026. 3 open G3 positions means this cohort\'s G3 graduates are urgently needed operationally.'},
+        {id:'TH-2023-A',c:'Thailand',intake:'Q1 2023',started:'Mar 2023',stage:'G3',s:4,a:3,conv:75,vel:'On track',status:'cg',statusTxt:'On Track',flag:'Thailand benchmark cohort. 1 candidate assessed bench-ready (G4 within 12 months). Coaching quality high throughout.'}
+      ].map(function(r){
+        var convCol=r.conv>=70?'var(--green)':r.conv>=60?'var(--amber)':'var(--red)';
+        return '<tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">'+r.id+'</td><td style="font-weight:600">'+r.c+'</td><td>'+r.intake+'</td><td>'+r.started+'</td><td>'+r.stage+'</td><td>'+r.s+'</td><td style="font-weight:600">'+r.a+'</td><td style="font-weight:700;color:'+convCol+'">'+r.conv+'%</td><td style="font-size:11.5px">'+r.vel+'</td><td><span class="chip '+r.status+'">'+r.statusTxt+'</span></td><td style="font-size:11.5px;color:var(--ink4);font-weight:300;max-width:200px">'+r.flag+'</td></tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="card">
+  <div class="ct">Cohort Lifecycle — <em>How to Read a Cohort</em></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px">
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">A healthy cohort looks like</div>
+      ${['Conversion rate ≥70% at G1→G2 (first year)','No more than 1 MEDIUM or HIGH at-risk candidate active at any time','Milestone velocity on or ahead of target duration for current stage','SM-endorsed bench candidate identified by the time cohort reaches G3 stage','Debrief tally sheets complete — G4 frequency ≥3/month for all active candidates'].map(function(t){return '<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12.5px"><span style="color:var(--green)">✓</span><span style="color:var(--ink3);font-weight:300;line-height:1.6">'+t+'</span></div>';}).join('')}
+    </div>
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">An at-risk cohort shows</div>
+      ${['Conversion rate below 60% — more exits than expected at the G1→G2 transition','Two or more HIGH at-risk candidates in the same cohort at the same time','Milestone velocity ≥3 months behind schedule across multiple candidates','No bench candidate identified despite cohort being at G3 stage for 12+ months','G4 debrief tally showing average below 2/month across the cohort'].map(function(t){return '<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12.5px"><span style="color:var(--red)">✗</span><span style="color:var(--ink3);font-weight:300;line-height:1.6">'+t+'</span></div>';}).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 08 ─────────────────────────────────────────────────────
+document.getElementById('page-intake').innerHTML=`
+<div class="pe">Section 08 — Intake Planner</div>
+<div class="pt">Intake<br><em>Planner</em></div>
+<p class="pd">The intake planner models how many G1 trainees Valentis must recruit per country per quarter to reach the 65 FTE target by Q2 2027 — accounting for expected attrition, conversion rates, and the Laos retirement cliff. Use Section 08 to build the recruitment volume business case for the COO.</p>
+<div class="vx" id="intake-vx">
+  <div class="vx-ey">Intake Planning Logic</div>
+  <div class="vx-ti">To reach 65 FTE by Q2 2027, Valentis needs a net addition of 23 staff. At a 63% G1→G2 conversion rate and 22% group attrition, the gross intake requirement is substantially higher than the net gap.</div>
+  <div class="vx-bo">Every 10 G1 trainees recruited produces approximately 6–7 G2 drillers 18 months later (at 63% conversion). To net 23 additional staff across all grades, accounting for attrition among existing staff and the Laos retirement cliff, the model estimates Valentis needs to recruit approximately 14–18 new G1 trainees over the next 6 quarters. The planner below lets you adjust the key variables to model different intake scenarios.</div>
+</div>
+<div style="background:var(--navy);border-radius:4px;padding:28px;margin-bottom:14px">
+  <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0f4ff;margin-bottom:4px">Intake Calculator</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--fm);margin-bottom:22px">Adjust variables · Intake requirement updates automatically</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+    <div><label class="cl">Current headcount</label><input id="ic-hc" class="ci" type="number" value="42" oninput="calcIntake()"></div>
+    <div><label class="cl">Target headcount (65 FTE)</label><input id="ic-tgt" class="ci" type="number" value="65" oninput="calcIntake()"></div>
+    <div><label class="cl">Target date (quarters from now)</label><input id="ic-qtrs" class="ci" type="number" value="6" min="1" max="12" oninput="calcIntake()"></div>
+    <div><label class="cl">G1→G2 conversion rate (%)</label><input id="ic-conv" class="ci" type="number" value="63" oninput="calcIntake()"></div>
+    <div><label class="cl">Annual attrition rate (%)</label><input id="ic-attr" class="ci" type="number" value="22" oninput="calcIntake()"></div>
+    <div><label class="cl">Laos retirement gap (add'l G4s needed)</label><input id="ic-laos" class="ci" type="number" value="1" oninput="calcIntake()"></div>
+  </div>
+  <div id="intake-result" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:20px"></div>
+</div>
+<div class="card">
+  <div class="ct">Intake Schedule — Recommended Q2 2026–Q2 2027</div>
+  <table class="dt">
+    <thead><tr><th>Quarter</th><th>Laos G1 intake</th><th>Myanmar G1 intake</th><th>Indonesia G1 intake</th><th>Thailand G1 intake</th><th>Total intake</th><th>Priority note</th></tr></thead>
+    <tbody>
+      ${[
+        {q:'Q2 2026',la:2,mm:3,id:2,th:0,note:'Myanmar intake increase — G4 coaching programme active. Indonesia: fill G3 vacancies first, then G1 intake when G4 coaching capacity restored.'},
+        {q:'Q3 2026',la:2,mm:3,id:2,th:1,note:'Maintain intake pace. Laos bench acceleration plan active. Monitor G4 coaching programme impact on Myanmar conversion before committing Q4 2026 intake.'},
+        {q:'Q4 2026',la:2,mm:2,id:2,th:0,note:'Q4 review: if Myanmar conversion has reached ≥70%, confidence in intake justifies full schedule. If still below target, intake risk is elevated — review with COO.'},
+        {q:'Q1 2027',la:1,mm:2,id:2,th:0,note:'Laos intake lower — bench acceleration and external hire are the priority G4 supply mechanism. Myanmar and Indonesia maintain intake pressure.'},
+        {q:'Q2 2027',la:1,mm:2,id:1,th:0,note:'65 FTE target date. Final intake push. Assess headcount and conversion trajectory against target.'}
+      ].map(function(r){
+        var total=r.la+r.mm+r.id+r.th;
+        return '<tr><td style="font-weight:600;color:var(--blue)">'+r.q+'</td><td>'+r.la+'</td><td>'+r.mm+'</td><td>'+r.id+'</td><td>'+r.th+'</td><td style="font-weight:700">'+total+'</td><td style="font-size:11.5px;color:var(--ink4);font-weight:300">'+r.note+'</td></tr>';
+      }).join('')}
+      <tr style="background:var(--surface2)"><td style="font-weight:700">TOTAL</td><td style="font-weight:700">8</td><td style="font-weight:700">12</td><td style="font-weight:700">9</td><td style="font-weight:700">1</td><td style="font-weight:800;color:var(--blue)">30</td><td style="font-size:12px;color:var(--ink3)">30 G1 intakes over 5 quarters = estimated 19–21 reaching G2+ given current conversion rates</td></tr>
+    </tbody>
+  </table>
+  <div class="inf b" style="margin-top:12px;margin-bottom:0"><strong>This schedule is contingent on G3 vacancy fills and G4 coaching capacity.</strong>Myanmar and Indonesia intake targets assume G4 coaching capacity is restored (Indonesia) and coaching programme is active (Myanmar). If G3 vacancies in Indonesia are not filled by Q2 2026, Indonesia G1 intake should be deferred — trainees without G4 coaching cover will exit at higher rates, wasting intake investment.</div>
+</div>
+`;
+
+function calcIntake(){
+  var hc=parseFloat(document.getElementById('ic-hc').value)||42;
+  var tgt=parseFloat(document.getElementById('ic-tgt').value)||65;
+  var qtrs=parseFloat(document.getElementById('ic-qtrs').value)||6;
+  var conv=parseFloat(document.getElementById('ic-conv').value)||63;
+  var attr=parseFloat(document.getElementById('ic-attr').value)||22;
+  var laos=parseFloat(document.getElementById('ic-laos').value)||1;
+  var net=tgt-hc;
+  var attrLoss=Math.round(hc*(attr/100)*(qtrs/4));
+  var grossNeed=net+attrLoss+laos;
+  var convFactor=conv/100;
+  var g1Need=Math.ceil(grossNeed/convFactor);
+  var perQtr=Math.ceil(g1Need/qtrs);
+  var projHc=hc+Math.round(g1Need*convFactor)-attrLoss;
+  document.getElementById('intake-result').innerHTML=
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px">'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--electric2);line-height:1">'+net+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">NET FTE GAP</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:rgba(255,255,255,0.5);line-height:1">'+grossNeed+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">GROSS NEED (INC ATTRITION + LAOS)</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--blue3);line-height:1">'+g1Need+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">G1 INTAKES REQUIRED</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--electric2);line-height:1">'+perQtr+'/qtr</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">AVG PER QUARTER</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(255,255,255,0.04);border-radius:3px;padding:14px;font-size:13px;color:rgba(255,255,255,0.5);line-height:1.85;font-weight:300">'
+    +'To reach <strong style="color:#f0f4ff">'+tgt+' FTE</strong> from the current <strong style="color:#f0f4ff">'+hc+'</strong> within <strong style="color:#f0f4ff">'+qtrs+' quarters</strong>: '
+    +'Valentis must recruit approximately <strong style="color:var(--blue3)">'+g1Need+' G1 trainees</strong> total ('+perQtr+'/quarter average). '
+    +'This accounts for expected attrition losses of ~'+attrLoss+' from the existing workforce and '+laos+' additional G4 needed for Laos retirement cover. '
+    +'At '+conv+'% G1→G2 conversion, '+g1Need+' intakes delivers approximately '+Math.round(g1Need*convFactor)+' G2+ progressions. '
+    +(projHc>=tgt?'<strong style="color:var(--green)">Projected headcount ('+projHc+') meets target.</strong>':'<strong style="color:var(--amber)">Projected headcount ('+projHc+') is below target — increase intake or improve conversion rate.</strong>')
+    +'</div>';
+}
+calcIntake();
+</script>

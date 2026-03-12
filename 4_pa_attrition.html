@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attrition &amp; Retention Analysis — People Analytics Tool 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f5;--surface:#fff;--surface2:#e8ecf2;
+  --border:#cdd4e0;--border2:#b8c2d4;
+  --ink:#0d1117;--ink2:#1a2332;--ink3:#3d4f6b;--ink4:#6b7d99;--ink5:#a0aec0;
+  --navy:#0a1628;
+  --blue:#1a6bdb;--blue2:#2979e8;--blue3:#4d94ff;
+  --blue-dim:rgba(26,107,219,0.08);--blue-border:rgba(26,107,219,0.22);
+  --electric:#3d8bff;--electric2:#5c9fff;
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --amber:#b8860b;--amber-dim:rgba(184,134,11,0.08);--amber-border:rgba(184,134,11,0.22);
+  --green:#1a7a4a;--green-dim:rgba(26,122,74,0.08);--green-border:rgba(26,122,74,0.22);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--blue),rgba(26,107,219,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:rgba(26,107,219,0.15);border:1px solid rgba(26,107,219,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f4ff;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(26,107,219,0.18);border-color:rgba(26,107,219,0.4);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--blue3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:40px 52px;max-width:1100px}
+.page.active{display:block}
+.ph{padding:20px 0;border-bottom:22px solid transparent}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--blue)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--blue);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cb{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.ca{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.cg{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.b{background:var(--blue-dim);border-color:var(--blue);color:var(--ink2)}
+.inf.a{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.inf.r{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.inf.g{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--navy);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+.vx{background:var(--navy);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f4ff;margin-bottom:8px;line-height:1.2}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap;margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+.br{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bl{font-size:12px;color:var(--ink3);width:96px;flex-shrink:0}
+.bt{flex:1;background:var(--surface2);border-radius:2px;height:20px;overflow:hidden}
+.bf{height:100%;border-radius:2px;display:flex;align-items:center;padding-left:8px}
+.bv{font-family:var(--fm);font-size:10px;font-weight:600;color:#fff;white-space:nowrap}
+.bc{font-family:var(--fm);font-size:10px;color:var(--ink5);margin-left:8px;white-space:nowrap}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.kbl::before{background:var(--blue)}
+.kpi.kgr::before{background:var(--green)}
+.kpi.kam::before{background:var(--amber)}
+.kpi.krd::before{background:var(--red)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kpi.kbl .kv{color:var(--blue)}
+.kpi.kgr .kv{color:var(--green)}
+.kpi.kam .kv{color:var(--amber)}
+.kpi.krd .kv{color:var(--red)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.kt{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktb{background:var(--blue-dim);color:var(--blue)}
+.kta{background:var(--amber-dim);color:var(--amber)}
+.ktr{background:var(--red-dim);color:var(--red)}
+.ktg{background:var(--green-dim);color:var(--green)}
+.ktm{background:var(--surface2);color:var(--ink4)}
+.ci{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 12px;font-size:13px;color:#f0f4ff;font-family:var(--fb);outline:none;transition:border .13s;margin-bottom:10px}
+.ci:focus{border-color:rgba(26,107,219,0.5)}
+.cl{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;display:block}
+.cs{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 12px;font-size:13px;color:#f0f4ff;font-family:var(--fb);outline:none;cursor:pointer;margin-bottom:10px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btnb{background:var(--blue);color:#fff}
+.btnb:hover{background:var(--blue2)}
+.btng{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btng:hover{border-color:rgba(26,107,219,0.5);color:var(--electric2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">People Analytics · Tool 4 / 9</div>
+    <div class="sb-title">Attrition &amp;<br><em>Retention</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Attrition Overview</div>
+    <div class="nav-item" onclick="showPage('drivers',this)"><span class="nav-num">02</span>Root Cause Analysis</div>
+    <div class="nav-item" onclick="showPage('month3',this)"><span class="nav-num">03</span>Month-3 Exit Pattern</div>
+    <div class="nav-item" onclick="showPage('risk',this)"><span class="nav-num">04</span>At-Risk Identification</div>
+    <div class="nav-item" onclick="showPage('sm',this)"><span class="nav-num">05</span>SM Retention Risk</div>
+    <div class="nav-item" onclick="showPage('cost',this)"><span class="nav-num">06</span>Cost of Attrition</div>
+    <div class="nav-item" onclick="showPage('interventions',this)"><span class="nav-num">07</span>Retention Interventions</div>
+    <div class="nav-item" onclick="showPage('calc',this)"><span class="nav-num">08</span>ROI Calculator</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>People Analytics · Tool 4 of 9</strong>
+      Attrition &amp; Retention Analysis<br>
+      <span style="color:rgba(255,255,255,0.1)">Know why people leave. Know what it costs. Know what to do.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview" class="page active"></div>
+  <div id="page-drivers" class="page"></div>
+  <div id="page-month3" class="page"></div>
+  <div id="page-risk" class="page"></div>
+  <div id="page-sm" class="page"></div>
+  <div id="page-cost" class="page"></div>
+  <div id="page-interventions" class="page"></div>
+  <div id="page-calc" class="page"></div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('[data-tabs]')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+// ── PAGE 01 ──────────────────────────────────────────────────────
+document.getElementById('page-overview').innerHTML=`
+<div class="ph">
+  <div class="pe">People Analytics · Tool 4 / 9 — Attrition &amp; Retention Analysis</div>
+  <div class="pt">Attrition &amp;<br><em>Retention</em></div>
+  <p class="pd">Attrition at Valentis is not a number to track — it is a business cost to manage. This tool covers the full attrition picture: rates by grade and country, root causes, at-risk identification, SM retention risk, cost modelling, and intervention ROI. The goal is to give Group HR the analysis language to make every retention investment case in revenue terms.</p>
+</div>
+<div class="vx">
+  <div class="vx-ey">The Attrition Problem at Valentis</div>
+  <div class="vx-ti">22% rolling attrition · ~9 exits/year · Myanmar at 28% is the critical market · Month-3 exits are the highest-leverage single problem</div>
+  <div class="vx-bo">At $1,000–$2,000 visible replacement cost per exit, annual attrition costs approximately $9K–$18K in direct replacement. The full cost — including production gaps, coaching capacity loss, and pipeline disruption — is $71K–$116K per year. 75% of exits are voluntary, meaning they are addressable through HR action. Myanmar at 28% attrition and 58% conversion rate is the primary intervention target: closing the Myanmar conversion gap from 58% to ≥70% is the single highest-ROI retention move available to Valentis in 2026.</div>
+</div>
+<div class="krow">
+  <div class="kpi krd"><div class="kl">Rolling 12-mo Attrition</div><div class="kv">22%</div><div class="ks">~9 exits per year group-wide</div><div class="kt ktr">Above 20% threshold</div></div>
+  <div class="kpi krd"><div class="kl">Myanmar Attrition</div><div class="kv">28%</div><div class="ks">Highest country — G1 driven</div><div class="kt ktr">Critical — month-3 pattern</div></div>
+  <div class="kpi kam"><div class="kl">Voluntary Exit %</div><div class="kv">75%</div><div class="ks">Employee-initiated exits</div><div class="kt kta">Addressable via HR action</div></div>
+  <div class="kpi kbl"><div class="kl">Est. Annual Attrition Cost</div><div class="kv">$71K+</div><div class="ks">Excl. SM retention risk</div><div class="kt ktb">Full model in Section 06</div></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Attrition by Country</div>
+    <div class="br"><span class="bl">Myanmar</span><div class="bt"><div class="bf" style="width:70%;background:var(--red)"><span class="bv">28%</span></div></div><span class="bc" style="color:var(--red)">Critical</span></div>
+    <div class="br"><span class="bl">Indonesia</span><div class="bt"><div class="bf" style="width:60%;background:var(--amber)"><span class="bv">24%</span></div></div><span class="bc" style="color:var(--amber)">Elevated</span></div>
+    <div class="br"><span class="bl">Laos</span><div class="bt"><div class="bf" style="width:45%;background:var(--blue)"><span class="bv">18%</span></div></div><span class="bc">Monitor</span></div>
+    <div class="br"><span class="bl">Thailand</span><div class="bt"><div class="bf" style="width:25%;background:var(--green)"><span class="bv">10%</span></div></div><span class="bc" style="color:var(--green)">Healthy — benchmark</span></div>
+    <div style="margin-top:12px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">Thailand 10% is the internal benchmark — full G4 staffing, Thailand SM as change champion, small cohort with high-quality coaching. The gap between Myanmar (28%) and Thailand (10%) is the measure of what better coaching delivers.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Attrition by Grade</div>
+    <div class="br"><span class="bl">G1 Trainees</span><div class="bt"><div class="bf" style="width:85%;background:var(--red)"><span class="bv">~38%</span></div></div><span class="bc" style="color:var(--red)">Peak risk</span></div>
+    <div class="br"><span class="bl">G2</span><div class="bt"><div class="bf" style="width:40%;background:var(--amber)"><span class="bv">~18%</span></div></div><span class="bc" style="color:var(--amber)">Elevated</span></div>
+    <div class="br"><span class="bl">G3</span><div class="bt"><div class="bf" style="width:25%;background:var(--blue)"><span class="bv">~11%</span></div></div><span class="bc">Normal</span></div>
+    <div class="br"><span class="bl">G4</span><div class="bt"><div class="bf" style="width:12%;background:var(--green)"><span class="bv">~5%</span></div></div><span class="bc" style="color:var(--green)">Low</span></div>
+    <div class="br"><span class="bl">G5 SM</span><div class="bt"><div class="bf" style="width:5%;background:var(--green)"><span class="bv">~2%</span></div></div><span class="bc" style="color:var(--green)">Very low</span></div>
+    <div style="margin-top:12px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">G1 attrition of ~38% is structurally high in exploration drilling globally. The goal is not zero — it is getting ≥70% through the month-3 window. Every grade above G2 shows dramatically lower attrition, confirming that the intervention target is the early-stage pipeline, not the broader workforce.</div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Attrition Trend — Illustrative 2024–2026</div>
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:12px;align-items:end">
+    ${[{q:'Q1 24',v:24,h:64,c:'var(--amber)'},{q:'Q2 24',v:23,h:60,c:'var(--amber)'},{q:'Q3 24',v:26,h:72,c:'var(--red)'},{q:'Q4 24',v:25,h:68,c:'var(--red)'},{q:'Q1 25',v:24,h:64,c:'var(--amber)'},{q:'Q1 26',v:22,h:56,c:'var(--blue)',curr:true}].map(function(d){
+      return '<div style="text-align:center"><div style="height:'+d.h+'px;background:'+d.c+';border-radius:2px 2px 0 0;margin:0 8px"></div><div style="font-family:var(--fm);font-size:9px;color:'+(d.curr?'var(--blue)':'var(--ink5)')+';margin-top:4px">'+(d.curr?'<strong>':'')+d.q+(d.curr?'</strong>':'')+'</div><div style="font-family:var(--fm);font-size:10px;color:'+(d.curr?'var(--blue)':'var(--ink3)')+';'+(d.curr?'font-weight:600;':'')+'">'+(d.curr?'<strong>':'')+d.v+'%'+(d.curr?'</strong>':'')+'</div></div>';
+    }).join('')}
+  </div>
+  <div style="margin-top:12px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">Attrition has held in the 22–26% range for 6+ quarters — it is structural, not episodic. Q1 2026 (22%) is a slight improvement, potentially reflecting early G4 coaching programme impact. Target: reach 18% group-wide by Q4 2026 as Myanmar conversion rate improves through the coaching programme.</div>
+</div>
+`;
+
+// ── PAGE 02 ──────────────────────────────────────────────────────
+document.getElementById('page-drivers').innerHTML=`
+<div class="ph">
+  <div class="pe">Section 02 — Root Cause Analysis</div>
+  <div class="pt">Root Cause<br><em>Analysis</em></div>
+  <p class="pd">Attrition at Valentis is caused by a cluster of reinforcing factors — some structural to the industry, some addressable in the short term. This section maps root causes by driver category, identifies the primary evidence, and connects each driver to the intervention that addresses it.</p>
+</div>
+<div class="inf a"><strong>Diagnostic approach.</strong>Without a formal exit survey system, Valentis root cause analysis draws from three sources: SM exit conversations (verbal reason for leaving), G4 check-in records (early warning signals before exit), and Group HR knowledge of operational conditions. As the data infrastructure matures, structured exit reason categories will replace this with systematic evidence.</div>
+<div class="card">
+  <div class="ct">The Four Driver Categories</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+    <div style="padding:16px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px"><span style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--red);line-height:1">1</span><span style="font-weight:700;font-size:13.5px;color:var(--ink)">G4 coaching quality gap</span></div>
+      <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">The highest-impact driver. G4s who lack coaching skills fail to provide adequate early-stage support to G1 trainees. Debrief frequency drops. Milestone progress stalls. Trainees lose confidence and disengage before month 3. Myanmar is the clearest case — the G4 coaching programme directly targets this driver.</div>
+      <div style="margin-top:8px"><span class="chip cr">Primary driver — MM &amp; ID</span></div>
+    </div>
+    <div style="padding:16px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px">
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px"><span style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--amber);line-height:1">2</span><span style="font-weight:700;font-size:13.5px;color:var(--ink)">Total rewards gap at G1–G2</span></div>
+      <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">G1 and G2 pay rates are at or near market minimum. Trainees who find site work physically demanding do not see a compelling financial upside at 3 months. The G1→G4 career and salary progression exists — but it is not being communicated visibly enough during the first 90 days to offset the immediate difficulty of site life.</div>
+      <div style="margin-top:8px"><span class="chip ca">Secondary driver — all countries</span></div>
+    </div>
+    <div style="padding:16px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px">
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px"><span style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--amber);line-height:1">3</span><span style="font-weight:700;font-size:13.5px;color:var(--ink)">Language and comprehension barrier</span></div>
+      <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">In Myanmar particularly, training materials not fully localised reduce trainee comprehension of milestone standards. G4s who are not confident communicating in Myanmar language conduct shorter, less effective debriefs. Trainees who do not fully understand what is expected at each milestone are more likely to exit when progress feels unclear.</div>
+      <div style="margin-top:8px"><span class="chip ca">Contributing driver — MM</span></div>
+    </div>
+    <div style="padding:16px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:3px">
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px"><span style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--blue);line-height:1">4</span><span style="font-weight:700;font-size:13.5px;color:var(--ink)">Competing local employment</span></div>
+      <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">In Indonesia, G1 trainees with partial competency sometimes exit to competitors at G2-equivalent pay, skipping the full Valentis development pathway. This is partly a sourcing quality issue (selecting candidates less likely to exit) and partly a speed-to-value issue (making the Valentis career pathway more financially compelling sooner).</div>
+      <div style="margin-top:8px"><span class="chip cb">Contributing driver — ID</span></div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Driver to Intervention Mapping</div>
+  <table class="dt">
+    <thead><tr><th>Driver</th><th>Evidence at Valentis</th><th>Intervention</th><th>Owner</th><th>Target outcome</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">G4 coaching quality</td><td>Month-3 exits concentrated where G4 debrief frequency is lowest. Myanmar G4s pre-programme averaging 1.2 debriefs/month vs target 4.</td><td>G4 coaching programme — 6 weeks, Myanmar language, Thailand SM co-facilitates. Certification ≥3/5 all rubric dimensions. Monthly debrief tally tracking.</td><td>Group HR (design/track) · Thailand SM (co-facilitate) · COO (sponsor)</td><td>Myanmar conversion ≥70% Q4 2026</td></tr>
+      <tr><td style="font-weight:600">Total rewards gap G1–G2</td><td>Exit conversations cite pay vs difficulty as primary reason for voluntary exits at month 3. G1 compa-ratio at ~85% in Myanmar and Indonesia.</td><td>Career pathway communication during induction — show G1→G4 salary progression explicitly. G2 milestone bonus design Q3 2026. Merit cycle 2027 to prioritise grade promotions.</td><td>Group HR (design) · COO (approve) · SMs (deliver induction)</td><td>Month-3 exit rate trend downward from Q3 2026</td></tr>
+      <tr><td style="font-weight:600">Language barrier (Myanmar)</td><td>G4 coaching programme now in Myanmar language. Milestone sign-off cards being translated.</td><td>Myanmar-language milestone cards by Q2 2026. All training materials Myanmar-language verified Q3 2026. G4s coached to confirm trainee comprehension at each debrief.</td><td>Group HR (oversee) · Myo H. (verify) · G4s (deliver)</td><td>Full Myanmar-language delivery Q3 2026</td></tr>
+      <tr><td style="font-weight:600">Competing employment (ID)</td><td>40% of Indonesia exits cite "better offer elsewhere." G1→G2 conversion 63% — lower than Laos despite similar programme quality.</td><td>Sourcing quality review — screen for candidates less likely to exit to competitors. Indonesia site allowance review — business case to COO by Q2 2026.</td><td>Group HR (sourcing/allowance) · Wirawan (market intel) · COO (allowance decision)</td><td>Indonesia conversion rate reaching 68%+ by Q3 2026</td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="card">
+  <div class="ct">Root Cause — <em>Causal Chain Diagram</em></div>
+  <div class="vx" style="margin-bottom:0">
+    <div class="vx-ey">Causal chain: G1 trainee exits at or before month 3 (Myanmar 28% attrition)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--electric2);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">Coaching &amp; Supervision Chain</div>
+        ${['G4 debrief frequency too low in first 90 days → trainee milestones stall → trainee loses confidence → exits at month 3','G4 not monitoring early warning signals → at-risk trainees not identified before month-3 decision point → no intervention occurs','SM not reviewing G4 coaching quality monthly → coaching gaps persist for 90+ days without correction'].map(function(t,i){return '<div style="padding:9px 12px;background:rgba(255,255,255,0.04);border-left:2px solid '+(i===0?'var(--red)':'var(--amber)')+';border-radius:0 3px 3px 0;margin-bottom:6px;font-size:12px;color:rgba(255,255,255,0.55);line-height:1.65">'+t+'</div>';}).join('')}
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--electric2);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">Rewards &amp; Pathway Chain</div>
+        ${['G1 salary at band minimum → not compelling relative to site difficulty → insufficient financial incentive to persist through month-3 hardship','Career pathway to G3–G4 salary levels not visible in induction → trainee does not see the long-term financial upside clearly → month-3 difficulty feels pointless','Language barrier → unclear milestone expectations → trainee uncertainty about progress → exit before formal assessment failure'].map(function(t,i){return '<div style="padding:9px 12px;background:rgba(255,255,255,0.04);border-left:2px solid '+(i===0?'var(--amber)':i===1?'var(--amber)':'var(--blue)')+';border-radius:0 3px 3px 0;margin-bottom:6px;font-size:12px;color:rgba(255,255,255,0.55);line-height:1.65">'+t+'</div>';}).join('')}
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 03 ──────────────────────────────────────────────────────
+document.getElementById('page-month3').innerHTML=`
+<div class="ph">
+  <div class="pe">Section 03 — Month-3 Exit Pattern</div>
+  <div class="pt">Month-3<br><em>Exit Pattern</em></div>
+  <p class="pd">The month-3 window is the single highest-leverage intervention point in the Valentis driller pipeline. This section defines the pattern, explains why it exists, maps the early warning signals, and specifies the intervention protocol that Group HR and G4s must follow for every at-risk trainee.</p>
+</div>
+<div class="vx">
+  <div class="vx-ey">Why Month 3 Is the Critical Window</div>
+  <div class="vx-ti">Month 3 is when trainees have experienced enough difficulty to consider leaving — but before they have experienced enough progress to stay.</div>
+  <div class="vx-bo">The first 90 days of G1 training are the steepest learning curve: new physical environment, unfamiliar equipment, demanding milestone standards, limited autonomy. By month 3, trainees who have not received consistent G4 coaching and clear milestone progress face a binary decision: commit or exit. The month-3 check-in system exists to intervene in that decision before it is made — not after the resignation letter arrives.</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Exit Distribution by Month</div>
+    <div class="br"><span class="bl" style="width:78px">Month 1–2</span><div class="bt"><div class="bf" style="width:15%;background:var(--blue)"><span class="bv">15%</span></div></div><span class="bc">Admin / mismatch exits</span></div>
+    <div class="br"><span class="bl" style="width:78px">Month 3</span><div class="bt"><div class="bf" style="width:55%;background:var(--red)"><span class="bv">~35%</span></div></div><span class="bc" style="color:var(--red)">Peak exit window</span></div>
+    <div class="br"><span class="bl" style="width:78px">Month 4–6</span><div class="bt"><div class="bf" style="width:30%;background:var(--amber)"><span class="bv">20%</span></div></div><span class="bc">Post-stall exits</span></div>
+    <div class="br"><span class="bl" style="width:78px">Month 7–12</span><div class="bt"><div class="bf" style="width:22%;background:var(--amber)"><span class="bv">15%</span></div></div><span class="bc">Pre-G2 exits</span></div>
+    <div class="br"><span class="bl" style="width:78px">G2+ stage</span><div class="bt"><div class="bf" style="width:22%;background:var(--blue)"><span class="bv">15%</span></div></div><span class="bc">Post-progression exits</span></div>
+    <div style="margin-top:12px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">~35% of all trainee exits cluster at month 3. This is predictable — which means it is preventable. The objective is not zero month-3 exits (some trainees are genuinely unsuited to drilling). The objective is to ensure no trainee exits because of insufficient support.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Early Warning Signals — Weeks 8–12</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      <div style="padding:10px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px"><div style="font-weight:700;color:var(--red);font-size:12.5px;margin-bottom:3px">Signal 1 — Milestone velocity drop</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">Trainee completing 1 milestone per 3 weeks drops to zero progress in weeks 8–12. Milestone stall precedes exit by 2–4 weeks on average. G4 must report any stall lasting 3+ weeks immediately.</div></div>
+      <div style="padding:10px 12px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px"><div style="font-weight:700;color:var(--amber);font-size:12.5px;margin-bottom:3px">Signal 2 — Reduced engagement in debriefs</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">G4 reports trainee asking fewer questions, giving shorter answers. Qualitative signal — G4s must be coached to recognise and report this pattern rather than attribute it to a bad week.</div></div>
+      <div style="padding:10px 12px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px"><div style="font-weight:700;color:var(--amber);font-size:12.5px;margin-bottom:3px">Signal 3 — Attendance or punctuality changes</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">Reliable trainee begins arriving late or taking unscheduled leave. In site environments this is a strong behavioural disengagement signal — committed G1 trainees rarely take unscheduled leave in the first 90 days.</div></div>
+      <div style="padding:10px 12px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:3px"><div style="font-weight:700;color:var(--blue);font-size:12.5px;margin-bottom:3px">Signal 4 — Questions about alternative employment</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">Any question about pay at other sites or competitor contract terms. Trigger HIGH risk flag immediately — notify Group HR within 24 hours.</div></div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Month-3 Check-In Protocol — Step by Step</div>
+  <table class="dt">
+    <thead><tr><th>Step</th><th>Action</th><th>Owner</th><th>Timing</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr><td style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)">1</td><td style="font-weight:600">Identify check-in trigger date</td><td>Group HR (pipeline log)</td><td>Week 10 of each G1 start date</td><td>Group HR notifies G4 of upcoming check-in 2 weeks in advance. Check-in must occur between week 10 and week 14. If G4 unavailable, SM conducts it.</td></tr>
+      <tr><td style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)">2</td><td style="font-weight:600">G4 conducts structured check-in</td><td>G4 (assigned to trainee)</td><td>Week 10–14</td><td>45-minute private conversation: (1) milestone progress self-assessment, (2) support needs, (3) career commitment and motivation, (4) any concerns. G4 completes check-in form within 48 hours.</td></tr>
+      <tr><td style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)">3</td><td style="font-weight:600">G4 assigns risk rating</td><td>G4 (with SM if uncertain)</td><td>Same day as check-in</td><td>LOW — engaged, progressing. MEDIUM — hesitation/slow velocity — weekly debrief for 30 days. HIGH — active disengagement — Group HR notified within 24 hours.</td></tr>
+      <tr><td style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)">4</td><td style="font-weight:600">Group HR reviews HIGH flags</td><td>Group HR</td><td>Within 24 hours of HIGH flag</td><td>Group HR contacts SM. Together, design a 30-day intervention plan: debrief frequency increase, milestone support, salary/career conversation where appropriate. Document in pipeline log.</td></tr>
+      <tr><td style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)">5</td><td style="font-weight:600">30-day follow-up check-in</td><td>G4 (all MEDIUM/HIGH)</td><td>30 days after initial check-in</td><td>20-minute follow-up. Re-assess risk level. If HIGH persists: COO briefed. If resolved: document in pipeline log and move to standard monthly monitoring.</td></tr>
+      <tr><td style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)">6</td><td style="font-weight:600">Quarterly aggregate review</td><td>Group HR</td><td>With COO quarterly report</td><td>Check-in compliance rate. Risk distribution by country. Month-3 exit rate vs prior quarter. Include in COO people brief.</td></tr>
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── PAGE 04 ──────────────────────────────────────────────────────
+document.getElementById('page-risk').innerHTML=`
+<div class="ph">
+  <div class="pe">Section 04 — At-Risk Identification</div>
+  <div class="pt">At-Risk<br><em>Identification</em></div>
+  <p class="pd">A systematic framework for identifying pipeline candidates at risk of exit before they signal intent to leave. At Valentis's current scale, at-risk identification is a monthly manual review by Group HR against the pipeline log. The goal is to surface risk 4–8 weeks before the likely exit decision point.</p>
+</div>
+<div class="card">
+  <div class="ct">At-Risk Scoring Framework — <em>Apply Monthly</em></div>
+  <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:14px">Score each active G1–G3 on five dimensions. Total 0–10. Status: <strong>LOW</strong> 0–3 · <strong>MEDIUM</strong> 4–6 · <strong>HIGH</strong> 7–10. Update pipeline_status field in pipeline log monthly.</div>
+  <table class="dt">
+    <thead><tr><th>Dimension</th><th>Score 0 — No risk</th><th>Score 1 — Moderate</th><th>Score 2 — High risk</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">Milestone velocity</td><td>On pace or ahead of schedule.</td><td>1–2 milestones behind. Still progressing.</td><td>No completions in last 60 days. Significant stall.</td></tr>
+      <tr><td style="font-weight:600">Check-in risk level</td><td>Last check-in rated LOW. No concerns.</td><td>Last check-in rated MEDIUM. Follow-up plan in place.</td><td>Last check-in rated HIGH. Intervention plan active.</td></tr>
+      <tr><td style="font-weight:600">G4 debrief frequency</td><td>3–4 debriefs/month. Tally sheet current.</td><td>1–2 debriefs/month. Below target.</td><td>Fewer than 1/month in last 60 days. Trainee without coaching support.</td></tr>
+      <tr><td style="font-weight:600">Attendance pattern</td><td>No unexplained absences in last 60 days.</td><td>1–2 unexplained absences or lateness. SM has noted.</td><td>3+ unexplained absences or persistent lateness.</td></tr>
+      <tr><td style="font-weight:600">Tenure stage</td><td>G2 or G3 — past month-3 window.</td><td>G1 month 6–12 — past acute window, not yet at G2 confirmation.</td><td>G1 month 2–4 — peak exit window. All G1s in this range score 2 regardless of other indicators.</td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="card">
+  <div class="ct">At-Risk Register — <em>Illustrative Q1 2026</em></div>
+  <div class="inf a"><strong>Illustrative entries showing how the register operates.</strong>Group HR populates this from the pipeline log each month. The entries below reflect Valentis's known Q1 2026 risk profile.</div>
+  <table class="dt">
+    <thead><tr><th>Country</th><th>Grade</th><th>Score</th><th>Status</th><th>Primary risk factors</th><th>Intervention</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">Myanmar</td><td>G1</td><td style="font-weight:800;color:var(--red);font-family:var(--fd);font-size:18px">8/10</td><td><span class="chip cr">HIGH</span></td><td>Month-3 window (2) + check-in HIGH (2) + G4 debrief low at 1/month (2) + attendance issues (1) + tenure (1)</td><td>Group HR + Myo H. 30-day plan. Weekly debrief required. Career pathway conversation week 12. COO informed.</td></tr>
+      <tr><td style="font-weight:600">Myanmar</td><td>G1</td><td style="font-weight:800;color:var(--amber);font-family:var(--fd);font-size:18px">5/10</td><td><span class="chip ca">MEDIUM</span></td><td>Month-3 window (2) + 2 milestones behind (1) + check-in MEDIUM (1) + tenure (1)</td><td>G4 weekly debriefs for 30 days. Group HR monitoring. 30-day follow-up check-in scheduled.</td></tr>
+      <tr><td style="font-weight:600">Indonesia</td><td>G1</td><td style="font-weight:800;color:var(--amber);font-family:var(--fd);font-size:18px">5/10</td><td><span class="chip ca">MEDIUM</span></td><td>Attendance issues — 2 unexplained absences (2) + milestone velocity slow (1) + moderate tenure (1) + check-in MEDIUM (1)</td><td>Wirawan SM direct conversation. G4 milestone support review. Site allowance adequacy check.</td></tr>
+      <tr><td style="font-weight:600">Laos</td><td>G2</td><td style="font-weight:800;color:var(--amber);font-family:var(--fd);font-size:18px">4/10</td><td><span class="chip ca">MEDIUM</span></td><td>G4 debrief dropped to 1/month (2) — G4 focused on new G1 cohort. Milestone velocity slower (1). Check-in MEDIUM (1).</td><td>Laos SM to address G4 bandwidth. G4 recommit to G2 debrief schedule.</td></tr>
+      <tr><td style="font-weight:600">Myanmar</td><td>G3</td><td style="font-weight:800;color:var(--blue);font-family:var(--fd);font-size:18px">2/10</td><td><span class="chip cb">LOW</span></td><td>Month 24 — approaching G4 eligibility. Check-in LOW. Not an exit risk — a succession readiness flag.</td><td>SM G4-readiness assessment by Q1 2026 close. Update bench strength in pipeline log.</td></tr>
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── PAGE 05 ──────────────────────────────────────────────────────
+document.getElementById('page-sm').innerHTML=`
+<div class="ph">
+  <div class="pe">Section 05 — SM Retention Risk</div>
+  <div class="pt">SM Retention<br><em>Risk</em></div>
+  <p class="pd">Site Manager exits are a categorically different risk from trainee attrition. An SM exit does not just cost a salary replacement — it disrupts the entire country operation, stalls the pipeline, and can trigger cascade exits among site staff. This section quantifies and plans for the two live SM retention risks at Valentis.</p>
+</div>
+<div class="inf r"><strong>Two named SM risks with known deadlines — Myo H. and Wirawan S.</strong>Both retention bonuses expire in 2027. The retention conversation deadlines are September 2026 (Myo H.) and October 2026 (Wirawan S.). Missing these windows means arriving at the retention conversation after the SM has already committed to leaving — at which point it is a negotiation, not a relationship investment.</div>
+<div class="g2">
+  <div class="card" style="border-left:3px solid var(--amber)">
+    <div style="font-family:var(--fm);font-size:8px;color:var(--amber);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">Myanmar · Site Manager G5</div>
+    <div style="font-family:var(--fd);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:10px">Myo H.</div>
+    <table class="dt" style="margin-bottom:12px">
+      <tbody>
+        <tr><td style="font-weight:600;width:150px">Retention bonus expiry</td><td style="color:var(--red);font-weight:700">April 2027</td></tr>
+        <tr><td style="font-weight:600">Conversation deadline</td><td style="color:var(--amber);font-weight:700">September 2026</td></tr>
+        <tr><td style="font-weight:600">Risk level</td><td><span class="chip ca">High — bonus cliff event</span></td></tr>
+        <tr><td style="font-weight:600">Pipeline dependency</td><td>Myanmar G1–G3 pipeline (8 candidates). G4 coaching programme co-facilitator (with Thailand SM). Primary coaching culture driver for Myanmar site.</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px"><strong style="color:var(--red)">Estimated cost of exit: $130K–$200K.</strong> Replacement search 3–6 months ($8K–$15K). Myanmar pipeline delivery disruption during vacancy — estimated 15–20% delivery drop for 6+ months (~$120K–$180K at current revenue). G4 coaching programme at risk of stalling without SM sponsorship.</div>
+    <div style="padding:12px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px;font-size:12.5px;color:var(--ink3);line-height:1.75"><strong style="color:var(--ink);display:block;margin-bottom:4px">Retention strategy:</strong>COO to lead September 2026. Group HR to prepare: (1) retention bonus renewal scenarios, (2) career progression pathway to G6/Country Director for Country 5, (3) recognition for Myanmar programme achievement. Frame as opening the next career chapter — not extending the current contract.</div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--red)">
+    <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">Indonesia · Site Manager G5 · High Power Sceptic</div>
+    <div style="font-family:var(--fd);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:10px">Wirawan S.</div>
+    <table class="dt" style="margin-bottom:12px">
+      <tbody>
+        <tr><td style="font-weight:600;width:150px">Retention bonus expiry</td><td style="color:var(--red);font-weight:700">Q1 2027</td></tr>
+        <tr><td style="font-weight:600">Conversation deadline</td><td style="color:var(--red);font-weight:700">October 2026</td></tr>
+        <tr><td style="font-weight:600">Risk level</td><td><span class="chip cr">Critical — sceptic + bonus cliff</span></td></tr>
+        <tr><td style="font-weight:600">Engagement note</td><td>High Power Sceptic — COO involvement required. Peer influence from Thailand SM recommended. Responds to organisational credibility evidence, not just financial offers.</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px"><strong style="color:var(--red)">Estimated cost of exit: $150K–$250K.</strong> Indonesia pipeline (7 candidates) at risk of full stall during SM vacancy — 3 open G3 vacancies already depressing delivery from 93% to 84%. SM vacancy on top would be a structural delivery crisis. Search and replacement $8K–$15K. Delivery disruption $140K–$230K over 6–12 months.</div>
+    <div style="padding:12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:12.5px;color:var(--ink3);line-height:1.75"><strong style="color:var(--ink);display:block;margin-bottom:4px">Retention strategy:</strong>COO to lead with Thailand SM as peer influencer October 2026. Wirawan responds to credibility and legacy — the conversation must show that Valentis is building something worth leading. Present G4 succession candidate as his professional legacy. If retention fails: succession plan must activate immediately — there is no buffer time.</div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">SM Retention — <em>2026 Action Calendar</em></div>
+  <table class="dt">
+    <thead><tr><th>Month</th><th>Action</th><th>Owner</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600;color:var(--blue)">Mar–Apr 2026</td><td>Group HR prepares SM retention risk brief for COO. Quantifies cost of exit for both SMs. Flags conversation deadlines.</td><td>Group HR</td><td>SM Retention Risk Brief — 1 page per SM with cost of exit, recommended approach, deadline.</td></tr>
+      <tr><td style="font-weight:600;color:var(--blue)">July 2026</td><td>Group HR prepares Myo H. retention scenario analysis: three options (bonus renewal, career advancement, hybrid). Models cost of each vs cost of exit.</td><td>Group HR</td><td>Myo H. Retention Scenarios document for COO review.</td></tr>
+      <tr><td style="font-weight:600;color:var(--amber)">September 2026</td><td>COO leads Myo H. retention conversation. Group HR provides talking points. Thailand SM available as reference if needed.</td><td>COO (lead) · Group HR (support)</td><td>Retention offer agreed or exit plan activated. Document outcome in pipeline log.</td></tr>
+      <tr><td style="font-weight:600;color:var(--amber)">September 2026</td><td>Group HR identifies G4 succession candidate for Indonesia SM role. Succession development conversation begins. Country 5 criteria linked.</td><td>Group HR</td><td>Indonesia SM succession candidate identified. Development plan activated.</td></tr>
+      <tr><td style="font-weight:600;color:var(--red)">October 2026</td><td>COO leads Wirawan retention conversation. Thailand SM engaged as peer influencer. Succession plan ready to present as career legacy component.</td><td>COO (lead) · Thailand SM · Group HR (support)</td><td>Retention offer agreed or exit plan activated immediately.</td></tr>
+      <tr><td style="font-weight:600;color:var(--blue)">December 2026</td><td>Group HR reviews both retention outcomes. If retained: update people risk register. If exiting: activate succession plan.</td><td>Group HR</td><td>Annual people risk register update. COO year-end people briefing.</td></tr>
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── PAGE 06 ──────────────────────────────────────────────────────
+document.getElementById('page-cost').innerHTML=`
+<div class="ph">
+  <div class="pe">Section 06 — Cost of Attrition</div>
+  <div class="pt">Cost of<br><em>Attrition</em></div>
+  <p class="pd">The full cost of attrition at Valentis is substantially higher than the visible replacement cost. This section builds the complete cost model — from direct replacement through to production impact — and provides the business case language for every retention investment conversation with the COO.</p>
+</div>
+<div class="vx">
+  <div class="vx-ey">The Full Cost Picture</div>
+  <div class="vx-ti">Every G1–G4 exit costs $1,500–$48,000+ depending on grade. The G4 exit is a pipeline continuity event. The SM exit is a business continuity event.</div>
+  <div class="vx-bo">The $1,000–$2,000 visible replacement cost estimate understates the true impact significantly. A G1 exit at month 3 costs at least $2,500 when onboarding investment is included. A G4 exit costs $25K–$48K per year in coaching capacity loss even before replacement cost. An SM exit is a $150K–$250K event when delivery disruption is factored in. The model below gives Group HR the numbers to make every retention investment case in revenue terms — the language the COO responds to.</div>
+</div>
+<div class="card">
+  <div class="ct">Cost of Attrition by Grade — Full Model</div>
+  <table class="dt">
+    <thead><tr><th>Grade</th><th>Direct replacement</th><th>Onboarding investment lost</th><th>Production gap cost</th><th>Total est. cost</th><th>Business case note</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">G1</td><td>$500–$800</td><td>$400–$600 (induction + first 90 days G4/SM time)</td><td>Minimal — G1 not yet operationally independent. Some rig downtime during replacement search.</td><td style="font-weight:700;color:var(--ink)">$1,000–$2,000</td><td>Higher at month 3 (full onboarding consumed). Lower at month 1. Multiply by ~4 exits/year = $4K–$8K/year.</td></tr>
+      <tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">G2</td><td>$800–$1,200</td><td>$1,200–$2,000 (18 months G4 coaching time, milestone admin)</td><td>$500–$1,000/month during vacancy — G2 contributes partial rig productivity</td><td style="font-weight:700;color:var(--ink)">$3,500–$6,000</td><td>Often requires external hire or G1 fast-track at higher initial cost. Multiply by ~2 exits/year = $7K–$12K/year.</td></tr>
+      <tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">G3</td><td>$1,200–$2,000</td><td>$3,000–$5,000 (30+ months development investment)</td><td>$2,000–$4,000/month — G3 is primary rig operator. Vacancy directly reduces programme delivery %.</td><td style="font-weight:700;color:var(--ink)">$8,000–$18,000</td><td>Indonesia 3 open G3 vacancies (40+ days each) costing ~$6K–$12K/month in delivery impact alone.</td></tr>
+      <tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">G4</td><td>$2,000–$4,000</td><td>$5,000–$8,000 (full pipeline development + coaching programme)</td><td>$18,000–$36,000/year — G4 absence means pipeline candidates have no coach. Conversion rate drops, compounding downstream costs.</td><td style="font-weight:700;color:var(--red);font-weight:800">$25,000–$48,000</td><td>This is why the G4 coaching programme is the highest-ROI investment. Retaining one trained G4 avoids $25K–$48K/year in avoidable costs.</td></tr>
+      <tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">G5 SM</td><td>$8,000–$15,000</td><td>$10,000–$20,000 (institutional knowledge, SM network, operational relationships)</td><td>$120,000–$200,000 — delivery disruption over 6–12 month vacancy at country level</td><td style="font-weight:700;color:var(--red);font-weight:800">$138,000–$235,000</td><td>SM exit is a business continuity event. Quantifying this makes the retention bonus renewal case self-evident to any COO.</td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Annual Attrition Cost — Current Estimate</div>
+    <div style="display:grid;gap:8px;margin-top:8px">
+      <div style="padding:11px 14px;background:var(--surface2);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:300;color:var(--ink3)">G1 exits (est. 4/yr at month 3)</span><span style="font-weight:700;color:var(--red);font-family:var(--fm)">$6K–$8K</span></div>
+      <div style="padding:11px 14px;background:var(--surface2);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:300;color:var(--ink3)">G2 exits (est. 2/yr)</span><span style="font-weight:700;color:var(--amber);font-family:var(--fm)">$7K–$12K</span></div>
+      <div style="padding:11px 14px;background:var(--surface2);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:300;color:var(--ink3)">G3 exits + 3 ID vacancies impact</span><span style="font-weight:700;color:var(--red);font-family:var(--fm)">$40K–$60K</span></div>
+      <div style="padding:11px 14px;background:var(--surface2);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:300;color:var(--ink3)">G4 coaching gap (annual avoidable)</span><span style="font-weight:700;color:var(--red);font-family:var(--fm)">$18K–$36K</span></div>
+      <div style="padding:11px 14px;border:2px solid var(--ink);border-radius:3px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13.5px;font-weight:700;color:var(--ink)">Total annual people risk cost</span><span style="font-weight:800;color:var(--red);font-family:var(--fd);font-size:20px">$71K–$116K</span></div>
+    </div>
+    <div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">Excludes SM retention risk ($150K–$250K each). Also excludes opportunity cost of delayed 65 FTE target — every quarter short-staffed is a quarter of potential revenue unrealised.</div>
+  </div>
+  <div class="card">
+    <div class="ct">COO Brief Language</div>
+    <div style="background:var(--surface2);border-radius:3px;padding:16px;font-size:13px;color:var(--ink3);line-height:1.9;font-weight:300">
+      <p style="margin-bottom:10px">"At the current 22% attrition rate, Valentis is spending an estimated <strong style="color:var(--ink)">$71K–$116K per year</strong> on people risk — not including SM retention. This is approximately <strong style="color:var(--ink)">2% of revenue</strong> lost to avoidable exits and vacancy costs."</p>
+      <p style="margin-bottom:10px">"The G4 coaching programme (~$5K cost) targets the highest-leverage driver. If it moves Myanmar conversion from 58% to 70%, avoidable G1 replacement cost drops by approximately <strong style="color:var(--ink)">$4,500 per cohort</strong> — the programme pays for itself in one cohort cycle."</p>
+      <p>"The Indonesia G3 vacancy situation is costing approximately <strong style="color:var(--ink)">$6K–$12K per month</strong> in delivery impact. Filling those three positions is the single fastest path to recovering delivery and closing the headcount gap simultaneously."</p>
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 07 ──────────────────────────────────────────────────────
+document.getElementById('page-interventions').innerHTML=`
+<div class="ph">
+  <div class="pe">Section 07 — Retention Interventions</div>
+  <div class="pt">Retention<br><em>Interventions</em></div>
+  <p class="pd">The complete retention intervention menu at Valentis — what works, when to use it, what it costs, and what it is expected to deliver. Ordered by impact-to-cost ratio. Every intervention has a named owner, a deadline, and a measurable success criterion.</p>
+</div>
+<div class="card" data-tabs="true">
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('pline',this)">Pipeline</div>
+    <div class="tab" onclick="showTab('rewards',this)">Rewards</div>
+    <div class="tab" onclick="showTab('smret',this)">SM Retention</div>
+    <div class="tab" onclick="showTab('cal',this)">2026 Calendar</div>
+  </div>
+  <div id="tb-pline" class="tb active">
+    <table class="dt">
+      <thead><tr><th>Intervention</th><th>Target</th><th>Cost</th><th>Expected impact</th><th>Owner</th><th>Success measure</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">G4 coaching programme <span class="chip cr" style="display:block;margin-top:4px">Highest priority</span></td><td>Myanmar G4s (primary) · all countries secondary</td><td>~$5,000 (Thailand SM time, materials, certification admin)</td><td>Myanmar conversion 58%→70%. Monthly G4 debrief frequency 1.2→4. Month-3 exit rate 3→1 per cohort.</td><td>Group HR · Thailand SM · COO (sponsor)</td><td>Myanmar conversion ≥70% Q4 2026. G4 rubric scores ≥3/5 all dimensions.</td></tr>
+        <tr><td style="font-weight:600">Month-3 check-in system</td><td>All G1 trainees at week 10–14</td><td>~$0 additional (G4 time within existing role)</td><td>Identifies HIGH risk trainees 4–8 weeks before exit decision. Enables intervention before resignation.</td><td>G4 (conduct) · Group HR (track) · SM (oversight)</td><td>100% check-in compliance. HIGH cases actioned within 24 hours. Month-3 exit rate trend downward.</td></tr>
+        <tr><td style="font-weight:600">Myanmar-language training materials</td><td>Myanmar G1–G3</td><td>~$1,500–$2,000 (translation of milestone cards, induction)</td><td>Reduces comprehension barrier — trainees who understand milestone expectations clearly are less likely to exit from uncertainty.</td><td>Group HR · Myo H. (verify accuracy)</td><td>All milestone cards in Myanmar language Q2 2026. G4s confirm trainee comprehension improved at check-ins.</td></tr>
+        <tr><td style="font-weight:600">Career pathway communication — induction</td><td>All G1 intake cohorts</td><td>~$0 (update to existing induction content)</td><td>Trainees who can see G1→G4 salary and career progression in week 1 are more likely to persist through month-3 difficulty. A single visual showing the salary journey is sufficient.</td><td>Group HR (design) · SMs (deliver in induction)</td><td>All inductions from Q2 2026. Month-1 trainee survey: "do you understand your career path?" ≥80% yes target.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="tb-rewards" class="tb">
+    <table class="dt">
+      <thead><tr><th>Intervention</th><th>Target</th><th>Cost</th><th>Expected impact</th><th>Owner</th><th>Decision needed</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">G2 milestone completion bonus</td><td>G1 trainees approaching G2 confirmation</td><td>$200–$400 per G2 confirmation. At 5–6/year: $1K–$2.4K/year</td><td>Creates visible financial reward at the first major milestone. Signals progression is real. May reduce month 6–12 attrition.</td><td>Group HR (design) · COO (approve) · Finance (budget)</td><td>COO approval required. Design Q3 2026. Pilot Q4 2026 in Myanmar first.</td></tr>
+        <tr><td style="font-weight:600">Indonesia site allowance review</td><td>Indonesia G1–G2</td><td>$50–$100/month per trainee increase. At 4 G1–G2 in Indonesia: $2.4K–$4.8K/year</td><td>Addresses competitive gap — Indonesia trainees exiting to competitors at G2-equivalent pay. Small allowance may close the financial motivation gap at lower cost than replacing those who exit.</td><td>Group HR (business case) · Wirawan (market intel) · COO (decision)</td><td>Business case to COO Q2 2026. Decision Q3 2026.</td></tr>
+        <tr><td style="font-weight:600">Merit cycle — G1→G2 promotions priority</td><td>All countries · merit cycle Jan 2027</td><td>Within existing 4.5% pool — no additional cost</td><td>Ensuring G1→G2 promotions receive full grade step-up increases (not compressed) makes development progress financially visible and meaningful.</td><td>Group HR (merit matrix design) · COO (approve)</td><td>Merit matrix design Q3 2026. Grade promotion step-up policy formalised November 2026.</td></tr>
+        <tr><td style="font-weight:600">Zaw M. below-minimum remediation</td><td>Zaw M. (Myanmar G3)</td><td>Incremental salary adjustment to G3 band floor</td><td>Mandatory compliance. Also signals to Myanmar team that Valentis takes pay fairness seriously — has broader retention signalling value beyond one individual.</td><td>Group HR · Finance · COO (approved)</td><td>April 2026 payroll. Already actioned.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="tb-smret" class="tb">
+    <div class="inf b"><strong>SM retention is COO-led. Group HR's role is to prepare the analysis, design the options, and support the conversation — not lead it.</strong>The COO relationship with Myo H. and Wirawan is the retention mechanism. Group HR makes that relationship investment-ready.</div>
+    <table class="dt">
+      <thead><tr><th>SM</th><th>Retention approach</th><th>Financial options</th><th>Non-financial options</th><th>Group HR prep required</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700">Myo H.<br><span style="font-size:11px;color:var(--ink4);font-weight:300">Myanmar SM</span></td>
+          <td>COO-led September 2026. Frame as career advancement — not bonus renewal. Myo H.'s motivation: recognition, responsibility, career progression to Country Director.</td>
+          <td>Retention bonus renewal (12–24 months). Salary increase to G5 upper band. Performance incentive linked to Myanmar conversion rate target.</td>
+          <td>Country Director pathway — explicit promotion roadmap to G6 for Country 5. Expanded remit. Public recognition of Myanmar coaching programme achievement.</td>
+          <td>Retention scenario analysis (3 options with cost). Career pathway to Country Director written up. September 2026 COO conversation brief.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:700">Wirawan S.<br><span style="font-size:11px;color:var(--ink4);font-weight:300">Indonesia SM · Sceptic</span></td>
+          <td>COO-led with Thailand SM as peer reference October 2026. Wirawan responds to credibility signals — demonstrate Valentis's capability and growth story. Succession planning as career legacy framing.</td>
+          <td>Retention bonus renewal. Salary review (Indonesia country factor 92% — verify market position). Potential equity participation if available.</td>
+          <td>Succession legacy framing — Wirawan as the person who built Indonesia's capability. G4 succession candidate presented as his professional legacy. Expanded scope as Country 5 approaches.</td>
+          <td>Retention scenario analysis. Indonesia SM succession candidate identification. COO conversation brief with High Power Sceptic engagement approach. Thailand SM briefed and aligned before October 2026.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="tb-cal" class="tb">
+    <table class="dt">
+      <thead><tr><th>Period</th><th>Intervention</th><th>Owner</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;color:var(--blue)">Jan–Mar 2026</td><td>G4 coaching programme — Myanmar cohort 1. Month-3 check-in system launch. Zaw M. salary actioned April payroll.</td><td>Group HR · Thailand SM</td><td><span class="chip cg">In progress</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--blue)">Apr–Jun 2026</td><td>Myanmar-language milestone cards complete. Career pathway communication added to all inductions. Indonesia allowance business case to COO. SM retention risk brief to COO.</td><td>Group HR</td><td><span class="chip ca">Planned</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--amber)">Jul–Sep 2026</td><td>G4 coaching programme — first rubric re-observation. Myo H. retention scenario analysis. Myo H. retention conversation (September). Indonesia SM succession candidate identified.</td><td>Group HR · COO</td><td><span class="chip cm">Upcoming</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--red)">Oct–Dec 2026</td><td>Wirawan retention conversation (October). Merit cycle design complete (November). G2 milestone bonus design piloted. Country 5 G4 deployment candidate identified.</td><td>COO · Group HR</td><td><span class="chip cm">Upcoming</span></td></tr>
+        <tr><td style="font-weight:600;color:var(--blue)">Jan 2027</td><td>Merit cycle effective 1 Jan 2027. G4 coaching programme Q4 2026 conversion rate review (target: Myanmar ≥70%). Annual attrition report to COO.</td><td>Group HR · Finance</td><td><span class="chip cm">Upcoming</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+// ── PAGE 08 ──────────────────────────────────────────────────────
+document.getElementById('page-calc').innerHTML=`
+<div class="ph">
+  <div class="pe">Section 08 — ROI Calculator</div>
+  <div class="pt">Retention<br><em>ROI Calculator</em></div>
+  <p class="pd">Model the financial return of any retention intervention against the cost of the exits it prevents. Enter the intervention cost, the number of exits you expect to prevent, and the average grade of those exits — the calculator outputs the net saving and payback period. Use this to build the business case for every retention investment request to the COO.</p>
+</div>
+<div style="background:var(--navy);border-radius:4px;padding:28px;margin-bottom:14px">
+  <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0f4ff;margin-bottom:4px">Retention Investment — Business Case Calculator</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--fm);margin-bottom:22px">Enter intervention details · Results update instantly</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+    <div>
+      <label class="cl">Intervention name</label>
+      <input id="ci-name" class="ci" type="text" placeholder="e.g. G4 coaching programme" value="G4 coaching programme">
+    </div>
+    <div>
+      <label class="cl">Intervention cost ($)</label>
+      <input id="ci-cost" class="ci" type="number" value="5000" oninput="calcROI()">
+    </div>
+    <div>
+      <label class="cl">Exits expected to prevent (per year)</label>
+      <input id="ci-exits" class="ci" type="number" value="3" oninput="calcROI()">
+    </div>
+    <div>
+      <label class="cl">Average grade of prevented exits</label>
+      <select id="ci-grade" class="ci" onchange="calcROI()">
+        <option value="1500">G1 — $1,500 avg replacement cost</option>
+        <option value="4750" selected>G2 — $4,750 avg replacement cost</option>
+        <option value="13000">G3 — $13,000 avg replacement cost</option>
+        <option value="36500">G4 — $36,500 avg replacement cost</option>
+        <option value="186500">G5 SM — $186,500 avg replacement cost</option>
+      </select>
+    </div>
+    <div>
+      <label class="cl">Additional production gain ($/yr, optional)</label>
+      <input id="ci-prod" class="ci" type="number" value="0" placeholder="e.g. 12000" oninput="calcROI()">
+    </div>
+    <div>
+      <label class="cl">Years modelled</label>
+      <input id="ci-years" class="ci" type="number" value="1" min="1" max="5" oninput="calcROI()">
+    </div>
+  </div>
+  <div id="roi-result" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:20px"></div>
+</div>
+<div class="card">
+  <div class="ct">Quick Reference — Pre-Built Business Cases</div>
+  <table class="dt">
+    <thead><tr><th>Intervention</th><th>Cost</th><th>Exits prevented/yr</th><th>Avg grade</th><th>Net saving yr 1</th><th>ROI</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">G4 coaching programme</td><td>$5,000</td><td>3 (Myanmar G1 exits)</td><td>G2 (~$4,750)</td><td style="font-weight:700;color:var(--green)">$9,250</td><td style="font-weight:700;color:var(--green)">185%</td></tr>
+      <tr><td style="font-weight:600">Month-3 check-in system</td><td>~$0</td><td>2 (early warning conversions)</td><td>G1 (~$1,500)</td><td style="font-weight:700;color:var(--green)">$3,000</td><td style="font-weight:700;color:var(--green)">∞ (zero cost)</td></tr>
+      <tr><td style="font-weight:600">Myanmar-language materials</td><td>$1,750</td><td>1 (comprehension barrier exits)</td><td>G1 (~$1,500)</td><td style="font-weight:700;color:var(--amber)">-$250 yr 1</td><td style="font-weight:700;color:var(--blue)">Break-even yr 1 · +$1,500 yr 2</td></tr>
+      <tr><td style="font-weight:600">Myo H. retention bonus renewal</td><td>$15,000 (est.)</td><td>1 SM exit prevented</td><td>G5 SM (~$186,500)</td><td style="font-weight:700;color:var(--green)">$171,500</td><td style="font-weight:700;color:var(--green)">1,143%</td></tr>
+      <tr><td style="font-weight:600">Indonesia allowance increase</td><td>$3,600/yr</td><td>1 G1 exit prevented</td><td>G1 (~$1,500)</td><td style="font-weight:700;color:var(--amber)">-$2,100 yr 1</td><td style="font-weight:700;color:var(--blue)">Justified if 2+ exits prevented/yr</td></tr>
+    </tbody>
+  </table>
+  <div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">Pre-built cases use the mid-point of each grade cost range. The G4 coaching programme and SM retention bonus renewal are the two highest-ROI retention investments available — both have clearly positive returns in year 1.</div>
+</div>
+`;
+
+function calcROI(){
+  var name=document.getElementById('ci-name').value||'This intervention';
+  var cost=parseFloat(document.getElementById('ci-cost').value)||0;
+  var exits=parseFloat(document.getElementById('ci-exits').value)||0;
+  var grade=parseFloat(document.getElementById('ci-grade').value)||0;
+  var prod=parseFloat(document.getElementById('ci-prod').value)||0;
+  var years=Math.max(1,Math.min(5,parseFloat(document.getElementById('ci-years').value)||1));
+  var annualBenefit=(exits*grade)+prod;
+  var totalCost=cost*years;
+  var totalBenefit=annualBenefit*years;
+  var netSaving=totalBenefit-totalCost;
+  var roi=cost>0?Math.round(((totalBenefit-totalCost)/totalCost)*100):null;
+  var payback=annualBenefit>0?(cost/annualBenefit*12).toFixed(1):null;
+  var col=netSaving>0?'var(--green)':netSaving===0?'var(--amber)':'var(--red)';
+  document.getElementById('roi-result').innerHTML=
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px">'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--electric2);line-height:1">$'+Math.round(totalBenefit).toLocaleString()+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">TOTAL BENEFIT ('+years+'YR)</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:rgba(255,255,255,0.4);line-height:1">$'+Math.round(totalCost).toLocaleString()+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">TOTAL INVESTMENT ('+years+'YR)</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:'+col+';line-height:1">'+(netSaving>=0?'$'+Math.round(netSaving).toLocaleString():'-$'+Math.round(Math.abs(netSaving)).toLocaleString())+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">NET SAVING</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:'+(roi&&roi>0?'var(--green)':roi&&roi<0?'var(--red)':'var(--amber)')+';line-height:1">'+(roi!==null?roi+'%':'N/A')+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">ROI</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(255,255,255,0.04);border-radius:3px;padding:14px;font-size:13px;color:rgba(255,255,255,0.5);line-height:1.85;font-weight:300">'
+    +'<strong style="color:#f0f4ff;display:block;margin-bottom:6px">COO brief language — '+name+':</strong>'
+    +'"Investing $'+Math.round(cost).toLocaleString()+' in '+name+' is expected to prevent approximately '+exits+' '+['G1 trainee','G2','G3 driller','G4 driller','Site Manager'][Math.min(4,Math.max(0,Math.round([1500,4750,13000,36500,186500].indexOf(grade)/1)-0))]+'+ exit'+(exits!==1?'s':'')+' per year. '
+    +'At an average replacement cost of $'+grade.toLocaleString()+' per exit, the annual benefit is $'+Math.round(annualBenefit).toLocaleString()+'. '
+    +(payback?'Payback period: '+payback+' months. ':'')
+    +(years>1?'Over '+years+' years, net saving: $'+Math.round(netSaving).toLocaleString()+'. ':'')
+    +(roi!==null&&roi>0?'Return on investment: '+roi+'%. This is a straightforward business case.':(roi!==null&&roi<0?'This investment does not pay back in year 1 — justify on strategic pipeline or culture grounds.':''))
+    +'"</div>';
+}
+calcROI();
+</script>
+</body>
+</html>

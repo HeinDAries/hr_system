@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboarding & Offboarding Process Manager — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --slate: #2d3142;
+    --amber: #c9802a;
+    --amber-light: #e8a84a;
+    --amber-pale: #fdf3e3;
+    --steel: #4a5568;
+    --mist: #f4f5f7;
+    --white: #ffffff;
+    --border: #dde1ea;
+    --success: #2d7d46;
+    --success-bg: #edf7f1;
+    --warning: #b45309;
+    --warning-bg: #fef3cd;
+    --danger: #b91c1c;
+    --danger-bg: #fef2f2;
+    --info: #1e5f74;
+    --info-bg: #e8f4f8;
+    --tag-laos: #1e5f74;
+    --tag-myanmar: #6b3a2a;
+    --tag-indonesia: #1a4731;
+    --tag-thailand: #3b2a6e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--mist); color: var(--ink); min-height: 100vh; }
+
+  .header { background: var(--slate); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--amber); }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .dept-badge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--amber); letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--amber); padding: 3px 8px; border-radius: 2px; }
+  .header-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); font-weight: 600; }
+  .header-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8899aa; letter-spacing: 1px; }
+
+  .tool-header { background: var(--white); padding: 28px 40px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  .tool-title-block h1 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .tool-title-block p { font-size: 13px; color: var(--steel); max-width: 600px; line-height: 1.6; }
+  .tool-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber-light); padding: 4px 10px; border-radius: 2px; letter-spacing: 1px; white-space: nowrap; margin-top: 4px; }
+
+  .stats-bar { background: var(--slate); padding: 16px 40px; display: flex; }
+  .stat-item { flex: 1; text-align: center; padding: 0 16px; border-right: 1px solid rgba(255,255,255,0.1); }
+  .stat-item:last-child { border-right: none; }
+  .stat-number { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; color: var(--amber-light); display: block; }
+  .stat-number.red { color: #f87171; }
+  .stat-number.green { color: #6ee7b7; }
+  .stat-number.yellow { color: #fcd34d; }
+  .stat-label { font-size: 11px; color: #99aabb; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .main { padding: 28px 40px; display: flex; flex-direction: column; gap: 24px; }
+
+  .tab-bar { display: flex; border-bottom: 2px solid var(--border); }
+  .tab-btn { padding: 10px 22px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--steel); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--ink); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ACTIVE CASES */
+  .controls-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .search-box { flex: 1; min-width: 200px; display: flex; align-items: center; background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 0 14px; gap: 8px; height: 38px; }
+  .search-box input { border: none; outline: none; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); flex: 1; background: transparent; }
+  .filter-select { height: 38px; padding: 0 12px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: var(--steel); background: var(--white); cursor: pointer; outline: none; }
+  .btn { height: 38px; padding: 0 18px; border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--amber); color: var(--white); }
+  .btn-primary:hover { background: var(--amber-light); }
+  .btn-outline { background: var(--white); color: var(--slate); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* CASE CARDS */
+  .cases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+  .case-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s; }
+  .case-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: var(--amber); }
+  .case-card-header { padding: 14px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .case-type-bar { width: 4px; border-radius: 2px; flex-shrink: 0; align-self: stretch; margin-right: 4px; }
+  .bar-onboard { background: var(--success); }
+  .bar-offboard { background: var(--danger); }
+  .case-name { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--ink); }
+  .case-sub { font-size: 11px; color: var(--steel); margin-top: 2px; }
+  .case-type-badge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 2px; white-space: nowrap; }
+  .ctb-on { background: var(--success-bg); color: var(--success); }
+  .ctb-off { background: var(--danger-bg); color: var(--danger); }
+
+  .case-progress { padding: 0 16px 12px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--steel); margin-bottom: 5px; }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .pf-on { background: var(--success); }
+  .pf-off { background: var(--danger); }
+
+  .case-tasks { padding: 0 16px 14px; }
+  .task-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px dotted var(--border); }
+  .task-row:last-child { border-bottom: none; }
+  .task-check { width: 16px; height: 16px; border-radius: 3px; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 10px; transition: all 0.15s; }
+  .task-check.done { background: var(--success); border-color: var(--success); color: var(--white); }
+  .task-check.pending { background: var(--white); }
+  .task-label { font-size: 12px; flex: 1; line-height: 1.3; }
+  .task-label.done-text { text-decoration: line-through; color: #aab; }
+  .task-owner { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #99aabb; }
+  .task-overdue { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--danger); }
+
+  .case-footer { padding: 10px 16px; background: var(--mist); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .case-date { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--steel); }
+
+  .country-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 2px; color: var(--white); }
+  .ct-laos { background: var(--tag-laos); }
+  .ct-myanmar { background: var(--tag-myanmar); }
+  .ct-indonesia { background: var(--tag-indonesia); }
+  .ct-thailand { background: var(--tag-thailand); }
+
+  /* CHECKLISTS TAB */
+  .checklists-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .checklist-panel { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .checklist-header { padding: 16px 20px; background: var(--slate); display: flex; align-items: center; justify-content: space-between; }
+  .checklist-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--white); }
+  .checklist-sub { font-size: 11px; color: rgba(255,255,255,0.6); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+  .checklist-type-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-on { background: #6ee7b7; }
+  .dot-off { background: #f87171; }
+
+  .phase-block { border-bottom: 1px solid var(--border); }
+  .phase-block:last-child { border-bottom: none; }
+  .phase-title { padding: 10px 20px 8px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--amber); background: var(--amber-pale); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .phase-tasks { padding: 4px 0; }
+  .cl-task-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 20px; border-bottom: 1px dotted var(--border); }
+  .cl-task-row:last-child { border-bottom: none; }
+  .cl-num { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #aab; width: 20px; flex-shrink: 0; padding-top: 2px; }
+  .cl-info { flex: 1; }
+  .cl-task-name { font-size: 12.5px; font-weight: 500; color: var(--ink); line-height: 1.3; }
+  .cl-task-detail { font-size: 11px; color: var(--steel); margin-top: 2px; line-height: 1.4; }
+  .cl-owner { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 2px; background: var(--mist); color: var(--steel); white-space: nowrap; flex-shrink: 0; }
+  .cl-timing { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--amber); white-space: nowrap; flex-shrink: 0; }
+
+  /* SITE VS OFFICE */
+  .context-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .ctx-btn { padding: 6px 16px; font-size: 12px; font-weight: 500; border-radius: 20px; cursor: pointer; border: 1.5px solid var(--border); background: var(--white); color: var(--steel); transition: all 0.15s; font-family: 'IBM Plex Sans', sans-serif; }
+  .ctx-btn.active { background: var(--slate); color: var(--amber-light); border-color: var(--slate); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,26,46,0.6); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--white); border-radius: 8px; width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--white); z-index: 1; }
+  .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); }
+  .modal-close { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 16px; color: var(--steel); display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: var(--mist); }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--mist); border-radius: 0 0 8px 8px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-full { grid-column: 1 / -1; }
+  .form-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--amber-pale); }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 11px; font-weight: 500; color: var(--steel); }
+  .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.15s; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--amber); }
+  .form-divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+  /* CASE DETAIL MODAL TASKS */
+  .modal-task-section { margin-bottom: 16px; }
+  .modal-task-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid var(--amber-pale); }
+  .modal-task-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px dotted var(--border); }
+  .modal-task-row:last-child { border-bottom: none; }
+  .mtask-check { width: 18px; height: 18px; border-radius: 3px; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 11px; flex-shrink: 0; transition: all 0.15s; }
+  .mtask-check.done { background: var(--success); border-color: var(--success); color: var(--white); }
+  .mtask-label { font-size: 13px; flex: 1; }
+  .mtask-label.done { text-decoration: line-through; color: #aab; }
+  .mtask-owner { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--steel); }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--slate); color: var(--white); padding: 12px 20px; border-radius: 6px; font-size: 13px; border-left: 3px solid var(--amber); display: none; z-index: 200; }
+  .toast.show { display: block; animation: fadeUp 0.2s ease; }
+  @keyframes fadeUp { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--steel); font-size: 13px; }
+  .empty-state .es-icon { font-size: 36px; margin-bottom: 12px; }
+
+  @media (max-width: 900px) {
+    .header, .tool-header, .main, .stats-bar { padding-left: 16px; padding-right: 16px; }
+    .checklists-layout { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="dept-badge">HR OPS · D9</div>
+    <div class="header-title">Valentis Group — HR Operations & Compliance</div>
+  </div>
+  <div class="header-meta">TOOL 04 / 09 &nbsp;·&nbsp; ONBOARDING & OFFBOARDING</div>
+</div>
+
+<div class="tool-header">
+  <div class="tool-title-block">
+    <h1>Onboarding & Offboarding Process Manager</h1>
+    <p>Task-level checklists and active case tracking for all new hire onboarding and employee exits across Valentis's four operating countries. Differentiates site and office workflows, tracks task ownership, and flags overdue items.</p>
+  </div>
+  <div class="tool-tag">HR OPS · TOOL 4 OF 9</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-number green" id="sActive">—</span><div class="stat-label">Active Cases</div></div>
+  <div class="stat-item"><span class="stat-number" id="sOnboard">—</span><div class="stat-label">Onboarding</div></div>
+  <div class="stat-item"><span class="stat-number red" id="sOffboard">—</span><div class="stat-label">Offboarding</div></div>
+  <div class="stat-item"><span class="stat-number yellow" id="sOverdue">—</span><div class="stat-label">Overdue Tasks</div></div>
+  <div class="stat-item"><span class="stat-number green" id="sCompleted">—</span><div class="stat-label">Completed This Month</div></div>
+  <div class="stat-item"><span class="stat-number" id="sAvgCompletion">—</span><div class="stat-label">Avg. Completion</div></div>
+</div>
+
+<div class="main">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('cases')">Active Cases</button>
+    <button class="tab-btn" onclick="switchTab('checklists')">Process Checklists</button>
+    <button class="tab-btn" onclick="switchTab('history')">Completed Cases</button>
+  </div>
+
+  <!-- TAB 1: ACTIVE CASES -->
+  <div class="tab-content active" id="tab-cases">
+    <div class="controls-row">
+      <div class="search-box">
+        <span style="color:#99aabb;font-size:14px;">⌕</span>
+        <input type="text" id="caseSearch" placeholder="Search employee name…" oninput="filterCases()">
+      </div>
+      <select class="filter-select" id="fcType" onchange="filterCases()">
+        <option value="">All Types</option>
+        <option value="onboarding">Onboarding</option>
+        <option value="offboarding">Offboarding</option>
+      </select>
+      <select class="filter-select" id="fcCountry" onchange="filterCases()">
+        <option value="">All Countries</option>
+        <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option>
+      </select>
+      <button class="btn btn-primary" onclick="openNewCase()">+ New Case</button>
+    </div>
+    <div class="cases-grid" id="casesGrid"></div>
+  </div>
+
+  <!-- TAB 2: CHECKLISTS -->
+  <div class="tab-content" id="tab-checklists">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-size:13px;color:var(--steel);line-height:1.6;">Standard process templates for onboarding and offboarding. Use these as the basis for each new case — adapt to site vs. office context and country requirements.</div>
+      </div>
+      <div class="context-tabs">
+        <button class="ctx-btn active" id="ctxSite" onclick="setContext('site')">Site / Field Roles</button>
+        <button class="ctx-btn" id="ctxOffice" onclick="setContext('office')">Office Roles</button>
+      </div>
+    </div>
+    <div class="checklists-layout" id="checklistsLayout"></div>
+  </div>
+
+  <!-- TAB 3: HISTORY -->
+  <div class="tab-content" id="tab-history">
+    <div id="historyContent"></div>
+  </div>
+</div>
+
+<!-- NEW CASE MODAL -->
+<div class="modal-overlay" id="newCaseModal" onclick="closeMod('newCaseModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Create New Case</h2>
+      <button class="modal-close" onclick="closeDirect('newCaseModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title" style="margin-top:0;">Case Details</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Case Type *</label>
+          <select id="nc_type">
+            <option value="onboarding">Onboarding</option>
+            <option value="offboarding">Offboarding</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Employee Name *</label><input type="text" id="nc_name" placeholder="e.g. Soe Min Aung"></div>
+        <div class="form-group"><label>Employee ID</label><input type="text" id="nc_id" placeholder="e.g. VTG-MM-029"></div>
+        <div class="form-group"><label>Job Title</label><input type="text" id="nc_title" placeholder="e.g. Driller Trainee"></div>
+        <div class="form-group"><label>Grade</label>
+          <select id="nc_grade">
+            <option value="">—</option>
+            <option>G1</option><option>G2</option><option>G3</option><option>G4</option>
+            <option>G5</option><option>G6</option><option>G7</option><option>G8</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Country *</label>
+          <select id="nc_country">
+            <option value="">Select…</option>
+            <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Workforce Type *</label>
+          <select id="nc_context">
+            <option value="site">Site / Field</option>
+            <option value="office">Office</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Start / Exit Date</label><input type="date" id="nc_date"></div>
+        <div class="form-group"><label>HR Case Owner</label><input type="text" id="nc_owner" value="Group HR Manager"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('newCaseModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="createCase()">Create Case</button>
+    </div>
+  </div>
+</div>
+
+<!-- CASE DETAIL MODAL -->
+<div class="modal-overlay" id="caseDetailModal" onclick="closeMod('caseDetailModal',event)">
+  <div class="modal" style="max-width:760px;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="caseDetailTitle">Case Detail</h2>
+      <button class="modal-close" onclick="closeDirect('caseDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="caseDetailBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('caseDetailModal')">Close</button>
+      <button class="btn btn-primary" id="completeCaseBtn">Mark Case Complete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let currentContext = 'site';
+let activeCases = [];
+let completedCases = [];
+let activeCaseId = null;
+
+// ── CHECKLIST TEMPLATES ──────────────────────────────────────────
+const templates = {
+  onboarding: {
+    site: [
+      { phase:'Pre-Arrival (Week -1)', tasks:[
+        { name:'Signed contract returned and filed', owner:'HR', timing:'Day -7' },
+        { name:'Employee record created in HR register', owner:'HR', timing:'Day -7' },
+        { name:'Site access pass / ID card arranged', owner:'Site Manager', timing:'Day -5' },
+        { name:'PPE pack prepared (helmet, boots, vest, gloves)', owner:'Site Manager', timing:'Day -3' },
+        { name:'Camp / accommodation confirmed (if residential roster)', owner:'Site Manager', timing:'Day -3' },
+        { name:'Payroll added to next pay cycle', owner:'HR', timing:'Day -5' },
+        { name:'Emergency contact and bank details collected', owner:'HR', timing:'Day -5' },
+      ]},
+      { phase:'Day 1 — Induction', tasks:[
+        { name:'Group safety induction completed and recorded', owner:'Site Manager', timing:'Day 1' },
+        { name:'Site rules, hazard awareness, emergency procedures briefing', owner:'Site Manager', timing:'Day 1' },
+        { name:'Introduction to direct supervisor and drill crew', owner:'Site Manager', timing:'Day 1' },
+        { name:'HR welcome pack and policy summary issued', owner:'HR', timing:'Day 1' },
+        { name:'Signed induction acknowledgement form collected', owner:'HR', timing:'Day 1' },
+        { name:'Work permit sighted (if applicable)', owner:'HR', timing:'Day 1' },
+      ]},
+      { phase:'Week 1 — Orientation', tasks:[
+        { name:'Probation period terms communicated and documented', owner:'HR', timing:'Day 2' },
+        { name:'Leave entitlements explained', owner:'HR', timing:'Day 3' },
+        { name:'Training plan for G2→G3 development cycle confirmed', owner:'Site Manager', timing:'Day 3' },
+        { name:'Buddy / mentor assigned from senior driller crew', owner:'Site Manager', timing:'Day 2' },
+        { name:'Medical fitness check completed (if required by country)', owner:'Site Manager', timing:'Week 1' },
+      ]},
+      { phase:'Month 1–3 — Follow-up', tasks:[
+        { name:'Week 4 check-in: settling in, concerns, welfare', owner:'Site Manager', timing:'Day 28' },
+        { name:'Month 3 probation mid-point review', owner:'HR + Site Manager', timing:'Day 90' },
+        { name:'Record completeness check — all fields populated', owner:'HR', timing:'Day 30' },
+        { name:'Training log update — progress vs. development plan', owner:'Site Manager', timing:'Day 60' },
+      ]},
+    ],
+    office: [
+      { phase:'Pre-Arrival (Week -1)', tasks:[
+        { name:'Signed contract returned and filed', owner:'HR', timing:'Day -7' },
+        { name:'Employee record created in HR register', owner:'HR', timing:'Day -7' },
+        { name:'Laptop / workstation prepared', owner:'Admin / IT', timing:'Day -3' },
+        { name:'Email account and system access set up', owner:'Admin / IT', timing:'Day -3' },
+        { name:'Payroll added to next pay cycle', owner:'HR', timing:'Day -5' },
+        { name:'Bank details and tax reference collected', owner:'HR', timing:'Day -5' },
+        { name:'Office access card arranged', owner:'Admin', timing:'Day -2' },
+      ]},
+      { phase:'Day 1 — Induction', tasks:[
+        { name:'Welcome meeting with HR and direct manager', owner:'HR', timing:'Day 1' },
+        { name:'Office tour and team introductions', owner:'Manager', timing:'Day 1' },
+        { name:'IT systems walkthrough (email, file server, tools)', owner:'Admin / IT', timing:'Day 1' },
+        { name:'HR policies and code of conduct briefing', owner:'HR', timing:'Day 1' },
+        { name:'Signed induction acknowledgement collected', owner:'HR', timing:'Day 1' },
+      ]},
+      { phase:'Week 1 — Orientation', tasks:[
+        { name:'90-day onboarding plan agreed with manager', owner:'Manager', timing:'Day 2' },
+        { name:'Introduction to key stakeholders and cross-functional teams', owner:'Manager', timing:'Week 1' },
+        { name:'Leave entitlements and HR systems explained', owner:'HR', timing:'Day 3' },
+        { name:'Probation terms confirmed and documented', owner:'HR', timing:'Day 2' },
+      ]},
+      { phase:'Month 1–3 — Follow-up', tasks:[
+        { name:'30-day onboarding check-in with manager', owner:'Manager', timing:'Day 30' },
+        { name:'Month 3 probation mid-point review', owner:'HR + Manager', timing:'Day 90' },
+        { name:'Record completeness check', owner:'HR', timing:'Day 30' },
+      ]},
+    ]
+  },
+  offboarding: {
+    site: [
+      { phase:'Notice Period', tasks:[
+        { name:'Resignation / termination letter filed in employee record', owner:'HR', timing:'Day 0' },
+        { name:'Notice period dates confirmed', owner:'HR', timing:'Day 0' },
+        { name:'Replacement / succession plan initiated', owner:'Site Manager', timing:'Day 1' },
+        { name:'Knowledge transfer plan agreed (esp. G3/G4 drillers)', owner:'Site Manager', timing:'Week 1' },
+        { name:'Final pay calculation prepared (inc. leave payout)', owner:'HR', timing:'Week 2' },
+      ]},
+      { phase:'Final Week on Site', tasks:[
+        { name:'PPE and equipment returned and checked', owner:'Site Manager', timing:'Last day -3' },
+        { name:'Site access pass / ID card collected', owner:'Site Manager', timing:'Last day' },
+        { name:'Camp / accommodation clearance confirmed', owner:'Site Manager', timing:'Last day' },
+        { name:'Exit interview conducted', owner:'HR', timing:'Last day -2' },
+        { name:'Confidentiality / IP reminder issued (if applicable)', owner:'HR', timing:'Last day -1' },
+      ]},
+      { phase:'Exit Processing', tasks:[
+        { name:'Final pay processed in payroll', owner:'HR', timing:'Last day' },
+        { name:'Work permit cancellation initiated (if applicable)', owner:'HR', timing:'Last day' },
+        { name:'BPJS / SSF / social security exit notified (per country)', owner:'HR', timing:'Last day' },
+        { name:'Employment certificate / reference letter issued if requested', owner:'HR', timing:'Last day +5' },
+        { name:'Employee record updated — termination date and reason', owner:'HR', timing:'Last day' },
+        { name:'Payroll removed from next cycle', owner:'HR', timing:'Last day' },
+      ]},
+      { phase:'Post-Exit Review', tasks:[
+        { name:'Exit interview insights logged in HR notes', owner:'HR', timing:'+3 days' },
+        { name:'Re-hire eligibility flag set in employee record', owner:'HR', timing:'+5 days' },
+        { name:'Workforce plan updated to reflect vacancy', owner:'HR', timing:'+1 day' },
+      ]},
+    ],
+    office: [
+      { phase:'Notice Period', tasks:[
+        { name:'Resignation / termination letter filed', owner:'HR', timing:'Day 0' },
+        { name:'Notice period confirmed', owner:'HR', timing:'Day 0' },
+        { name:'Handover plan agreed with manager', owner:'Manager', timing:'Day 1' },
+        { name:'Final pay and leave payout calculated', owner:'HR', timing:'Week 2' },
+      ]},
+      { phase:'Final Week in Office', tasks:[
+        { name:'All work files transferred / archived per handover plan', owner:'Manager', timing:'Last day -5' },
+        { name:'Email and system access removal scheduled', owner:'Admin / IT', timing:'Last day' },
+        { name:'Office access card collected', owner:'Admin', timing:'Last day' },
+        { name:'Exit interview conducted', owner:'HR', timing:'Last day -2' },
+        { name:'Company assets returned (laptop, phone, etc.)', owner:'Admin', timing:'Last day' },
+      ]},
+      { phase:'Exit Processing', tasks:[
+        { name:'Final pay processed', owner:'HR', timing:'Last day' },
+        { name:'Social security exit notified (per country)', owner:'HR', timing:'Last day' },
+        { name:'Employment certificate issued if requested', owner:'HR', timing:'Last day +5' },
+        { name:'Employee record updated — termination date', owner:'HR', timing:'Last day' },
+        { name:'Email account deactivated', owner:'Admin / IT', timing:'Last day +1' },
+      ]},
+      { phase:'Post-Exit Review', tasks:[
+        { name:'Exit interview insights logged', owner:'HR', timing:'+3 days' },
+        { name:'Re-hire eligibility flagged', owner:'HR', timing:'+5 days' },
+        { name:'Headcount / position register updated', owner:'HR', timing:'+1 day' },
+      ]},
+    ]
+  }
+};
+
+// ── SEED ACTIVE CASES ──────────────────────────────────────────
+function seedCases() {
+  activeCases = [
+    {
+      id:'CASE-001', type:'onboarding', name:'Tin Maung Win', empId:'VTG-MM-028',
+      title:'Driller Trainee', grade:'G2', country:'Myanmar', context:'site',
+      date:'2025-03-01', owner:'Group HR Manager',
+      tasks:[
+        { name:'Signed contract returned and filed', owner:'HR', done:true, overdue:false },
+        { name:'Employee record created in HR register', owner:'HR', done:true, overdue:false },
+        { name:'Site access pass / ID card arranged', owner:'Site Manager', done:true, overdue:false },
+        { name:'PPE pack prepared', owner:'Site Manager', done:true, overdue:false },
+        { name:'Payroll added to next pay cycle', owner:'HR', done:false, overdue:true },
+        { name:'Emergency contact and bank details collected', owner:'HR', done:false, overdue:true },
+        { name:'Group safety induction completed', owner:'Site Manager', done:false, overdue:false },
+        { name:'Introduction to direct supervisor', owner:'Site Manager', done:false, overdue:false },
+        { name:'Probation period terms communicated', owner:'HR', done:false, overdue:false },
+      ]
+    },
+    {
+      id:'CASE-002', type:'onboarding', name:'Htet Aung', empId:'VTG-MM-016',
+      title:'Driller Trainee', grade:'G2', country:'Myanmar', context:'site',
+      date:'2024-11-20', owner:'Group HR Manager',
+      tasks:[
+        { name:'Signed contract returned and filed', owner:'HR', done:false, overdue:true },
+        { name:'Employee record created in HR register', owner:'HR', done:true, overdue:false },
+        { name:'PPE pack prepared', owner:'Site Manager', done:true, overdue:false },
+        { name:'Payroll added to next pay cycle', owner:'HR', done:true, overdue:false },
+        { name:'Group safety induction completed', owner:'Site Manager', done:true, overdue:false },
+        { name:'Probation period terms communicated', owner:'HR', done:true, overdue:false },
+        { name:'Buddy / mentor assigned', owner:'Site Manager', done:true, overdue:false },
+        { name:'Month 3 probation mid-point review', owner:'HR + Site Manager', done:false, overdue:false },
+      ]
+    },
+    {
+      id:'CASE-003', type:'offboarding', name:'Sven Andersen', empId:'VTG-LA-004',
+      title:'Driller (Fixed Term)', grade:'G3', country:'Laos', context:'site',
+      date:'2025-04-30', owner:'Group HR Manager',
+      tasks:[
+        { name:'Resignation / termination notice filed', owner:'HR', done:true, overdue:false },
+        { name:'Notice period dates confirmed (contract end 30 Apr)', owner:'HR', done:true, overdue:false },
+        { name:'Replacement / succession plan initiated', owner:'Site Manager', done:false, overdue:false },
+        { name:'Knowledge transfer plan agreed', owner:'Site Manager', done:false, overdue:false },
+        { name:'Final pay calculation prepared', owner:'HR', done:false, overdue:false },
+        { name:'Exit interview scheduled', owner:'HR', done:false, overdue:false },
+        { name:'Work permit cancellation to be initiated', owner:'HR', done:false, overdue:false },
+      ]
+    },
+    {
+      id:'CASE-004', type:'onboarding', name:'Dedi Kurniawan', empId:'VTG-ID-020',
+      title:'Driller Trainee', grade:'G2', country:'Indonesia', context:'site',
+      date:'2024-02-05', owner:'Siti Rahayu',
+      tasks:[
+        { name:'Signed contract returned and filed', owner:'HR', done:true, overdue:false },
+        { name:'Employee record created', owner:'HR', done:true, overdue:false },
+        { name:'PPE pack prepared', owner:'Site Manager', done:true, overdue:false },
+        { name:'BPJS Ketenagakerjaan & Kesehatan enrollment', owner:'HR', done:true, overdue:false },
+        { name:'Group safety induction completed', owner:'Site Manager', done:true, overdue:false },
+        { name:'Probation terms communicated', owner:'HR', done:true, overdue:false },
+        { name:'Training plan G2→G3 confirmed', owner:'Site Manager', done:true, overdue:false },
+        { name:'Month 3 probation mid-point review', owner:'HR + Site Manager', done:true, overdue:false },
+        { name:'Record completeness check', owner:'HR', done:false, overdue:true },
+      ]
+    },
+  ];
+}
+
+// ── RENDER CASES ──────────────────────────────────────────
+function renderCases(data) {
+  const grid = document.getElementById('casesGrid');
+  if (!data.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="es-icon">📋</div>No active cases match your filter.</div>`;
+    return;
+  }
+  grid.innerHTML = data.map(c => {
+    const total = c.tasks.length;
+    const done = c.tasks.filter(t=>t.done).length;
+    const pct = Math.round(done/total*100);
+    const overdue = c.tasks.filter(t=>!t.done&&t.overdue).length;
+    const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'}[c.country]||'';
+    const isOn = c.type==='onboarding';
+    const preview = c.tasks.slice(0,4);
+    return `
+      <div class="case-card" onclick="openCaseDetail('${c.id}')">
+        <div class="case-card-header">
+          <div class="case-type-bar ${isOn?'bar-onboard':'bar-offboard'}"></div>
+          <div style="flex:1;">
+            <div class="case-name">${c.name}</div>
+            <div class="case-sub">${c.empId} · ${c.title} · ${c.grade}</div>
+          </div>
+          <span class="case-type-badge ${isOn?'ctb-on':'ctb-off'}">${isOn?'ONBOARDING':'OFFBOARDING'}</span>
+        </div>
+        <div style="padding:0 16px 8px;display:flex;gap:8px;align-items:center;">
+          <span class="country-tag ${ctClass}">${c.country}</span>
+          <span style="font-size:11px;color:var(--steel);">${c.context==='site'?'Site / Field':'Office'}</span>
+          ${overdue?`<span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--danger);margin-left:auto;">${overdue} overdue</span>`:''}
+        </div>
+        <div class="case-progress">
+          <div class="progress-label">
+            <span>${done} of ${total} tasks complete</span>
+            <span>${pct}%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill ${isOn?'pf-on':'pf-off'}" style="width:${pct}%"></div></div>
+        </div>
+        <div class="case-tasks">
+          ${preview.map(t=>`
+            <div class="task-row">
+              <div class="task-check ${t.done?'done':'pending'}">${t.done?'✓':''}</div>
+              <span class="task-label ${t.done?'done-text':''}">${t.name}</span>
+              <span class="${t.overdue&&!t.done?'task-overdue':'task-owner'}">${t.overdue&&!t.done?'OVERDUE':t.owner}</span>
+            </div>`).join('')}
+          ${total>4?`<div style="font-size:11px;color:var(--steel);padding:4px 0;text-align:center;">+${total-4} more tasks — click to view all</div>`:''}
+        </div>
+        <div class="case-footer">
+          <span class="case-date">${isOn?'Start':'Exit'}: ${fmtDate(c.date)}</span>
+          <span style="font-size:11px;color:var(--steel);">Owner: ${c.owner}</span>
+        </div>
+      </div>`;
+  }).join('');
+  updateStats();
+}
+
+function filterCases() {
+  const q = document.getElementById('caseSearch').value.toLowerCase();
+  const type = document.getElementById('fcType').value;
+  const country = document.getElementById('fcCountry').value;
+  const filtered = activeCases.filter(c => {
+    const mq = !q || c.name.toLowerCase().includes(q);
+    const mt = !type || c.type === type;
+    const mc = !country || c.country === country;
+    return mq && mt && mc;
+  });
+  renderCases(filtered);
+}
+
+function updateStats() {
+  const on = activeCases.filter(c=>c.type==='onboarding').length;
+  const off = activeCases.filter(c=>c.type==='offboarding').length;
+  const overdue = activeCases.reduce((a,c)=>a+c.tasks.filter(t=>!t.done&&t.overdue).length,0);
+  const avgPct = activeCases.length ? Math.round(activeCases.reduce((a,c)=>{
+    const d=c.tasks.filter(t=>t.done).length; return a+Math.round(d/c.tasks.length*100);
+  },0)/activeCases.length) : 0;
+  document.getElementById('sActive').textContent = activeCases.length;
+  document.getElementById('sOnboard').textContent = on;
+  document.getElementById('sOffboard').textContent = off;
+  document.getElementById('sOverdue').textContent = overdue;
+  document.getElementById('sCompleted').textContent = completedCases.length;
+  document.getElementById('sAvgCompletion').textContent = avgPct+'%';
+}
+
+// ── CASE DETAIL ──────────────────────────────────────────
+function openCaseDetail(id) {
+  activeCaseId = id;
+  const c = activeCases.find(x=>x.id===id);
+  if (!c) return;
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'}[c.country]||'';
+  const isOn = c.type==='onboarding';
+  const done = c.tasks.filter(t=>t.done).length;
+  const pct = Math.round(done/c.tasks.length*100);
+
+  document.getElementById('caseDetailTitle').textContent = `${isOn?'Onboarding':'Offboarding'} — ${c.name}`;
+  document.getElementById('caseDetailBody').innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+      <span class="country-tag ${ctClass}">${c.country}</span>
+      <span style="font-size:12px;color:var(--steel);">${c.empId} · ${c.title} · ${c.grade} · ${c.context==='site'?'Site':'Office'}</span>
+      <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:${pct===100?'var(--success)':'var(--amber)'};">${pct}% complete</span>
+    </div>
+    <div style="background:var(--mist);border-radius:4px;padding:10px 14px;margin-bottom:16px;display:flex;gap:20px;font-size:12px;">
+      <span><strong>${isOn?'Start':'Exit'} Date:</strong> ${fmtDate(c.date)}</span>
+      <span><strong>Case Owner:</strong> ${c.owner}</span>
+      <span><strong>Tasks:</strong> ${done}/${c.tasks.length} done</span>
+      <span style="color:var(--danger);"><strong>Overdue:</strong> ${c.tasks.filter(t=>!t.done&&t.overdue).length}</span>
+    </div>
+    <div class="modal-task-title">Task Checklist</div>
+    <div id="modalTaskList">
+      ${c.tasks.map((t,i)=>`
+        <div class="modal-task-row">
+          <div class="mtask-check ${t.done?'done':''}" onclick="toggleTask('${id}',${i})">${t.done?'✓':''}</div>
+          <span class="mtask-label ${t.done?'done':''}">${t.name}</span>
+          <span class="mtask-owner ${t.overdue&&!t.done?'':''}">
+            ${t.overdue&&!t.done?`<span style="color:var(--danger);font-weight:600;">OVERDUE</span>`:''}
+            ${t.owner}
+          </span>
+        </div>`).join('')}
+    </div>`;
+  document.getElementById('completeCaseBtn').onclick = () => completeCase(id);
+  document.getElementById('caseDetailModal').classList.add('active');
+}
+
+function toggleTask(caseId, idx) {
+  const c = activeCases.find(x=>x.id===caseId);
+  if (!c) return;
+  c.tasks[idx].done = !c.tasks[idx].done;
+  openCaseDetail(caseId);
+  filterCases();
+}
+
+function completeCase(id) {
+  const idx = activeCases.findIndex(x=>x.id===id);
+  if (idx<0) return;
+  const c = activeCases.splice(idx,1)[0];
+  completedCases.unshift({...c, completedDate:'2025-03-10'});
+  closeDirect('caseDetailModal');
+  filterCases();
+  renderHistory();
+  showToast(`✓ Case for ${c.name} marked complete`);
+}
+
+// ── CHECKLISTS ──────────────────────────────────────────
+function renderChecklists(context) {
+  const el = document.getElementById('checklistsLayout');
+  const types = ['onboarding','offboarding'];
+  el.innerHTML = types.map(type => {
+    const phases = templates[type][context];
+    const totalTasks = phases.reduce((a,p)=>a+p.tasks.length,0);
+    const isOn = type==='onboarding';
+    return `
+      <div class="checklist-panel">
+        <div class="checklist-header">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="checklist-type-dot ${isOn?'dot-on':'dot-off'}"></div>
+              <div class="checklist-title">${isOn?'Onboarding':'Offboarding'} Checklist</div>
+            </div>
+            <div class="checklist-sub">${context==='site'?'Site / Field Roles':'Office Roles'} · ${totalTasks} tasks across ${phases.length} phases</div>
+          </div>
+        </div>
+        ${phases.map(phase=>`
+          <div class="phase-block">
+            <div class="phase-title">
+              <span>${phase.phase}</span>
+              <span style="font-size:10px;color:var(--steel);">${phase.tasks.length} tasks</span>
+            </div>
+            <div class="phase-tasks">
+              ${phase.tasks.map((t,i)=>`
+                <div class="cl-task-row">
+                  <span class="cl-num">${String(i+1).padStart(2,'0')}</span>
+                  <div class="cl-info">
+                    <div class="cl-task-name">${t.name}</div>
+                  </div>
+                  <span class="cl-owner">${t.owner}</span>
+                  <span class="cl-timing">${t.timing}</span>
+                </div>`).join('')}
+            </div>
+          </div>`).join('')}
+      </div>`;
+  }).join('');
+}
+
+function setContext(ctx) {
+  currentContext = ctx;
+  document.getElementById('ctxSite').classList.toggle('active', ctx==='site');
+  document.getElementById('ctxOffice').classList.toggle('active', ctx==='office');
+  renderChecklists(ctx);
+}
+
+// ── HISTORY ──────────────────────────────────────────
+function renderHistory() {
+  const el = document.getElementById('historyContent');
+  if (!completedCases.length) {
+    el.innerHTML = `<div class="empty-state"><div class="es-icon">✅</div><div>No completed cases yet.</div></div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="table-card" style="background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+      <div class="table-card-header" style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);letter-spacing:1.5px;text-transform:uppercase;">Completed Cases</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);">${completedCases.length} records</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr>
+            ${['CASE ID','EMPLOYEE','TYPE','COUNTRY','GRADE','DATE','COMPLETED','TASKS'].map(h=>`<th style="background:var(--mist);padding:10px 14px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--steel);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);">${h}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${completedCases.map(c=>{
+            const ctClass={Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'}[c.country]||'';
+            const isOn=c.type==='onboarding';
+            return `<tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);">${c.id}</td>
+              <td style="padding:10px 14px;font-size:13px;font-weight:600;">${c.name}</td>
+              <td style="padding:10px 14px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 8px;border-radius:2px;${isOn?'background:var(--success-bg);color:var(--success)':'background:var(--danger-bg);color:var(--danger)'};">${isOn?'ONBOARDING':'OFFBOARDING'}</span></td>
+              <td style="padding:10px 14px;"><span class="country-tag ${ctClass}">${c.country}</span></td>
+              <td style="padding:10px 14px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--slate);color:var(--amber-light);padding:3px 9px;border-radius:2px;">${c.grade}</span></td>
+              <td style="padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(c.date)}</td>
+              <td style="padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--success);">${fmtDate(c.completedDate)}</td>
+              <td style="padding:10px 14px;font-size:12px;">${c.tasks.filter(t=>t.done).length}/${c.tasks.length}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── NEW CASE ──────────────────────────────────────────
+function openNewCase() { document.getElementById('newCaseModal').classList.add('active'); }
+function createCase() {
+  const name = document.getElementById('nc_name').value.trim();
+  const country = document.getElementById('nc_country').value;
+  if (!name || !country) { showToast('⚠ Name and Country required'); return; }
+  const type = document.getElementById('nc_type').value;
+  const context = document.getElementById('nc_context').value;
+  const tmpl = templates[type][context];
+  const allTasks = tmpl.flatMap(phase => phase.tasks.map(t=>({name:t.name,owner:t.owner,done:false,overdue:false})));
+  const newCase = {
+    id: `CASE-${String(activeCases.length+completedCases.length+5).padStart(3,'0')}`,
+    type, name, country, context,
+    empId: document.getElementById('nc_id').value || '—',
+    title: document.getElementById('nc_title').value || '—',
+    grade: document.getElementById('nc_grade').value || '—',
+    date: document.getElementById('nc_date').value || '2025-03-10',
+    owner: document.getElementById('nc_owner').value || 'Group HR Manager',
+    tasks: allTasks
+  };
+  activeCases.unshift(newCase);
+  filterCases();
+  closeDirect('newCaseModal');
+  showToast(`✓ Case created for ${name} — ${allTasks.length} tasks loaded`);
+}
+
+// ── UTILS ──────────────────────────────────────────
+function fmtDate(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function switchTab(id) {
+  const tabs=['cases','checklists','history'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function closeMod(id,e) { if(e.target===document.getElementById(id)) closeDirect(id); }
+function closeDirect(id) { document.getElementById(id).classList.remove('active'); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+
+seedCases();
+renderCases(activeCases);
+renderChecklists('site');
+renderHistory();
+</script>
+</body>
+</html>

@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Culture Assessment & Framework — Employee Experience Tool 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6f0;--surface:#fff;--surface2:#f2ebe1;--surface3:#e8ddd0;
+  --border:#ddd0c0;--border2:#c8b89e;
+  --ink:#1a1208;--ink2:#2d2010;--ink3:#4a3520;--ink4:#7a6248;--ink5:#b09878;
+  --coral:#c0533a;--coral2:#d4644a;--coral3:#e8846e;
+  --coral-dim:rgba(192,83,58,0.08);--coral-border:rgba(192,83,58,0.22);
+  --teal:#1a5f6a;--teal2:#226e7a;--teal3:#4a9aaa;
+  --teal-dim:rgba(26,95,106,0.08);--teal-border:rgba(26,95,106,0.22);
+  --gold:#b8962e;--gold2:#c9a83a;
+  --gold-dim:rgba(184,150,46,0.08);--gold-border:rgba(184,150,46,0.22);
+  --green:#2d7a4a;--green-dim:rgba(45,122,74,0.08);--green-border:rgba(45,122,74,0.22);
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--teal);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--coral),var(--coral3),rgba(192,83,58,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#fff;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:rgba(255,200,180,0.9);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.35);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.7)}
+.nav-item.active{background:rgba(192,83,58,0.22);border-color:rgba(192,83,58,0.45);color:#ffcfc0}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--coral3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.08)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:rgba(255,200,180,0.8);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:40px 52px;max-width:1100px}
+.page.active{display:block}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--coral);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--coral)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(100,60,20,0.06)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--coral);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cc{background:var(--coral-dim);color:var(--coral);border:1px solid var(--coral-border)}
+.ct2{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border)}
+.cg{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.cgr{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.c{background:var(--coral-dim);border-color:var(--coral);color:var(--ink2)}
+.inf.t{background:var(--teal-dim);border-color:var(--teal);color:var(--ink2)}
+.inf.g{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.inf.gr{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--teal);color:rgba(255,255,255,0.75);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+.vx{background:var(--teal);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,200,180,0.7);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.25}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap;margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--coral);border-bottom-color:var(--coral);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kco::before{background:var(--coral)}.kte::before{background:var(--teal)}
+.kgo::before{background:var(--gold)}.kgr::before{background:var(--green)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kco .kv{color:var(--coral)}.kte .kv{color:var(--teal)}
+.kgo .kv{color:var(--gold)}.kgr .kv{color:var(--green)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.kt{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktc{background:var(--coral-dim);color:var(--coral)}
+.ktt{background:var(--teal-dim);color:var(--teal)}
+.ktg{background:var(--gold-dim);color:var(--gold)}
+.ktgr{background:var(--green-dim);color:var(--green)}
+.ci{width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:3px;padding:9px 12px;font-size:13px;color:#fff;font-family:var(--fb);outline:none;transition:border .13s;margin-bottom:10px}
+.ci:focus{border-color:rgba(192,83,58,0.5)}
+.cl{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:5px;display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">Employee Experience · Tool 2 / 8</div>
+    <div class="sb-title">Culture<br><em>Assessment</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('current',this)"><span class="nav-num">02</span>Current Culture</div>
+    <div class="nav-item" onclick="showPage('target',this)"><span class="nav-num">03</span>Target Culture</div>
+    <div class="nav-item" onclick="showPage('pillars',this)"><span class="nav-num">04</span>Culture Pillars</div>
+    <div class="nav-item" onclick="showPage('assessment',this)"><span class="nav-num">05</span>Culture Assessment</div>
+    <div class="nav-item" onclick="showPage('gaps',this)"><span class="nav-num">06</span>Gap Analysis</div>
+    <div class="nav-item" onclick="showPage('activation',this)"><span class="nav-num">07</span>Culture Activation</div>
+    <div class="nav-item" onclick="showPage('coo',this)"><span class="nav-num">08</span>COO Culture Brief</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Employee Experience · Tool 2 of 8</strong>
+      Culture Assessment &amp; Framework<br>
+      <span style="color:rgba(255,255,255,0.12)">Culture is what happens when no-one from Group HR is watching. This tool makes it measurable.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview"    class="page active"></div>
+  <div id="page-current"     class="page"></div>
+  <div id="page-target"      class="page"></div>
+  <div id="page-pillars"     class="page"></div>
+  <div id="page-assessment"  class="page"></div>
+  <div id="page-gaps"        class="page"></div>
+  <div id="page-activation"  class="page"></div>
+  <div id="page-coo"         class="page"></div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+</script>
+</body>
+</html>
+<script>
+// ── PAGE 01 ──────────────────────────────────────────────────────
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">Employee Experience & Culture · Tool 2 / 8</div>
+<div class="pt">Culture Assessment<br>&amp; <em>Framework</em></div>
+<p class="pd">Culture is the set of shared beliefs, behaviours, and expectations that shape how work happens at Valentis — when nobody is watching and no policy is being enforced. At a 42-person multi-country mineral exploration company, culture is not declared by leadership and then adopted. It is lived by Site Managers, modelled by G4 drillers, and experienced by trainees in their first three months on site. This tool maps what Valentis's culture currently is, defines what it should be, and gives Group HR the framework to close the gap.</p>
+<div class="vx">
+  <div class="vx-ey">Why Culture Is an Operational Priority at Valentis</div>
+  <div class="vx-ti">Culture determines whether a G4 driller coaches voluntarily or only when required. Whether a trainee who struggles at month 3 tells someone — or just leaves. Whether an SM runs a tight, accountable site or a permissive one. These are culture outcomes, and they are measurable in the attrition and delivery data.</div>
+  <div class="vx-bo">Valentis does not yet have a defined culture framework — which means culture currently defaults to whatever each SM's personal leadership style produces. Thailand's SM produces a high-coaching, high-accountability culture that delivers 105% and 10% attrition. Myanmar's current culture produces 58% conversion and 28% attrition. The difference is substantially cultural — and culture can be shaped. This tool gives Group HR the framework to do that deliberately, rather than hoping each SM happens to create the right environment.</div>
+</div>
+<div class="krow">
+  <div class="kpi kco"><div class="kl">Culture Maturity (current)</div><div class="kv">Ad hoc</div><div class="ks">No defined culture framework · SM-dependent · inconsistent across sites</div><div class="kt ktc">Target: Defined & embedded</div></div>
+  <div class="kpi kte"><div class="kl">Culture Gap — Delivery</div><div class="kv">25pp</div><div class="ks">Thailand 105% vs Myanmar 80% — largely a culture gap, not a resources gap</div><div class="kt ktt">Coaching culture is the lever</div></div>
+  <div class="kpi kgo"><div class="kl">Culture Gap — Attrition</div><div class="kv">18pp</div><div class="ks">Thailand 10% vs Myanmar 28% — belonging and recognition culture drives the difference</div><div class="kt ktg">Belonging + recognition</div></div>
+  <div class="kpi kgr"><div class="kl">Culture Activation Target</div><div class="kv">Q4 2026</div><div class="ks">Valentis culture pillars embedded at all sites · SM culture briefs complete</div><div class="kt ktgr">8-tool EX programme</div></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">The Culture–Performance Chain at Valentis</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {cult:'Coaching culture',perf:'G4 debrief frequency → conversion rate → pipeline supply → delivery capacity',evidence:'Thailand G4s average 4.1 debriefs/month (coaching culture). Myanmar G4s 1.2 (compliance culture). This is a culture difference, not a skills difference — the G4 coaching programme changes the culture, not just the skill.',col:'var(--coral)'},
+        {cult:'Accountability culture',perf:'SM expectations → pipeline log compliance → Group HR visibility → early intervention',evidence:'Thailand pipeline log compliance 100%. Myanmar 72%. Thailand SM holds G4s accountable to monthly submission. Myanmar SM has not yet made this a cultural expectation. Accountability is contagious when the SM models it.',col:'var(--teal)'},
+        {cult:'Belonging culture',perf:'Team cohesion → month-3 retention → reduced isolation → lower attrition',evidence:'Sites with strong belonging culture have lower month-3 exits regardless of pay or conditions. Belonging is built in the first two weeks — buddy assignment, SM personal greeting, and team integration are the cultural mechanisms.',col:'var(--gold)'},
+        {cult:'Recognition culture',perf:'Visible achievements → commitment renewal → grade progression momentum',evidence:'Sites where the SM publicly recognises good work monthly have measurably higher continuation rates from G2 to G3. Recognition is a cultural habit — once established, it compounds.',col:'var(--coral)'}
+      ].map(function(d){return '<div style="padding:10px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:2px">'+d.cult+'</div><div style="font-size:12px;color:var(--coral);font-weight:500;margin-bottom:3px">→ '+d.perf+'</div><div style="font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.65;font-style:italic">'+d.evidence+'</div></div>';}).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">What This Tool Covers</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {sec:'02',title:'Current Culture',desc:'Honest assessment of what Valentis culture currently is — site by site, dimension by dimension. Strengths to build on, gaps that drive attrition and delivery underperformance.',col:'var(--coral)'},
+        {sec:'03',title:'Target Culture',desc:'What Valentis culture should look, feel, and sound like in 2027. Defined clearly enough that an SM knows whether they are living it and a trainee can feel it.',col:'var(--teal)'},
+        {sec:'04',title:'Culture Pillars',desc:'Four Valentis culture pillars — the non-negotiable cultural commitments that apply at every site in every country. The foundation of the employer brand.',col:'var(--gold)'},
+        {sec:'05',title:'Culture Assessment',desc:'The diagnostic tool Group HR uses to assess culture at each site — observable behaviours, not survey scores. Conducted during site visits or via SM self-assessment.',col:'var(--coral)'},
+        {sec:'06',title:'Gap Analysis',desc:'Where each country currently sits vs the target culture — by pillar. Priority actions per country to close the gap.',col:'var(--teal)'},
+        {sec:'07',title:'Culture Activation',desc:'How Group HR activates the culture framework — SM briefing, language adoption, behaviour modelling, and the cultural calendar.',col:'var(--gold)'},
+        {sec:'08',title:'COO Culture Brief',desc:'The narrative for the COO: what the Valentis culture strategy is, why it matters commercially, and what decisions it requires.',col:'var(--teal)'}
+      ].map(function(d){return '<div style="display:flex;gap:10px;align-items:start;padding:8px 10px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fm);font-size:9px;color:'+d.col+';flex-shrink:0;width:22px;font-weight:700">'+d.sec+'</div><div><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:2px">'+d.title+'</div><div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.6">'+d.desc+'</div></div></div>';}).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 02 ──────────────────────────────────────────────────────
+document.getElementById('page-current').innerHTML=`
+<div class="pe">Section 02 — Current Culture</div>
+<div class="pt">Current<br><em>Culture</em></div>
+<p class="pd">An honest assessment of what Valentis culture currently is — not what it aspires to be. Current culture is assessed across four dimensions and four countries. It is based on observable evidence: attrition data, delivery rates, pipeline log compliance, and what Group HR observes at site visits and in SM interactions. The purpose is not to judge but to diagnose.</p>
+<div class="inf c"><strong>The culture assessment principle:</strong> Culture is what people do, not what they say. The evidence for current culture is in the data — attrition rates, debrief frequency, check-in compliance, grade celebration practices. These observable behaviours are more reliable than any survey score.</div>
+<div class="card">
+  <div class="ct">Current Culture — Four Dimensions</div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('cc-coaching',this)">Coaching</div>
+    <div class="tab" onclick="showTab('cc-account',this)">Accountability</div>
+    <div class="tab" onclick="showTab('cc-belong',this)">Belonging</div>
+    <div class="tab" onclick="showTab('cc-recog',this)">Recognition</div>
+  </div>
+  ${[
+    {id:'cc-coaching',label:'Coaching Culture',active:true,
+     desc:'Coaching culture is the degree to which G4 drillers invest in developing trainees — not because they are required to, but because the site environment treats it as a valued contribution.',
+     rows:[
+       {c:'Thailand',score:8,ev:'4.1 debriefs/month. SM tracks and holds G4s accountable. G4s reference coaching as part of their identity, not an add-on. Thailand G4 certification culture is the group benchmark.',col:'var(--green)'},
+       {c:'Laos',score:6,ev:'3.2 debriefs/month — below target but functional. Coaching happens, but is not culturally celebrated. G4s approaching retirement may deprioritise coaching as they near exit.',col:'var(--gold)'},
+       {c:'Indonesia',score:4,ev:'2.1 debriefs/month. G4s diverted to operations due to G3 vacancies — coaching culture is being eroded by operational pressure, not SM neglect. Structural fix (G3 hires) required before cultural improvement possible.',col:'var(--coral)'},
+       {c:'Myanmar',score:2,ev:'1.2 debriefs/month. G4 coaching is treated as compliance, not contribution. Myo H. has not yet made coaching a cultural expectation. G4 coaching programme directly targets this dimension.',col:'var(--red)'}
+     ]},
+    {id:'cc-account',label:'Accountability Culture',
+     desc:'Accountability culture is the degree to which employees and SMs follow through on commitments — pipeline log submission, check-in protocols, debrief targets — without requiring enforcement from Group HR.',
+     rows:[
+       {c:'Thailand',score:9,ev:'100% pipeline log compliance. Month-3 check-in 100%. SM tracks all commitments personally. Accountability is modelled from the top — G4s follow because the SM does.',col:'var(--green)'},
+       {c:'Laos',score:7,ev:'85% pipeline log compliance. Strong follow-through on most commitments. Some inconsistency when SM is absent — accountability is SM-dependent rather than team-embedded.',col:'var(--gold)'},
+       {c:'Indonesia',score:5,ev:'78% pipeline log compliance. Wirawan S. is accountable personally but site stress from G3 vacancies is lowering team compliance. Retention risk further undermines this.',col:'var(--gold)'},
+       {c:'Myanmar',score:3,ev:'72% pipeline log compliance. Month-3 check-in compliance 55%. Accountability is the weakest cultural dimension in Myanmar — requires the most sustained SM behaviour change.',col:'var(--red)'}
+     ]},
+    {id:'cc-belong',label:'Belonging Culture',
+     desc:'Belonging culture is the degree to which employees feel genuinely part of a team — known, welcomed, and missed if absent. At remote sites, belonging requires active cultivation.',
+     rows:[
+       {c:'Thailand',score:8,ev:'10% attrition. Low month-3 exits. SM knows each employee\'s situation personally. Team dinners/events documented. New employees report feeling welcomed within first week.',col:'var(--green)'},
+       {c:'Laos',score:7,ev:'18% attrition — reasonable for the geography. Long-tenured team creates strong cohesion among established G3/G4s. Risk: retiring G4s take belonging anchors with them, and new G1s may not feel the same warmth.',col:'var(--gold)'},
+       {c:'Indonesia',score:5,ev:'24% attrition. Site stress from vacancies reducing team cohesion. Employees who remain are carrying extra load and the resentment of that can erode belonging. Wirawan\'s retention risk is felt by the team.',col:'var(--coral)'},
+       {c:'Myanmar',score:4,ev:'28% attrition. Month-3 check-in compliance 55% — the belonging intervention is not happening. Myanmar has strong cultural community values that are not yet activated by Valentis\'s EX design.',col:'var(--red)'}
+     ]},
+    {id:'cc-recog',label:'Recognition Culture',
+     desc:'Recognition culture is the degree to which good work, milestones, and commitment are visibly acknowledged — by the SM, by G4s, and by the broader team.',
+     rows:[
+       {c:'Thailand',score:8,ev:'SM recognises publicly monthly. Grade milestones celebrated as team events. G4 debrief quality recognised alongside operational output. Employees cite recognition as a reason for staying.',col:'var(--green)'},
+       {c:'Laos',score:6,ev:'Grade milestones acknowledged but not celebrated. SM gives individual recognition but rarely in a group setting. Retirement of G4s should be marked as significant cultural moments — currently handled administratively.',col:'var(--gold)'},
+       {c:'Indonesia',score:5,ev:'Recognition has declined as site stress increased. Grade promotions processed without ceremony. G3 vacancies have shifted focus to output, not people. Recognition culture needs restoration alongside G3 fills.',col:'var(--coral)'},
+       {c:'Myanmar',score:3,ev:'Lowest recognition culture in the group. Grade milestones not routinely celebrated. Good work not publicly acknowledged. Myo H. gives individual feedback but has not built a team recognition habit.',col:'var(--red)'}
+     ]}
+  ].map(function(dim){
+    return '<div id="tb-'+dim.id+'" class="tb'+(dim.active?' active':'')+'">'
+      +'<div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">'+dim.desc+'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">'
+      +dim.rows.map(function(r){
+        var barW=r.score*10;
+        return '<div style="background:var(--surface2);border-radius:4px;padding:14px;border-top:3px solid '+r.col+'">'
+          +'<div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:6px">'+r.c+'</div>'
+          +'<div style="font-family:var(--fd);font-size:36px;font-weight:800;color:'+r.col+';line-height:1;margin-bottom:4px">'+r.score+'<span style="font-size:18px;opacity:0.4">/10</span></div>'
+          +'<div style="height:4px;background:var(--surface3);border-radius:2px;margin-bottom:8px;overflow:hidden"><div style="width:'+barW+'%;height:100%;background:'+r.col+'"></div></div>'
+          +'<div style="font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.65">'+r.ev+'</div>'
+          +'</div>';
+      }).join('')
+      +'</div></div>';
+  }).join('')}
+</div>
+<div class="card">
+  <div class="ct">Current Culture — <em>Summary Scorecard</em></div>
+  <table class="dt">
+    <thead><tr><th>Country</th><th>Coaching</th><th>Accountability</th><th>Belonging</th><th>Recognition</th><th>Culture avg</th><th>Assessment</th></tr></thead>
+    <tbody>
+      ${[
+        {c:'Thailand',scores:[8,9,8,8]},
+        {c:'Laos',scores:[6,7,7,6]},
+        {c:'Indonesia',scores:[4,5,5,5]},
+        {c:'Myanmar',scores:[2,3,4,3]}
+      ].map(function(r){
+        var avg=(r.scores.reduce(function(a,b){return a+b},0)/4).toFixed(1);
+        var avgN=parseFloat(avg);
+        var col=avgN>=7?'var(--green)':avgN>=5?'var(--gold)':'var(--coral)';
+        var label=avgN>=7?'Strong culture foundation':avgN>=5?'Functional — gaps emerging':'Culture deficit — priority intervention';
+        return '<tr><td style="font-weight:700">'+r.c+'</td>'
+          +r.scores.map(function(s){var sc=s>=7?'var(--green)':s>=5?'var(--gold)':'var(--red)';return '<td style="font-weight:700;color:'+sc+'">'+s+'/10</td>';}).join('')
+          +'<td style="font-weight:800;color:'+col+';font-family:var(--fd);font-size:18px">'+avg+'</td>'
+          +'<td style="font-size:11.5px;color:'+col+'">'+label+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── PAGE 03 ──────────────────────────────────────────────────────
+document.getElementById('page-target').innerHTML=`
+<div class="pe">Section 03 — Target Culture</div>
+<div class="pt">Target<br><em>Culture</em></div>
+<p class="pd">The target culture defines what Valentis culture should look, feel, and sound like in 2027 — when the four culture pillars are embedded at all sites and the SM is the primary culture carrier in each country. The target is ambitious but grounded: it is what Thailand already demonstrates is achievable. The question is not whether it is possible — it is how to replicate it.</p>
+<div class="vx">
+  <div class="vx-ey">The Target Culture Statement</div>
+  <div class="vx-ti">"At Valentis, every person who shows up to develop is developed. Every person who coaches is recognised for coaching. Every person who commits is seen committing. This is a company where the work is hard and the investment in people is harder."</div>
+  <div class="vx-bo">This is not a values statement — it is a description of what life at Valentis should feel like for a G1 trainee in their first three months, a G4 driller in their fifth year, and an SM managing a site through operational pressure. It is observable, testable, and behavioural. If a trainee cannot feel this after month 3, the culture has not been delivered. If a G4 does not feel recognised for coaching, the culture has not been delivered. The target culture is defined by what employees experience, not what Group HR intends.</div>
+</div>
+<div class="card">
+  <div class="ct">Target Culture — Dimension by Dimension</div>
+  <div style="display:grid;gap:12px;margin-top:4px">
+    ${[
+      {dim:'Coaching',target:8,current:5.25,desc:'Every G4 conducts ≥4 structured debriefs per month, uses the Valentis rubric, and identifies their trainee\'s next milestone before each session ends. Coaching is referenced as a professional identity, not an administrative requirement. G4s who coach well are publicly acknowledged for it — not just for operational output.',looks:['G4s schedule debriefs proactively — trainees do not need to ask','SM asks G4s about coaching quality in every monthly check-in, not just delivery numbers','G4 debriefs are discussed in peer conversations: "What did you work on in your last debrief?"','New G4s are mentored by experienced G4s on coaching technique — the culture reproduces itself'],col:'var(--coral)'},
+      {dim:'Accountability',target:9,current:6,desc:'Every commitment made at Valentis — pipeline log submission, month-3 check-in, debrief frequency, merit cycle deadline — is followed through without requiring reminder. The SM models accountability first. G4s follow the SM\'s example. Trainees observe that commitments at Valentis are kept.',looks:['Pipeline log submitted by every G4 on the last working day of each month without prompting','Month-3 check-ins happen in weeks 10–14 — not when the SM finds time','Grade milestones processed the same month they are achieved, not two months later','Group HR commitments to employees are kept on the agreed date'],col:'var(--teal)'},
+      {dim:'Belonging',target:8,current:6,desc:'Every Valentis employee feels known by their SM within the first week, connected to their team by the end of month 1, and genuinely missed if absent for a significant period. Belonging does not require proximity — it requires intentional relationship-building that the SM prioritises as part of the role.',looks:['SM knows each employee\'s name, grade stage, and one personal detail by end of week 1','New employees are introduced to every team member by their buddy within the first 3 days','Return from leave is met with a personal SM check-in on day 1 back — not ignored','Employees who are struggling say so — because they believe the SM will respond with support, not judgement'],col:'var(--gold)'},
+      {dim:'Recognition',target:8,current:5.5,desc:'Good work at Valentis is seen and said out loud. Grade milestones are celebrated as significant events — not processed as administrative paperwork. The SM names at least one person publicly every month. Coaching quality is recognised alongside operational output.',looks:['Every G2, G3, and G4 grading is announced to the full site team by the SM on the day','SM recognition of individuals happens in team settings, not only in private feedback conversations','Group HR sends a written acknowledgement for every grade progression — signed at the appropriate seniority','Year-end site gathering marks the year\'s milestones — progressions, cohort completions, long service'],col:'var(--coral)'}
+    ].map(function(d){
+      var gap=d.target-d.current;
+      var gapCol=gap<=2?'var(--green)':gap<=4?'var(--gold)':'var(--coral)';
+      return '<div style="background:var(--surface2);border-radius:4px;padding:18px;border-left:4px solid '+d.col+'">'
+        +'<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px">'
+        +'<div style="font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink)">'+d.dim+' Culture</div>'
+        +'<div style="text-align:right">'
+        +'<div style="font-family:var(--fd);font-size:28px;font-weight:800;color:'+d.col+';line-height:1">'+d.target+'/10</div>'
+        +'<div style="font-size:11px;color:var(--ink5);font-family:var(--fm)">target · now '+d.current.toFixed(1)+' · gap <span style="color:'+gapCol+'">'+gap.toFixed(1)+'</span></div>'
+        +'</div></div>'
+        +'<div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">'+d.desc+'</div>'
+        +'<div style="font-family:var(--fm);font-size:8px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What it looks like when embedded</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">'
+        +d.looks.map(function(l){return '<div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;padding:6px 8px;background:var(--surface);border-radius:2px;border-left:2px solid '+d.col+'">'+l+'</div>';}).join('')
+        +'</div></div>';
+    }).join('')}
+  </div>
+</div>
+`;
+</script>
+
+<script>
+// ── PAGE 04 — Culture Pillars (static HTML, no JS object strings) ──────────
+document.getElementById('page-pillars').innerHTML=`
+<div class="pe">Section 04 — Culture Pillars</div>
+<div class="pt">Culture<br><em>Pillars</em></div>
+<p class="pd">The Valentis Culture Pillars are the four non-negotiable cultural commitments that apply at every site, in every country, at every grade level. They are the answer to the question: what does it mean to work at Valentis? They underpin the employer brand, guide SM behaviour, and give every employee a shared language for what the company stands for.</p>
+<div class="vx">
+  <div class="vx-ey">The Four Valentis Culture Pillars</div>
+  <div class="vx-ti">We Develop &middot; We Deliver &middot; We Belong &middot; We Earn It</div>
+  <div class="vx-bo">These four pillars were built from the evidence of what drives retention and delivery at Valentis. They reflect what the Thailand site already demonstrates works, and what every other site needs to build toward. They are short enough to remember, specific enough to act on, and honest enough to be believable.</div>
+</div>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px">
+  <div style="background:var(--coral);padding:16px 22px;display:flex;justify-content:space-between;align-items:center">
+    <div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Pillar 01 of 04</div>
+    <div style="font-family:var(--fd);font-size:28px;font-weight:700;color:#fff">We Develop</div></div>
+    <div style="font-size:36px;color:rgba(255,255,255,0.25)">&uarr;</div>
+  </div>
+  <div style="padding:18px 22px">
+    <div style="font-family:var(--fd);font-size:15px;font-style:italic;color:var(--ink3);line-height:1.7;margin-bottom:12px;border-left:3px solid var(--coral);padding-left:12px">"At Valentis, development is the work. Every G4 develops trainees. Every SM develops G4s. Group HR develops SMs. The pipeline is not a background process &mdash; it is what Valentis does."</div>
+    <p style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Development at Valentis is not a benefit or a programme &mdash; it is the operational model. The G1&rarr;G4 journey is the core value proposition for every employee who joins as a trainee. When G4s coach well, when SMs develop G4s, when Group HR supports SM growth, the pipeline delivers. When any link in that chain breaks, delivery suffers.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What it looks like in practice</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--coral)">G4 schedules the next debrief before the current one ends</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--coral)">SM asks "what did you develop this month?" before "what did you deliver?"</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--coral)">Group HR provides SM with development frameworks, not just administrative support</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--coral)">Trainees can name their next milestone and what it requires to reach it</div>
+      </div>
+      <div style="padding:12px;background:var(--surface2);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What it is not</div>
+        <div style="font-size:12px;color:var(--ink4);font-weight:300;line-height:1.7;font-style:italic">We Develop does not mean compulsory training attendance or tick-box completion. It means genuine investment in the person in front of you &mdash; structured, frequent, and treated as the most important thing a G4 does.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px">
+  <div style="background:var(--teal);padding:16px 22px;display:flex;justify-content:space-between;align-items:center">
+    <div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Pillar 02 of 04</div>
+    <div style="font-family:var(--fd);font-size:28px;font-weight:700;color:#fff">We Deliver</div></div>
+    <div style="font-size:36px;color:rgba(255,255,255,0.25)">&#9673;</div>
+  </div>
+  <div style="padding:18px 22px">
+    <div style="font-family:var(--fd);font-size:15px;font-style:italic;color:var(--ink3);line-height:1.7;margin-bottom:12px;border-left:3px solid var(--teal);padding-left:12px">"At Valentis, we do what we say. Pipeline logs submitted on the last day of the month. Check-ins conducted in weeks 10&ndash;14. Milestones processed the month they are achieved. Delivery is not just a business metric &mdash; it is a cultural standard."</div>
+    <p style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Delivery culture at Valentis operates at two levels: operational delivery (programme targets, rig output) and interpersonal delivery (commitments kept, processes followed, people not left waiting). Both matter. An SM who delivers operationally but misses every month-3 check-in has not delivered &mdash; because the pipeline suffers and people exit.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What it looks like in practice</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--teal)">Pipeline log submitted without reminder &mdash; every G4, every month</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--teal)">Month-3 check-ins happen in weeks 10&ndash;14, not when the SM finds time</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--teal)">Grade milestones processed the same month they are achieved</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--teal)">Group HR responds to SM requests within 48 hours</div>
+      </div>
+      <div style="padding:12px;background:var(--surface2);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What it is not</div>
+        <div style="font-size:12px;color:var(--ink4);font-weight:300;line-height:1.7;font-style:italic">We Deliver does not mean output at the expense of people. It means following through &mdash; on commitments to trainees, to processes, and to the standard. Delivering results by skipping people commitments is a culture failure.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px">
+  <div style="background:var(--gold);padding:16px 22px;display:flex;justify-content:space-between;align-items:center">
+    <div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Pillar 03 of 04</div>
+    <div style="font-family:var(--fd);font-size:28px;font-weight:700;color:#fff">We Belong</div></div>
+    <div style="font-size:36px;color:rgba(255,255,255,0.25)">&#9671;</div>
+  </div>
+  <div style="padding:18px 22px">
+    <div style="font-family:var(--fd);font-size:15px;font-style:italic;color:var(--ink3);line-height:1.7;margin-bottom:12px;border-left:3px solid var(--gold);padding-left:12px">"At Valentis, nobody is invisible. The SM knows your name in the first week. The team marks your milestones. If you are struggling, there is someone to tell. Remote does not mean alone."</div>
+    <p style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Belonging at a remote mineral exploration site requires active cultivation. It does not happen by accident. The SM is the belonging architect at each site &mdash; and the practices that create belonging (personal greetings, buddy systems, check-ins, milestone celebrations) are EX design decisions, not natural outcomes.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What it looks like in practice</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--gold)">SM greets every new employee by name on day 1</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--gold)">Buddy assigned before the new employee arrives on site</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--gold)">Team acknowledges every grade milestone publicly</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--gold)">SM checks in after leave, difficult periods, or site changes</div>
+      </div>
+      <div style="padding:12px;background:var(--surface2);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What it is not</div>
+        <div style="font-size:12px;color:var(--ink4);font-weight:300;line-height:1.7;font-style:italic">We Belong does not mean forced social events or performative team-building. It means the SM knows who is on the team and gives them genuine personal attention. At 42 people total, this is entirely achievable.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px">
+  <div style="background:var(--coral);padding:16px 22px;display:flex;justify-content:space-between;align-items:center">
+    <div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Pillar 04 of 04</div>
+    <div style="font-family:var(--fd);font-size:28px;font-weight:700;color:#fff">We Earn It</div></div>
+    <div style="font-size:36px;color:rgba(255,255,255,0.25)">&#9733;</div>
+  </div>
+  <div style="padding:18px 22px">
+    <div style="font-family:var(--fd);font-size:15px;font-style:italic;color:var(--ink3);line-height:1.7;margin-bottom:12px;border-left:3px solid var(--coral);padding-left:12px">"At Valentis, progression is earned and recognised. Every grade milestone represents real achievement &mdash; and is treated as such. The G1&rarr;G4 journey is hard. The celebration of completing it should match the difficulty of doing it."</div>
+    <p style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">We Earn It is the recognition and meritocracy pillar. It establishes that grade progression is genuinely meaningful &mdash; earned through demonstrated capability, not automatic with time. And that earning it is visibly, publicly, tangibly acknowledged. The grade step-up pay increase, the SM announcement, the Group HR letter &mdash; these are the mechanisms of We Earn It.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What it looks like in practice</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--coral)">Every grade progression announced to the full team by SM on the day</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--coral)">Pay step-up confirmed in writing before the public announcement</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--coral)">Group HR acknowledgement letter sent within 5 working days of grading</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px;padding:5px 8px;background:var(--surface2);border-radius:2px;border-left:2px solid var(--coral)">G4 certification treated as the highest individual achievement at site level</div>
+      </div>
+      <div style="padding:12px;background:var(--surface2);border-radius:3px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What it is not</div>
+        <div style="font-size:12px;color:var(--ink4);font-weight:300;line-height:1.7;font-style:italic">We Earn It does not mean withholding recognition until perfection. It means acknowledging every real milestone &mdash; including commitment milestones like month 3 and the 6-month mark &mdash; not only formal grade changes.</div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 05 — Culture Assessment (static HTML, no JS object strings) ─────────
+document.getElementById('page-assessment').innerHTML=`
+<div class="pe">Section 05 — Culture Assessment</div>
+<div class="pt">Culture<br><em>Assessment</em></div>
+<p class="pd">The Valentis Culture Assessment is the diagnostic tool Group HR uses to evaluate culture at each site against the four pillars. It is based on observable behaviours &mdash; not survey scores or SM self-report &mdash; and is designed to be conducted during an annual site visit or a structured SM conversation. The output is a site culture score per pillar and an overall culture rating.</p>
+<div class="inf t"><strong>Assessment principle:</strong> Ask for evidence, not intention. "Do you hold monthly recognition?" is answered with what the SM intends. "Tell me about the last person you recognised publicly, and when that was" is answered with what the SM actually does. Culture is revealed in specifics.</div>
+<div class="card">
+  <div class="ct">Culture Assessment Tool &mdash; <em>Group HR Field Guide</em></div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('ca-p1',this)">We Develop</div>
+    <div class="tab" onclick="showTab('ca-p2',this)">We Deliver</div>
+    <div class="tab" onclick="showTab('ca-p3',this)">We Belong</div>
+    <div class="tab" onclick="showTab('ca-p4',this)">We Earn It</div>
+  </div>
+
+  <div id="tb-ca-p1" class="tb active">
+    <table class="dt"><thead><tr><th>#</th><th>Assessment question</th><th>Evidence to look for</th><th>Scoring guide</th></tr></thead>
+    <tbody>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">1</td><td style="font-weight:600;font-size:12.5px">What was the average G4 debrief frequency at your site last month?</td><td style="font-size:11.5px">Pipeline log debrief count field. Target: &ge;4/month per G4.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">&ge;4/month = 5pts &middot; 3&ndash;3.9 = 3pts &middot; 2&ndash;2.9 = 2pts &middot; &lt;2 = 0pts</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">2</td><td style="font-weight:600;font-size:12.5px">Walk me through what happens in a typical G4 debrief at your site.</td><td style="font-size:11.5px">SM should describe rubric use, trainee self-assessment, and next milestone discussion. A vague or generalised answer indicates low coaching culture.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Structured + rubric = 5pts &middot; Some structure = 3pts &middot; Informal = 1pt &middot; "Just a chat" = 0pts</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">3</td><td style="font-weight:600;font-size:12.5px">When did you last develop a G4 &mdash; not coach a trainee, but actively develop a G4?</td><td style="font-size:11.5px">SM development of G4s is the next level of culture. SMs who only manage operations and do not develop their G4s limit the culture ceiling.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Recent + specific = 5pts &middot; General = 3pts &middot; Cannot recall = 0pts</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">4</td><td style="font-weight:600;font-size:12.5px">Who at your site is most likely to reach G4 next &mdash; and what are you doing to develop them?</td><td style="font-size:11.5px">SM should name the person, the timeline, and specific development actions. Named candidate with a specific plan signals strong coaching culture.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Named + specific plan = 5pts &middot; Named only = 2pts &middot; Cannot identify = 0pts</td></tr>
+    </tbody></table>
+    <div style="margin-top:10px;padding:10px 14px;background:var(--surface2);border-radius:3px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--ink)">Pillar score:</strong> Sum of 4 questions &times; max 5 pts each = 20 pts per pillar. 17&ndash;20 = Strong &middot; 12&ndash;16 = Functional &middot; 8&ndash;11 = Developing &middot; Below 8 = Priority intervention required.</div>
+  </div>
+
+  <div id="tb-ca-p2" class="tb">
+    <table class="dt"><thead><tr><th>#</th><th>Assessment question</th><th>Evidence to look for</th><th>Scoring guide</th></tr></thead>
+    <tbody>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">1</td><td style="font-weight:600;font-size:12.5px">When did you last submit your pipeline log? Was it on time?</td><td style="font-size:11.5px">Pipeline log submission date vs last working day of month. Any late submission or excuse is a We Deliver flag.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">On time every month (verified) = 5pts &middot; 1&ndash;2 late in past year = 3pts &middot; Regularly late = 0pts</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">2</td><td style="font-weight:600;font-size:12.5px">How many month-3 check-ins did you conduct last quarter &mdash; and on what dates?</td><td style="font-size:11.5px">SM should be able to state the dates from memory or records. Approximate answers suggest low accountability culture.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">All on time + dates known = 5pts &middot; Most conducted = 3pts &middot; Some missed = 1pt &middot; Cannot recall = 0pts</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">3</td><td style="font-weight:600;font-size:12.5px">Tell me about a commitment you made to a team member recently. Did you follow through, and how quickly?</td><td style="font-size:11.5px">SM should give a specific example. Speed of follow-through is a culture indicator.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Specific + timely = 5pts &middot; Specific + delayed = 3pts &middot; Vague = 1pt</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">4</td><td style="font-weight:600;font-size:12.5px">What do you do when someone on your team misses a commitment they made?</td><td style="font-size:11.5px">The SM response to missed team commitments is a direct accountability culture indicator.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Clear expectation + specific response = 5pts &middot; General response = 2pts &middot; Permissive = 0pts</td></tr>
+    </tbody></table>
+    <div style="margin-top:10px;padding:10px 14px;background:var(--surface2);border-radius:3px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--ink)">Pillar score:</strong> Sum of 4 questions &times; max 5 pts each = 20 pts per pillar. 17&ndash;20 = Strong &middot; 12&ndash;16 = Functional &middot; 8&ndash;11 = Developing &middot; Below 8 = Priority intervention required.</div>
+  </div>
+
+  <div id="tb-ca-p3" class="tb">
+    <table class="dt"><thead><tr><th>#</th><th>Assessment question</th><th>Evidence to look for</th><th>Scoring guide</th></tr></thead>
+    <tbody>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">1</td><td style="font-weight:600;font-size:12.5px">Tell me about the last person who joined your site. What did you do on their first day?</td><td style="font-size:11.5px">SM should describe a personal greeting, buddy introduction, and structured first day. A generic answer indicates low belonging culture.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Personal + structured + buddy = 5pts &middot; Personal only = 3pts &middot; Standard orientation only = 1pt</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">2</td><td style="font-weight:600;font-size:12.5px">Name someone who returned from leave in the last three months. What did you do on their first day back?</td><td style="font-size:11.5px">SM should describe a proactive personal check-in. If they cannot name a recent returner or describe a check-in, the protocol is not embedded.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Named + proactive check-in = 5pts &middot; Informal check-in = 3pts &middot; No specific action = 0pts</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">3</td><td style="font-weight:600;font-size:12.5px">Which employee at your site do you know the least about personally &mdash; and what do you know about them?</td><td style="font-size:11.5px">With a small team, the SM should know something personal about everyone. This question tests the floor of belonging, not the ceiling.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Knows something about everyone = 5pts &middot; Most people = 3pts &middot; Clear gaps = 0pts</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">4</td><td style="font-weight:600;font-size:12.5px">If a team member were struggling personally, what would they do? Has this happened?</td><td style="font-size:11.5px">SM should describe a culture where employees feel safe raising personal difficulties. A real example is a strong belonging culture signal.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Clear pathway + real example = 5pts &middot; Clear pathway, no example = 3pts &middot; No clear pathway = 0pts</td></tr>
+    </tbody></table>
+    <div style="margin-top:10px;padding:10px 14px;background:var(--surface2);border-radius:3px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--ink)">Pillar score:</strong> Sum of 4 questions &times; max 5 pts each = 20 pts per pillar. 17&ndash;20 = Strong &middot; 12&ndash;16 = Functional &middot; 8&ndash;11 = Developing &middot; Below 8 = Priority intervention required.</div>
+  </div>
+
+  <div id="tb-ca-p4" class="tb">
+    <table class="dt"><thead><tr><th>#</th><th>Assessment question</th><th>Evidence to look for</th><th>Scoring guide</th></tr></thead>
+    <tbody>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">1</td><td style="font-weight:600;font-size:12.5px">Tell me about the last grade promotion at your site. How did you mark it?</td><td style="font-size:11.5px">SM should describe the team announcement, acknowledgement, and pay step-up confirmation. Administrative processing alone signals low recognition culture.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Announced + team moment + pay confirmed = 5pts &middot; Announced only = 3pts &middot; Processed administratively = 0pts</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">2</td><td style="font-weight:600;font-size:12.5px">When did you last recognise someone publicly in front of the team? What for?</td><td style="font-size:11.5px">SM should give a specific recent example &mdash; not a general statement about their management style.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Recent + specific + public = 5pts &middot; Recent but private = 3pts &middot; Cannot recall = 0pts</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">3</td><td style="font-weight:600;font-size:12.5px">What achievement at your site in the last 6 months are you most proud of &mdash; and did the team know you were proud?</td><td style="font-size:11.5px">Tests whether the SM celebrates team achievements or keeps pride internal.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Specific achievement + shared with team = 5pts &middot; Specific but kept internal = 2pts &middot; Cannot name achievement = 0pts</td></tr>
+      <tr><td style="font-family:var(--fm);font-size:11px;color:var(--coral);font-weight:700">4</td><td style="font-weight:600;font-size:12.5px">How do trainees at your site know that reaching month 3 is an achievement worth marking?</td><td style="font-size:11.5px">The month-3 commitment milestone should be acknowledged by the SM. If the SM has no answer, the milestone is invisible to trainees.</td><td style="font-size:11px;font-family:var(--fm);color:var(--teal)">Specific action at month-3 mark = 5pts &middot; Informal acknowledgement = 2pts &middot; Not marked at all = 0pts</td></tr>
+    </tbody></table>
+    <div style="margin-top:10px;padding:10px 14px;background:var(--surface2);border-radius:3px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--ink)">Pillar score:</strong> Sum of 4 questions &times; max 5 pts each = 20 pts per pillar. 17&ndash;20 = Strong &middot; 12&ndash;16 = Functional &middot; 8&ndash;11 = Developing &middot; Below 8 = Priority intervention required.</div>
+  </div>
+</div>
+
+<div style="background:var(--teal);border-radius:4px;padding:24px;margin-bottom:14px">
+  <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#fff;margin-bottom:14px">Culture Score Calculator</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div><label class="cl">We Develop (0&ndash;20)</label><input id="cd-dev" class="ci" type="number" min="0" max="20" value="8" oninput="calcCulture()"></div>
+    <div><label class="cl">We Deliver (0&ndash;20)</label><input id="cd-del" class="ci" type="number" min="0" max="20" value="12" oninput="calcCulture()"></div>
+    <div><label class="cl">We Belong (0&ndash;20)</label><input id="cd-bel" class="ci" type="number" min="0" max="20" value="10" oninput="calcCulture()"></div>
+    <div><label class="cl">We Earn It (0&ndash;20)</label><input id="cd-ear" class="ci" type="number" min="0" max="20" value="7" oninput="calcCulture()"></div>
+  </div>
+  <div id="culture-result"></div>
+</div>
+`;
+</script>
+
+
+<script>
+// ── PAGE 06 — Gap Analysis (static HTML) ─────────────────────────────────────
+document.getElementById('page-gaps').innerHTML=`
+<div class="pe">Section 06 &mdash; Gap Analysis</div>
+<div class="pt">Culture Gap<br><em>Analysis</em></div>
+<p class="pd">The culture gap analysis maps where each country currently sits against the target culture score for each pillar &mdash; and identifies the specific behavioural interventions required to close the gap. The gap analysis is the bridge between assessment and activation.</p>
+
+<div class="card">
+  <div class="ct">Culture Gap &mdash; Country &times; Pillar Matrix</div>
+  <table class="dt">
+    <thead>
+      <tr><th>Country</th><th>We Develop (target 8)</th><th>We Deliver (target 9)</th><th>We Belong (target 8)</th><th>We Earn It (target 8)</th><th>Overall gap</th><th>Priority pillar</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="font-weight:700">Thailand</td>
+        <td><span style="font-weight:700;color:var(--green)">8/10</span> <span style="font-size:11px;color:var(--green)">(&#10003;)</span></td>
+        <td><span style="font-weight:700;color:var(--green)">9/10</span> <span style="font-size:11px;color:var(--green)">(&#10003;)</span></td>
+        <td><span style="font-weight:700;color:var(--green)">8/10</span> <span style="font-size:11px;color:var(--green)">(&#10003;)</span></td>
+        <td><span style="font-weight:700;color:var(--green)">8/10</span> <span style="font-size:11px;color:var(--green)">(&#10003;)</span></td>
+        <td style="font-weight:700;color:var(--green)">At target</td>
+        <td style="font-weight:600;color:var(--ink4)">&mdash;</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700">Laos</td>
+        <td><span style="font-weight:700;color:var(--gold)">6/10</span> <span style="font-size:11px;color:var(--gold)">(-2)</span></td>
+        <td><span style="font-weight:700;color:var(--gold)">7/10</span> <span style="font-size:11px;color:var(--gold)">(-2)</span></td>
+        <td><span style="font-weight:700;color:var(--gold)">7/10</span> <span style="font-size:11px;color:var(--gold)">(-1)</span></td>
+        <td><span style="font-weight:700;color:var(--gold)">6/10</span> <span style="font-size:11px;color:var(--gold)">(-2)</span></td>
+        <td style="font-weight:700;color:var(--gold)">7 pts below</td>
+        <td style="font-weight:600;color:var(--coral)">We Develop</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700">Indonesia</td>
+        <td><span style="font-weight:700;color:var(--coral)">4/10</span> <span style="font-size:11px;color:var(--coral)">(-4)</span></td>
+        <td><span style="font-weight:700;color:var(--coral)">5/10</span> <span style="font-size:11px;color:var(--coral)">(-4)</span></td>
+        <td><span style="font-weight:700;color:var(--coral)">5/10</span> <span style="font-size:11px;color:var(--coral)">(-3)</span></td>
+        <td><span style="font-weight:700;color:var(--coral)">5/10</span> <span style="font-size:11px;color:var(--coral)">(-3)</span></td>
+        <td style="font-weight:700;color:var(--coral)">14 pts below</td>
+        <td style="font-weight:600;color:var(--coral)">We Develop</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700">Myanmar</td>
+        <td><span style="font-weight:700;color:var(--red)">2/10</span> <span style="font-size:11px;color:var(--red)">(-6)</span></td>
+        <td><span style="font-weight:700;color:var(--red)">3/10</span> <span style="font-size:11px;color:var(--red)">(-6)</span></td>
+        <td><span style="font-weight:700;color:var(--coral)">4/10</span> <span style="font-size:11px;color:var(--coral)">(-4)</span></td>
+        <td><span style="font-weight:700;color:var(--red)">3/10</span> <span style="font-size:11px;color:var(--red)">(-5)</span></td>
+        <td style="font-weight:700;color:var(--red)">21 pts below</td>
+        <td style="font-weight:600;color:var(--red)">We Develop (critical)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <div class="ct">Gap Closure &mdash; Priority Interventions by Country</div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('gap-la',this)">Laos</div>
+    <div class="tab" onclick="showTab('gap-mm',this)">Myanmar</div>
+    <div class="tab" onclick="showTab('gap-id',this)">Indonesia</div>
+    <div class="tab" onclick="showTab('gap-th',this)">Thailand</div>
+  </div>
+
+  <div id="tb-gap-la" class="tb active">
+    <div style="padding:12px;background:var(--coral-dim);border-left:3px solid var(--coral);border-radius:0 3px 3px 0;margin-bottom:12px">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--coral);margin-bottom:3px">PRIORITY PILLARS</div>
+      <div style="font-weight:700;font-size:13px;color:var(--ink)">We Develop + We Earn It</div>
+      <div style="font-size:12.5px;color:var(--ink3);font-weight:300;margin-top:4px">Laos culture is functional but has structural vulnerabilities. The retirement of experienced G4s will remove informal culture carriers. Formalising what they model is urgent before they leave.</div>
+    </div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:10px 14px;border-left:3px solid var(--coral);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cc">We Develop</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q2 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Activate peer coaching mentoring &mdash; retiring G4s formally mentor G3 bench candidates before departure. Coaching culture transfers with them, not just technical skill.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--coral);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cc">We Earn It</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q3 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Design G4 retirement ceremony standard &mdash; retiring G4s should be honoured as culture architects, not processed out administratively. Sets the recognition tone for the whole site.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--gold);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cg">We Belong</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q3 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Brief any incoming external G3 hire on Laos site culture before their first day. Buddy from the G4 cohort &mdash; not just a G2. Cultural continuity must be built into new hire onboarding.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--teal);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip ct2">We Deliver</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q2 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Pipeline log compliance already 85% &mdash; brief SM on targeting 100% by end of Q2 2026. Simple accountability ask with low resistance expected from this site.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tb-gap-mm" class="tb">
+    <div style="padding:12px;background:var(--coral-dim);border-left:3px solid var(--coral);border-radius:0 3px 3px 0;margin-bottom:12px">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--coral);margin-bottom:3px">PRIORITY PILLARS</div>
+      <div style="font-weight:700;font-size:13px;color:var(--ink)">We Develop (critical) + We Deliver + We Earn It</div>
+      <div style="font-size:12.5px;color:var(--ink3);font-weight:300;margin-top:4px">Myanmar has the largest culture gap in the group. All four pillars are below target. The G4 coaching programme addresses We Develop directly &mdash; the other pillars require SM behaviour change through the same programme.</div>
+    </div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:10px 14px;border-left:3px solid var(--coral);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cc">We Develop</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q2&ndash;Q3 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">G4 coaching programme in progress. Myo H. briefed on coaching culture language &mdash; G4s must hear that coaching is valued, not just required. Month-3 check-in compliance from 55% to 100% is the lead indicator of success.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--teal);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip ct2">We Deliver</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q2 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Myo H. personally commits to on-time pipeline log as a visible accountability model. Group HR confirms this expectation in the coaching programme brief. G4s follow the SM example.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--coral);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cc">We Earn It</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q2 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Introduce milestone acknowledgement for month-3 completion &mdash; not a grade promotion, but a clear acknowledgement that reaching month 3 is meaningful. Simple, low-cost, high-signal intervention.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--gold);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cg">We Belong</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q3 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Myanmar-language check-in guide developed for Myo H. Buddy programme introduced for all new G1s. SM briefed on the return-from-leave belonging protocol.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tb-gap-id" class="tb">
+    <div style="padding:12px;background:var(--coral-dim);border-left:3px solid var(--coral);border-radius:0 3px 3px 0;margin-bottom:12px">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--coral);margin-bottom:3px">PRIORITY PILLARS</div>
+      <div style="font-weight:700;font-size:13px;color:var(--ink)">We Develop + We Deliver</div>
+      <div style="font-size:12.5px;color:var(--ink3);font-weight:300;margin-top:4px">Indonesia culture is compromised by structural stress (G3 vacancies) and SM retention risk. Culture interventions must follow G3 hires &mdash; attempting culture change on an overwhelmed team is counterproductive.</div>
+    </div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:10px 14px;border-left:3px solid var(--coral);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cc">We Develop</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q3 2026 (post G3 hire)</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">G3 vacancy fills restore coaching capacity. Once G4s are no longer covering G3 gaps, debrief frequency can return to target. Brief Wirawan that G4 debrief accountability is a Q3 2026 priority once G3s are in seat.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--teal);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip ct2">We Deliver</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q2 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Wirawan personally demonstrates delivery culture under pressure &mdash; pipeline log compliance despite operational stress. Group HR recognises this publicly in the monthly COO brief.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--gold);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cg">We Belong</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q2 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Communicate honestly to the Indonesia team about the G3 hire timeline and Wirawan retention plan. Belonging requires trust &mdash; the team needs to know the plan, not discover it through rumour.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--coral);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cc">We Earn It</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q3 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Wirawan leads a site recognition moment in Q3 2026 &mdash; marking the team resilience through the G3 vacancy period publicly. Recognition of difficulty overcome is a powerful belonging and recognition moment combined.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tb-gap-th" class="tb">
+    <div style="padding:12px;background:var(--coral-dim);border-left:3px solid var(--coral);border-radius:0 3px 3px 0;margin-bottom:12px">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--coral);margin-bottom:3px">PRIORITY PILLARS</div>
+      <div style="font-weight:700;font-size:13px;color:var(--ink)">We Develop (bench succession only)</div>
+      <div style="font-size:12.5px;color:var(--ink3);font-weight:300;margin-top:4px">Thailand is at or near target across all pillars. The only culture gap is succession &mdash; the coaching and recognition culture is SM-dependent. Formalising it protects against key person risk when the SM or top G4 moves on.</div>
+    </div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:10px 14px;border-left:3px solid var(--coral);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cc">We Develop</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q2 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Document the Thailand coaching culture model formally &mdash; SM writes a one-page guide on how coaching runs at this site. This becomes the group standard used in SM briefings in other countries.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--teal);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip ct2">We Deliver</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Ongoing</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">No gap. Maintain current standard. Flag any compliance drops to Group HR immediately &mdash; Thailand is the accountability benchmark and any slippage here signals something significant.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--gold);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cg">We Belong</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q4 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Develop Country 5 deployment plan that actively maintains Thailand team belonging. The departure of a top G4 must be managed as a belonging moment &mdash; with clear communication and a named replacement plan.</div>
+      </div>
+      <div style="padding:10px 14px;border-left:3px solid var(--coral);background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span class="chip cc">We Earn It</span><span style="font-family:var(--fm);font-size:10px;color:var(--ink5)">Q3 2026</span></div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Identify and brief a Thailand SM successor. The act of identifying a successor is itself a We Earn It moment &mdash; it signals that being excellent at the SM role is recognised with succession investment.</div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+<script>
+// ── PAGE 07 ──────────────────────────────────────────────────────
+document.getElementById('page-activation').innerHTML=`
+<div class="pe">Section 07 — Culture Activation</div>
+<div class="pt">Culture<br><em>Activation</em></div>
+<p class="pd">Culture activation is the process of moving the four pillars from a framework document into the daily behaviour of SMs, G4s, and trainees. Culture does not activate through communication alone — it activates through consistent, repeated, visible behaviour by the people with the most influence on site: the SM first, then G4s, then the team. Group HR's role is to design the activation mechanisms and brief the SMs who deliver them.</p>
+<div class="vx">
+  <div class="vx-ey">The Culture Activation Model</div>
+  <div class="vx-ti">Brief the SM · Model the behaviour · Measure the output · Reinforce what works · Repeat quarterly.</div>
+  <div class="vx-bo">Culture activation at Valentis is SM-led, Group HR-designed, and COO-visible. Group HR cannot be present at every site every day — but the SM is. Every culture intervention must therefore work through the SM, not around them. This means SM briefing quality is the single most important culture activation variable. The SM who understands the four pillars and believes in them will activate the culture. The SM who sees them as administrative compliance will not.</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">SM Culture Briefing — <em>Annual Protocol</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Group HR conducts an annual culture briefing with each SM. The briefing is not a lecture — it is a conversation that connects the culture pillars to the SM's own site outcomes.</div>
+    ${[
+      {step:'1',title:'Review the culture assessment results',desc:'Share the SM\'s own site culture scores per pillar. Walk through the evidence — specific debrief frequency, check-in compliance, recognition events — not general impressions. The assessment data drives the conversation.',dur:'15 min',col:'var(--coral)'},
+      {step:'2',title:'Name one culture success from the past year',desc:'Before identifying gaps, affirm what the SM has done well. Specific, evidence-based recognition of culture behaviour models the We Earn It pillar in the briefing itself.',dur:'10 min',col:'var(--teal)'},
+      {step:'3',title:'Agree the priority pillar for the year',desc:'Based on the gap analysis, agree the one pillar the SM will focus most energy on. Not all four — one. Clear priority. Agreed actions. Specific timeline. Written commitment.',dur:'20 min',col:'var(--gold)'},
+      {step:'4',title:'Brief the pillar language and G4 rollout',desc:'Give the SM the language to use with G4s: how to introduce the culture pillars, how to reference them in debriefs, how to make them part of the team\'s vocabulary without it feeling forced.',dur:'15 min',col:'var(--coral)'},
+      {step:'5',title:'Set the quarterly check-in cadence',desc:'Agree dates for quarterly culture check-in conversations. Brief is reviewed against agreed actions. SM receives Group HR support for any activation challenges. No surprises at the annual review.',dur:'10 min',col:'var(--teal)'}
+    ].map(function(d){return '<div style="display:flex;gap:12px;margin-bottom:10px;padding:12px;background:var(--surface2);border-radius:3px"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:'+d.col+';line-height:1;flex-shrink:0;width:28px">'+d.step+'</div><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:3px">'+d.title+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.desc+'</div></div><div style="font-family:var(--fm);font-size:10px;color:var(--ink5);flex-shrink:0">'+d.dur+'</div></div>';}).join('')}
+    <div style="margin-top:4px;padding:10px 12px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:0 3px 3px 0;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Total briefing time: 70 minutes per SM per year. Four SMs = 4.7 hours of Group HR time annually. This is the highest-ROI Group HR investment in culture at Valentis.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Culture Language — <em>How We Talk About the Pillars</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">Culture language is how the pillars become part of everyday conversation — not posters on the wall, but phrases that SMs and G4s use naturally in check-ins, debriefs, and team conversations.</div>
+    ${[
+      {pillar:'We Develop',phrases:['"What are you developing this month?" (SM to G4 — monthly)','\"What did your G4 work on with you in your last debrief?\" (SM to trainee)','\"I am naming you as the bench candidate for G4. That means I am investing in your development now.\"','\"Your coaching quality this month was strong — I noticed the improvement in the trainee\'s rubric score.\"'],col:'var(--coral)'},
+      {pillar:'We Deliver',phrases:['"Pipeline log is due Friday. No exceptions — it is how we track our people." (SM to G4)','\"I said I would follow up on that by Wednesday. Here it is.\" (Group HR — modelling delivery)','\"Month-3 check-in for [name] is this week. It is in my diary. It happens.\" (SM)','\"What commitment did you make last month that you need to follow through on this week?\" (SM to G4)'],col:'var(--teal)'},
+      {pillar:'We Belong',phrases:['"[Name] is back from leave today. I am checking in with them this afternoon." (SM — modelling belonging)','\"I want every new person to know at least five team members by name by the end of week 1.\" (SM to buddy)','\"Who on the team do you think might be struggling right now? Let\'s talk about them.\" (Group HR to SM)','\"You have been here six months. I want to know how you are finding it — honestly.\" (SM to G2)'],col:'var(--gold)'},
+      {pillar:'We Earn It',phrases:['"[Name] graded to G3 this month. I want everyone to hear that — it is a real achievement." (SM — public)','\"The step-up in your pay reflects what you have earned. It is not automatic — you worked for it.\" (SM)','\"I am recognising [name] this month specifically for coaching quality, not just output.\" (SM — modelling recognition)','\"Tell me about the last time you recognised someone on your team. When was it, and what for?\" (Group HR to SM)'],col:'var(--coral)'}
+    ].map(function(d){return '<div style="margin-bottom:10px"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:5px;padding-left:10px;border-left:3px solid '+d.col+'">'+d.pillar+'</div>'+d.phrases.map(function(p){return '<div style="font-size:12px;color:var(--ink3);font-weight:300;font-style:italic;padding:5px 10px;background:var(--surface2);border-radius:2px;margin-bottom:3px">'+p+'</div>';}).join('')+'</div>';}).join('')}
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Culture Calendar — <em>Annual Activation Rhythm</em></div>
+  <table class="dt">
+    <thead><tr><th>Month</th><th>Culture activation event</th><th>Pillar</th><th>Owner</th><th>All countries?</th></tr></thead>
+    <tbody>
+      ${[
+        {m:'January',ev:'Group HR sends annual culture brief to all SMs — pillar refresh, this year\'s focus pillar per country',p:'All',o:'Group HR',all:'Yes'},
+        {m:'February',ev:'SM conducts team pillar introduction — at site level, in local language, no formal format required',p:'All',o:'SM',all:'Yes'},
+        {m:'March–April',ev:'Annual culture assessment conducted by Group HR (SM conversation or site visit)',p:'All — diagnostic',o:'Group HR',all:'Yes'},
+        {m:'May',ev:'Culture gap results shared with each SM — their score, the priority pillar, the agreed actions',p:'Targeted',o:'Group HR',all:'Yes'},
+        {m:'June',ev:'Mid-year culture check-in — Group HR reviews each SM\'s progress on priority pillar actions',p:'Targeted',o:'Group HR',all:'Yes'},
+        {m:'July–August',ev:'Pulse survey includes culture pillar questions — employee experience of the pillars measured',p:'All — measurement',o:'Group HR',all:'Yes'},
+        {m:'September',ev:'Group HR shares pulse survey culture results with each SM — employee perception vs observed behaviour',p:'All',o:'Group HR',all:'Yes'},
+        {m:'October',ev:'SM-led site recognition event — year\'s milestones marked, G2/G3/G4 gradings celebrated',p:'We Earn It',o:'SM',all:'Yes'},
+        {m:'November',ev:'Culture score update — Group HR re-assesses culture dimensions using Q3 data',p:'All — measurement',o:'Group HR',all:'Yes'},
+        {m:'December',ev:'COO culture brief — annual culture report with scores, trends, gap closure, and next year\'s priority',p:'All',o:'Group HR → COO',all:'Yes'}
+      ].map(function(r){
+        return '<tr><td style="font-weight:600;font-family:var(--fm);font-size:11px;color:var(--coral)">'+r.m+'</td>'
+          +'<td>'+r.ev+'</td>'
+          +'<td><span class="chip cm">'+r.p+'</span></td>'
+          +'<td>'+r.o+'</td>'
+          +'<td style="text-align:center;color:var(--green)">'+r.all+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── PAGE 08 ──────────────────────────────────────────────────────
+document.getElementById('page-coo').innerHTML=`
+<div class="pe">Section 08 — COO Culture Brief</div>
+<div class="pt">COO Culture<br><em>Brief</em></div>
+<p class="pd">The COO culture brief translates the Valentis culture framework into the commercial language the COO uses — delivery percentages, attrition cost, pipeline conversion. Culture strategy at Valentis is not a people initiative separate from operations — it is the explanation for why Thailand delivers 105% and Myanmar delivers 80%, and the plan for closing that gap.</p>
+<div class="card">
+  <div class="ct">The Commercial Case for Culture — <em>COO Summary</em></div>
+  <div style="background:var(--surface2);padding:20px;border-radius:3px;font-size:13.5px;color:var(--ink3);line-height:2;font-weight:300;margin-bottom:14px">
+    <p style="margin-bottom:12px">"Valentis does not currently have a defined culture framework. What we have are four SMs with four different management styles producing four different site cultures — and the performance data shows it. <strong style="color:var(--ink)">Thailand, with the strongest coaching and accountability culture, delivers 105% and has 10% attrition. Myanmar, with the weakest, delivers 80% and has 28% attrition.</strong> The 25pp delivery gap and the 18pp attrition gap are substantially culture gaps — and culture can be changed."</p>
+    <p style="margin-bottom:12px">"I am proposing a four-pillar Valentis culture framework — We Develop, We Deliver, We Belong, We Earn It — built from what Thailand already demonstrates works. <strong style="color:var(--ink)">The activation strategy is SM-led, not Group HR-delivered.</strong> I brief each SM annually, agree the priority pillar for their site, and measure quarterly. The total Group HR time investment is less than five hours per year across all four SMs."</p>
+    <p style="margin-bottom:12px">"The commercial return is measurable. <strong style="color:var(--ink)">If culture activation moves Myanmar's G4 coaching from 1.2 to 4 debriefs/month</strong> — which the G4 coaching programme is already doing — conversion improves from 58% toward 70%, delivery improves toward 88%, and the pipeline supply gap closes. That is worth $42K–$63K in annual delivery revenue improvement, plus the pipeline investment protection."</p>
+    <p>"I need one decision from you: <strong style="color:var(--ink)">formal endorsement of the four culture pillars</strong>, so that I can brief all SMs with your authority behind the framework, not just as a Group HR recommendation. This does not require a corporate values launch or a communications campaign — it requires each SM to hear that these four pillars are the COO's expectation of how a Valentis site runs."</p>
+  </div>
+  <div class="inf t"><strong>The single COO action required:</strong> Verbal endorsement of the four culture pillars in the next monthly people brief. Group HR handles everything else — the SM briefings, the assessment tool, the culture calendar, and the quarterly reporting. The COO's role is to make the pillars credible by owning them, not to deliver them.</div>
+</div>
+<div class="card">
+  <div class="ct">Culture Impact — Decision Register</div>
+  <table class="dt">
+    <thead><tr><th>Culture decision</th><th>Delivery / attrition impact</th><th>COO action</th><th>Timeline</th></tr></thead>
+    <tbody>
+      ${[
+        {dec:'Endorse the four Valentis culture pillars',impact:'Gives Group HR the authority to hold SMs accountable to culture standards, not just operational KPIs. Without COO endorsement, culture is a Group HR preference, not a company standard.',action:'Verbal endorsement in monthly people brief. Reference the pillars in any SM conversation where culture behaviours are discussed.',tl:'Q2 2026'},
+        {dec:'Require Myanmar culture assessment before Q3 2026',impact:'Myanmar has the largest culture gap and the highest attrition. A Q2 2026 assessment baseline allows Group HR to demonstrate culture improvement by Q4 2026 — timed to the coaching programme success measure.',action:'Confirm support for Group HR Myanmar site visit in Q2 2026. The visit serves both culture assessment and coaching programme observation.',tl:'Q2 2026'},
+        {dec:'Include culture scores in monthly COO people brief',impact:'Culture score visibility at COO level signals that culture is a performance metric, not a soft add-on. SMs who know the COO sees their culture score behave differently than SMs who do not.',action:'Agree to receive a one-line culture score update (per pillar per country) in the monthly people brief from Q3 2026 onward.',tl:'Q3 2026'},
+        {dec:'Recognise Thailand SM as the culture benchmark',impact:'Thailand SM is the group\'s best culture carrier. Naming this publicly gives the Thailand model legitimacy as the group standard — and gives the SM recognition for something beyond operational delivery.',action:'Reference Thailand SM\'s coaching and recognition culture practices in the next group leadership conversation or COO communication to SMs.',tl:'Q2 2026'}
+      ].map(function(r){
+        return '<tr><td style="font-weight:700">'+r.dec+'</td>'
+          +'<td style="font-size:12.5px">'+r.impact+'</td>'
+          +'<td style="font-size:12.5px;color:var(--teal)">'+r.action+'</td>'
+          +'<td style="font-weight:700;font-family:var(--fm);font-size:11px;color:var(--coral)">'+r.tl+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── CALCULATOR ────────────────────────────────────────────────────
+function calcCulture(){
+  var ids=['cd-dev','cd-del','cd-bel','cd-ear'];
+  var labels=['We Develop','We Deliver','We Belong','We Earn It'];
+  var targets=[8,9,8,8];
+  var scores=ids.map(function(id){return Math.min(20,Math.max(0,parseFloat(document.getElementById(id).value)||0));});
+  var total=scores.reduce(function(a,b){return a+b},0);
+  var maxTotal=80;
+  var pct=Math.round(total/maxTotal*10);
+  var col=pct>=8?'rgba(45,122,74,0.9)':pct>=6?'rgba(184,150,46,0.9)':'rgba(192,83,58,0.9)';
+  var label=pct>=8?'Strong culture foundation':pct>=6?'Functional — targeted interventions needed':pct>=4?'Developing — priority SM briefing required':'Culture deficit — immediate action';
+  document.getElementById('culture-result').innerHTML=
+    '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px">'
+    +scores.map(function(s,i){
+      var pillarPct=Math.round(s/20*10);
+      var pc=pillarPct>=8?'rgba(45,122,74,0.9)':pillarPct>=6?'rgba(184,150,46,0.9)':'rgba(192,83,58,0.9)';
+      return '<div style="text-align:center"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:'+pc+';line-height:1">'+s+'</div><div style="font-family:var(--fm);font-size:7px;color:rgba(255,255,255,0.3);margin-top:2px">'+labels[i].toUpperCase()+'</div></div>';
+    }).join('')
+    +'<div style="text-align:center;border-left:1px solid rgba(255,255,255,0.1);padding-left:10px"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:'+col+';line-height:1">'+total+'</div><div style="font-family:var(--fm);font-size:7px;color:rgba(255,255,255,0.3);margin-top:2px">TOTAL / 80</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(255,255,255,0.06);border-radius:3px;padding:12px;font-size:12.5px;color:rgba(255,255,255,0.5);line-height:1.7">'
+    +'<strong style="color:'+col+'">'+label+'</strong> · Score '+total+'/80 ('+Math.round(total/maxTotal*100)+'%). '
+    +'Priority pillar: <span style="color:rgba(255,200,180,0.8)">'+labels[scores.indexOf(Math.min.apply(null,scores))]+'</span> at '+Math.min.apply(null,scores)+'/20.'
+    +'</div>';
+}
+calcCulture();
+</script>

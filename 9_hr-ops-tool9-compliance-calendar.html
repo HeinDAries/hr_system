@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Compliance Calendar & Payroll Deadlines — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#1a1a2e; --slate:#2d3142; --amber:#c9802a; --amber-light:#e8a84a;
+    --amber-pale:#fdf3e3; --steel:#4a5568; --mist:#f4f5f7; --white:#ffffff;
+    --border:#dde1ea; --success:#2d7d46; --success-bg:#edf7f1;
+    --warning:#b45309; --warning-bg:#fef3cd; --danger:#b91c1c; --danger-bg:#fef2f2;
+    --info:#1e5f74; --info-bg:#e8f4f8; --purple:#5b21b6; --purple-bg:#ede9fe;
+    --tag-laos:#1e5f74; --tag-myanmar:#6b3a2a; --tag-indonesia:#1a4731; --tag-thailand:#3b2a6e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--mist);color:var(--ink);min-height:100vh;}
+
+  .header{background:var(--slate);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:64px;border-bottom:3px solid var(--amber);}
+  .header-left{display:flex;align-items:center;gap:16px;}
+  .dept-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:2px;border:1px solid var(--amber);padding:3px 8px;border-radius:2px;}
+  .header-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:600;}
+  .header-meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8899aa;letter-spacing:1px;}
+
+  .tool-header{background:var(--white);padding:28px 40px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:24px;}
+  .tool-title-block h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+  .tool-title-block p{font-size:13px;color:var(--steel);max-width:620px;line-height:1.6;}
+  .tool-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--amber-pale);color:var(--amber);border:1px solid var(--amber-light);padding:4px 10px;border-radius:2px;letter-spacing:1px;white-space:nowrap;margin-top:4px;}
+
+  .stats-bar{background:var(--slate);padding:16px 40px;display:flex;}
+  .stat-item{flex:1;text-align:center;padding:0 14px;border-right:1px solid rgba(255,255,255,0.1);}
+  .stat-item:last-child{border-right:none;}
+  .stat-number{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500;color:var(--amber-light);display:block;}
+  .stat-number.red{color:#f87171;} .stat-number.green{color:#6ee7b7;} .stat-number.yellow{color:#fcd34d;}
+  .stat-label{font-size:11px;color:#99aabb;letter-spacing:0.5px;margin-top:2px;}
+
+  .main{padding:28px 40px;display:flex;flex-direction:column;gap:24px;}
+  .tab-bar{display:flex;border-bottom:2px solid var(--border);}
+  .tab-btn{padding:10px 22px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:500;color:var(--steel);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.15s;}
+  .tab-btn.active{color:var(--amber);border-bottom-color:var(--amber);font-weight:600;}
+  .tab-btn:hover:not(.active){color:var(--ink);}
+  .tab-content{display:none;} .tab-content.active{display:block;}
+
+  .controls-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px;}
+  .filter-select{height:38px;padding:0 12px;border:1px solid var(--border);border-radius:4px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--steel);background:var(--white);cursor:pointer;outline:none;}
+  .btn{height:38px;padding:0 18px;border-radius:4px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+  .btn-primary{background:var(--amber);color:var(--white);} .btn-primary:hover{background:var(--amber-light);}
+  .btn-outline{background:var(--white);color:var(--slate);border:1px solid var(--border);} .btn-outline:hover{border-color:var(--amber);color:var(--amber);}
+
+  /* ── CALENDAR ── */
+  .cal-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+  .cal-wrap{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .cal-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+  .cal-month-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);}
+  .cal-nav-btns{display:flex;gap:8px;}
+  .cal-nav-btn{width:32px;height:32px;border-radius:4px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:14px;color:var(--steel);display:flex;align-items:center;justify-content:center;}
+  .cal-nav-btn:hover{background:var(--amber-pale);border-color:var(--amber);color:var(--amber);}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
+  .cal-dow{padding:8px 4px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--steel);letter-spacing:1px;border-bottom:1px solid var(--border);}
+  .cal-cell{min-height:88px;padding:6px 8px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;cursor:pointer;transition:background 0.1s;vertical-align:top;}
+  .cal-cell:nth-child(7n){border-right:none;}
+  .cal-cell:hover{background:var(--amber-pale);}
+  .cal-cell.other-month{background:var(--mist);}
+  .cal-cell.today{background:#fffbf0;}
+  .cal-cell.today .cal-day-num{background:var(--amber);color:var(--white);border-radius:50%;}
+  .cal-cell.has-events{background:#fffbf0;}
+  .cal-day-num{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:var(--ink);margin-bottom:4px;}
+  .cal-day-num.other{color:#ccc;}
+  .cal-event{font-size:10px;padding:2px 5px;border-radius:2px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;font-family:'IBM Plex Sans',monospace;font-weight:500;line-height:1.4;}
+  .ce-payroll{background:#fde8c0;color:#92400e;}
+  .ce-statutory{background:var(--info-bg);color:var(--info);}
+  .ce-compliance{background:var(--danger-bg);color:var(--danger);}
+  .ce-hr{background:var(--success-bg);color:var(--success);}
+  .ce-permit{background:var(--purple-bg);color:var(--purple);}
+  .ce-holiday{background:#f3f4f6;color:var(--steel);font-style:italic;}
+  .cal-more{font-size:10px;color:var(--amber);font-family:'IBM Plex Mono',monospace;cursor:pointer;padding:1px 5px;}
+
+  /* ── SIDEBAR ── */
+  .sidebar-panel{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;position:sticky;top:20px;}
+  .sp-header{padding:14px 16px;background:var(--slate);border-bottom:1px solid rgba(255,255,255,0.1);}
+  .sp-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber-light);}
+  .sp-month{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--white);margin-top:2px;}
+  .sp-body{max-height:600px;overflow-y:auto;}
+  .sp-event{display:flex;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;}
+  .sp-event:last-child{border-bottom:none;}
+  .sp-event:hover{background:var(--amber-pale);}
+  .sp-event-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);white-space:nowrap;padding-top:2px;width:50px;flex-shrink:0;}
+  .sp-event-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+  .sp-event-info{flex:1;}
+  .sp-event-title{font-size:12.5px;font-weight:600;color:var(--ink);}
+  .sp-event-sub{font-size:11px;color:var(--steel);margin-top:2px;}
+
+  /* ── PAYROLL CHECKLIST ── */
+  .checklist-layout{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+  .checklist-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .cc-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+  .cc-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--white);}
+  .cc-sub{font-size:10px;color:rgba(255,255,255,0.65);font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+  .cc-progress{font-family:'IBM Plex Mono',monospace;font-size:12px;color:rgba(255,255,255,0.8);}
+  .cc-body{padding:4px 0;}
+  .cc-item{display:flex;align-items:flex-start;gap:12px;padding:10px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;}
+  .cc-item:last-child{border-bottom:none;}
+  .cc-item:hover{background:var(--amber-pale);}
+  .cc-checkbox{width:18px;height:18px;border-radius:3px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all 0.15s;}
+  .cc-checkbox.checked{background:var(--success);border-color:var(--success);color:var(--white);}
+  .cc-info{flex:1;}
+  .cc-item-title{font-size:13px;font-weight:500;color:var(--ink);}
+  .cc-item-title.done{text-decoration:line-through;color:#aab;}
+  .cc-item-detail{font-size:11px;color:var(--steel);margin-top:2px;line-height:1.3;}
+  .cc-deadline{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 6px;border-radius:2px;flex-shrink:0;}
+  .cd-overdue{background:var(--danger-bg);color:var(--danger);}
+  .cd-soon{background:var(--warning-bg);color:var(--warning);}
+  .cd-ok{background:var(--success-bg);color:var(--success);}
+  .cc-footer{padding:10px 18px;background:var(--mist);border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .cc-prog-bar{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+  .cc-prog-fill{height:100%;border-radius:3px;background:var(--success);transition:width 0.3s;}
+  .cc-prog-pct{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--success);}
+
+  /* ── STATUTORY CALENDAR ── */
+  .statutory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .stat-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .scard-header{padding:12px 16px;}
+  .scard-country{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--white);}
+  .scard-sub{font-size:10px;color:rgba(255,255,255,0.65);font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+  .scard-body{padding:4px 0;}
+  .scard-row{display:flex;align-items:flex-start;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border);}
+  .scard-row:last-child{border-bottom:none;}
+  .sr-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);flex-shrink:0;width:70px;padding-top:1px;}
+  .sr-info{flex:1;}
+  .sr-title{font-size:12.5px;font-weight:500;color:var(--ink);}
+  .sr-note{font-size:11px;color:var(--steel);margin-top:1px;}
+
+  /* EVENT DETAIL MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,46,0.6);z-index:100;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.active{display:flex;}
+  .modal{background:var(--white);border-radius:8px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);}
+  .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1;}
+  .modal-header h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);}
+  .modal-close{width:32px;height:32px;border-radius:4px;border:1px solid var(--border);background:none;cursor:pointer;font-size:16px;color:var(--steel);display:flex;align-items:center;justify-content:center;}
+  .modal-close:hover{background:var(--mist);}
+  .modal-body{padding:24px;}
+  .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--mist);border-radius:0 0 8px 8px;}
+  .ev-hero{background:var(--slate);padding:16px 20px;border-radius:4px;margin-bottom:18px;}
+  .ev-date{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber-light);margin-bottom:5px;}
+  .ev-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--white);}
+  .ev-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+  .detail-section-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:10px;margin-top:16px;padding-bottom:5px;border-bottom:1px solid var(--amber-pale);}
+  .dl{font-size:10px;color:var(--steel);text-transform:uppercase;margin-bottom:3px;font-weight:500;}
+  .dv{font-size:13px;color:var(--ink);line-height:1.4;}
+
+  .add-event-form{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:20px 24px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-full{grid-column:1/-1;}
+  .form-group{display:flex;flex-direction:column;gap:4px;}
+  .form-group label{font-size:11px;font-weight:500;color:var(--steel);}
+  .form-group input,.form-group select,.form-group textarea{padding:8px 10px;border:1px solid var(--border);border-radius:4px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;background:var(--white);}
+  .form-group input:focus,.form-group select:focus{border-color:var(--amber);}
+  .form-group textarea{resize:vertical;min-height:60px;}
+
+  .country-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;padding:2px 7px;border-radius:2px;color:var(--white);}
+  .ct-laos{background:var(--tag-laos);} .ct-myanmar{background:var(--tag-myanmar);}
+  .ct-indonesia{background:var(--tag-indonesia);} .ct-thailand{background:var(--tag-thailand);}
+  .ct-group{background:var(--slate);}
+
+  .type-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-weight:500;}
+  .tb-payroll{background:#fde8c0;color:#92400e;}
+  .tb-statutory{background:var(--info-bg);color:var(--info);}
+  .tb-compliance{background:var(--danger-bg);color:var(--danger);}
+  .tb-hr{background:var(--success-bg);color:var(--success);}
+  .tb-permit{background:var(--purple-bg);color:var(--purple);}
+  .tb-holiday{background:#f3f4f6;color:var(--steel);}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--slate);color:var(--white);padding:12px 20px;border-radius:6px;font-size:13px;border-left:3px solid var(--amber);display:none;z-index:200;}
+  .toast.show{display:block;animation:fadeUp 0.2s ease;}
+  @keyframes fadeUp{from{transform:translateY(8px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+  @media(max-width:1100px){.cal-layout{grid-template-columns:1fr;} .statutory-grid{grid-template-columns:1fr 1fr;} .checklist-layout{grid-template-columns:1fr;} .main,.header,.tool-header,.stats-bar{padding-left:16px;padding-right:16px;}}
+  @media(max-width:640px){.statutory-grid{grid-template-columns:1fr;} .form-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="dept-badge">HR OPS · D9</div>
+    <div class="header-title">Valentis Group — HR Operations & Compliance</div>
+  </div>
+  <div class="header-meta">TOOL 09 / 09 &nbsp;·&nbsp; COMPLIANCE CALENDAR</div>
+</div>
+
+<div class="tool-header">
+  <div class="tool-title-block">
+    <h1>HR Compliance Calendar & Payroll Deadlines Planner</h1>
+    <p>Unified calendar of payroll processing deadlines, statutory filing obligations, permit renewals, HR review cycles, and public holidays across all four Valentis operating jurisdictions. Includes monthly payroll checklists for each country.</p>
+  </div>
+  <div class="tool-tag">HR OPS · TOOL 9 OF 9 · D9 COMPLETE</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-number red" id="sOverdue">—</span><div class="stat-label">Overdue This Month</div></div>
+  <div class="stat-item"><span class="stat-number yellow" id="sThisWeek">—</span><div class="stat-label">Due This Week</div></div>
+  <div class="stat-item"><span class="stat-number" id="sThisMonth">—</span><div class="stat-label">Events This Month</div></div>
+  <div class="stat-item"><span class="stat-number green" id="sPayrollPct">—</span><div class="stat-label">Payroll Checklist Completion</div></div>
+  <div class="stat-item"><span class="stat-number" id="sUpcoming">—</span><div class="stat-label">Next 30 Days</div></div>
+  <div class="stat-item"><span class="stat-number" id="sHolidays">—</span><div class="stat-label">Public Holidays Remaining</div></div>
+</div>
+
+<div class="main">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('calendar')">Calendar View</button>
+    <button class="tab-btn" onclick="switchTab('payroll')">Payroll Checklists</button>
+    <button class="tab-btn" onclick="switchTab('statutory')">Statutory Obligations</button>
+  </div>
+
+  <!-- TAB 1: CALENDAR -->
+  <div class="tab-content active" id="tab-calendar">
+    <div class="controls-row">
+      <select class="filter-select" id="calFilter" onchange="renderCalendar()">
+        <option value="">All Event Types</option>
+        <option value="payroll">Payroll</option>
+        <option value="statutory">Statutory Filing</option>
+        <option value="compliance">Compliance</option>
+        <option value="hr">HR Cycle</option>
+        <option value="permit">Permit / Visa</option>
+        <option value="holiday">Public Holiday</option>
+      </select>
+      <select class="filter-select" id="calCountry" onchange="renderCalendar()">
+        <option value="">All Jurisdictions</option>
+        <option value="Group">Group-Wide</option>
+        <option value="Laos">Laos</option>
+        <option value="Myanmar">Myanmar</option>
+        <option value="Indonesia">Indonesia</option>
+        <option value="Thailand">Thailand</option>
+      </select>
+      <button class="btn btn-primary" onclick="openAddEvent()">+ Add Event</button>
+      <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);">
+        <span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;"><span style="width:10px;height:10px;border-radius:2px;background:#fde8c0;display:inline-block;"></span>Payroll</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--info-bg);display:inline-block;"></span>Statutory</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--danger-bg);display:inline-block;"></span>Compliance</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--success-bg);display:inline-block;"></span>HR Cycle</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--purple-bg);display:inline-block;"></span>Permit</span>
+      </div>
+    </div>
+    <div class="cal-layout">
+      <div class="cal-wrap">
+        <div class="cal-nav">
+          <div class="cal-nav-btns">
+            <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+          </div>
+          <div class="cal-month-title" id="calMonthTitle"></div>
+          <div class="cal-nav-btns">
+            <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+            <button class="cal-nav-btn" onclick="goToToday()" style="width:auto;padding:0 10px;font-size:11px;font-family:'IBM Plex Mono',monospace;">TODAY</button>
+          </div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-dow">MON</div><div class="cal-dow">TUE</div><div class="cal-dow">WED</div>
+          <div class="cal-dow">THU</div><div class="cal-dow">FRI</div><div class="cal-dow">SAT</div><div class="cal-dow">SUN</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+      <div class="sidebar-panel">
+        <div class="sp-header">
+          <div class="sp-title">Events This Month</div>
+          <div class="sp-month" id="sidebarMonth"></div>
+        </div>
+        <div class="sp-body" id="sidebarEvents"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: PAYROLL CHECKLISTS -->
+  <div class="tab-content" id="tab-payroll">
+    <div class="controls-row">
+      <select class="filter-select" id="plMonth" onchange="renderPayroll()">
+        <option value="3">March 2025</option>
+        <option value="4">April 2025</option>
+        <option value="5">May 2025</option>
+      </select>
+      <button class="btn btn-outline" onclick="resetChecklist()">↺ Reset Month</button>
+      <div style="margin-left:auto;font-size:12px;color:var(--steel);">Click items to mark complete</div>
+    </div>
+    <div class="checklist-layout" id="checklistLayout"></div>
+  </div>
+
+  <!-- TAB 3: STATUTORY OBLIGATIONS -->
+  <div class="tab-content" id="tab-statutory">
+    <div style="font-size:13px;color:var(--steel);line-height:1.6;margin-bottom:16px;">Recurring annual statutory filing, reporting, and payment obligations across all four Valentis jurisdictions. Dates are based on standard government calendars; confirm with local advisors annually.</div>
+    <div class="controls-row">
+      <select class="filter-select" id="statCountry" onchange="renderStatutory()">
+        <option value="">All Countries</option>
+        <option value="Laos">Laos</option>
+        <option value="Myanmar">Myanmar</option>
+        <option value="Indonesia">Indonesia</option>
+        <option value="Thailand">Thailand</option>
+      </select>
+    </div>
+    <div class="statutory-grid" id="statutoryGrid"></div>
+  </div>
+</div>
+
+<!-- EVENT DETAIL MODAL -->
+<div class="modal-overlay" id="eventModal" onclick="closeMod('eventModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="evModalTitle">Event Detail</h2>
+      <button class="modal-close" onclick="closeDirect('eventModal')">✕</button>
+    </div>
+    <div class="modal-body" id="evBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('eventModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EVENT MODAL -->
+<div class="modal-overlay" id="addEventModal" onclick="closeMod('addEventModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Add Calendar Event</h2>
+      <button class="modal-close" onclick="closeDirect('addEventModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group form-full"><label>Event Title *</label><input type="text" id="ae_title" placeholder="e.g. Laos Payroll Processing"></div>
+        <div class="form-group"><label>Date *</label><input type="date" id="ae_date"></div>
+        <div class="form-group"><label>Type *</label>
+          <select id="ae_type">
+            <option value="payroll">Payroll</option>
+            <option value="statutory">Statutory Filing</option>
+            <option value="compliance">Compliance</option>
+            <option value="hr">HR Cycle</option>
+            <option value="permit">Permit / Visa</option>
+            <option value="holiday">Public Holiday</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Country / Scope</label>
+          <select id="ae_country">
+            <option value="Group">Group-Wide</option>
+            <option value="Laos">Laos</option>
+            <option value="Myanmar">Myanmar</option>
+            <option value="Indonesia">Indonesia</option>
+            <option value="Thailand">Thailand</option>
+          </select>
+        </div>
+        <div class="form-group form-full"><label>Owner / Responsible</label><input type="text" id="ae_owner" value="Group HR Manager"></div>
+        <div class="form-group form-full"><label>Notes / Detail</label><textarea id="ae_notes" placeholder="Add detail, requirements, or links…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('addEventModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEvent()">Add to Calendar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TODAY = new Date('2025-03-10');
+let currentYear = 2025, currentMonth = 3; // March 2025
+
+// ── EVENT DATA ──────────────────────────────────────────
+let events = [
+  // MARCH 2025
+  { id:'e1',  date:'2025-03-05', title:'Laos Payroll Data Cut-Off',        type:'payroll',    country:'Laos',      owner:'Group HR Manager', notes:'All timesheets and leave records must be finalised. Submit to payroll by 5pm.' },
+  { id:'e2',  date:'2025-03-07', title:'Myanmar Payroll Data Cut-Off',     type:'payroll',    country:'Myanmar',   owner:'Group HR Manager', notes:'Site Manager to confirm headcount and any changes.' },
+  { id:'e3',  date:'2025-03-10', title:'Indonesia Payroll Processing',     type:'payroll',    country:'Indonesia', owner:'Siti Rahayu',      notes:'BPJS and PPh21 calculations due. Process before banking cut-off.' },
+  { id:'e4',  date:'2025-03-10', title:'Thailand Payroll Processing',      type:'payroll',    country:'Thailand',  owner:'Group HR Manager', notes:'Social security contribution and withholding tax calculation required.' },
+  { id:'e5',  date:'2025-03-12', title:'Myanmar Payroll Processing',       type:'payroll',    country:'Myanmar',   owner:'Group HR Manager', notes:'Process salary payments. Confirm bank details for all employees.' },
+  { id:'e6',  date:'2025-03-15', title:'Indonesia BPJS Contribution Due',  type:'statutory',  country:'Indonesia', owner:'Siti Rahayu',      notes:'BPJS Ketenagakerjaan & Kesehatan employer contributions due by 15th.' },
+  { id:'e7',  date:'2025-03-15', title:'Laos Payroll Processing',          type:'payroll',    country:'Laos',      owner:'Group HR Manager', notes:'Salary disbursement. Confirm local bank transfers.' },
+  { id:'e8',  date:'2025-03-20', title:'Thailand Social Security Due',     type:'statutory',  country:'Thailand',  owner:'Group HR Manager', notes:'SSO contribution (5% employee + 5% employer) due to Social Security Office.' },
+  { id:'e9',  date:'2025-03-25', title:'Indonesia PPh21 Filing Deadline',  type:'statutory',  country:'Indonesia', owner:'Siti Rahayu',      notes:'Monthly income tax withholding report (SPT Masa PPh21) to DGT.' },
+  { id:'e10', date:'2025-03-28', title:'Laos Social Insurance Due',        type:'statutory',  country:'Laos',      owner:'Group HR Manager', notes:'NSSF contribution (5.5% employer, 4.5% employee) due by month-end.' },
+  { id:'e11', date:'2025-03-31', title:'Nguyen Van Duc — Work Permit Expiry', type:'permit',  country:'Laos',      owner:'Group HR Manager', notes:'CRITICAL: Work Permit LA-WP-2022-0088 expires. Renewal submitted Feb 25 — follow up with Ministry of Labour.' },
+  { id:'e12', date:'2025-03-31', title:'OHS Policy Review Deadline',       type:'compliance', country:'Group',     owner:'COO',             notes:'POL-GRP-003 overdue for review. COO to sign off revised version.' },
+  { id:'e13', date:'2025-03-20', title:'Lao New Year (Boun Pi Mai)',       type:'holiday',    country:'Laos',      owner:'—',               notes:'Lao national public holiday — Lao New Year (3 days). Site operations reduced.' },
+
+  // APRIL 2025
+  { id:'e14', date:'2025-04-01', title:'Q1 HR Metrics Review',             type:'hr',         country:'Group',     owner:'Group HR Manager', notes:'Compile Q1 people metrics: headcount, attrition, vacancy rate, trainee pipeline progress, payroll-to-revenue ratio.' },
+  { id:'e15', date:'2025-04-05', title:'Laos Payroll Data Cut-Off',        type:'payroll',    country:'Laos',      owner:'Group HR Manager', notes:'April payroll data finalisation.' },
+  { id:'e16', date:'2025-04-07', title:'Myanmar Payroll Data Cut-Off',     type:'payroll',    country:'Myanmar',   owner:'Group HR Manager', notes:'April payroll data finalisation.' },
+  { id:'e17', date:'2025-04-10', title:'Indonesia Payroll Processing',     type:'payroll',    country:'Indonesia', owner:'Siti Rahayu',      notes:'April payroll run.' },
+  { id:'e18', date:'2025-04-10', title:'Thailand Payroll Processing',      type:'payroll',    country:'Thailand',  owner:'Group HR Manager', notes:'April payroll run.' },
+  { id:'e19', date:'2025-04-13', title:'Songkran — Thailand Public Holiday', type:'holiday',  country:'Thailand',  owner:'—',               notes:'Thai New Year. 3-day public holiday 13–15 April.' },
+  { id:'e20', date:'2025-04-15', title:'Indonesia BPJS Contribution Due',  type:'statutory',  country:'Indonesia', owner:'Siti Rahayu',      notes:'Monthly BPJS payments due.' },
+  { id:'e21', date:'2025-04-15', title:'Laos Payroll Processing',          type:'payroll',    country:'Laos',      owner:'Group HR Manager', notes:'April salary disbursement.' },
+  { id:'e22', date:'2025-04-20', title:'Thailand Social Security Due',     type:'statutory',  country:'Thailand',  owner:'Group HR Manager', notes:'April SSO contributions due.' },
+  { id:'e23', date:'2025-04-25', title:'Indonesia PPh21 Filing',           type:'statutory',  country:'Indonesia', owner:'Siti Rahayu',      notes:'Monthly PPh21 SPT Masa due.' },
+  { id:'e24', date:'2025-04-25', title:'Sven Andersen Probation End Review', type:'hr',       country:'Laos',      owner:'Group HR Manager', notes:'Final probation review. Decision required: confirm employment or extend/terminate. Note: contract also expires Apr 30.' },
+  { id:'e25', date:'2025-04-30', title:'Sven Andersen — Contract Expiry', type:'compliance', country:'Laos',      owner:'Group HR Manager', notes:'Fixed-term contract VTG-LA-004 expires. Renewal or separation decision required.' },
+  { id:'e26', date:'2025-04-30', title:'Sven Andersen — Work Permit Expiry', type:'permit',  country:'Laos',      owner:'Group HR Manager', notes:'Work Permit LA-WP-2023-0117 expires April 30. Renewal in progress.' },
+  { id:'e27', date:'2025-04-28', title:'Laos Social Insurance Due',        type:'statutory',  country:'Laos',      owner:'Group HR Manager', notes:'NSSF April contribution due.' },
+
+  // MAY 2025
+  { id:'e28', date:'2025-05-01', title:'Labour Day — Group Holiday',       type:'holiday',    country:'Group',     owner:'—',               notes:'International Workers Day. Public holiday in Laos, Myanmar, Indonesia, Thailand.' },
+  { id:'e29', date:'2025-05-05', title:'Laos Payroll Data Cut-Off',        type:'payroll',    country:'Laos',      owner:'Group HR Manager', notes:'May payroll data finalisation.' },
+  { id:'e30', date:'2025-05-10', title:'Indonesia Payroll Processing',     type:'payroll',    country:'Indonesia', owner:'Siti Rahayu',      notes:'May payroll run.' },
+  { id:'e31', date:'2025-05-15', title:'Indonesia BPJS Contribution Due',  type:'statutory',  country:'Indonesia', owner:'Siti Rahayu',      notes:'May BPJS payments.' },
+  { id:'e32', date:'2025-05-15', title:'Htet Aung Probation End Review',   type:'hr',         country:'Myanmar',   owner:'Group HR Manager', notes:'3-month probation review for VTG-MM-016. Performance and signed contract status review required.' },
+  { id:'e33', date:'2025-05-31', title:'Myanmar Annual Tax Filing',        type:'statutory',  country:'Myanmar',   owner:'Group HR Manager', notes:'Annual income tax return submission to IRD Myanmar. Prepare by May 31.' },
+  { id:'e34', date:'2025-05-20', title:'Driller Pipeline Review — Q2',     type:'hr',         country:'Group',     owner:'Group HR Manager', notes:'Review G2→G3 trainee progress: Ye Htut Win, Myo Naing, Thurein Aung, Tin Maung Win. Assess against 18-24 month development milestones.' },
+
+  // JUNE 2025
+  { id:'e35', date:'2025-06-01', title:'Driller Trainee Policy Review Due', type:'compliance', country:'Group',    owner:'Group HR Manager', notes:'POL-GRP-009 annual review due. Update G2→G3 milestones if required.' },
+  { id:'e36', date:'2025-06-30', title:'Indonesia Annual WLKP Report',     type:'statutory',  country:'Indonesia', owner:'Siti Rahayu',      notes:'Wajib Lapor Ketenagakerjaan (WLKP) — mandatory annual workforce report to Ministry of Manpower.' },
+  { id:'e37', date:'2025-06-30', title:'Thailand Annual Social Security Report', type:'statutory', country:'Thailand', owner:'Group HR Manager', notes:'Annual SSO report submission.' },
+
+  // RECURRING PERMIT REMINDER
+  { id:'e38', date:'2025-04-10', title:'Myanmar Payroll Processing',       type:'payroll',    country:'Myanmar',   owner:'Group HR Manager', notes:'April Myanmar payroll run.' },
+];
+
+// ── PAYROLL CHECKLISTS ──────────────────────────────────────────
+const checklistTemplate = {
+  Laos: [
+    { id:'la1', task:'Collect timesheets from Site Manager', detail:'All G1–G4 staff; confirm days worked and leave taken', deadline:'5th', done:true },
+    { id:'la2', task:'Verify leave balances against HR records', detail:'Cross-check with Tool 5 Leave Dashboard', deadline:'6th', done:true },
+    { id:'la3', task:'Calculate overtime (if applicable)', detail:'Laos Labour Law: OT at 150% weekdays, 200% weekends', deadline:'7th', done:false },
+    { id:'la4', task:'Apply NSSF contributions (employer 5.5% + employee 4.5%)', detail:'National Social Security Fund — mandatory', deadline:'8th', done:false },
+    { id:'la5', task:'Apply personal income tax withholding', detail:'Progressive rates 0–24%; confirm applicable rate per employee', deadline:'9th', done:false },
+    { id:'la6', task:'Generate payslips for review', detail:'PDF payslips required per Valentis policy', deadline:'12th', done:false },
+    { id:'la7', task:'Obtain COO approval for payroll total', detail:'Email approval required before disbursement', deadline:'14th', done:false },
+    { id:'la8', task:'Transfer salaries via BCEL / local bank', detail:'Confirm all employee bank details current', deadline:'15th', done:false },
+    { id:'la9', task:'Submit NSSF contribution to fund office', detail:'Payment and reporting form required by 28th', deadline:'28th', done:false },
+    { id:'la10', task:'File monthly payroll records in HR system', detail:'Archive payslips and payment confirmations', deadline:'30th', done:false },
+  ],
+  Myanmar: [
+    { id:'mm1', task:'Collect site attendance records', detail:'Kyaw Zin Thant (Site Manager) to submit by 7th', deadline:'7th', done:true },
+    { id:'mm2', task:'Confirm active headcount (10 employees)', detail:'Check against Tool 1 Employee Records — flag any leavers', deadline:'7th', done:true },
+    { id:'mm3', task:'Review any pending disciplinary impact on pay', detail:'Check Tool 7 for active cases affecting pay entitlement', deadline:'8th', done:false },
+    { id:'mm4', task:'Calculate income tax withholding (IWT)', detail:'Progressive tax per IRD Myanmar schedule; confirm rates', deadline:'9th', done:false },
+    { id:'mm5', task:'Prepare salary payment instructions', detail:'Confirm bank account details — note Khin Zaw bank details flag', deadline:'10th', done:false },
+    { id:'mm6', task:'Generate and review payslips', detail:'All 10 Myanmar employees', deadline:'11th', done:false },
+    { id:'mm7', task:'Obtain COO approval', detail:'Email approval required', deadline:'11th', done:false },
+    { id:'mm8', task:'Disburse salaries', detail:'CB Bank / KBZ Bank transfers', deadline:'12th', done:false },
+    { id:'mm9', task:'Archive payroll records', detail:'Store securely; retain for 5 years per Myanmar law', deadline:'15th', done:false },
+  ],
+  Indonesia: [
+    { id:'id1', task:'Collect attendance data from Kalimantan Site Manager', detail:'6 employees — confirm days, leave, overtime', deadline:'5th', done:true },
+    { id:'id2', task:'Calculate PPh21 income tax withholding', detail:'Per DGT progressive rates; Siti Rahayu to prepare calculation', deadline:'8th', done:true },
+    { id:'id3', task:'Calculate BPJS Ketenagakerjaan contributions', detail:'Employer: JKK 0.24–1.74% + JHT 3.7% + JP 2%; Employee: JHT 2% + JP 1%', deadline:'9th', done:false },
+    { id:'id4', task:'Calculate BPJS Kesehatan contributions', detail:'Employer 4% + Employee 1% of salary (capped at IDR 12M)', deadline:'9th', done:false },
+    { id:'id5', task:'Process payroll through HRIS', detail:'Confirm all components: base salary, allowances, deductions', deadline:'10th', done:false },
+    { id:'id6', task:'Disburse salaries', detail:'BCA / Mandiri bank transfers before 10th', deadline:'10th', done:false },
+    { id:'id7', task:'Submit BPJS contributions payment', detail:'Via BPJS online portal — deadline 15th', deadline:'15th', done:false },
+    { id:'id8', task:'File SPT Masa PPh21 to DGT', detail:'Monthly e-filing via DJP Online — deadline 25th', deadline:'25th', done:false },
+    { id:'id9', task:'Archive payslips and records', detail:'7-year retention requirement under Indonesian law', deadline:'30th', done:false },
+  ],
+  Thailand: [
+    { id:'th1', task:'Confirm Bangkok office headcount (5 employees)', detail:'Cross-check with Tool 1; flag any changes', deadline:'5th', done:true },
+    { id:'th2', task:'Calculate personal income tax withholding', detail:'Progressive rates 5–35%; Somchai (G8) highest bracket', deadline:'7th', done:false },
+    { id:'th3', task:'Calculate Social Security Fund contributions', detail:'5% employer + 5% employee (capped at THB 750/month each)', deadline:'8th', done:false },
+    { id:'th4', task:'Process payroll', detail:'Confirm all salary adjustments, allowances, and deductions', deadline:'10th', done:false },
+    { id:'th5', task:'Disburse salaries via Bangkok Bank / Kasikorn', detail:'Confirm bank details for all 5 employees', deadline:'10th', done:false },
+    { id:'th6', task:'Submit SSO contribution to Social Security Office', detail:'Monthly payment form + electronic submission — deadline 20th', deadline:'20th', done:false },
+    { id:'th7', task:'File PND 1 withholding tax return', detail:'Monthly PND 1 to Revenue Department — online via e-Filing', deadline:'23rd', done:false },
+    { id:'th8', task:'Archive payroll documentation', detail:'5-year retention per Thai Revenue Code', deadline:'30th', done:false },
+  ],
+};
+let checklists = JSON.parse(JSON.stringify(checklistTemplate));
+
+// ── STATUTORY OBLIGATIONS ──────────────────────────────────────────
+const statutory = {
+  Laos: [
+    { date:'Monthly 28th', title:'NSSF Contribution Payment', note:'Employer 5.5% + employee 4.5%; submit to National Social Security Fund' },
+    { date:'Monthly', title:'Income Tax Withholding Transfer', note:'Personal income tax withheld from salaries to be remitted to Tax Department' },
+    { date:'31 Mar', title:'Annual Tax Return (Corporate)', note:'Company income tax return; coordinate with finance' },
+    { date:'31 Mar', title:'Work Permit Renewals (if due)', note:'Annual work permits expire; submit renewal 6 weeks in advance' },
+    { date:'30 Jun', title:'Annual Employment Declaration', note:'Declare total workforce to Ministry of Labour; quota compliance check' },
+    { date:'31 Dec', title:'Annual NSSF Reconciliation', note:'Year-end social security reconciliation and declaration' },
+  ],
+  Myanmar: [
+    { date:'Monthly 15th', title:'Income Tax Withholding Remittance', note:'IWT payment to Internal Revenue Department (IRD)' },
+    { date:'31 May', title:'Annual Income Tax Return', note:'Employee annual IWT reconciliation; file with IRD' },
+    { date:'31 Mar', title:'Social Security Contribution', note:'Myanmar SSB contribution — check current requirements given operating environment' },
+    { date:'Quarterly', title:'Safety Incident Report', note:'Site safety statistics to Ministry of Labour; required under Factories Act' },
+    { date:'31 Dec', title:'Annual Employment Report', note:'Headcount and workforce summary to Township Labour Office' },
+  ],
+  Indonesia: [
+    { date:'Monthly 10th', title:'Salary Payment Deadline', note:'Wages must be paid by 10th; late payment incurs penalties under Law 13/2003' },
+    { date:'Monthly 15th', title:'BPJS Contribution Payment', note:'BPJS Ketenagakerjaan + Kesehatan; pay via BPJS portal' },
+    { date:'Monthly 25th', title:'PPh21 SPT Masa Filing', note:'Monthly withholding tax report to DGT via DJP Online' },
+    { date:'Monthly 25th', title:'PPh23 Filing (if applicable)', note:'Withholding on service fees, royalties; file if transactions occurred' },
+    { date:'30 Jun', title:'WLKP Annual Workforce Report', note:'Wajib Lapor Ketenagakerjaan — mandatory annual report to Ministry of Manpower' },
+    { date:'31 Mar', title:'Annual PPh21 SPT Tahunan', note:'Annual income tax reconciliation for all employees; e-file via DJP' },
+    { date:'Annual', title:'RPTKA Renewal', note:'Foreign worker utilisation plan renewal required annually; 8–12 week lead time' },
+  ],
+  Thailand: [
+    { date:'Monthly 7th (online: 15th)', title:'PND 1 — Withholding Tax Return', note:'Monthly employee income tax withholding; file to Revenue Department' },
+    { date:'Monthly 20th', title:'Social Security Contribution', note:'SSO contributions (5%+5%); submit to Social Security Office' },
+    { date:'Jan 31', title:'PND 1 Kor — Annual Tax Summary', note:'Annual withholding tax return for all employees' },
+    { date:'Mar 31', title:'Annual PIT Settlement', note:'Personal income tax year-end reconciliation' },
+    { date:'Annual', title:'Work Permit Renewals', note:'Foreign worker WPs require annual renewal; 2–4 week lead time' },
+    { date:'Annual', title:'90-Day Immigration Reporting', note:'All foreign nationals must report to immigration every 90 days' },
+  ],
+};
+
+// ── CALENDAR RENDER ──────────────────────────────────────────
+const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const typeClass = {payroll:'ce-payroll',statutory:'ce-statutory',compliance:'ce-compliance',hr:'ce-hr',permit:'ce-permit',holiday:'ce-holiday'};
+const typeBadge = {payroll:'tb-payroll',statutory:'tb-statutory',compliance:'tb-compliance',hr:'tb-hr',permit:'tb-permit',holiday:'tb-holiday'};
+const typeLabel = {payroll:'Payroll',statutory:'Statutory Filing',compliance:'Compliance',hr:'HR Cycle',permit:'Permit / Visa',holiday:'Public Holiday'};
+
+function getFilteredEvents() {
+  const typeF = document.getElementById('calFilter').value;
+  const countryF = document.getElementById('calCountry').value;
+  return events.filter(e=>(!typeF||e.type===typeF)&&(!countryF||e.country===countryF));
+}
+
+function renderCalendar() {
+  const year=currentYear, month=currentMonth;
+  document.getElementById('calMonthTitle').textContent = `${monthNames[month-1]} ${year}`;
+  document.getElementById('sidebarMonth').textContent = `${monthNames[month-1]} ${year}`;
+
+  const firstDay = new Date(year, month-1, 1);
+  let startDow = firstDay.getDay(); // 0=Sun
+  startDow = startDow===0?6:startDow-1; // Mon=0
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const daysInPrev = new Date(year, month-1, 0).getDate();
+
+  const filtered = getFilteredEvents();
+  const evByDate = {};
+  filtered.forEach(e=>{ if(!evByDate[e.date])evByDate[e.date]=[]; evByDate[e.date].push(e); });
+
+  let cells = '';
+  // prev month padding
+  for(let i=startDow-1;i>=0;i--){
+    cells+=`<div class="cal-cell other-month"><div class="cal-day-num other">${daysInPrev-i}</div></div>`;
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=(new Date(dateStr).toDateString()===TODAY.toDateString());
+    const dayEvs=evByDate[dateStr]||[];
+    const showEvs=dayEvs.slice(0,3);
+    const moreCount=dayEvs.length-3;
+    cells+=`<div class="cal-cell${isToday?' today':''}${dayEvs.length?' has-events':''}" onclick="handleCellClick('${dateStr}')">
+      <div class="cal-day-num${isToday?'':''}">${d}</div>
+      ${showEvs.map(e=>`<div class="cal-event ${typeClass[e.type]||''}" title="${e.title}" onclick="event.stopPropagation();openEventDetail('${e.id}')">${e.title}</div>`).join('')}
+      ${moreCount>0?`<div class="cal-more" onclick="event.stopPropagation();openEventDetail('${dayEvs[3].id}')">+${moreCount} more</div>`:''}
+    </div>`;
+  }
+  // next month padding
+  const totalCells = startDow + daysInMonth;
+  const remainder = totalCells%7===0?0:7-(totalCells%7);
+  for(let i=1;i<=remainder;i++){
+    cells+=`<div class="cal-cell other-month"><div class="cal-day-num other">${i}</div></div>`;
+  }
+  document.getElementById('calGrid').innerHTML = cells;
+
+  // sidebar
+  const monthStr=`${year}-${String(month).padStart(2,'0')}`;
+  const monthEvs=filtered.filter(e=>e.date.startsWith(monthStr)).sort((a,b)=>a.date.localeCompare(b.date));
+  const ctClass2 = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand',Group:'ct-group'};
+  document.getElementById('sidebarEvents').innerHTML = monthEvs.length
+    ? monthEvs.map(e=>`
+        <div class="sp-event" onclick="openEventDetail('${e.id}')">
+          <div class="sp-event-date">${fmtShortDate(e.date)}</div>
+          <div class="sp-event-dot" style="background:${dotColor(e.type)}"></div>
+          <div class="sp-event-info">
+            <div class="sp-event-title">${e.title}</div>
+            <div class="sp-event-sub">${e.country} · ${typeLabel[e.type]||e.type}</div>
+          </div>
+        </div>`).join('')
+    : `<div style="padding:20px 16px;font-size:13px;color:#aab;font-style:italic;">No events match current filters.</div>`;
+
+  updateStats();
+}
+
+function dotColor(type){
+  return {payroll:'#c9802a',statutory:'#1e5f74',compliance:'#b91c1c',hr:'#2d7d46',permit:'#5b21b6',holiday:'#9ca3af'}[type]||'#aab';
+}
+
+function handleCellClick(dateStr) {
+  const dayEvs = events.filter(e=>e.date===dateStr);
+  if(dayEvs.length===1) openEventDetail(dayEvs[0].id);
+  else if(dayEvs.length>1) openEventDetail(dayEvs[0].id);
+}
+
+function openEventDetail(id) {
+  const e = events.find(x=>x.id===id);
+  if(!e) return;
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand',Group:'ct-group'};
+  document.getElementById('evModalTitle').textContent = e.title;
+  document.getElementById('evBody').innerHTML = `
+    <div class="ev-hero">
+      <div class="ev-date">${fmtDate(e.date)}</div>
+      <div class="ev-title">${e.title}</div>
+      <div class="ev-tags">
+        <span class="type-badge ${typeBadge[e.type]||''}">${typeLabel[e.type]||e.type}</span>
+        <span class="country-tag ${ctClass[e.country]||'ct-group'}">${e.country}</span>
+      </div>
+    </div>
+    <div class="detail-section-title">Event Detail</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div><div class="dl">Date</div><div class="dv">${fmtDate(e.date)}</div></div>
+      <div><div class="dl">Owner</div><div class="dv">${e.owner}</div></div>
+    </div>
+    <div><div class="dl">Notes</div><div class="dv" style="background:var(--mist);padding:12px 14px;border-radius:4px;line-height:1.6;">${e.notes||'—'}</div></div>`;
+  document.getElementById('eventModal').classList.add('active');
+}
+
+function changeMonth(delta) {
+  currentMonth += delta;
+  if(currentMonth>12){currentMonth=1;currentYear++;}
+  if(currentMonth<1){currentMonth=12;currentYear--;}
+  renderCalendar();
+}
+function goToToday(){ currentYear=2025; currentMonth=3; renderCalendar(); }
+
+// ── PAYROLL CHECKLIST ──────────────────────────────────────────
+function renderPayroll() {
+  const ctColors = {Laos:'background:#1e5f74',Myanmar:'background:#6b3a2a',Indonesia:'background:#1a4731',Thailand:'background:#3b2a6e'};
+  const layout = document.getElementById('checklistLayout');
+  layout.innerHTML = Object.entries(checklists).map(([country, items])=>{
+    const done = items.filter(i=>i.done).length;
+    const pct = Math.round(done/items.length*100);
+    return `<div class="checklist-card">
+      <div class="cc-header" style="${ctColors[country]}">
+        <div>
+          <div class="cc-title">${country} — Payroll Checklist</div>
+          <div class="cc-sub">March 2025 Pay Cycle</div>
+        </div>
+        <div class="cc-progress">${done}/${items.length} done</div>
+      </div>
+      <div class="cc-body">
+        ${items.map(item=>{
+          const dl = parseInt(item.deadline);
+          const dlClass = dl<=10?'cd-soon':'cd-ok';
+          return `<div class="cc-item" onclick="toggleCheck('${country}','${item.id}')">
+            <div class="cc-checkbox ${item.done?'checked':''}">${item.done?'✓':''}</div>
+            <div class="cc-info">
+              <div class="cc-item-title ${item.done?'done':''}">${item.task}</div>
+              <div class="cc-item-detail">${item.detail}</div>
+            </div>
+            <div class="cc-deadline ${dlClass}">By ${item.deadline}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="cc-footer">
+        <div class="cc-prog-bar"><div class="cc-prog-fill" style="width:${pct}%"></div></div>
+        <div class="cc-prog-pct">${pct}%</div>
+      </div>
+    </div>`;
+  }).join('');
+  updateStats();
+}
+
+function toggleCheck(country, itemId) {
+  const item = checklists[country].find(i=>i.id===itemId);
+  if(item) { item.done=!item.done; renderPayroll(); }
+}
+function resetChecklist() {
+  checklists = JSON.parse(JSON.stringify(checklistTemplate));
+  renderPayroll();
+  showToast('↺ Checklists reset to defaults');
+}
+
+// ── STATUTORY ──────────────────────────────────────────
+function renderStatutory() {
+  const filter = document.getElementById('statCountry').value;
+  const filtered = filter ? {[filter]:statutory[filter]} : statutory;
+  const ctColors = {Laos:'background:#1e5f74',Myanmar:'background:#6b3a2a',Indonesia:'background:#1a4731',Thailand:'background:#3b2a6e'};
+  document.getElementById('statutoryGrid').innerHTML = Object.entries(filtered).map(([c,items])=>`
+    <div class="stat-card">
+      <div class="scard-header" style="${ctColors[c]}">
+        <div class="scard-country">${c}</div>
+        <div class="scard-sub">${items.length} statutory obligations</div>
+      </div>
+      <div class="scard-body">
+        ${items.map(o=>`<div class="scard-row">
+          <div class="sr-date">${o.date}</div>
+          <div class="sr-info">
+            <div class="sr-title">${o.title}</div>
+            <div class="sr-note">${o.note}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ── ADD EVENT ──────────────────────────────────────────
+function openAddEvent() {
+  ['ae_title','ae_notes','ae_owner'].forEach(id=>document.getElementById(id).value=id==='ae_owner'?'Group HR Manager':'');
+  document.getElementById('ae_date').value='';
+  document.getElementById('addEventModal').classList.add('active');
+}
+function saveEvent() {
+  const title=document.getElementById('ae_title').value.trim();
+  const date=document.getElementById('ae_date').value;
+  if(!title||!date){showToast('⚠ Title and date required');return;}
+  events.push({
+    id:`e-custom-${events.length+1}`, date, title,
+    type:document.getElementById('ae_type').value,
+    country:document.getElementById('ae_country').value,
+    owner:document.getElementById('ae_owner').value||'Group HR Manager',
+    notes:document.getElementById('ae_notes').value||'—'
+  });
+  closeDirect('addEventModal');
+  renderCalendar();
+  showToast(`✓ Event added: ${title}`);
+}
+
+// ── STATS ──────────────────────────────────────────
+function updateStats() {
+  const todayStr = '2025-03-10';
+  const weekEnd = '2025-03-16';
+  const monthEnd = '2025-03-31';
+  const next30 = '2025-04-09';
+  const overdue = events.filter(e=>e.date<todayStr&&e.type!=='holiday').length;
+  const thisWeek = events.filter(e=>e.date>=todayStr&&e.date<=weekEnd).length;
+  const thisMonth = events.filter(e=>e.date.startsWith('2025-03')).length;
+  const upcoming = events.filter(e=>e.date>todayStr&&e.date<=next30).length;
+  const holidays = events.filter(e=>e.type==='holiday'&&e.date>=todayStr).length;
+  const allItems = Object.values(checklists).flat();
+  const pct = Math.round(allItems.filter(i=>i.done).length/allItems.length*100);
+  document.getElementById('sOverdue').textContent = overdue;
+  document.getElementById('sThisWeek').textContent = thisWeek;
+  document.getElementById('sThisMonth').textContent = thisMonth;
+  document.getElementById('sPayrollPct').textContent = pct+'%';
+  document.getElementById('sUpcoming').textContent = upcoming;
+  document.getElementById('sHolidays').textContent = holidays;
+}
+
+function fmtDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtShortDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short'});}
+function switchTab(id){
+  const tabs=['calendar','payroll','statutory'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function closeMod(id,e){if(e.target===document.getElementById(id))closeDirect(id);}
+function closeDirect(id){document.getElementById(id).classList.remove('active');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+renderCalendar();
+renderPayroll();
+renderStatutory();
+</script>
+</body>
+</html>

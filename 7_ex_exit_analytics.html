@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exit Analytics & Insights — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral:#c0533a; --coral2:#d4664c; --coral-dim:rgba(192,83,58,0.08);
+  --teal:#1a5f6a; --teal2:#226673; --teal-dim:rgba(26,95,106,0.08);
+  --gold:#b8962e; --gold2:#c9a93a; --gold-dim:rgba(184,150,46,0.10);
+  --cream:#faf6f0; --cream2:#f3ede4;
+  --ink:#1c1a17; --ink2:#2e2b26; --ink3:#4a4540; --ink4:#6b6560; --ink5:#9a9390;
+  --surface:#ffffff; --surface2:#f7f2eb; --surface3:#ede7dd;
+  --green:#2d7a4a; --green-dim:rgba(45,122,74,0.10);
+  --red:#b03a2e; --red-dim:rgba(176,58,46,0.08);
+  --amber:#c47a1e; --amber-dim:rgba(196,122,30,0.10);
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fs:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono',monospace;
+  --r:4px; --r2:8px; --r3:12px;
+  --sh:0 1px 3px rgba(28,26,23,0.08),0 4px 12px rgba(28,26,23,0.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:var(--fs);background:var(--cream);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+
+.topbar{background:var(--ink);color:var(--cream);padding:0 28px;height:44px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-left{display:flex;align-items:center;gap:16px}
+.tb-logo{font-family:var(--fm);font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase}
+.tb-sep{width:1px;height:18px;background:rgba(250,246,240,0.15)}
+.tb-title{font-family:var(--fs);font-size:11px;color:rgba(250,246,240,0.6);letter-spacing:0.04em}
+.tb-right{font-family:var(--fm);font-size:9px;color:rgba(250,246,240,0.35);letter-spacing:0.06em}
+
+.header{background:var(--surface);border-bottom:1px solid var(--surface3);padding:28px 28px 0}
+.header-meta{font-family:var(--fm);font-size:9px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px}
+.header-title{font-family:var(--fd);font-size:38px;font-weight:300;color:var(--ink);line-height:1.1;margin-bottom:4px}
+.header-title em{color:var(--coral);font-style:italic}
+.header-sub{font-size:12px;color:var(--ink4);font-weight:300;margin-bottom:20px;max-width:640px;line-height:1.6}
+.nav{display:flex;gap:0;border-top:1px solid var(--surface3);overflow-x:auto}
+.nav-item{font-family:var(--fs);font-size:11px;font-weight:500;color:var(--ink4);padding:11px 18px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .18s;letter-spacing:0.02em}
+.nav-item:hover{color:var(--coral)}
+.nav-item.active{color:var(--coral);border-bottom-color:var(--coral)}
+
+.main{flex:1;padding:28px;max-width:1100px;width:100%}
+.page{display:none}.page.active{display:block}
+
+.card{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--r2);padding:20px 24px;margin-bottom:16px;box-shadow:var(--sh)}
+.card:last-child{margin-bottom:0}
+.ct{font-family:var(--fd);font-size:19px;font-weight:500;color:var(--ink);margin-bottom:14px}
+.ct em{color:var(--coral);font-style:italic}
+
+.pe{font-family:var(--fm);font-size:9px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px}
+.pt{font-family:var(--fd);font-size:32px;font-weight:300;color:var(--ink);line-height:1.15;margin-bottom:12px}
+.pt em{color:var(--coral);font-style:italic}
+.pd{font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;max-width:740px;margin-bottom:20px}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+
+.kpi{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--r2);padding:16px 18px;box-shadow:var(--sh)}
+.kpi-label{font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-family:var(--fd);font-size:30px;font-weight:500;line-height:1}
+.kpi-val.coral{color:var(--coral)} .kpi-val.teal{color:var(--teal)} .kpi-val.gold{color:var(--gold)} .kpi-val.green{color:var(--green)}
+.kpi-sub{font-size:11px;color:var(--ink4);margin-top:6px;font-weight:300;line-height:1.4}
+
+.tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:1px solid var(--surface3)}
+.tab{font-family:var(--fs);font-size:11px;font-weight:500;color:var(--ink4);padding:9px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.tab:hover{color:var(--coral)}
+.tab.active{color:var(--coral);border-bottom-color:var(--coral)}
+.tb{display:none}.tb.active{display:block}
+
+.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt th{font-family:var(--fm);font-size:8.5px;font-weight:500;color:var(--ink5);letter-spacing:0.08em;text-transform:uppercase;padding:8px 10px;text-align:left;border-bottom:1px solid var(--surface3);background:var(--cream2)}
+.dt td{padding:9px 10px;border-bottom:1px solid var(--surface3);color:var(--ink3);vertical-align:top;line-height:1.45}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--cream2)}
+
+.chip{display:inline-block;font-family:var(--fm);font-size:8px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:2px 7px;border-radius:2px}
+.ch-cr{background:var(--coral-dim);color:var(--coral)} .ch-tl{background:var(--teal-dim);color:var(--teal)}
+.ch-gd{background:var(--gold-dim);color:var(--gold)} .ch-gn{background:var(--green-dim);color:var(--green)}
+.ch-rd{background:var(--red-dim);color:var(--red)} .ch-am{background:var(--amber-dim);color:var(--amber)}
+
+/* ── RISK ROW ── */
+.risk-row{display:flex;gap:12px;align-items:baseline;padding:10px 14px;border-radius:var(--r);margin-bottom:6px}
+.risk-row.high{background:var(--red-dim);border-left:3px solid var(--red)}
+.risk-row.med{background:var(--amber-dim);border-left:3px solid var(--amber)}
+.risk-row.low{background:var(--green-dim);border-left:3px solid var(--green)}
+.risk-label{font-family:var(--fm);font-size:9px;font-weight:500;min-width:36px;letter-spacing:0.05em}
+.risk-text{font-size:12.5px;color:var(--ink);font-weight:400;line-height:1.45;flex:1}
+.risk-owner{font-family:var(--fm);font-size:9px;color:var(--ink5);text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap}
+
+/* ── PROTOCOL STEP ── */
+.pstep{display:flex;gap:14px;margin-bottom:12px}
+.pstep-num{font-family:var(--fd);font-size:24px;font-weight:300;color:var(--teal);min-width:28px;line-height:1.1}
+.pstep-body{flex:1}
+.pstep-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.pstep-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55}
+
+/* ── STANDARD ROW ── */
+.std-row{padding:10px 14px;background:var(--surface2);border-radius:var(--r);margin-bottom:6px;border-left:3px solid var(--teal)}
+.std-title{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.std-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5}
+
+/* ── FORMULA ── */
+.formula{background:var(--ink);border-radius:var(--r2);padding:14px 18px;margin:12px 0;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.formula-label{font-family:var(--fm);font-size:8.5px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.formula-eq{font-family:var(--fm);font-size:13px;color:var(--cream);letter-spacing:0.03em}
+.formula-note{font-size:11px;color:rgba(250,246,240,0.5);font-weight:300;line-height:1.5;max-width:340px;text-align:right}
+
+/* ── INSIGHT ── */
+.insight{background:var(--teal-dim);border:1px solid rgba(26,95,106,0.15);border-radius:var(--r2);padding:14px 18px;margin:12px 0}
+.insight-label{font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px}
+.insight-body{font-size:12.5px;color:var(--ink);font-weight:400;line-height:1.6}
+
+/* ── TIMELINE ── */
+.tl-item{display:flex;gap:16px;margin-bottom:14px}
+.tl-dot-col{display:flex;flex-direction:column;align-items:center;min-width:28px}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:4px}
+.tl-line{flex:1;width:1px;background:var(--surface3)}
+.tl-content{flex:1;padding-bottom:4px}
+.tl-when{font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:3px}
+.tl-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.tl-body{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5}
+
+/* ── EXIT-SPECIFIC COMPONENTS ── */
+.exit-reason{display:flex;gap:14px;align-items:stretch;padding:12px 16px;border-radius:var(--r2);background:var(--surface2);margin-bottom:8px;border:1px solid var(--surface3)}
+.exit-reason-rank{font-family:var(--fd);font-size:28px;font-weight:300;color:var(--coral);min-width:32px;line-height:1;padding-top:2px}
+.exit-reason-body{flex:1}
+.exit-reason-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.exit-reason-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5}
+.exit-reason-bar-wrap{margin-top:7px;display:flex;align-items:center;gap:8px}
+.exit-reason-bar-bg{flex:1;height:5px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.exit-reason-bar-fill{height:100%;border-radius:3px;background:var(--coral);transition:width .5s}
+.exit-reason-pct{font-family:var(--fm);font-size:9px;color:var(--ink5);min-width:28px}
+
+.q-block{border:1px solid var(--surface3);border-radius:var(--r2);overflow:hidden;margin-bottom:10px}
+.q-header{background:var(--surface2);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.q-num{font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.08em;text-transform:uppercase}
+.q-theme{font-family:var(--fm);font-size:8px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase}
+.q-body{padding:10px 14px}
+.q-text{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px;line-height:1.4}
+.q-probe{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.55;font-style:italic}
+
+.leaver-row{display:grid;grid-template-columns:90px 1fr 80px 80px 120px;gap:10px;align-items:center;padding:9px 12px;border-bottom:1px solid var(--surface3);font-size:12px}
+.leaver-row:last-child{border-bottom:none}
+.leaver-row:hover{background:var(--cream2)}
+.leaver-head{background:var(--cream2);font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;border-radius:var(--r2) var(--r2) 0 0}
+
+.bar-chart-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.bar-chart-label{font-size:11.5px;color:var(--ink3);font-weight:400;min-width:80px;text-align:right}
+.bar-chart-bg{flex:1;height:18px;background:var(--surface3);border-radius:var(--r);overflow:hidden}
+.bar-chart-fill{height:100%;border-radius:var(--r);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;transition:width .6s}
+.bar-chart-val{font-family:var(--fm);font-size:9px;font-weight:500;color:#fff}
+
+.action-item{display:flex;gap:12px;padding:11px 14px;border-radius:var(--r2);background:var(--surface2);margin-bottom:8px;border-left:3px solid var(--teal)}
+.action-ico{font-family:var(--fd);font-size:20px;color:var(--teal);min-width:24px;line-height:1.1}
+.action-body{flex:1}
+.action-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.action-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5}
+.action-meta{display:flex;gap:8px;margin-top:5px;flex-wrap:wrap}
+
+.footer{background:var(--ink2);color:rgba(250,246,240,0.35);font-family:var(--fm);font-size:9px;padding:14px 28px;display:flex;justify-content:space-between;letter-spacing:0.05em;margin-top:auto}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-left">
+    <div class="tb-logo">Valentis Group</div>
+    <div class="tb-sep"></div>
+    <div class="tb-title">Employee Experience &amp; Culture · Tool 07 of 08</div>
+  </div>
+  <div class="tb-right">GROUP HR · CONFIDENTIAL</div>
+</div>
+
+<div class="header">
+  <div class="header-meta">EX &amp; Culture Department · Exit Analytics &amp; Insights</div>
+  <div class="header-title">Exit Analytics &amp; <em>Insights</em></div>
+  <div class="header-sub">A structured framework for understanding why people leave Valentis — built around the driller pipeline, multi-country attrition patterns, and the specific exit moments that matter most. Exit data is only valuable if it changes something. This tool connects leaver analysis directly to action and closes the loop between exit intelligence and people strategy.</div>
+  <nav class="nav">
+    <div class="nav-item active" onclick="showPage('page-overview',this)">01 Overview</div>
+    <div class="nav-item" onclick="showPage('page-framework',this)">02 Exit Framework</div>
+    <div class="nav-item" onclick="showPage('page-interview',this)">03 Interview Design</div>
+    <div class="nav-item" onclick="showPage('page-analysis',this)">04 Leaver Analysis</div>
+    <div class="nav-item" onclick="showPage('page-country',this)">05 Country Breakdown</div>
+    <div class="nav-item" onclick="showPage('page-pipeline',this)">06 Pipeline Impact</div>
+    <div class="nav-item" onclick="showPage('page-action',this)">07 Action Framework</div>
+    <div class="nav-item" onclick="showPage('page-coo',this)">08 COO Brief</div>
+  </nav>
+</div>
+
+<div class="main">
+  <div id="page-overview" class="page active"></div>
+  <div id="page-framework" class="page"></div>
+  <div id="page-interview" class="page"></div>
+  <div id="page-analysis" class="page"></div>
+  <div id="page-country" class="page"></div>
+  <div id="page-pipeline" class="page"></div>
+  <div id="page-action" class="page"></div>
+  <div id="page-coo" class="page"></div>
+</div>
+
+<div class="footer">
+  <span>Valentis Group · Employee Experience &amp; Culture · Tool 07 — Exit Analytics &amp; Insights</span>
+  <span>Group HR · Confidential · 2025</span>
+</div>
+
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+function showTab(tabId,btnEl,group){
+  document.querySelectorAll('[data-group="'+group+'"]').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('[data-tab-btn="'+group+'"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  btnEl.classList.add('active');
+}
+</script>
+
+<!-- ════════════════════════════════════════════════════════ PAGE 01 — OVERVIEW -->
+<script>
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">Section 01 — Overview</div>
+<div class="pt">Why People Leave<br><em>Valentis</em></div>
+<p class="pd">Exit analytics at Valentis is not an HR administration task — it is a pipeline risk management function. With an 18–24 month G3-to-G4 development cycle, every preventable departure represents a delayed return on investment. Understanding the root cause of each exit, at which grade it occurred, in which country, and at which tenure point, is the foundation of an evidence-based people strategy.</p>
+
+<div class="g4">
+  <div class="kpi">
+    <div class="kpi-label">Group Voluntary Turnover</div>
+    <div class="kpi-val coral">38%</div>
+    <div class="kpi-sub">Rolling 12 months · All grades &amp; countries combined</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Trainee (G1–G3) Attrition</div>
+    <div class="kpi-val coral">54%</div>
+    <div class="kpi-sub">Highest-risk cohort · Myanmar month-3 spike is primary driver</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Average Tenure at Exit</div>
+    <div class="kpi-val gold">7.2 <span style="font-size:16px;font-weight:300">mo</span></div>
+    <div class="kpi-sub">Median exit occurs before G3 competency milestone</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Exit Interviews Completed</div>
+    <div class="kpi-val teal">31%</div>
+    <div class="kpi-sub">Current capture rate — structured framework targets 90%</div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Top Exit <em>Reasons</em> — Group Level</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      <div class="exit-reason">
+        <div class="exit-reason-rank">1</div>
+        <div class="exit-reason-body">
+          <div class="exit-reason-title">Isolation &amp; site conditions</div>
+          <div class="exit-reason-desc">Limited connectivity, no private space, poor living conditions — cited most frequently by G1–G2 trainees at Myanmar and Indonesia sites. Directly linked to month-3 attrition window.</div>
+          <div class="exit-reason-bar-wrap"><div class="exit-reason-bar-bg"><div class="exit-reason-bar-fill" style="width:72%"></div></div><span class="exit-reason-pct">72%</span></div>
+        </div>
+      </div>
+      <div class="exit-reason">
+        <div class="exit-reason-rank">2</div>
+        <div class="exit-reason-body">
+          <div class="exit-reason-title">Better compensation elsewhere</div>
+          <div class="exit-reason-desc">Competitor pay — particularly for trained G3s who are marketable after completing core competencies. Weak total rewards strategy is the structural cause.</div>
+          <div class="exit-reason-bar-wrap"><div class="exit-reason-bar-bg"><div class="exit-reason-bar-fill" style="width:58%"></div></div><span class="exit-reason-pct">58%</span></div>
+        </div>
+      </div>
+      <div class="exit-reason">
+        <div class="exit-reason-rank">3</div>
+        <div class="exit-reason-body">
+          <div class="exit-reason-title">Limited development / progression visibility</div>
+          <div class="exit-reason-desc">Trainees not seeing the path to G4. Grade progression not made visible enough during the early months. Recognition gaps amplify the sense of stagnation.</div>
+          <div class="exit-reason-bar-wrap"><div class="exit-reason-bar-bg"><div class="exit-reason-bar-fill" style="width:46%"></div></div><span class="exit-reason-pct">46%</span></div>
+        </div>
+      </div>
+      <div class="exit-reason">
+        <div class="exit-reason-rank">4</div>
+        <div class="exit-reason-body">
+          <div class="exit-reason-title">Relationship with immediate supervisor (SM)</div>
+          <div class="exit-reason-desc">Supervisory style and SM-employee relationship quality cited in roughly one-third of voluntary exits. Particularly acute where SMs lack coaching capability.</div>
+          <div class="exit-reason-bar-wrap"><div class="exit-reason-bar-bg"><div class="exit-reason-bar-fill" style="width:34%"></div></div><span class="exit-reason-pct">34%</span></div>
+        </div>
+      </div>
+      <div class="exit-reason">
+        <div class="exit-reason-rank">5</div>
+        <div class="exit-reason-body">
+          <div class="exit-reason-title">Family &amp; personal reasons</div>
+          <div class="exit-reason-desc">Rotational work strain on family life — higher in G3–G4 grades where employees have dependants. Often a secondary driver masking other dissatisfaction.</div>
+          <div class="exit-reason-bar-wrap"><div class="exit-reason-bar-bg"><div class="exit-reason-bar-fill" style="width:27%"></div></div><span class="exit-reason-pct">27%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="card">
+      <div class="ct">Attrition by <em>Tenure Band</em></div>
+      <div style="margin-top:4px">
+        <div class="bar-chart-row">
+          <div class="bar-chart-label">0–3 months</div>
+          <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:68%;background:var(--red)"><span class="bar-chart-val">68%</span></div></div>
+        </div>
+        <div class="bar-chart-row">
+          <div class="bar-chart-label">3–6 months</div>
+          <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:52%;background:var(--coral)"><span class="bar-chart-val">52%</span></div></div>
+        </div>
+        <div class="bar-chart-row">
+          <div class="bar-chart-label">6–12 months</div>
+          <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:28%;background:var(--gold)"><span class="bar-chart-val">28%</span></div></div>
+        </div>
+        <div class="bar-chart-row">
+          <div class="bar-chart-label">12–24 months</div>
+          <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:18%;background:var(--teal)"><span class="bar-chart-val">18%</span></div></div>
+        </div>
+        <div class="bar-chart-row">
+          <div class="bar-chart-label">24+ months</div>
+          <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:9%;background:var(--green)"><span class="bar-chart-val">9%</span></div></div>
+        </div>
+      </div>
+      <div class="insight" style="margin-top:12px;margin-bottom:0">
+        <div class="insight-label">Key Pattern</div>
+        <div class="insight-body">The first three months are when Valentis loses the most people. Survival past six months increases retention probability dramatically — making the onboarding and early-tenure experience the single highest-leverage investment.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Cost of <em>Attrition</em></div>
+      <div class="formula">
+        <div><div class="formula-label">Cost per G3 leaver</div><div class="formula-eq">$1,000 – $2,000 direct cost</div></div>
+        <div class="formula-note">Excludes production downtime and pipeline gap which can multiply actual cost 5&ndash;10x</div>
+      </div>
+      <p style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:0">At 54% trainee attrition across a cohort of ~16 trainees, Valentis is absorbing approximately $8,600–$17,200 in direct replacement costs annually — before factoring in the 18–24 month development delay that each exit creates in the driller pipeline.</p>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ════════════════════════════════════════════════════════ PAGE 02 — EXIT FRAMEWORK -->
+<script>
+document.getElementById('page-framework').innerHTML=`
+<div class="pe">Section 02 — Exit Framework</div>
+<div class="pt">The Exit<br><em>Framework</em></div>
+<p class="pd">Valentis needs a consistent, multi-stage exit process that captures intelligence at every departure — not just structured interviews for senior grades. The framework below defines the four exit types, the trigger points for each, and Group HR's role at each stage. The goal is a 90% exit intelligence capture rate within 12 months.</p>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Exit <em>Types</em> &amp; Triggers</div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:12px 14px;border-radius:var(--r2);background:var(--red-dim);border-left:3px solid var(--red)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-family:var(--fm);font-size:8.5px;color:var(--red);letter-spacing:0.09em;text-transform:uppercase">Type 1 — Voluntary Resignation</div>
+          <span class="chip ch-rd">Priority</span>
+        </div>
+        <div style="font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:3px">Employee initiates departure</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Full exit interview mandatory. SM notifies Group HR within 24 hours of resignation. Exit interview conducted by Group HR (not SM) within 5 working days of notice. Exit survey sent on final day.</div>
+      </div>
+      <div style="padding:12px 14px;border-radius:var(--r2);background:var(--amber-dim);border-left:3px solid var(--amber)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-family:var(--fm);font-size:8.5px;color:var(--amber);letter-spacing:0.09em;text-transform:uppercase">Type 2 — End of Probation Exit</div>
+          <span class="chip ch-am">High value</span>
+        </div>
+        <div style="font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:3px">Company-initiated during or at end of probation</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Short exit debrief with SM to understand trainee perspective on the experience. Not a performance conversation — this is intelligence gathering. What did they find harder or different than expected?</div>
+      </div>
+      <div style="padding:12px 14px;border-radius:var(--r2);background:var(--teal-dim);border-left:3px solid var(--teal)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase">Type 3 — Contract Non-Renewal</div>
+          <span class="chip ch-tl">Scheduled</span>
+        </div>
+        <div style="font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:3px">Fixed-term contract ends without renewal</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Exit survey mandatory. Focus on whether the employee would return to Valentis and what would have changed their decision. Alumni pipeline — a non-renewed G3 is a potential re-hire if conditions change.</div>
+      </div>
+      <div style="padding:12px 14px;border-radius:var(--r2);background:var(--gold-dim);border-left:3px solid var(--gold)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-family:var(--fm);font-size:8.5px;color:var(--gold);letter-spacing:0.09em;text-transform:uppercase">Type 4 — Retirement / Planned Departure</div>
+          <span class="chip ch-gd">Knowledge risk</span>
+        </div>
+        <div style="font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:3px">Senior grades leaving through planned transition</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Extended knowledge transfer protocol applies. Laos G4 retirement cohort is the active example. Exit interview includes succession readiness assessment, knowledge documentation, and handover checklist.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="card">
+      <div class="ct">Exit Process <em>Sequence</em></div>
+      <div style="display:grid;gap:0">
+        <div class="pstep">
+          <div class="pstep-num">01</div>
+          <div class="pstep-body">
+            <div class="pstep-title">SM notifies Group HR</div>
+            <div class="pstep-desc">Within 24 hours of receiving resignation or confirming departure. SM provides exit type, grade, tenure, and known reason if stated. SM does not conduct the exit interview.</div>
+          </div>
+        </div>
+        <div class="pstep">
+          <div class="pstep-num">02</div>
+          <div class="pstep-body">
+            <div class="pstep-title">Group HR schedules exit interview</div>
+            <div class="pstep-desc">Within 5 working days for voluntary exits. Interview conducted via phone or video where in-person is not possible. Uses structured interview guide (Section 03).</div>
+          </div>
+        </div>
+        <div class="pstep">
+          <div class="pstep-num">03</div>
+          <div class="pstep-body">
+            <div class="pstep-title">Exit survey issued on final day</div>
+            <div class="pstep-desc">Anonymous digital survey sent to personal email on last working day. 12 questions. Results are held by Group HR only — not shared with SM or COO in individual form.</div>
+          </div>
+        </div>
+        <div class="pstep">
+          <div class="pstep-num">04</div>
+          <div class="pstep-body">
+            <div class="pstep-title">Group HR codes and logs exit data</div>
+            <div class="pstep-desc">Each exit coded by primary reason, contributing factors, grade, country, and tenure band. Data entered into the exit analytics register within 48 hours of interview.</div>
+          </div>
+        </div>
+        <div class="pstep">
+          <div class="pstep-num">05</div>
+          <div class="pstep-body">
+            <div class="pstep-title">Quarterly theme reporting</div>
+            <div class="pstep-desc">Group HR compiles exit themes into quarterly people report. Patterns escalated to COO with root cause analysis and recommended action. Exit data is never presented leaver-by-leaver.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Confidentiality <em>Principles</em></div>
+      <div style="display:grid;gap:7px">
+        <div style="padding:9px 12px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--teal);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Interview responses stay with Group HR.</strong> SMs are not told what departing employees said about them. Patterns are shared at theme level only — never attributed.</div>
+        <div style="padding:9px 12px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--teal);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Survey data is anonymised.</strong> No employee is identified in exit survey analysis. Results reported as group averages and frequency distributions only.</div>
+        <div style="padding:9px 12px;background:var(--surface2);border-radius:var(--r);border-left:3px solid var(--teal);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">CEO and COO receive aggregated insights.</strong> Quarterly exit briefing presents themes, root causes, and recommended actions — not individual exit stories.</div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ════════════════════════════════════════════════════════ PAGE 03 — INTERVIEW DESIGN -->
+<script>
+document.getElementById('page-interview').innerHTML=`
+<div class="pe">Section 03 — Interview Design</div>
+<div class="pt">Exit Interview<br><em>Design</em></div>
+<p class="pd">The Valentis exit interview is structured to move beyond surface-level reasons and surface the real drivers of departure. It covers five domains: the role itself, the site environment, career and development, management and relationships, and the departure decision. The conversation should take 20–30 minutes and be conducted in a tone of genuine curiosity — not defensiveness.</p>
+
+<div class="card" style="margin-bottom:16px">
+  <div class="ct">Interview <em>Principles</em></div>
+  <div class="g3" style="margin-bottom:0">
+    <div style="padding:12px 14px;background:var(--teal-dim);border-radius:var(--r2);border-top:2px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Conducted by Group HR</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Never the SM. The reporting relationship prevents honest disclosure. Group HR is the neutral party — the employee must feel safe to be candid.</div>
+    </div>
+    <div style="padding:12px 14px;background:var(--teal-dim);border-radius:var(--r2);border-top:2px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Within 5 days of notice</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Not on the last day. Memory is clearer earlier. Emotions are more balanced before departure logistics dominate. The leaving employee is still psychologically present.</div>
+    </div>
+    <div style="padding:12px 14px;background:var(--teal-dim);border-radius:var(--r2);border-top:2px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Curiosity, not defence</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Group HR's role is to understand, not to change the employee's mind or justify company decisions. The frame is: "Help us understand what the experience was really like."</div>
+    </div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Structured Question <em>Guide</em></div>
+    <div style="margin-top:4px">
+      <div class="q-block">
+        <div class="q-header"><span class="q-num">Domain A — The Role &amp; Work</span><span class="q-theme">Context</span></div>
+        <div class="q-body">
+          <div class="q-text">What did your day-to-day role look like compared to what you expected when you joined?</div>
+          <div class="q-probe">Probe: Where was the biggest gap between expectation and reality? Was the work itself satisfying?</div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-header"><span class="q-num">Domain B — Site &amp; Environment</span><span class="q-theme">Conditions</span></div>
+        <div class="q-body">
+          <div class="q-text">How would you describe the site conditions — living arrangements, welfare, and the physical environment?</div>
+          <div class="q-probe">Probe: What specifically was hardest to adjust to? Did conditions improve or worsen over time? What one change would have made the biggest difference?</div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-header"><span class="q-num">Domain C — Development &amp; Progression</span><span class="q-theme">Pipeline</span></div>
+        <div class="q-body">
+          <div class="q-text">Did you feel like you were developing and moving forward in your role at Valentis?</div>
+          <div class="q-probe">Probe: Was the path to G4 clear to you? Did you understand the grading system? Did you receive feedback on your progress?</div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-header"><span class="q-num">Domain D — Management &amp; Team</span><span class="q-theme">Relationships</span></div>
+        <div class="q-body">
+          <div class="q-text">How was your relationship with your site manager and the broader team?</div>
+          <div class="q-probe">Probe: Did you feel supported? Were issues addressed when you raised them? Was there anything about the management style that made the work harder?</div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-header"><span class="q-num">Domain E — The Decision to Leave</span><span class="q-theme">Root cause</span></div>
+        <div class="q-body">
+          <div class="q-text">What was the final factor that led you to make the decision to leave?</div>
+          <div class="q-probe">Probe: Was there a specific moment or incident? What would have needed to change for you to stay? Is there anything Valentis could have done differently?</div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-header"><span class="q-num">Domain F — Future &amp; Alumni</span><span class="q-theme">Re-hire</span></div>
+        <div class="q-body">
+          <div class="q-text">Would you consider returning to Valentis in the future, and would you recommend working here to someone else?</div>
+          <div class="q-probe">Probe: Under what circumstances? What would need to be different? What was genuinely good about the experience?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="card">
+      <div class="ct">Exit Survey — <em>12 Questions</em></div>
+      <p style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:12px">Anonymous digital survey sent to personal email on final day. 5-point scale (1=strongly disagree, 5=strongly agree) plus two open text fields. Results held by Group HR only.</p>
+      <table class="dt">
+        <thead><tr><th>#</th><th>Statement</th><th>Domain</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q1</td><td>My role matched what I was told when I was hired.</td><td><span class="chip ch-tl">Role</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q2</td><td>The site conditions were acceptable for the type of work I was doing.</td><td><span class="chip ch-cr">Site</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q3</td><td>I understood the path to the next grade level.</td><td><span class="chip ch-gd">Dev</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q4</td><td>I received regular and useful feedback on my performance.</td><td><span class="chip ch-gd">Dev</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q5</td><td>My site manager treated me with respect.</td><td><span class="chip ch-tl">Mgmt</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q6</td><td>I felt safe raising concerns at my site.</td><td><span class="chip ch-tl">Mgmt</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q7</td><td>My pay was fair for the work I was doing.</td><td><span class="chip ch-gd">Rewards</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q8</td><td>I felt my wellbeing was taken seriously by the company.</td><td><span class="chip ch-cr">Welfare</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q9</td><td>I would recommend working at Valentis to a friend or colleague.</td><td><span class="chip ch-gn">Alumni</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q10</td><td>I would consider returning to Valentis in the future.</td><td><span class="chip ch-gn">Alumni</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q11</td><td>Open: What was the single biggest reason you decided to leave?</td><td><span class="chip ch-cr">Open</span></td></tr>
+          <tr><td style="font-family:var(--fm);color:var(--ink5)">Q12</td><td>Open: What is one thing Valentis should do differently for future employees?</td><td><span class="chip ch-cr">Open</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ct">Coding <em>Taxonomy</em></div>
+      <p style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:10px">Every exit is coded by Group HR using the six primary exit reason categories. Each exit may have one primary and one secondary code.</p>
+      <div style="display:grid;gap:6px">
+        <div style="display:flex;gap:8px;align-items:center;font-size:12px"><span class="chip ch-cr" style="min-width:80px;text-align:center">SITE-COND</span><span style="color:var(--ink3);font-weight:300">Isolation, welfare, living standards, site environment</span></div>
+        <div style="display:flex;gap:8px;align-items:center;font-size:12px"><span class="chip ch-gd" style="min-width:80px;text-align:center">COMP-RWD</span><span style="color:var(--ink3);font-weight:300">Compensation, benefits, total rewards below expectation</span></div>
+        <div style="display:flex;gap:8px;align-items:center;font-size:12px"><span class="chip ch-tl" style="min-width:80px;text-align:center">DEV-PROG</span><span style="color:var(--ink3);font-weight:300">Development, progression, grade visibility, learning</span></div>
+        <div style="display:flex;gap:8px;align-items:center;font-size:12px"><span class="chip ch-tl" style="min-width:80px;text-align:center">MGT-REL</span><span style="color:var(--ink3);font-weight:300">Management quality, SM relationship, team dynamics</span></div>
+        <div style="display:flex;gap:8px;align-items:center;font-size:12px"><span class="chip ch-am" style="min-width:80px;text-align:center">PERSONAL</span><span style="color:var(--ink3);font-weight:300">Family, health, personal circumstance, relocation</span></div>
+        <div style="display:flex;gap:8px;align-items:center;font-size:12px"><span class="chip ch-gn" style="min-width:80px;text-align:center">EXT-OPP</span><span style="color:var(--ink3);font-weight:300">External opportunity, competitor offer, career change</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ════════════════════════════════════════════════════════ PAGE 04 — LEAVER ANALYSIS -->
+<script>
+document.getElementById('page-analysis').innerHTML=`
+<div class="pe">Section 04 — Leaver Analysis</div>
+<div class="pt">Leaver<br><em>Analysis</em></div>
+<p class="pd">The Valentis exit register tracks every departure at the individual and aggregate level. This section provides the current-state leaver log, the analytical framework for identifying patterns, and the threshold rules that trigger escalation to COO level. Patterns, not individual exits, drive strategy.</p>
+
+<div class="card" style="margin-bottom:16px">
+  <div class="ct">Exit Register — <em>Sample Log</em></div>
+  <div style="border:1px solid var(--surface3);border-radius:var(--r2);overflow:hidden">
+    <div class="leaver-row leaver-head">
+      <div>Country</div><div>Grade / Role</div><div>Tenure</div><div>Primary Code</div><div>Pipeline Impact</div>
+    </div>
+    <div class="leaver-row">
+      <div><span class="chip ch-rd">Myanmar</span></div><div>G2 — Driller Trainee</div><div style="font-family:var(--fm);font-size:11px">3.1 mo</div><div><span class="chip ch-cr">SITE-COND</span></div><div style="font-size:11.5px;color:var(--red);font-weight:500">Pipeline gap — restart cycle</div>
+    </div>
+    <div class="leaver-row">
+      <div><span class="chip ch-rd">Myanmar</span></div><div>G2 — Driller Trainee</div><div style="font-family:var(--fm);font-size:11px">2.8 mo</div><div><span class="chip ch-cr">SITE-COND</span></div><div style="font-size:11.5px;color:var(--red);font-weight:500">Pipeline gap — restart cycle</div>
+    </div>
+    <div class="leaver-row">
+      <div><span class="chip ch-am">Indonesia</span></div><div>G3 — Driller</div><div style="font-family:var(--fm);font-size:11px">14.5 mo</div><div><span class="chip ch-gd">COMP-RWD</span></div><div style="font-size:11.5px;color:var(--red);font-weight:500">G3 vacancy open — G4 overwork</div>
+    </div>
+    <div class="leaver-row">
+      <div><span class="chip ch-am">Indonesia</span></div><div>G3 — Driller</div><div style="font-family:var(--fm);font-size:11px">11.2 mo</div><div><span class="chip ch-gd">COMP-RWD</span></div><div style="font-size:11.5px;color:var(--red);font-weight:500">Compounds existing vacancy</div>
+    </div>
+    <div class="leaver-row">
+      <div><span class="chip ch-tl">Laos</span></div><div>G4 — Senior Driller</div><div style="font-family:var(--fm);font-size:11px">84 mo</div><div><span class="chip ch-gd">PERSONAL</span></div><div style="font-size:11.5px;color:var(--amber);font-weight:500">Knowledge transfer risk — planned</div>
+    </div>
+    <div class="leaver-row">
+      <div><span class="chip ch-tl">Laos</span></div><div>G3 — Driller</div><div style="font-family:var(--fm);font-size:11px">9.3 mo</div><div><span class="chip ch-tl">DEV-PROG</span></div><div style="font-size:11.5px;color:var(--amber);font-weight:500">Pipeline thinning before retirements</div>
+    </div>
+    <div class="leaver-row">
+      <div><span class="chip ch-gn">Thailand</span></div><div>G2 — Driller Trainee</div><div style="font-family:var(--fm);font-size:11px">4.2 mo</div><div><span class="chip ch-am">PERSONAL</span></div><div style="font-size:11.5px;color:var(--green);font-weight:500">Within normal range — not systemic</div>
+    </div>
+    <div class="leaver-row">
+      <div><span class="chip ch-rd">Myanmar</span></div><div>G1 — Trainee</div><div style="font-family:var(--fm);font-size:11px">1.4 mo</div><div><span class="chip ch-cr">SITE-COND</span></div><div style="font-size:11.5px;color:var(--red);font-weight:500">Pre-competency exit — full restart</div>
+    </div>
+  </div>
+  <div class="insight" style="margin-bottom:0">
+    <div class="insight-label">Pattern Flag</div>
+    <div class="insight-body">Myanmar is producing a site-conditions cluster at the 1–3 month mark — not a random distribution. Indonesia is producing a compensation cluster at the 11–15 month mark — trained G3s becoming market-aware. These are structural patterns, not isolated incidents.</div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Analytical <em>Framework</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:14px">Exit data is analysed across five dimensions. Patterns that appear across two or more dimensions simultaneously become root cause escalations.</p>
+    <div style="display:grid;gap:7px">
+      <div class="std-row">
+        <div class="std-title">Dimension 1 — Grade concentration</div>
+        <div class="std-desc">Are exits concentrated in a specific grade band? G1–G3 exits are pipeline risk. G4+ exits are knowledge and continuity risk. Concentration above 60% in one grade band triggers review.</div>
+      </div>
+      <div class="std-row">
+        <div class="std-title">Dimension 2 — Tenure clustering</div>
+        <div class="std-desc">Exits clustering in the 0–3 month window signal onboarding failure. Exits clustering at 10–14 months signal a retention cliff at the point G3s become marketable. Different interventions apply.</div>
+      </div>
+      <div class="std-row">
+        <div class="std-title">Dimension 3 — Country pattern</div>
+        <div class="std-desc">A single country contributing more than 40% of total group exits over two consecutive quarters is a country-level structural problem — not individual variability. COO escalation required.</div>
+      </div>
+      <div class="std-row">
+        <div class="std-title">Dimension 4 — Reason code consistency</div>
+        <div class="std-desc">Three or more exits in 90 days sharing the same primary code (e.g. SITE-COND) is a systemic signal. It means something structural needs to change — not individual circumstance.</div>
+      </div>
+      <div class="std-row">
+        <div class="std-title">Dimension 5 — SM correlation</div>
+        <div class="std-desc">Exits from a specific site manager's team at a rate above group average for two consecutive quarters triggers a confidential SM leadership review. Handled by Group HR — not disclosed to SM directly.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Escalation <em>Thresholds</em></div>
+    <p style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:12px">The following thresholds trigger a formal escalation from Group HR to COO. Escalation format is a two-page brief (Section 08 template) with root cause analysis and recommended action.</p>
+    <div style="display:grid;gap:6px">
+      <div class="risk-row high"><span class="risk-label" style="color:var(--red)">ESC-1</span><div class="risk-text"><strong>Two or more G3+ exits in the same country within 90 days.</strong> G3 attrition directly impacts revenue-generating capacity. Pattern must be reviewed at COO level within 2 weeks.</div></div>
+      <div class="risk-row high"><span class="risk-label" style="color:var(--red)">ESC-2</span><div class="risk-text"><strong>Three exits sharing the same primary code within 90 days.</strong> Systemic driver identified. Root cause correction plan required within 30 days.</div></div>
+      <div class="risk-row med"><span class="risk-label" style="color:var(--amber)">ESC-3</span><div class="risk-text"><strong>Single-country attrition exceeds 45% of total group exits.</strong> Country-level structural problem. May require site manager intervention or operating model review.</div></div>
+      <div class="risk-row med"><span class="risk-label" style="color:var(--amber)">ESC-4</span><div class="risk-text"><strong>Exit interview capture rate falls below 70% for two consecutive months.</strong> Data quality failure prevents early warning system from functioning.</div></div>
+      <div class="risk-row low"><span class="risk-label" style="color:var(--green)">ESC-5</span><div class="risk-text"><strong>Monthly voluntary turnover exceeds 5% of headcount.</strong> Monitoring threshold — not yet a structural signal, but tracked as leading indicator. No immediate escalation, but logged.</div></div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ════════════════════════════════════════════════════════ PAGE 05 — COUNTRY BREAKDOWN -->
+<script>
+document.getElementById('page-country').innerHTML=`
+<div class="pe">Section 05 — Country Breakdown</div>
+<div class="pt">Attrition by<br><em>Country</em></div>
+<p class="pd">Attrition at Valentis is not evenly distributed. Myanmar and Indonesia carry the majority of group exit risk for structurally different reasons — Myanmar through site conditions, Indonesia through compensation and open vacancies. Laos has a retirement-driven departure wave building. Thailand is the benchmark. Each country requires a different retention response.</p>
+
+<div class="g4" style="margin-bottom:16px">
+  <div class="kpi" style="border-top:3px solid var(--red)">
+    <div class="kpi-label">Myanmar Attrition Rate</div>
+    <div class="kpi-val coral">62%</div>
+    <div class="kpi-sub">Highest in group — site conditions primary driver. Month-3 spike dominant pattern.</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid var(--amber)">
+    <div class="kpi-label">Indonesia Attrition Rate</div>
+    <div class="kpi-val gold">44%</div>
+    <div class="kpi-sub">Compensation-driven G3 exits. Three open vacancies compound the problem.</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid var(--teal)">
+    <div class="kpi-label">Laos Attrition Rate</div>
+    <div class="kpi-val teal">28%</div>
+    <div class="kpi-sub">Managed — but G4 retirement cohort creates imminent pipeline risk.</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid var(--green)">
+    <div class="kpi-label">Thailand Attrition Rate</div>
+    <div class="kpi-val green">14%</div>
+    <div class="kpi-sub">Benchmark site. Practices should be documented and replicated group-wide.</div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Myanmar — <em>Country Profile</em></div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+      <span class="chip ch-rd">Critical</span><span class="chip ch-cr">Site conditions primary</span><span class="chip ch-cr">Month-3 spike</span>
+    </div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:12px">Myanmar has the highest attrition in the group, driven by a specific structural failure: site conditions that fall below the minimum acceptable standard for sustained employee commitment. The 62% attrition rate is not random — exits cluster at the 1–3 month mark, indicating that expectations are not being managed at recruitment and conditions are causing early departure before integration.</p>
+    <div style="display:grid;gap:6px">
+      <div style="padding:9px 12px;background:var(--red-dim);border-left:3px solid var(--red);border-radius:var(--r);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Root cause:</strong> No connectivity, inadequate rest facilities, no documented welfare standards. D3 welfare score 4.4 — lowest in group. Isolation compounds each week without improvement.</div>
+      <div style="padding:9px 12px;background:var(--amber-dim);border-left:3px solid var(--amber);border-radius:var(--r);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Contributing factor:</strong> Trainee expectations not calibrated at recruitment — candidates not fully briefed on site remoteness, rotation schedule, and connectivity limitations before accepting offer.</div>
+      <div style="padding:9px 12px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:var(--r);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Required action:</strong> Welfare investment (Section 07), realistic job preview in recruitment process, month-3 check-in protocol, return-from-leave protocol. Full remediation plan in Q2 2026 welfare audit.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Indonesia — <em>Country Profile</em></div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+      <span class="chip ch-am">High concern</span><span class="chip ch-gd">Compensation-driven</span><span class="chip ch-rd">3 G3 vacancies open</span>
+    </div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:12px">Indonesia's attrition problem is concentrated at the G3 grade and is primarily compensation-driven. G3s who have completed core competencies (typically at the 10–14 month mark) are becoming market-aware and finding higher-paying alternatives. The three open G3 vacancies are both a consequence of this pattern and an accelerant — remaining G3s and G4s are covering extra shifts, increasing fatigue and resentment.</p>
+    <div style="display:grid;gap:6px">
+      <div style="padding:9px 12px;background:var(--red-dim);border-left:3px solid var(--red);border-radius:var(--r);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Root cause:</strong> G3 pay benchmarked below local market for skilled drillers. No retention mechanism (variable pay, loyalty premium, or milestone bonus) to extend commitment past the 12-month mark.</div>
+      <div style="padding:9px 12px;background:var(--amber-dim);border-left:3px solid var(--amber);border-radius:var(--r);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Contributing factor:</strong> G3 vacancies creating overwork for remaining team — the Indonesia site is in a retention spiral. Each exit makes conditions worse for remaining employees, increasing further exit risk.</div>
+      <div style="padding:9px 12px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:var(--r);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Required action:</strong> G3 market pay review, Q2 2026 G3 hiring (3 seats), design of 12-month retention mechanism for trained G3s. Wirawan to submit weekly shift compliance reports until G3 complement restored.</div>
+    </div>
+  </div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Laos — <em>Country Profile</em></div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+      <span class="chip ch-tl">Managed</span><span class="chip ch-gd">Retirement wave building</span><span class="chip ch-gd">Knowledge risk</span>
+    </div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:12px">Laos has a relatively controlled attrition picture — the 28% rate is elevated but not in crisis. The forward risk is the G4 retirement cohort. Two or more experienced G4s are approaching retirement within 18 months, and no G3 succession depth currently exists to replace them. The exit intelligence challenge in Laos is knowledge transfer, not immediate retention.</p>
+    <div style="display:grid;gap:6px">
+      <div style="padding:9px 12px;background:var(--amber-dim);border-left:3px solid var(--amber);border-radius:var(--r);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Forward risk:</strong> G4 retirements will remove 40–50% of Laos senior drilling capacity within 18 months. G3 pipeline must be strengthened now to prevent a site-level capability gap.</div>
+      <div style="padding:9px 12px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:var(--r);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Required action:</strong> Exit knowledge-transfer protocol activated for retiring G4s. G3 succession plan for Laos by Q3 2026. Retirement exit interview includes technical skills audit and documentation checklist.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Thailand — <em>Country Profile</em></div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+      <span class="chip ch-gn">Benchmark</span><span class="chip ch-gn">14% attrition</span><span class="chip ch-gn">Document practices</span>
+    </div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:12px">Thailand is the best-performing site on attrition. 14% voluntary turnover is within the expected range for rotational mining work. Exits are predominantly personal-reason and not clustered by grade or tenure. The task is not to fix Thailand — it is to understand precisely what is working and export it to the other three countries.</p>
+    <div style="display:grid;gap:6px">
+      <div style="padding:9px 12px;background:var(--green-dim);border-left:3px solid var(--green);border-radius:var(--r);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">What's working:</strong> Exit interviews at Thailand consistently cite strong SM relationship, clear grade progression communication, acceptable welfare standards, and team cohesion. SM capability is the primary differentiator.</div>
+      <div style="padding:9px 12px;background:var(--teal-dim);border-left:3px solid var(--teal);border-radius:var(--r);font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5"><strong style="font-weight:600;color:var(--ink)">Action:</strong> Thailand SM practices to be formally documented by Group HR in Q2 2026. SM coaching framework (Tool 08) should use Thailand as the reference model. Site visit or structured knowledge transfer to Myo H. in Myanmar.</div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ════════════════════════════════════════════════════════ PAGE 06 — PIPELINE IMPACT -->
+<script>
+document.getElementById('page-pipeline').innerHTML=`
+<div class="pe">Section 06 — Pipeline Impact</div>
+<div class="pt">Exit Impact on the<br><em>Driller Pipeline</em></div>
+<p class="pd">Every exit from the G1–G4 pipeline has a compounding effect that is unique to Valentis&rsquo;s operating model. The 18–24 month G3-to-G4 development cycle means that an exit is never just one departure — it is a delayed production capability, a restarted development clock, and a recruiting cost stacked on top of a training investment already made. This section quantifies that impact and connects exit data to pipeline planning.</p>
+
+<div class="g3" style="margin-bottom:16px">
+  <div class="kpi" style="border-top:3px solid var(--red)">
+    <div class="kpi-label">Pipeline Delay Per G2 Exit</div>
+    <div class="kpi-val coral">18–24 <span style="font-size:15px;font-weight:300">mo</span></div>
+    <div class="kpi-sub">Restarting the G1–G4 cycle from intake. The departing trainee's development investment is fully lost.</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid var(--amber)">
+    <div class="kpi-label">Pipeline Delay Per G3 Exit</div>
+    <div class="kpi-val gold">9–14 <span style="font-size:15px;font-weight:300">mo</span></div>
+    <div class="kpi-sub">A trained G3 leaving after 12 months represents 12 months of investment cost plus a 9–14 month gap until replacement reaches equivalent competency.</div>
+  </div>
+  <div class="kpi" style="border-top:3px solid var(--teal)">
+    <div class="kpi-label">People Cost as % of Revenue</div>
+    <div class="kpi-val teal">43%</div>
+    <div class="kpi-sub">At this ratio, pipeline gaps directly compress revenue. Each open G3/G4 seat reduces drilling capacity and revenue-generating hours.</div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">The Compounding <em>Cost Model</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:12px">A single G3 exit does not cost $1,000–$2,000. It costs the sum of the replacement investment, the lost development sunk cost, the production gap, and the overwork cost on remaining employees. The true cost is closer to $10,000–$20,000 when all factors are included.</p>
+    <table class="dt">
+      <thead><tr><th>Cost component</th><th>G2 exit</th><th>G3 exit</th></tr></thead>
+      <tbody>
+        <tr><td>Direct replacement cost (sourcing, hire, relocation)</td><td>$1,200–$2,000</td><td>$1,500–$2,500</td></tr>
+        <tr><td>Lost training investment (time + SM supervision cost)</td><td>$800–$1,500</td><td>$3,000–$5,000</td></tr>
+        <tr><td>Productivity gap (position unfilled, ramp-up time)</td><td>$2,000–$4,000</td><td>$4,000–$8,000</td></tr>
+        <tr><td>Overwork cost (other grades covering the gap)</td><td>$500–$1,000</td><td>$1,000–$2,500</td></tr>
+        <tr><td>Pipeline delay cost (delayed G4 availability)</td><td>$3,000–$5,000</td><td>$2,000–$4,000</td></tr>
+        <tr><td style="font-weight:700;color:var(--ink)">Total estimated cost range</td><td style="font-weight:700;color:var(--red)">$7,500–$13,500</td><td style="font-weight:700;color:var(--red)">$11,500–$22,000</td></tr>
+      </tbody>
+    </table>
+    <div class="formula" style="margin-bottom:0">
+      <div><div class="formula-label">Group annual cost of current attrition</div><div class="formula-eq">~$105K – $190K estimated</div></div>
+      <div class="formula-note">Based on estimated 8–12 pipeline exits annually across all four countries at current attrition rates</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Pipeline Exit <em>Scenarios</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:12px">Three scenarios illustrating how attrition compounds across the driller pipeline. These scenarios are designed for COO briefing — they translate HR data into operational and financial language.</p>
+    <div style="display:grid;gap:8px">
+      <div style="padding:12px 16px;background:var(--red-dim);border-left:3px solid var(--red);border-radius:var(--r2)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--red);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:4px">Scenario A — No change to current attrition</div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">8–12 pipeline exits per year · 3–5 G3 vacancies continuously open</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Valentis operates chronically below full drilling capacity. Country 5 expansion is impossible — the group cannot staff four countries at adequate depth. People cost stays at 43%+ of revenue because the productivity gap is permanent.</div>
+      </div>
+      <div style="padding:12px 16px;background:var(--amber-dim);border-left:3px solid var(--amber);border-radius:var(--r2)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--amber);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:4px">Scenario B — Targeted interventions in Myanmar + Indonesia</div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">Estimated 30–40% reduction in pipeline exits · Investment: ~$15K–$20K</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Welfare investment + compensation review + month-3 check-in reduces the two highest-volume exit sources. Pipeline stabilises. G4 headcount reaches target by Q1 2027. Country 5 scoping becomes feasible.</div>
+      </div>
+      <div style="padding:12px 16px;background:var(--green-dim);border-left:3px solid var(--green);border-radius:var(--r2)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--green);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:4px">Scenario C — Full retention programme implemented</div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">50–60% attrition reduction · Voluntary turnover stabilised at 15–18%</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Full EX programme (Tools 1–8) operational. Exit intelligence driving continuous improvement. People cost as % of revenue falls to 36–38% through productivity gains. Country 5 launch supported by a deep and stable pipeline.</div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ════════════════════════════════════════════════════════ PAGE 07 — ACTION FRAMEWORK -->
+<script>
+document.getElementById('page-action').innerHTML=`
+<div class="pe">Section 07 — Action Framework</div>
+<div class="pt">Exit Intelligence<br><em>to Action</em></div>
+<p class="pd">Exit data has no value unless it changes something. This section defines the action framework that converts exit intelligence into people strategy decisions — the feedback loop between what leavers tell us and what Valentis does differently. Actions are allocated by root cause code, assigned to an owner, and tracked to completion.</p>
+
+<div class="card" style="margin-bottom:16px">
+  <div class="ct">Action <em>Register</em> — Exit-Driven Priorities</div>
+  <div style="display:grid;gap:8px;margin-top:4px">
+    <div class="action-item" style="border-left-color:var(--red)">
+      <div class="action-ico">01</div>
+      <div class="action-body">
+        <div class="action-title">Myanmar welfare investment — SITE-COND cluster response</div>
+        <div class="action-desc">Welfare audit, connectivity, rest space, safety protocol cards. Addresses the highest-volume exit root cause in the group. The $2,500 Myanmar investment is the single highest-ROI action available to Group HR in FY2026.</div>
+        <div class="action-meta"><span class="chip ch-rd">Critical</span><span class="chip ch-cr">SITE-COND</span><span style="font-family:var(--fm);font-size:8px;color:var(--ink5)">Owner: Group HR + Myo H. · Q2 2026</span></div>
+      </div>
+    </div>
+    <div class="action-item" style="border-left-color:var(--red)">
+      <div class="action-ico">02</div>
+      <div class="action-body">
+        <div class="action-title">Indonesia G3 hiring — 3 open seats · vacancy spiral response</div>
+        <div class="action-desc">Three open G3 vacancies are creating overwork, fatigue, and a compounding exit spiral. Hiring is the retention intervention for Indonesia — not a wellbeing programme. G3 compensation review must accompany the hiring campaign to prevent immediate turnover of new hires.</div>
+        <div class="action-meta"><span class="chip ch-rd">Critical</span><span class="chip ch-gd">COMP-RWD</span><span style="font-family:var(--fm);font-size:8px;color:var(--ink5)">Owner: Group HR + COO · Q2 2026</span></div>
+      </div>
+    </div>
+    <div class="action-item" style="border-left-color:var(--amber)">
+      <div class="action-ico">03</div>
+      <div class="action-body">
+        <div class="action-title">G3 pay market review — COMP-RWD cluster response</div>
+        <div class="action-desc">Indonesia and Myanmar G3 exits citing compensation require a structured market benchmarking exercise. Valentis needs to know whether G3 pay is genuinely below market or whether compensation perception is the issue. Findings presented to COO with recommended adjustment by Q2 2026.</div>
+        <div class="action-meta"><span class="chip ch-am">High</span><span class="chip ch-gd">COMP-RWD</span><span style="font-family:var(--fm);font-size:8px;color:var(--ink5)">Owner: Group HR · Q2 2026</span></div>
+      </div>
+    </div>
+    <div class="action-item" style="border-left-color:var(--amber)">
+      <div class="action-ico">04</div>
+      <div class="action-body">
+        <div class="action-title">Month-3 check-in protocol — onboarding retention response</div>
+        <div class="action-desc">Structured Group HR check-in at 30, 60, and 90 days for all new trainees. Designed specifically to intercept the month-3 attrition window in Myanmar and Indonesia. SM is briefed on outcomes but does not conduct the check-in. Connected to the Onboarding Journey Designer (Tool 03).</div>
+        <div class="action-meta"><span class="chip ch-am">High</span><span class="chip ch-cr">SITE-COND</span><span class="chip ch-tl">DEV-PROG</span><span style="font-family:var(--fm);font-size:8px;color:var(--ink5)">Owner: Group HR · April 2026</span></div>
+      </div>
+    </div>
+    <div class="action-item" style="border-left-color:var(--gold)">
+      <div class="action-ico">05</div>
+      <div class="action-body">
+        <div class="action-title">Grade progression communication — DEV-PROG cluster response</div>
+        <div class="action-desc">Exit interviews flag that trainees do not see the G3-to-G4 path clearly. The recognition programme (Tool 05) and onboarding improvements (Tool 03) address this — but SMs also need to be briefed on how to communicate grade milestones actively during check-ins.</div>
+        <div class="action-meta"><span class="chip ch-gd">Medium</span><span class="chip ch-tl">DEV-PROG</span><span style="font-family:var(--fm);font-size:8px;color:var(--ink5)">Owner: Group HR + SMs · Q3 2026</span></div>
+      </div>
+    </div>
+    <div class="action-item" style="border-left-color:var(--gold)">
+      <div class="action-ico">06</div>
+      <div class="action-body">
+        <div class="action-title">Realistic Job Preview — pre-offer calibration</div>
+        <div class="action-desc">Multiple exit interviews cite the gap between what candidates expected and what remote site work was actually like. A structured realistic job preview at the offer stage — including site photos, rotation schedule, connectivity limitations, and welfare conditions — will reduce early exits driven by expectation mismatch.</div>
+        <div class="action-meta"><span class="chip ch-gd">Medium</span><span class="chip ch-cr">SITE-COND</span><span style="font-family:var(--fm);font-size:8px;color:var(--ink5)">Owner: Group HR · Q3 2026</span></div>
+      </div>
+    </div>
+    <div class="action-item" style="border-left-color:var(--teal)">
+      <div class="action-ico">07</div>
+      <div class="action-body">
+        <div class="action-title">Laos knowledge-transfer protocol — retirement cohort response</div>
+        <div class="action-desc">Retiring G4s in Laos represent a knowledge risk, not a voluntary attrition risk. Exit process for this cohort includes a structured knowledge transfer over a 6-month handover period, technical documentation, and succession readiness review. G3 acceleration plan must be in place before first G4 retirement.</div>
+        <div class="action-meta"><span class="chip ch-tl">Planned</span><span class="chip ch-gd">PERSONAL</span><span style="font-family:var(--fm);font-size:8px;color:var(--ink5)">Owner: Group HR + Laos SM · Q3 2026</span></div>
+      </div>
+    </div>
+    <div class="action-item" style="border-left-color:var(--teal)">
+      <div class="action-ico">08</div>
+      <div class="action-body">
+        <div class="action-title">Exit capture rate to 90% — data quality foundation</div>
+        <div class="action-desc">Current 31% exit interview completion rate makes it impossible to run a reliable early warning system. The structured framework in this tool, combined with SM notification protocols, will improve capture. Target 70% by Q3 2026 and 90% by Q4 2026.</div>
+        <div class="action-meta"><span class="chip ch-tl">Enabler</span><span style="font-family:var(--fm);font-size:8px;color:var(--ink5)">Owner: Group HR · Q4 2026</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Quarterly Exit <em>Review Cycle</em></div>
+  <div class="g3" style="margin-bottom:0">
+    <div style="padding:12px 14px;background:var(--surface2);border-radius:var(--r2);border-top:2px solid var(--coral)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--coral);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Monthly — Group HR internal</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Code all exits. Update exit register. Check escalation thresholds. Identify emerging patterns. Issue exit surveys and log completion rate.</div>
+    </div>
+    <div style="padding:12px 14px;background:var(--surface2);border-radius:var(--r2);border-top:2px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Quarterly — Group HR + COO</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Exit theme analysis. Root cause patterns. Action plan status. Any country-level escalations. Pipeline impact quantification. Recommendations for next quarter.</div>
+    </div>
+    <div style="padding:12px 14px;background:var(--surface2);border-radius:var(--r2);border-top:2px solid var(--gold)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--gold);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Annual — Full exit intelligence review</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Annual attrition trend analysis. Year-over-year comparison. Strategy effectiveness review. Exit benchmark against industry. Input to annual people strategy plan and budget.</div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ════════════════════════════════════════════════════════ PAGE 08 — COO BRIEF -->
+<script>
+document.getElementById('page-coo').innerHTML=`
+<div class="pe">Section 08 — COO Brief</div>
+<div class="pt">Executive Brief —<br><em>Exit Intelligence</em></div>
+<p class="pd">A quarterly exit intelligence briefing to the COO, structured to present patterns, root causes, pipeline impact, and recommended actions. This is not a headcount report — it is a business risk briefing. The framing is: what are people leaving for, what does that cost us, and what do we need to do about it.</p>
+
+<div style="background:var(--ink);border-radius:var(--r3);padding:28px;margin-bottom:16px;color:var(--cream)">
+  <div style="font-family:var(--fm);font-size:8.5px;color:rgba(250,246,240,0.4);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px">Valentis Group — Exit Intelligence Quarterly Brief · Q1 2026</div>
+  <div style="font-family:var(--fd);font-size:30px;font-weight:300;line-height:1.15;margin-bottom:16px">Three structural exit patterns are<br><em style="color:var(--coral)">costing us pipeline capacity</em></div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+    <div style="padding:14px 16px;background:rgba(250,246,240,0.06);border-radius:var(--r2);border-top:2px solid var(--red)">
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Group Voluntary Turnover</div>
+      <div style="font-family:var(--fd);font-size:32px;color:var(--coral);font-weight:500">38%</div>
+      <div style="font-size:11px;color:rgba(250,246,240,0.55);margin-top:4px;font-weight:300">Rolling 12 months · Myanmar primary driver</div>
+    </div>
+    <div style="padding:14px 16px;background:rgba(250,246,240,0.06);border-radius:var(--r2);border-top:2px solid var(--amber)">
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Estimated Annual Exit Cost</div>
+      <div style="font-family:var(--fd);font-size:32px;color:var(--gold);font-weight:500">~$150K</div>
+      <div style="font-size:11px;color:rgba(250,246,240,0.55);margin-top:4px;font-weight:300">Midpoint of $105K–$190K estimated range</div>
+    </div>
+    <div style="padding:14px 16px;background:rgba(250,246,240,0.06);border-radius:var(--r2);border-top:2px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Exit Interview Capture Rate</div>
+      <div style="font-family:var(--fd);font-size:32px;color:var(--teal);font-weight:500">31%</div>
+      <div style="font-size:11px;color:rgba(250,246,240,0.55);margin-top:4px;font-weight:300">Data quality is insufficient — structured capture required</div>
+    </div>
+  </div>
+
+  <div style="display:grid;gap:10px;margin-bottom:20px">
+    <div style="padding:14px 18px;background:rgba(192,83,58,0.15);border-radius:var(--r2);border-left:3px solid var(--coral)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--coral);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Pattern 01 — Myanmar Month-3 Site Conditions Cluster</div>
+      <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px">62% attrition rate. Exits clustering at 1–3 months. Primary code: SITE-COND. The welfare deficit at Myanmar is producing a predictable, repeating exit cycle.</div>
+      <div style="font-size:12px;color:rgba(250,246,240,0.65);font-weight:300;line-height:1.55">Every G2 exit from Myanmar costs an estimated $7,500–$13,500 in combined replacement, pipeline, and productivity cost. The Myanmar welfare investment of $2,500 is expected to reduce this cluster by 40–50% — a payback period of one prevented departure.</div>
+    </div>
+    <div style="padding:14px 18px;background:rgba(196,122,30,0.12);border-radius:var(--r2);border-left:3px solid var(--gold)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Pattern 02 — Indonesia G3 Compensation Cliff</div>
+      <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px">44% attrition. Exits clustering at 11–15 months. Primary code: COMP-RWD. Trained G3s are becoming market-aware and leaving at exactly the point where their skills are most valuable — to us and to competitors.</div>
+      <div style="font-size:12px;color:rgba(250,246,240,0.65);font-weight:300;line-height:1.55">Three open G3 vacancies are creating a retention spiral. The resolution is hiring + a pay review, not a welfare programme. Q2 2026 G3 hiring is already a declared priority. The pay review is the missing piece.</div>
+    </div>
+    <div style="padding:14px 18px;background:rgba(184,150,46,0.10);border-radius:var(--r2);border-left:3px solid var(--gold)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Pattern 03 — Laos Retirement Knowledge Risk</div>
+      <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px">Not an attrition crisis today. A capability crisis in 12–18 months if G4 retirements proceed without succession depth. This is the one exit pattern we can see coming and plan for.</div>
+      <div style="font-size:12px;color:rgba(250,246,240,0.65);font-weight:300;line-height:1.55">Knowledge transfer protocols for retiring G4s must begin now. G3 succession plan for Laos required by Q3 2026. If we act in Q2, we control this risk. If we act in Q4, we are managing a crisis.</div>
+    </div>
+  </div>
+
+  <div style="padding:14px 18px;background:rgba(26,95,106,0.2);border-radius:var(--r2);border-left:3px solid var(--teal)">
+    <div style="font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Decisions Requested</div>
+    <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px">Three decisions are required from the COO to address these patterns. All three are already directionally aligned with existing priorities.</div>
+    <div style="display:grid;gap:6px;margin-top:8px">
+      <div style="display:flex;gap:10px;font-size:12px;color:rgba(250,246,240,0.75)"><span style="font-family:var(--fm);font-size:9px;color:var(--teal);min-width:20px">01</span>Approve $2,500 Myanmar welfare investment as part of the broader $4,700 site welfare programme (per Wellbeing Tool briefing).</div>
+      <div style="display:flex;gap:10px;font-size:12px;color:rgba(250,246,240,0.75)"><span style="font-family:var(--fm);font-size:9px;color:var(--teal);min-width:20px">02</span>Confirm G3 Indonesia hiring (3 seats) remains Q2 2026 priority AND authorise Group HR to commission a G3 market pay benchmark by end of Q1 2026.</div>
+      <div style="display:flex;gap:10px;font-size:12px;color:rgba(250,246,240,0.75)"><span style="font-family:var(--fm);font-size:9px;color:var(--teal);min-width:20px">03</span>Confirm Laos G4 retirement timeline so Group HR can sequence the knowledge-transfer and succession programme correctly.</div>
+    </div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Implementation <em>Timeline</em></div>
+    <div style="display:grid;gap:0">
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">March–April 2026</div><div class="tl-title">Exit framework activated — all sites</div><div class="tl-body">SM notification protocol briefed. Exit interview guide distributed to Group HR. Exit survey template finalised. Capture rate tracking begins immediately.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">April 2026</div><div class="tl-title">Month-3 check-in protocol — all new trainees</div><div class="tl-body">Group HR implements 30/60/90-day check-in for all trainees. Myanmar and Indonesia prioritised. Connected to onboarding journey (Tool 03).</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--coral)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q2 2026</div><div class="tl-title">G3 Indonesia hiring + pay review</div><div class="tl-body">G3 recruitment campaign launched. Market pay benchmark completed. Findings and recommendation presented to COO. Retention mechanism designed if pay gap confirmed.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--gold)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q3 2026</div><div class="tl-title">Laos knowledge-transfer + G3 succession plan</div><div class="tl-body">Retiring G4 handover protocols activated. G3 succession readiness review completed. Group HR delivers first exit intelligence quarterly briefing to COO with Q1–Q2 data.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q4 2026</div><div class="tl-title">Exit capture rate target: 90%</div><div class="tl-body">Full exit intelligence cycle operational. Quarterly exit briefings established as standard COO reporting. Annual exit review input to 2027 people strategy plan.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot"></div></div>
+        <div class="tl-content"><div class="tl-when">2027+</div><div class="tl-title">Attrition target: group voluntary turnover &lt; 20%</div><div class="tl-body">From current 38% to below 20% as the three-year retention programme compounds. Country 5 expansion supported by a deep, stable pipeline.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Exit Programme vs <em>Status Quo Cost</em></div>
+    <table class="dt" style="margin-bottom:12px">
+      <thead><tr><th>Investment</th><th>Cost</th><th>Expected outcome</th></tr></thead>
+      <tbody>
+        <tr><td>Exit framework activation (Group HR time)</td><td>~$0 cash</td><td style="color:var(--green);font-weight:600">90% capture rate · pattern detection</td></tr>
+        <tr><td>Myanmar welfare investment</td><td>$2,500</td><td style="color:var(--green);font-weight:600">40–50% reduction in month-3 exits</td></tr>
+        <tr><td>G3 pay market benchmark</td><td>~$500–$1,500</td><td style="color:var(--green);font-weight:600">Evidence base for retention mechanism design</td></tr>
+        <tr><td>Month-3 check-in programme</td><td>~$0 cash</td><td style="color:var(--green);font-weight:600">Early interception of exit risk before threshold</td></tr>
+        <tr><td>Realistic job preview development</td><td>~$200–$500</td><td style="color:var(--green);font-weight:600">Reduced expectation-driven early exits</td></tr>
+        <tr><td style="font-weight:700;color:var(--ink)">Total Year 1 investment</td><td style="font-weight:700;color:var(--teal)">~$5,700–$8,000</td><td style="font-weight:700;color:var(--green)">Est. $40K–$80K annual cost reduction</td></tr>
+      </tbody>
+    </table>
+    <div class="insight" style="margin-bottom:0">
+      <div class="insight-label">ROI Summary</div>
+      <div class="insight-body">If the exit programme prevents just four G3-equivalent departures in FY2026, the total cost saving exceeds $46,000 — a return of 6x to 8x on the programme investment in the first year alone.</div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+</body>
+</html>

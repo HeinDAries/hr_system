@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leave & Absence Management Dashboard — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --slate: #2d3142;
+    --amber: #c9802a;
+    --amber-light: #e8a84a;
+    --amber-pale: #fdf3e3;
+    --steel: #4a5568;
+    --mist: #f4f5f7;
+    --white: #ffffff;
+    --border: #dde1ea;
+    --success: #2d7d46;
+    --success-bg: #edf7f1;
+    --warning: #b45309;
+    --warning-bg: #fef3cd;
+    --danger: #b91c1c;
+    --danger-bg: #fef2f2;
+    --info: #1e5f74;
+    --info-bg: #e8f4f8;
+    --purple: #5b21b6;
+    --purple-bg: #ede9fe;
+    --tag-laos: #1e5f74;
+    --tag-myanmar: #6b3a2a;
+    --tag-indonesia: #1a4731;
+    --tag-thailand: #3b2a6e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--mist); color: var(--ink); min-height: 100vh; }
+
+  .header { background: var(--slate); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--amber); }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .dept-badge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--amber); letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--amber); padding: 3px 8px; border-radius: 2px; }
+  .header-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); font-weight: 600; }
+  .header-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8899aa; letter-spacing: 1px; }
+
+  .tool-header { background: var(--white); padding: 28px 40px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  .tool-title-block h1 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .tool-title-block p { font-size: 13px; color: var(--steel); max-width: 600px; line-height: 1.6; }
+  .tool-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber-light); padding: 4px 10px; border-radius: 2px; letter-spacing: 1px; white-space: nowrap; margin-top: 4px; }
+
+  .stats-bar { background: var(--slate); padding: 16px 40px; display: flex; }
+  .stat-item { flex: 1; text-align: center; padding: 0 14px; border-right: 1px solid rgba(255,255,255,0.1); }
+  .stat-item:last-child { border-right: none; }
+  .stat-number { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; color: var(--amber-light); display: block; }
+  .stat-number.red { color: #f87171; }
+  .stat-number.green { color: #6ee7b7; }
+  .stat-number.yellow { color: #fcd34d; }
+  .stat-label { font-size: 11px; color: #99aabb; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .main { padding: 28px 40px; display: flex; flex-direction: column; gap: 24px; }
+
+  .tab-bar { display: flex; border-bottom: 2px solid var(--border); }
+  .tab-btn { padding: 10px 22px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--steel); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--ink); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .controls-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .search-box { flex: 1; min-width: 200px; display: flex; align-items: center; background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 0 14px; gap: 8px; height: 38px; }
+  .search-box input { border: none; outline: none; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); flex: 1; background: transparent; }
+  .filter-select { height: 38px; padding: 0 12px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: var(--steel); background: var(--white); cursor: pointer; outline: none; }
+  .btn { height: 38px; padding: 0 18px; border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--amber); color: var(--white); }
+  .btn-primary:hover { background: var(--amber-light); }
+  .btn-outline { background: var(--white); color: var(--slate); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* BALANCES TABLE */
+  .table-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .table-card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .table-card-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--steel); letter-spacing: 1.5px; text-transform: uppercase; }
+  .record-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--amber); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--mist); padding: 10px 14px; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--steel); letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border); font-weight: 500; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--amber-pale); }
+  td { padding: 10px 14px; font-size: 12.5px; color: var(--ink); vertical-align: middle; }
+
+  .country-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 2px; color: var(--white); }
+  .ct-laos { background: var(--tag-laos); }
+  .ct-myanmar { background: var(--tag-myanmar); }
+  .ct-indonesia { background: var(--tag-indonesia); }
+  .ct-thailand { background: var(--tag-thailand); }
+
+  .grade-badge { font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 2px; background: var(--slate); color: var(--amber-light); }
+
+  /* LEAVE BALANCE BARS */
+  .balance-cell { min-width: 120px; }
+  .balance-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .balance-bar { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; max-width: 80px; }
+  .bb-fill { height: 100%; border-radius: 3px; }
+  .bb-high { background: var(--success); }
+  .bb-med { background: var(--amber); }
+  .bb-low { background: var(--danger); }
+  .balance-num { font-family: 'IBM Plex Mono', monospace; font-size: 11px; white-space: nowrap; }
+  .bn-good { color: var(--success); }
+  .bn-med { color: var(--warning); }
+  .bn-low { color: var(--danger); }
+
+  .status-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 10px; font-family: 'IBM Plex Mono', monospace; }
+  .sp-approved { background: var(--success-bg); color: var(--success); }
+  .sp-pending { background: var(--warning-bg); color: var(--warning); }
+  .sp-rejected { background: var(--danger-bg); color: var(--danger); }
+  .sp-active { background: var(--info-bg); color: var(--info); }
+
+  .leave-type-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 2px; font-family: 'IBM Plex Mono', monospace; }
+  .lt-annual { background: var(--info-bg); color: var(--info); }
+  .lt-sick { background: var(--warning-bg); color: var(--warning); }
+  .lt-casual { background: var(--purple-bg); color: var(--purple); }
+  .lt-maternity { background: #fce7f3; color: #9d174d; }
+  .lt-unpaid { background: var(--mist); color: var(--steel); }
+  .lt-compassionate { background: var(--danger-bg); color: var(--danger); }
+
+  .action-btns { display: flex; gap: 6px; }
+  .icon-btn { width: 28px; height: 28px; border-radius: 3px; border: 1px solid var(--border); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; color: var(--steel); }
+  .icon-btn:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-pale); }
+
+  /* COUNTRY ENTITLEMENTS */
+  .entitlements-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .ent-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .ent-header { padding: 14px 16px; }
+  .ent-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--white); }
+  .ent-sub { font-size: 10px; color: rgba(255,255,255,0.65); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+  .ent-body { padding: 12px 16px; }
+  .ent-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 7px 0; border-bottom: 1px dotted var(--border); }
+  .ent-row:last-child { border-bottom: none; }
+  .ent-label { font-size: 12px; color: var(--ink); flex: 1; line-height: 1.3; }
+  .ent-value { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; color: var(--amber); white-space: nowrap; }
+  .ent-note { font-size: 10px; color: var(--steel); margin-top: 2px; line-height: 1.3; }
+
+  /* PENDING APPROVALS */
+  .approvals-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .approval-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .approval-header { padding: 12px 16px; background: var(--slate); display: flex; align-items: center; justify-content: space-between; }
+  .approval-header-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--amber-light); }
+  .approval-row { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 1px solid var(--border); }
+  .approval-row:last-child { border-bottom: none; }
+  .ar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--slate); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 13px; color: var(--amber-light); font-weight: 700; flex-shrink: 0; }
+  .ar-info { flex: 1; }
+  .ar-name { font-size: 13px; font-weight: 600; }
+  .ar-detail { font-size: 11px; color: var(--steel); margin-top: 1px; }
+  .ar-actions { display: flex; gap: 6px; }
+  .ar-btn { height: 26px; padding: 0 10px; border-radius: 3px; font-size: 11px; font-weight: 600; cursor: pointer; border: none; font-family: 'IBM Plex Sans', sans-serif; }
+  .ar-approve { background: var(--success-bg); color: var(--success); }
+  .ar-approve:hover { background: var(--success); color: var(--white); }
+  .ar-reject { background: var(--danger-bg); color: var(--danger); }
+  .ar-reject:hover { background: var(--danger); color: var(--white); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,26,46,0.6); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--white); border-radius: 8px; width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--white); z-index: 1; }
+  .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); }
+  .modal-close { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 16px; color: var(--steel); display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: var(--mist); }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--mist); border-radius: 0 0 8px 8px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-full { grid-column: 1 / -1; }
+  .form-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--amber-pale); }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 11px; font-weight: 500; color: var(--steel); }
+  .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.15s; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--amber); }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+
+  /* DETAIL */
+  .detail-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; margin-top: 16px; padding-bottom: 5px; border-bottom: 1px solid var(--amber-pale); }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .detail-item .detail-label { font-size: 10px; color: var(--steel); font-weight: 500; text-transform: uppercase; margin-bottom: 3px; }
+  .detail-item .detail-value { font-size: 13px; color: var(--ink); }
+
+  /* BALANCE SUMMARY PANEL */
+  .balance-summary { background: var(--mist); border-radius: 4px; padding: 12px 14px; margin-bottom: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .bs-item { text-align: center; }
+  .bs-num { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 500; color: var(--ink); }
+  .bs-label { font-size: 10px; color: var(--steel); margin-top: 2px; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--slate); color: var(--white); padding: 12px 20px; border-radius: 6px; font-size: 13px; border-left: 3px solid var(--amber); display: none; z-index: 200; }
+  .toast.show { display: block; animation: fadeUp 0.2s ease; }
+  @keyframes fadeUp { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  @media (max-width: 1100px) { .entitlements-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 800px) {
+    .header, .tool-header, .main, .stats-bar { padding-left: 16px; padding-right: 16px; }
+    .entitlements-grid, .approvals-layout { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="dept-badge">HR OPS · D9</div>
+    <div class="header-title">Valentis Group — HR Operations & Compliance</div>
+  </div>
+  <div class="header-meta">TOOL 05 / 09 &nbsp;·&nbsp; LEAVE & ABSENCE</div>
+</div>
+
+<div class="tool-header">
+  <div class="tool-title-block">
+    <h1>Leave & Absence Management Dashboard</h1>
+    <p>Leave balances, accruals, approval workflows, and country-specific entitlement rules across all four Valentis operating jurisdictions. Tracks annual, sick, casual, and other leave types with running balance visibility per employee.</p>
+  </div>
+  <div class="tool-tag">HR OPS · TOOL 5 OF 9</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-number yellow" id="sPending">—</span><div class="stat-label">Pending Approvals</div></div>
+  <div class="stat-item"><span class="stat-number green" id="sApproved">—</span><div class="stat-label">Approved This Month</div></div>
+  <div class="stat-item"><span class="stat-number" id="sOnLeave">—</span><div class="stat-label">Currently On Leave</div></div>
+  <div class="stat-item"><span class="stat-number red" id="sLowBalance">—</span><div class="stat-label">Low Balance Alerts</div></div>
+  <div class="stat-item"><span class="stat-number" id="sAvgAnnual">—</span><div class="stat-label">Avg. Annual Balance</div></div>
+  <div class="stat-item"><span class="stat-number" id="sTotalRecords">—</span><div class="stat-label">Total Leave Records</div></div>
+</div>
+
+<div class="main">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('balances')">Leave Balances</button>
+    <button class="tab-btn" onclick="switchTab('requests')">Leave Requests</button>
+    <button class="tab-btn" onclick="switchTab('approvals')">Pending Approvals</button>
+    <button class="tab-btn" onclick="switchTab('entitlements')">Country Entitlements</button>
+  </div>
+
+  <!-- TAB 1: BALANCES -->
+  <div class="tab-content active" id="tab-balances">
+    <div class="controls-row">
+      <div class="search-box">
+        <span style="color:#99aabb;font-size:14px;">⌕</span>
+        <input type="text" id="balSearch" placeholder="Search employee…" oninput="filterBalances()">
+      </div>
+      <select class="filter-select" id="fbCountry" onchange="filterBalances()">
+        <option value="">All Countries</option>
+        <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option>
+      </select>
+      <select class="filter-select" id="fbGrade" onchange="filterBalances()">
+        <option value="">All Grades</option>
+        <option>G1</option><option>G2</option><option>G3</option><option>G4</option>
+        <option>G5</option><option>G6</option><option>G7</option><option>G8</option>
+      </select>
+      <select class="filter-select" id="fbAlert" onchange="filterBalances()">
+        <option value="">All Balances</option>
+        <option value="low">Low Balance (≤3d)</option>
+        <option value="high">Good Standing (>5d)</option>
+      </select>
+      <button class="btn btn-primary" onclick="openLeaveRequest()">+ Request Leave</button>
+      <button class="btn btn-outline" onclick="exportBalances()">↓ Export</button>
+    </div>
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">Employee Leave Balances — 2025</span>
+        <span class="record-count" id="balCount"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>EMPLOYEE</th>
+            <th>COUNTRY</th>
+            <th>GRADE</th>
+            <th>ANNUAL ENTITLE.</th>
+            <th>ANNUAL TAKEN</th>
+            <th>ANNUAL BALANCE</th>
+            <th>SICK ENTITLE.</th>
+            <th>SICK TAKEN</th>
+            <th>CASUAL TAKEN</th>
+            <th>CURRENTLY ON LEAVE</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="balTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 2: LEAVE REQUESTS LOG -->
+  <div class="tab-content" id="tab-requests">
+    <div class="controls-row">
+      <div class="search-box">
+        <span style="color:#99aabb;font-size:14px;">⌕</span>
+        <input type="text" id="reqSearch" placeholder="Search employee…" oninput="filterRequests()">
+      </div>
+      <select class="filter-select" id="frType" onchange="filterRequests()">
+        <option value="">All Leave Types</option>
+        <option>Annual</option><option>Sick</option><option>Casual</option>
+        <option>Compassionate</option><option>Unpaid</option>
+      </select>
+      <select class="filter-select" id="frStatus" onchange="filterRequests()">
+        <option value="">All Statuses</option>
+        <option>Pending</option><option>Approved</option><option>Rejected</option><option>Active</option>
+      </select>
+      <button class="btn btn-primary" onclick="openLeaveRequest()">+ New Request</button>
+    </div>
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">Leave Request Log</span>
+        <span class="record-count" id="reqCount"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>REQ ID</th>
+            <th>EMPLOYEE</th>
+            <th>COUNTRY</th>
+            <th>LEAVE TYPE</th>
+            <th>FROM</th>
+            <th>TO</th>
+            <th>DAYS</th>
+            <th>REASON</th>
+            <th>STATUS</th>
+            <th>APPROVED BY</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="reqTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3: PENDING APPROVALS -->
+  <div class="tab-content" id="tab-approvals">
+    <div class="approvals-layout" id="approvalsLayout"></div>
+  </div>
+
+  <!-- TAB 4: COUNTRY ENTITLEMENTS -->
+  <div class="tab-content" id="tab-entitlements">
+    <div style="font-size:13px;color:var(--steel);line-height:1.6;margin-bottom:16px;">Statutory minimum leave entitlements per jurisdiction. Valentis policy meets or exceeds all statutory minimums. All entitlements are in working days unless stated.</div>
+    <div class="entitlements-grid" id="entGrid"></div>
+  </div>
+</div>
+
+<!-- LEAVE REQUEST MODAL -->
+<div class="modal-overlay" id="leaveModal" onclick="closeMod('leaveModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Submit Leave Request</h2>
+      <button class="modal-close" onclick="closeDirect('leaveModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title" style="margin-top:0;">Leave Details</div>
+      <div class="form-grid">
+        <div class="form-group form-full">
+          <label>Employee *</label>
+          <select id="lm_emp">
+            <option value="">Select employee…</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Leave Type *</label>
+          <select id="lm_type">
+            <option>Annual</option><option>Sick</option><option>Casual</option>
+            <option>Compassionate</option><option>Unpaid</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Days Requested *</label><input type="number" id="lm_days" min="0.5" step="0.5" placeholder="e.g. 3"></div>
+        <div class="form-group"><label>From Date *</label><input type="date" id="lm_from"></div>
+        <div class="form-group"><label>To Date *</label><input type="date" id="lm_to"></div>
+        <div class="form-group form-full"><label>Reason / Notes</label><textarea id="lm_reason" placeholder="Brief reason for leave…"></textarea></div>
+        <div class="form-group"><label>Approver</label><input type="text" id="lm_approver" value="Group HR Manager"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('leaveModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitLeave()">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYEE DETAIL MODAL -->
+<div class="modal-overlay" id="empDetailModal" onclick="closeMod('empDetailModal',event)">
+  <div class="modal" style="max-width:700px;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="empDetailTitle">Leave Detail</h2>
+      <button class="modal-close" onclick="closeDirect('empDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="empDetailBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('empDetailModal')">Close</button>
+      <button class="btn btn-primary" onclick="openLeaveRequest()">+ Request Leave</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── ENTITLEMENTS DATA ──────────────────────────────────────────
+const entitlements = {
+  Laos: {
+    color: 'background:#1e5f74',
+    legislation: 'Labour Law No.43/NA (2013)',
+    items: [
+      { label:'Annual Leave', value:'15 days/year', note:'After 1 year service' },
+      { label:'Sick Leave', value:'30 days/year', note:'With medical certificate' },
+      { label:'Casual / Personal Leave', value:'Not statutory', note:'Valentis grants 3 days' },
+      { label:'Maternity Leave', value:'105 days', note:'~15 weeks; 70% pay' },
+      { label:'Paternity Leave', value:'Not statutory', note:'Valentis grants 3 days' },
+      { label:'Compassionate Leave', value:'Not statutory', note:'Valentis grants 3 days' },
+      { label:'Public Holidays', value:'~15 days/year', note:'Per government calendar' },
+    ]
+  },
+  Myanmar: {
+    color: 'background:#6b3a2a',
+    legislation: 'Leave and Holidays Act (1951)',
+    items: [
+      { label:'Annual Leave', value:'10 days/year', note:'After 1 year service' },
+      { label:'Casual Leave', value:'6 days/year', note:'Max 3 consecutive days' },
+      { label:'Sick Leave', value:'30 days/year', note:'With medical certificate' },
+      { label:'Maternity Leave', value:'98 days', note:'~14 weeks' },
+      { label:'Paternity Leave', value:'Not statutory', note:'Valentis grants 3 days' },
+      { label:'Compassionate Leave', value:'Not statutory', note:'Valentis grants 3 days' },
+      { label:'Public Holidays', value:'~25+ days/year', note:'Per government calendar' },
+    ]
+  },
+  Indonesia: {
+    color: 'background:#1a4731',
+    legislation: 'Law No.13/2003; Omnibus Law 2020',
+    items: [
+      { label:'Annual Leave', value:'12 days/year', note:'After 12 months service' },
+      { label:'Sick Leave', value:'Unlimited', note:'First 4 months = 100% pay' },
+      { label:'Casual / Personal Leave', value:'Not statutory', note:'Valentis grants 3 days' },
+      { label:'Maternity Leave', value:'3 months', note:'Before & after birth' },
+      { label:'Paternity Leave', value:'2 days', note:'Statutory minimum' },
+      { label:'Compassionate Leave', value:'2 days', note:'Spouse/child death; statutory' },
+      { label:'Long Service Leave', value:'1 month', note:'After 6 years service' },
+      { label:'Public Holidays', value:'~16 days/year', note:'National + regional' },
+    ]
+  },
+  Thailand: {
+    color: 'background:#3b2a6e',
+    legislation: 'Labour Protection Act B.E. 2541',
+    items: [
+      { label:'Annual Leave', value:'Min. 6 days/year', note:'Valentis grants 15 days' },
+      { label:'Sick Leave', value:'30 days/year', note:'Paid; cert required >3 days' },
+      { label:'Casual / Personal Leave', value:'Not statutory', note:'Valentis grants 3 days' },
+      { label:'Maternity Leave', value:'98 days', note:'45 days paid by employer' },
+      { label:'Paternity Leave', value:'Not statutory', note:'Valentis grants 3 days' },
+      { label:'Compassionate Leave', value:'Not statutory', note:'Valentis grants 3 days' },
+      { label:'Military Leave', value:'60 days/year', note:'If called up; full pay' },
+      { label:'Public Holidays', value:'13 days/year', note:'Per government calendar' },
+    ]
+  }
+};
+
+// ── EMPLOYEE LEAVE DATA ──────────────────────────────────────────
+let employees = [
+  { id:'VTG-LA-001', name:'Bounmy Phommasack',    country:'Laos',      grade:'G4', annualEntitle:15, annualTaken:4,  sickEntitle:30, sickTaken:0, casualTaken:1, onLeave:false },
+  { id:'VTG-LA-002', name:'Khamla Sysouphanthong',country:'Laos',      grade:'G4', annualEntitle:15, annualTaken:6,  sickEntitle:30, sickTaken:2, casualTaken:0, onLeave:false },
+  { id:'VTG-LA-003', name:'Phonesavanh Boupha',   country:'Laos',      grade:'G4', annualEntitle:15, annualTaken:10, sickEntitle:30, sickTaken:0, casualTaken:2, onLeave:false },
+  { id:'VTG-LA-004', name:'Sven Andersen',         country:'Laos',     grade:'G3', annualEntitle:15, annualTaken:8,  sickEntitle:30, sickTaken:0, casualTaken:1, onLeave:false },
+  { id:'VTG-LA-005', name:'Viengkham Xayavong',   country:'Laos',      grade:'G2', annualEntitle:0,  annualTaken:0,  sickEntitle:30, sickTaken:0, casualTaken:0, onLeave:false, note:'<1yr service' },
+  { id:'VTG-LA-006', name:'Dalavanh Keosavanh',   country:'Laos',      grade:'G2', annualEntitle:15, annualTaken:3,  sickEntitle:30, sickTaken:1, casualTaken:0, onLeave:false },
+  { id:'VTG-LA-007', name:'Nguyen Van Duc',        country:'Laos',     grade:'G3', annualEntitle:15, annualTaken:5,  sickEntitle:30, sickTaken:0, casualTaken:2, onLeave:false },
+  { id:'VTG-MM-008', name:'Kyaw Zin Thant',        country:'Myanmar',  grade:'G4', annualEntitle:10, annualTaken:3,  sickEntitle:30, sickTaken:0, casualTaken:1, onLeave:false },
+  { id:'VTG-MM-009', name:'Aung Myint Kyaw',       country:'Myanmar',  grade:'G3', annualEntitle:10, annualTaken:2,  sickEntitle:30, sickTaken:1, casualTaken:2, onLeave:false },
+  { id:'VTG-MM-010', name:'Zaw Lin Oo',            country:'Myanmar',  grade:'G3', annualEntitle:10, annualTaken:4,  sickEntitle:30, sickTaken:0, casualTaken:0, onLeave:true  },
+  { id:'VTG-MM-011', name:'Ye Htut Win',           country:'Myanmar',  grade:'G2', annualEntitle:0,  annualTaken:0,  sickEntitle:30, sickTaken:0, casualTaken:0, onLeave:false, note:'<1yr service' },
+  { id:'VTG-MM-012', name:'Myo Naing',             country:'Myanmar',  grade:'G2', annualEntitle:0,  annualTaken:0,  sickEntitle:30, sickTaken:1, casualTaken:0, onLeave:false, note:'<1yr service' },
+  { id:'VTG-MM-013', name:'Thurein Aung',          country:'Myanmar',  grade:'G2', annualEntitle:0,  annualTaken:0,  sickEntitle:30, sickTaken:0, casualTaken:0, onLeave:false, note:'<1yr service' },
+  { id:'VTG-MM-014', name:'Hlaing Min Oo',         country:'Myanmar',  grade:'G1', annualEntitle:10, annualTaken:7,  sickEntitle:30, sickTaken:3, casualTaken:1, onLeave:false },
+  { id:'VTG-MM-015', name:'Khin Zaw',              country:'Myanmar',  grade:'G1', annualEntitle:10, annualTaken:8,  sickEntitle:30, sickTaken:5, casualTaken:2, onLeave:false },
+  { id:'VTG-MM-016', name:'Htet Aung',             country:'Myanmar',  grade:'G2', annualEntitle:0,  annualTaken:0,  sickEntitle:30, sickTaken:0, casualTaken:0, onLeave:false, note:'<1yr service' },
+  { id:'VTG-ID-017', name:'Budi Santoso',          country:'Indonesia',grade:'G4', annualEntitle:12, annualTaken:5,  sickEntitle:null, sickTaken:0, casualTaken:1, onLeave:false },
+  { id:'VTG-ID-018', name:'Arif Budiman',          country:'Indonesia',grade:'G3', annualEntitle:12, annualTaken:2,  sickEntitle:null, sickTaken:0, casualTaken:0, onLeave:false },
+  { id:'VTG-ID-019', name:'Rizky Firmansyah',      country:'Indonesia',grade:'G3', annualEntitle:12, annualTaken:3,  sickEntitle:null, sickTaken:2, casualTaken:1, onLeave:false },
+  { id:'VTG-ID-020', name:'Dedi Kurniawan',        country:'Indonesia',grade:'G2', annualEntitle:12, annualTaken:1,  sickEntitle:null, sickTaken:0, casualTaken:0, onLeave:false },
+  { id:'VTG-ID-021', name:'Eko Prasetyo',          country:'Indonesia',grade:'G3', annualEntitle:12, annualTaken:4,  sickEntitle:null, sickTaken:1, casualTaken:0, onLeave:true  },
+  { id:'VTG-ID-022', name:'Siti Rahayu',           country:'Indonesia',grade:'G5', annualEntitle:12, annualTaken:6,  sickEntitle:null, sickTaken:0, casualTaken:2, onLeave:false },
+  { id:'VTG-TH-023', name:'Somchai Rattana',       country:'Thailand', grade:'G8', annualEntitle:15, annualTaken:8,  sickEntitle:30, sickTaken:0, casualTaken:1, onLeave:false },
+  { id:'VTG-TH-024', name:'Nattaporn Suksawat',   country:'Thailand',  grade:'G7', annualEntitle:15, annualTaken:5,  sickEntitle:30, sickTaken:1, casualTaken:0, onLeave:false },
+  { id:'VTG-TH-025', name:'Pimchanok Thongdee',   country:'Thailand',  grade:'G5', annualEntitle:15, annualTaken:3,  sickEntitle:30, sickTaken:0, casualTaken:1, onLeave:false },
+  { id:'VTG-TH-026', name:'Ananya Buranasiri',     country:'Thailand', grade:'G5', annualEntitle:15, annualTaken:2,  sickEntitle:30, sickTaken:2, casualTaken:0, onLeave:false },
+  { id:'VTG-TH-027', name:'Kasem Wongchai',        country:'Thailand', grade:'G7', annualEntitle:15, annualTaken:4,  sickEntitle:30, sickTaken:0, casualTaken:0, onLeave:false },
+  { id:'VTG-MM-028', name:'Tin Maung Win',         country:'Myanmar',  grade:'G2', annualEntitle:0,  annualTaken:0,  sickEntitle:30, sickTaken:0, casualTaken:0, onLeave:false, note:'<1yr service' },
+];
+
+let leaveRequests = [
+  { reqId:'LR-001', empId:'VTG-MM-010', name:'Zaw Lin Oo',      country:'Myanmar',   type:'Annual',        from:'2025-03-08', to:'2025-03-14', days:5, reason:'Family visit', status:'Active',   approvedBy:'Site Manager' },
+  { reqId:'LR-002', empId:'VTG-ID-021', name:'Eko Prasetyo',    country:'Indonesia', type:'Sick',          from:'2025-03-09', to:'2025-03-11', days:3, reason:'Medical — fever', status:'Active', approvedBy:'Siti Rahayu' },
+  { reqId:'LR-003', empId:'VTG-LA-003', name:'Phonesavanh Boupha',country:'Laos',   type:'Annual',         from:'2025-03-20', to:'2025-03-24', days:3, reason:'School holiday', status:'Pending', approvedBy:'—' },
+  { reqId:'LR-004', empId:'VTG-MM-015', name:'Khin Zaw',         country:'Myanmar',  type:'Sick',          from:'2025-03-05', to:'2025-03-06', days:2, reason:'Medical', status:'Approved',    approvedBy:'Site Manager' },
+  { reqId:'LR-005', empId:'VTG-TH-024', name:'Nattaporn Suksawat',country:'Thailand',type:'Annual',        from:'2025-03-25', to:'2025-03-28', days:4, reason:'Personal travel', status:'Pending', approvedBy:'—' },
+  { reqId:'LR-006', empId:'VTG-LA-002', name:'Khamla Sysouphanthong',country:'Laos',type:'Casual',         from:'2025-02-20', to:'2025-02-20', days:1, reason:'Personal', status:'Approved',    approvedBy:'Site Manager' },
+  { reqId:'LR-007', empId:'VTG-ID-022', name:'Siti Rahayu',     country:'Indonesia', type:'Annual',        from:'2025-02-10', to:'2025-02-14', days:5, reason:'Holiday', status:'Approved',     approvedBy:'Group HR Manager' },
+  { reqId:'LR-008', empId:'VTG-TH-025', name:'Pimchanok Thongdee',country:'Thailand',type:'Compassionate', from:'2025-01-15', to:'2025-01-17', days:3, reason:'Family bereavement', status:'Approved', approvedBy:'Group HR Manager' },
+  { reqId:'LR-009', empId:'VTG-MM-014', name:'Hlaing Min Oo',   country:'Myanmar',  type:'Annual',         from:'2025-04-01', to:'2025-04-05', days:4, reason:'Religious holiday', status:'Pending', approvedBy:'—' },
+  { reqId:'LR-010', empId:'VTG-LA-004', name:'Sven Andersen',    country:'Laos',     type:'Annual',         from:'2025-04-20', to:'2025-04-25', days:4, reason:'Pre-departure', status:'Pending', approvedBy:'—' },
+];
+
+let filteredBal = [...employees];
+let filteredReq = [...leaveRequests];
+
+// ── RENDER BALANCES ──────────────────────────────────────────
+function renderBalances(data) {
+  const tbody = document.getElementById('balTableBody');
+  tbody.innerHTML = data.map(e => {
+    const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'}[e.country]||'';
+    const balance = e.annualEntitle - e.annualTaken;
+    const pct = e.annualEntitle > 0 ? Math.round(balance/e.annualEntitle*100) : 0;
+    const fillClass = balance > 5 ? 'bb-high' : balance > 2 ? 'bb-med' : 'bb-low';
+    const numClass = balance > 5 ? 'bn-good' : balance > 2 ? 'bn-med' : 'bn-low';
+    const sickDisplay = e.sickEntitle === null ? 'Unlimited' : `${e.sickEntitle}d`;
+    return `
+      <tr onclick="openEmpDetail('${e.id}')">
+        <td><div style="font-weight:600;font-size:13px;">${e.name}</div><div style="font-size:11px;color:var(--steel);">${e.id}</div></td>
+        <td><span class="country-tag ${ctClass}">${e.country}</span></td>
+        <td><span class="grade-badge">${e.grade}</span></td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;">${e.annualEntitle > 0 ? e.annualEntitle+'d' : e.note||'—'}</td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;">${e.annualTaken}d</td>
+        <td class="balance-cell">
+          ${e.annualEntitle > 0 ? `<div class="balance-bar-wrap">
+            <div class="balance-bar"><div class="bb-fill ${fillClass}" style="width:${pct}%"></div></div>
+            <span class="balance-num ${numClass}">${balance}d</span>
+          </div>` : `<span style="font-size:11px;color:#aab;">—</span>`}
+        </td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;">${sickDisplay}</td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;">${e.sickTaken}d</td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;">${e.casualTaken}d</td>
+        <td>
+          ${e.onLeave
+            ? `<span class="status-pill sp-active">● On Leave</span>`
+            : `<span style="font-size:11px;color:#aab;">—</span>`}
+        </td>
+        <td onclick="event.stopPropagation()">
+          <div class="action-btns">
+            <button class="icon-btn" title="View Detail" onclick="openEmpDetail('${e.id}')">◉</button>
+            <button class="icon-btn" title="Request Leave" onclick="quickRequest('${e.id}')">+</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+  document.getElementById('balCount').textContent = `${data.length} of ${employees.length} employees`;
+  updateStats();
+}
+
+function filterBalances() {
+  const q = document.getElementById('balSearch').value.toLowerCase();
+  const country = document.getElementById('fbCountry').value;
+  const grade = document.getElementById('fbGrade').value;
+  const alert = document.getElementById('fbAlert').value;
+  filteredBal = employees.filter(e => {
+    const mq = !q || e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q);
+    const mc = !country || e.country === country;
+    const mg = !grade || e.grade === grade;
+    const bal = e.annualEntitle - e.annualTaken;
+    const ma = !alert || (alert==='low'&&bal<=3&&e.annualEntitle>0) || (alert==='high'&&bal>5);
+    return mq && mc && mg && ma;
+  });
+  renderBalances(filteredBal);
+}
+
+function updateStats() {
+  const pending = leaveRequests.filter(r=>r.status==='Pending').length;
+  const approved = leaveRequests.filter(r=>r.status==='Approved').length;
+  const onLeave = employees.filter(e=>e.onLeave).length;
+  const lowBal = employees.filter(e=>e.annualEntitle>0&&(e.annualEntitle-e.annualTaken)<=3).length;
+  const validBal = employees.filter(e=>e.annualEntitle>0);
+  const avgAnnual = validBal.length ? Math.round(validBal.reduce((a,e)=>a+(e.annualEntitle-e.annualTaken),0)/validBal.length) : 0;
+  document.getElementById('sPending').textContent = pending;
+  document.getElementById('sApproved').textContent = approved;
+  document.getElementById('sOnLeave').textContent = onLeave;
+  document.getElementById('sLowBalance').textContent = lowBal;
+  document.getElementById('sAvgAnnual').textContent = avgAnnual+'d';
+  document.getElementById('sTotalRecords').textContent = leaveRequests.length;
+}
+
+// ── RENDER REQUESTS ──────────────────────────────────────────
+function renderRequests(data) {
+  const tbody = document.getElementById('reqTableBody');
+  const statusClass = {Pending:'sp-pending',Approved:'sp-approved',Rejected:'sp-rejected',Active:'sp-active'};
+  const typeClass = {Annual:'lt-annual',Sick:'lt-sick',Casual:'lt-casual',Compassionate:'lt-compassionate',Unpaid:'lt-unpaid'};
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'};
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);">${r.reqId}</td>
+      <td><div style="font-weight:600;font-size:13px;">${r.name}</div><div style="font-size:11px;color:var(--steel);">${r.empId}</div></td>
+      <td><span class="country-tag ${ctClass[r.country]||''}">${r.country}</span></td>
+      <td><span class="leave-type-badge ${typeClass[r.type]||''}">${r.type}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(r.from)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(r.to)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;">${r.days}d</td>
+      <td style="font-size:12px;max-width:140px;">${r.reason}</td>
+      <td><span class="status-pill ${statusClass[r.status]||''}">${r.status}</span></td>
+      <td style="font-size:12px;">${r.approvedBy}</td>
+      <td onclick="event.stopPropagation()">
+        <div class="action-btns">
+          ${r.status==='Pending'?`
+            <button class="ar-btn ar-approve" onclick="approveRequest('${r.reqId}')">✓</button>
+            <button class="ar-btn ar-reject" onclick="rejectRequest('${r.reqId}')">✕</button>
+          `:`<span style="font-size:11px;color:#aab;">—</span>`}
+        </div>
+      </td>
+    </tr>`).join('');
+  document.getElementById('reqCount').textContent = `${data.length} of ${leaveRequests.length} records`;
+}
+
+function filterRequests() {
+  const q = document.getElementById('reqSearch').value.toLowerCase();
+  const type = document.getElementById('frType').value;
+  const status = document.getElementById('frStatus').value;
+  filteredReq = leaveRequests.filter(r => {
+    const mq = !q || r.name.toLowerCase().includes(q);
+    const mt = !type || r.type === type;
+    const ms = !status || r.status === status;
+    return mq && mt && ms;
+  });
+  renderRequests(filteredReq);
+}
+
+function approveRequest(reqId) {
+  const r = leaveRequests.find(x=>x.reqId===reqId);
+  if (r) { r.status='Approved'; r.approvedBy='Group HR Manager'; renderRequests(filteredReq); renderApprovals(); updateStats(); showToast(`✓ ${r.reqId} approved for ${r.name}`); }
+}
+function rejectRequest(reqId) {
+  const r = leaveRequests.find(x=>x.reqId===reqId);
+  if (r) { r.status='Rejected'; renderRequests(filteredReq); renderApprovals(); updateStats(); showToast(`✕ ${r.reqId} rejected`); }
+}
+
+// ── RENDER APPROVALS ──────────────────────────────────────────
+function renderApprovals() {
+  const pending = leaveRequests.filter(r=>r.status==='Pending');
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'};
+  const typeClass = {Annual:'lt-annual',Sick:'lt-sick',Casual:'lt-casual',Compassionate:'lt-compassionate',Unpaid:'lt-unpaid'};
+  const el = document.getElementById('approvalsLayout');
+  const pendingHtml = pending.length
+    ? pending.map(r=>`
+        <div class="approval-row">
+          <div class="ar-avatar">${r.name.charAt(0)}</div>
+          <div class="ar-info">
+            <div class="ar-name">${r.name}</div>
+            <div class="ar-detail">
+              <span class="leave-type-badge ${typeClass[r.type]||''}">${r.type}</span>
+              &nbsp;${r.days}d &nbsp;·&nbsp; ${fmtDate(r.from)} → ${fmtDate(r.to)}
+              &nbsp;·&nbsp; <span class="country-tag ${ctClass[r.country]||''}" style="font-size:9px;">${r.country}</span>
+            </div>
+            <div style="font-size:11px;color:var(--steel);margin-top:3px;">${r.reason}</div>
+          </div>
+          <div class="ar-actions">
+            <button class="ar-btn ar-approve" onclick="approveRequest('${r.reqId}')">✓ Approve</button>
+            <button class="ar-btn ar-reject" onclick="rejectRequest('${r.reqId}')">✕</button>
+          </div>
+        </div>`).join('')
+    : `<div style="padding:24px;text-align:center;font-size:13px;color:#aab;font-style:italic;">No pending approvals.</div>`;
+
+  const active = leaveRequests.filter(r=>r.status==='Active');
+  const activeHtml = active.length
+    ? active.map(r=>`
+        <div class="approval-row">
+          <div class="ar-avatar">${r.name.charAt(0)}</div>
+          <div class="ar-info">
+            <div class="ar-name">${r.name}</div>
+            <div class="ar-detail">
+              <span class="leave-type-badge ${typeClass[r.type]||''}">${r.type}</span>
+              &nbsp;${r.days}d &nbsp;·&nbsp; ${fmtDate(r.from)} → ${fmtDate(r.to)}
+            </div>
+          </div>
+          <span class="status-pill sp-active" style="flex-shrink:0;">● Active</span>
+        </div>`).join('')
+    : `<div style="padding:24px;text-align:center;font-size:13px;color:#aab;font-style:italic;">No active leave.</div>`;
+
+  el.innerHTML = `
+    <div class="approval-card">
+      <div class="approval-header"><span class="approval-header-title">⏳ Pending Approvals (${pending.length})</span></div>
+      <div>${pendingHtml}</div>
+    </div>
+    <div class="approval-card">
+      <div class="approval-header"><span class="approval-header-title">● Currently On Leave (${active.length})</span></div>
+      <div>${activeHtml}</div>
+    </div>`;
+}
+
+// ── COUNTRY ENTITLEMENTS ──────────────────────────────────────────
+function renderEntitlements() {
+  const el = document.getElementById('entGrid');
+  el.innerHTML = Object.entries(entitlements).map(([country, data]) => {
+    const ctColor = {Laos:'background:#1e5f74',Myanmar:'background:#6b3a2a',Indonesia:'background:#1a4731',Thailand:'background:#3b2a6e'}[country];
+    return `
+      <div class="ent-card">
+        <div class="ent-header" style="${ctColor}">
+          <div class="ent-title">${country}</div>
+          <div class="ent-sub">${data.legislation}</div>
+        </div>
+        <div class="ent-body">
+          ${data.items.map(item=>`
+            <div class="ent-row">
+              <div>
+                <div class="ent-label">${item.label}</div>
+                <div class="ent-note">${item.note}</div>
+              </div>
+              <div class="ent-value">${item.value}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── EMP DETAIL MODAL ──────────────────────────────────────────
+function openEmpDetail(id) {
+  const e = employees.find(x=>x.id===id);
+  if (!e) return;
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'}[e.country]||'';
+  const balance = e.annualEntitle - e.annualTaken;
+  const empRequests = leaveRequests.filter(r=>r.empId===id);
+  const typeClass = {Annual:'lt-annual',Sick:'lt-sick',Casual:'lt-casual',Compassionate:'lt-compassionate',Unpaid:'lt-unpaid'};
+  const statusClass = {Pending:'sp-pending',Approved:'sp-approved',Rejected:'sp-rejected',Active:'sp-active'};
+
+  document.getElementById('empDetailTitle').textContent = e.name;
+  document.getElementById('empDetailBody').innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+      <span class="country-tag ${ctClass}">${e.country}</span>
+      <span class="grade-badge">${e.grade}</span>
+      <span style="font-size:12px;color:var(--steel);">${e.id}</span>
+      ${e.onLeave?`<span class="status-pill sp-active" style="margin-left:auto;">● On Leave</span>`:''}
+    </div>
+    <div class="balance-summary">
+      <div class="bs-item"><div class="bs-num">${e.annualEntitle > 0 ? e.annualEntitle+'d' : '—'}</div><div class="bs-label">Annual Entitlement</div></div>
+      <div class="bs-item"><div class="bs-num">${e.annualTaken}d</div><div class="bs-label">Annual Taken</div></div>
+      <div class="bs-item"><div class="bs-num" style="color:${balance>5?'var(--success)':balance>2?'var(--warning)':'var(--danger)'};">${e.annualEntitle>0?balance+'d':'—'}</div><div class="bs-label">Annual Balance</div></div>
+      <div class="bs-item"><div class="bs-num">${e.sickEntitle===null?'∞':e.sickEntitle+'d'}</div><div class="bs-label">Sick Entitlement</div></div>
+      <div class="bs-item"><div class="bs-num">${e.sickTaken}d</div><div class="bs-label">Sick Taken</div></div>
+      <div class="bs-item"><div class="bs-num">${e.casualTaken}d</div><div class="bs-label">Casual Taken</div></div>
+    </div>
+    <div class="detail-section-title">Leave History</div>
+    ${empRequests.length
+      ? `<table style="width:100%;border-collapse:collapse;">
+          <thead><tr>
+            ${['ID','Type','From','To','Days','Status'].map(h=>`<th style="background:var(--mist);padding:8px 12px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--steel);border-bottom:1px solid var(--border);">${h}</th>`).join('')}
+          </tr></thead>
+          <tbody>
+            ${empRequests.map(r=>`<tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);">${r.reqId}</td>
+              <td style="padding:8px 12px;"><span class="leave-type-badge ${typeClass[r.type]||''}">${r.type}</span></td>
+              <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(r.from)}</td>
+              <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(r.to)}</td>
+              <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;">${r.days}d</td>
+              <td style="padding:8px 12px;"><span class="status-pill ${statusClass[r.status]||''}">${r.status}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`
+      : `<div style="font-size:13px;color:#aab;font-style:italic;">No leave history on record.</div>`}`;
+  document.getElementById('empDetailModal').classList.add('active');
+}
+
+// ── LEAVE REQUEST MODAL ──────────────────────────────────────────
+function populateEmpSelect(selectId, defaultId) {
+  const sel = document.getElementById(selectId);
+  sel.innerHTML = `<option value="">Select employee…</option>` +
+    employees.map(e=>`<option value="${e.id}" ${e.id===defaultId?'selected':''}>${e.name} (${e.country})</option>`).join('');
+}
+function openLeaveRequest() {
+  populateEmpSelect('lm_emp', null);
+  document.getElementById('lm_days').value = '';
+  document.getElementById('lm_from').value = '';
+  document.getElementById('lm_to').value = '';
+  document.getElementById('lm_reason').value = '';
+  document.getElementById('lm_type').value = 'Annual';
+  document.getElementById('leaveModal').classList.add('active');
+}
+function quickRequest(empId) {
+  populateEmpSelect('lm_emp', empId);
+  document.getElementById('leaveModal').classList.add('active');
+}
+function submitLeave() {
+  const empId = document.getElementById('lm_emp').value;
+  const days = parseFloat(document.getElementById('lm_days').value);
+  const from = document.getElementById('lm_from').value;
+  if (!empId || !days || !from) { showToast('⚠ Employee, days, and start date required'); return; }
+  const emp = employees.find(e=>e.id===empId);
+  const reqId = `LR-${String(leaveRequests.length+1).padStart(3,'0')}`;
+  leaveRequests.push({
+    reqId, empId, name: emp.name, country: emp.country,
+    type: document.getElementById('lm_type').value,
+    from, to: document.getElementById('lm_to').value||from,
+    days, reason: document.getElementById('lm_reason').value||'—',
+    status: 'Pending', approvedBy: '—'
+  });
+  filteredReq = [...leaveRequests];
+  renderRequests(filteredReq); renderApprovals(); updateStats();
+  closeDirect('leaveModal');
+  showToast(`✓ Leave request ${reqId} submitted for ${emp.name}`);
+}
+
+// ── UTILS ──────────────────────────────────────────
+function exportBalances() {
+  const headers = ['ID','Name','Country','Grade','Annual Entitlement','Annual Taken','Annual Balance','Sick Entitlement','Sick Taken','Casual Taken','On Leave'];
+  const rows = filteredBal.map(e=>[e.id,e.name,e.country,e.grade,e.annualEntitle,e.annualTaken,e.annualEntitle-e.annualTaken,e.sickEntitle||'Unlimited',e.sickTaken,e.casualTaken,e.onLeave?'Yes':'No']);
+  const csv=[headers.join(','),...rows.map(r=>r.map(v=>`"${v}"`).join(','))].join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='valentis-leave-balances.csv'; a.click(); showToast('✓ Balances exported');
+}
+function fmtDate(d) { if(!d) return '—'; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function switchTab(id) {
+  const tabs=['balances','requests','approvals','entitlements'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function closeMod(id,e) { if(e.target===document.getElementById(id)) closeDirect(id); }
+function closeDirect(id) { document.getElementById(id).classList.remove('active'); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+
+renderBalances(employees);
+renderRequests(leaveRequests);
+renderApprovals();
+renderEntitlements();
+</script>
+</body>
+</html>

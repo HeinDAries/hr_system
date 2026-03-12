@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L&amp;D Measurement &amp; ROI — L&amp;D Tool 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1eb;--surface:#fff;--surface2:#edeae2;--surface3:#e4e0d6;
+  --border:#d8d3c8;--border2:#c8c2b4;
+  --ink:#1a1a14;--ink2:#2c2b22;--ink3:#524f44;--ink4:#857f72;--ink5:#b4ae9f;
+  --forest:#1f4d35;--forest2:#276044;--forest3:#2e7350;
+  --forest-dim:rgba(31,77,53,0.07);--forest-border:rgba(31,77,53,0.22);
+  --brass:#7a5c14;--brass2:#8f6d1a;
+  --brass-dim:rgba(122,92,20,0.08);--brass-border:rgba(122,92,20,0.22);
+  --sienna:#9b3a1a;--sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.2);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --slate:#2c3a30;
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--forest3),var(--forest),rgba(31,77,53,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;background:rgba(31,77,53,0.2);border:1px solid rgba(31,77,53,0.4);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:#6dbf8a;font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(31,77,53,0.2);border-color:rgba(31,77,53,0.45);color:#6dbf8a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--forest3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#6dbf8a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--forest);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--forest)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--forest);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-forest{background:var(--forest-dim);color:var(--forest);border:1px solid var(--forest-border)}
+.chip-brass{background:var(--brass-dim);color:var(--brass);border:1px solid var(--brass-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.forest{background:var(--forest-dim);border-color:var(--forest);color:var(--ink2)}
+.info.brass{background:var(--brass-dim);border-color:var(--brass);color:var(--ink2)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--forest);padding:16px 20px;margin:16px 0;background:var(--forest-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--forest)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--forest);border-bottom-color:var(--forest);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* metric card */
+.met-card{border:1px solid var(--border);border-radius:4px;padding:18px;background:var(--surface);margin-bottom:10px}
+.met-num{font-family:var(--fd);font-size:42px;font-weight:800;color:var(--forest);line-height:1}
+.met-label{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-top:3px;margin-bottom:7px}
+.met-desc{font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7}
+/* ROI calculator */
+.calc-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px}
+.calc-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;display:block}
+.calc-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 13px;font-size:13px;color:#f0ede4;font-family:var(--fm);outline:none;transition:border .13s;margin-bottom:10px}
+.calc-input:focus{border-color:rgba(31,77,53,0.6)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-forest{background:var(--forest);color:#fff}
+.btn-forest:hover{background:var(--forest2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:rgba(31,77,53,0.5);color:#6dbf8a}
+.calc-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+/* level row */
+.lv-row{display:grid;grid-template-columns:60px 140px 1fr 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.lv-num{background:var(--slate);padding:14px 12px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:26px;font-weight:800;color:#6dbf8a}
+.lv-name{background:var(--surface2);padding:14px 14px;display:flex;align-items:center;font-weight:700;font-size:13px;color:var(--ink);border-right:1px solid var(--border)}
+.lv-cell{padding:12px 14px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;border-right:1px solid var(--border)}
+.lv-cell:last-child{border-right:none}
+.lv-cell-hd{font-family:var(--fm);font-size:7.5px;color:var(--ink5);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx-box{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">L&amp;D Tool 6 / 7</div>
+    <div class="sb-title">L&amp;D Measurement<br><em>&amp; ROI</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('why',this)"><span class="nav-num">01</span>Why Measurement Matters</div>
+    <div class="nav-item" onclick="showPage('framework',this)"><span class="nav-num">02</span>Kirkpatrick–Phillips Framework</div>
+    <div class="nav-item" onclick="showPage('metrics',this)"><span class="nav-num">03</span>Valentis Metric Set</div>
+    <div class="nav-item" onclick="showPage('roi',this)"><span class="nav-num">04</span>ROI: The Driller Pipeline</div>
+    <div class="nav-item" onclick="showPage('data',this)"><span class="nav-num">05</span>Data Collection System</div>
+    <div class="nav-item" onclick="showPage('reporting',this)"><span class="nav-num">06</span>Reporting Cadence</div>
+    <div class="nav-item" onclick="showPage('calc',this)"><span class="nav-num">07</span>ROI Calculator</div>
+    <div class="nav-item" onclick="showPage('brief',this)"><span class="nav-num">08</span>COO Brief Builder</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Learning &amp; Development — Tool 6 of 7</strong>
+      L&amp;D Measurement &amp; ROI<br>
+      <span style="color:rgba(255,255,255,0.12)">Measure what the business cares about. Not what is easy to count.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-why" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">L&amp;D Tool 6 / 7 — L&amp;D Measurement &amp; ROI</div>
+    <h1 class="page-title">Why Measurement<br><em>Matters</em></h1>
+    <p class="page-desc">L&D measurement at Valentis is not about proving that training happened. It is about proving that training changed something — conversion rates, programme delivery, retention, pipeline depth. If a learning investment cannot be connected to one of these outcomes, it is not a priority investment.</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">The Measurement Imperative at Valentis</div>
+    <div class="vx-title">People cost is 43% of revenue. Ba is not yet in business planning. These two facts are connected.</div>
+    <div class="vx-body">When L&D is invisible — when Ba cannot answer "what did the G4 coaching programme cost and what did it return?" — HR is a cost centre. When Ba can answer that question in revenue language — "the coaching programme moved Myanmar's conversion rate from 58% to 68%, saving $22K in replacement cost over 12 months against a $12K programme spend" — HR is an investment. The measurement system in this tool is the mechanism for making that shift from invisible to visible, from cost to investment.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">The Three Measurement Purposes at Valentis</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:4px">PURPOSE 1 — IMPROVE</div>
+          <div style="font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:4px">Make the next L&D investment better</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Measurement tells Ba which parts of a learning programme are working and which are not. The G4 coaching programme's six-module rubric score distribution tells Ba which module is weakest — and whether the weakness is the content, the facilitator, or the G4's context. Without measurement, Ba has opinions. With it, Ba has decisions.</div>
+        </div>
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:4px">PURPOSE 2 — JUSTIFY</div>
+          <div style="font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:4px">Build the business case for future investment</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The COO will approve a second year of the coaching programme faster if Ba can show what the first year returned. The data needed to justify next year's L&D budget is generated by measuring this year's outcomes. Measurement today is investment authority tomorrow.</div>
+        </div>
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:4px">PURPOSE 3 — POSITION</div>
+          <div style="font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:4px">Build Ba's seat at the business planning table</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Ba is not currently in business planning meetings. The fastest route into that room is to deliver intelligence that the COO cannot get anywhere else — pipeline risk in revenue terms, L&D ROI in margin language, workforce cost modelled against growth scenarios. This tool builds that intelligence system.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">What Valentis Can Actually Measure</div>
+      <div class="card-body" style="margin-bottom:12px">A 42-person company across four countries cannot run a multi-year randomised control trial. Measurement must be practical, low-overhead, and directly connected to data that already exists or can be collected without significant new infrastructure.</div>
+      <table class="dtable">
+        <thead><tr><th>Data type</th><th>Already exists?</th><th>Collection effort</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">G1 trainee headcount by cohort</td><td><span class="chip chip-forest">Yes</span></td><td>Ba counts from HR records quarterly</td></tr>
+          <tr><td style="font-weight:600">G1 month-3 attrition (exits)</td><td><span class="chip chip-brass">Partial — informal</span></td><td>SM monthly report — Ba formalises data field</td></tr>
+          <tr><td style="font-weight:600">G4 coaching rubric scores</td><td><span class="chip chip-red">No — not yet</span></td><td>Ba creates observation record; 30-min per G4 quarterly</td></tr>
+          <tr><td style="font-weight:600">Programme delivery % by country</td><td><span class="chip chip-forest">Yes</span></td><td>Operations report — Ba extracts monthly</td></tr>
+          <tr><td style="font-weight:600">Grade milestone completion dates</td><td><span class="chip chip-brass">Partial — sign-off cards</span></td><td>Ba digitises from site records quarterly</td></tr>
+          <tr><td style="font-weight:600">Recruitment cost per hire (G1–G3)</td><td><span class="chip chip-brass">Partial — finance</span></td><td>Ba requests from finance at annual close</td></tr>
+          <tr><td style="font-weight:600">Voluntary attrition by grade/country</td><td><span class="chip chip-brass">Partial — payroll</span></td><td>Ba extracts from payroll records quarterly</td></tr>
+          <tr><td style="font-weight:600">SM peer forum participation</td><td><span class="chip chip-red">No — new</span></td><td>Ba records attendance and commitment completion each forum</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Measurement Traps — What NOT to Measure at Valentis</div>
+    <div class="card-body" style="margin-bottom:12px">The most common measurement mistake in L&D is measuring what is easy to count rather than what the business cares about. These are the traps to avoid.</div>
+    <table class="dtable">
+      <thead><tr><th>Metric to avoid</th><th>Why it is misleading</th><th>What to measure instead</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Training hours delivered</td><td>A G4 who attended 30 hours of coaching training but still has a 50% conversion rate has not learned what matters. Hours delivered measures activity, not change.</td><td>G4 coaching rubric score (before/after). Conversion rate change 6 months after programme completion.</td></tr>
+        <tr><td style="font-weight:600">Training completion rates</td><td>100% completion of a programme that had no measurable behaviour impact is a waste of measurement effort — and potentially misleading to the COO.</td><td>Behaviour change observed post-programme (rubric). Milestone sign-off quality improvement. At-risk trainee identification rate before month 3.</td></tr>
+        <tr><td style="font-weight:600">Learner satisfaction scores</td><td>Learners who rate a session 4.5/5 may still return to site and do exactly what they did before. Satisfaction predicts enjoyment, not transfer. At Valentis's scale, it is also not worth the data collection overhead.</td><td>Skip Level 1 (satisfaction) entirely for operational programmes. Start at Level 2 (learning demonstrated) and 3 (behaviour change observed). Use Level 1 only if a programme design change decision depends on it.</td></tr>
+        <tr><td style="font-weight:600">Number of programmes delivered</td><td>Ba delivering 12 L&D programmes in 2026 sounds productive. Three high-impact programmes with measurable outcomes is more valuable than twelve programmes with no follow-up measurement.</td><td>Number of programmes with at least one business outcome metric attached. L&D investment as % of people cost vs. pipeline health indicators — the ratio matters, not the count.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-framework" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Measurement Framework</div>
+    <h1 class="page-title">Kirkpatrick–Phillips<br><em>at Valentis</em></h1>
+    <p class="page-desc">The Kirkpatrick–Phillips five-level model is the reference framework for L&D measurement globally. At Valentis, not every level is applicable to every programme — and that is by design. This section translates each level into Valentis language and identifies which programmes warrant measurement at which levels.</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Don't measure every level for every programme. Measure the levels that answer the questions the business is actually asking about this investment."</p>
+    <cite>Valentis L&amp;D Measurement Principle · 2026</cite>
+  </div>
+
+  <div style="display:grid;gap:8px;margin-bottom:14px">
+    <div class="lv-row">
+      <div class="lv-num">1</div>
+      <div class="lv-name">Reaction</div>
+      <div class="lv-cell"><div class="lv-cell-hd">What it measures</div>Did participants find the learning experience relevant, engaging, and useful? Immediate post-session response.</div>
+      <div class="lv-cell"><div class="lv-cell-hd">Valentis application</div>Minimal use. Only applied to the G4 coaching programme and SM peer forum — and only in the first delivery cycle to check design quality. Three questions maximum: relevant? practical? one change I will make?</div>
+      <div class="lv-cell"><div class="lv-cell-hd">Valentis programmes</div><span class="chip chip-muted">G4 coaching — first cycle only</span> <span class="chip chip-muted">SM peer forum — first 2 sessions</span></div>
+    </div>
+    <div class="lv-row">
+      <div class="lv-num">2</div>
+      <div class="lv-name">Learning</div>
+      <div class="lv-cell"><div class="lv-cell-hd">What it measures</div>Did participants acquire the knowledge, skills, or attitude the programme was designed to develop? Assessed during or immediately after the programme.</div>
+      <div class="lv-cell"><div class="lv-cell-hd">Valentis application</div>Applied to the G4 coaching programme through the five-dimension rubric — scored before and after the six-module programme. The rubric score increase is the Level 2 measure. Also applied to G1–G3 milestone sign-off — milestone completion is evidence of learning demonstrated.</div>
+      <div class="lv-cell"><div class="lv-cell-hd">Valentis programmes</div><span class="chip chip-forest">G4 coaching — rubric score</span> <span class="chip chip-forest">G1–G4 milestones — completion</span></div>
+    </div>
+    <div class="lv-row">
+      <div class="lv-num">3</div>
+      <div class="lv-name">Behaviour</div>
+      <div class="lv-cell"><div class="lv-cell-hd">What it measures</div>Did participants change their on-the-job behaviour as a result of the programme? Observed 30–90 days after programme completion.</div>
+      <div class="lv-cell"><div class="lv-cell-hd">Valentis application</div>The highest-priority level at Valentis. G4 coaching programme: is the G4 running structured debriefs, documenting month-3 check-ins, and flagging at-risk trainees? Observed by SM. SM peer forum: is the SM applying the commitment they made at the forum? Ba checks at the next forum.</div>
+      <div class="lv-cell"><div class="lv-cell-hd">Valentis programmes</div><span class="chip chip-forest">G4 coaching — debrief frequency</span> <span class="chip chip-forest">SM peer forum — commitment follow-up</span> <span class="chip chip-forest">G1–G4 pathway — next-grade behaviour</span></div>
+    </div>
+    <div class="lv-row">
+      <div class="lv-num">4</div>
+      <div class="lv-name">Results</div>
+      <div class="lv-cell"><div class="lv-cell-hd">What it measures</div>Did the programme produce measurable business outcomes — productivity, quality, retention, delivery? Measured 3–12 months after programme completion.</div>
+      <div class="lv-cell"><div class="lv-cell-hd">Valentis application</div>The primary measure for Ba's COO reporting. G4 coaching programme: conversion rate change at 6 and 12 months post-certification. Laos G3 development plan: first G4 certification date vs. first retirement date. Indonesia sourcing + pipeline programme: G3 headcount and delivery % recovery.</div>
+      <div class="lv-cell"><div class="lv-cell-hd">Valentis programmes</div><span class="chip chip-forest">G4 coaching — conversion rate</span> <span class="chip chip-forest">Laos G3 plans — certification date</span> <span class="chip chip-forest">Indonesia pipeline — delivery %</span></div>
+    </div>
+    <div class="lv-row">
+      <div class="lv-num">5</div>
+      <div class="lv-name">ROI</div>
+      <div class="lv-cell"><div class="lv-cell-hd">What it measures</div>Did the financial benefit of the programme's results exceed its cost? Expressed as a percentage return: (Benefit − Cost) ÷ Cost × 100.</div>
+      <div class="lv-cell"><div class="lv-cell-hd">Valentis application</div>Applied to the G4 coaching programme and the Laos G3 development investment — the two programmes with the largest quantifiable business stakes. The ROI Calculator (Section 07) runs the calculation. Not required for every programme — only those where the COO needs to see the investment case in financial terms.</div>
+      <div class="lv-cell"><div class="lv-cell-hd">Valentis programmes</div><span class="chip chip-brass">G4 coaching programme — full ROI</span> <span class="chip chip-brass">Laos G3 plans — cost of inaction ROI</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Measurement Level Assignment — Valentis 2026 Programmes</div>
+    <table class="dtable">
+      <thead><tr><th>Programme</th><th>L1</th><th>L2</th><th>L3</th><th>L4</th><th>L5</th><th>Rationale</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600">G4 Coaching Programme (Myanmar)</td>
+          <td><span class="chip chip-muted">First cycle</span></td>
+          <td><span class="chip chip-forest">Rubric score</span></td>
+          <td><span class="chip chip-forest">Debrief obs.</span></td>
+          <td><span class="chip chip-forest">Conversion rate</span></td>
+          <td><span class="chip chip-brass">Full ROI</span></td>
+          <td style="font-size:12px">Highest business stakes. Full five-level measurement justified. ROI needed for COO year-2 approval.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">SM Peer Forum (all countries)</td>
+          <td><span class="chip chip-muted">First 2 sessions</span></td>
+          <td>—</td>
+          <td><span class="chip chip-forest">Commitment follow-up</span></td>
+          <td><span class="chip chip-forest">Pipeline health</span></td>
+          <td>—</td>
+          <td style="font-size:12px">Low cost programme. L3 (commitment application) and L4 (pipeline trend) are the relevant measures.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Laos G3 Development Plans</td>
+          <td>—</td>
+          <td><span class="chip chip-forest">Milestone completion</span></td>
+          <td><span class="chip chip-forest">G4 readiness obs.</span></td>
+          <td><span class="chip chip-forest">Certification date</span></td>
+          <td><span class="chip chip-brass">Cost of inaction ROI</span></td>
+          <td style="font-size:12px">Business outcome is binary: G4 certified before first retirement or not. L5 frames the cost if the outcome is not achieved.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">G1–G4 Development Pathway</td>
+          <td>—</td>
+          <td><span class="chip chip-forest">Milestone sign-off</span></td>
+          <td><span class="chip chip-forest">Next-grade behaviour</span></td>
+          <td><span class="chip chip-forest">Conversion rates</span></td>
+          <td>—</td>
+          <td style="font-size:12px">Ongoing pipeline infrastructure — not a discrete programme event. L2–L4 measured continuously via the quarterly pipeline review.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">SM Annual Development Conversations</td>
+          <td>—</td>
+          <td>—</td>
+          <td><span class="chip chip-forest">Commitment follow-up</span></td>
+          <td><span class="chip chip-forest">SM-specific outcome</span></td>
+          <td>—</td>
+          <td style="font-size:12px">One-to-one development conversation. L3 is the key measure: did the SM change one specific behaviour? L4 traces to the outcome the behaviour was designed to influence.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-metrics" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Valentis Metric Set</div>
+    <h1 class="page-title">The Valentis<br><em>Metric Set</em></h1>
+    <p class="page-desc">Eleven metrics. Each one is directly observable, directly connected to a business outcome, and owned by a specific role. These are the metrics Ba tracks, reports, and uses to drive L&D decisions across the pipeline.</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('met-pipeline',this)">Pipeline Metrics</div>
+    <div class="tab" onclick="showTab('met-coaching',this)">Coaching Quality</div>
+    <div class="tab" onclick="showTab('met-delivery',this)">Delivery &amp; Retention</div>
+  </div>
+
+  <div class="tab-body active" id="tab-met-pipeline">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="met-card">
+        <div class="met-num">M1</div>
+        <div class="met-label">G1→G2 Conversion Rate</div>
+        <div class="met-desc" style="margin-bottom:8px">Percentage of G1 trainees who reach G2 milestone completion within 24 months of cohort start date. Measured per cohort and as a rolling 12-month group average.</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> ≥70% group average</div>
+          <div style="padding:5px 8px;background:var(--red-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--red)">Current:</span> 58% Myanmar · ~72% others</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> Ba (group) · G4 (cohort)</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Quarterly</div>
+        </div>
+      </div>
+      <div class="met-card">
+        <div class="met-num">M2</div>
+        <div class="met-label">G2→G3 Progression Rate</div>
+        <div class="met-desc" style="margin-bottom:8px">Percentage of G2 drillers who reach G3 milestone completion within 30 months of G2 entry. Measured group-wide and by country.</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> ≥75% group average</div>
+          <div style="padding:5px 8px;background:var(--brass-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--brass)">Current:</span> Est. 70–75% — baseline needed</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> Ba (group) · SM (country)</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Quarterly</div>
+        </div>
+      </div>
+      <div class="met-card">
+        <div class="met-num">M3</div>
+        <div class="met-label">G3→G4 Certification Rate</div>
+        <div class="met-desc" style="margin-bottom:8px">Percentage of G3 senior drillers who reach G4 certification within 30 months of G3 entry. The hardest transition — technical mastery plus people development proof both required.</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> ≥50% group average</div>
+          <div style="padding:5px 8px;background:var(--brass-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--brass)">Current:</span> Est. 40–50% — baseline needed</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> Ba (final sign-off) · SM (country)</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Quarterly</div>
+        </div>
+      </div>
+      <div class="met-card">
+        <div class="met-num">M4</div>
+        <div class="met-label">Month-3 Check-in Completion Rate</div>
+        <div class="met-desc" style="margin-bottom:8px">Percentage of G1 trainees who receive a documented month-3 check-in within days 85–95 of their start date. A process compliance metric — but one with direct attrition consequences.</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> 100%</div>
+          <div style="padding:5px 8px;background:var(--red-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--red)">Current:</span> Not formally tracked — informal only</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> G4 (conduct) · Ba (track)</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Monthly</div>
+        </div>
+      </div>
+      <div class="met-card">
+        <div class="met-num">M5</div>
+        <div class="met-label">Average Time-in-Grade (G1 → G2)</div>
+        <div class="met-desc" style="margin-bottom:8px">Average months from G1 start date to G2 milestone completion. Tracks pipeline velocity — how efficiently the pipeline is converting G1s to G2s across the group. Baseline establishment is the 2026 Q1 priority.</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> 14–18 months (establish baseline first)</div>
+          <div style="padding:5px 8px;background:var(--brass-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--brass)">Current:</span> Not tracked — baseline Q1 2026</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> Ba</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Semi-annual</div>
+        </div>
+      </div>
+      <div class="met-card">
+        <div class="met-num">M6</div>
+        <div class="met-label">Active G4 Pipeline Candidates</div>
+        <div class="met-desc" style="margin-bottom:8px">Number of G3 drillers with active, signed development plans targeting G4 certification — by country. The leading indicator for long-term G4 supply. Laos target: 2 active candidates by June 2026.</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> ≥2 per country at all times</div>
+          <div style="padding:5px 8px;background:var(--red-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--red)">Current:</span> Laos: 0 active plans · others: unknown</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> Ba (track) · SM (activate)</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Quarterly</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-met-coaching">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="met-card">
+        <div class="met-num">M7</div>
+        <div class="met-label">G4 Coaching Rubric Score (mean)</div>
+        <div class="met-desc" style="margin-bottom:8px">Mean score across all five rubric dimensions for each G4, assessed annually by Ba through direct observation. The primary measure of coaching quality improvement from the coaching programme.</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> ≥3.0 / 5.0 all dimensions · ≥4.0 by year 2</div>
+          <div style="padding:5px 8px;background:var(--red-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--red)">Current:</span> Baseline not yet established</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> Ba (observe and score)</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Annual (+ pre-programme baseline)</div>
+        </div>
+      </div>
+      <div class="met-card">
+        <div class="met-num">M8</div>
+        <div class="met-label">Structured Debrief Frequency</div>
+        <div class="met-desc" style="margin-bottom:8px">Number of documented four-question debrief sessions conducted per G4 per fortnight. The Level 3 (behaviour) measure for the G4 coaching programme — did the coaching knowledge transfer to on-the-job practice?</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> ≥2 documented debriefs / G4 / fortnight</div>
+          <div style="padding:5px 8px;background:var(--red-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--red)">Current:</span> No formal debrief practice documented</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> G4 (conduct) · SM (verify monthly)</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Monthly (SM spot-check)</div>
+        </div>
+      </div>
+      <div class="met-card">
+        <div class="met-num">M9</div>
+        <div class="met-label">SM Peer Forum Commitment Follow-Through</div>
+        <div class="met-desc" style="margin-bottom:8px">Percentage of SM commitments made at the end of each peer forum session that are reported as completed or in-progress at the following session. The primary L3 measure for the SM peer forum programme.</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> ≥75% committed / completed or in-progress</div>
+          <div style="padding:5px 8px;background:var(--brass-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--brass)">Current:</span> Forum not yet launched — Q2 2026 start</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> Ba (track)</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Each forum session (quarterly)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-met-delivery">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="met-card">
+        <div class="met-num">M10</div>
+        <div class="met-label">Programme Delivery % by Country</div>
+        <div class="met-desc" style="margin-bottom:8px">Actual drilling programme metres (or targets) delivered as a percentage of planned. The primary operational outcome metric — and the outcome that L&D investment is ultimately designed to protect and improve through pipeline health.</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> ≥93% all countries</div>
+          <div style="padding:5px 8px;background:var(--red-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--red)">Current:</span> Indonesia: 84% · Others: ~93%+</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> SM (country) · Ba (track against pipeline)</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Monthly</div>
+        </div>
+      </div>
+      <div class="met-card">
+        <div class="met-num">M11</div>
+        <div class="met-label">Voluntary Attrition Rate (G1–G3)</div>
+        <div class="met-desc" style="margin-bottom:8px">Percentage of G1–G3 drillers who voluntarily exit in any 12-month period. Measured by grade and country. Month-3 exits tracked separately as a leading attrition indicator. People-cost impact quantified annually for COO reporting.</div>
+        <div style="display:grid;gap:4px">
+          <div style="padding:5px 8px;background:var(--forest-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--forest)">Target:</span> &lt;20% annualised G1 · &lt;10% G2–G3</div>
+          <div style="padding:5px 8px;background:var(--brass-dim);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--brass)">Current:</span> Formal tracking not established — Q1 2026 baseline</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Owner:</span> Ba (track from payroll)</div>
+          <div style="padding:5px 8px;background:var(--surface2);border-radius:2px;font-size:11.5px;color:var(--ink3);font-family:var(--fm)"><span style="color:var(--ink4)">Cadence:</span> Quarterly (monthly for G1)</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Metric Interdependency Map</div>
+      <div class="card-body" style="margin-bottom:12px">The eleven metrics are not independent. Changes in one lead to changes in others — understanding the causal chain helps Ba diagnose problems at the root, not the symptom.</div>
+      <table class="dtable">
+        <thead><tr><th>If this metric worsens…</th><th>Expect impact on…</th><th>Diagnostic question</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">M4 — Check-in completion drops below 100%</td><td>M1 (conversion rate) deteriorates within 1–2 cohort cycles. At-risk trainees not caught early → exit at month 3.</td><td>Which G4s are missing check-ins? Is it a time/priority issue or a capability issue? Does the G4 know how to run the check-in?</td></tr>
+          <tr><td style="font-weight:600">M7 — G4 rubric score stays below 3.0</td><td>M8 (debrief frequency) stays low. M1 (conversion) does not improve despite coaching programme. M4 (check-in quality) is poor even when completed.</td><td>Did the coaching programme actually change behaviour? Which rubric dimension is weakest — is it a design gap or a follow-through gap?</td></tr>
+          <tr><td style="font-weight:600">M6 — G4 pipeline candidates drop to 0</td><td>M3 (G3→G4 rate) drops to 0 in 12–18 months. Retirement risk accelerates — no internal succession. M10 (delivery) at risk when G4 vacancies appear.</td><td>Are there G3 candidates who can be activated? Is the block a development plan gap or a G3 candidate quality gap? This is the Laos situation today.</td></tr>
+          <tr><td style="font-weight:600">M10 — Programme delivery drops below 90%</td><td>Revenue impact is immediate. M11 (attrition) may increase if delivery pressure creates poor working conditions. G3/G4 headcount is the usual cause — trace back to M2, M3, M6.</td><td>What is the headcount cause? Vacancy, attrition, or development shortfall? This is the Indonesia situation — M10 drop traced to G3 vacancy (M2 pipeline failure).</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+  <div id="page-roi" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — ROI: The Driller Pipeline</div>
+    <h1 class="page-title">ROI: The Driller<br><em>Pipeline</em></h1>
+    <p class="page-desc">The two L&D investments with the largest quantifiable return at Valentis are the G4 coaching programme and the Laos G3 development plan. This section builds the full financial case for each — costs, benefits, and ROI in terms the COO cannot ignore.</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">The ROI Argument — Framing for the COO</div>
+    <div class="vx-title">Every trained driller who exits unnecessarily costs $1,000–$2,000 — before production downtime.</div>
+    <div class="vx-body">At 58% conversion with a cohort of 8 trainees, Myanmar produces approximately 4–5 G2 drillers. At 70% it produces 5–6. The difference is 1 additional driller per cohort. With 2 cohorts per year, that is 2 additional G2 drillers annually. At a replacement cost of $1,000–$2,000 per driller (recruitment, onboarding, lost productivity during gap) — plus the production downtime cost that Ba does not yet have a figure for — the benefit side of the coaching programme ROI is real, computable, and substantial relative to the programme cost. This is Ba's number to own.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ROI Case 1 — G4 Coaching Programme (Myanmar)</div>
+    <div class="card-body" style="margin-bottom:14px">Full five-level ROI calculation for the Myanmar G4 coaching programme — designed as a reference for Ba's COO briefing and for year-2 budget justification.</div>
+    <div class="grid-2">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:8px">PROGRAMME COSTS</div>
+        <table class="dtable" style="margin-bottom:14px">
+          <thead><tr><th>Cost item</th><th>Estimate</th><th>Basis</th></tr></thead>
+          <tbody>
+            <tr><td>Ba's facilitation time (6 modules × 2hrs + prep)</td><td>$2,400</td><td>~20hrs × G6 effective rate</td></tr>
+            <tr><td>Thailand SM video co-facilitation (modules 2, 4, 6)</td><td>$600</td><td>3 sessions × 2hrs, internal cost only</td></tr>
+            <tr><td>G4 time off-programme for sessions</td><td>$1,800</td><td>3 G4s × 6 sessions × 1hr at G4 rate + opportunity cost</td></tr>
+            <tr><td>Materials and documentation</td><td>$200</td><td>Printing, translation, milestone cards</td></tr>
+            <tr><td style="font-weight:700;color:var(--ink)">Total programme cost</td><td style="font-weight:700;color:var(--ink)">~$5,000</td><td>Conservative estimate</td></tr>
+          </tbody>
+        </table>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:8px">BENEFIT ASSUMPTIONS</div>
+        <table class="dtable">
+          <thead><tr><th>Benefit item</th><th>Assumption</th></tr></thead>
+          <tbody>
+            <tr><td>Conversion rate improvement</td><td>58% → 68% within 12 months post-certification (conservative — target is 70%+)</td></tr>
+            <tr><td>Cohort size</td><td>8 trainees per cohort, 2 cohorts per year</td></tr>
+            <tr><td>Additional G2 drillers produced</td><td>+0.8 per cohort × 2 cohorts = ~1.6 additional G2 drillers per year</td></tr>
+            <tr><td>Replacement cost avoided per driller</td><td>$1,500 (midpoint of $1,000–$2,000 range)</td></tr>
+            <tr><td>Annual benefit (replacement cost avoided)</td><td>1.6 × $1,500 = <strong>$2,400/year</strong></td></tr>
+            <tr><td>Production downtime avoided (conservative)</td><td>1 driller vacancy × 4 weeks × daily programme value — <em>not included in this conservative estimate</em></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:8px">ROI CALCULATION</div>
+        <div style="background:var(--slate);border-radius:4px;padding:20px;margin-bottom:12px">
+          <div style="display:grid;gap:8px">
+            <div style="padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:3px;display:grid;grid-template-columns:1fr auto"><div style="font-size:12.5px;color:rgba(255,255,255,0.5)">Year 1 benefit (replacement cost avoided)</div><div style="font-family:var(--fm);font-size:13px;color:#6dbf8a;font-weight:600">$2,400</div></div>
+            <div style="padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:3px;display:grid;grid-template-columns:1fr auto"><div style="font-size:12.5px;color:rgba(255,255,255,0.5)">Year 2 benefit (annualised, ongoing)</div><div style="font-family:var(--fm);font-size:13px;color:#6dbf8a;font-weight:600">$2,400</div></div>
+            <div style="padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:3px;display:grid;grid-template-columns:1fr auto"><div style="font-size:12.5px;color:rgba(255,255,255,0.5)">2-year total benefit (conservative)</div><div style="font-family:var(--fm);font-size:13px;color:#6dbf8a;font-weight:600">$4,800</div></div>
+            <div style="padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:3px;display:grid;grid-template-columns:1fr auto"><div style="font-size:12.5px;color:rgba(255,255,255,0.5)">Programme cost (one-time)</div><div style="font-family:var(--fm);font-size:13px;color:rgba(155,26,26,0.8);font-weight:600">($5,000)</div></div>
+            <div style="height:1px;background:rgba(255,255,255,0.1)"></div>
+            <div style="padding:10px 12px;background:rgba(31,77,53,0.15);border:1px solid rgba(31,77,53,0.3);border-radius:3px;display:grid;grid-template-columns:1fr auto"><div style="font-size:13px;color:#f0ede4;font-weight:600">ROI (Year 1 only, conservative)</div><div style="font-family:var(--fm);font-size:13px;color:#f0c060;font-weight:700">-52%</div></div>
+            <div style="padding:10px 12px;background:rgba(31,77,53,0.15);border:1px solid rgba(31,77,53,0.3);border-radius:3px;display:grid;grid-template-columns:1fr auto"><div style="font-size:13px;color:#f0ede4;font-weight:600">ROI (2-year, conservative)</div><div style="font-family:var(--fm);font-size:13px;color:#6dbf8a;font-weight:700">-4%</div></div>
+            <div style="padding:10px 12px;background:rgba(31,77,53,0.15);border:1px solid rgba(31,77,53,0.3);border-radius:3px;display:grid;grid-template-columns:1fr auto"><div style="font-size:13px;color:#f0ede4;font-weight:600">ROI (2-year + production downtime avoided)</div><div style="font-family:var(--fm);font-size:13px;color:#6dbf8a;font-weight:700">Positive</div></div>
+          </div>
+        </div>
+        <div class="info brass"><strong>The conservative case understates the return.</strong>The calculation above excludes production downtime cost avoided — which is almost certainly larger than the replacement cost. If a G1 cohort attrition event means 4 weeks of reduced programme capacity, and the programme delivers ~$X/week in revenue, the downtime avoided is a multiple of the $2,400 replacement cost figure. Ba should obtain the programme revenue-per-week figure from the COO to run the full calculation. The full ROI is strongly positive — the conservative case merely requires the second year to break even.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">ROI Case 2 — Laos G3 Development Plan (Cost of Inaction)</div>
+    <div class="card-body" style="margin-bottom:14px">For the Laos G3 plan, the ROI argument is framed as cost of inaction — what does it cost if Ba does NOT invest in the development plan, and the Laos G4 retirement cliff hits without internal successors ready?</div>
+    <table class="dtable">
+      <thead><tr><th>Scenario</th><th>Cost item</th><th>Estimate</th><th>Basis</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4" style="font-weight:700;color:var(--forest);border-bottom:2px solid var(--border2)">Invest in development plan (Act)</td><td>Ba facilitation and oversight (quarterly reviews, June plan activation, annual talent review)</td><td>~$3,000/year</td><td>Est. 25hrs Ba time at G6 effective rate</td></tr>
+        <tr><td>Cross-site exposure — Laos G3 to Thailand (4 weeks)</td><td>~$2,500</td><td>Travel, accommodation, salary continuation during placement</td></tr>
+        <tr><td>Retiring G4 knowledge transfer sessions (6 months × monthly)</td><td>~$600</td><td>Internal time cost only — both G4 and G3 candidate time</td></tr>
+        <tr style="border-bottom:2px solid var(--border2)"><td style="font-weight:700;color:var(--forest)">Total invest (2026–2027)</td><td style="font-weight:700;color:var(--forest)">~$6,100</td><td></td></tr>
+        <tr><td rowspan="4" style="font-weight:700;color:var(--red)">Do not invest (Inaction)</td><td>External G4 hire (no internal candidate ready at first retirement)</td><td>$8,000–$15,000</td><td>Recruitment fees, relocation, visa/work permit for external hire</td></tr>
+        <tr><td>Programme delivery reduction during G4 vacancy (estimated 6–12 weeks)</td><td>$15,000–$40,000</td><td>Laos programme value × reduced capacity weeks (Ba to obtain exact figure from COO)</td></tr>
+        <tr><td>External G4 onboarding — 3–6 months to full effectiveness</td><td>$5,000–$10,000</td><td>Productivity gap during context-building period</td></tr>
+        <tr><td style="font-weight:700;color:var(--red)">Total inaction cost (conservative)</td><td style="font-weight:700;color:var(--red)">$28,000–$65,000</td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="info forest" style="margin-top:14px"><strong>The Laos ROI case is unambiguous.</strong>Investing $6,100 to avoid a $28,000–$65,000 cost of inaction is not a close call. The development plan pays for itself multiple times over even in the conservative scenario. Ba's challenge is not making this case — it is making it early enough that the COO does not experience the cost of inaction before the argument is made. June 2026 is the deadline. The business case must be in the COO's hands by April 2026 at the latest.</div>
+  </div>
+</div>
+  <div id="page-data" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Data Collection System</div>
+    <h1 class="page-title">Data Collection<br><em>System</em></h1>
+    <p class="page-desc">A measurement system is only as good as its data. This section defines exactly what Ba collects, from whom, when, and how — using a deliberately light-touch approach that does not require new technology or significant overhead from the field.</p>
+  </div>
+  <div class="info forest"><strong>Design principle: pull from what already exists first.</strong>Operations reports, payroll records, and SM monthly updates contain most of what Ba needs. The measurement system adds only what cannot be extracted from existing sources — primarily the G4 coaching observation record and the milestone completion log. Avoid creating new data-collection burden that SMs and G4s will not sustain.</div>
+  <div class="card">
+    <div class="card-title">Data Sources and Collection Responsibilities</div>
+    <table class="dtable">
+      <thead><tr><th>Data point</th><th>Source</th><th>Collected by</th><th>Frequency</th><th>Format</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">G1 trainee headcount by country (cohort)</td><td>HR records / payroll</td><td>Ba</td><td>At cohort start + quarterly</td><td>Ba's pipeline log (master spreadsheet)</td></tr>
+        <tr><td style="font-weight:600">G1 exits by month and reason</td><td>SM monthly report (new data field added Q1 2026)</td><td>SM (record) · Ba (extract)</td><td>Monthly</td><td>Standardised SM report field: month of exit, voluntary/involuntary, stated reason if known</td></tr>
+        <tr><td style="font-weight:600">Month-3 check-in completion + at-risk flag</td><td>G4 check-in record (Tool 3 documentation)</td><td>G4 (complete) · Ba (track)</td><td>Per trainee at day 85–95</td><td>Ba's check-in tracker: trainee name, G4, country, date completed, risk level (RAG), outcome</td></tr>
+        <tr><td style="font-weight:600">Grade milestone completion (all grades)</td><td>Milestone sign-off cards (site records)</td><td>G4/SM (sign) · Ba (digitise quarterly)</td><td>Quarterly consolidation</td><td>Ba's pipeline log: trainee name, grade, milestones complete (1–5), date of latest sign-off</td></tr>
+        <tr><td style="font-weight:600">G4 coaching rubric score (5 dimensions)</td><td>Ba's direct observation session (30 min per G4)</td><td>Ba</td><td>Annual (+ pre-programme baseline)</td><td>Ba's coaching quality log: G4 name, country, date, score by dimension, qualitative notes</td></tr>
+        <tr><td style="font-weight:600">Structured debrief frequency</td><td>G4 debrief record (simple tally sheet per G4)</td><td>G4 (record) · SM (verify monthly)</td><td>Monthly SM verification</td><td>Single-page G4 debrief tally: date, trainee name, session number — reviewed by SM monthly</td></tr>
+        <tr><td style="font-weight:600">Programme delivery % by country</td><td>Operations report (existing)</td><td>Ba extracts from ops report</td><td>Monthly</td><td>Extracted to Ba's L&D metric dashboard — column alongside pipeline data</td></tr>
+        <tr><td style="font-weight:600">SM peer forum commitments and follow-through</td><td>Ba's forum record</td><td>Ba (document in real time)</td><td>Per session (quarterly)</td><td>Forum record: SM name, commitment made, date, completion status at next session</td></tr>
+        <tr><td style="font-weight:600">Recruitment cost per G1–G3 hire</td><td>Finance / payroll</td><td>Ba requests from finance annually</td><td>Annual</td><td>Cost per hire by grade and country — used in ROI calculation and COO brief</td></tr>
+        <tr><td style="font-weight:600">Voluntary attrition by grade / country</td><td>Payroll records (leavers)</td><td>Ba</td><td>Quarterly</td><td>Extracted from payroll: grade at exit, country, months in grade, voluntary vs involuntary</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">The Pipeline Log — Ba's Master Tracking Document</div>
+      <div class="card-body" style="margin-bottom:10px">A single consolidated spreadsheet maintained by Ba. One row per active pipeline candidate. Updated quarterly from site milestone records. This is the source of truth for all pipeline reporting.</div>
+      <table class="dtable">
+        <thead><tr><th>Column</th><th>Content</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Name</td><td>Trainee / driller name (or anonymised ID)</td></tr>
+          <tr><td style="font-weight:600">Country</td><td>Laos / Myanmar / Indonesia / Thailand</td></tr>
+          <tr><td style="font-weight:600">Current grade</td><td>G1–G4</td></tr>
+          <tr><td style="font-weight:600">Grade entry date</td><td>Date of promotion to current grade</td></tr>
+          <tr><td style="font-weight:600">Months in grade</td><td>Calculated from entry date</td></tr>
+          <tr><td style="font-weight:600">Milestones complete</td><td>Number (e.g., 3 of 5) + latest completion date</td></tr>
+          <tr><td style="font-weight:600">Check-in status (G1 only)</td><td>Completed / pending / overdue + RAG flag</td></tr>
+          <tr><td style="font-weight:600">G4 candidate flag</td><td>Yes / No — for G3 drillers with active dev plan</td></tr>
+          <tr><td style="font-weight:600">Status</td><td>On track / stalled (3+ months no milestone) / at-risk / ready for promotion</td></tr>
+          <tr><td style="font-weight:600">Last Ba review date</td><td>Date of last quarterly talent review update</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Data Collection — Minimum Viable vs Full System</div>
+      <div class="card-body" style="margin-bottom:10px">The full measurement system may take 2–3 quarters to establish fully. This prioritisation guide tells Ba what to set up first.</div>
+      <div style="display:grid;gap:7px">
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:.5px;margin-bottom:3px">ESTABLISH IMMEDIATELY — Q1 2026</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Month-3 check-in completion tracker. G1 exit log with month-of-exit field. Pipeline log (headcount, grade, milestone count). Programme delivery % extraction from ops reports. These four form the minimum viable dataset for the quarterly COO brief.</div>
+        </div>
+        <div style="padding:11px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:3px">ESTABLISH Q2 2026</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">G4 coaching rubric baseline scores (pre-coaching programme). Debrief frequency tally (verify with SM monthly). SM peer forum commitment log (first forum Q2 2026). Voluntary attrition extraction from payroll.</div>
+        </div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:3px">ESTABLISH Q3–Q4 2026</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Recruitment cost per hire from finance (for ROI calculation). Time-in-grade tracking (G1→G2 average months). Production downtime cost per vacancy (requires COO input). Full ROI model with both benefit streams.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-reporting" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Reporting Cadence</div>
+    <h1 class="page-title">Reporting<br><em>Cadence</em></h1>
+    <p class="page-desc">The reporting cadence defines what Ba produces, when, for whom, and in what format. Reports that are too frequent become noise. Reports that are too infrequent miss intervention windows. This cadence is calibrated to Valentis's operational rhythm and Ba's bandwidth.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Four Reports — Overview</div>
+    <table class="dtable">
+      <thead><tr><th>Report</th><th>Frequency</th><th>Audience</th><th>Format</th><th>Length</th><th>Primary purpose</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Monthly Pipeline Flash</td><td>Monthly</td><td>Ba (internal tracking)</td><td>Pipeline log update + 3-line summary</td><td>Internal only — not distributed</td><td>Maintain current pipeline data. Identify any check-in overdue or stalled candidate flags before they become quarterly surprises.</td></tr>
+        <tr><td style="font-weight:600">Quarterly Pipeline Report</td><td>Quarterly</td><td>COO · SMs</td><td>1-page summary + data appendix</td><td>1 page max (narrative) + table</td><td>Group-wide pipeline health update. Conversion rates, milestone completion, active G4 candidates, at-risk flags. The primary Ba-to-COO people intelligence product.</td></tr>
+        <tr><td style="font-weight:600">L&D Investment Review</td><td>Semi-annual (H1 + H2)</td><td>COO</td><td>2-page brief with ROI data</td><td>2 pages max</td><td>L&D spend vs. outcomes. Programme ROI where calculable. Forward investment recommendations for H2 or following year. The business case for Ba's budget.</td></tr>
+        <tr><td style="font-weight:600">Annual People Capability Report</td><td>Annual (December)</td><td>COO · CEO (if relevant)</td><td>4–6 page document</td><td>4–6 pages</td><td>Full-year pipeline performance. Metric set scorecard vs. targets. ROI for primary programmes. Forward risks and investment recommendations. Ba's primary annual strategic document — the one that builds the business planning seat.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Quarterly Pipeline Report — Template Structure</div>
+    <div class="card-body" style="margin-bottom:12px">This is Ba's primary recurring output. One page. Business language. Numbers first, narrative second. The COO should be able to read it in under 3 minutes and act on it.</div>
+    <div style="border:2px solid var(--border);border-radius:4px;padding:24px;background:var(--surface)">
+      <div style="border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:16px">
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:2px;margin-bottom:4px">VALENTIS GROUP · PEOPLE PIPELINE REPORT</div>
+        <div style="font-family:var(--fd);font-size:26px;font-weight:700;color:var(--ink)">Q[X] 2026 — Pipeline &amp; L&amp;D Update</div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--ink4)">Prepared by: Ba · Group HR Manager · [Date]</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+        <div style="padding:10px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;text-align:center">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--forest)">[X]%</div>
+          <div style="font-family:var(--fm);font-size:7.5px;color:var(--ink4);letter-spacing:.5px">G1 CONVERSION (GROUP)</div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;text-align:center">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--ink)">[X]</div>
+          <div style="font-family:var(--fm);font-size:7.5px;color:var(--ink4);letter-spacing:.5px">ACTIVE G4 CANDIDATES</div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;text-align:center">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--ink)">[X]%</div>
+          <div style="font-family:var(--fm);font-size:7.5px;color:var(--ink4);letter-spacing:.5px">CHECK-IN COMPLETION</div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;text-align:center">
+          <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--ink)">[X]%</div>
+          <div style="font-family:var(--fm);font-size:7.5px;color:var(--ink4);letter-spacing:.5px">PROGRAMME DELIVERY (GROUP AVG)</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">PRIORITY ACTIONS THIS QUARTER</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">1. [Highest-priority pipeline action — e.g., Laos G3 dev plans activated]<br>2. [Second action — e.g., Myanmar G4 coaching programme module 3 complete]<br>3. [Third action — e.g., Indonesia G3 candidate 1 identified]</div>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:.5px;margin-bottom:5px">FLAGS REQUIRING COO ATTENTION</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">[Any flag that requires COO decision or awareness — e.g., Indonesia SM retention conversation approaching, Country 5 SM assessment timeline, Myo H. retention deadline]</div>
+        </div>
+      </div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">CONVERSION RATES BY COUNTRY — THIS QUARTER</div>
+      <table class="dtable" style="margin-bottom:0">
+        <thead><tr><th>Country</th><th>G1 Conversion (12-mo)</th><th>vs. Target (70%)</th><th>Active G4 Candidates</th><th>Programme Delivery</th></tr></thead>
+        <tbody>
+          <tr><td>Myanmar</td><td>[X]%</td><td>[±Xpp]</td><td>[X]</td><td>[X]%</td></tr>
+          <tr><td>Laos</td><td>[X]%</td><td>[±Xpp]</td><td>[X]</td><td>[X]%</td></tr>
+          <tr><td>Indonesia</td><td>[X]%</td><td>[±Xpp]</td><td>[X]</td><td>[X]%</td></tr>
+          <tr><td>Thailand</td><td>[X]%</td><td>[±Xpp]</td><td>[X]</td><td>[X]%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Annual People Capability Report — Sections</div>
+      <div style="display:grid;gap:6px;margin-top:4px">
+        <div style="padding:9px 14px;background:var(--surface2);border-left:3px solid var(--forest);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Section 1 — Pipeline performance summary.</strong> All 11 metrics vs. targets. Year-on-year change where baseline exists. Country-by-country conversion rate trends.</div>
+        <div style="padding:9px 14px;background:var(--surface2);border-left:3px solid var(--forest);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Section 2 — L&D investment return.</strong> Programme spend vs. outcomes. G4 coaching programme ROI (conversion rate impact × replacement cost). Laos G3 plan progress and cost of inaction update.</div>
+        <div style="padding:9px 14px;background:var(--surface2);border-left:3px solid var(--forest);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Section 3 — Leadership development outcomes.</strong> SM development: one specific change per SM. G4 rubric score movement. Peer forum commitment follow-through rate.</div>
+        <div style="padding:9px 14px;background:var(--surface2);border-left:3px solid var(--forest);border-radius:0 3px 3px 0;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Section 4 — Forward risks and recommendations.</strong> Succession risks by country and grade. Investment recommendations for following year. Country 5 people readiness status. Ba's two-line assessment: "The business is [more/less] resilient than 12 months ago because…"</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Reporting Calendar — 2026</div>
+      <table class="dtable" style="margin-top:4px">
+        <thead><tr><th>Month</th><th>Deliverable</th><th>Audience</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">March 2026</td><td>Q1 Pipeline Report (baseline — first formal report)</td><td>COO</td></tr>
+          <tr><td style="font-weight:600">April 2026</td><td>Laos ROI / cost of inaction brief (before June deadline)</td><td>COO</td></tr>
+          <tr><td style="font-weight:600">June 2026</td><td>Q2 Pipeline Report + H1 L&D Investment Review</td><td>COO</td></tr>
+          <tr><td style="font-weight:600">July 2026</td><td>G4 coaching programme mid-point review (post-module 3)</td><td>COO + Myo H.</td></tr>
+          <tr><td style="font-weight:600">September 2026</td><td>Q3 Pipeline Report + retention conversation briefs (Myo H., Wirawan)</td><td>COO</td></tr>
+          <tr><td style="font-weight:600">October 2026</td><td>Country 5 SM succession recommendation</td><td>COO</td></tr>
+          <tr><td style="font-weight:600">December 2026</td><td>Q4 Pipeline Report + Annual People Capability Report + H2 L&D Review</td><td>COO · CEO</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  <div id="page-calc" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — ROI Calculator</div>
+    <h1 class="page-title">ROI<br><em>Calculator</em></h1>
+    <p class="page-desc">Enter the inputs for any L&D programme and calculate the Kirkpatrick–Phillips ROI. The calculator runs both a conservative and an optimistic scenario. The output is designed to go directly into a COO brief or budget submission.</p>
+  </div>
+  <div class="calc-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0ede4;margin-bottom:4px">L&amp;D ROI Calculator</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:22px">Phillips ROI = (Programme Benefit − Programme Cost) ÷ Programme Cost × 100</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
+      <div>
+        <span class="calc-label">Programme name</span>
+        <input class="calc-input" id="c-name" placeholder="e.g. G4 Coaching Programme — Myanmar" type="text">
+        <span class="calc-label">Benefit period (years)</span>
+        <input class="calc-input" id="c-years" placeholder="e.g. 2" type="number" min="1" max="5">
+      </div>
+      <div>
+        <span class="calc-label">Total programme cost ($)</span>
+        <input class="calc-input" id="c-cost" placeholder="e.g. 5000" type="number" min="0">
+        <span class="calc-label">Avoided replacement cost per person ($)</span>
+        <input class="calc-input" id="c-replace" placeholder="e.g. 1500" type="number" min="0">
+      </div>
+      <div>
+        <span class="calc-label">Additional pipeline completions per year (conservative)</span>
+        <input class="calc-input" id="c-low" placeholder="e.g. 1.0" type="number" min="0" step="0.1">
+        <span class="calc-label">Additional pipeline completions per year (optimistic)</span>
+        <input class="calc-input" id="c-high" placeholder="e.g. 2.0" type="number" min="0" step="0.1">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+      <div>
+        <span class="calc-label">Avoided production downtime cost per year ($, conservative — enter 0 if unknown)</span>
+        <input class="calc-input" id="c-down-low" placeholder="e.g. 0" type="number" min="0">
+      </div>
+      <div>
+        <span class="calc-label">Avoided production downtime cost per year ($, optimistic — enter 0 if unknown)</span>
+        <input class="calc-input" id="c-down-high" placeholder="e.g. 8000" type="number" min="0">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-forest" onclick="calcROI()">Calculate ROI &#8594;</button>
+      <button class="btn btn-ghost" onclick="clearCalc()">Reset</button>
+    </div>
+    <div class="calc-result" id="calc-result"></div>
+  </div>
+</div>
+
+  <div id="page-brief" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — COO Brief Builder</div>
+    <h1 class="page-title">COO Brief<br><em>Builder</em></h1>
+    <p class="page-desc">Generate a structured one-page COO pipeline brief for any quarter. Select the reporting period and current pipeline status — the builder produces a brief in the standard Valentis format, ready for Ba to populate with live data before sending.</p>
+  </div>
+  <div class="calc-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0ede4;margin-bottom:4px">COO Quarterly Pipeline Brief Generator</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:22px">Select conditions — generates the framing, flags, and narrative template for Ba to complete with live data</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+      <div>
+        <span class="calc-label">Reporting quarter</span>
+        <select class="calc-input" id="b-quarter" style="cursor:pointer">
+          <option value="">Select…</option>
+          <option>Q1 2026</option><option>Q2 2026</option><option>Q3 2026</option><option>Q4 2026</option>
+          <option>Q1 2027</option>
+        </select>
+        <span class="calc-label">Myanmar conversion rate</span>
+        <select class="calc-input" id="b-myanmar" style="cursor:pointer">
+          <option value="">Select…</option>
+          <option value="low">Below 60% (critical)</option>
+          <option value="mid">60–70% (improving)</option>
+          <option value="target">70%+ (at target)</option>
+        </select>
+      </div>
+      <div>
+        <span class="calc-label">Laos G4 pipeline status</span>
+        <select class="calc-input" id="b-laos" style="cursor:pointer">
+          <option value="">Select…</option>
+          <option value="none">No active development plans</option>
+          <option value="active">Plans activated — in progress</option>
+          <option value="ontarget">On track for Q4 2026 certification</option>
+        </select>
+        <span class="calc-label">Indonesia programme delivery</span>
+        <select class="calc-input" id="b-indonesia" style="cursor:pointer">
+          <option value="">Select…</option>
+          <option value="low">Below 88% (recovery in progress)</option>
+          <option value="mid">88–93% (recovering)</option>
+          <option value="target">93%+ (recovered)</option>
+        </select>
+      </div>
+      <div>
+        <span class="calc-label">Primary COO action required?</span>
+        <select class="calc-input" id="b-action" style="cursor:pointer">
+          <option value="">Select…</option>
+          <option value="none">Awareness only — no action needed</option>
+          <option value="budget">Budget approval needed</option>
+          <option value="retention">Retention decision needed (Myo H. / Wirawan)</option>
+          <option value="country5">Country 5 SM candidate decision</option>
+          <option value="authority">Group HR authority endorsement (Indonesia)</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-forest" onclick="buildBrief()">Generate Brief Template &#8594;</button>
+      <button class="btn btn-ghost" onclick="clearBrief()">Reset</button>
+    </div>
+    <div class="calc-result" id="brief-result"></div>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tab-body').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+
+function fmt(n){return n<0?'('+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:0})+')':(n===0?'0':'$'+n.toLocaleString('en-US',{minimumFractionDigits:0}));}
+function pct(n){return (n>=0?'+':'')+n.toFixed(0)+'%';}
+function roiColor(v){return v>=50?'#6dbf8a':v>=0?'#f0c060':'rgba(155,26,26,0.8)';}
+
+function calcROI(){
+  var name=document.getElementById('c-name').value||'Programme';
+  var years=parseFloat(document.getElementById('c-years').value)||1;
+  var cost=parseFloat(document.getElementById('c-cost').value)||0;
+  var replace=parseFloat(document.getElementById('c-replace').value)||0;
+  var low=parseFloat(document.getElementById('c-low').value)||0;
+  var high=parseFloat(document.getElementById('c-high').value)||0;
+  var downLow=parseFloat(document.getElementById('c-down-low').value)||0;
+  var downHigh=parseFloat(document.getElementById('c-down-high').value)||0;
+
+  var benLow=(low*replace+downLow)*years;
+  var benHigh=(high*replace+downHigh)*years;
+  var netLow=benLow-cost;
+  var netHigh=benHigh-cost;
+  var roiLow=cost>0?((benLow-cost)/cost*100):0;
+  var roiHigh=cost>0?((benHigh-cost)/cost*100):0;
+  var pbLow=benLow>0?(cost/((low*replace+downLow))*12):null;
+  var pbHigh=benHigh>0?(cost/((high*replace+downHigh))*12):null;
+
+  var html='<div style="font-family:var(--fd);font-size:18px;font-weight:700;color:#f0ede4;margin-bottom:2px">ROI Output — '+name+'</div>'
+    +'<div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:14px">'+years+'-year benefit period · Programme cost: $'+cost.toLocaleString()+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'
+    +'<div style="padding:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px">'
+    +'<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.25);margin-bottom:8px">CONSERVATIVE SCENARIO</div>'
+    +'<div style="display:grid;gap:5px">'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Additional pipeline completions/yr</span><span style="font-family:var(--fm);color:rgba(255,255,255,0.6)">'+low+'</span></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Replacement cost avoided ('+years+'yr)</span><span style="font-family:var(--fm);color:rgba(255,255,255,0.6)">'+fmt(low*replace*years)+'</span></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Downtime cost avoided ('+years+'yr)</span><span style="font-family:var(--fm);color:rgba(255,255,255,0.6)">'+fmt(downLow*years)+'</span></div>'
+    +'<div style="height:1px;background:rgba(255,255,255,0.08);margin:4px 0"></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Total benefit</span><span style="font-family:var(--fm);color:#6dbf8a">'+fmt(benLow)+'</span></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Programme cost</span><span style="font-family:var(--fm);color:rgba(155,26,26,0.8)">'+fmt(-cost)+'</span></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:13px;margin-top:4px"><span style="color:#f0ede4;font-weight:600">Net benefit</span><span style="font-family:var(--fm);color:'+roiColor(netLow)+';font-weight:700">'+fmt(netLow)+'</span></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:13px"><span style="color:#f0ede4;font-weight:600">ROI</span><span style="font-family:var(--fm);color:'+roiColor(roiLow)+';font-weight:700">'+pct(roiLow)+'</span></div>'
+    +(pbLow?'<div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px">Payback: ~'+Math.round(pbLow)+' months</div>':'')
+    +'</div></div>'
+    +'<div style="padding:16px;background:rgba(31,77,53,0.08);border:1px solid rgba(31,77,53,0.2);border-radius:3px">'
+    +'<div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;margin-bottom:8px">OPTIMISTIC SCENARIO</div>'
+    +'<div style="display:grid;gap:5px">'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Additional pipeline completions/yr</span><span style="font-family:var(--fm);color:rgba(255,255,255,0.6)">'+high+'</span></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Replacement cost avoided ('+years+'yr)</span><span style="font-family:var(--fm);color:rgba(255,255,255,0.6)">'+fmt(high*replace*years)+'</span></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Downtime cost avoided ('+years+'yr)</span><span style="font-family:var(--fm);color:rgba(255,255,255,0.6)">'+fmt(downHigh*years)+'</span></div>'
+    +'<div style="height:1px;background:rgba(255,255,255,0.08);margin:4px 0"></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Total benefit</span><span style="font-family:var(--fm);color:#6dbf8a">'+fmt(benHigh)+'</span></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Programme cost</span><span style="font-family:var(--fm);color:rgba(155,26,26,0.8)">'+fmt(-cost)+'</span></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:13px;margin-top:4px"><span style="color:#f0ede4;font-weight:600">Net benefit</span><span style="font-family:var(--fm);color:'+roiColor(netHigh)+';font-weight:700">'+fmt(netHigh)+'</span></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto;font-size:13px"><span style="color:#f0ede4;font-weight:600">ROI</span><span style="font-family:var(--fm);color:'+roiColor(roiHigh)+';font-weight:700">'+pct(roiHigh)+'</span></div>'
+    +(pbHigh?'<div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px">Payback: ~'+Math.round(pbHigh)+' months</div>':'')
+    +'</div></div></div>'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.7"><strong style="color:rgba(255,255,255,0.6)">COO brief language:</strong> "The '+name+' cost approximately $'+cost.toLocaleString()+'. Against a conservative benefit estimate of $'+benLow.toLocaleString()+' over '+years+' year(s), the programme returns '+pct(roiLow)+' ROI in the conservative scenario and '+pct(roiHigh)+' in the optimistic scenario. The production downtime benefit is not included in the conservative figure — obtaining the programme revenue-per-week figure would allow the full return to be calculated."</div>';
+
+  var res=document.getElementById('calc-result');
+  res.innerHTML=html;res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearCalc(){
+  ['c-name','c-years','c-cost','c-replace','c-low','c-high','c-down-low','c-down-high'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('calc-result').style.display='none';
+}
+
+var myanmarText={
+  low:'Myanmar conversion rate remains below 60%. The G4 coaching programme has not yet produced measurable conversion improvement. [Ba to note: check G4 debrief frequency — low frequency predicts no conversion improvement. Programme is [X] modules complete. Expected impact window: [X] months post-certification.] Recommended COO awareness: Myanmar at-risk status continues.',
+  mid:'Myanmar conversion rate has improved to [X]% — up from 58% baseline. The G4 coaching programme is [X] modules complete and G4 debrief frequency has increased to [X]/fortnight. The 70% target is achievable by Q4 2026 if current trajectory holds.',
+  target:'Myanmar conversion rate has reached the 70% target. The G4 coaching programme certification is complete. [Ba to note the specific improvement driver here — which coaching practice changed most visibly?] This is a reporting milestone — note in the annual people capability report.'
+};
+var laosText={
+  none:'PRIORITY FLAG: No Laos G3 development plans are active. The first G4 retirement is projected within 18 months. Without plan activation by June 2026, the G3→G4 development cycle cannot complete before the first retirement. Cost of inaction: $28,000–$65,000 (replacement + delivery impact). Recommended COO action: confirm Group HR authority to activate development plans with the Laos SM.',
+  active:'Laos G3 development plans have been activated for both candidates. [Ba to add: plan activation dates, candidate names (or IDs), assigned G4 mentor, cross-site exposure scheduled for Q3 2026.] Pipeline is now actively managed. Quarterly milestone update will be included in each subsequent report.',
+  ontarget:'Laos G3 candidate 1 is on track for G4 certification by Q4 2026 — ahead of the first projected G4 retirement. Candidate 2 is [X] months behind. [Ba to add: specific milestone status for each candidate.] Retirement risk is being managed. No COO action required this quarter.'
+};
+var indonesiaText={
+  low:'Indonesia programme delivery remains at [X]% — below the 93% target. G3 vacancy filling is [X of 3 complete]. [Ba to note: estimated weeks to full G3 headcount and projected delivery recovery timeline based on current hire progress.] No additional COO action required — recovery is in progress.',
+  mid:'Indonesia programme delivery has recovered to [X]% — up from 84%. [X] of 3 G3 vacancies have been filled. Full recovery to 93%+ is projected by [quarter]. G2 accelerated pipeline candidates identified: [X]. SM peer forum participation: [first/second] session complete.',
+  target:'Indonesia programme delivery has recovered to 93%+. All 3 G3 vacancies filled. G2 accelerated pipeline candidates have active development plans — structural recurrence risk is being managed. Indonesia SM participated in [X] peer forum sessions. Pipeline is stable.'
+};
+var actionText={
+  none:'No COO action items this quarter. Pipeline is progressing to plan. Ba will provide the next update at [next quarter report date].',
+  budget:'ACTION REQUIRED — BUDGET APPROVAL: Ba is requesting approval for [programme name] — estimated cost $[X]. The ROI case is attached. [Ba to attach the ROI calculator output.] Decision needed by [date] to allow [programme start date].',
+  retention:'ACTION REQUIRED — RETENTION DECISION: Ba recommends initiating retention conversations with [Myo H. / Wirawan S.] by [date]. Retention proposals are attached for COO review and approval before Ba initiates the conversations. [Ba to attach prepared proposals.] Decision needed by September 2026 at the latest — both retention bonuses expire [dates].',
+  country5:'ACTION REQUIRED — COUNTRY 5 SM CANDIDATE: Ba has completed the SM succession assessment. Recommendation: [Thailand SM / Wirawan S. / external hire]. Summary of assessment and risk analysis is attached. COO decision needed by Q4 2026 for Q2 2027 launch timeline.',
+  authority:'ACTION REQUIRED — GROUP HR AUTHORITY (INDONESIA): Ba is requesting a direct endorsement from the COO that Group HR has authority to conduct pipeline reviews and access workforce data in Indonesia. This is currently being resisted at the SM level. A brief COO message to Wirawan S. — copied to Ba — would resolve this without a formal escalation.'
+};
+
+function buildBrief(){
+  var q=document.getElementById('b-quarter').value;
+  var mym=document.getElementById('b-myanmar').value;
+  var lao=document.getElementById('b-laos').value;
+  var ind=document.getElementById('b-indonesia').value;
+  var act=document.getElementById('b-action').value;
+  if(!q||!mym||!lao||!ind||!act){alert('Please complete all fields.');return;}
+
+  var mymText=myanmarText[mym]||'';
+  var laosTxt=laosText[lao]||'';
+  var indText=indonesiaText[ind]||'';
+  var actTxt=actionText[act]||'';
+
+  var overallRisk=(mym==='low'||lao==='none'||ind==='low')?'<span style="font-family:var(--fm);font-size:9px;padding:3px 8px;background:rgba(155,26,26,0.2);border:1px solid rgba(155,26,26,0.4);border-radius:2px;color:#e07070">ELEVATED RISK</span>':
+    (mym==='mid'||lao==='active'||ind==='mid')?'<span style="font-family:var(--fm);font-size:9px;padding:3px 8px;background:rgba(122,92,20,0.2);border:1px solid rgba(122,92,20,0.4);border-radius:2px;color:#f0c060">IMPROVING</span>':
+    '<span style="font-family:var(--fm);font-size:9px;padding:3px 8px;background:rgba(31,77,53,0.2);border:1px solid rgba(31,77,53,0.4);border-radius:2px;color:#6dbf8a">ON TRACK</span>';
+
+  var html='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:20px;font-size:12.5px;line-height:1.8;color:rgba(255,255,255,0.6)">'
+    +'<div style="font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;margin-bottom:2px">VALENTIS GROUP — PEOPLE PIPELINE REPORT</div>'
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><div style="font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.4)">'+q+' · Ba · Group HR Manager</div>'+overallRisk+'</div>'
+
+    +'<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-bottom:5px">MYANMAR — G4 COACHING &amp; CONVERSION RATE</div>'
+    +'<div style="padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:3px;margin-bottom:10px">'+mymText+'</div>'
+
+    +'<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-bottom:5px">LAOS — G3→G4 PIPELINE &amp; RETIREMENT SUCCESSION</div>'
+    +'<div style="padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:3px;margin-bottom:10px">'+laosTxt+'</div>'
+
+    +'<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-bottom:5px">INDONESIA — DELIVERY RECOVERY &amp; G3 PIPELINE</div>'
+    +'<div style="padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:3px;margin-bottom:10px">'+indText+'</div>'
+
+    +'<div style="font-family:var(--fm);font-size:8px;color:'+(act==='none'?'rgba(255,255,255,0.25)':'#f0c060')+';letter-spacing:1px;margin-bottom:5px">'+(act==='none'?'SUMMARY':'⚠ COO ACTION REQUIRED')+'</div>'
+    +'<div style="padding:10px 12px;background:'+(act==='none'?'rgba(255,255,255,0.03)':'rgba(122,92,20,0.1)')+';border-radius:3px;border:'+(act==='none'?'none':'1px solid rgba(122,92,20,0.3)')+';margin-bottom:0">'+actTxt+'</div>'
+
+    +'<div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)">Template generated by Ba\'s HR Toolkit — L&D Tool 6: Measurement &amp; ROI · Valentis Group 2026</div>'
+    +'</div>';
+
+  var res=document.getElementById('brief-result');
+  res.innerHTML=html;res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearBrief(){
+  ['b-quarter','b-myanmar','b-laos','b-indonesia','b-action'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('brief-result').style.display='none';
+}
+</script>
+</body>
+</html>

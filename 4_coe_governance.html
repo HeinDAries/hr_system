@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Governance & Decision Rights — Centre of Excellence Tool 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2ee;--surface:#fff;--surface2:#e8ece6;--surface3:#dde3da;
+  --border:#c8d0c4;--border2:#b4bfaf;
+  --ink:#0d110c;--ink2:#1a2418;--ink3:#3d5039;--ink4:#6b7d67;--ink5:#a0b09c;
+  --teal:#0a2420;--teal2:#0d2e29;
+  --gold:#b8960a;--gold2:#cfa50c;--gold3:#e6bc2a;
+  --gold-dim:rgba(184,150,10,0.09);--gold-border:rgba(184,150,10,0.28);
+  --green:#1a6b3a;--green-dim:rgba(26,107,58,0.08);--green-border:rgba(26,107,58,0.24);
+  --red:#b83225;--red-dim:rgba(184,50,37,0.07);--red-border:rgba(184,50,37,0.22);
+  --amber:#b87010;--amber-dim:rgba(184,112,16,0.08);--amber-border:rgba(184,112,16,0.24);
+  --teal-accent:#0e7c6e;--teal-dim:rgba(14,124,110,0.09);--teal-border:rgba(14,124,110,0.26);
+  --sidebar-w:280px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--teal);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--gold3),var(--gold),rgba(184,150,10,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);background:rgba(184,150,10,0.15);border:1px solid rgba(184,150,10,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f8f4;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--gold3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(184,150,10,0.16);border-color:rgba(184,150,10,0.38);color:var(--gold3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--gold2)}
+.nav-item.tool-link{color:rgba(255,255,255,0.18);font-size:12px}
+.nav-item.tool-link.current-tool{color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.04)}
+.nav-status{margin-left:auto;font-family:var(--fm);font-size:8px;padding:1px 5px;border-radius:2px}
+.status-done{background:rgba(26,107,58,0.25);color:#6ecf94}
+.status-next{background:rgba(184,150,10,0.2);color:var(--gold3)}
+.status-soon{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.25)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--gold3);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal-accent);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--gold)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--gold);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cgo{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.cgr{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.ca{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.ct2{background:var(--teal-dim);color:var(--teal-accent);border:1px solid var(--teal-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.go{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.inf.gr{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf.r{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.inf.a{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.inf.t{background:var(--teal-dim);border-color:var(--teal-accent);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--teal);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+.vx{background:var(--teal);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f8f4;margin-bottom:8px;line-height:1.2}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.42);font-weight:300;line-height:1.85}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kgo::before{background:var(--gold)}.kgr2::before{background:var(--green)}
+.ka::before{background:var(--amber)}.kt2::before{background:var(--teal-accent)}
+.krd::before{background:var(--red)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kgo .kv{color:var(--gold)}.kgr2 .kv{color:var(--green)}
+.ka .kv{color:var(--amber)}.kt2 .kv{color:var(--teal-accent)}.krd .kv{color:var(--red)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.ktag{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktag-go{background:var(--gold-dim);color:var(--gold)}
+.ktag-gr{background:var(--green-dim);color:var(--green)}
+.ktag-t{background:var(--teal-dim);color:var(--teal-accent)}
+.ktag-a{background:var(--amber-dim);color:var(--amber)}
+.ktag-r{background:var(--red-dim);color:var(--red)}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+/* Decision tree */
+.dtree-node{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:12px 16px;text-align:center;position:relative}
+.dtree-q{font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px}
+.dtree-sub{font-size:11.5px;color:var(--ink4);font-weight:300}
+.dtree-yes{color:var(--green);font-family:var(--fm);font-size:9px}
+.dtree-no{color:var(--red);font-family:var(--fm);font-size:9px}
+.dtree-outcome{border-radius:4px;padding:10px 14px;text-align:center;font-weight:700;font-size:12.5px}
+/* Authority badge */
+.auth-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:3px;font-family:var(--fm);font-size:9px;font-weight:600;letter-spacing:.5px}
+/* Shadow HR alert */
+.shadow-item{padding:11px 16px;border-radius:3px;margin-bottom:7px;border:1px solid}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx,.page.active .krow{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+.page.active .card:nth-child(5){animation-delay:.12s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">Centre of Excellence · Tool 4 / 7</div>
+    <div class="sb-title">Governance &amp;<br><em>Decision Rights</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Tool 4 Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('principles',this)"><span class="nav-num">02</span>Governance Principles</div>
+    <div class="nav-item" onclick="showPage('authority',this)"><span class="nav-num">03</span>Authority Levels</div>
+    <div class="nav-item" onclick="showPage('matrix',this)"><span class="nav-num">04</span>Decision Rights Matrix</div>
+    <div class="nav-item" onclick="showPage('tree',this)"><span class="nav-num">05</span>Decision Trees</div>
+    <div class="nav-item" onclick="showPage('shadow',this)"><span class="nav-num">06</span>Preventing Shadow HR</div>
+    <div class="nav-item" onclick="showPage('escalation',this)"><span class="nav-num">07</span>Escalation Framework</div>
+    <div class="nav-item" onclick="showPage('review',this)"><span class="nav-num">08</span>Governance Review</div>
+
+    <div class="sb-group">All CoE Tools</div>
+    <div class="nav-item tool-link"><span class="nav-num">01</span>CoE Operating Model<span class="nav-status status-done">Done</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">02</span>Standards &amp; Policy Register<span class="nav-status status-done">Done</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">03</span>Knowledge Management<span class="nav-status status-done">Done</span></div>
+    <div class="nav-item tool-link current-tool"><span class="nav-num">04</span>Governance &amp; Decision Rights<span class="nav-status status-next">Current</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">05</span>Framework Lifecycle<span class="nav-status status-soon">Next</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">06</span>Innovation Tracker<span class="nav-status status-soon">Soon</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">07</span>CoE Maturity Model<span class="nav-status status-soon">Soon</span></div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Centre of Excellence · Tool 4 of 7</strong>
+      HR Governance &amp; Decision Rights<br>
+      <span style="color:rgba(255,255,255,0.1)">Clear decision rights prevent shadow HR. Shadow HR fragments policy across four countries silently.</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+  <div id="page-overview"   class="page active"></div>
+  <div id="page-principles" class="page"></div>
+  <div id="page-authority"  class="page"></div>
+  <div id="page-matrix"     class="page"></div>
+  <div id="page-tree"       class="page"></div>
+  <div id="page-shadow"     class="page"></div>
+  <div id="page-escalation" class="page"></div>
+  <div id="page-review"     class="page"></div>
+</main>
+
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item:not(.tool-link)').forEach(n=>n.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));scope.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+</script>
+
+<script>
+// ══ PAGE 01 — OVERVIEW ══════════════════════════════════════════
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">Centre of Excellence · Tool 4 / 7 — HR Governance &amp; Decision Rights</div>
+<div class="pt">Governance &amp;<br><em>Decision Rights</em></div>
+<p class="pd">At Valentis, four countries, four SMs, and a lean HR team make HR decisions every day. Without clear decision rights, those decisions are made inconsistently — some too conservatively, some outside policy, some without HR involvement at all. This tool defines who approves what, when HR must be consulted, and what happens when the wrong person makes the wrong call. It is the governance backbone that keeps HR coherent across geographies.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Governance Problem at Valentis</div>
+  <div class="vx-ti">Shadow HR is not malicious. It is what happens when decision rights are unclear and a manager needs an answer now. The Country SM hires someone above band because "we needed them urgently." The HRBP approves a PIP without HR Ops involvement because "it was faster." These are governance failures — and they accumulate.</div>
+  <div class="vx-bo">Across four countries and two time zones, informal HR decisions happen constantly at Valentis. A G3 is hired above band in Indonesia without a salary exception approval. A disciplinary warning is issued in Myanmar without HR present. A contract is varied verbally in Laos without a written addendum. None of these feel like big decisions at the time. Collectively, they create a HR function where the policy register says one thing and what actually happens says another. The decision rights matrix in this tool closes that gap — by making the approval pathway for every HR decision explicit, fast, and accessible to everyone who needs to make one.</div>
+</div>
+
+<div class="krow">
+  <div class="kpi kgo"><div class="kl">Decision Categories</div><div class="kv">7</div><div class="ks">Employment · Pay · Performance · ER · Policy · Talent · Operations</div><div class="ktag ktag-go">Full matrix in Section 04</div></div>
+  <div class="kpi kgr2"><div class="kl">Authority Levels</div><div class="kv">5</div><div class="ks">Country SM · HRBP · Group HR Head · COO · Board</div><div class="ktag ktag-gr">Section 03</div></div>
+  <div class="kpi ka"><div class="kl">Shadow HR Risks</div><div class="kv">8</div><div class="ks">Known governance gaps currently active across 4 countries</div><div class="ktag ktag-a">Section 06</div></div>
+  <div class="kpi kt2"><div class="kl">Decision Trees</div><div class="kv">6</div><div class="ks">Quick-reference pathways for the most common decision types</div><div class="ktag ktag-t">Section 05</div></div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">What Governance <em>Actually Prevents</em></div>
+    ${[
+      {risk:'Above-band hiring without approval',consequence:'Pay equity breach · sets precedent that erodes band discipline · discovered in audit = reputational and legal exposure',frequency:'Estimated 2–3 times per year at Valentis currently',col:'var(--red)'},
+      {risk:'Disciplinary action without HR involvement',consequence:'Legal exposure if process not followed · ER case outcome challenged · unfair dismissal risk in Thailand and Indonesia',frequency:'Myanmar: 1 known instance Q4 2025',col:'var(--red)'},
+      {risk:'Verbal contract variations',consequence:'Creates binding obligations not reflected in written terms · undiscoverable until a dispute arises',frequency:'Laos: informal overtime agreements common',col:'var(--amber)'},
+      {risk:'Performance decisions without documentation',consequence:'PIP or termination challenged because no paper trail · HRBP excluded from process · manager acting alone',frequency:'Myanmar and Laos: intermittent',col:'var(--amber)'},
+      {risk:'Policy exceptions granted informally by SM',consequence:'Creates de facto policy variations that are invisible to CoE · discovered when another country requests same exception',frequency:'Indonesia: 1 known informal exception active',col:'var(--gold)'},
+    ].map(d=>`<div style="padding:10px 14px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0;margin-bottom:7px">
+      <div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:3px">${d.risk}</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55;margin-bottom:3px">${d.consequence}</div>
+      <div style="font-family:var(--fm);font-size:9.5px;color:${d.col}">${d.frequency}</div>
+    </div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Tool 4 — <em>Section Map</em></div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {n:'02',t:'Governance Principles',d:'The five principles that underpin all HR governance at Valentis — the why behind the decision rights structure.'},
+        {n:'03',t:'Authority Levels',d:'The five authority levels — what each level can approve, what requires escalation, and the speed expectations at each level.'},
+        {n:'04',t:'Decision Rights Matrix',d:'The complete matrix — every significant HR decision mapped to its approval authority, consultation requirements, and documentation standard.'},
+        {n:'05',t:'Decision Trees',d:'Six quick-reference decision trees for the most common governance questions: hiring, pay, performance, ER, policy, and contract changes.'},
+        {n:'06',t:'Preventing Shadow HR',d:'The eight known shadow HR risks at Valentis, how they arise, and the specific governance controls that prevent each one.'},
+        {n:'07',t:'Escalation Framework',d:'When and how HR decisions escalate — the triggers, the path, the timeline, and what happens when escalation is ignored.'},
+        {n:'08',t:'Governance Review',d:'How HR governance is audited annually, what signals indicate governance is breaking down, and the 2026 governance health status.'},
+      ].map(d=>`<div style="padding:9px 12px;background:var(--surface2);border-radius:3px;display:flex;gap:12px;align-items:flex-start">
+        <span style="font-family:var(--fm);font-size:9px;color:var(--gold);flex-shrink:0;padding-top:2px">${d.n}</span>
+        <div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px">${d.t}</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">${d.d}</div></div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ══ PAGE 02 — GOVERNANCE PRINCIPLES ═════════════════════════════
+document.getElementById('page-principles').innerHTML=`
+<div class="pe">Section 02 — Governance Principles</div>
+<div class="pt">Governance<br><em>Principles</em></div>
+<p class="pd">Five principles underpin all HR governance at Valentis. They are not rules — they are the reasoning behind the decision rights structure. Understanding the principles helps every stakeholder navigate situations the matrix does not explicitly cover.</p>
+
+<div class="vx">
+  <div class="vx-ey">Why Principles Matter as Much as Rules</div>
+  <div class="vx-ti">A decision rights matrix covers the decisions you anticipated. The governance principles cover the decisions you did not. When a Country SM faces a novel situation not in the matrix, the principles tell them which direction to lean.</div>
+  <div class="vx-bo">HR governance at a four-country mineral exploration company cannot anticipate every decision. Operations move fast, situations are unusual, and the distance between countries means real-time HR consultation is not always possible. The five principles below are the fallback for every situation not explicitly covered by the matrix — they give Country SMs and HRBPs the framework to make defensible decisions independently when they must, and to know when they must not.</div>
+</div>
+
+<div style="display:grid;gap:12px;margin-bottom:14px">
+  ${[
+    {n:'01',title:'Clarity Over Speed',principle:'When in doubt about who should approve a decision, the right move is to pause and clarify — not to act and apologise later. A one-hour delay to confirm the right approver costs far less than undoing a decision made by the wrong person.',application:'A Country SM who is unsure whether a hiring decision requires COO approval should contact the HRBP before making an offer — even if the candidate is waiting. The candidate can wait. An above-band offer cannot be easily unwound.',col:'var(--gold)'},
+    {n:'02',title:'The Person Affected Cannot Approve',principle:'No one approves a decision that directly and materially benefits themselves. A Country SM cannot approve their own contract variation. An HRBP cannot approve their own salary increase. The approval must go one level above.',application:'Indonesia SM requests an allowance increase for field operations — this goes to Group HR Head, not the SM themselves. Myanmar HRBP requests training budget — approved by Group HR Head, not the HRBP.',col:'var(--gold)'},
+    {n:'03',title:'Decisions at the Lowest Appropriate Level',principle:'HR governance is not about centralising every decision. It is about ensuring the right decisions go to the right level. Routine operational decisions should be made by Country SMs and HRBPs without involving Group HR Head or COO.',application:'A SM approving an annual leave request does not need HR involvement. A SM approving a contract extension for a G3 should follow the standard procedure — HRBP notation, but no approval required beyond the SM.',col:'var(--teal-accent)'},
+    {n:'04',title:'Documentation is the Decision',principle:'A decision that is not documented did not happen — in the eyes of a labour tribunal, an audit, or a future HR team member. Every approval that goes through the decision rights matrix must leave a written record, however brief.',application:'A HRBP approves a minor schedule change verbally — they must follow up with a one-line email confirmation. "As discussed, your schedule change is approved from [date]." That email is the record.',col:'var(--teal-accent)'},
+    {n:'05',title:'Consistency Across Countries',principle:'The same type of decision must go through the same approval process in all four countries. Valentis cannot have one standard for Thailand and a different standard for Myanmar — even if Myanmar\'s SM has operated informally for years.',application:'If Indonesia requires HRBP sign-off on all above-G2 external hires, then Thailand, Laos, and Myanmar require the same sign-off. The matrix applies group-wide. Country context changes how the conversation happens — not whether the approval is needed.',col:'var(--amber)'},
+  ].map(d=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px 24px;border-left:5px solid ${d.col};box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <span style="font-family:var(--fm);font-size:9px;color:${d.col}">Principle ${d.n}</span>
+      <span style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--ink)">${d.title}</span>
+    </div>
+    <div style="font-size:13.5px;color:var(--ink2);line-height:1.85;font-weight:300;margin-bottom:10px">${d.principle}</div>
+    <div style="padding:10px 14px;background:var(--surface2);border-radius:3px">
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:${d.col};margin-bottom:5px">Applied at Valentis</div>
+      <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">${d.application}</div>
+    </div>
+  </div>`).join('')}
+</div>
+`;
+
+// ══ PAGE 03 — AUTHORITY LEVELS ═══════════════════════════════════
+document.getElementById('page-authority').innerHTML=`
+<div class="pe">Section 03 — Authority Levels</div>
+<div class="pt">Authority<br><em>Levels</em></div>
+<p class="pd">Five authority levels govern HR decisions at Valentis. Each level has a defined scope of what it can approve, what triggers escalation to the next level, and how quickly it is expected to respond. The levels are cumulative — higher levels can approve everything lower levels can.</p>
+
+<div class="inf go"><strong>The Speed Standard</strong>Every authority level has a response time expectation. An HR decision waiting more than 5 working days for an approval is a governance failure — either the decision went to the wrong level, or the approver is not operating within standard. The CoE monitors approval time as part of the quarterly governance review.</div>
+
+<div style="display:grid;gap:10px;margin-bottom:14px">
+  ${[
+    {level:'Level 1',title:'Country SM',scope:'Day-to-day people management decisions within established HR frameworks. Routine approvals that do not involve policy variation, above-band pay, or significant financial commitment.',canApprove:['Annual leave, sick leave, and standard schedule adjustments','Performance feedback and informal coaching conversations','Internal roster changes and shift swaps','Reimbursement of standard business expenses within policy limits','Probation period standard commencement and completion (notification to HRBP)'],cannotApprove:['Any salary decision — including increments, allowances, or bonuses — without HRBP notation','Disciplinary warnings or formal performance actions','Contract changes of any kind','Hiring decisions above G2 without HRBP sign-off'],response:'Same day for routine matters',col:'var(--teal-accent)'},
+    {level:'Level 2',title:'Country HRBP',scope:'HR process decisions within policy and within grade band. The primary operational HR approver for country-level people decisions. Can act without Group HR Head involvement for in-policy, in-band decisions.',canApprove:['External hires at G1–G4 within approved grade band','In-band salary adjustments (within ±10% of band midpoint)','Performance review outcomes and grade progression recommendations (subject to calibration)','Standard PIP initiation and management','Grievance and disciplinary proceedings (following process — not unilaterally)','Onboarding and offboarding processing','Standard policy applications and interpretations'],cannotApprove:['Above-band salary offers or adjustments','G5+ external hires (requires Group HR Head)','Terminations (requires Group HR Head co-sign)','Policy exceptions or country addenda','Any decision involving the Country SM themselves'],response:'Within 2 working days',col:'var(--gold)'},
+    {level:'Level 3',title:'Group HR Head / CoE',scope:'Group-wide HR decisions, policy governance, and any decision that creates precedent or financial exposure beyond standard band parameters. The primary escalation point from country HRBPs.',canApprove:['Above-band salary offers (up to 15% above band maximum — above that requires COO)','G5 and G6 external hires','All terminations (co-sign with HRBP)','Policy exceptions (up to Tier 2 level — Tier 1 requires COO)','Country addenda (CoE endorsement)','Framework design and revision','All CoE scope decisions (Tools 1–7)','Cross-country mobility and secondment terms'],cannotApprove:['New grade band creation or band restructuring (requires COO)','Salary above 15% of band maximum (requires COO)','Tier 1 policy changes (requires COO)','Board-level people decisions'],response:'Within 3 working days',col:'var(--amber)'},
+    {level:'Level 4',title:'COO',scope:'Strategic HR decisions, significant financial commitments, and decisions that set group-wide precedent or carry board-level implications. HR presents with a recommendation — COO decides.',canApprove:['Grade band restructuring or new band creation','Salary exceptions above 15% of band maximum','All Tier 1 policy changes','New country HR framework (entering a new country of operation)','Group-wide HR restructuring (adding or removing HR roles)','CHRO appointment and senior HR role compensation','Any HR decision with >$50K annual financial impact'],cannotApprove:['Board-approved compensation structures for ExCo','HR-related board resolutions'],response:'Within 5 working days (HR to present decision paper)',col:'var(--red)'},
+    {level:'Level 5',title:'Board',scope:'Board-level people governance — executive compensation, board HR committee oversight, and any people matter that requires board resolution or disclosure.',canApprove:['Executive (ExCo) compensation packages','Board-approved incentive schemes','CHRO appointment and compensation','Any HR matter requiring board disclosure or resolution'],cannotApprove:['Operational HR decisions — all operational authority is delegated to COO and below'],response:'Board meeting cycle — HR to submit papers 10 days before board meeting',col:'var(--teal)'},
+  ].map(d=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+    <div style="background:${d.col};padding:12px 20px;display:flex;align-items:center;gap:14px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:2px">${d.level}</div>
+        <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:#fff;line-height:1">${d.title}</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.5);margin-bottom:2px">Response Standard</div>
+        <div style="font-family:var(--fm);font-size:11px;color:rgba(255,255,255,0.9);font-weight:600">${d.response}</div>
+      </div>
+    </div>
+    <div style="padding:16px 20px">
+      <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">${d.scope}</div>
+      <div class="g2" style="margin-bottom:0">
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:6px">Can Approve</div>
+          ${d.canApprove.map(i=>`<div style="font-size:12px;color:var(--ink3);font-weight:300;padding:3px 0;border-bottom:1px solid var(--border);display:flex;gap:8px"><span style="color:var(--green);flex-shrink:0">✓</span>${i}</div>`).join('')}
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:6px">Cannot Approve — Escalate</div>
+          ${d.cannotApprove.map(i=>`<div style="font-size:12px;color:var(--ink3);font-weight:300;padding:3px 0;border-bottom:1px solid var(--border);display:flex;gap:8px"><span style="color:var(--red);flex-shrink:0">✕</span>${i}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`).join('')}
+</div>
+`;
+
+// ══ PAGE 04 — DECISION RIGHTS MATRIX ═══════════════════════════
+document.getElementById('page-matrix').innerHTML=`
+<div class="pe">Section 04 — Decision Rights Matrix</div>
+<div class="pt">Decision Rights<br><em>Matrix</em></div>
+<p class="pd">The complete decision rights matrix for Valentis HR. Every significant HR decision is mapped to its approval authority, consultation requirement, documentation standard, and response time. Use this as the reference for any decision where the right approver is unclear.</p>
+
+<div class="inf go"><strong>How to Read This Matrix</strong>
+  <span style="display:inline-flex;gap:8px;flex-wrap:wrap;margin-top:5px">
+    <span style="background:#fffbf0;color:#8a6200;border:1px solid #d4aa00;font-family:var(--fm);font-size:8px;padding:2px 8px;border-radius:2px;font-weight:600">A — Approves (decides)</span>
+    <span style="background:var(--teal-dim);color:var(--teal-accent);border:1px solid var(--teal-border);font-family:var(--fm);font-size:8px;padding:2px 8px;border-radius:2px;font-weight:600">C — Consulted (must be involved)</span>
+    <span style="background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);font-family:var(--fm);font-size:8px;padding:2px 8px;border-radius:2px;font-weight:600">N — Notified (informed after)</span>
+    <span style="background:var(--surface2);color:var(--ink5);border:1px solid var(--border);font-family:var(--fm);font-size:8px;padding:2px 8px;border-radius:2px;font-weight:600">— Not involved</span>
+  </span>
+</div>
+
+<div class="tabs" data-tabs>
+  <div class="tab active" onclick="showTab('mx-hire',this)">Hiring &amp; Contracts</div>
+  <div class="tab" onclick="showTab('mx-pay',this)">Pay &amp; Benefits</div>
+  <div class="tab" onclick="showTab('mx-perf',this)">Performance</div>
+  <div class="tab" onclick="showTab('mx-er',this)">Employee Relations</div>
+  <div class="tab" onclick="showTab('mx-pol',this)">Policy &amp; Governance</div>
+  <div class="tab" onclick="showTab('mx-ops',this)">HR Operations</div>
+  <div class="tab" onclick="showTab('mx-exit',this)">Exits &amp; Transitions</div>
+</div>
+
+${[
+  {id:'mx-hire',label:'Hiring & Contracts',rows:[
+    {dec:'G1–G2 external hire (in band)',sm:'C',hrbp:'A',grp:'N',coo:'—',doc:'Offer letter · HRBP sign-off email',time:'2 days'},
+    {dec:'G3–G4 external hire (in band)',sm:'C',hrbp:'A',grp:'C',coo:'N',doc:'Offer letter · HRBP approval · Group HR Head consultation note',time:'3 days'},
+    {dec:'G5–G6 external hire',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Offer paper · Group HR Head approval · COO notification',time:'5 days'},
+    {dec:'Any hire above band (up to +15%)',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Exception form · justification · Group HR Head approval',time:'3 days'},
+    {dec:'Any hire above band (+15% or more)',sm:'C',hrbp:'C',grp:'C',coo:'A',doc:'Decision paper · COO approval · policy exception record',time:'5 days'},
+    {dec:'Internal promotion (in-band)',sm:'C',hrbp:'A',grp:'N',coo:'—',doc:'Promotion letter · HRBP confirmation',time:'2 days'},
+    {dec:'Internal promotion (grade change)',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Promotion paper · Group HR Head approval · calibration note',time:'3 days'},
+    {dec:'Contract extension (standard)',sm:'C',hrbp:'A',grp:'N',coo:'—',doc:'Extension letter · HRBP notation',time:'2 days'},
+    {dec:'Contract variation (terms change)',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Variation letter · Group HR Head approval',time:'3 days'},
+    {dec:'Country addendum creation',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Addendum document · CoE endorsement',time:'10 days'},
+  ]},
+  {id:'mx-pay',label:'Pay & Benefits',rows:[
+    {dec:'In-band merit increase (standard cycle)',sm:'C',hrbp:'A',grp:'C',coo:'N',doc:'Merit review record · HRBP approval · calibration sign-off',time:'Cycle schedule'},
+    {dec:'In-band off-cycle increase',sm:'C',hrbp:'A',grp:'C',coo:'N',doc:'Business case · HRBP approval · Group HR Head consultation',time:'3 days'},
+    {dec:'Above-band increase (up to +15%)',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Exception form · Group HR Head approval',time:'3 days'},
+    {dec:'Above-band increase (+15% or more)',sm:'C',hrbp:'C',grp:'C',coo:'A',doc:'Decision paper · COO approval · exception register entry',time:'5 days'},
+    {dec:'Field / hardship allowance (in policy)',sm:'A',hrbp:'N',grp:'N',coo:'—',doc:'SM confirmation email to HRBP',time:'Same day'},
+    {dec:'New allowance type (not in policy)',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Policy note · Group HR Head approval',time:'5 days'},
+    {dec:'Merit pool allocation (annual)',sm:'C',hrbp:'C',grp:'A',coo:'A',doc:'Merit pool model · COO approval · calibration record',time:'As per cycle'},
+    {dec:'Grade band restructuring',sm:'—',hrbp:'C',grp:'C',coo:'A',doc:'Band review paper · COO approval · CoE update to register',time:'Board/budget cycle'},
+    {dec:'Benefits change (in-framework)',sm:'—',hrbp:'C',grp:'A',coo:'N',doc:'Benefits update memo · Group HR Head approval',time:'5 days'},
+  ]},
+  {id:'mx-perf',label:'Performance',rows:[
+    {dec:'Annual performance rating (individual)',sm:'A',hrbp:'C',grp:'—',coo:'—',doc:'Performance review form · HRBP calibration',time:'Review cycle'},
+    {dec:'Performance calibration (country)',sm:'C',hrbp:'A',grp:'C',coo:'—',doc:'Calibration record · Group HR Head sign-off',time:'Review cycle'},
+    {dec:'Grade progression recommendation',sm:'C',hrbp:'A',grp:'C',coo:'—',doc:'Progression paper · calibration record',time:'Review cycle'},
+    {dec:'PIP initiation',sm:'C',hrbp:'A',grp:'N',coo:'—',doc:'PIP template · HRBP sign-off · notification to Group HR Head',time:'Within 5 days of trigger'},
+    {dec:'PIP outcome — improvement confirmed',sm:'C',hrbp:'A',grp:'N',coo:'—',doc:'PIP outcome letter · HRBP notation',time:'At PIP close'},
+    {dec:'PIP outcome — dismissal recommended',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'PIP summary · Group HR Head co-sign · legal review if required',time:'At PIP close'},
+    {dec:'G4 coaching quality assessment',sm:'—',hrbp:'A',grp:'C',coo:'—',doc:'Coaching quality rubric · HRBP assessment',time:'Quarterly'},
+    {dec:'Performance framework change',sm:'—',hrbp:'C',grp:'A',coo:'N',doc:'Framework revision · CoE update · communication to all HRBPs',time:'As per lifecycle'},
+  ]},
+  {id:'mx-er',label:'Employee Relations',rows:[
+    {dec:'Informal counselling / verbal warning',sm:'A',hrbp:'C',grp:'—',coo:'—',doc:'SM file note · HRBP notification',time:'Same day'},
+    {dec:'Written warning (first)',sm:'C',hrbp:'A',grp:'N',coo:'—',doc:'Warning letter · HRBP present or sign-off · SM co-sign',time:'Within 5 days of hearing'},
+    {dec:'Final written warning',sm:'C',hrbp:'A',grp:'C',coo:'—',doc:'Warning letter · Group HR Head consultation · HRBP present',time:'Within 5 days of hearing'},
+    {dec:'Suspension (precautionary)',sm:'C',hrbp:'A',grp:'C',coo:'N',doc:'Suspension letter · Group HR Head approval · COO notification',time:'Same day (urgent)'},
+    {dec:'Grievance investigation appointment',sm:'—',hrbp:'A',grp:'C',coo:'—',doc:'Investigator appointment · investigation plan',time:'Within 2 days of grievance'},
+    {dec:'Grievance outcome — informal resolution',sm:'C',hrbp:'A',grp:'N',coo:'—',doc:'Resolution record · HRBP sign-off',time:'Within 20 working days'},
+    {dec:'Grievance outcome — formal finding',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Investigation report · Group HR Head decision · appeal right communicated',time:'Within 20 working days'},
+    {dec:'ER case escalation to legal',sm:'—',hrbp:'C',grp:'A',coo:'N',doc:'Escalation briefing · COO notification if >$20K exposure',time:'Within 5 days of trigger'},
+    {dec:'Settlement agreement',sm:'—',hrbp:'C',grp:'A',coo:'A',doc:'Settlement terms · COO approval · legal sign-off',time:'As per negotiation'},
+  ]},
+  {id:'mx-pol',label:'Policy & Governance',rows:[
+    {dec:'Tier 3 procedure update',sm:'—',hrbp:'C',grp:'N',coo:'—',doc:'Updated procedure · CoE notification · KB updated',time:'5 days'},
+    {dec:'Tier 2 standard update',sm:'—',hrbp:'C',grp:'A',coo:'N',doc:'Updated standard · CoE endorsement · HRBP communication',time:'10 days'},
+    {dec:'Tier 1 policy update',sm:'—',hrbp:'C',grp:'C',coo:'A',doc:'Policy paper · COO endorsement · group communication',time:'As per review cycle'},
+    {dec:'Policy exception (Tier 2)',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Exception form · Group HR Head approval · exception register',time:'5 days'},
+    {dec:'Policy exception (Tier 1)',sm:'C',hrbp:'C',grp:'C',coo:'A',doc:'Exception paper · COO approval · exception register',time:'5 days'},
+    {dec:'Country addendum (new)',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Addendum draft · legal validation · CoE endorsement',time:'10 days'},
+    {dec:'CoE Charter revision',sm:'—',hrbp:'—',grp:'A',coo:'A',doc:'Revised charter · COO endorsement · distribution to SMs',time:'Annual review cycle'},
+  ]},
+  {id:'mx-ops',label:'HR Operations',rows:[
+    {dec:'Standard contract issuance',sm:'—',hrbp:'N',grp:'—',coo:'—',doc:'Signed contract · HR Ops file',time:'Before day 1'},
+    {dec:'Payroll input approval',sm:'—',hrbp:'N',grp:'—',coo:'—',doc:'Payroll sign-off · HR Ops record',time:'Per payroll calendar'},
+    {dec:'Work permit application',sm:'C',hrbp:'C',grp:'N',coo:'—',doc:'Permit application · HR Ops tracking register',time:'Per permit timeline'},
+    {dec:'HRIS data change (grade/pay)',sm:'—',hrbp:'A',grp:'N',coo:'—',doc:'HRIS change record · HRBP authorisation',time:'Within 2 days of change'},
+    {dec:'New vendor / agency appointment',sm:'—',hrbp:'C',grp:'A',coo:'N',doc:'Vendor approval · contract · Group HR Head sign-off',time:'5 days'},
+    {dec:'Benefits enrolment (standard)',sm:'—',hrbp:'N',grp:'—',coo:'—',doc:'Enrolment form · HR Ops record',time:'Within 30 days of start'},
+    {dec:'HR system access grant',sm:'—',hrbp:'A',grp:'N',coo:'—',doc:'Access request · HRBP approval · IT implementation',time:'2 days'},
+  ]},
+  {id:'mx-exit',label:'Exits & Transitions',rows:[
+    {dec:'Voluntary resignation — standard',sm:'C',hrbp:'A',grp:'N',coo:'—',doc:'Resignation acceptance · exit checklist · HRBP confirmation',time:'Within 2 days of notice'},
+    {dec:'Voluntary resignation — G5+',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Resignation acceptance · Group HR Head confirmation · COO notification',time:'Within 2 days of notice'},
+    {dec:'Termination — end of contract',sm:'C',hrbp:'A',grp:'N',coo:'—',doc:'Non-renewal letter · HRBP sign-off · HR Ops processing',time:'60 days before end'},
+    {dec:'Termination — performance (post-PIP)',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Termination letter · Group HR Head co-sign · legal review if required',time:'At PIP close + notice period'},
+    {dec:'Termination — misconduct',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Investigation outcome · termination letter · Group HR Head approval',time:'Within 5 days of outcome'},
+    {dec:'Redundancy / restructuring exit',sm:'C',hrbp:'C',grp:'C',coo:'A',doc:'Redundancy paper · COO approval · legal review · individual letters',time:'As per restructure plan'},
+    {dec:'Cross-country transfer / secondment',sm:'C',hrbp:'C',grp:'A',coo:'N',doc:'Transfer terms · Group HR Head approval · both country HRBPs notified',time:'30 days before transfer'},
+    {dec:'SM departure (country lead)',sm:'—',hrbp:'C',grp:'A',coo:'A',doc:'Succession plan · COO involvement · Group HR Head leads process',time:'As per succession plan'},
+  ]},
+].map(domain=>`
+<div id="tb-${domain.id}" class="tb${domain.id==='mx-hire'?' active':''}">
+  <div class="card">
+    <div class="ct">${domain.label}</div>
+    <div style="overflow-x:auto">
+    <table class="dt">
+      <thead>
+        <tr>
+          <th style="min-width:230px">Decision</th>
+          <th style="text-align:center;min-width:60px">Country SM</th>
+          <th style="text-align:center;min-width:70px">HRBP</th>
+          <th style="text-align:center;min-width:80px">Group HR Head</th>
+          <th style="text-align:center;min-width:55px">COO</th>
+          <th style="min-width:200px">Documentation Required</th>
+          <th style="min-width:80px">Response Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${domain.rows.map(r=>{
+          const cell=v=>{
+            if(v==='A') return `<td style="text-align:center"><span style="background:#fffbf0;color:#8a6200;border:1px solid #d4aa00;font-family:var(--fm);font-size:9px;padding:2px 8px;border-radius:2px;font-weight:700;display:inline-block">A</span></td>`;
+            if(v==='C') return `<td style="text-align:center"><span style="background:var(--teal-dim);color:var(--teal-accent);border:1px solid var(--teal-border);font-family:var(--fm);font-size:9px;padding:2px 8px;border-radius:2px;font-weight:700;display:inline-block">C</span></td>`;
+            if(v==='N') return `<td style="text-align:center"><span style="background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);font-family:var(--fm);font-size:9px;padding:2px 8px;border-radius:2px;font-weight:700;display:inline-block">N</span></td>`;
+            return `<td style="text-align:center;color:var(--ink5);font-size:12px">—</td>`;
+          };
+          return `<tr>
+            <td style="font-weight:500;font-size:12.5px">${r.dec}</td>
+            ${cell(r.sm)}${cell(r.hrbp)}${cell(r.grp)}${cell(r.coo)}
+            <td style="font-size:11.5px;font-weight:300;color:var(--ink4)">${r.doc}</td>
+            <td style="font-family:var(--fm);font-size:10px;color:var(--teal-accent)">${r.time}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+`).join('')}
+`;
+
+// ══ PAGE 05 — DECISION TREES ════════════════════════════════════
+document.getElementById('page-tree').innerHTML=`
+<div class="pe">Section 05 — Decision Trees</div>
+<div class="pt">Decision<br><em>Trees</em></div>
+<p class="pd">Six quick-reference decision trees for the most common governance questions at Valentis. Each tree takes a Country SM or HRBP through the key questions that determine who approves a decision — in under 60 seconds.</p>
+
+<div class="tabs" data-tabs>
+  <div class="tab active" onclick="showTab('dt-hire',this)">Hiring Decision</div>
+  <div class="tab" onclick="showTab('dt-pay',this)">Pay Decision</div>
+  <div class="tab" onclick="showTab('dt-disc',this)">Disciplinary Action</div>
+  <div class="tab" onclick="showTab('dt-term',this)">Termination</div>
+  <div class="tab" onclick="showTab('dt-pol',this)">Policy Question</div>
+  <div class="tab" onclick="showTab('dt-contract',this)">Contract Change</div>
+</div>
+
+${[
+  {id:'dt-hire',label:'Hiring Decision Tree',steps:[
+    {q:'Is this an internal promotion or external hire?',yes:{label:'Internal',go:'→ Go to Q2'},no:{label:'External',go:'→ Go to Q3'}},
+    {q:'Q2 (Internal): Does the promotion involve a grade change?',yes:{label:'Yes — grade changes',go:'→ Group HR Head approval required'},no:{label:'No — same grade',go:'→ HRBP approves'}},
+    {q:'Q3 (External): What grade is the hire?',yes:{label:'G1–G2',go:'→ HRBP approves'},no:{label:'G3–G4: HRBP + Group HR Head consult\nG5–G6: Group HR Head approves',go:''}},
+    {q:'Q4: Is the offer within the approved grade band?',yes:{label:'Yes — in band',go:'→ Standard process — see grade level'},no:{label:'No — above band',go:'→ Go to Q5'}},
+    {q:'Q5: How far above band maximum is the offer?',yes:{label:'Up to +15%',go:'→ Group HR Head approves exception'},no:{label:'More than +15%',go:'→ COO approval required'}},
+  ],outcomes:[
+    {title:'G1–G2, in band',approver:'HRBP',doc:'Offer letter + HRBP sign-off',col:'var(--green)'},
+    {title:'G3–G4, in band',approver:'HRBP (Group HR consulted)',doc:'Offer letter + HRBP approval + Group HR note',col:'var(--teal-accent)'},
+    {title:'G5–G6, in band',approver:'Group HR Head',doc:'Offer paper + Group HR approval',col:'var(--amber)'},
+    {title:'Any grade, above band (up to +15%)',approver:'Group HR Head',doc:'Exception form + Group HR approval',col:'var(--amber)'},
+    {title:'Any grade, above band (+15%+)',approver:'COO',doc:'Decision paper + COO approval',col:'var(--red)'},
+  ]},
+  {id:'dt-pay',label:'Pay Decision Tree',steps:[
+    {q:'Is this a merit cycle increase or an off-cycle request?',yes:{label:'Merit cycle',go:'→ Go to Q2'},no:{label:'Off-cycle',go:'→ Go to Q3'}},
+    {q:'Q2 (Merit cycle): Is the increase within the approved merit pool?',yes:{label:'Yes — within pool',go:'→ HRBP approves (Group HR consulted)'},no:{label:'No — exceeds pool',go:'→ Group HR Head approval required'}},
+    {q:'Q3 (Off-cycle): Is the increase within approved grade band?',yes:{label:'Yes — in band',go:'→ Group HR Head consulted · HRBP approves'},no:{label:'No — above band',go:'→ Go to Q4'}},
+    {q:'Q4: How far above band maximum?',yes:{label:'Up to +15%',go:'→ Group HR Head approves'},no:{label:'More than +15%',go:'→ COO approval required'}},
+    {q:'Q5: Is this a new allowance type not in current policy?',yes:{label:'Yes — new type',go:'→ Group HR Head approval + policy note'},no:{label:'No — existing policy allowance',go:'→ SM approves + notifies HRBP'}},
+  ],outcomes:[
+    {title:'Merit cycle, within pool',approver:'HRBP (Group HR consulted)',doc:'Merit review record + calibration sign-off',col:'var(--green)'},
+    {title:'Off-cycle, in band',approver:'HRBP + Group HR Head consult',doc:'Business case + HRBP approval',col:'var(--teal-accent)'},
+    {title:'Above band, up to +15%',approver:'Group HR Head',doc:'Exception form + approval',col:'var(--amber)'},
+    {title:'Above band, +15%+',approver:'COO',doc:'Decision paper + COO approval',col:'var(--red)'},
+    {title:'Standard field allowance (in policy)',approver:'Country SM',doc:'SM email confirmation to HRBP',col:'var(--green)'},
+  ]},
+  {id:'dt-disc',label:'Disciplinary Action Tree',steps:[
+    {q:'What is the severity of the conduct issue?',yes:{label:'Minor — performance or behaviour',go:'→ Go to Q2'},no:{label:'Serious — policy breach, misconduct',go:'→ Go to Q3'}},
+    {q:'Q2 (Minor): Has the SM had an informal coaching conversation first?',yes:{label:'Yes — coaching done',go:'→ SM can issue verbal warning · HRBP notified'},no:{label:'No — go straight to formal',go:'→ Step back — informal coaching first'}},
+    {q:'Q3 (Serious): Is suspension required to protect the investigation?',yes:{label:'Yes — suspension needed',go:'→ HRBP approves suspension · Group HR Head consulted · COO notified'},no:{label:'No — investigation can proceed',go:'→ HRBP appoints investigator · Group HR Head consulted'}},
+    {q:'Q4: What outcome does the investigation recommend?',yes:{label:'Written warning (first or final)',go:'→ HRBP approves · Group HR Head consulted on final warning'},no:{label:'Termination recommended',go:'→ Group HR Head co-signs · legal review if required'}},
+    {q:'Q5: Is this a first formal action or a repeated issue?',yes:{label:'First formal action',go:'→ First written warning process'},no:{label:'Repeated — prior warnings on file',go:'→ Final written warning or termination path'}},
+  ],outcomes:[
+    {title:'Verbal warning / informal counsel',approver:'Country SM',doc:'SM file note · HRBP notification',col:'var(--green)'},
+    {title:'First written warning',approver:'HRBP',doc:'Warning letter · HRBP present',col:'var(--teal-accent)'},
+    {title:'Final written warning',approver:'HRBP + Group HR Head consulted',doc:'Warning letter · Group HR Head consultation note',col:'var(--amber)'},
+    {title:'Precautionary suspension',approver:'HRBP + Group HR Head',doc:'Suspension letter · COO notification',col:'var(--amber)'},
+    {title:'Dismissal (misconduct)',approver:'Group HR Head co-signs',doc:'Investigation report · termination letter · legal review',col:'var(--red)'},
+  ]},
+  {id:'dt-term',label:'Termination Decision Tree',steps:[
+    {q:'What is the reason for termination?',yes:{label:'End of fixed-term contract',go:'→ HRBP approves · SM co-signs · 60-day notice required'},no:{label:'Performance, misconduct, or redundancy',go:'→ Go to Q2'}},
+    {q:'Q2: Is this performance-driven or conduct-driven?',yes:{label:'Performance — post-PIP',go:'→ Group HR Head co-signs · legal review recommended'},no:{label:'Conduct — post-investigation',go:'→ Group HR Head co-signs · legal review if required'}},
+    {q:'Q3: Is this a redundancy or restructuring exit?',yes:{label:'Yes — role eliminated',go:'→ COO approval required · legal review · individual consultation required'},no:{label:'No — individual performance/conduct',go:'→ Go to Q2'}},
+    {q:'Q4: Does the country have statutory severance requirements?',yes:{label:'Yes — Indonesia, Laos, Myanmar',go:'→ HR Ops calculates statutory severance · HRBP confirms · addendum applies'},no:{label:'No additional statutory requirement',go:'→ Notice period per contract applies'}},
+    {q:'Q5: Is the termination contested or at risk of challenge?',yes:{label:'Yes — employee dispute expected',go:'→ Legal involved from outset · COO notified · Group HR Head leads'},no:{label:'No — clean exit expected',go:'→ Standard termination process'}},
+  ],outcomes:[
+    {title:'End of contract (no renewal)',approver:'HRBP',doc:'Non-renewal letter · HR Ops processing · 60-day notice',col:'var(--green)'},
+    {title:'Performance termination (post-PIP)',approver:'Group HR Head co-signs',doc:'PIP summary · termination letter · legal review recommended',col:'var(--amber)'},
+    {title:'Misconduct termination',approver:'Group HR Head co-signs',doc:'Investigation report · termination letter',col:'var(--amber)'},
+    {title:'Redundancy / restructuring',approver:'COO approves',doc:'Redundancy paper · individual consultation records · COO sign-off',col:'var(--red)'},
+    {title:'Contested termination',approver:'Group HR Head leads · COO notified',doc:'Full case file · legal involvement · COO notification',col:'var(--red)'},
+  ]},
+  {id:'dt-pol',label:'Policy Question Tree',steps:[
+    {q:'Is someone asking whether a group policy applies to their situation?',yes:{label:'Yes — interpretation question',go:'→ HRBP interprets with reference to policy · CoE consulted if unclear'},no:{label:'No — requesting an exception',go:'→ Go to Q2'}},
+    {q:'Q2: Is this a Tier 1 (Group Policy) or Tier 2 (Functional Standard) exception?',yes:{label:'Tier 2 — Functional Standard',go:'→ Group HR Head can approve exception'},no:{label:'Tier 1 — Group Policy',go:'→ COO approval required'}},
+    {q:'Q3: Is the exception driven by local law or genuine market practice?',yes:{label:'Yes — legal or market basis',go:'→ Country addendum process · CoE endorsement'},no:{label:'No — operational convenience only',go:'→ Group standard applies · exception not granted'}},
+    {q:'Q4: Is this a new policy area where no policy exists?',yes:{label:'Yes — gap identified',go:'→ CoE adds to build queue · interim guidance from Group HR Head'},no:{label:'No — policy exists but needs updating',go:'→ CoE initiates policy review · current policy applies until updated'}},
+    {q:'Q5: Does the policy question need COO visibility?',yes:{label:'Yes — significant precedent risk',go:'→ Group HR Head briefs COO · decision documented'},no:{label:'No — operational query',go:'→ HRBP or Group HR Head resolves · documents'}},
+  ],outcomes:[
+    {title:'Policy interpretation',approver:'HRBP (CoE consulted if unclear)',doc:'HRBP email confirmation · CoE note if precedent-setting',col:'var(--green)'},
+    {title:'Tier 2 exception',approver:'Group HR Head',doc:'Exception form + exception register entry',col:'var(--teal-accent)'},
+    {title:'Tier 1 exception',approver:'COO',doc:'Decision paper + COO approval + exception register',col:'var(--red)'},
+    {title:'Country addendum (legal basis)',approver:'CoE endorses',doc:'Addendum document + legal validation + CoE endorsement',col:'var(--amber)'},
+    {title:'Policy gap identified',approver:'CoE adds to build queue',doc:'Gap logged in KM health dashboard · interim guidance issued',col:'var(--gold)'},
+  ]},
+  {id:'dt-contract',label:'Contract Change Tree',steps:[
+    {q:'What type of contract change is being requested?',yes:{label:'Extension (same terms)',go:'→ HRBP approves · SM co-signs'},no:{label:'Variation (terms change)',go:'→ Go to Q2'}},
+    {q:'Q2: What terms are changing?',yes:{label:'Hours, location, or title only',go:'→ Group HR Head approves · written variation letter required'},no:{label:'Pay or benefits',go:'→ Go to pay decision tree + variation letter'}},
+    {q:'Q3: Is the change driven by a legal requirement (e.g. minimum wage increase)?',yes:{label:'Yes — legally required',go:'→ HR Ops processes · HRBP notifies · Group HR Head aware'},no:{label:'No — voluntary change',go:'→ Standard variation process'}},
+    {q:'Q4: Does the change affect more than one employee?',yes:{label:'Yes — group change',go:'→ Group HR Head approval · COO notification if >5 employees affected'},no:{label:'No — individual change',go:'→ Standard variation process at appropriate level'}},
+    {q:'Q5: Does the country addendum need updating as a result?',yes:{label:'Yes — addendum affected',go:'→ CoE reviews addendum · updates if required'},no:{label:'No — addendum not affected',go:'→ Variation letter sufficient'}},
+  ],outcomes:[
+    {title:'Contract extension (same terms)',approver:'HRBP',doc:'Extension letter · HRBP notation',col:'var(--green)'},
+    {title:'Hours/location/title change',approver:'Group HR Head',doc:'Variation letter · Group HR Head approval',col:'var(--teal-accent)'},
+    {title:'Pay change (variation)',approver:'Per pay decision tree',doc:'Variation letter + pay approval per matrix',col:'var(--amber)'},
+    {title:'Legally required change',approver:'HR Ops processes',doc:'HR Ops record · HRBP notification',col:'var(--green)'},
+    {title:'Group change (5+ employees)',approver:'Group HR Head + COO notification',doc:'Group variation notice · individual letters',col:'var(--red)'},
+  ]},
+].map(tree=>`
+<div id="tb-${tree.id}" class="tb${tree.id==='dt-hire'?' active':''}">
+  <div class="g2">
+    <div class="card">
+      <div class="ct">${tree.label} — <em>Questions</em></div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        ${tree.steps.map((s,i)=>`<div style="padding:11px 14px;background:var(--surface2);border-radius:4px;border-left:3px solid var(--gold)">
+          <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:6px">${s.q}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span style="font-family:var(--fm);font-size:10px;background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);padding:3px 8px;border-radius:2px">✓ ${s.yes.label} ${s.yes.go}</span>
+            ${s.no.label?`<span style="font-family:var(--fm);font-size:10px;background:var(--red-dim);color:var(--red);border:1px solid var(--red-border);padding:3px 8px;border-radius:2px">✕ ${s.no.label} ${s.no.go}</span>`:''}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Outcomes — <em>Who Approves</em></div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        ${tree.outcomes.map(o=>`<div style="padding:11px 14px;border-left:3px solid ${o.col};background:var(--surface2);border-radius:0 4px 4px 0">
+          <div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:4px">${o.title}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="font-family:var(--fm);font-size:8px;color:var(--ink5)">APPROVER</span>
+            <span style="font-weight:700;font-size:12.5px;color:${o.col}">${o.approver}</span>
+          </div>
+          <div style="font-family:var(--fm);font-size:9.5px;color:var(--ink5)">Doc: ${o.doc}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+</div>
+`).join('')}
+`;
+
+// ══ PAGE 06 — PREVENTING SHADOW HR ══════════════════════════════
+document.getElementById('page-shadow').innerHTML=`
+<div class="pe">Section 06 — Preventing Shadow HR</div>
+<div class="pt">Preventing<br><em>Shadow HR</em></div>
+<p class="pd">Shadow HR is any people decision made outside the governance framework — informally, without documentation, or at the wrong approval level. At Valentis, eight shadow HR patterns have been identified across four countries. Each is named, its root cause is identified, and a specific governance control is in place to prevent it.</p>
+
+<div class="vx">
+  <div class="vx-ey">Why Shadow HR Happens</div>
+  <div class="vx-ti">Shadow HR is never deliberate policy circumvention. It is what happens when the right path is slower or less clear than the wrong one. The fix is not discipline — it is making the right path faster and easier than the shadow path.</div>
+  <div class="vx-bo">Every shadow HR pattern at Valentis has the same root cause: the manager needed a decision and the governance pathway felt too slow, unclear, or bureaucratic. The Indonesia SM hired above band because "the candidate would not wait and I could not reach the HRBP." The Myanmar SM issued a warning without HR present because "HR was in Bangkok and the situation needed to be addressed today." These are governance design failures, not management failures. The controls below are designed to remove the friction that makes shadow HR the path of least resistance.</div>
+</div>
+
+<div class="card">
+  <div class="ct">The Eight Shadow HR Patterns — <em>Valentis 2026</em></div>
+  <div style="display:grid;gap:8px;margin-top:4px">
+    ${[
+      {n:'01',pattern:'Above-band hiring without exception approval',country:'Indonesia',how:'SM negotiates above-band salary verbally in offer stage before HRBP is involved',risk:'High — pay equity breach · band erosion · creates precedent',control:'HRBP must be notified before any verbal offer is made for G3+ roles. Exception: G1–G2 where SM has written HRBP pre-approval for the band range.',status:'Active risk',col:'var(--red)'},
+      {n:'02',pattern:'Disciplinary action without HRBP present',country:'Myanmar',how:'SM issues verbal or written warning in the moment without contacting HRBP first',risk:'High — legal exposure · unfair process challenge · undocumented precedent',control:'SM receives one-page "Before You Discipline" card specifying: contact HRBP before any formal action. HRBP 24hr response commitment.',status:'Active risk',col:'var(--red)'},
+      {n:'03',pattern:'Informal verbal contract variations',country:'Laos',how:'SM agrees verbally to schedule or allowance changes that are never reduced to writing',risk:'Medium — creates binding obligations · undiscoverable until dispute · payroll inconsistency',control:'Any variation to scheduled hours, allowances, or location must be confirmed in a HRBP email within 24 hours. SM trained on this requirement.',status:'Active risk',col:'var(--amber)'},
+      {n:'04',pattern:'Performance decisions without documentation',country:'Myanmar · Laos',how:'SM manages underperformance informally without engaging HRBP or creating a file record',risk:'Medium — no paper trail for PIP or termination · legal exposure if challenged',control:'Quarterly performance check-in with HRBP for all G2 and below staff in Myanmar and Laos. Any informal performance conversation must be noted in HRIS.',status:'Active risk',col:'var(--amber)'},
+      {n:'05',pattern:'Policy exceptions granted informally by SM',country:'Indonesia',how:'SM agrees to a one-off policy variation with an employee without going through exception process',risk:'Medium — invisible to CoE · creates precedent other employees will reference · unregistered exception',control:'Exception register communicated to all SMs. Any deviation from policy — however small — must go through the exception form. CoE monitors quarterly.',status:'Active risk',col:'var(--amber)'},
+      {n:'06',pattern:'G4 recruitment without HRBP sign-off',country:'Laos',how:'SM advances a G4 candidate to offer stage without involving HRBP in the assessment process',risk:'Medium — hiring decision at G4 made without HR quality check · competency assessment skipped',control:'G4 recruitment requires HRBP sign-off on structured interview scorecard before any offer is made. HRBP must be included in at least one interview panel.',status:'Identified Q4 2025',col:'var(--amber)'},
+      {n:'07',pattern:'Payroll changes processed without HRBP notation',country:'All countries',how:'HR Ops processes a salary change based on SM instruction without HRBP authorisation in the system',risk:'Low-Medium — pay change without HR governance trail · creates audit gap',control:'HRIS configured to require HRBP authorisation code before any salary change is processed. HR Ops cannot override this without escalating to Group HR Head.',status:'Control in place',col:'var(--gold)'},
+      {n:'08',pattern:'Exit without offboarding process',country:'Myanmar',how:'Employee departs without exit interview, knowledge transfer check, or system access revocation',risk:'Low — knowledge loss · data security gap · no exit insight captured',control:'Offboarding checklist mandatory for all exits G3 and above in Myanmar. HR Ops confirms completion before final pay is processed.',status:'Control being implemented',col:'var(--gold)'},
+    ].map(d=>`<div style="padding:12px 16px;border-left:4px solid ${d.col};background:var(--surface2);border-radius:0 4px 4px 0;display:flex;gap:14px">
+      <span style="font-family:var(--fm);font-size:11px;font-weight:700;color:${d.col};flex-shrink:0;padding-top:2px">${d.n}</span>
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px">
+          <span style="font-weight:700;font-size:13px;color:var(--ink)">${d.pattern}</span>
+          <div style="display:flex;gap:5px;flex-shrink:0;margin-left:10px">
+            <span class="chip cm" style="font-size:8px">${d.country}</span>
+            <span class="chip" style="font-size:8px;background:rgba(0,0,0,0.05);border:1px solid var(--border);color:${d.col==='var(--red)'?'var(--red)':d.col==='var(--amber)'?'var(--amber)':'var(--ink4)'}">${d.status}</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink5);margin-bottom:3px">How it happens</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.how}</div>
+            <div style="margin-top:5px;font-family:var(--fm);font-size:9.5px;color:${d.col}">Risk: ${d.risk}</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:3px">Governance Control</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.control}</div>
+          </div>
+        </div>
+      </div>
+    </div>`).join('')}
+  </div>
+</div>
+`;
+
+// ══ PAGE 07 — ESCALATION FRAMEWORK ══════════════════════════════
+document.getElementById('page-escalation').innerHTML=`
+<div class="pe">Section 07 — Escalation Framework</div>
+<div class="pt">Escalation<br><em>Framework</em></div>
+<p class="pd">The escalation framework defines when a decision or situation must move up the authority chain, who it moves to, how fast, and what happens when escalation is not actioned within the expected timeframe. It prevents decisions from stalling, festering, or being absorbed back into the wrong level.</p>
+
+<div class="vx">
+  <div class="vx-ey">When to Escalate — The Four Triggers</div>
+  <div class="vx-ti">Escalation is not a sign of failure. It is a sign of good governance. A Country SM who escalates an above-band offer to the HRBP instead of making the offer themselves is doing exactly what the governance framework asks of them.</div>
+  <div class="vx-bo">The four triggers that require escalation are: the decision is outside the current approver's authority level, the decision creates a precedent for other countries or other employees, the situation carries legal or financial risk above the approver's exposure tolerance, or the situation involves the approver themselves (conflict of interest). If any of these conditions apply, escalate immediately — do not attempt to resolve at the current level.</div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Escalation Triggers — <em>Must Escalate</em></div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {trigger:'Decision exceeds authority level',desc:'Any decision outside the current approver\'s matrix authority — immediately escalate to the next level regardless of urgency.',path:'SM → HRBP → Group HR Head → COO',time:'Same day notification · decision within standard timelines',col:'var(--gold)'},
+        {trigger:'Precedent-setting situation',desc:'Any decision that, if known by other employees or countries, would create an expectation that the same applies to them. Requires Group HR Head involvement at minimum.',path:'HRBP → Group HR Head → COO if Tier 1 policy',time:'Within 2 working days',col:'var(--amber)'},
+        {trigger:'Legal or financial exposure',desc:'Any situation where the decision could create legal liability or financial exposure. Scale determines level: <$20K → Group HR Head. >$20K → COO. Board disclosure threshold → Board.',path:'HRBP → Group HR Head → COO → Board',time:'Within 1 working day of identifying exposure',col:'var(--red)'},
+        {trigger:'Conflict of interest',desc:'Any decision where the current approver has a personal interest in the outcome — including decisions about their own team members where a close personal relationship exists.',path:'Conflict owner → next level up for that decision only',time:'Immediate — before any action is taken',col:'var(--red)'},
+        {trigger:'Governance failure identified',desc:'Any situation where shadow HR has occurred — a decision was made at the wrong level, without documentation, or outside policy. CoE must be notified. Remediation plan required.',path:'HRBP → Group HR Head → COO notification if significant',time:'Within 5 working days of identification',col:'var(--amber)'},
+      ].map(d=>`<div style="padding:10px 14px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px">${d.trigger}</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55;margin-bottom:5px">${d.desc}</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <span style="font-family:var(--fm);font-size:9.5px;color:${d.col}">Path: ${d.path}</span>
+          <span style="font-family:var(--fm);font-size:9.5px;color:var(--ink5)">⏱ ${d.time}</span>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Escalation Response Standards — <em>By Level</em></div>
+    <table class="dt">
+      <thead><tr><th>Escalated To</th><th>Standard Response Time</th><th>If Not Responded</th></tr></thead>
+      <tbody>
+        ${[
+          {to:'HRBP',std:'Within 2 working days',fallback:'SM escalates to Group HR Head with note that HRBP is unresponsive'},
+          {to:'Group HR Head',std:'Within 3 working days',fallback:'HRBP escalates to COO with note and full context'},
+          {to:'COO',std:'Within 5 working days',fallback:'Group HR Head resubmits with urgency flag and business impact statement'},
+          {to:'Board (via COO)',std:'Board meeting cycle (paper submitted 10 days before)',fallback:'COO presents as interim decision with board ratification at next meeting'},
+        ].map(r=>`<tr>
+          <td style="font-weight:600;font-size:12.5px;color:var(--gold)">${r.to}</td>
+          <td style="font-size:12.5px;font-weight:300">${r.std}</td>
+          <td style="font-size:12px;font-weight:300;color:var(--amber)">${r.fallback}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+
+    <div class="ct" style="margin-top:18px">Escalation <em>Do's and Don'ts</em></div>
+    <div style="display:grid;gap:6px;margin-top:6px">
+      ${[
+        {type:'do',text:'Escalate with a clear summary: what the decision is, why it requires escalation, what your recommendation is, and what you need from the escalation recipient.'},
+        {type:'do',text:'Give the escalation recipient everything they need to decide without coming back to you for information — include the relevant policy reference, the business context, and the options.'},
+        {type:'do',text:'Set a decision deadline in your escalation request: "I need a decision by [date] to [reason]. If I do not hear by then, I will [default action / re-escalate]."'},
+        {type:'dont',text:'Escalate a decision you can make yourself because it is uncomfortable. The matrix is the guide — if the authority is yours, use it.'},
+        {type:'dont',text:'Escalate without a recommendation. Your job as the escalating party is to present options and recommend one — not to hand the decision to someone else without doing the analysis.'},
+        {type:'dont',text:'Wait more than 2 working days to escalate once you have identified that a decision is outside your authority. Delay is its own governance failure.'},
+      ].map(d=>`<div style="padding:8px 12px;border-radius:3px;display:flex;gap:10px;align-items:flex-start;background:${d.type==='do'?'var(--green-dim)':'var(--red-dim)'};border:1px solid ${d.type==='do'?'var(--green-border)':'var(--red-border)'}">
+        <span style="color:${d.type==='do'?'var(--green)':'var(--red)'};flex-shrink:0;font-weight:700;font-size:13px">${d.type==='do'?'✓':'✕'}</span>
+        <span style="font-size:12px;color:var(--ink2);font-weight:300;line-height:1.5">${d.text}</span>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ══ PAGE 08 — GOVERNANCE REVIEW ══════════════════════════════════
+document.getElementById('page-review').innerHTML=`
+<div class="pe">Section 08 — Governance Review</div>
+<div class="pt">Governance<br><em>Review</em></div>
+<p class="pd">HR governance is not a set-and-forget document — it requires an annual audit and a quarterly health check. This section defines what governance review looks like at Valentis, how governance health is measured, and the current governance status across four countries.</p>
+
+<div class="krow">
+  <div class="kpi kgo"><div class="kl">Decision Rights Coverage</div><div class="kv">94%</div><div class="ks">Significant HR decisions mapped in the matrix · 6% gap identified</div><div class="ktag ktag-go">Q2 2026 gap closure</div></div>
+  <div class="kpi ka"><div class="kl">Active Shadow HR Patterns</div><div class="kv">8</div><div class="ks">Identified and actively controlled · 3 high-risk, 3 medium, 2 low</div><div class="ktag ktag-a">Controls in place</div></div>
+  <div class="kpi kgr2"><div class="kl">Countries Governed</div><div class="kv">4</div><div class="ks">Matrix applies group-wide · country-specific controls per pattern</div><div class="ktag ktag-gr">Thailand strongest</div></div>
+  <div class="kpi kt2"><div class="kl">Governance Health</div><div class="kv">72%</div><div class="ks">Self-assessed · shadow HR patterns and matrix gaps drive deficit</div><div class="ktag ktag-t">Target: 85% by Q4 2026</div></div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Annual Governance Audit — <em>Scope</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">The CoE conducts a governance audit annually — typically in Q4. The audit assesses whether decision rights are being respected in practice, not just in the policy document.</div>
+    ${[
+      {area:'Decision rights compliance',method:'Sample 20 HR decisions made in the year across all countries. Verify that each was made at the correct authority level with correct documentation.',benchmark:'95% of sampled decisions at correct authority level'},
+      {area:'Shadow HR identification',method:'Interview all Country HRBPs and at least one SM per country. Ask: "What HR decisions have been made this year that you were not involved in but should have been?"',benchmark:'Zero new shadow HR patterns identified that were not known to CoE'},
+      {area:'Exception register completeness',method:'Cross-reference exception register against HRIS data for any above-band salaries, contract variations, or policy deviations. Any gap = unregistered exception.',benchmark:'100% of known exceptions in the register'},
+      {area:'Documentation standard',method:'Sample 10 decisions from the matrix. Verify that each has the required documentation as specified in the matrix.',benchmark:'90%+ of sampled decisions fully documented'},
+      {area:'Escalation effectiveness',method:'Review any escalations that occurred in the year. Were they resolved within standard timelines? Were there decisions that should have escalated but did not?',benchmark:'All escalations resolved within 2x standard response time'},
+    ].map(d=>`<div style="padding:10px 14px;background:var(--surface2);border-radius:3px;margin-bottom:7px">
+      <div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:4px">${d.area}</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55;margin-bottom:4px">${d.method}</div>
+      <div style="font-family:var(--fm);font-size:9.5px;color:var(--teal-accent)">Benchmark: ${d.benchmark}</div>
+    </div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Governance Health — <em>By Country Q1 2026</em></div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {country:'Thailand',score:88,strengths:'SM well-trained on decision rights · HRBP engaged and responsive · no shadow HR patterns identified',risks:'SM departure risk — successor may not have same governance discipline',col:'var(--green)'},
+        {country:'Indonesia',score:68,strengths:'HRBP active and capable · payroll governance strong',risks:'Above-band hiring pattern (Pattern 01 active) · G3 vacancies increasing SM autonomy · exception register gap',col:'var(--amber)'},
+        {country:'Laos',score:70,strengths:'Contract process generally followed · leave management clean',risks:'Informal verbal variations (Pattern 03 active) · G4 recruitment sign-off gap (Pattern 06) · SM operating with high autonomy',col:'var(--amber)'},
+        {country:'Myanmar',score:61,strengths:'HRBP motivated to improve · payroll clean',risks:'Disciplinary action without HR (Pattern 02 active) · performance documentation gap (Pattern 04) · highest shadow HR concentration',col:'var(--red)'},
+      ].map(d=>`<div style="padding:12px 16px;background:var(--surface2);border-radius:4px;border-left:4px solid ${d.col}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-weight:700;font-size:14px;color:var(--ink)">${d.country}</span>
+          <span style="font-family:var(--fd);font-size:28px;font-weight:800;color:${d.col}">${d.score}%</span>
+        </div>
+        <div style="font-size:12px;color:var(--green);font-weight:300;margin-bottom:3px">✓ ${d.strengths}</div>
+        <div style="font-size:12px;color:var(--red);font-weight:300">⚠ ${d.risks}</div>
+      </div>`).join('')}
+    </div>
+    <div class="inf go" style="margin-top:12px"><strong>2026 Governance Improvement Plan</strong>Target: raise group governance health from 72% to 85% by Q4 2026. Key actions: close Indonesia above-band pattern (Q2), issue Myanmar HRBP "Before You Discipline" card (Q2), implement Laos verbal variation protocol (Q2), quarterly governance check-ins with all HRBPs from Q2.</div>
+  </div>
+</div>
+`;
+</script>
+</body>
+</html>

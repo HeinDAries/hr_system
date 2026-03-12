@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workforce Planning Model — People Analytics Tool 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f5;--surface:#fff;--surface2:#e8ecf2;
+  --border:#cdd4e0;--border2:#b8c2d4;
+  --ink:#0d1117;--ink2:#1a2332;--ink3:#3d4f6b;--ink4:#6b7d99;--ink5:#a0aec0;
+  --navy:#0a1628;
+  --blue:#1a6bdb;--blue2:#2979e8;--blue3:#4d94ff;
+  --blue-dim:rgba(26,107,219,0.08);--blue-border:rgba(26,107,219,0.22);
+  --electric:#3d8bff;--electric2:#5c9fff;
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --amber:#b8860b;--amber-dim:rgba(184,134,11,0.08);--amber-border:rgba(184,134,11,0.22);
+  --green:#1a7a4a;--green-dim:rgba(26,122,74,0.08);--green-border:rgba(26,122,74,0.22);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--blue),rgba(26,107,219,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:rgba(26,107,219,0.15);border:1px solid rgba(26,107,219,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f4ff;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(26,107,219,0.18);border-color:rgba(26,107,219,0.4);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--blue3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:40px 52px;max-width:1100px}
+.page.active{display:block}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--blue)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--blue);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cb{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.ca{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.cg{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.b{background:var(--blue-dim);border-color:var(--blue);color:var(--ink2)}
+.inf.a{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.inf.r{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.inf.g{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--navy);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+.vx{background:var(--navy);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f4ff;margin-bottom:8px;line-height:1.2}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+.br{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bl{font-size:12px;color:var(--ink3);width:100px;flex-shrink:0}
+.bt{flex:1;background:var(--surface2);border-radius:2px;height:20px;overflow:hidden}
+.bf{height:100%;border-radius:2px;display:flex;align-items:center;padding-left:8px}
+.bv{font-family:var(--fm);font-size:10px;font-weight:600;color:#fff;white-space:nowrap}
+.bc{font-family:var(--fm);font-size:10px;color:var(--ink5);margin-left:8px;white-space:nowrap}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kbl::before{background:var(--blue)}.kgr::before{background:var(--green)}
+.kam::before{background:var(--amber)}.krd::before{background:var(--red)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kbl .kv{color:var(--blue)}.kgr .kv{color:var(--green)}
+.kam .kv{color:var(--amber)}.krd .kv{color:var(--red)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.kt{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktb{background:var(--blue-dim);color:var(--blue)}.kta{background:var(--amber-dim);color:var(--amber)}
+.ktr{background:var(--red-dim);color:var(--red)}.ktg{background:var(--green-dim);color:var(--green)}
+.ci{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 12px;font-size:13px;color:#f0f4ff;font-family:var(--fb);outline:none;transition:border .13s;margin-bottom:10px}
+.ci:focus{border-color:rgba(26,107,219,0.5)}
+.cl{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;display:block}
+.cs{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 12px;font-size:13px;color:#f0f4ff;font-family:var(--fb);outline:none;cursor:pointer;margin-bottom:10px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btnb{background:var(--blue);color:#fff}.btnb:hover{background:var(--blue2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">People Analytics · Tool 6 / 9</div>
+    <div class="sb-title">Workforce<br><em>Planning</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Planning Overview</div>
+    <div class="nav-item" onclick="showPage('demand',this)"><span class="nav-num">02</span>Demand Modelling</div>
+    <div class="nav-item" onclick="showPage('supply',this)"><span class="nav-num">03</span>Supply Analysis</div>
+    <div class="nav-item" onclick="showPage('gap',this)"><span class="nav-num">04</span>Gap Analysis</div>
+    <div class="nav-item" onclick="showPage('scenarios',this)"><span class="nav-num">05</span>Scenario Modeller</div>
+    <div class="nav-item" onclick="showPage('country5',this)"><span class="nav-num">06</span>Country 5 Planning</div>
+    <div class="nav-item" onclick="showPage('people_cost',this)"><span class="nav-num">07</span>People Cost Model</div>
+    <div class="nav-item" onclick="showPage('action',this)"><span class="nav-num">08</span>Action Plan</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>People Analytics · Tool 6 of 9</strong>
+      Workforce Planning Model<br>
+      <span style="color:rgba(255,255,255,0.1)">42 to 65 FTE. 6 quarters. Four countries. One plan.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview"   class="page active"></div>
+  <div id="page-demand"     class="page"></div>
+  <div id="page-supply"     class="page"></div>
+  <div id="page-gap"        class="page"></div>
+  <div id="page-scenarios"  class="page"></div>
+  <div id="page-country5"   class="page"></div>
+  <div id="page-people_cost" class="page"></div>
+  <div id="page-action"     class="page"></div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+// PAGES
+</script>
+</body>
+</html>
+<script>
+// ── PAGE 01 ──────────────────────────────────────────────────────
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">People Analytics · Tool 6 / 9 — Workforce Planning Model</div>
+<div class="pt">Workforce<br><em>Planning</em></div>
+<p class="pd">Workforce planning at Valentis is the translation of operational ambition into people numbers — how many, at what grade, in which country, by when, and at what cost. This tool builds the plan from 42 to 65 FTE over six quarters, models three scenarios, integrates the Country 5 expansion, and tracks people cost against the 43% revenue ratio threshold.</p>
+<div class="vx">
+  <div class="vx-ey">The Planning Context</div>
+  <div class="vx-ti">Valentis is growing 35% in 18 months across four countries with a retirement cliff, three open vacancies, and a pipeline conversion problem. This is not incremental workforce growth — it is a structural transformation.</div>
+  <div class="vx-bo">The 42→65 FTE journey is not simply a matter of hiring 23 people. It requires filling 3 open G3 vacancies immediately, recovering Myanmar conversion rate from 58% to 70%, accelerating Laos G3→G4 bench development ahead of 3 retirements, planning Country 5 SM and G4 deployment, and keeping people cost below 45% rolling average as headcount rises. Each of these is a dependency in the plan — and each has a named owner and a deadline. This tool provides the planning framework, the gap analysis, and the scenario modelling to make the workforce plan a COO-ready document.</div>
+</div>
+<div class="krow">
+  <div class="kpi krd"><div class="kl">Current Headcount</div><div class="kv">42</div><div class="ks">Active employees · Q1 2026</div><div class="kt ktr">Net gap: −23 FTE</div></div>
+  <div class="kpi kbl"><div class="kl">Target Headcount</div><div class="kv">65</div><div class="ks">65 FTE by Q2 2027</div><div class="kt ktb">6 quarters to target</div></div>
+  <div class="kpi kam"><div class="kl">People Cost Ratio</div><div class="kv">43%</div><div class="ks">Current · alert threshold 45%</div><div class="kt kta">Must stay below 45% rolling</div></div>
+  <div class="kpi kgr"><div class="kl">Revenue Base</div><div class="kv">$8.3M</div><div class="ks">Current annual revenue</div><div class="kt ktg">People cost: ~$3.57M</div></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Growth Trajectory — 42 to 65 FTE</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;align-items:end;margin-top:8px">
+      ${[{q:'Q1 26',v:42,h:48,cur:true},{q:'Q2 26',v:46,h:54},{q:'Q3 26',v:50,h:58},{q:'Q4 26',v:55,h:64},{q:'Q1 27',v:60,h:70},{q:'Q2 27',v:65,h:76,tgt:true}].map(function(d){
+        var col=d.cur?'var(--blue)':d.tgt?'var(--green)':'var(--ink4)';
+        return '<div style="text-align:center"><div style="height:'+d.h+'px;background:'+col+';border-radius:2px 2px 0 0;margin:0 4px;opacity:'+(d.cur||d.tgt?1:0.6)+'"></div>'
+          +'<div style="font-family:var(--fm);font-size:8.5px;color:'+(d.cur?'var(--blue)':d.tgt?'var(--green)':'var(--ink5)')+';margin-top:4px">'+(d.cur?'<strong>':'')+d.q+(d.cur?'</strong>':'')+'</div>'
+          +'<div style="font-family:var(--fm);font-size:10px;color:'+(d.cur?'var(--blue)':d.tgt?'var(--green)':'var(--ink3)')+';font-weight:'+(d.cur||d.tgt?700:400)+'">'+d.v+'</div>'
+          +'</div>';
+      }).join('')}
+    </div>
+    <div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">The trajectory assumes ~5–7 net additions per quarter. This requires gross hiring of 6–8 G1 intakes per quarter (accounting for attrition) plus filling the 3 open Indonesia G3 vacancies in Q2 2026 and activating the Laos bench plan in Q2 2026.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Planning Dependencies — Critical Path</div>
+    <div style="display:grid;gap:6px;margin-top:4px">
+      ${[
+        {q:'Q1–Q2 2026',items:['Fill 3 Indonesia G3 vacancies (delivery recovery)','Activate Laos bench acceleration plan (June deadline)','Myanmar G4 coaching programme — track debrief frequency','SM retention risk brief to COO'],col:'var(--red)'},
+        {q:'Q3 2026',items:['G4 coaching programme first rubric re-observation','Myo H. retention conversation (September)','Indonesia SM succession candidate identified','Country 5 preparation — SM candidate shortlist begins'],col:'var(--amber)'},
+        {q:'Q4 2026',items:['Wirawan retention conversation (October)','Merit cycle design complete (November)','Country 5 G4 deployment candidate identified','Laos bench G4 readiness re-assessment'],col:'var(--amber)'},
+        {q:'Q1–Q2 2027',items:['Merit cycle effective 1 Jan 2027','Country 5 launch — SM and G4 deployed','65 FTE target — headcount validation','People cost ratio review against 45% threshold'],col:'var(--blue)'}
+      ].map(function(d){
+        return '<div style="padding:10px 12px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0">'
+          +'<div style="font-family:var(--fm);font-size:8px;color:'+d.col+';letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase">'+d.q+'</div>'
+          +d.items.map(function(i){return '<div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:3px;display:flex;gap:6px"><span style="color:'+d.col+'">→</span>'+i+'</div>';}).join('')
+          +'</div>';
+      }).join('')}
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Workforce Plan — <em>One-Page Summary</em></div>
+  <table class="dt">
+    <thead><tr><th>Dimension</th><th>Current (Q1 2026)</th><th>Q4 2026 milestone</th><th>Target (Q2 2027)</th><th>Key constraint</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">Total headcount</td><td>42</td><td>~55</td><td>65</td><td>Pipeline conversion rate and intake schedule</td></tr>
+      <tr><td style="font-weight:600">G4 senior drillers</td><td>7</td><td>~8–9</td><td>10–11</td><td>Laos retirement cliff · bench acceleration · conversion improvement</td></tr>
+      <tr><td style="font-weight:600">Myanmar conversion</td><td>58%</td><td>≥65% (interim)</td><td>≥70%</td><td>G4 coaching programme delivery and G4 certification compliance</td></tr>
+      <tr><td style="font-weight:600">People cost ratio</td><td>43%</td><td>≤45%</td><td>≤43% (normalised)</td><td>Salary growth must be offset by revenue growth · headcount additions phased</td></tr>
+      <tr><td style="font-weight:600">Country 5 readiness</td><td>Planning only</td><td>SM candidate identified</td><td>SM + G4 deployed</td><td>SM succession candidate, G4 deployment candidate, COO decision Q4 2026</td></tr>
+      <tr><td style="font-weight:600">Open vacancies</td><td>3 (ID G3)</td><td>0</td><td>0</td><td>Indonesia sourcing escalation Q2 2026 — no further intake until G3 filled</td></tr>
+    </tbody>
+  </table>
+</div>
+`;
+
+// ── PAGE 02 ──────────────────────────────────────────────────────
+document.getElementById('page-demand').innerHTML=`
+<div class="pe">Section 02 — Demand Modelling</div>
+<div class="pt">Demand<br><em>Modelling</em></div>
+<p class="pd">Demand modelling answers: how many people does Valentis need, at what grade, in which country, and when? Demand is not the same as headcount target — it is derived from operational output requirements, programme delivery standards, and the Country 5 expansion timeline.</p>
+<div class="vx">
+  <div class="vx-ey">Where Demand Comes From</div>
+  <div class="vx-ti">Demand at Valentis is driven by programme delivery targets (rig utilisation), the Country 5 expansion, and the structural need to replace retiring G4 drillers faster than they leave.</div>
+  <div class="vx-bo">Each rig requires a minimum G4-led drilling team to operate at standard. Sub-optimal team composition — G3 covering G4, or G4 covering operational plus coaching — directly reduces delivery percentage and generates the kind of cascade risk Valentis is experiencing in Indonesia today. Demand modelling starts from the rig and works backward: how many G4s per rig, how many G3s to coach and cover, and how many G1–G2 in the pipeline to sustain the G3–G4 supply over time.</div>
+</div>
+<div class="card">
+  <div class="ct">Demand by Grade — Current vs Target</div>
+  <table class="dt">
+    <thead><tr><th>Grade</th><th>Current demand (Q1 2026)</th><th>Q4 2026 demand</th><th>Q2 2027 demand (65 FTE)</th><th>Country 5 add'l demand</th><th>Derivation</th></tr></thead>
+    <tbody>
+      ${[
+        {g:'G1',curr:8,q4:12,q2:14,c5:2,basis:'Pipeline intake requirement. Derived from G4 supply need working backward through conversion rates over 42–60 months. Number of G1s needed to deliver required G4 output.'},
+        {g:'G2',curr:10,q4:12,q2:14,c5:2,basis:'Progression from G1 cohorts at 63–70% conversion. Demand is a consequence of G1 intake and conversion rate — not a direct headcount lever.'},
+        {g:'G3',curr:9,q4:11,q2:13,c5:2,basis:'Minimum 2–3 G3 per operating site as operational drillers. Indonesia currently has 3 vacancies vs required 6–7 total. G3 demand drives sourcing urgency.'},
+        {g:'G4',curr:7,q4:9,q2:11,c5:2,basis:'1–2 G4 per rig as lead driller and coach. Each G4 can effectively coach a maximum of 3–4 G1–G2 trainees at 4 debriefs/month standard. Laos retirement creates structural demand.'},
+        {g:'G5 SM',curr:4,q4:4,q2:5,c5:1,basis:'1 SM per country. Country 5 expansion requires 1 new SM. Succession from current G4/G5 pipeline or external executive hire.'},
+        {g:'G6–G8',curr:4,q4:5,q2:6,c5:1,basis:'Group leadership (COO, Group HR, Finance, Technical). Growth adds 1–2 leadership positions. Country 5 may require Country Director (G6) if multi-country structure formalised.'},
+        {g:'TOTAL',curr:42,q4:53,q2:63,c5:10,basis:'Excludes Country 5 in Q2 2027 base — Country 5 adds ~10 FTE in the first operational year. Full 65 FTE target includes Country 5 contribution.'}
+      ].map(function(r){
+        var bold=r.g==='TOTAL';
+        var style=bold?'font-weight:700;':'';
+        return '<tr><td style="font-weight:700;color:var(--blue);font-family:var(--fm)">'+r.g+'</td>'
+          +'<td style="'+style+'">'+r.curr+'</td>'
+          +'<td style="'+style+'">'+r.q4+'</td>'
+          +'<td style="'+style+';color:var(--green);font-weight:700">'+r.q2+'</td>'
+          +'<td style="color:var(--blue)">+'+r.c5+'</td>'
+          +'<td style="font-size:11.5px">'+r.basis+'</td></tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Demand by Country — Q2 2027 Target</div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Country demand is derived from site operating requirements and programme delivery targets. Each country must maintain minimum grade coverage for both operational delivery and pipeline coaching.</div>
+    <table class="dt">
+      <thead><tr><th>Country</th><th>Current</th><th>Q2 2027 demand</th><th>Net add</th><th>Key driver</th></tr></thead>
+      <tbody>
+        ${[
+          {c:'Laos',curr:14,tgt:18,driver:'Largest site. Retirement replacements (3 G4s). Pipeline intake increase.'},
+          {c:'Myanmar',curr:12,tgt:16,driver:'Conversion rate improvement drives additional retainable trainees. Coaching programme unlocks pipeline flow.'},
+          {c:'Indonesia',curr:11,tgt:16,driver:'G3 vacancy fill (3 positions) + new pipeline intake once capacity restored. Delivery recovery to 90%+ requires full G3 complement.'},
+          {c:'Thailand',curr:5,tgt:6,driver:'Small site. Country 5 G4 deployment candidate identified from Thailand — temporary pipeline draw.'},
+          {c:'Country 5',curr:0,tgt:9,driver:'New country launch — SM + G4 deployment + initial G1–G2 intake cohort. Phased from Q2 2027.'},
+          {c:'Group/HQ',curr:0,tgt:0,driver:'Group HR, Finance, COO — no headcount change planned in this horizon.'}
+        ].map(function(r){
+          var net=r.tgt-r.curr;
+          return '<tr><td style="font-weight:600">'+r.c+'</td><td>'+r.curr+'</td><td style="font-weight:700;color:var(--green)">'+r.tgt+'</td><td style="color:var(--blue);font-weight:700">+'+(net>0?net:net)+'</td><td style="font-size:11.5px">'+r.driver+'</td></tr>';
+        }).join('')}
+        <tr style="background:var(--surface2)"><td style="font-weight:700">TOTAL</td><td style="font-weight:700">42</td><td style="font-weight:700;color:var(--green)">65</td><td style="font-weight:700;color:var(--blue)">+23</td><td style="font-size:11.5px">Net growth including Country 5 phase-in</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Demand Drivers — Ranked by Urgency</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {rank:1,title:'Indonesia G3 vacancies — delivery crisis now',desc:'3 G3 positions open 40+ days. Delivery at 84% vs 90% target. Each week of vacancy costs $1,500–$2,500 in delivery impact. Demand is immediate — sourcing escalation required in Q2 2026.',col:'var(--red)',tag:'Immediate'},
+        {rank:2,title:'Laos G4 supply — retirement cliff 2027',desc:'3 G4 retirements within 3 years. Bench provides 2 replacements under accelerated plan. External G3 hire + bench plan activation by June 2026 is the minimum viable response.',col:'var(--red)',tag:'Q2 2026'},
+        {rank:3,title:'Myanmar pipeline capacity — 65 FTE supply chain',desc:'Reaching 65 FTE requires Myanmar to produce more G2+ progressions. This requires the G4 coaching programme to move conversion from 58%→70% — generating an additional 1.2 G4s/year.',col:'var(--amber)',tag:'Q4 2026'},
+        {rank:4,title:'Country 5 SM and G4 deployment',desc:'Country 5 expansion requires 1 SM (succession from existing G4/G5) and 1–2 G4 drillers deployed from existing countries. Identification required Q4 2026 for Q2 2027 launch.',col:'var(--blue)',tag:'Q4 2026'}
+      ].map(function(d){
+        return '<div style="padding:10px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0">'
+          +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+          +'<span style="font-family:var(--fd);font-size:22px;font-weight:800;color:'+d.col+';line-height:1">'+d.rank+'</span>'
+          +'<span style="font-weight:600;font-size:13px;color:var(--ink)">'+d.title+'</span>'
+          +'<span class="chip '+(d.col==='var(--red)'?'cr':d.col==='var(--amber)'?'ca':'cb')+'" style="margin-left:auto;flex-shrink:0">'+d.tag+'</span>'
+          +'</div>'
+          +'<div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.desc+'</div>'
+          +'</div>';
+      }).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 03 ──────────────────────────────────────────────────────
+document.getElementById('page-supply').innerHTML=`
+<div class="pe">Section 03 — Supply Analysis</div>
+<div class="pt">Supply<br><em>Analysis</em></div>
+<p class="pd">Supply analysis models the people Valentis will have available — accounting for existing headcount, expected pipeline progressions, attrition losses, retirements, and new hires. Supply is what you can reliably plan to have. Gap analysis (Section 04) compares supply against demand.</p>
+<div class="card">
+  <div class="ct">Supply Sources — What Valentis Can Count On</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+    ${[
+      {src:'Existing workforce',count:42,note:'Current active employees. Adjusted for expected attrition (~9 exits/year at 22%). Net retention over 6 quarters: approximately 36–38 of 42.',col:'var(--green)',reliable:true},
+      {src:'Pipeline progressions',count:'8–10',note:'G1→G2 and G2→G3 progressions expected over 6 quarters at current conversion rates. If Myanmar reaches 70% conversion: +2 additional G2 progressions over the period.',col:'var(--blue)',reliable:true},
+      {src:'G3→G4 bench development',count:'2–3',note:'Laos 2 bench candidates (accelerated plan). Myanmar 1 bench candidate. Indonesia 1 developing. Total G4 additions from internal development: 2–3 within 18 months.',col:'var(--blue)',reliable:false},
+      {src:'External hires',count:'3–5',note:'Indonesia G3 vacancies (3) — sourcing required now. Laos external G3 hire (1) — bridge for retirement cliff. Any additional G3/G4 external hires if pipeline insufficient.',col:'var(--amber)',reliable:false}
+    ].map(function(d){
+      return '<div style="padding:14px;background:var(--surface2);border-radius:3px;border-left:3px solid '+d.col+'">'
+        +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">'
+        +'<span style="font-weight:600;font-size:13px;color:var(--ink)">'+d.src+'</span>'
+        +'<span style="font-family:var(--fd);font-size:26px;font-weight:800;color:'+d.col+';line-height:1">'+d.count+'</span>'
+        +'</div>'
+        +'<div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:7px">'+d.note+'</div>'
+        +'<span class="chip '+(d.reliable?'cg':'ca')+'">'+(d.reliable?'High confidence':'Contingent on action')+'</span>'
+        +'</div>';
+    }).join('')}
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Supply Forecast — Quarter by Quarter</div>
+  <div class="inf b"><strong>Supply forecast assumptions.</strong>Based on: 22% annual attrition (9 exits/year → ~2 per quarter), current pipeline conversion rates, Laos bench acceleration plan active June 2026, Indonesia G3 vacancies filled Q2 2026, Myanmar conversion improving to 65% by Q3 2026 and 70% by Q4 2026.</div>
+  <table class="dt">
+    <thead><tr><th>Quarter</th><th>Opening headcount</th><th>Exits (attrition)</th><th>Pipeline progressions (new G2/G3)</th><th>New G4s (bench/ext)</th><th>External hires</th><th>Closing headcount</th><th>vs Demand</th></tr></thead>
+    <tbody>
+      ${[
+        {q:'Q1 2026',open:42,exits:2,prog:1,g4:0,ext:0,note:'Baseline. No significant supply changes. G4 coaching programme launched.'},
+        {q:'Q2 2026',open:41,exits:2,prog:2,g4:0,ext:4,note:'Indonesia G3 vacancies filled (+3 ext) + Laos external G3 hire (+1). Bench plan activated.'},
+        {q:'Q3 2026',open:45,exits:2,prog:2,g4:1,ext:2,note:'Myanmar conversion improving → 1 additional G2 progression. First Laos bench candidate approaching G4.'},
+        {q:'Q4 2026',open:48,exits:2,prog:3,g4:1,ext:2,note:'Myanmar at 65% conversion — additional progressions. Second G4 from bench. Merit cycle preparation.'},
+        {q:'Q1 2027',open:52,exits:2,prog:3,g4:1,ext:2,note:'Myanmar approaching 70% target. Laos retirement covered by bench G4. Country 5 preparation.'},
+        {q:'Q2 2027',open:56,exits:2,prog:3,g4:1,ext:7,note:'Country 5 launch (+7 net new). 65 FTE target. Myanmar ≥70% conversion confirmed.'}
+      ].map(function(r){
+        var close=r.open-r.exits+r.prog+r.g4+r.ext;
+        var demand=[42,46,50,55,60,65][['Q1 2026','Q2 2026','Q3 2026','Q4 2026','Q1 2027','Q2 2027'].indexOf(r.q)];
+        var gap=close-demand;
+        var gapCol=gap>=0?'var(--green)':gap>=-3?'var(--amber)':'var(--red)';
+        return '<tr><td style="font-weight:600;color:var(--blue);font-family:var(--fm)">'+r.q+'</td>'
+          +'<td>'+r.open+'</td>'
+          +'<td style="color:var(--red)">−'+r.exits+'</td>'
+          +'<td style="color:var(--blue)">+'+r.prog+'</td>'
+          +'<td style="color:var(--green)">+'+r.g4+'</td>'
+          +'<td style="color:var(--amber)">+'+r.ext+'</td>'
+          +'<td style="font-weight:700">'+close+'</td>'
+          +'<td style="font-weight:700;color:'+gapCol+'">'+(gap>=0?'+':'')+gap+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+  <div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.8">Supply shortfall is most acute in Q1–Q2 2026 when Indonesia G3 vacancies have not yet been filled. From Q3 2026 onward, if the critical dependencies are met (Indonesia hires, Laos bench, Myanmar conversion improvement), supply tracks toward target. The Country 5 launch in Q2 2027 drives the final step to 65 FTE.</div>
+</div>
+`;
+
+// ── PAGE 04 ──────────────────────────────────────────────────────
+document.getElementById('page-gap').innerHTML=`
+<div class="pe">Section 04 — Gap Analysis</div>
+<div class="pt">Gap<br><em>Analysis</em></div>
+<p class="pd">Gap analysis sits at the centre of workforce planning — it is where supply meets demand and the plan is formed. This section maps the current and projected gaps by grade and country, identifies which gaps are addressable through internal development and which require external sourcing, and specifies the intervention required for each gap.</p>
+<div class="vx">
+  <div class="vx-ey">The Gap Picture</div>
+  <div class="vx-ti">Valentis has a net gap of −23 FTE. 3 gaps are immediately critical. 8 are addressable through planned action. 12 are pipeline-dependent over the 6-quarter horizon.</div>
+  <div class="vx-bo">Not all gaps are equal. The 3 Indonesia G3 vacancies are live operational gaps costing money today. The Laos G4 retirement gap is a structural gap arriving in 12 months — there is still time to act, but the window is closing. The 65 FTE headcount gap is a planning gap — addressable through the intake schedule if conversion rates are met. This section separates the gaps by type and urgency so Group HR can prioritise accordingly.</div>
+</div>
+<div class="card">
+  <div class="ct">Gap Register — Full Detail</div>
+  <table class="dt">
+    <thead><tr><th>Gap</th><th>Country</th><th>Grade</th><th>Positions</th><th>Type</th><th>Urgency</th><th>Resolution pathway</th><th>Deadline</th></tr></thead>
+    <tbody>
+      ${[
+        {gap:'Open G3 vacancies',c:'Indonesia',g:'G3',n:3,type:'Operational vacancy',urg:'cr',urgTxt:'Critical',res:'External sourcing — TA brief to be issued Q2 2026. Minimum 3 years G3-equivalent experience. Indonesia country factor to be reflected in offer. Cannot wait for pipeline — operational impact is live.',dl:'Q2 2026'},
+        {gap:'G4 retirement cover',c:'Laos',g:'G4',n:1,type:'Structural gap — retirement',urg:'cr',urgTxt:'Critical',res:'Dual pathway: (1) accelerated bench development for 2 G3 candidates → G4 by Q3–Q4 2027; (2) external G3 hire now → G4 development within 18 months. Both pathways must be activated — neither alone is sufficient.',dl:'June 2026'},
+        {gap:'Pipeline headcount shortfall',c:'Group',g:'G1–G3',n:11,type:'Growth gap',urg:'ca',urgTxt:'Elevated',res:'Intake schedule increase per Tool 5 (Section 08). Myanmar: 3/quarter. Indonesia: 2/quarter (once G3 filled). Laos: 2/quarter. Total: 14–18 G1 intakes over 6 quarters.',dl:'Q2 2026 start'},
+        {gap:'Country 5 SM',c:'Country 5',g:'G5',n:1,type:'Expansion gap',urg:'cb',urgTxt:'Planned',res:'Internal succession preference. Candidate must be identified Q3 2026, development plan activated Q4 2026, deployment Q2 2027. External executive search as fallback if no internal candidate meets criteria.',dl:'Q3 2026 (ID)'},
+        {gap:'Country 5 G4 deployment',c:'Country 5',g:'G4',n:2,type:'Expansion gap',urg:'cb',urgTxt:'Planned',res:'Cross-country deployment from existing G4 pool. Thailand and Laos bench candidates are the preferred source. Must be coaching-certified (G4 coaching programme) before deployment. Identification Q4 2026.',dl:'Q4 2026 (ID)'},
+        {gap:'Myanmar G3 bench thinness',c:'Myanmar',g:'G3',n:1,type:'Pipeline depth gap',urg:'ca',urgTxt:'Monitor',res:'Current Myanmar G3 cohort (2 candidates) is thin for a site of this size. Increase G1 intake and improve conversion rate through coaching programme. Next bench candidate emerging ~Q3 2027.',dl:'Ongoing'},
+        {gap:'G4 coaching capacity (group)',c:'Group',g:'G4',n:2,type:'Capability gap',urg:'ca',urgTxt:'Monitor',res:'As headcount grows to 65 FTE, G4 coaching load per G4 increases. At 65 FTE with 14 G1–G2 trainees and 7 G4s: average 2 trainees per G4 — manageable. But at current 7 G4s with Indonesia G3 vacancies diverting G4 time, effective coaching capacity is constrained.',dl:'Q3 2026'}
+      ].map(function(r){
+        return '<tr><td style="font-weight:600">'+r.gap+'</td><td>'+r.c+'</td>'
+          +'<td style="font-family:var(--fm);font-size:11px;color:var(--blue)">'+r.g+'</td>'
+          +'<td style="font-weight:700;color:var(--red)">'+r.n+'</td>'
+          +'<td style="font-size:11.5px">'+r.type+'</td>'
+          +'<td><span class="chip '+r.urg+'">'+r.urgTxt+'</span></td>'
+          +'<td style="font-size:11.5px">'+r.res+'</td>'
+          +'<td style="font-weight:600;font-family:var(--fm);font-size:11px;color:var(--amber)">'+r.dl+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Gap by Resolution Type</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {type:'External sourcing (now)',count:4,note:'Indonesia 3×G3 + Laos 1×G3. These cannot be solved internally — sourcing must start immediately. Each week of delay costs operational delivery.',col:'var(--red)'},
+        {type:'Internal bench development',count:3,note:'Laos 2×G4-ready + Myanmar 1×G4-developing. Require accelerated development plan activation and close monitoring. Bench plan must be live by June 2026.',col:'var(--amber)'},
+        {type:'Pipeline intake (new G1s)',count:11,note:'The 11-FTE pipeline shortfall is filled by increasing G1 intake and improving conversion rates. This takes 18–60 months to flow through — must start now for Q2 2027 impact.',col:'var(--blue)'},
+        {type:'Country 5 deployment',count:3,note:'1×SM internal succession + 2×G4 cross-country deployment. Identification Q4 2026. Deployment Q2 2027. Planning dependent on COO Country 5 decision.',col:'var(--blue)'}
+      ].map(function(d){
+        return '<div style="padding:12px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0;display:flex;gap:12px;align-items:start">'
+          +'<div style="font-family:var(--fd);font-size:36px;font-weight:800;color:'+d.col+';line-height:1;flex-shrink:0">'+d.count+'</div>'
+          +'<div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px">'+d.type+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.note+'</div></div>'
+          +'</div>';
+      }).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Gap Closure Progress — <em>Tracking Framework</em></div>
+    <div style="margin-bottom:10px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">Group HR tracks gap closure monthly against this framework. RAG status reported to COO quarterly.</div>
+    <table class="dt">
+      <thead><tr><th>Gap</th><th>Q1 26 status</th><th>Q2 26 target</th><th>Closure measure</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">ID G3 vacancies (3)</td><td><span class="chip cr">Open</span></td><td><span class="chip ca">Filled</span></td><td>All 3 positions filled and started by end Q2 2026</td></tr>
+        <tr><td style="font-weight:600">Laos bench plan</td><td><span class="chip cr">Not activated</span></td><td><span class="chip ca">Active</span></td><td>Individual development plans signed off by June 2026</td></tr>
+        <tr><td style="font-weight:600">Myanmar conversion</td><td><span class="chip cr">58%</span></td><td><span class="chip ca">≥62%</span></td><td>Monthly check-in compliance ≥90% · G4 debrief freq ≥3/month</td></tr>
+        <tr><td style="font-weight:600">G1 intake schedule</td><td><span class="chip ca">Not started</span></td><td><span class="chip cb">In progress</span></td><td>Q2 2026 intake cohorts started per intake schedule</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+</script>
+<script>
+// ── PAGE 05 ──────────────────────────────────────────────────────
+document.getElementById('page-scenarios').innerHTML=`
+<div class="pe">Section 05 — Scenario Modeller</div>
+<div class="pt">Scenario<br><em>Modeller</em></div>
+<p class="pd">Three workforce scenarios model the impact of different conversion rates, attrition levels, and external hiring decisions on the 65 FTE target. Use this section to stress-test the plan and identify which assumptions carry the most risk. The interactive modeller at the bottom lets Group HR model custom scenarios for COO presentations.</p>
+<div class="card" data-tabs="true">
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('sc-base',this)">Base Case</div>
+    <div class="tab" onclick="showTab('sc-bull',this)">Optimistic</div>
+    <div class="tab" onclick="showTab('sc-bear',this)">Downside</div>
+  </div>
+  ${(function(){
+    var scenarios=[
+      {id:'sc-base',name:'Base Case',col:'var(--blue)',
+        assumptions:['Myanmar conversion improves to 70% by Q4 2026 (G4 coaching programme on track)','Indonesia G3 vacancies filled Q2 2026 (sourcing escalation effective)','Laos bench plan activated June 2026 — 2 G4 confirmations by Q4 2027','Both SM retention conversations succeed (Myo H. Sep 2026, Wirawan Oct 2026)','Country 5 launch Q2 2027 with internal SM succession + 2 G4 deployments','Annual attrition holds at 22% (not improving, not worsening)'],
+        hc:[42,46,50,55,60,65],
+        risk:'Conversion improvement is the most critical assumption — if Myanmar coaching programme does not move the needle by Q3 2026, the base case requires revision.',
+        pcr:[43,43.5,44,44.5,44,43]},
+      {id:'sc-bull',name:'Optimistic',col:'var(--green)',
+        assumptions:['Myanmar conversion reaches 70% by Q2 2026 — coaching programme accelerates faster than projected','Attrition improves to 18% group-wide as coaching quality improves and G2 milestone bonuses take effect','Indonesia G3 filled Q1 2026 — sourcing pipeline already active','Laos bench produces 2 G4s by Q3 2027 without need for external G3 hire','Country 5 SM identified internally from existing G4/G5 pool with minimal development lag'],
+        hc:[42,48,53,59,65,70],
+        risk:'Optimistic scenario reaches 65 FTE one quarter early (Q1 2027) and opens the possibility of accelerating Country 5 launch or adding a sixth country in the planning horizon.',
+        pcr:[43,43,43.5,43,42.5,42]},
+      {id:'sc-bear',name:'Downside',col:'var(--red)',
+        assumptions:['Myanmar conversion stalls at 60% — G4 coaching programme compliance issues or G4 staff turnover disrupts programme','Either Myo H. or Wirawan exits before retention conversation — SM vacancy creates cascade pipeline disruption','Indonesia G3 vacancies remain open past Q3 2026 — delivery drops further and G4 coaching capacity stays diverted','Attrition worsens to 26% — broader economic or competitive pressures increase exits','Laos bench plan activated too late — first G4 retirement in 2027 creates live G4 vacancy with no internal cover'],
+        hc:[42,43,44,46,48,51],
+        risk:'Downside scenario misses 65 FTE target by Q2 2027 by 14 FTE. People cost ratio also worsens as fixed salaries constitute a larger share of flat or declining revenue. This scenario requires COO escalation and a revised workforce plan.',
+        pcr:[43,44,45,46,46.5,47]}
+    ];
+    return scenarios.map(function(s,si){
+      var isActive=si===0;
+      var html='<div id="tb-'+s.id+'" class="tb'+(isActive?' active':'')+'"><div class="g2" style="margin-bottom:0">';
+      html+='<div><div style="font-family:var(--fm);font-size:8px;color:'+s.col+';letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Key assumptions</div>';
+      s.assumptions.forEach(function(a,i){html+='<div style="display:flex;gap:8px;margin-bottom:6px;font-size:12.5px"><span style="color:'+s.col+';font-weight:700;flex-shrink:0">'+(i+1)+'.</span><span style="color:var(--ink3);font-weight:300;line-height:1.65">'+a+'</span></div>';});
+      html+='<div style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-left:3px solid '+s.col+';border-radius:0 3px 3px 0;font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink)">Key risk: </strong>'+s.risk+'</div>';
+      html+='</div><div>';
+      html+='<div style="font-family:var(--fm);font-size:8px;color:'+s.col+';letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Headcount trajectory</div>';
+      var max=Math.max.apply(null,s.hc);
+      var qs=['Q1 26','Q2 26','Q3 26','Q4 26','Q1 27','Q2 27'];
+      html+='<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;align-items:end;margin-bottom:16px">';
+      s.hc.forEach(function(v,i){
+        var h=Math.round((v/max)*100);
+        var isTgt=v>=65;
+        html+='<div style="text-align:center"><div style="height:'+h+'px;background:'+s.col+';border-radius:2px 2px 0 0;margin:0 3px;opacity:'+(isTgt?1:0.65)+'"></div>'
+          +'<div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:3px">'+qs[i]+'</div>'
+          +'<div style="font-family:var(--fm);font-size:10px;color:'+(isTgt?s.col:'var(--ink3)')+';font-weight:'+(isTgt?700:400)+'">'+v+'</div>'
+          +'</div>';
+      });
+      html+='</div>';
+      html+='<div style="font-family:var(--fm);font-size:8px;color:'+s.col+';letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">People cost ratio %</div>';
+      html+='<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;align-items:end">';
+      s.pcr.forEach(function(v,i){
+        var h=Math.round(((v-40)/10)*100);
+        var alert=v>=45;
+        html+='<div style="text-align:center"><div style="height:'+h+'px;background:'+(alert?'var(--red)':s.col)+';border-radius:2px 2px 0 0;margin:0 3px"></div>'
+          +'<div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-top:3px">'+qs[i]+'</div>'
+          +'<div style="font-family:var(--fm);font-size:10px;color:'+(alert?'var(--red)':'var(--ink3)')+';font-weight:'+(alert?700:400)+'">'+v+'%</div>'
+          +'</div>';
+      });
+      html+='</div>';
+      html+='</div></div></div>';
+      return html;
+    }).join('');
+  })()}
+</div>
+<div style="background:var(--navy);border-radius:4px;padding:28px;margin-bottom:14px">
+  <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0f4ff;margin-bottom:4px">Custom Scenario Modeller</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--fm);margin-bottom:22px">Adjust variables · Output updates automatically · Use for COO presentations</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+    <div><label class="cl">Current headcount</label><input id="sm-hc" class="ci" type="number" value="42" oninput="calcScenario()"></div>
+    <div><label class="cl">FTE target</label><input id="sm-tgt" class="ci" type="number" value="65" oninput="calcScenario()"></div>
+    <div><label class="cl">Quarters to target</label><input id="sm-q" class="ci" type="number" value="6" min="1" max="12" oninput="calcScenario()"></div>
+    <div><label class="cl">Myanmar G1→G2 conversion (%)</label><input id="sm-conv" class="ci" type="number" value="63" min="0" max="100" oninput="calcScenario()"></div>
+    <div><label class="cl">Annual attrition rate (%)</label><input id="sm-attr" class="ci" type="number" value="22" oninput="calcScenario()"></div>
+    <div><label class="cl">External hires planned (total)</label><input id="sm-ext" class="ci" type="number" value="4" oninput="calcScenario()"></div>
+    <div><label class="cl">Annual revenue ($M)</label><input id="sm-rev" class="ci" type="number" value="8.3" step="0.1" oninput="calcScenario()"></div>
+    <div><label class="cl">Avg salary per employee ($K)</label><input id="sm-sal" class="ci" type="number" value="85" oninput="calcScenario()"></div>
+    <div><label class="cl">Country 5 headcount (if launching)</label><input id="sm-c5" class="ci" type="number" value="7" oninput="calcScenario()"></div>
+  </div>
+  <div id="scenario-result" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:20px"></div>
+</div>
+`;
+
+// ── PAGE 06 ──────────────────────────────────────────────────────
+document.getElementById('page-country5').innerHTML=`
+<div class="pe">Section 06 — Country 5 Planning</div>
+<div class="pt">Country 5<br><em>Planning</em></div>
+<p class="pd">Country 5 is Valentis's next expansion — targeted for Q2 2027. This section models the workforce requirements for Country 5 launch: the SM succession candidate, G4 deployment, initial G1–G2 intake, and the people cost implications of adding a fifth country to the group structure. Country 5 planning must begin now — the SM identification deadline is Q3 2026.</p>
+<div class="vx">
+  <div class="vx-ey">Country 5 Workforce Requirements</div>
+  <div class="vx-ti">Country 5 requires 1 SM, 2 G4 drillers, and a G1–G2 intake cohort of 4–6 trainees at launch. Total initial workforce: ~8–10 FTE. Full operational headcount within 18 months: ~12–15 FTE.</div>
+  <div class="vx-bo">Country 5 is not just a headcount addition — it is a capability deployment. The SM and G4s must be experienced Valentis operators who can embed the pipeline coaching culture from day one. An SM who does not understand the G4 coaching programme, or G4 drillers who have not been certified, will reproduce the pre-programme Myanmar pattern in a new geography. Country 5 must get the pipeline right from the start.</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">Country 5 — Workforce Requirements at Launch</div>
+    <table class="dt">
+      <thead><tr><th>Role</th><th>Grade</th><th>Count</th><th>Source</th><th>Identification deadline</th><th>Notes</th></tr></thead>
+      <tbody>
+        ${[
+          {role:'Site Manager',g:'G5',n:1,src:'Internal succession (preferred) or external hire',dl:'Q3 2026',note:'Must have Valentis site experience, understand G4 coaching model, and be able to build a new-country pipeline culture. Country Director pathway is the career incentive.'},
+          {role:'Senior Driller',g:'G4',n:2,src:'Cross-country deployment from existing G4 pool (Thailand/Laos bench preferred)',dl:'Q4 2026',note:'Must be coaching-certified (G4 programme rubric ≥3/5 all dimensions). Cross-site experience is the deployment prerequisite. Thailand SM first point of contact for candidate identification.'},
+          {role:'Junior Driller',g:'G3',n:2,src:'Internal pipeline or targeted external hire',dl:'Q1 2027',note:'Laos external G3 hire (in progress) could be a candidate if 6+ months in Valentis pipeline. Alternatively, internal G3 from any country willing to relocate.'},
+          {role:'G1–G2 Trainees',g:'G1/G2',n:'4–6',src:'Local recruitment in Country 5 geography',dl:'Q2 2027 (launch)',note:'New intake using standard Valentis recruitment process. Country 5 sourcing channels to be established by TA function by Q1 2027. Local market research required.'}
+        ].map(function(r){
+          return '<tr><td style="font-weight:600">'+r.role+'</td>'
+            +'<td style="font-family:var(--fm);color:var(--blue)">'+r.g+'</td>'
+            +'<td style="font-weight:700;color:var(--ink)">'+r.n+'</td>'
+            +'<td>'+r.src+'</td>'
+            +'<td style="font-weight:600;color:var(--amber);font-family:var(--fm);font-size:11px">'+r.dl+'</td>'
+            +'<td style="font-size:11.5px">'+r.note+'</td>'
+            +'</tr>';
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">SM Succession — Candidate Criteria</div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">The Country 5 SM is the most critical hire in the plan. A strong internal candidate is strongly preferred — they carry the Valentis pipeline culture. The criteria below define what Group HR should be assessing.</div>
+    ${[
+      {c:'Valentis operational experience',d:'Minimum 3 years as G4 or G5 within Valentis. Must have led a G1–G2 pipeline cohort through at least one full development cycle. No external SM hire can replicate this institutional knowledge without a 12+ month induction lag.'},
+      {c:'G4 coaching certification',d:'Must hold or be capable of holding G4 coaching rubric certification ≥3/5 all dimensions. If not certified: certification must be completed before deployment. This is non-negotiable for Country 5 — pipeline failure in a new country is very costly.'},
+      {c:'Cross-cultural operational readiness',d:'Country 5 geography TBD — but any Valentis SM must demonstrate ability to build trust with local G4s and G1 trainees from a different cultural background. Thailand SM is the reference case for what good looks like.'},
+      {c:'Career development motivation',d:'Country 5 SM is a career step — the candidate must want the opportunity, not just accept it. The Country Director pathway (G6) is the incentive. Group HR must present this as a career investment, not a posting.'},
+      {c:'COO endorsement',d:'Any internal SM candidate must be endorsed by the COO before approach. SM succession is a C-suite-level people decision — not a Group HR unilateral appointment.'}
+    ].map(function(d,i){return '<div style="display:flex;gap:10px;margin-bottom:8px"><div style="font-family:var(--fd);font-size:24px;font-weight:800;color:var(--blue);line-height:1;flex-shrink:0;width:28px">'+(i+1)+'</div><div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:3px">'+d.c+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">'+d.d+'</div></div></div>';}).join('')}
+  </div>
+</div>
+<div class="card">
+  <div class="ct">Country 5 — People Cost Modelling</div>
+  <div class="g2" style="margin-bottom:0">
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Estimated Country 5 people cost at launch</div>
+      <table class="dt">
+        <thead><tr><th>Role</th><th>Count</th><th>Est. annual salary</th><th>Country factor</th><th>Annual people cost</th></tr></thead>
+        <tbody>
+          ${[
+            {r:'SM (G5)',n:1,sal:120000,cf:'TBC — new market'},
+            {r:'G4 (deployed)',n:2,sal:72000,cf:'Home country factor maintained during deployment'},
+            {r:'G3',n:2,sal:48000,cf:'New country factor TBC'},
+            {r:'G1–G2 trainees',n:5,sal:28000,cf:'New country factor TBC'}
+          ].map(function(r){
+            var total=r.n*r.sal;
+            return '<tr><td>'+r.r+'</td><td>'+r.n+'</td><td>$'+r.sal.toLocaleString()+'</td><td style="font-size:11px;color:var(--ink5)">'+r.cf+'</td><td style="font-weight:700">$'+total.toLocaleString()+'</td></tr>';
+          }).join('')}
+          <tr style="background:var(--surface2)"><td style="font-weight:700">Total</td><td style="font-weight:700">10</td><td>—</td><td>—</td><td style="font-weight:700;color:var(--blue)">~$480,000/year</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Revenue requirement to keep ratio below 45%</div>
+      <div style="padding:16px;background:var(--surface2);border-radius:4px;margin-bottom:10px">
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.85">Country 5 adds ~$480K to annual people cost. To keep the group people cost ratio below 45%, Country 5 must generate revenue of at minimum:</div>
+        <div style="font-family:var(--fd);font-size:40px;font-weight:800;color:var(--green);line-height:1;margin:12px 0">$1.07M</div>
+        <div style="font-size:12px;color:var(--ink5);font-family:var(--fm)">$480K ÷ 45% = $1.07M minimum country revenue at launch</div>
+      </div>
+      <div style="padding:12px;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:3px;font-size:12.5px;color:var(--ink3);line-height:1.75;font-weight:300"><strong style="color:var(--amber);display:block;margin-bottom:4px">People cost ratio risk at Country 5 launch:</strong>New countries typically take 2–4 quarters to reach full programme delivery revenue. During the ramp-up period, people cost ratio will be elevated above 45% for Country 5 alone. Group HR must make this case to COO explicitly — Country 5 launch will temporarily push group-wide people cost ratio above threshold before revenue normalises.</div>
+    </div>
+  </div>
+</div>
+`;
+
+// ── PAGE 07 ──────────────────────────────────────────────────────
+document.getElementById('page-people_cost').innerHTML=`
+<div class="pe">Section 07 — People Cost Model</div>
+<div class="pt">People Cost<br><em>Model</em></div>
+<p class="pd">People cost at Valentis runs at approximately 43% of revenue — currently within the acceptable range but approaching the 45% rolling alert threshold. This section models how people cost evolves as headcount grows to 65 FTE, identifies the quarters at highest ratio risk, and provides Group HR with the monitoring framework and COO alert language needed to manage cost within the plan.</p>
+<div class="krow">
+  <div class="kpi kbl"><div class="kl">Current Revenue</div><div class="kv">$8.3M</div><div class="ks">Annual · all 4 countries</div><div class="kt ktb">People cost: $3.57M</div></div>
+  <div class="kpi kam"><div class="kl">Current People Cost %</div><div class="kv">43%</div><div class="ks">~$3.57M / $8.3M</div><div class="kt kta">Alert at 47%/mo · 45% rolling</div></div>
+  <div class="kpi krd"><div class="kl">People Cost at 65 FTE</div><div class="kv">~$5.5M</div><div class="ks">Est. 65 FTE × avg $85K</div><div class="kt ktr">Requires $12M+ revenue at 45%</div></div>
+  <div class="kpi kgr"><div class="kl">Required Revenue at 65 FTE</div><div class="kv">$12.2M</div><div class="ks">To hold 45% ratio at $5.5M cost</div><div class="kt ktg">47% growth from current $8.3M</div></div>
+</div>
+<div class="card">
+  <div class="ct">People Cost Ratio — Quarterly Forecast to Q2 2027</div>
+  <div class="inf a"><strong>Key risk: the transition quarters.</strong>As headcount grows faster than revenue ramps, people cost ratio will temporarily rise. The highest risk quarters are Q2–Q3 2026 when Indonesia G3 hires increase the salary base before delivery is fully restored. Country 5 launch in Q2 2027 creates a second elevation risk.</div>
+  <table class="dt">
+    <thead><tr><th>Quarter</th><th>Headcount</th><th>Est. people cost ($M)</th><th>Est. revenue ($M)</th><th>People cost %</th><th>vs threshold</th><th>COO action required?</th></tr></thead>
+    <tbody>
+      ${[
+        {q:'Q1 2026',hc:42,cost:3.57,rev:8.3},
+        {q:'Q2 2026',hc:46,cost:3.91,rev:8.5},
+        {q:'Q3 2026',hc:50,cost:4.25,rev:9.1},
+        {q:'Q4 2026',hc:55,cost:4.68,rev:10.2},
+        {q:'Q1 2027',hc:60,cost:5.10,rev:11.2},
+        {q:'Q2 2027',hc:65,cost:5.53,rev:12.3}
+      ].map(function(r){
+        var pct=Math.round((r.cost/r.rev)*100*10)/10;
+        var col=pct>=47?'var(--red)':pct>=45?'var(--amber)':'var(--green)';
+        var action=pct>=47?'Yes — immediate COO alert':pct>=45?'Yes — COO advisory':'No — within range';
+        var actionCol=pct>=47?'var(--red)':pct>=45?'var(--amber)':'var(--green)';
+        return '<tr><td style="font-weight:600;font-family:var(--fm);color:var(--blue)">'+r.q+'</td>'
+          +'<td>'+r.hc+'</td>'
+          +'<td>$'+r.cost.toFixed(2)+'M</td>'
+          +'<td>$'+r.rev.toFixed(1)+'M</td>'
+          +'<td style="font-weight:700;color:'+col+'">'+pct+'%</td>'
+          +'<td>'+(pct>=47?'<span class="chip cr">Above 45% threshold</span>':pct>=45?'<span class="chip ca">At threshold</span>':'<span class="chip cg">Within range</span>')+'</td>'
+          +'<td style="color:'+actionCol+';font-size:12px">'+action+'</td>'
+          +'</tr>';
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct">People Cost Monitoring — Alert System</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {trigger:'Monthly ratio ≥47%',action:'Immediate COO alert (same-day notification). Group HR prepares cost analysis within 5 working days showing which cost components drove the spike. COO decides whether to defer planned hires or accelerate revenue activities.',col:'var(--red)'},
+        {trigger:'Rolling 3-month ratio ≥45%',action:'COO advisory — Group HR prepares quarterly people cost brief showing trend direction and 2-quarter forward forecast. Options analysis included: defer intake, freeze non-critical hires, or flag to CEO if revenue gap is widening.',col:'var(--amber)'},
+        {trigger:'Ratio trending upward 3+ consecutive months',action:'Group HR flags trend direction in COO monthly report even if absolute level is below threshold. Upward trend in cost ratio is an early warning — it should be visible before it becomes a problem.',col:'var(--amber)'},
+        {trigger:'Annual merit cycle impact modelling',action:'Before merit cycle finalisation (November each year), Group HR provides people cost impact model showing: post-merit people cost ratio by quarter for the next 12 months. COO approves merit pool with full cost visibility.',col:'var(--blue)'}
+      ].map(function(d){
+        return '<div style="padding:10px 14px;border-left:3px solid '+d.col+';background:var(--surface2);border-radius:0 3px 3px 0">'
+          +'<div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:4px">If: '+d.trigger+'</div>'
+          +'<div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65">Then: '+d.action+'</div>'
+          +'</div>';
+      }).join('')}
+    </div>
+  </div>
+  <div style="background:var(--navy);border-radius:4px;padding:22px">
+    <div style="font-family:var(--fm);font-size:8px;color:var(--electric2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Interactive People Cost Calculator</div>
+    <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:#f0f4ff;margin-bottom:14px">Model cost ratio at any headcount</div>
+    <label class="cl">Headcount</label>
+    <input id="pc-hc" class="ci" type="number" value="65" oninput="calcPeopleCost()">
+    <label class="cl">Average salary per employee ($K)</label>
+    <input id="pc-sal" class="ci" type="number" value="85" oninput="calcPeopleCost()">
+    <label class="cl">On-costs multiplier (1.0 = salary only)</label>
+    <input id="pc-oc" class="ci" type="number" value="1.15" step="0.01" oninput="calcPeopleCost()">
+    <label class="cl">Annual revenue ($M)</label>
+    <input id="pc-rev" class="ci" type="number" value="12.3" step="0.1" oninput="calcPeopleCost()">
+    <div id="pc-result" style="background:rgba(255,255,255,0.05);border-radius:3px;padding:14px;margin-top:4px"></div>
+  </div>
+</div>
+`;
+
+// ── PAGE 08 ──────────────────────────────────────────────────────
+document.getElementById('page-action').innerHTML=`
+<div class="pe">Section 08 — Action Plan</div>
+<div class="pt">Workforce<br><em>Action Plan</em></div>
+<p class="pd">The workforce action plan consolidates every planning decision in this tool into a single sequenced action register — with named owners, deadlines, success measures, and COO dependencies. This is the document Group HR uses to track plan execution and brief the COO on workforce plan status quarterly.</p>
+<div class="vx">
+  <div class="vx-ey">How to Use This Action Plan</div>
+  <div class="vx-ti">Every action has a named owner, a hard deadline, and a success measure. If any action misses its deadline, the workforce plan is at risk. Group HR escalates to COO within 48 hours of a missed deadline.</div>
+  <div class="vx-bo">The action plan is organised by quarter. Priority is marked RED (plan-critical — a miss puts the 65 FTE target at risk), AMBER (plan-important — a miss requires mitigation), and BLUE (plan-enabling — builds future capability without immediate delivery impact). Group HR reviews the action plan weekly and presents status in the monthly COO people brief.</div>
+</div>
+<div class="card" data-tabs="true">
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('ap-q12',this)">Q1–Q2 2026</div>
+    <div class="tab" onclick="showTab('ap-q3',this)">Q3 2026</div>
+    <div class="tab" onclick="showTab('ap-q4',this)">Q4 2026</div>
+    <div class="tab" onclick="showTab('ap-27',this)">Q1–Q2 2027</div>
+  </div>
+  ${(function(){
+    var quarters=[
+      {id:'ap-q12',label:'Q1–Q2 2026',actions:[
+        {action:'Fill 3 Indonesia G3 vacancies',owner:'Group HR (TA brief) · Indonesia SM (interview) · COO (offer approval)',dl:'End Q2 2026',priority:'cr',pTxt:'Critical',measure:'All 3 positions filled and started. Indonesia delivery recovering toward 90%.'},
+        {action:'Activate Laos bench acceleration plan for 2 G3 candidates',owner:'Laos SM (design) · Group HR (track, document)',dl:'June 2026',priority:'cr',pTxt:'Critical',measure:'Individual accelerated development plans signed off by SM and each candidate. Monthly progress tracked in pipeline log.'},
+        {action:'Commission Laos external G3 hire',owner:'Group HR (sourcing brief) · TA (source) · COO (approve budget)',dl:'Q2 2026',priority:'cr',pTxt:'Critical',measure:'Sourcing brief issued by April 2026. Candidate shortlisted by June 2026. Hire started Q3 2026.'},
+        {action:'Myanmar G4 coaching programme — track debrief frequency monthly',owner:'Group HR (track) · Myo H. (report) · Thailand SM (facilitate)',dl:'Monthly ongoing',priority:'ca',pTxt:'Important',measure:'G4 debrief frequency ≥3/month for all Myanmar G4s by Q2 2026. G4 rubric re-observation scheduled Q3 2026.'},
+        {action:'SM retention risk brief to COO',owner:'Group HR',dl:'April 2026',priority:'ca',pTxt:'Important',measure:'Brief delivered. COO confirms conversation deadlines (Sep 2026 Myo H., Oct 2026 Wirawan). Retention scenarios commissioned.'},
+        {action:'Start Q2 2026 G1 intake cohorts — Myanmar 3, Indonesia 2, Laos 2',owner:'Group HR (schedule) · SMs (onboard) · TA (recruit)',dl:'Q2 2026',priority:'ca',pTxt:'Important',measure:'7 G1 trainees onboarded across 3 countries. Check-in trigger dates logged in pipeline log. G4 assignments confirmed.'},
+        {action:'Indonesia site allowance review — business case to COO',owner:'Group HR (business case) · Wirawan (market intel)',dl:'Q2 2026',priority:'cb',pTxt:'Enabling',measure:'Business case delivered to COO. Decision received by Q3 2026.'}
+      ]},
+      {id:'ap-q3',label:'Q3 2026',actions:[
+        {action:'G4 coaching programme first rubric re-observation (Myanmar G4s)',owner:'Group HR · Thailand SM',dl:'Q3 2026',priority:'cr',pTxt:'Critical',measure:'All Myanmar G4s re-observed. Rubric scores documented. Any G4 below ≥3/5 on any dimension: remediation plan within 2 weeks.'},
+        {action:'Myo H. retention conversation — COO lead, Group HR support',owner:'COO (lead) · Group HR (prep, attend)',dl:'September 2026',priority:'cr',pTxt:'Critical',measure:'Conversation held. Retention offer agreed or exit plan activated. Documented in pipeline log within 5 working days.'},
+        {action:'Indonesia SM succession candidate identified',owner:'Group HR · COO',dl:'Q3 2026',priority:'cr',pTxt:'Critical',measure:'Candidate identified. Development conversation held. Succession plan documented. Country 5 criteria linked.'},
+        {action:'Country 5 SM candidate shortlisting begins',owner:'Group HR · COO',dl:'Q3 2026',priority:'ca',pTxt:'Important',measure:'Candidate longlist of 2–3 internal G4/G5s assessed against SM criteria. Shortlist presented to COO by Q4 2026.'},
+        {action:'Q3 2026 G1 intake cohorts — Myanmar 3, Indonesia 2, Laos 2, Thailand 1',owner:'Group HR · SMs · TA',dl:'Q3 2026',priority:'ca',pTxt:'Important',measure:'8 G1 trainees onboarded. Prior Q2 cohort check-in compliance reviewed.'},
+        {action:'People cost ratio Q2 2026 review — flag to COO if ≥45%',owner:'Group HR · Finance',dl:'Q3 2026',priority:'cb',pTxt:'Enabling',measure:'Q2 2026 people cost ratio confirmed. If ≥45%: COO advisory issued with Q3–Q4 forecast.'}
+      ]},
+      {id:'ap-q4',label:'Q4 2026',actions:[
+        {action:'Wirawan retention conversation — COO lead, Thailand SM peer, Group HR support',owner:'COO (lead) · Thailand SM · Group HR (support)',dl:'October 2026',priority:'cr',pTxt:'Critical',measure:'Conversation held. Retention offer agreed or exit plan and succession plan activated immediately.'},
+        {action:'Country 5 SM candidate confirmed — development plan activated',owner:'Group HR · COO',dl:'Q4 2026',priority:'cr',pTxt:'Critical',measure:'SM candidate confirmed by COO. Development plan active. Deployment timeline to Q2 2027 confirmed.'},
+        {action:'Country 5 G4 deployment candidates identified (2)',owner:'Group HR · Thailand SM · COO',dl:'Q4 2026',priority:'cr',pTxt:'Critical',measure:'2 G4 candidates identified. Coaching certification confirmed. Cross-site experience agreed. Deployment timeline set.'},
+        {action:'Myanmar conversion rate Q4 2026 review — coaching programme success measure',owner:'Group HR',dl:'Q4 2026',priority:'cr',pTxt:'Critical',measure:'Myanmar G1→G2 conversion rate measured. Target: ≥70%. If below 65%: COO escalation and coaching programme review.'},
+        {action:'Merit cycle design complete — G1→G2 promotions prioritised',owner:'Group HR (design) · COO (approve) · Finance (model)',dl:'November 2026',priority:'ca',pTxt:'Important',measure:'Merit matrix final. Grade promotion step-up policy formalised. People cost impact modelled and COO-approved.'},
+        {action:'Laos bench G4 readiness re-assessment',owner:'Group HR · Laos SM',dl:'Q4 2026',priority:'ca',pTxt:'Important',measure:'Both Laos G3 bench candidates re-assessed against G4-ready criteria. G4 confirmation timeline confirmed or revised.'},
+        {action:'Annual attrition report to COO',owner:'Group HR',dl:'December 2026',priority:'cb',pTxt:'Enabling',measure:'Full year attrition analysis by country and grade. Intervention ROI summary. 2027 retention plan outline.'}
+      ]},
+      {id:'ap-27',label:'Q1–Q2 2027',actions:[
+        {action:'Merit cycle effective 1 January 2027',owner:'Group HR · Finance · SMs',dl:'1 Jan 2027',priority:'ca',pTxt:'Important',measure:'All merit increases processed. G1→G2 promotions confirmed at full grade step-up. Zero salary errors.'},
+        {action:'Laos first G4 retirement — managed handover',owner:'Laos SM · Group HR',dl:'Q1 2027 (if first retirement)',measure:'Bench candidate or external hire in G4 role before retirement effective date. Zero operational gap during handover.',priority:'cr',pTxt:'Critical'},
+        {action:'Country 5 launch — SM and G4 deployed, G1–G2 intake started',owner:'COO (decision) · Group HR (coordinate) · TA (recruit)',dl:'Q2 2027',priority:'cr',pTxt:'Critical',measure:'SM in country and operational. 2 G4s deployed with coaching certification. First G1 cohort (4–6 trainees) onboarded. People cost model for Country 5 presented to COO.'},
+        {action:'65 FTE target validation',owner:'Group HR · Finance',dl:'Q2 2027',priority:'cr',pTxt:'Critical',measure:'Total active headcount ≥63 FTE (allowing ±2 for recruitment timing). All grade bands adequately staffed. Pipeline health metrics reviewed.'},
+        {action:'People cost ratio review — 65 FTE run-rate',owner:'Group HR · Finance · COO',dl:'Q2 2027',priority:'ca',pTxt:'Important',measure:'People cost ratio at 65 FTE confirmed. If above 45% rolling: cost reduction or revenue recovery plan presented to COO.'},
+        {action:'Workforce plan 2027–2029 commissioned',owner:'Group HR',dl:'Q2 2027',priority:'cb',pTxt:'Enabling',measure:'Next planning cycle initiated. Includes Country 5 maturation, Country 6 feasibility, and Laos retirement wave 2 (2028–2029).'}
+      ]}
+    ];
+    return quarters.map(function(qtr,qi){
+      var isActive=qi===0;
+      return '<div id="tb-'+qtr.id+'" class="tb'+(isActive?' active':'')+'"><table class="dt">'
+        +'<thead><tr><th>Action</th><th>Owner</th><th>Deadline</th><th>Priority</th><th>Success measure</th></tr></thead>'
+        +'<tbody>'
+        +qtr.actions.map(function(a){
+          return '<tr><td style="font-weight:600">'+a.action+'</td>'
+            +'<td style="font-size:11.5px">'+a.owner+'</td>'
+            +'<td style="font-weight:600;font-family:var(--fm);font-size:11px;color:var(--amber)">'+a.dl+'</td>'
+            +'<td><span class="chip '+a.priority+'">'+a.pTxt+'</span></td>'
+            +'<td style="font-size:11.5px;color:var(--ink4)">'+a.measure+'</td>'
+            +'</tr>';
+        }).join('')
+        +'</tbody></table></div>';
+    }).join('');
+  })()}
+</div>
+<div class="card">
+  <div class="ct">COO Quarterly Workforce Plan Brief — <em>Template</em></div>
+  <div style="background:var(--surface2);padding:18px;border-radius:3px;font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300">
+    <p style="margin-bottom:10px"><strong style="color:var(--ink)">Workforce plan status — [Quarter]:</strong> Valentis is [on track / behind / ahead of] the 42→65 FTE workforce plan. Current headcount is [X] against a quarterly target of [Y].</p>
+    <p style="margin-bottom:10px"><strong style="color:var(--ink)">Critical dependencies status:</strong> [Indonesia G3 vacancies: filled / outstanding]. [Laos bench plan: active / not activated]. [Myanmar conversion: X% vs target 70%]. [SM retention: Myo H. — [status] · Wirawan — [status]].</p>
+    <p style="margin-bottom:10px"><strong style="color:var(--ink)">People cost ratio:</strong> Current quarterly ratio is [X%] against the 45% rolling threshold. [If above: action being taken. If below: tracking to plan.]</p>
+    <p style="margin-bottom:10px"><strong style="color:var(--ink)">COO decisions required this quarter:</strong> [List any approvals, budget decisions, or conversations that require COO action in the current quarter.]</p>
+    <p><strong style="color:var(--ink)">Next quarter forecast:</strong> Projected headcount [X] if current trajectory continues. Key risk: [single biggest risk to the plan in the next quarter]. Mitigation: [what Group HR is doing about it].</p>
+  </div>
+</div>
+`;
+
+// ── CALCULATORS ───────────────────────────────────────────────────
+function calcScenario(){
+  var hc=parseFloat(document.getElementById('sm-hc').value)||42;
+  var tgt=parseFloat(document.getElementById('sm-tgt').value)||65;
+  var q=parseFloat(document.getElementById('sm-q').value)||6;
+  var conv=parseFloat(document.getElementById('sm-conv').value)||63;
+  var attr=parseFloat(document.getElementById('sm-attr').value)||22;
+  var ext=parseFloat(document.getElementById('sm-ext').value)||4;
+  var rev=parseFloat(document.getElementById('sm-rev').value)||8.3;
+  var sal=parseFloat(document.getElementById('sm-sal').value)||85;
+  var c5=parseFloat(document.getElementById('sm-c5').value)||7;
+  var attrLoss=Math.round(hc*(attr/100)*(q/4));
+  var convFactor=conv/100;
+  var pipelineGain=Math.round((tgt-hc)*convFactor*0.6);
+  var projHc=hc-attrLoss+pipelineGain+ext+c5;
+  var peopleCost=(projHc*sal*1000)/1e6;
+  var pcr=Math.round((peopleCost/rev)*100*10)/10;
+  var gap=projHc-tgt;
+  var gapCol=gap>=0?'var(--green)':gap>=-5?'var(--amber)':'var(--red)';
+  var pcrCol=pcr>=47?'var(--red)':pcr>=45?'var(--amber)':'var(--green)';
+  document.getElementById('scenario-result').innerHTML=
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px">'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:'+gapCol+';line-height:1">'+projHc+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">PROJECTED HEADCOUNT</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:'+(gap>=0?'var(--green)':'var(--red)')+';line-height:1">'+(gap>=0?'+':'')+gap+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">VS TARGET OF '+tgt+'</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:'+pcrCol+';line-height:1">'+pcr+'%</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">EST PEOPLE COST RATIO</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--electric2);line-height:1">$'+peopleCost.toFixed(1)+'M</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.5px">EST PEOPLE COST</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(255,255,255,0.04);border-radius:3px;padding:14px;font-size:13px;color:rgba(255,255,255,0.5);line-height:1.85">'
+    +'Under this scenario, projected headcount of <strong style="color:#f0f4ff">'+projHc+'</strong> '
+    +(gap>=0?'meets':'does not meet')+' the '+tgt+' FTE target (gap: '+(gap>=0?'+':'')+gap+'). '
+    +'People cost ratio of <strong style="color:'+pcrCol+'">'+pcr+'%</strong> is '
+    +(pcr<45?'within the 45% rolling threshold':'above the 45% rolling threshold — COO advisory required')+'. '
+    +(pcr>=47?'<strong style="color:var(--red)">Above 47% monthly alert — immediate COO notification required.</strong>':'')
+    +'</div>';
+}
+
+function calcPeopleCost(){
+  var hc=parseFloat(document.getElementById('pc-hc').value)||65;
+  var sal=parseFloat(document.getElementById('pc-sal').value)||85;
+  var oc=parseFloat(document.getElementById('pc-oc').value)||1.15;
+  var rev=parseFloat(document.getElementById('pc-rev').value)||12.3;
+  var cost=(hc*sal*1000*oc)/1e6;
+  var pcr=Math.round((cost/rev)*100*10)/10;
+  var reqRev=cost/0.45;
+  var col=pcr>=47?'var(--red)':pcr>=45?'var(--amber)':'var(--green)';
+  document.getElementById('pc-result').innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--electric2);line-height:1">$'+cost.toFixed(2)+'M</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:3px">ANNUAL PEOPLE COST</div></div>'
+    +'<div style="text-align:center"><div style="font-family:var(--fd);font-size:28px;font-weight:800;color:'+col+';line-height:1">'+pcr+'%</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:3px">PEOPLE COST RATIO</div></div>'
+    +'</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.7">'
+    +(pcr<45?'Within threshold. Revenue required to hold 45%: <strong style="color:var(--green)">$'+reqRev.toFixed(1)+'M</strong> — current revenue provides '+Math.round((rev/reqRev)*100)+'% coverage.':'<strong style="color:'+col+'">Above 45% threshold. To bring within range, revenue must reach $'+reqRev.toFixed(1)+'M or headcount reduced.</strong>')
+    +'</div>';
+}
+calcScenario();
+calcPeopleCost();
+</script>

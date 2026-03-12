@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contracts & Position Register — Valentis Group HR Ops</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --slate: #2d3142;
+    --amber: #c9802a;
+    --amber-light: #e8a84a;
+    --amber-pale: #fdf3e3;
+    --steel: #4a5568;
+    --mist: #f4f5f7;
+    --white: #ffffff;
+    --border: #dde1ea;
+    --success: #2d7d46;
+    --success-bg: #edf7f1;
+    --warning: #b45309;
+    --warning-bg: #fef3cd;
+    --danger: #b91c1c;
+    --danger-bg: #fef2f2;
+    --info: #1e5f74;
+    --info-bg: #e8f4f8;
+    --tag-laos: #1e5f74;
+    --tag-myanmar: #6b3a2a;
+    --tag-indonesia: #1a4731;
+    --tag-thailand: #3b2a6e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--mist); color: var(--ink); min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: var(--slate); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--amber); }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .dept-badge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--amber); letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--amber); padding: 3px 8px; border-radius: 2px; }
+  .header-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); font-weight: 600; }
+  .header-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8899aa; letter-spacing: 1px; }
+
+  /* TOOL HEADER */
+  .tool-header { background: var(--white); padding: 28px 40px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  .tool-title-block h1 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .tool-title-block p { font-size: 13px; color: var(--steel); max-width: 580px; line-height: 1.6; }
+  .tool-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber-light); padding: 4px 10px; border-radius: 2px; letter-spacing: 1px; white-space: nowrap; margin-top: 4px; }
+
+  /* STATS BAR */
+  .stats-bar { background: var(--slate); padding: 16px 40px; display: flex; gap: 0; }
+  .stat-item { flex: 1; text-align: center; padding: 0 16px; border-right: 1px solid rgba(255,255,255,0.1); }
+  .stat-item:last-child { border-right: none; }
+  .stat-number { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; color: var(--amber-light); display: block; }
+  .stat-label { font-size: 11px; color: #99aabb; letter-spacing: 0.5px; margin-top: 2px; }
+  .stat-number.red { color: #f87171; }
+  .stat-number.green { color: #6ee7b7; }
+  .stat-number.yellow { color: #fcd34d; }
+
+  /* MAIN */
+  .main { padding: 28px 40px; display: flex; flex-direction: column; gap: 24px; }
+
+  /* TABS */
+  .tab-bar { display: flex; gap: 0; border-bottom: 2px solid var(--border); }
+  .tab-btn { padding: 10px 22px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--steel); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; letter-spacing: 0.3px; }
+  .tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--ink); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* CONTROLS */
+  .controls-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .search-box { flex: 1; min-width: 200px; display: flex; align-items: center; background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 0 14px; gap: 8px; height: 38px; }
+  .search-box input { border: none; outline: none; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); flex: 1; background: transparent; }
+  .filter-select { height: 38px; padding: 0 12px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: var(--steel); background: var(--white); cursor: pointer; outline: none; }
+  .btn { height: 38px; padding: 0 18px; border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; border: none; letter-spacing: 0.3px; transition: all 0.15s; }
+  .btn-primary { background: var(--amber); color: var(--white); }
+  .btn-primary:hover { background: var(--amber-light); }
+  .btn-outline { background: var(--white); color: var(--slate); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+  .btn-sm { height: 30px; padding: 0 12px; font-size: 11px; }
+
+  /* TABLE CARD */
+  .table-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .table-card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .table-card-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--steel); letter-spacing: 1.5px; text-transform: uppercase; }
+  .record-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--amber); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--mist); padding: 10px 14px; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--steel); letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border); font-weight: 500; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--amber-pale); }
+  td { padding: 10px 14px; font-size: 12.5px; color: var(--ink); vertical-align: middle; }
+
+  .emp-id { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--steel); }
+  .emp-name { font-weight: 600; font-size: 13px; }
+  .emp-sub { font-size: 11px; color: var(--steel); margin-top: 1px; }
+
+  .country-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 2px; color: var(--white); letter-spacing: 0.5px; }
+  .ct-laos { background: var(--tag-laos); }
+  .ct-myanmar { background: var(--tag-myanmar); }
+  .ct-indonesia { background: var(--tag-indonesia); }
+  .ct-thailand { background: var(--tag-thailand); }
+
+  .grade-badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 2px; background: var(--slate); color: var(--amber-light); letter-spacing: 0.5px; }
+
+  .contract-badge { display: inline-block; font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 10px; font-family: 'IBM Plex Mono', monospace; }
+  .cb-permanent { background: var(--info-bg); color: var(--info); }
+  .cb-fixed { background: var(--warning-bg); color: var(--warning); }
+  .cb-trainee { background: #ede9fe; color: #5b21b6; }
+  .cb-casual { background: var(--mist); color: var(--steel); }
+
+  .expiry-cell { font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+  .expiry-ok { color: var(--success); }
+  .expiry-warn { color: var(--warning); }
+  .expiry-critical { color: var(--danger); font-weight: 600; }
+  .expiry-na { color: #aab; }
+
+  .days-pill { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 500; }
+  .dp-ok { background: var(--success-bg); color: var(--success); }
+  .dp-warn { background: var(--warning-bg); color: var(--warning); }
+  .dp-critical { background: var(--danger-bg); color: var(--danger); }
+  .dp-na { background: var(--mist); color: #aab; }
+
+  .action-btns { display: flex; gap: 6px; }
+  .icon-btn { width: 28px; height: 28px; border-radius: 3px; border: 1px solid var(--border); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; color: var(--steel); }
+  .icon-btn:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-pale); }
+
+  /* POSITION REGISTER */
+  .position-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+  .country-block { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .country-block-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .country-block-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--white); }
+  .country-block-sub { font-size: 10px; color: rgba(255,255,255,0.7); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+  .cbh-laos { background: var(--tag-laos); }
+  .cbh-myanmar { background: var(--tag-myanmar); }
+  .cbh-indonesia { background: var(--tag-indonesia); }
+  .cbh-thailand { background: var(--tag-thailand); }
+
+  .country-block-body { padding: 12px; }
+  .fill-rate-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+  .fill-rate-fill { height: 100%; border-radius: 3px; }
+  .fill-high { background: var(--success); }
+  .fill-med { background: var(--amber); }
+  .fill-low { background: var(--danger); }
+
+  .pos-row { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; border-bottom: 1px dotted var(--border); font-size: 11.5px; }
+  .pos-row:last-child { border-bottom: none; }
+  .pos-title { color: var(--ink); flex: 1; }
+  .pos-grade { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--steel); margin: 0 8px; }
+  .pos-status { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+  .ps-filled { background: var(--success-bg); color: var(--success); }
+  .ps-vacant { background: var(--danger-bg); color: var(--danger); }
+  .pos-count-badge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 2px 6px; border-radius: 2px; }
+  .pcb-filled { background: var(--success-bg); color: var(--success); }
+  .pcb-vacant { background: var(--danger-bg); color: var(--danger); }
+
+  /* RENEWAL ALERTS */
+  .alerts-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .alert-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .alert-card-header { padding: 12px 16px; background: var(--slate); display: flex; align-items: center; justify-content: space-between; }
+  .alert-card-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--amber-light); }
+  .alert-card-body { padding: 0; }
+  .alert-row { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  .alert-row:last-child { border-bottom: none; }
+  .alert-row:hover { background: var(--amber-pale); }
+  .alert-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .ai-critical { background: var(--danger-bg); }
+  .ai-warn { background: var(--warning-bg); }
+  .ai-ok { background: var(--success-bg); }
+  .alert-info { flex: 1; }
+  .alert-name { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+  .alert-detail { font-size: 11px; color: var(--steel); margin-top: 1px; }
+  .alert-days { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .ad-critical { color: var(--danger); }
+  .ad-warn { color: var(--warning); }
+  .ad-ok { color: var(--success); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,26,46,0.6); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--white); border-radius: 8px; width: 100%; max-width: 720px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--white); z-index: 1; }
+  .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); }
+  .modal-close { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 16px; color: var(--steel); display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: var(--mist); }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--mist); border-radius: 0 0 8px 8px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 12px; margin-top: 4px; padding-bottom: 6px; border-bottom: 1px solid var(--amber-pale); }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 11px; font-weight: 500; color: var(--steel); letter-spacing: 0.3px; }
+  .form-group input, .form-group select, .form-group textarea { padding: 8px 11px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.15s; background: var(--white); }
+  .form-group input:focus, .form-group select:focus { border-color: var(--amber); }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+  .form-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .form-full { grid-column: 1 / -1; }
+
+  /* DETAIL */
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .detail-item .detail-label { font-size: 10px; color: var(--steel); font-weight: 500; letter-spacing: 0.3px; text-transform: uppercase; margin-bottom: 3px; }
+  .detail-item .detail-value { font-size: 13px; color: var(--ink); }
+  .detail-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; margin-top: 16px; padding-bottom: 6px; border-bottom: 1px solid var(--amber-pale); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--slate); color: var(--white); padding: 12px 20px; border-radius: 6px; font-size: 13px; border-left: 3px solid var(--amber); display: none; z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .toast.show { display: block; animation: slideIn 0.2s ease; }
+  @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  @media (max-width: 1000px) {
+    .position-grid { grid-template-columns: 1fr 1fr; }
+    .alerts-section { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 700px) {
+    .header, .tool-header, .main, .stats-bar { padding-left: 16px; padding-right: 16px; }
+    .position-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="dept-badge">HR OPS · D9</div>
+    <div class="header-title">Valentis Group — HR Operations & Compliance</div>
+  </div>
+  <div class="header-meta">TOOL 02 / 09 &nbsp;·&nbsp; CONTRACTS & POSITIONS</div>
+</div>
+
+<!-- TOOL HEADER -->
+<div class="tool-header">
+  <div class="tool-title-block">
+    <h1>Employment Contracts & Position Register</h1>
+    <p>Tracks contract types, expiry and renewal dates, probation end dates, and headcount position status (filled / vacant) across all four Valentis operating countries. Single view for contract compliance and workforce gap visibility.</p>
+  </div>
+  <div class="tool-tag">HR OPS · TOOL 2 OF 9</div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-number" id="sTotalContracts">28</span>
+    <div class="stat-label">Active Contracts</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number yellow" id="sExpiring">3</span>
+    <div class="stat-label">Expiring ≤ 90 Days</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number red" id="sCritical">1</span>
+    <div class="stat-label">Critical (≤ 30 Days)</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" id="sProbation">4</span>
+    <div class="stat-label">Probation Active</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number red" id="sVacant">3</span>
+    <div class="stat-label">Open Vacancies</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number green" id="sFillRate">90%</span>
+    <div class="stat-label">Headcount Fill Rate</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('contracts')">Contract Register</button>
+    <button class="tab-btn" onclick="switchTab('positions')">Position Register</button>
+    <button class="tab-btn" onclick="switchTab('renewals')">Renewal Alerts</button>
+  </div>
+
+  <!-- TAB 1: CONTRACT REGISTER -->
+  <div class="tab-content active" id="tab-contracts">
+    <div class="controls-row">
+      <div class="search-box">
+        <span style="color:#99aabb;font-size:14px;">⌕</span>
+        <input type="text" id="contractSearch" placeholder="Search name, ID, role…" oninput="filterContracts()">
+      </div>
+      <select class="filter-select" id="fcCountry" onchange="filterContracts()">
+        <option value="">All Countries</option>
+        <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option>
+      </select>
+      <select class="filter-select" id="fcType" onchange="filterContracts()">
+        <option value="">All Contract Types</option>
+        <option>Permanent</option><option>Fixed Term</option><option>Trainee</option><option>Casual</option>
+      </select>
+      <select class="filter-select" id="fcExpiry" onchange="filterContracts()">
+        <option value="">All Expiry Status</option>
+        <option value="critical">Critical (≤30d)</option>
+        <option value="warn">Expiring (≤90d)</option>
+        <option value="ok">OK (&gt;90d)</option>
+        <option value="permanent">Permanent</option>
+      </select>
+      <button class="btn btn-primary" onclick="openAddContract()">+ Add Contract</button>
+      <button class="btn btn-outline" onclick="exportContracts()">↓ Export</button>
+    </div>
+
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">Contract Register</span>
+        <span class="record-count" id="contractCount">Showing 28 contracts</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>EMP ID</th>
+            <th>EMPLOYEE</th>
+            <th>COUNTRY</th>
+            <th>GRADE</th>
+            <th>CONTRACT TYPE</th>
+            <th>START DATE</th>
+            <th>END DATE / EXPIRY</th>
+            <th>DAYS TO EXPIRY</th>
+            <th>PROBATION END</th>
+            <th>RENEWAL STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="contractTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 2: POSITION REGISTER -->
+  <div class="tab-content" id="tab-positions">
+    <div class="position-grid" id="positionGrid"></div>
+
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">All Positions</span>
+        <span class="record-count" id="posCount"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>POSITION ID</th>
+            <th>ROLE</th>
+            <th>GRADE</th>
+            <th>COUNTRY</th>
+            <th>SITE</th>
+            <th>DEPT</th>
+            <th>STATUS</th>
+            <th>INCUMBENT</th>
+            <th>OPEN SINCE</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="posTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3: RENEWAL ALERTS -->
+  <div class="tab-content" id="tab-renewals">
+    <div class="alerts-section">
+      <div class="alert-card">
+        <div class="alert-card-header">
+          <span class="alert-card-title">🔴 Critical — Expiring ≤ 30 Days</span>
+        </div>
+        <div class="alert-card-body" id="alertsCritical"></div>
+      </div>
+      <div class="alert-card">
+        <div class="alert-card-header">
+          <span class="alert-card-title">⚠ Warning — Expiring ≤ 90 Days</span>
+        </div>
+        <div class="alert-card-body" id="alertsWarn"></div>
+      </div>
+      <div class="alert-card">
+        <div class="alert-card-header">
+          <span class="alert-card-title">📋 Probation Ending ≤ 60 Days</span>
+        </div>
+        <div class="alert-card-body" id="alertsProbation"></div>
+      </div>
+      <div class="alert-card">
+        <div class="alert-card-header">
+          <span class="alert-card-title">🏗 Open Vacancies</span>
+        </div>
+        <div class="alert-card-body" id="alertsVacancies"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- CONTRACT MODAL -->
+<div class="modal-overlay" id="contractModal" onclick="closeModal('contractModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="contractModalTitle">Add Contract Record</h2>
+      <button class="modal-close" onclick="closeModalDirect('contractModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title" style="margin-top:0;">Employee & Contract Details</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Employee ID *</label><input type="text" id="cm_id" placeholder="e.g. VTG-MM-029"></div>
+        <div class="form-group"><label>Full Name *</label><input type="text" id="cm_name" placeholder="Employee name"></div>
+        <div class="form-group"><label>Country *</label>
+          <select id="cm_country">
+            <option value="">Select…</option>
+            <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Grade *</label>
+          <select id="cm_grade">
+            <option value="">Select…</option>
+            <option>G1</option><option>G2</option><option>G3</option><option>G4</option>
+            <option>G5</option><option>G6</option><option>G7</option><option>G8</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Job Title *</label><input type="text" id="cm_title" placeholder="e.g. Driller Trainee"></div>
+        <div class="form-group"><label>Contract Type *</label>
+          <select id="cm_type">
+            <option value="">Select…</option>
+            <option>Permanent</option><option>Fixed Term</option><option>Trainee</option><option>Casual</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Contract Start Date *</label><input type="date" id="cm_start"></div>
+        <div class="form-group"><label>Contract End Date (if applicable)</label><input type="date" id="cm_end"></div>
+        <div class="form-group"><label>Probation End Date</label><input type="date" id="cm_probation"></div>
+        <div class="form-group"><label>Renewal Status</label>
+          <select id="cm_renewal">
+            <option>Not Required</option>
+            <option>Pending Review</option>
+            <option>Renewal Initiated</option>
+            <option>Renewed</option>
+            <option>Not Renewing</option>
+          </select>
+        </div>
+        <div class="form-group form-full"><label>Notes</label><textarea id="cm_notes" placeholder="Renewal intent, terms, conditions…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModalDirect('contractModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveContract()">Save Contract</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal" onclick="closeModal('detailModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="detailModalTitle">Contract Detail</h2>
+      <button class="modal-close" onclick="closeModalDirect('detailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="detailModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModalDirect('detailModal')">Close</button>
+      <button class="btn btn-primary" id="detailEditBtn">Edit Contract</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TODAY = new Date('2025-03-10');
+
+function daysBetween(a, b) {
+  return Math.round((new Date(b) - new Date(a)) / 86400000);
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+function daysToExpiry(endDate) {
+  if (!endDate) return null;
+  return daysBetween(TODAY, endDate);
+}
+
+// ── DATA ──────────────────────────────────────────────────────────
+const contracts = [
+  { id:'VTG-LA-001', name:'Bounmy Phommasack',   country:'Laos',      grade:'G4', title:'Senior Driller',        type:'Permanent', start:'2019-03-12', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-LA-002', name:'Khamla Sysouphanthong',country:'Laos',     grade:'G4', title:'Senior Driller',        type:'Permanent', start:'2018-07-01', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-LA-003', name:'Phonesavanh Boupha',   country:'Laos',      grade:'G4', title:'Senior Driller',        type:'Permanent', start:'2017-11-15', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-LA-004', name:'Sven Andersen',         country:'Laos',     grade:'G3', title:'Driller',               type:'Fixed Term', start:'2021-05-10', end:'2025-04-30', probation:null,      renewal:'Pending Review' },
+  { id:'VTG-LA-005', name:'Viengkham Xayavong',   country:'Laos',      grade:'G2', title:'Driller Trainee',       type:'Trainee',   start:'2024-01-08', end:'2025-07-08', probation:'2025-04-08', renewal:'Not Required' },
+  { id:'VTG-LA-006', name:'Dalavanh Keosavanh',   country:'Laos',      grade:'G2', title:'Driller Trainee',       type:'Trainee',   start:'2023-06-01', end:'2025-05-31', probation:null,       renewal:'Not Required' },
+  { id:'VTG-LA-007', name:'Nguyen Van Duc',        country:'Laos',     grade:'G3', title:'Field Technician',      type:'Fixed Term', start:'2022-09-14', end:'2025-03-31', probation:null,      renewal:'Renewal Initiated' },
+  { id:'VTG-MM-008', name:'Kyaw Zin Thant',        country:'Myanmar',  grade:'G4', title:'Senior Driller',        type:'Permanent', start:'2020-02-20', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-MM-009', name:'Aung Myint Kyaw',       country:'Myanmar',  grade:'G3', title:'Driller',               type:'Permanent', start:'2021-10-05', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-MM-010', name:'Zaw Lin Oo',            country:'Myanmar',  grade:'G3', title:'Driller',               type:'Permanent', start:'2022-04-18', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-MM-011', name:'Ye Htut Win',           country:'Myanmar',  grade:'G2', title:'Driller Trainee',       type:'Trainee',   start:'2024-10-01', end:'2026-04-01', probation:'2025-04-01', renewal:'Not Required' },
+  { id:'VTG-MM-012', name:'Myo Naing',             country:'Myanmar',  grade:'G2', title:'Driller Trainee',       type:'Trainee',   start:'2024-10-01', end:'2026-04-01', probation:'2025-04-01', renewal:'Not Required' },
+  { id:'VTG-MM-013', name:'Thurein Aung',          country:'Myanmar',  grade:'G2', title:'Driller Trainee',       type:'Trainee',   start:'2024-07-15', end:'2026-01-15', probation:null,       renewal:'Not Required' },
+  { id:'VTG-MM-014', name:'Hlaing Min Oo',         country:'Myanmar',  grade:'G1', title:'Field Support',         type:'Permanent', start:'2023-03-01', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-MM-015', name:'Khin Zaw',              country:'Myanmar',  grade:'G1', title:'Field Support',         type:'Permanent', start:'2023-08-10', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-MM-016', name:'Htet Aung',             country:'Myanmar',  grade:'G2', title:'Driller Trainee',       type:'Trainee',   start:'2024-11-20', end:'2026-05-20', probation:'2025-05-20', renewal:'Not Required' },
+  { id:'VTG-ID-017', name:'Budi Santoso',          country:'Indonesia',grade:'G4', title:'Senior Driller',        type:'Permanent', start:'2020-08-12', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-ID-018', name:'Arif Budiman',          country:'Indonesia',grade:'G3', title:'Driller',               type:'Permanent', start:'2022-01-10', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-ID-019', name:'Rizky Firmansyah',      country:'Indonesia',grade:'G3', title:'Driller',               type:'Permanent', start:'2023-03-22', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-ID-020', name:'Dedi Kurniawan',        country:'Indonesia',grade:'G2', title:'Driller Trainee',       type:'Trainee',   start:'2024-02-05', end:'2025-08-05', probation:null,       renewal:'Not Required' },
+  { id:'VTG-ID-021', name:'Eko Prasetyo',          country:'Indonesia',grade:'G3', title:'Field Technician',      type:'Fixed Term', start:'2022-07-18', end:'2025-12-31', probation:null,      renewal:'Not Required' },
+  { id:'VTG-ID-022', name:'Siti Rahayu',           country:'Indonesia',grade:'G5', title:'HR & Admin Officer',    type:'Permanent', start:'2021-04-01', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-TH-023', name:'Somchai Rattana',       country:'Thailand', grade:'G8', title:'Country Manager',       type:'Permanent', start:'2016-06-01', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-TH-024', name:'Nattaporn Suksawat',   country:'Thailand',  grade:'G7', title:'Finance Manager',       type:'Permanent', start:'2018-09-15', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-TH-025', name:'Pimchanok Thongdee',   country:'Thailand',  grade:'G5', title:'Operations Coordinator',type:'Permanent', start:'2020-11-01', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-TH-026', name:'Ananya Buranasiri',     country:'Thailand', grade:'G5', title:'Procurement Officer',   type:'Permanent', start:'2022-02-14', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-TH-027', name:'Kasem Wongchai',        country:'Thailand', grade:'G7', title:'Group HR Manager',      type:'Permanent', start:'2019-08-01', end:null,         probation:null,       renewal:'Not Required' },
+  { id:'VTG-MM-028', name:'Tin Maung Win',         country:'Myanmar',  grade:'G2', title:'Driller Trainee',       type:'Trainee',   start:'2025-03-01', end:'2026-09-01', probation:'2025-09-01', renewal:'Not Required' },
+];
+
+const positions = [
+  // LAOS
+  { posId:'POS-LA-001', role:'Senior Driller',     grade:'G4', country:'Laos',      site:'Vientiane Site A', dept:'Drilling Ops', status:'Filled', incumbent:'Bounmy Phommasack',    openSince:null },
+  { posId:'POS-LA-002', role:'Senior Driller',     grade:'G4', country:'Laos',      site:'Vientiane Site A', dept:'Drilling Ops', status:'Filled', incumbent:'Khamla Sysouphanthong', openSince:null },
+  { posId:'POS-LA-003', role:'Senior Driller',     grade:'G4', country:'Laos',      site:'Vientiane Site A', dept:'Drilling Ops', status:'Filled', incumbent:'Phonesavanh Boupha',    openSince:null },
+  { posId:'POS-LA-004', role:'Driller',            grade:'G3', country:'Laos',      site:'Vientiane Site A', dept:'Drilling Ops', status:'Filled', incumbent:'Sven Andersen',         openSince:null },
+  { posId:'POS-LA-005', role:'Driller Trainee',    grade:'G2', country:'Laos',      site:'Vientiane Site A', dept:'Drilling Ops', status:'Filled', incumbent:'Viengkham Xayavong',    openSince:null },
+  { posId:'POS-LA-006', role:'Driller Trainee',    grade:'G2', country:'Laos',      site:'Vientiane Site B', dept:'Drilling Ops', status:'Filled', incumbent:'Dalavanh Keosavanh',    openSince:null },
+  { posId:'POS-LA-007', role:'Field Technician',   grade:'G3', country:'Laos',      site:'Vientiane Site B', dept:'Technical',    status:'Filled', incumbent:'Nguyen Van Duc',        openSince:null },
+  // MYANMAR
+  { posId:'POS-MM-001', role:'Senior Driller',     grade:'G4', country:'Myanmar',   site:'Mandalay Site', dept:'Drilling Ops', status:'Filled', incumbent:'Kyaw Zin Thant',      openSince:null },
+  { posId:'POS-MM-002', role:'Driller',            grade:'G3', country:'Myanmar',   site:'Mandalay Site', dept:'Drilling Ops', status:'Filled', incumbent:'Aung Myint Kyaw',     openSince:null },
+  { posId:'POS-MM-003', role:'Driller',            grade:'G3', country:'Myanmar',   site:'Mandalay Site', dept:'Drilling Ops', status:'Filled', incumbent:'Zaw Lin Oo',          openSince:null },
+  { posId:'POS-MM-004', role:'Driller Trainee',    grade:'G2', country:'Myanmar',   site:'Mandalay Site', dept:'Drilling Ops', status:'Filled', incumbent:'Ye Htut Win',         openSince:null },
+  { posId:'POS-MM-005', role:'Driller Trainee',    grade:'G2', country:'Myanmar',   site:'Mandalay Site', dept:'Drilling Ops', status:'Filled', incumbent:'Myo Naing',           openSince:null },
+  { posId:'POS-MM-006', role:'Driller Trainee',    grade:'G2', country:'Myanmar',   site:'Mandalay Site', dept:'Drilling Ops', status:'Filled', incumbent:'Thurein Aung',        openSince:null },
+  { posId:'POS-MM-007', role:'Field Support',      grade:'G1', country:'Myanmar',   site:'Mandalay Site', dept:'Ops Support',  status:'Filled', incumbent:'Hlaing Min Oo',       openSince:null },
+  { posId:'POS-MM-008', role:'Field Support',      grade:'G1', country:'Myanmar',   site:'Mandalay Site', dept:'Ops Support',  status:'Filled', incumbent:'Khin Zaw',            openSince:null },
+  { posId:'POS-MM-009', role:'Driller Trainee',    grade:'G2', country:'Myanmar',   site:'Mandalay Site', dept:'Drilling Ops', status:'Filled', incumbent:'Htet Aung',           openSince:null },
+  { posId:'POS-MM-010', role:'Driller Trainee',    grade:'G2', country:'Myanmar',   site:'Mandalay Site', dept:'Drilling Ops', status:'Filled', incumbent:'Tin Maung Win',       openSince:null },
+  // INDONESIA — 3 open G3 vacancies
+  { posId:'POS-ID-001', role:'Senior Driller',     grade:'G4', country:'Indonesia', site:'Kalimantan Site', dept:'Drilling Ops', status:'Filled',  incumbent:'Budi Santoso',     openSince:null },
+  { posId:'POS-ID-002', role:'Driller',            grade:'G3', country:'Indonesia', site:'Kalimantan Site', dept:'Drilling Ops', status:'Filled',  incumbent:'Arif Budiman',     openSince:null },
+  { posId:'POS-ID-003', role:'Driller',            grade:'G3', country:'Indonesia', site:'Kalimantan Site', dept:'Drilling Ops', status:'Filled',  incumbent:'Rizky Firmansyah', openSince:null },
+  { posId:'POS-ID-004', role:'Driller (G3)',       grade:'G3', country:'Indonesia', site:'Kalimantan Site', dept:'Drilling Ops', status:'Vacant',  incumbent:'—',                openSince:'2024-10-01' },
+  { posId:'POS-ID-005', role:'Driller (G3)',       grade:'G3', country:'Indonesia', site:'Kalimantan Site', dept:'Drilling Ops', status:'Vacant',  incumbent:'—',                openSince:'2024-10-01' },
+  { posId:'POS-ID-006', role:'Driller (G3)',       grade:'G3', country:'Indonesia', site:'Kalimantan Site', dept:'Drilling Ops', status:'Vacant',  incumbent:'—',                openSince:'2024-10-01' },
+  { posId:'POS-ID-007', role:'Driller Trainee',    grade:'G2', country:'Indonesia', site:'Kalimantan Site', dept:'Drilling Ops', status:'Filled',  incumbent:'Dedi Kurniawan',   openSince:null },
+  { posId:'POS-ID-008', role:'Field Technician',   grade:'G3', country:'Indonesia', site:'Kalimantan Site', dept:'Technical',    status:'Filled',  incumbent:'Eko Prasetyo',     openSince:null },
+  { posId:'POS-ID-009', role:'HR & Admin Officer', grade:'G5', country:'Indonesia', site:'Jakarta Office',  dept:'HR & Admin',   status:'Filled',  incumbent:'Siti Rahayu',      openSince:null },
+  // THAILAND
+  { posId:'POS-TH-001', role:'Country Manager',       grade:'G8', country:'Thailand', site:'Bangkok HQ', dept:'Management',  status:'Filled', incumbent:'Somchai Rattana',    openSince:null },
+  { posId:'POS-TH-002', role:'Finance Manager',        grade:'G7', country:'Thailand', site:'Bangkok HQ', dept:'Finance',     status:'Filled', incumbent:'Nattaporn Suksawat', openSince:null },
+  { posId:'POS-TH-003', role:'Operations Coordinator', grade:'G5', country:'Thailand', site:'Bangkok HQ', dept:'Operations',  status:'Filled', incumbent:'Pimchanok Thongdee', openSince:null },
+  { posId:'POS-TH-004', role:'Procurement Officer',    grade:'G5', country:'Thailand', site:'Bangkok HQ', dept:'Procurement', status:'Filled', incumbent:'Ananya Buranasiri', openSince:null },
+  { posId:'POS-TH-005', role:'Group HR Manager',       grade:'G7', country:'Thailand', site:'Bangkok HQ', dept:'Human Resources', status:'Filled', incumbent:'Kasem Wongchai', openSince:null },
+];
+
+let filteredContracts = [...contracts];
+
+// ── CONTRACT TABLE ────────────────────────────────────────────────
+function renderContracts(data) {
+  const tbody = document.getElementById('contractTableBody');
+  tbody.innerHTML = '';
+  data.forEach(c => {
+    const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'}[c.country]||'';
+    const typeClass = {Permanent:'cb-permanent','Fixed Term':'cb-fixed',Trainee:'cb-trainee',Casual:'cb-casual'}[c.type]||'cb-casual';
+    const days = daysToExpiry(c.end);
+    let daysHtml = '<span class="days-pill dp-na">Permanent</span>';
+    let expiryClass = 'expiry-na';
+    if (days !== null) {
+      if (days <= 30) { daysHtml = `<span class="days-pill dp-critical">${days}d</span>`; expiryClass = 'expiry-critical'; }
+      else if (days <= 90) { daysHtml = `<span class="days-pill dp-warn">${days}d</span>`; expiryClass = 'expiry-warn'; }
+      else { daysHtml = `<span class="days-pill dp-ok">${days}d</span>`; expiryClass = 'expiry-ok'; }
+    }
+    const renewalColor = {
+      'Pending Review': 'color:var(--warning)',
+      'Renewal Initiated': 'color:var(--info)',
+      'Renewed': 'color:var(--success)',
+      'Not Renewing': 'color:var(--danger)',
+      'Not Required': 'color:#aab'
+    }[c.renewal] || '';
+
+    tbody.innerHTML += `
+      <tr onclick="openContractDetail('${c.id}')">
+        <td><span class="emp-id">${c.id}</span></td>
+        <td><div class="emp-name">${c.name}</div><div class="emp-sub">${c.title}</div></td>
+        <td><span class="country-tag ${ctClass}">${c.country}</span></td>
+        <td><span class="grade-badge">${c.grade}</span></td>
+        <td><span class="contract-badge ${typeClass}">${c.type}</span></td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(c.start)}</td>
+        <td class="${expiryClass}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${c.end ? fmtDate(c.end) : '—'}</td>
+        <td>${daysHtml}</td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${c.probation ? fmtDate(c.probation) : '—'}</td>
+        <td style="font-size:11px;font-weight:500;${renewalColor}">${c.renewal}</td>
+        <td onclick="event.stopPropagation()">
+          <div class="action-btns">
+            <button class="icon-btn" title="Edit" onclick="openEditContract('${c.id}')">✎</button>
+            <button class="icon-btn" title="Renew" onclick="markRenewal('${c.id}')">↺</button>
+          </div>
+        </td>
+      </tr>`;
+  });
+  document.getElementById('contractCount').textContent = `Showing ${data.length} of ${contracts.length} contracts`;
+  updateStats();
+}
+
+function filterContracts() {
+  const q = document.getElementById('contractSearch').value.toLowerCase();
+  const country = document.getElementById('fcCountry').value;
+  const type = document.getElementById('fcType').value;
+  const expiry = document.getElementById('fcExpiry').value;
+  filteredContracts = contracts.filter(c => {
+    const mq = !q || c.name.toLowerCase().includes(q) || c.id.toLowerCase().includes(q) || c.title.toLowerCase().includes(q);
+    const mc = !country || c.country === country;
+    const mt = !type || c.type === type;
+    let me = true;
+    if (expiry) {
+      const d = daysToExpiry(c.end);
+      if (expiry==='permanent') me = c.type==='Permanent';
+      else if (expiry==='critical') me = d !== null && d <= 30;
+      else if (expiry==='warn') me = d !== null && d <= 90 && d > 30;
+      else if (expiry==='ok') me = d !== null && d > 90;
+    }
+    return mq && mc && mt && me;
+  });
+  renderContracts(filteredContracts);
+}
+
+function updateStats() {
+  const expiring = contracts.filter(c => { const d = daysToExpiry(c.end); return d !== null && d <= 90; }).length;
+  const critical = contracts.filter(c => { const d = daysToExpiry(c.end); return d !== null && d <= 30; }).length;
+  const probation = contracts.filter(c => c.probation && daysToExpiry(c.probation) > 0).length;
+  const vacant = positions.filter(p => p.status === 'Vacant').length;
+  const fillRate = Math.round((positions.filter(p=>p.status==='Filled').length / positions.length)*100);
+  document.getElementById('sTotalContracts').textContent = contracts.length;
+  document.getElementById('sExpiring').textContent = expiring;
+  document.getElementById('sCritical').textContent = critical;
+  document.getElementById('sProbation').textContent = probation;
+  document.getElementById('sVacant').textContent = vacant;
+  document.getElementById('sFillRate').textContent = fillRate+'%';
+}
+
+// ── POSITION REGISTER ────────────────────────────────────────────
+function renderPositions() {
+  const countries = ['Laos','Myanmar','Indonesia','Thailand'];
+  const grid = document.getElementById('positionGrid');
+  grid.innerHTML = '';
+  countries.forEach(ctry => {
+    const cPositions = positions.filter(p=>p.country===ctry);
+    const filled = cPositions.filter(p=>p.status==='Filled').length;
+    const vacant = cPositions.filter(p=>p.status==='Vacant').length;
+    const fillRate = Math.round(filled/cPositions.length*100);
+    const fillClass = fillRate===100?'fill-high':fillRate>=70?'fill-med':'fill-low';
+    const cbhClass = {Laos:'cbh-laos',Myanmar:'cbh-myanmar',Indonesia:'cbh-indonesia',Thailand:'cbh-thailand'}[ctry];
+    let posRows = cPositions.map(p=>{
+      const statusClass = p.status==='Filled'?'ps-filled':'ps-vacant';
+      const icon = p.status==='Filled'?'✓':'○';
+      return `<div class="pos-row">
+        <span class="pos-title">${p.role}</span>
+        <span class="pos-grade">${p.grade}</span>
+        <span class="pos-status ${statusClass}">${icon}</span>
+      </div>`;
+    }).join('');
+    grid.innerHTML += `
+      <div class="country-block">
+        <div class="country-block-header ${cbhClass}">
+          <div>
+            <div class="country-block-title">${ctry}</div>
+            <div class="country-block-sub">${cPositions.length} positions &nbsp;·&nbsp; ${vacant} vacant</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:500;color:rgba(255,255,255,0.9);">${fillRate}%</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.6);">fill rate</div>
+          </div>
+        </div>
+        <div class="country-block-body">
+          <div class="fill-rate-bar"><div class="fill-rate-fill ${fillClass}" style="width:${fillRate}%"></div></div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <span class="pos-count-badge pcb-filled">✓ ${filled} filled</span>
+            <span class="pos-count-badge pcb-vacant">○ ${vacant} vacant</span>
+          </div>
+          ${posRows}
+        </div>
+      </div>`;
+  });
+
+  // Positions table
+  const tbody = document.getElementById('posTableBody');
+  tbody.innerHTML = '';
+  positions.forEach(p => {
+    const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'}[p.country]||'';
+    const statusHtml = p.status==='Filled'
+      ? `<span class="days-pill dp-ok">Filled</span>`
+      : `<span class="days-pill dp-critical">Vacant</span>`;
+    tbody.innerHTML += `
+      <tr>
+        <td><span class="emp-id">${p.posId}</span></td>
+        <td><div class="emp-name">${p.role}</div></td>
+        <td><span class="grade-badge">${p.grade}</span></td>
+        <td><span class="country-tag ${ctClass}">${p.country}</span></td>
+        <td style="font-size:12px;">${p.site}</td>
+        <td style="font-size:12px;color:var(--steel);">${p.dept}</td>
+        <td>${statusHtml}</td>
+        <td style="font-size:12.5px;">${p.incumbent}</td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);">${p.openSince?fmtDate(p.openSince):'—'}</td>
+        <td>
+          <div class="action-btns">
+            <button class="icon-btn" title="${p.status==='Filled'?'Mark Vacant':'Fill Position'}" onclick="togglePos('${p.posId}')">⇄</button>
+          </div>
+        </td>
+      </tr>`;
+  });
+  document.getElementById('posCount').textContent = `${positions.length} positions — ${positions.filter(p=>p.status==='Filled').length} filled, ${positions.filter(p=>p.status==='Vacant').length} vacant`;
+}
+
+function togglePos(posId) {
+  const pos = positions.find(p=>p.posId===posId);
+  if (!pos) return;
+  pos.status = pos.status==='Filled'?'Vacant':'Filled';
+  if (pos.status==='Vacant') pos.openSince = TODAY.toISOString().split('T')[0];
+  else pos.openSince = null;
+  renderPositions();
+  updateStats();
+  showToast(`Position ${posId} marked as ${pos.status}`);
+}
+
+// ── RENEWAL ALERTS ────────────────────────────────────────────────
+function renderAlerts() {
+  const critical = contracts.filter(c=>{ const d=daysToExpiry(c.end); return d!==null && d<=30; });
+  const warn = contracts.filter(c=>{ const d=daysToExpiry(c.end); return d!==null && d>30 && d<=90; });
+  const probEnding = contracts.filter(c=>c.probation && daysToExpiry(c.probation)>0 && daysToExpiry(c.probation)<=60);
+  const vacancies = positions.filter(p=>p.status==='Vacant');
+
+  const renderAlertRows = (items, container, type) => {
+    const el = document.getElementById(container);
+    if (!items.length) { el.innerHTML = `<div style="padding:16px;font-size:13px;color:#aab;font-style:italic;">No items in this category.</div>`; return; }
+    el.innerHTML = items.map(item => {
+      let icon, iconClass, days, daysClass, name, detail;
+      if (type==='contract') {
+        days = daysToExpiry(item.end);
+        iconClass = days<=30?'ai-critical':'ai-warn';
+        icon = days<=30?'🔴':'⚠';
+        daysClass = days<=30?'ad-critical':'ad-warn';
+        name = item.name;
+        detail = `${item.id} · ${item.type} · ${item.country} · Expires ${fmtDate(item.end)}`;
+        return `<div class="alert-row"><div class="alert-icon ${iconClass}">${icon}</div><div class="alert-info"><div class="alert-name">${name}</div><div class="alert-detail">${detail}</div></div><div class="alert-days ${daysClass}">${days}d left</div></div>`;
+      } else if (type==='probation') {
+        days = daysToExpiry(item.probation);
+        name = item.name;
+        detail = `${item.id} · ${item.country} · Probation ends ${fmtDate(item.probation)}`;
+        return `<div class="alert-row"><div class="alert-icon ai-warn">📋</div><div class="alert-info"><div class="alert-name">${name}</div><div class="alert-detail">${detail}</div></div><div class="alert-days ad-warn">${days}d</div></div>`;
+      } else {
+        const openDays = item.openSince ? daysBetween(item.openSince, TODAY) : '—';
+        name = item.role;
+        detail = `${item.posId} · ${item.country} · ${item.site} · Open ${openDays}d`;
+        return `<div class="alert-row"><div class="alert-icon ai-critical">🏗</div><div class="alert-info"><div class="alert-name">${name}</div><div class="alert-detail">${detail}</div></div><div class="alert-days ad-critical">Vacant</div></div>`;
+      }
+    }).join('');
+  };
+
+  renderAlertRows(critical, 'alertsCritical', 'contract');
+  renderAlertRows(warn, 'alertsWarn', 'contract');
+  renderAlertRows(probEnding, 'alertsProbation', 'probation');
+  renderAlertRows(vacancies, 'alertsVacancies', 'vacancy');
+}
+
+// ── TABS ──────────────────────────────────────────────────────────
+function switchTab(id) {
+  const tabs = ['contracts','positions','renewals'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active', tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────
+function openAddContract() {
+  document.getElementById('contractModalTitle').textContent = 'Add Contract Record';
+  ['cm_id','cm_name','cm_title','cm_notes'].forEach(id=>document.getElementById(id).value='');
+  ['cm_start','cm_end','cm_probation'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cm_country').value='';
+  document.getElementById('cm_grade').value='';
+  document.getElementById('cm_type').value='';
+  document.getElementById('cm_renewal').value='Not Required';
+  document.getElementById('contractModal').classList.add('active');
+}
+function openEditContract(id) {
+  const c = contracts.find(x=>x.id===id);
+  if (!c) return;
+  document.getElementById('contractModalTitle').textContent = `Edit — ${c.name}`;
+  document.getElementById('cm_id').value = c.id;
+  document.getElementById('cm_name').value = c.name;
+  document.getElementById('cm_country').value = c.country;
+  document.getElementById('cm_grade').value = c.grade;
+  document.getElementById('cm_title').value = c.title;
+  document.getElementById('cm_type').value = c.type;
+  document.getElementById('cm_start').value = c.start;
+  document.getElementById('cm_end').value = c.end||'';
+  document.getElementById('cm_probation').value = c.probation||'';
+  document.getElementById('cm_renewal').value = c.renewal;
+  document.getElementById('contractModal').classList.add('active');
+}
+function saveContract() {
+  const name = document.getElementById('cm_name').value.trim();
+  const country = document.getElementById('cm_country').value;
+  if (!name || !country) { showToast('⚠ Name and Country are required'); return; }
+  const id = document.getElementById('cm_id').value.trim();
+  const existing = contracts.find(c=>c.id===id);
+  if (existing) {
+    existing.end = document.getElementById('cm_end').value||null;
+    existing.probation = document.getElementById('cm_probation').value||null;
+    existing.renewal = document.getElementById('cm_renewal').value;
+    existing.type = document.getElementById('cm_type').value;
+    showToast('✓ Contract record updated');
+  } else {
+    contracts.push({
+      id: id || `VTG-NEW-${contracts.length+1}`,
+      name, country,
+      grade: document.getElementById('cm_grade').value,
+      title: document.getElementById('cm_title').value,
+      type: document.getElementById('cm_type').value,
+      start: document.getElementById('cm_start').value,
+      end: document.getElementById('cm_end').value||null,
+      probation: document.getElementById('cm_probation').value||null,
+      renewal: document.getElementById('cm_renewal').value
+    });
+    showToast('✓ Contract added');
+  }
+  filteredContracts = [...contracts];
+  renderContracts(filteredContracts);
+  renderAlerts();
+  closeModalDirect('contractModal');
+}
+function markRenewal(id) {
+  const c = contracts.find(x=>x.id===id);
+  if (c) { c.renewal = 'Renewal Initiated'; renderContracts(filteredContracts); showToast(`↺ Renewal initiated for ${c.name}`); }
+}
+function openContractDetail(id) {
+  const c = contracts.find(x=>x.id===id);
+  if (!c) return;
+  const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand'}[c.country]||'';
+  const days = daysToExpiry(c.end);
+  const typeClass = {Permanent:'cb-permanent','Fixed Term':'cb-fixed',Trainee:'cb-trainee',Casual:'cb-casual'}[c.type]||'cb-casual';
+  document.getElementById('detailModalTitle').textContent = c.name;
+  document.getElementById('detailModalBody').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--slate);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:18px;color:var(--amber-light);font-weight:700;">${c.name.charAt(0)}</div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;">${c.name}</div>
+        <div style="font-size:12px;color:var(--steel);margin-top:2px;">${c.id} &nbsp;·&nbsp; ${c.title}</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <span class="country-tag ${ctClass}">${c.country}</span>
+        <span class="grade-badge">${c.grade}</span>
+        <span class="contract-badge ${typeClass}">${c.type}</span>
+      </div>
+    </div>
+    <div class="detail-section-title">Contract Terms</div>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">Start Date</div><div class="detail-value">${fmtDate(c.start)}</div></div>
+      <div class="detail-item"><div class="detail-label">End Date</div><div class="detail-value">${c.end?fmtDate(c.end):'Permanent — No expiry'}</div></div>
+      <div class="detail-item"><div class="detail-label">Days to Expiry</div><div class="detail-value">${days!==null?days+'d':'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Renewal Status</div><div class="detail-value">${c.renewal}</div></div>
+      <div class="detail-item"><div class="detail-label">Probation End</div><div class="detail-value">${c.probation?fmtDate(c.probation):'—'}</div></div>
+    </div>`;
+  document.getElementById('detailEditBtn').onclick = () => { closeModalDirect('detailModal'); openEditContract(id); };
+  document.getElementById('detailModal').classList.add('active');
+}
+
+function closeModal(id, e) { if (e.target===document.getElementById(id)) closeModalDirect(id); }
+function closeModalDirect(id) { document.getElementById(id).classList.remove('active'); }
+
+// ── EXPORT ──────────────────────────────────────────────────────────
+function exportContracts() {
+  const headers = ['ID','Name','Country','Grade','Title','Contract Type','Start Date','End Date','Days to Expiry','Probation End','Renewal Status'];
+  const rows = filteredContracts.map(c=>[c.id,c.name,c.country,c.grade,c.title,c.type,c.start,c.end||'—',daysToExpiry(c.end)||'—',c.probation||'—',c.renewal]);
+  const csv = [headers.join(','),...rows.map(r=>r.map(v=>`"${v}"`).join(','))].join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = 'valentis-contracts.csv'; a.click();
+  showToast('✓ Contract register exported');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+renderContracts(contracts);
+renderPositions();
+renderAlerts();
+</script>
+</body>
+</html>

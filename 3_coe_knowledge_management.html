@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knowledge Management System — Centre of Excellence Tool 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2ee;--surface:#fff;--surface2:#e8ece6;--surface3:#dde3da;
+  --border:#c8d0c4;--border2:#b4bfaf;
+  --ink:#0d110c;--ink2:#1a2418;--ink3:#3d5039;--ink4:#6b7d67;--ink5:#a0b09c;
+  --teal:#0a2420;--teal2:#0d2e29;
+  --gold:#b8960a;--gold2:#cfa50c;--gold3:#e6bc2a;
+  --gold-dim:rgba(184,150,10,0.09);--gold-border:rgba(184,150,10,0.28);
+  --green:#1a6b3a;--green-dim:rgba(26,107,58,0.08);--green-border:rgba(26,107,58,0.24);
+  --red:#b83225;--red-dim:rgba(184,50,37,0.07);--red-border:rgba(184,50,37,0.22);
+  --amber:#b87010;--amber-dim:rgba(184,112,16,0.08);--amber-border:rgba(184,112,16,0.24);
+  --teal-accent:#0e7c6e;--teal-dim:rgba(14,124,110,0.09);--teal-border:rgba(14,124,110,0.26);
+  --sidebar-w:280px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--teal);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--gold3),var(--gold),rgba(184,150,10,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);background:rgba(184,150,10,0.15);border:1px solid rgba(184,150,10,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f8f4;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--gold3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(184,150,10,0.16);border-color:rgba(184,150,10,0.38);color:var(--gold3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--gold2)}
+.nav-item.tool-link{color:rgba(255,255,255,0.18);font-size:12px}
+.nav-item.tool-link.current-tool{color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.04)}
+.nav-status{margin-left:auto;font-family:var(--fm);font-size:8px;padding:1px 5px;border-radius:2px}
+.status-done{background:rgba(26,107,58,0.25);color:#6ecf94}
+.status-next{background:rgba(184,150,10,0.2);color:var(--gold3)}
+.status-soon{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.25)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--gold3);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal-accent);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--gold)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--gold);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cgo{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.cgr{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.ca{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.ct2{background:var(--teal-dim);color:var(--teal-accent);border:1px solid var(--teal-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.go{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.inf.gr{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf.r{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.inf.a{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.inf.t{background:var(--teal-dim);border-color:var(--teal-accent);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--teal);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+.vx{background:var(--teal);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f8f4;margin-bottom:8px;line-height:1.2}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.42);font-weight:300;line-height:1.85}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kgo::before{background:var(--gold)}.kgr2::before{background:var(--green)}
+.ka::before{background:var(--amber)}.kt2::before{background:var(--teal-accent)}
+.krd::before{background:var(--red)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kgo .kv{color:var(--gold)}.kgr2 .kv{color:var(--green)}
+.ka .kv{color:var(--amber)}.kt2 .kv{color:var(--teal-accent)}.krd .kv{color:var(--red)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.ktag{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktag-go{background:var(--gold-dim);color:var(--gold)}
+.ktag-gr{background:var(--green-dim);color:var(--green)}
+.ktag-t{background:var(--teal-dim);color:var(--teal-accent)}
+.ktag-a{background:var(--amber-dim);color:var(--amber)}
+.ktag-r{background:var(--red-dim);color:var(--red)}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+/* Knowledge item card */
+.kb-item{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:8px;display:flex;gap:14px;align-items:flex-start;transition:box-shadow .13s}
+.kb-item:hover{box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.kb-icon{width:36px;height:36px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.kb-meta{flex:1}
+.kb-title{font-weight:700;font-size:13px;color:var(--ink);margin-bottom:3px}
+.kb-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:5px}
+.kb-tags{display:flex;gap:5px;flex-wrap:wrap}
+/* Folder tree */
+.folder{margin-bottom:4px}
+.folder-head{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:3px;cursor:pointer;transition:background .13s}
+.folder-head:hover{background:var(--surface2)}
+.folder-icon{font-size:13px;flex-shrink:0}
+.folder-name{font-weight:600;font-size:13px;color:var(--ink)}
+.folder-count{margin-left:auto;font-family:var(--fm);font-size:9px;color:var(--ink5)}
+.folder-children{padding-left:24px;border-left:1px dashed var(--border);margin-left:16px}
+.file-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:3px;transition:background .13s}
+.file-item:hover{background:var(--surface2)}
+.file-name{font-size:12.5px;color:var(--ink2);font-weight:300}
+.file-status{margin-left:auto;font-family:var(--fm);font-size:8px}
+/* Onboarding timeline */
+.ob-track{display:flex;gap:0;margin-bottom:14px}
+.ob-node{flex:1;position:relative;padding-top:32px}
+.ob-node::before{content:'';position:absolute;top:12px;left:0;right:0;height:2px;background:var(--border)}
+.ob-node:first-child::before{left:50%}
+.ob-node:last-child::before{right:50%}
+.ob-dot{width:24px;height:24px;border-radius:50%;position:absolute;top:1px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--fm)}
+.ob-label{text-align:center;font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.ob-content{background:var(--surface2);border-radius:3px;padding:8px 10px;margin:0 4px;font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.5}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx,.page.active .krow{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+.page.active .card:nth-child(5){animation-delay:.12s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">Centre of Excellence · Tool 3 / 7</div>
+    <div class="sb-title">Knowledge<br><em>Management</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Tool 3 Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('architecture',this)"><span class="nav-num">02</span>KM Architecture</div>
+    <div class="nav-item" onclick="showPage('library',this)"><span class="nav-num">03</span>Toolkit Library</div>
+    <div class="nav-item" onclick="showPage('capture',this)"><span class="nav-num">04</span>Capture & Curation</div>
+    <div class="nav-item" onclick="showPage('version',this)"><span class="nav-num">05</span>Version Control</div>
+    <div class="nav-item" onclick="showPage('onboarding',this)"><span class="nav-num">06</span>Onboarding via KM</div>
+    <div class="nav-item" onclick="showPage('handover',this)"><span class="nav-num">07</span>Handover Framework</div>
+    <div class="nav-item" onclick="showPage('health',this)"><span class="nav-num">08</span>KM Health Dashboard</div>
+
+    <div class="sb-group">All CoE Tools</div>
+    <div class="nav-item tool-link"><span class="nav-num">01</span>CoE Operating Model<span class="nav-status status-done">Done</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">02</span>Standards &amp; Policy Register<span class="nav-status status-done">Done</span></div>
+    <div class="nav-item tool-link current-tool"><span class="nav-num">03</span>Knowledge Management<span class="nav-status status-next">Current</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">04</span>Governance &amp; Decision Rights<span class="nav-status status-soon">Next</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">05</span>Framework Lifecycle<span class="nav-status status-soon">Soon</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">06</span>Innovation Tracker<span class="nav-status status-soon">Soon</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">07</span>CoE Maturity Model<span class="nav-status status-soon">Soon</span></div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Centre of Excellence · Tool 3 of 7</strong>
+      Knowledge Management System<br>
+      <span style="color:rgba(255,255,255,0.1)">HR knowledge must outlast the person who built it. That is what this tool ensures.</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+  <div id="page-overview"     class="page active"></div>
+  <div id="page-architecture" class="page"></div>
+  <div id="page-library"      class="page"></div>
+  <div id="page-capture"      class="page"></div>
+  <div id="page-version"      class="page"></div>
+  <div id="page-onboarding"   class="page"></div>
+  <div id="page-handover"     class="page"></div>
+  <div id="page-health"       class="page"></div>
+</main>
+
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item:not(.tool-link)').forEach(n=>n.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));scope.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+</script>
+
+<script>
+// ══ PAGE 01 — OVERVIEW ══════════════════════════════════════════
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">Centre of Excellence · Tool 3 / 7 — Knowledge Management System</div>
+<div class="pt">Knowledge<br><em>Management</em></div>
+<p class="pd">At 42 staff across four countries, Valentis's HR knowledge is dangerously concentrated. Most of it lives in one person's head, one person's laptop, or one person's inbox. When that person is absent, moves on, or is overwhelmed — the knowledge disappears. The Knowledge Management System fixes this permanently. Every framework, template, lesson learned, and process guide is captured, organised, version-controlled, and accessible.</p>
+
+<div class="vx">
+  <div class="vx-ey">The KM Premise at Valentis</div>
+  <div class="vx-ti">If a new HRBP joined Valentis tomorrow, could they onboard themselves from the toolkit in two weeks? If the answer is no — the knowledge management system is not working. That is the test this tool is designed to pass.</div>
+  <div class="vx-bo">Knowledge management in a small HR function is not about technology — it is about discipline. The discipline of capturing what you build as you build it. The discipline of updating documentation when a process changes. The discipline of writing for the person who will use this after you, not just for yourself. At Valentis, the CoE is the custodian of institutional HR knowledge. When Ba builds a framework, it goes into the toolkit. When a country HRBP learns something from an ER case, it goes into the lessons learned log. When a template is updated, the old version is archived. This is what makes the HR function resilient — not dependent on any single person staying forever.</div>
+</div>
+
+<div class="krow">
+  <div class="kpi kgo"><div class="kl">Toolkit Items</div><div class="kv">64</div><div class="ks">Frameworks · templates · guides · playbooks · tools across 8 domains</div><div class="ktag ktag-go">Living knowledge base</div></div>
+  <div class="kpi kgr2"><div class="kl">Current & Maintained</div><div class="kv">51</div><div class="ks">Up to date · version controlled · owner assigned</div><div class="ktag ktag-gr">80% maintenance rate</div></div>
+  <div class="kpi ka"><div class="kl">Needs Update</div><div class="kv">10</div><div class="ks">Content exists but requires refresh · flagged by users</div><div class="ktag ktag-a">Q2 2026 priority</div></div>
+  <div class="kpi kt2"><div class="kl">To Be Captured</div><div class="kv">3</div><div class="ks">Known gaps — process exists in practice but not documented</div><div class="ktag ktag-t">Capture Q2 2026</div></div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">The Three KM Risks <em>Without This System</em></div>
+    ${[
+      {risk:'Single Point of Failure',desc:'When the Group HR Head is the only person who knows how the HR system works, every absence, illness, or departure creates an operational crisis. Knowledge captured in the toolkit survives the person.',icon:'⚠',col:'var(--red)'},
+      {risk:'Version Chaos',desc:'Without version control, every country operates on whatever version of a template they downloaded six months ago. Updates never reach the field. Inconsistency accumulates silently.',icon:'⚠',col:'var(--amber)'},
+      {risk:'Reinvention Waste',desc:'Without a lessons-learned system, Valentis solves the same problems repeatedly — in different countries, in different years. The KM system converts experience into institutional intelligence.',icon:'⚠',col:'var(--gold)'},
+    ].map(d=>`<div style="padding:12px 16px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0;margin-bottom:8px">
+      <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px">${d.icon} ${d.risk}</div>
+      <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">${d.desc}</div>
+    </div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Tool 3 — <em>Section Map</em></div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {n:'02',t:'KM Architecture',d:'How the knowledge base is structured — the eight domains, the four content types, and the filing logic that makes everything findable.'},
+        {n:'03',t:'Toolkit Library',d:'The complete catalogue of all 64 toolkit items — organised by domain with status, owner, version, and access level for each.'},
+        {n:'04',t:'Capture & Curation',d:'How new knowledge enters the system — the capture triggers, the curation standard, and the quarterly review that keeps it current.'},
+        {n:'05',t:'Version Control',d:'The version control protocol — how items are versioned, how updates are communicated, and how old versions are archived not deleted.'},
+        {n:'06',t:'Onboarding via KM',d:'The 10-day HRBP onboarding pathway through the toolkit — how a new HR hire gets to operational competency using the knowledge base.'},
+        {n:'07',t:'Handover Framework',d:'The structured handover pack for any HR role departure — what must be documented, transferred, and confirmed before the role exits.'},
+        {n:'08',t:'KM Health Dashboard',d:'Monthly health view — what is current, what needs updating, what is missing, and the CoE maintenance action list.'},
+      ].map(d=>`<div style="padding:9px 12px;background:var(--surface2);border-radius:3px;display:flex;gap:12px;align-items:flex-start">
+        <span style="font-family:var(--fm);font-size:9px;color:var(--gold);flex-shrink:0;padding-top:2px">${d.n}</span>
+        <div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px">${d.t}</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">${d.d}</div></div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ══ PAGE 02 — KM ARCHITECTURE ════════════════════════════════════
+document.getElementById('page-architecture').innerHTML=`
+<div class="pe">Section 02 — KM Architecture</div>
+<div class="pt">KM<br><em>Architecture</em></div>
+<p class="pd">The knowledge base is organised into eight domains that mirror the HR function structure at Valentis. Within each domain, content is classified into four types: frameworks, templates, guides, and lessons learned. This two-axis structure makes any item findable in under 30 seconds.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Architecture Principle</div>
+  <div class="vx-ti">The knowledge base must be organised for the person who is looking for something at 9pm before a difficult conversation tomorrow morning — not for the person who built it. Findability is the only metric that matters.</div>
+  <div class="vx-bo">Most HR knowledge bases fail because they are organised for the creator, not the user. Files named by date, folders nested five levels deep, no consistent naming convention — the result is that the knowledge exists but cannot be found when needed. At Valentis, the architecture is built around two questions: what domain does this belong to, and what type of content is it? Every item has one home. No item lives in more than one folder. If someone does not know which domain something belongs to, the content type index provides a second entry point.</div>
+</div>
+
+<div class="card">
+  <div class="ct">The Eight Knowledge Domains</div>
+  <div class="g2" style="margin-bottom:0">
+    ${[
+      {n:'01',domain:'People Analytics & Reporting',desc:'All PA frameworks, dashboard templates, reporting guides, data dictionary, and analytics methodology documents.',items:12,col:'var(--teal-accent)'},
+      {n:'02',domain:'Talent Acquisition',desc:'Recruitment frameworks, JD templates, interview guides, assessment tools, offer letter templates, onboarding checklists.',items:10,col:'var(--gold)'},
+      {n:'03',domain:'Performance Management',desc:'PM framework, review templates, calibration guides, PIP templates, coaching logs, competency frameworks.',items:9,col:'var(--gold)'},
+      {n:'04',domain:'Compensation & Benefits',desc:'Grade band tables, merit review templates, pay equity audit guides, benefits summaries, comp modelling tools.',items:8,col:'var(--amber)'},
+      {n:'05',domain:'Learning & Development',desc:'L&D policy, training nomination templates, G4 coaching framework, SM development programme, training evaluation tools.',items:7,col:'var(--amber)'},
+      {n:'06',domain:'HR Operations & Compliance',desc:'Payroll input guides, contract templates, work permit tracking, HRIS user guides, compliance checklists.',items:9,col:'var(--green)'},
+      {n:'07',domain:'Employee Relations & Conduct',desc:'ER case guides, disciplinary templates, grievance procedures, investigation frameworks, settlement templates.',items:6,col:'var(--red)'},
+      {n:'08',domain:'CoE & Governance',desc:'CoE charter, policy register, standards register, framework lifecycle tools, governance decision trees, exception forms.',items:3,col:'var(--teal-accent)'},
+    ].map(d=>`<div style="padding:14px 16px;background:var(--surface2);border-radius:4px;border-left:4px solid ${d.col};display:flex;gap:14px;align-items:flex-start">
+      <div style="flex-shrink:0;text-align:center">
+        <div style="font-family:var(--fm);font-size:10px;color:${d.col};font-weight:700">${d.n}</div>
+        <div style="font-family:var(--fm);font-size:18px;font-weight:700;color:${d.col};line-height:1">${d.items}</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--ink5)">items</div>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px">${d.domain}</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">${d.desc}</div>
+      </div>
+    </div>`).join('')}
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">The Four Content Types</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {type:'Framework',icon:'🏗',desc:'A structured methodology for an HR process — how the process works end-to-end, with the principles behind it. Frameworks are designed once and used repeatedly. Examples: Performance Management Framework, G4 Coaching Framework, Grade Framework.',access:'All HR staff',col:'var(--gold)'},
+        {type:'Template',icon:'📄',desc:'A ready-to-use document with standard structure and placeholder content. Templates are filled in for each use. Examples: Performance Review Form, PIP Template, Offer Letter Template, Exit Interview Guide.',access:'All HR staff',col:'var(--teal-accent)'},
+        {type:'Guide / Playbook',icon:'📘',desc:'Step-by-step instructions for executing an HR process. More detailed than a framework — designed to be followed in sequence. Examples: Recruitment SOP, Onboarding Checklist, Disciplinary Process Guide.',access:'All HR staff',col:'var(--amber)'},
+        {type:'Lessons Learned',icon:'💡',desc:'Documented insights from HR cases, project outcomes, and country operations. Captures what worked, what did not, and what to do differently. Examples: ER case debrief notes, recruitment campaign post-mortem, framework implementation feedback.',access:'CoE + HRBP only',col:'var(--green)'},
+      ].map(d=>`<div style="padding:12px 14px;background:var(--surface2);border-radius:4px;border-top:3px solid ${d.col};display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:20px;flex-shrink:0;margin-top:2px">${d.icon}</span>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="font-weight:700;font-size:13px;color:var(--ink)">${d.type}</span>
+            <span class="chip cm" style="font-size:7.5px">Access: ${d.access}</span>
+          </div>
+          <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">${d.desc}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Naming Convention & <em>Filing Logic</em></div>
+    <div class="inf go"><strong>The Naming Standard</strong>Every toolkit item follows this naming convention: [Domain Code] — [Content Type] — [Item Name] — [Version]. Example: <span style="font-family:var(--fm);font-size:11px">PM — Template — Performance Review Form — v2.1</span></div>
+    <div style="display:grid;gap:7px">
+      ${[
+        {rule:'One item, one home',desc:'Every toolkit item lives in exactly one domain folder. No item is duplicated across folders. If an item spans two domains, it lives in the primary domain and is linked (not copied) from the secondary.'},
+        {rule:'File name = find me instantly',desc:'The naming convention is mandatory. Anyone looking for a performance review template should find it in under 15 seconds by going to the PM domain and filtering by Template.'},
+        {rule:'Never delete — always archive',desc:'Superseded versions are moved to the Archive subfolder within each domain. They are never deleted. Archived items are read-only and clearly marked "SUPERSEDED — do not use."'},
+        {rule:'Update date in the file, not just the folder',desc:'Every toolkit item contains its own version number and last-updated date on page 1 or in the document header. The file is self-identifying — you do not need the folder structure to know if it is current.'},
+        {rule:'Lessons learned are confidential',desc:'Lessons learned documents may reference specific countries, cases, or situations. They are accessible to CoE and HRBPs only — not to Country SMs or operational staff unless explicitly approved.'},
+      ].map(d=>`<div style="padding:9px 12px;background:var(--surface2);border-radius:3px">
+        <div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:3px">→ ${d.rule}</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.desc}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ══ PAGE 03 — TOOLKIT LIBRARY ════════════════════════════════════
+document.getElementById('page-library').innerHTML=`
+<div class="pe">Section 03 — Toolkit Library</div>
+<div class="pt">Toolkit<br><em>Library</em></div>
+<p class="pd">The complete catalogue of all 64 toolkit items across 8 domains. Each item is listed with its content type, current version, owner, maintenance status, and access level. The CoE reviews this library quarterly and acts on any item flagged as needing update.</p>
+
+<div class="tabs" data-tabs>
+  <div class="tab active" onclick="showTab('lib-pa',this)">People Analytics</div>
+  <div class="tab" onclick="showTab('lib-ta',this)">Talent Acquisition</div>
+  <div class="tab" onclick="showTab('lib-pm',this)">Performance</div>
+  <div class="tab" onclick="showTab('lib-cb',this)">Compensation</div>
+  <div class="tab" onclick="showTab('lib-ld',this)">L&amp;D</div>
+  <div class="tab" onclick="showTab('lib-ops',this)">HR Operations</div>
+  <div class="tab" onclick="showTab('lib-er',this)">Employee Relations</div>
+  <div class="tab" onclick="showTab('lib-coe',this)">CoE &amp; Governance</div>
+</div>
+
+${[
+  {id:'lib-pa',domain:'People Analytics & Reporting',items:[
+    {name:'Analytics Strategy & Framework',type:'Framework',ver:'1.2',owner:'CoE',status:'current',access:'All HR'},
+    {name:'HR Data Infrastructure Guide',type:'Guide',ver:'1.1',owner:'CoE',status:'current',access:'CoE + Ops'},
+    {name:'Workforce Dashboard Template',type:'Template',ver:'2.0',owner:'CoE',status:'current',access:'All HR'},
+    {name:'Attrition Analysis Template',type:'Template',ver:'1.3',owner:'CoE',status:'current',access:'All HR'},
+    {name:'Talent Pipeline Analytics Guide',type:'Guide',ver:'1.1',owner:'CoE',status:'current',access:'All HR'},
+    {name:'Workforce Planning Model',type:'Framework',ver:'1.2',owner:'CoE',status:'current',access:'CoE + HRBP'},
+    {name:'Compensation Analytics Guide',type:'Guide',ver:'1.0',owner:'CoE',status:'needs-update',access:'CoE'},
+    {name:'Productivity & Performance Analytics Framework',type:'Framework',ver:'1.0',owner:'CoE',status:'current',access:'All HR'},
+    {name:'HR Reporting Templates (COO/CEO/Board)',type:'Template',ver:'1.1',owner:'CoE',status:'current',access:'CoE'},
+    {name:'Data Dictionary — HR Definitions',type:'Guide',ver:'1.3',owner:'CoE',status:'current',access:'All HR'},
+    {name:'People Analytics Lessons Learned Log',type:'Lessons',ver:'1.0',owner:'CoE',status:'current',access:'CoE only'},
+    {name:'KPI Reference Card — Group Metrics',type:'Template',ver:'2.1',owner:'CoE',status:'current',access:'All HR'},
+  ]},
+  {id:'lib-ta',domain:'Talent Acquisition',items:[
+    {name:'Recruitment Framework',type:'Framework',ver:'2.0',owner:'CoE',status:'current',access:'All HR'},
+    {name:'Job Description Library (all grades)',type:'Template',ver:'2.2',owner:'CoE + HRBP',status:'current',access:'All HR'},
+    {name:'Interview Question Bank — by Grade',type:'Template',ver:'1.4',owner:'CoE',status:'current',access:'All HR'},
+    {name:'Structured Interview Scorecard',type:'Template',ver:'1.2',owner:'CoE',status:'current',access:'All HR'},
+    {name:'Recruitment Pipeline Tracker',type:'Template',ver:'1.1',owner:'HR Ops',status:'needs-update',access:'All HR'},
+    {name:'Offer Letter Templates — by Country',type:'Template',ver:'1.3',owner:'HR Ops',status:'current',access:'HR Ops'},
+    {name:'90-Day Onboarding Checklist',type:'Guide',ver:'1.2',owner:'CoE',status:'current',access:'All HR'},
+    {name:'Offboarding & Exit Checklist',type:'Guide',ver:'1.1',owner:'HR Ops',status:'current',access:'All HR'},
+    {name:'Agency Management Guide',type:'Guide',ver:'1.0',owner:'CoE',status:'needs-update',access:'HRBP + Ops'},
+    {name:'Recruitment Lessons Learned Log',type:'Lessons',ver:'1.2',owner:'CoE',status:'current',access:'CoE + HRBP'},
+  ]},
+  {id:'lib-pm',domain:'Performance Management',items:[
+    {name:'Performance Management Framework',type:'Framework',ver:'2.2',owner:'CoE',status:'current',access:'All HR'},
+    {name:'Annual Performance Review Form',type:'Template',ver:'2.1',owner:'CoE',status:'current',access:'All HR'},
+    {name:'Mid-Year Check-In Template',type:'Template',ver:'1.2',owner:'CoE',status:'current',access:'All HR'},
+    {name:'G4 Coaching Framework',type:'Framework',ver:'1.0',owner:'CoE',status:'current',access:'All HR'},
+    {name:'G4 Monthly Coaching Log',type:'Template',ver:'1.1',owner:'CoE',status:'current',access:'G4 + HRBP'},
+    {name:'Performance Calibration Guide',type:'Guide',ver:'1.1',owner:'CoE',status:'current',access:'HRBP + CoE'},
+    {name:'PIP Template & Process Guide',type:'Template',ver:'1.3',owner:'CoE',status:'current',access:'HRBP only'},
+    {name:'Competency Framework — All Grades',type:'Framework',ver:'2.0',owner:'CoE',status:'needs-update',access:'All HR'},
+    {name:'Performance Lessons Learned Log',type:'Lessons',ver:'1.1',owner:'CoE',status:'current',access:'CoE + HRBP'},
+  ]},
+  {id:'lib-cb',domain:'Compensation & Benefits',items:[
+    {name:'Grade Band Tables — All Countries',type:'Template',ver:'3.0',owner:'CoE',status:'current',access:'CoE + HRBP'},
+    {name:'Merit Review Process Guide',type:'Guide',ver:'2.1',owner:'CoE',status:'current',access:'CoE + HRBP'},
+    {name:'Merit Pool Modelling Spreadsheet',type:'Template',ver:'2.0',owner:'CoE',status:'current',access:'CoE only'},
+    {name:'Pay Equity Audit Workbook',type:'Template',ver:'1.2',owner:'CoE',status:'current',access:'CoE only'},
+    {name:'Compensation Benchmarking Guide',type:'Guide',ver:'1.0',owner:'CoE',status:'needs-update',access:'CoE'},
+    {name:'Benefits Summary — by Country',type:'Template',ver:'1.3',owner:'HR Ops',status:'current',access:'All HR'},
+    {name:'Expense & Allowance Rate Card',type:'Template',ver:'2.0',owner:'HR Ops',status:'current',access:'All Staff'},
+    {name:'Comp & Benefits Lessons Learned',type:'Lessons',ver:'1.0',owner:'CoE',status:'current',access:'CoE only'},
+  ]},
+  {id:'lib-ld',domain:'Learning & Development',items:[
+    {name:'L&D Framework',type:'Framework',ver:'1.2',owner:'CoE',status:'needs-update',access:'All HR'},
+    {name:'SM Development Programme Guide',type:'Guide',ver:'1.0',owner:'CoE',status:'current',access:'CoE + HRBP'},
+    {name:'Training Needs Analysis Template',type:'Template',ver:'1.1',owner:'HRBP',status:'current',access:'All HR'},
+    {name:'Training Nomination & Approval Form',type:'Template',ver:'1.2',owner:'HR Ops',status:'current',access:'All Staff'},
+    {name:'Training Evaluation Form',type:'Template',ver:'1.0',owner:'HR Ops',status:'needs-update',access:'All Staff'},
+    {name:'G4 Coaching Quality Rubric',type:'Template',ver:'1.0',owner:'CoE',status:'current',access:'HRBP + CoE'},
+    {name:'L&D Lessons Learned Log',type:'Lessons',ver:'1.0',owner:'CoE',status:'current',access:'CoE + HRBP'},
+  ]},
+  {id:'lib-ops',domain:'HR Operations & Compliance',items:[
+    {name:'Payroll Input Guide — by Country',type:'Guide',ver:'1.3',owner:'HR Ops',status:'current',access:'HR Ops'},
+    {name:'Employment Contract Templates',type:'Template',ver:'2.1',owner:'HR Ops + Legal',status:'current',access:'HR Ops'},
+    {name:'Work Permit Tracking Register',type:'Template',ver:'1.2',owner:'HR Ops',status:'needs-update',access:'HR Ops + HRBP'},
+    {name:'HRIS User Guide',type:'Guide',ver:'1.1',owner:'HR Ops',status:'needs-update',access:'All HR'},
+    {name:'HR Compliance Checklist — Annual',type:'Template',ver:'1.3',owner:'CoE + Ops',status:'current',access:'CoE + Ops'},
+    {name:'New Hire Paperwork Checklist',type:'Guide',ver:'1.2',owner:'HR Ops',status:'current',access:'HR Ops'},
+    {name:'Leaver Checklist & Process',type:'Guide',ver:'1.1',owner:'HR Ops',status:'current',access:'HR Ops'},
+    {name:'HR Calendar — Annual Cycle',type:'Template',ver:'2.0',owner:'CoE',status:'current',access:'All HR'},
+    {name:'HR Ops Lessons Learned Log',type:'Lessons',ver:'1.0',owner:'HR Ops',status:'current',access:'CoE + Ops'},
+  ]},
+  {id:'lib-er',domain:'Employee Relations & Conduct',items:[
+    {name:'ER Case Management Guide',type:'Guide',ver:'1.2',owner:'CoE',status:'current',access:'HRBP + CoE'},
+    {name:'Disciplinary Hearing Template Pack',type:'Template',ver:'1.3',owner:'CoE',status:'current',access:'HRBP + CoE'},
+    {name:'Grievance Investigation Guide',type:'Guide',ver:'1.1',owner:'CoE',status:'current',access:'HRBP + CoE'},
+    {name:'Settlement Agreement Template',type:'Template',ver:'1.0',owner:'CoE + Legal',status:'needs-update',access:'CoE only'},
+    {name:'ER Case Log Template',type:'Template',ver:'1.2',owner:'HRBP',status:'current',access:'HRBP + CoE'},
+    {name:'ER Lessons Learned Log',type:'Lessons',ver:'1.3',owner:'CoE',status:'current',access:'CoE only'},
+  ]},
+  {id:'lib-coe',domain:'CoE & Governance',items:[
+    {name:'CoE Charter',type:'Framework',ver:'1.0',owner:'CoE',status:'current',access:'All HR + SMs'},
+    {name:'Policy Exception Request Form',type:'Template',ver:'1.0',owner:'CoE',status:'current',access:'All HR'},
+    {name:'Country Addendum Template',type:'Template',ver:'1.0',owner:'CoE',status:'current',access:'HRBP + CoE'},
+  ]},
+].map(domain=>`
+<div id="tb-${domain.id}" class="tb${domain.id==='lib-pa'?' active':''}">
+  <div class="card">
+    <div class="ct">${domain.domain}</div>
+    <table class="dt">
+      <thead><tr><th>Item Name</th><th>Type</th><th>Version</th><th>Owner</th><th>Status</th><th>Access</th></tr></thead>
+      <tbody>
+        ${domain.items.map(item=>{
+          const typeColor=item.type==='Framework'?'var(--gold)':item.type==='Template'?'var(--teal-accent)':item.type==='Guide'?'var(--amber)':'var(--green)';
+          const statusEl=item.status==='current'
+            ?'<span style="background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px">Current</span>'
+            :'<span style="background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px">Needs Update</span>';
+          return `<tr>
+            <td style="font-weight:600;font-size:12.5px">${item.name}</td>
+            <td><span class="chip" style="background:rgba(0,0,0,0.04);border:1px solid var(--border);color:${typeColor};font-size:8px">${item.type}</span></td>
+            <td style="font-family:var(--fm);font-size:10px;color:var(--ink4)">${item.ver}</td>
+            <td style="font-size:12px;font-weight:300">${item.owner}</td>
+            <td>${statusEl}</td>
+            <td style="font-size:11px;color:var(--ink5);font-family:var(--fm)">${item.access}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+`).join('')}
+`;
+
+// ══ PAGE 04 — CAPTURE & CURATION ═══════════════════════════════
+document.getElementById('page-capture').innerHTML=`
+<div class="pe">Section 04 — Capture &amp; Curation</div>
+<div class="pt">Capture &amp;<br><em>Curation</em></div>
+<p class="pd">Knowledge capture is the discipline of turning what HR does into something HR knows. Every time a new process is designed, a case is closed, a framework is applied, or a country shares an insight — there is a capture opportunity. The KM system only works if knowledge enters it consistently. This section defines when, what, and how.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Capture Discipline</div>
+  <div class="vx-ti">The hardest part of knowledge management is not organising what you have — it is capturing it at the moment it is created, not six months later when you can no longer remember the details that made it useful.</div>
+  <div class="vx-bo">At Valentis, knowledge capture happens at four trigger points: when something new is built (a framework, template, or process), when something significant happens (an ER case, a project outcome, a policy failure), when something changes (a process update, a legal change, a country variation), and when someone leaves (structured handover before exit). The CoE owns capture as a discipline — HRBPs and HR Ops contribute to it, but the CoE ensures it happens consistently and that the output meets the curation standard before it enters the knowledge base.</div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">The Four Capture Triggers</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {trigger:'Build Trigger',when:'When any HR framework, template, guide, or process is created or significantly redesigned',what:'The output document + a brief context note (why it was built, what problem it solves, who it is for, known limitations)',who:'Creator — CoE or HRBP',timeline:'Within 5 working days of completion',col:'var(--gold)'},
+        {trigger:'Event Trigger',when:'When an ER case closes, a recruitment campaign ends, a framework is piloted in a country, or any significant HR project completes',what:'Lessons learned note: what happened, what worked, what did not, what to do differently next time (1 page maximum)',who:'Case/project owner — HRBP or CoE',timeline:'Within 10 working days of closure',col:'var(--teal-accent)'},
+        {trigger:'Change Trigger',when:'When a policy is updated, a legal requirement changes, a process step is modified, or a template is revised',what:'Updated document + changelog entry (version number, date, what changed, why)',who:'Document owner — CoE, HRBP, or HR Ops',timeline:'Same day as the change takes effect',col:'var(--amber)'},
+        {trigger:'Exit Trigger',when:'When any HR team member (CoE, HRBP, HR Ops) gives notice or prepares to transition out of role',what:'Full handover pack — see Section 07 for complete handover framework',who:'Departing staff member + line manager',timeline:'Minimum 10 working days before last day',col:'var(--red)'},
+      ].map(d=>`<div style="padding:12px 16px;border-top:3px solid ${d.col};background:var(--surface2);border-radius:0 0 4px 4px">
+        <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:6px">${d.trigger}</div>
+        <div style="display:grid;gap:4px">
+          <div style="font-size:12px;font-weight:300;color:var(--ink3)"><span style="font-family:var(--fm);font-size:9px;color:${d.col};margin-right:6px">WHEN</span>${d.when}</div>
+          <div style="font-size:12px;font-weight:300;color:var(--ink3)"><span style="font-family:var(--fm);font-size:9px;color:${d.col};margin-right:6px">WHAT</span>${d.what}</div>
+          <div style="font-size:12px;font-weight:300;color:var(--ink3)"><span style="font-family:var(--fm);font-size:9px;color:${d.col};margin-right:6px">WHO</span>${d.who}</div>
+          <div style="font-family:var(--fm);font-size:10px;color:${d.col};margin-top:3px">⏱ ${d.timeline}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">The Curation Standard — <em>What Gets In</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Not everything captured meets the standard for the toolkit. The CoE applies this quality filter before any item is published to the knowledge base.</div>
+    ${[
+      {q:'Is it generalisable?',desc:'Would this be useful for another HR person dealing with a similar situation — in a different country or a different year? If it is too specific to one individual case, it stays in the case file, not the knowledge base.',pass:'Yes → publish to KB',fail:'No → keep in case file only'},
+      {q:'Is it complete?',desc:'Does the document stand alone? Can someone pick it up with no prior context and understand what it is, when to use it, and how? Incomplete drafts do not go in the KB.',pass:'Yes → publish',fail:'No → complete first'},
+      {q:'Is it current?',desc:'Does it reflect how Valentis currently operates? A well-written guide from 2023 that describes a process that has since changed is worse than no guide — it actively misleads.',pass:'Yes → publish',fail:'No → update or archive'},
+      {q:'Has it been quality-checked?',desc:'For frameworks and guides: has the CoE reviewed it before publication? For lessons learned: has the author anonymised any identifying details about individuals?',pass:'Yes → publish',fail:'No → CoE review required'},
+    ].map(d=>`<div style="margin-bottom:8px;padding:10px 14px;background:var(--surface2);border-radius:3px">
+      <div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:4px">${d.q}</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5;margin-bottom:5px">${d.desc}</div>
+      <div style="display:flex;gap:8px">
+        <span style="font-family:var(--fm);font-size:9px;background:var(--green-dim);color:var(--green);padding:2px 7px;border-radius:2px">✓ ${d.pass}</span>
+        <span style="font-family:var(--fm);font-size:9px;background:var(--red-dim);color:var(--red);padding:2px 7px;border-radius:2px">✕ ${d.fail}</span>
+      </div>
+    </div>`).join('')}
+    <div class="inf t" style="margin-top:8px"><strong>Quarterly Curation Review</strong>The CoE runs a quarterly curation sweep — reviewing all items added in the last quarter, checking that "needs update" flags from users have been actioned, and identifying any items that should be retired. This is the 2-hour CoE quarterly deep-work session.</div>
+  </div>
+</div>
+`;
+
+// ══ PAGE 05 — VERSION CONTROL ═══════════════════════════════════
+document.getElementById('page-version').innerHTML=`
+<div class="pe">Section 05 — Version Control</div>
+<div class="pt">Version<br><em>Control</em></div>
+<p class="pd">Version control is the mechanism that ensures every HR staff member across four countries is always working from the same, current version of every toolkit item. Without it, a coaching log from 2024 and one from 2026 both called "G4 Coaching Log" circulate simultaneously — with no way to know which is right.</p>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Version Numbering System</div>
+    <div class="inf go"><strong>The Standard</strong>All toolkit items use a two-number version system: Major.Minor — where a major version change signals a significant structural update, and a minor version change signals corrections, additions, or light revisions.</div>
+    <table class="dt">
+      <thead><tr><th>Version Type</th><th>When to Use</th><th>Example Change</th><th>Communication Required</th></tr></thead>
+      <tbody>
+        ${[
+          {type:'Major (X.0)',when:'Structural redesign of the document — content, purpose, or process has changed significantly',ex:'Performance Review Form redesigned from a free-text form to a structured competency grid',comms:'Active notification to all users — email + knowledge base announcement'},
+          {type:'Minor (X.Y)',when:'Corrections, additions of detail, formatting updates, or small process clarifications',ex:'Added a clarification note on grade progression criteria; fixed a calculation in the merit model',comms:'Version number update in document; knowledge base updated silently'},
+          {type:'Patch (X.Y.Z)',when:'Typo corrections, broken link fixes, formatting errors — no content change',ex:'Corrected a typo in section heading; fixed a broken cross-reference',comms:'No communication required — silent update'},
+        ].map(r=>`<tr>
+          <td style="font-weight:700;font-family:var(--fm);font-size:11.5px;color:var(--gold)">${r.type}</td>
+          <td style="font-size:12.5px;font-weight:300">${r.when}</td>
+          <td style="font-size:12px;color:var(--ink4);font-weight:300">${r.ex}</td>
+          <td style="font-size:12px;color:var(--teal-accent);font-weight:300">${r.comms}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Update & Archive Protocol</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {step:'01',t:'Update the source document',d:'Open the current version. Make changes. Update the version number and "last updated" date on page 1 or in the document header. Save as a new file — do not overwrite the previous version.'},
+        {step:'02',t:'Move previous version to Archive',d:'Move (not copy, not delete) the previous version to the /Archive subfolder in the relevant domain. Rename it with [SUPERSEDED] prefix: e.g. [SUPERSEDED] PM — Template — Performance Review Form — v2.0.'},
+        {step:'03',t:'Update the Knowledge Base entry',d:'In the toolkit library (this tool, Section 03), update the version number and status for the item. Add the update date and a brief changelog note.'},
+        {step:'04',t:'Communicate if Major update',d:'For major version changes: send a brief notification to all relevant users identifying what changed and where to find the new version. One paragraph — no lengthy explanation required.'},
+        {step:'05',t:'Update cross-references',d:'Check if any other toolkit item references the updated document. If so, update those references to point to the new version number.'},
+      ].map(d=>`<div style="padding:9px 14px;background:var(--surface2);border-radius:3px;display:flex;gap:12px">
+        <span style="font-family:var(--fm);font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;padding-top:2px">${d.step}</span>
+        <div><div style="font-weight:700;font-size:12.5px;margin-bottom:3px">${d.t}</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.d}</div></div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Changelog Template — <em>Built Into Every Document</em></div>
+  <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Every toolkit item includes a changelog table on the first page. This is the document's own record of its history — no need to look anywhere else to understand what version this is and what changed.</div>
+  <div style="background:var(--teal);border-radius:4px;padding:18px 22px">
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--gold3);margin-bottom:12px">Standard Changelog — Page 1 of Every Toolkit Item</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr>${['Document Name','Domain','Content Type','Current Version','Last Updated','Owner','Access Level','Review Due'].map(h=>`<th style="text-align:left;padding:6px 10px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);font-family:var(--fm);font-size:7px;letter-spacing:1px;text-transform:uppercase">${h}</th>`).join('')}</tr></thead>
+      <tbody><tr>${['[Document Name]','[Domain]','[Framework / Template / Guide / Lessons]','[X.Y]','[DD MMM YYYY]','[Owner Name]','[All HR / HRBP+ / CoE only]','[DD MMM YYYY]'].map(v=>`<td style="padding:7px 10px;color:rgba(255,255,255,0.6);font-family:var(--fm);font-size:10px;border-bottom:1px solid rgba(255,255,255,0.08)">${v}</td>`).join('')}</tr></tbody>
+    </table>
+    <div style="margin-top:12px">
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--gold3);margin-bottom:8px">Version History</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr>${['Version','Date','Author','Change Summary'].map(h=>`<th style="text-align:left;padding:6px 10px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);font-family:var(--fm);font-size:7px;letter-spacing:1px;text-transform:uppercase">${h}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${[
+          ['2.1','15 Jan 2026','CoE','Added competency weighting guidance; updated grade progression criteria for G3→G4'],
+          ['2.0','10 Jun 2025','CoE','Full redesign — moved from free-text to structured competency grid format'],
+          ['1.3','02 Feb 2025','CoE','Minor: added calibration instructions section'],
+        ].map(r=>`<tr>${r.map(v=>`<td style="padding:7px 10px;color:rgba(255,255,255,0.5);font-family:var(--fm);font-size:10px;border-bottom:1px solid rgba(255,255,255,0.06)">${v}</td>`).join('')}</tr>`).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+`;
+
+// ══ PAGE 06 — ONBOARDING VIA KM ═════════════════════════════════
+document.getElementById('page-onboarding').innerHTML=`
+<div class="pe">Section 06 — Onboarding via KM</div>
+<div class="pt">Onboarding<br><em>via KM</em></div>
+<p class="pd">The knowledge base should be the primary onboarding tool for any new HR hire at Valentis. A new HRBP should be able to reach operational competency within 10 working days by working through the structured onboarding pathway below — no extensive handholding required. If they cannot, the toolkit is incomplete.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Onboarding Test</div>
+  <div class="vx-ti">If a new HRBP joined tomorrow and the Group HR Head was unavailable for a week — could the HRBP find the answers to their first 20 questions in the toolkit? That is the minimum bar. This pathway is designed to make it possible.</div>
+  <div class="vx-bo">Most small companies onboard HR staff through "sit next to me and watch what I do." This is fast for the teacher and slow for the learner — because the learner only absorbs what comes up during those specific days, not the full scope of what they need to know. The toolkit-first onboarding approach at Valentis inverts this: the new hire reads before they observe. By the time they shadow the Group HR Head or country HRBP, they have the conceptual framework to understand what they are seeing. Questions are more specific, learning is faster, and the institutional knowledge is distributed — not centralised.</div>
+</div>
+
+<div class="card">
+  <div class="ct">10-Day HRBP Onboarding Pathway</div>
+  <div style="display:grid;gap:8px;margin-top:8px">
+    ${[
+      {days:'Days 1–2',focus:'The HR System at Valentis',reads:['CoE Charter (CoE & Governance domain)','Analytics Strategy & Framework (PA domain)','Grade Framework & Band Tables (C&B domain)','HR Calendar — Annual Cycle (HR Ops domain)'],outcome:'Understands the HR architecture, how the function is structured, and the annual rhythm of HR activity.',col:'var(--gold)'},
+      {days:'Days 3–4',focus:'Performance & Talent',reads:['Performance Management Framework','G4 Coaching Framework','Competency Framework — All Grades','Recruitment Framework','90-Day Onboarding Checklist'],outcome:'Can run a performance review, understand coaching standards, and manage a recruitment process from the frameworks.',col:'var(--gold)'},
+      {days:'Days 5–6',focus:'Compensation & Operations',reads:['Grade Band Tables — All Countries','Merit Review Process Guide','Pay Equity Audit Workbook (read-only)','Payroll Input Guide (own country)','Employment Contract Templates'],outcome:'Understands pay structure, can navigate a merit cycle, knows how payroll inputs work in their country.',col:'var(--teal-accent)'},
+      {days:'Days 7–8',focus:'Employee Relations & Compliance',reads:['ER Case Management Guide','Disciplinary Hearing Template Pack','Grievance Investigation Guide','HR Compliance Checklist — Annual'],outcome:'Can manage a basic ER case, knows when to escalate, understands annual compliance obligations.',col:'var(--amber)'},
+      {days:'Days 9–10',focus:'Country Context & Live Operations',reads:['Country Addenda — own country (Tool 2)','Country Scorecard — own country (PA Tool 3)','Workforce Dashboard — current (PA Tool 3)','Lessons Learned Logs — own domain'],outcome:'Understands how group standards apply in their specific country, current workforce risks, and institutional knowledge from past cases.',col:'var(--green)'},
+    ].map(d=>`<div style="padding:14px 16px;background:var(--surface2);border-radius:4px;border-left:4px solid ${d.col};display:flex;gap:16px">
+      <div style="flex-shrink:0;text-align:center;min-width:60px">
+        <div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--ink5);margin-bottom:3px">Period</div>
+        <div style="font-family:var(--fd);font-size:16px;font-weight:700;color:${d.col};line-height:1.1">${d.days}</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:6px">${d.focus}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:7px">
+          ${d.reads.map(r=>`<span style="font-family:var(--fm);font-size:9.5px;background:rgba(0,0,0,0.04);border:1px solid var(--border);padding:2px 7px;border-radius:2px;color:var(--ink4)">→ ${r}</span>`).join('')}
+        </div>
+        <div style="font-size:12px;color:var(--teal-accent);font-weight:300"><strong style="font-weight:600">Outcome: </strong>${d.outcome}</div>
+      </div>
+    </div>`).join('')}
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">After the 10 Days — <em>Guided Practice</em></div>
+    <div style="display:grid;gap:6px;margin-top:4px">
+      ${[
+        {week:'Week 3',act:'Shadow Group HR Head or senior HRBP on a live activity — recruitment review, performance check-in, or country scorecard preparation. New hire should be asking informed questions.'},
+        {week:'Week 4',act:'Complete first independent task using the toolkit — e.g. prepare a country scorecard, run a recruitment pipeline review, or draft a coaching log summary.'},
+        {week:'Week 6',act:'30-day check-in with Group HR Head. Review what is clear, what needs more depth, and what toolkit items were unclear or missing. Capture gaps for CoE.'},
+        {week:'Week 13',act:'90-day competency assessment. Can the HRBP run their core processes independently using the toolkit? Are there any knowledge gaps requiring additional support?'},
+      ].map(d=>`<div style="padding:9px 12px;background:var(--surface2);border-radius:3px;display:flex;gap:12px">
+        <span style="font-family:var(--fm);font-size:9px;color:var(--gold);flex-shrink:0;padding-top:2px;white-space:nowrap">${d.week}</span>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.act}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Onboarding <em>Feedback Loop</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">Every new hire's onboarding experience is a live audit of the knowledge base. The questions they cannot answer from the toolkit are the gaps the CoE needs to fill.</div>
+    <div class="inf t"><strong>The Onboarding Audit Rule</strong>At the 30-day check-in, the Group HR Head asks one question: "What did you need to know that you could not find in the toolkit?" The answers go directly into the KM health dashboard as capture priorities. A new hire who cannot find something is telling the CoE where the knowledge base is incomplete.</div>
+    ${[
+      'Were there processes you had to ask someone about that should have been in the toolkit?',
+      'Were any guides unclear, out of date, or missing key steps?',
+      'Were there country-specific questions the addenda did not answer?',
+      'Were there templates that needed updating before you could use them?',
+    ].map(q=>`<div style="padding:7px 12px;background:var(--surface2);border-radius:3px;margin-bottom:5px;display:flex;gap:10px;align-items:flex-start">
+      <span style="color:var(--gold);flex-shrink:0;font-size:12px;margin-top:1px">?</span>
+      <span style="font-size:12.5px;color:var(--ink2);font-weight:300;line-height:1.5">${q}</span>
+    </div>`).join('')}
+  </div>
+</div>
+`;
+
+// ══ PAGE 07 — HANDOVER FRAMEWORK ════════════════════════════════
+document.getElementById('page-handover').innerHTML=`
+<div class="pe">Section 07 — Handover Framework</div>
+<div class="pt">Handover<br><em>Framework</em></div>
+<p class="pd">The handover framework is the structured process for transferring HR knowledge and accountability when any HR team member departs, transitions to a new role, or goes on extended leave. It is the insurance policy against institutional knowledge walking out the door with one person.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Handover Principle</div>
+  <div class="vx-ti">A role that cannot be handed over in 10 working days is a role whose knowledge has not been properly managed. The handover pack is not created at resignation — it is maintained continuously so that it can be activated at any time.</div>
+  <div class="vx-bo">The most dangerous moment in any HR function is the first day after a key person leaves without a proper handover. At Valentis, where the Group HR Head holds the entire HR architecture in their head, this risk is acute. The handover framework converts implicit knowledge — "I know how this works" — into explicit knowledge — "this is documented, version-controlled, and accessible." The framework applies to every HR role: CoE, HRBP, and HR Ops. The depth of handover required varies by role — but the discipline is the same.</div>
+</div>
+
+<div class="card">
+  <div class="ct">Handover Pack Contents — <em>By Role</em></div>
+  <div class="tabs" style="margin-bottom:0" data-tabs>
+    <div class="tab active" onclick="showTab('ho-coe',this)">CoE / Group HR Head</div>
+    <div class="tab" onclick="showTab('ho-hrbp',this)">Country HRBP</div>
+    <div class="tab" onclick="showTab('ho-ops',this)">HR Operations</div>
+  </div>
+
+  <div id="tb-ho-coe" class="tb active">
+    <div class="inf go"><strong>CoE Handover — Highest Complexity</strong>The CoE handover is the most critical and most complex in the HR function. It must be built and maintained continuously — not assembled in the last two weeks of employment.</div>
+    <div style="display:grid;gap:7px">
+      ${[
+        {section:'01',t:'HR Architecture Overview',d:'A 2-page narrative explaining how the HR system at Valentis is structured — the four-tier policy model, the CoE scope, and the relationships with each country. Written for someone arriving with no prior knowledge of Valentis.',status:'Must be current at all times'},
+        {section:'02',t:'Policy Register Status',d:'Current state of the policy register — what is current, what is in review, what is overdue, and the outstanding action list. From Tool 2.',status:'Updated monthly'},
+        {section:'03',t:'Knowledge Base Status',d:'Current state of the toolkit — what is current, what needs updating, what is missing. From Tool 3 Section 08.',status:'Updated quarterly'},
+        {section:'04',t:'Active Exceptions & Addenda',d:'All active policy exceptions and country addenda — what exists, when it expires, and what action is required. From Tool 2.',status:'Updated as changes occur'},
+        {section:'05',t:'Outstanding CoE Commitments',d:'All current CoE commitments — framework builds in progress, reviews due, innovation pilots running, governance issues open.',status:'Updated weekly'},
+        {section:'06',t:'Key Relationships & Context',d:'For each Country SM and HRBP: relationship history, current issues, communication style notes, anything a successor needs to know to continue the relationship effectively.',status:'Updated as context changes'},
+        {section:'07',t:'COO Relationship & Reporting',d:'Current status of COO reporting relationship — recent briefs, outstanding decisions, COO priorities for HR, and the next reporting milestone.',status:'Updated monthly'},
+        {section:'08',t:'CHRO Elevation Status',d:'Current positioning on the CHRO trajectory — what has been demonstrated, what is in progress, what the successor needs to continue building.',status:'Updated quarterly'},
+      ].map(d=>`<div style="padding:10px 14px;background:var(--surface2);border-radius:3px;display:flex;gap:14px;align-items:flex-start">
+        <span style="font-family:var(--fm);font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;padding-top:2px">${d.section}</span>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:3px">
+            <span style="font-weight:700;font-size:13px;color:var(--ink)">${d.t}</span>
+            <span style="font-family:var(--fm);font-size:9px;color:var(--teal-accent);flex-shrink:0;margin-left:8px">${d.status}</span>
+          </div>
+          <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.d}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div id="tb-ho-hrbp" class="tb">
+    <div style="display:grid;gap:7px">
+      ${[
+        {section:'01',t:'Country HR Status Summary',d:'Current state of HR in the country — open roles, active ER cases, upcoming review cycles, compliance items due.',status:'Updated monthly'},
+        {section:'02',t:'Active Case Log',d:'All open ER cases — status, history, next steps. No names if possible — refer to "Case Ref" only. Context notes for each.',status:'Updated as cases progress'},
+        {section:'03',t:'Recruitment Pipeline',d:'All active recruitment — role, stage, candidates in process, expected fill dates. Agency contacts for active roles.',status:'Updated weekly'},
+        {section:'04',t:'Key Manager Relationships',d:'For each SM in country: working relationship, current HR issues, communication preferences, anything a successor needs to know.',status:'Updated as context changes'},
+        {section:'05',t:'Country Addenda & Exceptions',d:'All country-specific policy variations in place — what they are, why they exist, when they expire.',status:'Updated as changes occur'},
+        {section:'06',t:'Pending Actions & Deadlines',d:'All outstanding HR actions in the country with deadlines — nothing to fall through the gap.',status:'Updated weekly'},
+      ].map(d=>`<div style="padding:10px 14px;background:var(--surface2);border-radius:3px;display:flex;gap:14px;align-items:flex-start">
+        <span style="font-family:var(--fm);font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;padding-top:2px">${d.section}</span>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:3px">
+            <span style="font-weight:700;font-size:13px;color:var(--ink)">${d.t}</span>
+            <span style="font-family:var(--fm);font-size:9px;color:var(--teal-accent);flex-shrink:0;margin-left:8px">${d.status}</span>
+          </div>
+          <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.d}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div id="tb-ho-ops" class="tb">
+    <div style="display:grid;gap:7px">
+      ${[
+        {section:'01',t:'Payroll Calendar & Contacts',d:'Payroll input deadlines for all countries, payroll provider contacts, escalation paths for payroll issues.',status:'Updated as calendar changes'},
+        {section:'02',t:'System Access & Credentials',d:'List of all systems the HR Ops role accesses — HRIS, payroll system, benefits portal. Credential transfer process to follow IT security protocol.',status:'Updated as systems change'},
+        {section:'03',t:'Compliance Calendar',d:'All compliance deadlines in the next 90 days — filings, renewals, permit expirations, contract renewals due.',status:'Updated monthly'},
+        {section:'04',t:'Active Vendor Relationships',d:'All HR vendors currently in use — recruitment agencies, benefits providers, payroll providers. Contact details, contract terms, renewal dates.',status:'Updated as contracts change'},
+        {section:'05',t:'Outstanding Processing Items',d:'Any payroll inputs, contract actions, or compliance filings currently in progress or overdue.',status:'Updated weekly'},
+      ].map(d=>`<div style="padding:10px 14px;background:var(--surface2);border-radius:3px;display:flex;gap:14px;align-items:flex-start">
+        <span style="font-family:var(--fm);font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;padding-top:2px">${d.section}</span>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:3px">
+            <span style="font-weight:700;font-size:13px;color:var(--ink)">${d.t}</span>
+            <span style="font-family:var(--fm);font-size:9px;color:var(--teal-accent);flex-shrink:0;margin-left:8px">${d.status}</span>
+          </div>
+          <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.d}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Handover Timeline — <em>Minimum Standard</em></div>
+    ${[
+      {t:'Day −20',e:'Handover pack review — departing staff member reviews pack currency. Missing sections identified and completed.'},
+      {t:'Day −15',e:'Successor identified and briefed. Handover pack shared with successor (and interim cover if no successor yet).'},
+      {t:'Day −10',e:'Handover meetings begin — structured walk-through of each section. Successor asks questions, departing person answers and updates notes.'},
+      {t:'Day −5',e:'System access transferred. All vendor and stakeholder contacts notified of transition. COO briefed if CoE role.'},
+      {t:'Day −2',e:'Final handover pack review. Outstanding action list confirmed. Successor confirms they have what they need.'},
+      {t:'Day 0',e:'Last day. Departing person available for 2 hours of questions. After this — all knowledge should be in the pack.'},
+      {t:'Day +10',e:'Post-handover check-in. Successor confirms no critical knowledge gaps. CoE updates KM health dashboard with any gaps identified.'},
+    ].map(d=>`<div style="display:flex;gap:12px;padding:7px 0;border-bottom:1px solid var(--border);align-items:flex-start">
+      <span style="font-family:var(--fm);font-size:10px;color:var(--gold);flex-shrink:0;min-width:55px">${d.t}</span>
+      <span style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.5">${d.e}</span>
+    </div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Emergency Handover — <em>Unplanned Absence</em></div>
+    <div class="inf r"><strong>The Unplanned Absence Scenario</strong>What happens if the Group HR Head is suddenly and unexpectedly unavailable for 2–4 weeks? This section defines the minimum that must be accessible immediately — without a structured handover process.</div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">The Emergency Access Pack is a single document maintained by the CoE and updated monthly. It is stored in a named location known to the COO. It contains:</div>
+    ${[
+      'Location of the full HR toolkit and policy register',
+      'Names and contact details of all Country HRBPs',
+      'All active ER cases — status and next action required',
+      'Payroll deadlines for the next 30 days',
+      'Any HR decisions pending COO input',
+      'The monthly COO brief template and where current data lives',
+      'Any compliance deadlines in the next 30 days',
+    ].map(i=>`<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);align-items:flex-start">
+      <span style="color:var(--gold);flex-shrink:0;font-size:12px">✓</span>
+      <span style="font-size:12.5px;color:var(--ink2);font-weight:300">${i}</span>
+    </div>`).join('')}
+    <div class="inf go" style="margin-top:12px"><strong>Update Frequency</strong>The Emergency Access Pack is updated on the first Monday of every month — as part of the CoE monthly standup. It takes 15 minutes. The COO knows where it is stored.</div>
+  </div>
+</div>
+`;
+
+// ══ PAGE 08 — KM HEALTH DASHBOARD ═══════════════════════════════
+document.getElementById('page-health').innerHTML=`
+<div class="pe">Section 08 — KM Health Dashboard</div>
+<div class="pt">KM Health<br><em>Dashboard</em></div>
+<p class="pd">The KM health dashboard is the CoE's monthly view of knowledge base health. It shows what is current, what needs updating, what is missing, and the capture backlog. The CoE acts on this dashboard every quarter — maintaining the knowledge base as a living system, not a static archive.</p>
+
+<div class="krow">
+  <div class="kpi kgr2"><div class="kl">Current & Maintained</div><div class="kv">51</div><div class="ks">Up to date · owner assigned · version current</div><div class="ktag ktag-gr">80% of toolkit</div></div>
+  <div class="kpi ka"><div class="kl">Needs Update</div><div class="kv">10</div><div class="ks">Flagged for refresh · content exists but stale</div><div class="ktag ktag-a">Q2 priority</div></div>
+  <div class="kpi kt2"><div class="kl">Capture Backlog</div><div class="kv">3</div><div class="ks">Process exists in practice but not documented</div><div class="ktag ktag-t">Build Q2 2026</div></div>
+  <div class="kpi krd"><div class="kl">No Owner Assigned</div><div class="kv">0</div><div class="ks">Every toolkit item has an assigned owner</div><div class="ktag ktag-gr">Clean ✓</div></div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Update Queue — <em>Q2 2026 Action List</em></div>
+    <div style="display:grid;gap:6px;margin-top:4px">
+      ${[
+        {item:'Work Permit Tracking Register',domain:'HR Operations',reason:'Indonesia permit rules changed Q1 2026 — register format needs updating to capture new DKPTKI fields.',owner:'HR Ops',priority:'High',col:'var(--red)'},
+        {item:'Compensation Benchmarking Guide',domain:'Compensation',reason:'Last benchmarked in 2024. Market data for SE Asia mining sector needs 2025/2026 refresh.',owner:'CoE',priority:'High',col:'var(--red)'},
+        {item:'Recruitment Pipeline Tracker',domain:'Talent Acquisition',reason:'New fields needed: candidate source tracking and time-to-offer measurement added to analytics in Q1 2026.',owner:'HR Ops',priority:'Medium',col:'var(--amber)'},
+        {item:'L&D Framework',domain:'Learning & Dev',reason:'G4 coaching programme launched Jan 2026 — L&D Framework needs updating to embed the new coaching standard.',owner:'CoE',priority:'Medium',col:'var(--amber)'},
+        {item:'Training Evaluation Form',domain:'Learning & Dev',reason:'Current form collects satisfaction scores only. Upgrade to include capability improvement measurement.',owner:'HR Ops',priority:'Medium',col:'var(--amber)'},
+        {item:'Agency Management Guide',domain:'Talent Acquisition',reason:'New agencies onboarded in Indonesia Q4 2025. Guide needs updated contact list and briefing format.',owner:'HRBP',priority:'Medium',col:'var(--amber)'},
+        {item:'Competency Framework — All Grades',domain:'Performance',reason:'G4 coaching competency added to the grade framework — competency framework needs alignment.',owner:'CoE',priority:'Medium',col:'var(--amber)'},
+        {item:'HRIS User Guide',domain:'HR Operations',reason:'System update Q1 2026 changed several workflow screens. Guide screenshots outdated.',owner:'HR Ops',priority:'Low',col:'var(--gold)'},
+        {item:'Settlement Agreement Template',domain:'Employee Relations',reason:'Legal review recommended — last updated 2023. Country addenda coverage has expanded since.',owner:'CoE + Legal',priority:'Low',col:'var(--gold)'},
+        {item:'Compensation Analytics Guide',domain:'People Analytics',reason:'Upgrade to reflect new merit pool modelling tool built in PA Tool 7.',owner:'CoE',priority:'Low',col:'var(--gold)'},
+      ].map(d=>`<div style="padding:9px 14px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0;display:flex;gap:12px;align-items:flex-start">
+        <span class="chip" style="font-size:8px;background:rgba(0,0,0,0.05);border:1px solid var(--border);color:var(--ink4);flex-shrink:0;white-space:nowrap">${d.priority}</span>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:3px">
+            <span style="font-weight:700;font-size:12.5px;color:var(--ink)">${d.item}</span>
+            <span style="font-family:var(--fm);font-size:9px;color:var(--ink5);flex-shrink:0;margin-left:8px">${d.domain} · ${d.owner}</span>
+          </div>
+          <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.reason}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Capture Backlog — <em>Not Yet Documented</em></div>
+    <div class="inf a"><strong>3 Known Gaps</strong>These processes exist in practice at Valentis but have never been formally documented. They are single points of failure — if the person who runs them leaves, the process leaves with them.</div>
+    ${[
+      {gap:'Country SM Performance Briefing Process',desc:'The process by which Country SMs receive and discuss their team\'s performance data is currently done verbally by the Group HR Head. No guide, no template, no standard format exists. If the Group HR Head is absent, this stops.',risk:'High — SM briefings are critical to delivery management.',target:'Q2 2026',owner:'CoE'},
+      {gap:'Informal Salary Exception Escalation Path',desc:'The practical path for requesting and getting approval for an above-band salary exception is known informally but not documented. The exception form exists (Tool 2) but the escalation conversation protocol does not.',risk:'Medium — creates inconsistency in how exceptions are raised and decided.',target:'Q2 2026',owner:'CoE'},
+      {gap:'New Country Entry HR Checklist',desc:'Valentis has established operations in four countries but there is no documented checklist for what HR must do when entering a new country (labour law review, contract templates, permit process, payroll setup). As Valentis scales, this will be needed.',risk:'Medium — relevant when next country entry occurs.',target:'Q3 2026',owner:'CoE'},
+    ].map(d=>`<div style="padding:12px 16px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px">
+        <span style="font-weight:700;font-size:13px;color:var(--ink)">${d.gap}</span>
+        <span class="chip cr" style="flex-shrink:0;margin-left:8px;white-space:nowrap">To Capture</span>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55;margin-bottom:5px">${d.desc}</div>
+      <div style="font-size:11.5px;color:var(--red);font-weight:400;margin-bottom:3px">Risk: ${d.risk}</div>
+      <div style="font-family:var(--fm);font-size:9.5px;color:var(--ink5)">Owner: ${d.owner} · Target: ${d.target}</div>
+    </div>`).join('')}
+    <div class="card" style="margin-top:14px;margin-bottom:0;background:var(--surface2);box-shadow:none">
+      <div class="ct" style="font-size:18px">KM Health — <em>Trend</em></div>
+      <table class="dt" style="margin-top:4px">
+        <thead><tr><th>Quarter</th><th>Total Items</th><th>Current</th><th>Needs Update</th><th>Missing</th><th>Health %</th></tr></thead>
+        <tbody>
+          ${[
+            {q:'Q2 2025',t:54,c:44,u:7,m:3,pct:81},
+            {q:'Q3 2025',t:58,c:46,u:8,m:4,pct:79},
+            {q:'Q4 2025',t:61,c:49,u:9,m:3,pct:80},
+            {q:'Q1 2026',t:64,c:51,u:10,m:3,pct:80},
+            {q:'Q2 2026 Target',t:67,c:62,u:3,m:2,pct:90},
+          ].map(r=>`<tr>
+            <td style="font-weight:600;font-size:12px">${r.q}</td>
+            <td style="font-family:var(--fm);font-size:11px">${r.t}</td>
+            <td style="color:var(--green);font-weight:600">${r.c}</td>
+            <td style="color:var(--amber)">${r.u}</td>
+            <td style="color:var(--red)">${r.m}</td>
+            <td style="font-weight:700;color:${r.pct>=85?'var(--green)':r.pct>=75?'var(--amber)':'var(--red)'}">${r.pct}%</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;
+</script>
+</body>
+</html>

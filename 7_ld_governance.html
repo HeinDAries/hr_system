@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Governance &amp; Curriculum Map — L&amp;D Tool 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1eb;--surface:#fff;--surface2:#edeae2;--surface3:#e4e0d6;
+  --border:#d8d3c8;--border2:#c8c2b4;
+  --ink:#1a1a14;--ink2:#2c2b22;--ink3:#524f44;--ink4:#857f72;--ink5:#b4ae9f;
+  --forest:#1f4d35;--forest2:#276044;--forest3:#2e7350;
+  --forest-dim:rgba(31,77,53,0.07);--forest-border:rgba(31,77,53,0.22);
+  --brass:#7a5c14;--brass2:#8f6d1a;
+  --brass-dim:rgba(122,92,20,0.08);--brass-border:rgba(122,92,20,0.22);
+  --sienna:#9b3a1a;--sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.2);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --slate:#2c3a30;
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--forest3),var(--forest),rgba(31,77,53,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;background:rgba(31,77,53,0.2);border:1px solid rgba(31,77,53,0.4);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:#6dbf8a;font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(31,77,53,0.2);border-color:rgba(31,77,53,0.45);color:#6dbf8a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--forest3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#6dbf8a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--forest);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--forest)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--forest);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-forest{background:var(--forest-dim);color:var(--forest);border:1px solid var(--forest-border)}
+.chip-brass{background:var(--brass-dim);color:var(--brass);border:1px solid var(--brass-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.forest{background:var(--forest-dim);border-color:var(--forest);color:var(--ink2)}
+.info.brass{background:var(--brass-dim);border-color:var(--brass);color:var(--ink2)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--forest);padding:16px 20px;margin:16px 0;background:var(--forest-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--forest)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--forest);border-bottom-color:var(--forest);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* curriculum map grid */
+.cm-grid{display:grid;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px}
+.cm-header{display:grid;background:var(--slate);font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.45)}
+.cm-header-cell{padding:9px 14px;border-right:1px solid rgba(255,255,255,0.06)}
+.cm-header-cell:last-child{border-right:none}
+.cm-row{display:grid;border-top:1px solid var(--border)}
+.cm-row:hover .cm-cell{background:var(--surface2)}
+.cm-cell{padding:10px 14px;border-right:1px solid var(--border);font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6;vertical-align:top}
+.cm-cell:last-child{border-right:none}
+.cm-cell-grade{font-family:var(--fd);font-size:20px;font-weight:800;color:var(--forest);background:var(--surface2)}
+/* governance swimlane */
+.sw-wrap{display:grid;gap:10px;margin-bottom:14px}
+.sw-row{display:grid;grid-template-columns:130px 1fr;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.sw-label{background:var(--slate);padding:14px 12px;display:flex;align-items:center;justify-content:center;text-align:center}
+.sw-label-text{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5);line-height:1.5}
+.sw-content{padding:13px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start}
+.sw-item{padding:7px 12px;border-radius:3px;font-size:12px;line-height:1.5;flex-shrink:0}
+/* cal planner */
+.cal-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px}
+.cal-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 13px;font-size:13px;color:#f0ede4;font-family:var(--fb);outline:none;cursor:pointer;margin-bottom:10px}
+.cal-select option{background:var(--slate);color:#f0ede4}
+.cal-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;display:block}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-forest{background:var(--forest);color:#fff}
+.btn-forest:hover{background:var(--forest2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:rgba(31,77,53,0.5);color:#6dbf8a}
+.cal-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx-box{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">L&amp;D Tool 7 / 7</div>
+    <div class="sb-title">Learning Governance<br><em>&amp; Curriculum Map</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>L&amp;D System Overview</div>
+    <div class="nav-item" onclick="showPage('curriculum',this)"><span class="nav-num">02</span>Curriculum Map</div>
+    <div class="nav-item" onclick="showPage('governance',this)"><span class="nav-num">03</span>Governance Structure</div>
+    <div class="nav-item" onclick="showPage('roles',this)"><span class="nav-num">04</span>Roles &amp; Accountabilities</div>
+    <div class="nav-item" onclick="showPage('quality',this)"><span class="nav-num">05</span>Quality Assurance</div>
+    <div class="nav-item" onclick="showPage('calendar',this)"><span class="nav-num">06</span>2026 L&amp;D Calendar</div>
+    <div class="nav-item" onclick="showPage('library',this)"><span class="nav-num">07</span>Knowledge Library</div>
+    <div class="nav-item" onclick="showPage('planner',this)"><span class="nav-num">08</span>Annual Plan Builder</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Learning &amp; Development — Tool 7 of 7</strong>
+      Learning Governance &amp; Curriculum Map<br>
+      <span style="color:rgba(255,255,255,0.12)">This is the final tool. Together the seven tools are the Valentis L&D System.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">L&amp;D Tool 7 / 7 — Learning Governance &amp; Curriculum Map</div>
+    <h1 class="page-title">L&amp;D System<br><em>Overview</em></h1>
+    <p class="page-desc">This is the seventh and final L&D tool. It holds the architecture of the entire Valentis learning system — the curriculum map, governance structure, roles, quality standards, calendar, and knowledge library. Where the previous six tools each addressed a specific L&D function, this tool binds them together into a single coherent system that Ba owns and operates.</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">The Seven-Tool L&D System — What Ba Has Built</div>
+    <div class="vx-title">Six months ago, Valentis had no formal L&D system. Today it has one.</div>
+    <div class="vx-body">Tool 1 established the strategy and framework — why L&D at Valentis exists and what it is designed to produce. Tool 2 ran the training needs analysis — 9 capability gaps, 4 critical/now. Tool 3 gave Ba the design toolkit — how to build learning that transfers to the field. Tool 4 built the G1→G4 Development Pathway — the most critical people infrastructure Valentis has. Tool 5 built the Leadership Development Programme — G4, SM, and Ba's own development. Tool 6 built the measurement system — ROI, metrics, reporting cadence. This tool — Tool 7 — maps what has been built, governs how it runs, and ensures it does not quietly degrade.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Valentis L&amp;D System — Seven Tools at a Glance</div>
+    <table class="dtable">
+      <thead><tr><th>#</th><th>Tool</th><th>Primary purpose</th><th>Key output</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:700;color:var(--forest)">1</td><td style="font-weight:600">L&amp;D Strategy &amp; Framework</td><td>Defines why L&D exists at Valentis and what it is designed to produce</td><td>L&D purpose statement, strategic priorities, investment logic</td><td><span class="chip chip-forest">Complete</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">2</td><td style="font-weight:600">Training Needs Analysis</td><td>Identifies capability gaps and prioritises learning investment</td><td>9 gaps identified, 4 critical/now, Tier 1 investment &lt;$15K</td><td><span class="chip chip-forest">Complete</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">3</td><td style="font-weight:600">Learning Design Toolkit</td><td>Ensures learning programmes transfer to field behaviour</td><td>Design templates, facilitation guides, transfer planning tools</td><td><span class="chip chip-forest">Complete</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">4</td><td style="font-weight:600">G1→G4 Development Pathway</td><td>Operates the driller pipeline — Valentis's most critical people infrastructure</td><td>Grade-by-grade milestones, candidate tracker, country adaptations</td><td><span class="chip chip-forest">Complete</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">5</td><td style="font-weight:600">Leadership Development Programme</td><td>Develops G4 coaching capability, SM effectiveness, and Ba's own readiness</td><td>Valentis Leadership Framework (C1–C4), SM individual plans, G4 rubric</td><td><span class="chip chip-forest">Complete</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">6</td><td style="font-weight:600">L&amp;D Measurement &amp; ROI</td><td>Proves L&D value in business language — for the COO and for Ba's investment authority</td><td>11 metrics, ROI calculator, quarterly reporting template, COO brief builder</td><td><span class="chip chip-forest">Complete</span></td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">7</td><td style="font-weight:600">Learning Governance &amp; Curriculum Map</td><td>Holds the system together — curriculum architecture, governance, quality, calendar</td><td>Curriculum map, governance structure, 2026 calendar, knowledge library</td><td><span class="chip chip-forest">This tool</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What Governance Means at Valentis Scale</div>
+      <div class="card-body" style="margin-bottom:12px">Governance at a 42-person company does not mean committees, policy documents, and sign-off matrices. It means three things: Ba knows what the curriculum contains and whether it is current. Each programme has a clear owner who is accountable for its quality. And there is a simple annual cycle — plan, deliver, review — that prevents the system from quietly going stale.</div>
+      <div style="display:grid;gap:7px">
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:3px">GOVERNANCE ELEMENT 1</div>
+          <div style="font-weight:600;font-size:13.5px;color:var(--ink);margin-bottom:2px">Curriculum visibility</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Ba can see, at any point, what the Valentis curriculum contains — by grade, by country, by programme type. No programme exists in the system without an owner, a last-reviewed date, and a connection to at least one strategic outcome.</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:3px">GOVERNANCE ELEMENT 2</div>
+          <div style="font-weight:600;font-size:13.5px;color:var(--ink);margin-bottom:2px">Programme accountability</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Every programme in the Valentis curriculum has a named owner. For operational programmes (G1–G4 pathway), the owner is the SM or G4, with Ba as system custodian. For leadership programmes, the owner is Ba. Ownership means the programme runs, is reviewed annually, and is improved when measurement data demands it.</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:3px">GOVERNANCE ELEMENT 3</div>
+          <div style="font-weight:600;font-size:13.5px;color:var(--ink);margin-bottom:2px">Annual review cycle</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">December each year: Ba reviews the entire curriculum against the TNA and measurement data. Programmes that have met their outcomes are either embedded as standard practice or retired. Gaps identified in the review become the next year's TNA priorities. The curriculum does not grow indefinitely — it stays lean and targeted.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">System Health Indicators — Is the L&amp;D System Working?</div>
+      <div class="card-body" style="margin-bottom:10px">Ba can use these six questions annually to assess whether the L&D system is functioning as designed. A system that cannot answer these questions positively has governance gaps, not just learning gaps.</div>
+      <div style="display:grid;gap:6px">
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;align-items:start">
+          <div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--forest)">1</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Does every G1 trainee have a named G4 responsible for their development?</strong> If the answer is no — or "probably, but I'm not certain" — the pathway governance has broken down at the first point of contact.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;align-items:start">
+          <div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--forest)">2</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Has every active G3 driller received a month-3 check-in this quarter?</strong> The highest-leverage single intervention in the system. If check-in compliance drops, Ba's first call is to the G4, not the trainee.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;align-items:start">
+          <div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--forest)">3</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Is every Laos G3 candidate making milestone progress toward G4?</strong> The retirement cliff is the system's highest-stakes delivery deadline. If this answer is uncertain, the annual report to the COO will contain bad news.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;align-items:start">
+          <div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--forest)">4</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Has each SM made and followed through on at least one peer forum commitment this year?</strong> If yes — the forum is working. If no — Ba needs to redesign the forum format, not just remind SMs to follow through.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;align-items:start">
+          <div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--forest)">5</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Can Ba name one measurable outcome from this year's L&D investment?</strong> Not a programme that ran. An outcome that changed — a conversion rate, a delivery %, a certification date achieved. If Ba cannot name one, the measurement system is not being used.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:3px;align-items:start">
+          <div style="font-family:var(--fm);font-size:18px;font-weight:800;color:var(--forest)">6</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Has Ba's own development plan been reviewed this year?</strong> The L&D system includes Ba. If Ba's gap areas (strategic influence, commercial fluency, C-suite credibility) have not been revisited against Ba's 2026 actions, the leadership development programme is incomplete.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-curriculum" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Curriculum Map</div>
+    <h1 class="page-title">Curriculum<br><em>Map</em></h1>
+    <p class="page-desc">The complete Valentis learning curriculum — every active programme, mapped by grade and development domain. The curriculum map is Ba's master view of what the organisation offers, to whom, when, and at what investment level. It is reviewed annually in December and updated whenever a new programme is added or retired.</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('cm-ops',this)">Operational Pipeline</div>
+    <div class="tab" onclick="showTab('cm-lead',this)">Leadership</div>
+    <div class="tab" onclick="showTab('cm-core',this)">Core &amp; Compliance</div>
+    <div class="tab" onclick="showTab('cm-ba',this)">Ba's Own Development</div>
+  </div>
+
+  <div class="tab-body active" id="tab-cm-ops">
+    <div class="info forest"><strong>Operational pipeline curriculum — the core of Valentis L&D.</strong>These programmes exist to move drillers from G1 to G4. Everything else in the L&D system is either upstream preparation (TNA, design) or downstream support (measurement, governance). The operational pipeline curriculum is the system's primary delivery mechanism.</div>
+    <div class="cm-grid" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+      <div class="cm-header" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+        <div class="cm-header-cell">Grade</div>
+        <div class="cm-header-cell">Programme / Mechanism</div>
+        <div class="cm-header-cell">Mode</div>
+        <div class="cm-header-cell">Owner</div>
+        <div class="cm-header-cell">Duration</div>
+        <div class="cm-header-cell">Success measure</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+        <div class="cm-cell cm-cell-grade" style="grid-row:span 3">G1</div>
+        <div class="cm-cell"><strong>30-Day Induction Programme</strong><br>Site safety, equipment orientation, team integration. Structured daily plan, G4-led.</div>
+        <div class="cm-cell">On-site. Daily structured activities + G4 debrief sessions.</div>
+        <div class="cm-cell">G4 (deliver) · Ba (design, review annually)</div>
+        <div class="cm-cell">30 days</div>
+        <div class="cm-cell">Trainee reports readiness. G4 confirms milestone M1 (site safety) complete.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="display:none"></div>
+        <div class="cm-cell"><strong>Five-Milestone Development Journey</strong><br>M1 site safety → M2 equipment → M3 drilling fundamentals → M4 non-routine response → M5 peer teaching.</div>
+        <div class="cm-cell">On-site experiential. G4 coaches, documents, signs off each milestone.</div>
+        <div class="cm-cell">G4 (deliver) · SM (oversight) · Ba (quarterly audit)</div>
+        <div class="cm-cell">18–24 months</div>
+        <div class="cm-cell">All 5 milestones signed off. M5 completion = G2 promotion eligibility.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="display:none"></div>
+        <div class="cm-cell"><strong>Month-3 At-Risk Check-in</strong><br>The highest-leverage single intervention. G4 conducts structured check-in at day 85–95 for every active trainee.</div>
+        <div class="cm-cell">1:1 conversation, 30–45 min. G4-led. Documented by G4 on standard form.</div>
+        <div class="cm-cell">G4 (conduct) · Ba (track compliance)</div>
+        <div class="cm-cell">Single session at month 3</div>
+        <div class="cm-cell">100% completion rate. At-risk trainees flagged and intervention planned within 7 days.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+        <div class="cm-cell cm-cell-grade" style="grid-row:span 2">G2</div>
+        <div class="cm-cell"><strong>Four-Milestone Development Journey</strong><br>M1 independent complex operations → M2 equipment maintenance / fault diagnosis → M3 G1 supervision → M4 operational planning.</div>
+        <div class="cm-cell">On-site experiential. G4 coaches and signs off. Indonesia M1 accelerated pathway for candidates with external experience.</div>
+        <div class="cm-cell">G4 (deliver) · SM (oversight) · Ba (quarterly audit)</div>
+        <div class="cm-cell">12–18 months</div>
+        <div class="cm-cell">All 4 milestones signed off. M4 completion = G3 promotion eligibility.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="display:none"></div>
+        <div class="cm-cell"><strong>G1 Day-to-Day Supervision Practice</strong><br>G2 drillers build supervisory capability through structured G1 oversight — documented and reviewed by G4.</div>
+        <div class="cm-cell">Embedded in daily operations. G4 observes and provides fortnightly feedback.</div>
+        <div class="cm-cell">G4 (observe and feedback) · G2 (document interactions)</div>
+        <div class="cm-cell">Ongoing from month 3 of G2</div>
+        <div class="cm-cell">G4 observation confirms M3 (G1 supervision) standard. G1 trainee outcomes tracked.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+        <div class="cm-cell cm-cell-grade" style="grid-row:span 3">G3</div>
+        <div class="cm-cell"><strong>Five-Milestone Development Journey</strong><br>M1 technical mastery → M2 G1/G2 programme oversight → M3 technical judgment → M4 G1 development accountability (primary G4 readiness signal) → M5 performance management.</div>
+        <div class="cm-cell">On-site experiential. SM-led sign-off. Laos urgency: M4 gate is the retirement-risk critical path.</div>
+        <div class="cm-cell">SM (oversight and sign-off) · Ba (quarterly audit, G4 candidate flagging)</div>
+        <div class="cm-cell">18–24 months</div>
+        <div class="cm-cell">All 5 milestones. M4 sign-off at G3 is the primary G4 candidate identification gate.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="display:none"></div>
+        <div class="cm-cell"><strong>G4 Development Plan (for G3 candidates)</strong><br>Formal development plan activated for G3 drillers identified as G4 candidates. Includes cross-site exposure, retiring G4 knowledge transfer, SM coaching observation.</div>
+        <div class="cm-cell">Hybrid: on-site + cross-site exposure (typically 4-week placement).</div>
+        <div class="cm-cell">Ba (design and activate) · SM (country execution) · G4 (mentoring)</div>
+        <div class="cm-cell">12–18 months per candidate</div>
+        <div class="cm-cell">G4 certification achieved. Laos: first candidate certified before first G4 retirement.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="display:none"></div>
+        <div class="cm-cell"><strong>People-Avoidance Intervention</strong><br>Targeted support for G3s who demonstrate avoidance of M4/M5 (development and performance accountability). Named as the most common G3 failure mode.</div>
+        <div class="cm-cell">Structured 1:1 coaching from SM. Three-session minimum. Ba provides coaching framework and follow-up template.</div>
+        <div class="cm-cell">SM (deliver) · Ba (design, review at 90 days)</div>
+        <div class="cm-cell">3 structured sessions + 90-day review</div>
+        <div class="cm-cell">G3 demonstrates M4-level behaviour within 90 days of intervention start.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:60px 1fr 1fr 1fr 1fr 1fr">
+        <div class="cm-cell cm-cell-grade">G4</div>
+        <div class="cm-cell"><strong>G4 Coaching Programme</strong><br>Six-module structured programme building G4 coaching and people development capability. Myanmar-first rollout. Thailand SM co-facilitates modules 2, 4, 6 via video.</div>
+        <div class="cm-cell">Blended: Ba-facilitated sessions (6 × 2hrs) + field practice between modules + rubric-based observation.</div>
+        <div class="cm-cell">Ba (design and facilitate) · Thailand SM (modules 2, 4, 6) · SM (field observation)</div>
+        <div class="cm-cell">6 weeks (one module per week) + 6-month post-certification tracking</div>
+        <div class="cm-cell">Rubric score ≥3/5 all dimensions. Conversion rate target ≥70% at Q4 2026.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-cm-lead">
+    <div class="cm-grid" style="grid-template-columns:130px 1fr 1fr 1fr 1fr">
+      <div class="cm-header" style="grid-template-columns:130px 1fr 1fr 1fr 1fr">
+        <div class="cm-header-cell">Audience</div>
+        <div class="cm-header-cell">Programme / Mechanism</div>
+        <div class="cm-header-cell">Mode &amp; cadence</div>
+        <div class="cm-header-cell">Owner</div>
+        <div class="cm-header-cell">Success measure</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:130px 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="font-weight:700;color:var(--forest);background:var(--surface2)">All SMs<br><span style="font-size:11px;color:var(--ink4);font-weight:300">Quarterly</span></div>
+        <div class="cm-cell"><strong>SM Peer Forum</strong><br>Quarterly structured peer learning for all four SMs. One SM hosts. Agenda: live case, shared challenge, one commitment per SM. Thailand SM anchors first two sessions as change champion.</div>
+        <div class="cm-cell">Virtual (video). 90 min per session. Quarterly. Ba facilitates. First session Q2 2026.</div>
+        <div class="cm-cell">Ba (design and facilitate)</div>
+        <div class="cm-cell">≥75% SM commitment follow-through rate. Each SM names one changed practice per year.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:130px 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="font-weight:700;color:var(--forest);background:var(--surface2)">Each SM<br><span style="font-size:11px;color:var(--ink4);font-weight:300">Annual</span></div>
+        <div class="cm-cell"><strong>SM Annual Development Conversation</strong><br>Structured 1:1 between Ba and each SM. Valentis Leadership Framework C1–C4 reviewed. One development focus identified and planned for the year.</div>
+        <div class="cm-cell">1:1, 60–90 min. Annual (January/February). Ba-led. Myo H. and Wirawan include retention dimension.</div>
+        <div class="cm-cell">Ba (design and conduct)</div>
+        <div class="cm-cell">Each SM has one active, documented development focus. Ba reviews progress at mid-year and year-end.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:130px 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="font-weight:700;color:var(--forest);background:var(--surface2)">Myo H.<br><span style="font-size:11px;color:var(--ink4);font-weight:300">Myanmar SM</span></div>
+        <div class="cm-cell"><strong>G4 Coaching Programme Sponsorship</strong><br>Myo H. co-sponsors the Myanmar G4 coaching programme — observed in three sessions, provides field observation data to Ba, publicly endorses the programme to G4s. Builds Myo H.'s C1 (Develop People) capability.</div>
+        <div class="cm-cell">Observation + endorsement. Embedded in G4 coaching programme delivery. September 2026 retention conversation deadline.</div>
+        <div class="cm-cell">Ba (coordinate) · Myo H. (sponsor)</div>
+        <div class="cm-cell">Myo H. completes all three observation sessions. Retention conversation held by September 2026.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:130px 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="font-weight:700;color:var(--forest);background:var(--surface2)">Wirawan S.<br><span style="font-size:11px;color:var(--ink4);font-weight:300">Indonesia SM</span></div>
+        <div class="cm-cell"><strong>High Power Sceptic Engagement Sequence</strong><br>Data first, peer second, COO third. Ba presents Indonesia G3 vacancy and delivery data → Thailand SM as peer reference → COO backstop if required. G3 resolution builds trust.</div>
+        <div class="cm-cell">Sequenced interactions. Q1 data brief → Q2 peer forum (Thailand SM) → Q3 COO backstop only if needed.</div>
+        <div class="cm-cell">Ba (lead strategy) · COO (backstop)</div>
+        <div class="cm-cell">Wirawan participates in two consecutive peer forums. Retention conversation held by October 2026.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:130px 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="font-weight:700;color:var(--forest);background:var(--surface2)">All G4s<br><span style="font-size:11px;color:var(--ink4);font-weight:300">Quarterly</span></div>
+        <div class="cm-cell"><strong>G4 Quarterly Development Debrief</strong><br>Three-question structured debrief between Ba and each G4. Not a performance review — a development dialogue. Focuses on coaching quality, trainee progress, and G4's own development needs.</div>
+        <div class="cm-cell">30-min call or site visit. Quarterly. Ba-led. Myanmar G4s first — establishes baseline before coaching programme starts.</div>
+        <div class="cm-cell">Ba (design and conduct)</div>
+        <div class="cm-cell">Each G4 has at least two development conversations per year. G4 names one thing they improved.</div>
+      </div>
+      <div class="cm-row" style="grid-template-columns:130px 1fr 1fr 1fr 1fr">
+        <div class="cm-cell" style="font-weight:700;color:var(--forest);background:var(--surface2)">Country 5<br><span style="font-size:11px;color:var(--ink4);font-weight:300">Succession</span></div>
+        <div class="cm-cell"><strong>Country 5 SM Readiness Programme</strong><br>Identified G4 candidate (Q4 2026 identification deadline) prepared for SM role at Country 5 launch (Q2 2027). Requires coaching certification, cross-site experience, SM shadowing.</div>
+        <div class="cm-cell">Structured development plan. 6-month preparation window Q4 2026–Q2 2027. Ba designs and monitors.</div>
+        <div class="cm-cell">Ba (design and monitor) · Thailand SM (shadow host)</div>
+        <div class="cm-cell">Candidate identified Q4 2026. Certified for deployment by Q2 2027 launch.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-cm-core">
+    <div class="info brass"><strong>Core and compliance programmes are not Ba's primary responsibility at Valentis.</strong>Operations owns HSE and technical compliance. Ba's role is to ensure these programmes are acknowledged in the curriculum map (so no gap exists) and to flag to the COO if Ba observes a pattern — for example, if site-level HSE refresher non-completion is correlated with incident rates or trainee confidence at month 3.</div>
+    <table class="dtable">
+      <thead><tr><th>Programme</th><th>Audience</th><th>Owner</th><th>Ba's role</th><th>Cadence</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">HSE Induction — Site Safety</td><td>All new hires (G1+)</td><td>SM / Operations</td><td>Ensure G1 pathway M1 (site safety) is completed as part of 30-day induction. Flag non-completion to SM and Ba's check-in tracker.</td><td>At hire</td></tr>
+        <tr><td style="font-weight:600">HSE Annual Refresher</td><td>All site staff</td><td>SM / Operations</td><td>Note completion rate in quarterly pipeline report. Flag if any country drops below 90% annual refresher completion.</td><td>Annual</td></tr>
+        <tr><td style="font-weight:600">Equipment Operating Standards</td><td>G1–G3 (grade-appropriate)</td><td>SM / Operations (technical)</td><td>Equipment standards are embedded in G1 M2 and G2 M2 milestones. Ba reviews alignment between pathway milestones and equipment standards annually.</td><td>Ongoing / annual review</td></tr>
+        <tr><td style="font-weight:600">Labour Law &amp; Employment Compliance</td><td>SMs + Ba</td><td>Ba (HR compliance) + local counsel</td><td>Ba maintains a country compliance register for Laos, Myanmar, Indonesia, Thailand. Country 5 compliance review required before SM deployment.</td><td>Annual review + as regulations change</td></tr>
+        <tr><td style="font-weight:600">Anti-Bribery &amp; Ethics</td><td>All staff (G4+ priority)</td><td>Ba / COO</td><td>Ba ensures awareness programme is acknowledged in the curriculum. Not a significant design or delivery burden — typically covered in annual induction refresh.</td><td>Annual (acknowledgement)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tab-body" id="tab-cm-ba">
+    <div class="vx-box" style="margin-top:4px">
+      <div class="vx-eyebrow">Ba's Own Development Curriculum</div>
+      <div class="vx-title">Ba is a participant in the L&D system — not only its architect.</div>
+      <div class="vx-body">The four gap areas identified in the Leadership Development Programme (Tool 5) — strategic influence, commercial fluency, C-suite credibility, external profile — each require active learning. Ba's development curriculum is not listed here for completeness. It is here because Ba's credibility in running a rigorous L&D system for Valentis depends on being seen to apply the same discipline to Ba's own development.</div>
+    </div>
+    <table class="dtable">
+      <thead><tr><th>Development area</th><th>Current gap</th><th>Programme / mechanism</th><th>2026 action</th><th>Success indicator</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600">Strategic influence</td>
+          <td>Not in business planning meetings. HR presented as reactive to operational need.</td>
+          <td>COO brief building (Tool 6 outputs). Pipeline report as strategic intelligence product. Proactive risk framing before events occur.</td>
+          <td>Deliver first quarterly pipeline report by March 2026. Laos ROI brief to COO by April 2026. Request business planning inclusion at H1 review.</td>
+          <td>Ba invited to at least one business planning conversation by Q3 2026. COO references Ba's pipeline data in an operational decision.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Commercial fluency</td>
+          <td>HR outputs not framed in revenue or margin language. Cost-centre positioning.</td>
+          <td>AIHR Compensation &amp; Benefits certification. L&D ROI calculator practice. People cost as % of revenue framing in all COO briefs.</td>
+          <td>Complete C&amp;B certification by Q3 2026. Use revenue language in every COO brief — replacement cost, delivery %, margin impact. Request P&L access from COO.</td>
+          <td>COO describes Ba's reports as "business data, not HR data." Ba can model a people cost scenario in under 30 minutes.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">C-suite credibility</td>
+          <td>HR positioned as reactive and administrative. Ba not perceived as strategic peer by COO/CEO.</td>
+          <td>AIHR Strategic Talent Acquisition certification (in progress). Annual people capability report for CEO (December 2026). Ba's CHRO positioning document.</td>
+          <td>Complete Strategic TA certification by Q2 2026. Deliver first Annual People Capability Report to COO and CEO December 2026. Update CHRO gap analysis mid-year.</td>
+          <td>CEO engages with the Annual People Capability Report. COO introduces Ba as Group HR at an external meeting without the "admin" framing.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">External profile</td>
+          <td>No external professional presence. CHRO track requires demonstrated external credibility.</td>
+          <td>AIHR certifications as credential. HR peer networks (country-level). LinkedIn presence reflecting strategic HR work.</td>
+          <td>List both AIHR certifications on completion. Connect with one external HR peer in the mining / exploration sector by Q3 2026. One external insight cited in a COO brief.</td>
+          <td>Two AIHR certifications complete and listed. At least one external HR peer relationship established. COO aware Ba is active in the external HR community.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-governance" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Governance Structure</div>
+    <h1 class="page-title">Governance<br><em>Structure</em></h1>
+    <p class="page-desc">The governance structure defines how decisions about the L&D system are made — who approves, who reviews, who escalates, and what triggers a review outside the normal annual cycle. At Valentis, governance is lightweight by design. The system should run without governance overhead becoming a barrier to delivery.</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Governance exists to protect delivery quality — not to create process for its own sake. At 42 people across four countries, every governance layer must earn its place."</p>
+    <cite>Valentis L&amp;D Governance Principle · 2026</cite>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Governance Swimlanes — Who Does What</div>
+    <div class="card-body" style="margin-bottom:14px">Three actors in the Valentis L&D governance model: Ba (Group HR Manager), the COO, and the SMs. Each has a defined lane. Overlap is intentional only at decision gates.</div>
+    <div class="sw-wrap">
+      <div class="sw-row">
+        <div class="sw-label"><div class="sw-label-text">COO<br>Strategic<br>Approver</div></div>
+        <div class="sw-content">
+          <div class="sw-item" style="background:var(--forest-dim);border:1px solid var(--forest-border);color:var(--ink2)"><strong style="display:block;font-size:11px">Annual L&D Budget</strong><span style="font-size:11.5px;font-weight:300">Approves total L&D spend. Receives Ba's investment case in H2. No approval needed for individual programme delivery within approved budget.</span></div>
+          <div class="sw-item" style="background:var(--forest-dim);border:1px solid var(--forest-border);color:var(--ink2)"><strong style="display:block;font-size:11px">G4 Candidate Exceptions</strong><span style="font-size:11.5px;font-weight:300">Indonesia accelerated pathway exceptions. Any promotion outside the standard time-in-grade criteria requires COO awareness (not formal approval).</span></div>
+          <div class="sw-item" style="background:var(--forest-dim);border:1px solid var(--forest-border);color:var(--ink2)"><strong style="display:block;font-size:11px">Country 5 SM Selection</strong><span style="font-size:11.5px;font-weight:300">Final selection decision. Ba presents recommendation with evidence. COO decides by Q4 2026 for Q2 2027 launch.</span></div>
+          <div class="sw-item" style="background:var(--forest-dim);border:1px solid var(--forest-border);color:var(--ink2)"><strong style="display:block;font-size:11px">Retention Decisions</strong><span style="font-size:11.5px;font-weight:300">Myo H. and Wirawan retention proposals require COO approval before Ba initiates conversations.</span></div>
+        </div>
+      </div>
+      <div class="sw-row">
+        <div class="sw-label"><div class="sw-label-text">Ba<br>System<br>Custodian</div></div>
+        <div class="sw-content">
+          <div class="sw-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)"><strong style="display:block;font-size:11px">Curriculum design and review</strong><span style="font-size:11.5px;font-weight:300">Ba designs all L&D programmes, reviews curriculum annually in December, retires programmes that have met their outcomes, adds programmes in response to TNA findings.</span></div>
+          <div class="sw-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)"><strong style="display:block;font-size:11px">G4 certification sign-off</strong><span style="font-size:11.5px;font-weight:300">Ba countersigns all G4 certifications. SM recommends. Ba validates against rubric evidence. No G4 certification without Ba's sign-off.</span></div>
+          <div class="sw-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)"><strong style="display:block;font-size:11px">Pipeline reporting</strong><span style="font-size:11.5px;font-weight:300">Quarterly and annual pipeline reports are Ba's sole-authored products. SMs provide data inputs; Ba synthesises and interprets for COO.</span></div>
+          <div class="sw-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)"><strong style="display:block;font-size:11px">Stalled candidate intervention</strong><span style="font-size:11.5px;font-weight:300">When a candidate is stalled at 3 months with no milestone progress, Ba initiates a structured review (not SM alone). At 6 months, Ba produces a formal assessment. At 12 months, Ba recommends to COO.</span></div>
+          <div class="sw-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)"><strong style="display:block;font-size:11px">SM development facilitation</strong><span style="font-size:11.5px;font-weight:300">SM peer forum design, facilitation, and commitment tracking are Ba's sole responsibility. Ba does not delegate SM development to the COO or to SMs themselves.</span></div>
+          <div class="sw-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)"><strong style="display:block;font-size:11px">Trigger reviews</strong><span style="font-size:11.5px;font-weight:300">Any trigger event (see below) prompts Ba to initiate an unscheduled review without waiting for the quarterly cycle.</span></div>
+        </div>
+      </div>
+      <div class="sw-row">
+        <div class="sw-label"><div class="sw-label-text">Site<br>Managers<br>Operators</div></div>
+        <div class="sw-content">
+          <div class="sw-item" style="background:var(--brass-dim);border:1px solid var(--brass-border);color:var(--ink2)"><strong style="display:block;font-size:11px">Day-to-day pathway delivery</strong><span style="font-size:11.5px;font-weight:300">SMs ensure G4s are running milestones, check-ins, and debriefs. Not Ba's direct delivery responsibility — Ba sets standards and audits quarterly.</span></div>
+          <div class="sw-item" style="background:var(--brass-dim);border:1px solid var(--brass-border);color:var(--ink2)"><strong style="display:block;font-size:11px">Milestone recommendation</strong><span style="font-size:11.5px;font-weight:300">SMs recommend G3→G4 candidate activation (based on M4 sign-off). G3→G4 promotion recommendation comes from SM to Ba; Ba reviews and countersigns.</span></div>
+          <div class="sw-item" style="background:var(--brass-dim);border:1px solid var(--brass-border);color:var(--ink2)"><strong style="display:block;font-size:11px">Country adaptation</strong><span style="font-size:11.5px;font-weight:300">SMs propose country-specific pathway adaptations (e.g., language, shift pattern, equipment type). Ba approves adaptations that do not change milestone standards. Standard changes require Ba plus COO awareness.</span></div>
+          <div class="sw-item" style="background:var(--brass-dim);border:1px solid var(--brass-border);color:var(--ink2)"><strong style="display:block;font-size:11px">Monthly pipeline data input</strong><span style="font-size:11.5px;font-weight:300">SMs report trainee exits, milestone completions, and at-risk flags to Ba monthly. This is a non-negotiable data input — Ba cannot run the pipeline report without it.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Trigger Reviews — When to Act Between Cycles</div>
+    <div class="card-body" style="margin-bottom:12px">The quarterly cycle is the default. These events trigger an unscheduled review by Ba — without waiting for the next scheduled report.</div>
+    <table class="dtable">
+      <thead><tr><th>Trigger event</th><th>Ba's immediate action</th><th>Escalation threshold</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">G1 monthly exit rate exceeds 30% in any country</td><td>Review all check-in completion records for the affected cohort. Identify whether the G4 responsible completed the month-3 check-in. If not — G4 coaching programme priority escalates.</td><td>Two consecutive months above 30% → COO brief within 7 days.</td></tr>
+        <tr><td style="font-weight:600">Programme delivery drops below 85% in any country</td><td>Review G3/G4 headcount immediately. If headcount gap is the cause — activate emergency sourcing protocol (Tool 1 / TA). If capability gap is the cause — review G4 debrief frequency and G3 milestone completion for the affected cohort.</td><td>Immediate COO notification if below 85% — same day as Ba becomes aware.</td></tr>
+        <tr><td style="font-weight:600">First Laos G4 retirement date confirmed</td><td>Verify G3 candidate development plan milestone status. If candidate is not on track for certification before retirement date — immediate intervention plan. Escalate to COO within 48 hours with a remediation options brief.</td><td>Automatic COO notification. No discretion on escalation — this is the retirement cliff event.</td></tr>
+        <tr><td style="font-weight:600">Any SM confirms departure intention</td><td>Activate succession assessment immediately. Review Country 5 SM pipeline and the internal succession criteria from the SM succession risk register (Tool 5). Identify whether an internal candidate can be accelerated.</td><td>COO notification within 24 hours. Succession brief within 2 weeks.</td></tr>
+        <tr><td style="font-weight:600">Wirawan S. declines to participate in SM peer forum after two invitations</td><td>Move to COO backstop engagement. Ba briefs COO on Indonesia pipeline data and requests a direct COO message to Wirawan reinforcing Group HR authority and the importance of forum participation.</td><td>COO briefed before the third invitation is issued.</td></tr>
+        <tr><td style="font-weight:600">Ba misses a planned quarterly pipeline report</td><td>No trigger — this is a governance failure, not an external event. Ba's accountability to the reporting cadence is self-monitored. A missed quarterly report requires Ba to consider whether the data collection system is functioning and whether the reporting overhead is sustainable.</td><td>If sustained across two cycles — redesign the report, not the delivery commitment.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-roles" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Roles &amp; Accountabilities</div>
+    <h1 class="page-title">Roles &amp;<br><em>Accountabilities</em></h1>
+    <p class="page-desc">Every actor in the Valentis L&D system has a defined role with specific accountabilities. This section makes each role explicit — what they must do, when, and what Ba checks. Accountability without clarity is not accountability at all.</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('role-ba',this)">Ba — Group HR</div>
+    <div class="tab" onclick="showTab('role-sm',this)">Site Managers</div>
+    <div class="tab" onclick="showTab('role-g4',this)">G4 Lead Drillers</div>
+    <div class="tab" onclick="showTab('role-coo',this)">COO</div>
+  </div>
+
+  <div class="tab-body active" id="tab-role-ba">
+    <div class="card">
+      <div class="card-title">Ba — Group HR Manager — L&amp;D Accountabilities</div>
+      <div class="card-body" style="margin-bottom:12px">Ba is the custodian of the entire Valentis L&D system. Not every delivery responsibility is Ba's — but every governance responsibility is. Ba is accountable for the system's health, not just its design.</div>
+      <table class="dtable">
+        <thead><tr><th>Accountability</th><th>Frequency</th><th>Standard</th><th>What failure looks like</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Quarterly pipeline report to COO</td><td>Quarterly</td><td>Delivered within 10 working days of quarter close. One page. Numbers first, narrative second. Country conversion rates, active G4 candidates, check-in completion, delivery %.</td><td>Report is late, or omits the conversion rate data, or does not include a flag section. COO receives information about pipeline health for the first time from a source other than Ba.</td></tr>
+          <tr><td style="font-weight:600">G4 coaching rubric observation</td><td>Annual (+ pre-programme baseline)</td><td>30-min structured observation per G4. Five dimensions scored. Results shared with G4 and SM within 7 days of observation.</td><td>G4 completes the coaching programme but has no rubric score on record. Or rubric scores are recorded without a prior baseline — making change unmeasurable.</td></tr>
+          <tr><td style="font-weight:600">Month-3 check-in compliance tracking</td><td>Monthly</td><td>Ba maintains a check-in tracker. Every G1 trainee has a documented check-in status by month 4. Overdue check-ins are flagged to the G4 within 5 working days of the deadline passing.</td><td>A trainee exits at month 3 and Ba is unable to confirm whether a check-in was completed or not.</td></tr>
+          <tr><td style="font-weight:600">SM peer forum facilitation</td><td>Quarterly</td><td>Forum designed and facilitated by Ba. All four SMs invited. Commitment records completed in real time. Follow-through checked at the next session.</td><td>Forum happens but Ba has no commitment records. Or the forum becomes a status update meeting with no development content.</td></tr>
+          <tr><td style="font-weight:600">Annual curriculum review</td><td>Annual (December)</td><td>Every programme in the curriculum is reviewed against TNA priorities and measurement data. Programmes without a measurable outcome attached are either updated or retired. New TNA priorities become next year's investment focus.</td><td>The curriculum grows year-on-year without retirement. By 2028, there are 20 programmes running with no one tracking whether they work.</td></tr>
+          <tr><td style="font-weight:600">Stalled candidate intervention</td><td>At 3, 6, 12 months of stall</td><td>Ba initiates a structured review with the SM at 3 months. Produces a formal candidate assessment at 6 months. Makes a COO recommendation at 12 months (promote, redeploy, or exit the programme).</td><td>A candidate sits in a stalled state for 18+ months with no documented intervention and no COO awareness.</td></tr>
+          <tr><td style="font-weight:600">Ba's own development plan review</td><td>Annual (mid-year and year-end)</td><td>Ba reviews progress against the four gap areas (strategic influence, commercial fluency, C-suite credibility, external profile). AIHR certifications tracked to completion. COO brief quality reviewed against the revenue-language standard.</td><td>Ba's development plan is designed in Tool 5 and never revisited. The gap areas in 2027 are identical to those in 2026.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-role-sm">
+    <div class="card">
+      <div class="card-title">Site Manager — L&amp;D Accountabilities</div>
+      <table class="dtable">
+        <thead><tr><th>Accountability</th><th>Frequency</th><th>Standard</th><th>Ba's check</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Monthly pipeline data report to Ba</td><td>Monthly</td><td>SM reports trainee exits (month of exit + reason if known), milestone completions, and at-risk flags. Data submitted within 5 working days of month close.</td><td>Ba cross-checks against pipeline log. Any gap triggers a follow-up call to SM — same week.</td></tr>
+          <tr><td style="font-weight:600">G4 debrief frequency oversight</td><td>Monthly</td><td>SM reviews G4 debrief tally sheets monthly. Flags to Ba if any G4 has fewer than 2 documented debriefs in the month. Does not conduct the debrief on the G4's behalf — raises the flag and confirms the G4 has conducted it.</td><td>Ba asks SMs directly in the quarterly call: "Which G4s missed debriefs last month and what was the reason?"</td></tr>
+          <tr><td style="font-weight:600">G3 milestone sign-off (M1–M3)</td><td>As milestones are reached</td><td>SM signs off G3 milestones M1–M3. G3 M4 and M5 are elevated to Ba review before sign-off — these are the G4 readiness gates.</td><td>Ba audits milestone sign-off records quarterly. Any sign-off without accompanying observational evidence is queried.</td></tr>
+          <tr><td style="font-weight:600">G4 candidate recommendation</td><td>When G3 reaches M4</td><td>SM formally recommends a G3 as a G4 development candidate when M4 is completed to standard. Written recommendation to Ba with SM's observational notes. Ba countersigns within 10 working days.</td><td>Ba reviews the quality of SM's observational notes — not just whether the recommendation was made.</td></tr>
+          <tr><td style="font-weight:600">SM peer forum participation</td><td>Quarterly</td><td>SM attends all four quarterly peer forums. Makes one specific commitment per session. Reports on the prior session's commitment at the start of the next session.</td><td>Ba tracks attendance and commitment follow-through in the forum record. Any SM who misses two consecutive forums is addressed in the annual SM development conversation.</td></tr>
+          <tr><td style="font-weight:600">Country 5 SM (for identified candidate)</td><td>From Q4 2026</td><td>If the Country 5 SM candidate is an internal G4, the home-country SM supports the shadow period by releasing the candidate for the agreed placement weeks and providing a written readiness assessment to Ba by Q1 2027.</td><td>Ba coordinates the placement. SM's readiness assessment is input to Ba's Country 5 recommendation to COO.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-role-g4">
+    <div class="card">
+      <div class="card-title">G4 Lead Driller — L&amp;D Accountabilities</div>
+      <table class="dtable">
+        <thead><tr><th>Accountability</th><th>Frequency</th><th>Standard</th><th>Who checks</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Month-3 check-in for every G1 in their cohort</td><td>At day 85–95 per trainee</td><td>30–45 min structured check-in. Four areas covered: technical confidence, team integration, understanding of expectations, any concerns. Documented on the standard form. At-risk flag raised to SM and Ba within 24 hours if identified.</td><td>Ba (compliance check monthly). SM (quality spot-check quarterly).</td></tr>
+          <tr><td style="font-weight:600">Structured debrief sessions (G1 trainees)</td><td>≥2 per trainee per fortnight</td><td>Four-question debrief format: What went well? What was difficult? What will you do differently? What do you need from me? Documented on G4 debrief tally sheet.</td><td>SM reviews tally sheet monthly. Ba reviews aggregate debrief frequency in quarterly pipeline report.</td></tr>
+          <tr><td style="font-weight:600">Milestone sign-off (G1 M1–M5, G2 M1–M4)</td><td>As milestones are reached</td><td>G4 signs off milestone only when the standard is demonstrated — not on time served. Milestone sign-off includes date and a one-line observation note confirming the standard. Rushed or undocumented sign-offs are a governance failure.</td><td>Ba audits quarterly. Any milestone sign-off without an observation note is queried and, if repeated, raised to SM as a G4 performance issue.</td></tr>
+          <tr><td style="font-weight:600">G4 coaching programme participation (Myanmar G4s)</td><td>6 modules (2026)</td><td>All six modules attended. Field practice exercises completed between modules. Post-programme: rubric score assessed by Ba. G4 continues to develop debrief practice to reach ≥3.0/5.0 on all rubric dimensions.</td><td>Ba (attendance and rubric). SM (field practice observation).</td></tr>
+          <tr><td style="font-weight:600">G4 quarterly development debrief with Ba</td><td>Quarterly</td><td>30-min call or site visit with Ba. Three questions: What development have you observed in your trainees? What has been hardest for you as a coach this quarter? What do you need to do better in the next quarter?</td><td>Ba conducts and documents. G4's response to the third question becomes the G4's development focus for next quarter.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-role-coo">
+    <div class="card">
+      <div class="card-title">COO — L&amp;D Accountabilities</div>
+      <div class="card-body" style="margin-bottom:10px">The COO is not an L&D delivery actor. The COO's role in the system is to create conditions for Ba to operate effectively — and to make the decisions that only the COO can make.</div>
+      <table class="dtable">
+        <thead><tr><th>Accountability</th><th>Frequency</th><th>Standard</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Receive and respond to quarterly pipeline reports</td><td>Quarterly</td><td>COO acknowledges receipt within 5 working days. Any flag requiring COO action receives a decision or a confirmed timeline for decision within 10 working days. Ba should never have to chase a response to a pipeline report.</td></tr>
+          <tr><td style="font-weight:600">Approve annual L&D budget</td><td>Annual (H2 for following year)</td><td>COO reviews Ba's investment case and approves or modifies the L&D budget. If the budget is modified below Ba's recommended level, the COO acknowledges which outcomes will not be achievable within the reduced budget — Ba documents this for the annual people capability report.</td></tr>
+          <tr><td style="font-weight:600">Endorse Group HR authority (Indonesia)</td><td>Once — Q1 2026</td><td>COO sends a direct message to Wirawan S. confirming that Group HR has authority to conduct pipeline reviews and access workforce data across all Valentis countries, including Indonesia. One message, copied to Ba. This resolves the authority ambiguity without a formal escalation.</td></tr>
+          <tr><td style="font-weight:600">Approve SM retention proposals</td><td>Before September 2026 (Myo H.) / October 2026 (Wirawan)</td><td>COO reviews and approves or rejects Ba's retention proposals before Ba initiates the conversations. No retention conversation happens without COO sign-off on the proposal terms.</td></tr>
+          <tr><td style="font-weight:600">Make Country 5 SM decision</td><td>Q4 2026</td><td>COO selects the Country 5 SM from Ba's recommendation brief. Decision is required by Q4 2026 for the Q2 2027 launch timeline. Late decision compresses the SM preparation window and increases deployment risk.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  <div id="page-quality" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Quality Assurance</div>
+    <h1 class="page-title">Quality<br><em>Assurance</em></h1>
+    <p class="page-desc">Quality assurance in the Valentis L&D system is not about checking compliance with a policy. It is about answering one question at every stage: is this programme producing the behaviour change it was designed to produce? If the answer is no, Ba investigates the cause before the next delivery cycle.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Quality Standards by Programme Type</div>
+    <table class="dtable">
+      <thead><tr><th>Programme type</th><th>Minimum quality standard</th><th>QA check</th><th>Who checks</th><th>Frequency</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600">G1–G4 Milestone Journey<br><span style="font-size:11px;color:var(--ink4)">Operational pipeline</span></td>
+          <td>Every milestone sign-off includes: candidate name, grade, milestone number, date, G4/SM signature, and one-line observational note confirming the standard demonstrated. No blank sign-off cards.</td>
+          <td>Ba audits a random sample of 3 milestone cards per country per quarter. Any card without an observation note is flagged to the SM as a quality breach.</td>
+          <td>Ba (audit) · SM (enforce with G4)</td>
+          <td>Quarterly audit. Trigger review if two consecutive audits find &gt;20% blank cards in any country.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Month-3 Check-in<br><span style="font-size:11px;color:var(--ink4)">Critical intervention</span></td>
+          <td>Check-in must be conducted within days 85–95 (not earlier — the month-3 inflection point is real). Documentation must include the four areas assessed and a risk level (Green / Amber / Red). Amber and Red flags must have an intervention plan within 7 days.</td>
+          <td>Ba checks the check-in log monthly. Any G1 who passes day 95 without a documented check-in triggers an immediate follow-up to the G4. Ba does not wait for the quarterly audit — check-in compliance is a monthly check.</td>
+          <td>Ba (monthly compliance check)</td>
+          <td>Monthly. Target: 100% completion within the day 85–95 window.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">G4 Coaching Programme<br><span style="font-size:11px;color:var(--ink4)">High-stakes programme</span></td>
+          <td>All six modules delivered. Each G4 has a pre-programme rubric baseline score on record. Post-programme rubric score assessed within 4 weeks of module 6 completion. G4 debrief frequency tracked for 6 months post-certification.</td>
+          <td>Ba maintains the coaching quality log. Rubric scores are the primary QA measure — not programme attendance. If a G4 attends all six modules but does not reach ≥3.0 on any rubric dimension, the programme has not worked for that G4. Ba designs a targeted follow-up, not a repeat of the full programme.</td>
+          <td>Ba (rubric observation and coaching log)</td>
+          <td>Rubric: annual. Debrief frequency: monthly (SM verification). Post-programme conversion rate: at 6 and 12 months.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">SM Peer Forum<br><span style="font-size:11px;color:var(--ink4)">Leadership development</span></td>
+          <td>Commitment record completed at every session. Follow-through reported at the subsequent session. If the follow-through rate drops below 50% across two consecutive sessions, Ba redesigns the commitment format — the issue is the mechanism, not the SMs' commitment.</td>
+          <td>Ba's forum record is the QA document. Ba reviews the record before each session and plans an opening that acknowledges the prior session's commitments explicitly — this is the accountability mechanism that makes follow-through more likely.</td>
+          <td>Ba (forum record)</td>
+          <td>Each session. Target: ≥75% follow-through rate.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">G3 Development Plans<br><span style="font-size:11px;color:var(--ink4)">G4 pipeline</span></td>
+          <td>Every active G3 development plan has a current milestone status, a named SM sponsor, and a projected certification date. Plans without an active status update in the preceding 90 days are considered stalled — Ba flags to SM immediately.</td>
+          <td>Ba reviews G4 pipeline candidates in the quarterly pipeline report. Any candidate without a milestone update in 90 days is a governance flag, not just a pipeline concern.</td>
+          <td>Ba (quarterly review of candidate pipeline)</td>
+          <td>Quarterly. Laos candidates: monthly (retirement risk urgency).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Quality Failure Modes — What to Watch For</div>
+      <div class="card-body" style="margin-bottom:10px">These are the most common quality degradation patterns in field-based L&D systems at Valentis's scale. Each has an early warning signal that Ba can observe before the failure is complete.</div>
+      <div style="display:grid;gap:7px">
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:.5px;margin-bottom:3px">FAILURE MODE 1 — MILESTONE INFLATION</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">What it looks like:</strong> Milestones are signed off on schedule regardless of whether the standard is demonstrated. All candidates appear "on track" until promotion — then underperformance at the next grade is immediate. <strong style="color:var(--ink2)">Early warning:</strong> All milestone sign-offs arrive on the same date (batch processing). Sign-off cards have no observation notes. No candidate is ever rated below standard.</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:.5px;margin-bottom:3px">FAILURE MODE 2 — CHECK-IN FORMALISM</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">What it looks like:</strong> Check-ins are conducted on schedule but are purely procedural — the G4 asks the questions, records "Green" for all answers, and the trainee still exits at month 4. The check-in happened; the conversation did not. <strong style="color:var(--ink2)">Early warning:</strong> 100% check-in completion but attrition at month 3–4 remains unchanged. All check-ins rated Green — no Amber or Red flags despite a context where some risk should be normal.</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:3px">FAILURE MODE 3 — PROGRAMME ACCUMULATION</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">What it looks like:</strong> The curriculum grows year-on-year without retirement. By year 3, there are 15 active programmes, most with no measurement attached, and Ba cannot explain what outcomes they collectively produce. <strong style="color:var(--ink2)">Early warning:</strong> The December curriculum review finds more than two programmes that cannot be linked to a measurable outcome or a current TNA priority.</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:3px">FAILURE MODE 4 — REPORTING WITHOUT INSIGHT</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">What it looks like:</strong> Ba produces the quarterly pipeline report on schedule but it contains only data — no interpretation, no flags, no recommended actions. The COO reads the numbers but cannot determine what they mean for operational risk. The report becomes a routine document that nobody acts on. <strong style="color:var(--ink2)">Early warning:</strong> The COO stops responding to quarterly reports with any questions or decisions.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Annual Curriculum Review Process — December</div>
+      <div class="card-body" style="margin-bottom:10px">Ba conducts this review alone. It takes 2–3 hours. The output is a one-page curriculum review memo to Ba's own records — updated curriculum map, retirement list, and next year's TNA priorities.</div>
+      <div style="display:grid;gap:6px">
+        <div style="display:grid;grid-template-columns:32px 1fr;gap:8px;padding:9px 12px;background:var(--surface2);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--forest);line-height:1">1</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Pull the measurement data.</strong> Extract the eleven metrics for the year. For each programme in the curriculum, identify which metrics it was designed to move and whether it moved them.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:32px 1fr;gap:8px;padding:9px 12px;background:var(--surface2);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--forest);line-height:1">2</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Rate each programme: Keep / Improve / Retire.</strong> Keep if the outcome was achieved and the need persists. Improve if the outcome was partially achieved or the mechanism needs redesign. Retire if the outcome was achieved and is now embedded in practice, or if the need no longer exists.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:32px 1fr;gap:8px;padding:9px 12px;background:var(--surface2);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--forest);line-height:1">3</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Run a lightweight TNA scan.</strong> Review the current pipeline metric set. Any metric that is still below target after 12 months of intervention points to a capability gap that has not been addressed by the curriculum. This becomes next year's TNA priority.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:32px 1fr;gap:8px;padding:9px 12px;background:var(--surface2);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--forest);line-height:1">4</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Update the curriculum map.</strong> Remove retired programmes. Add confirmed new programmes for the coming year (with owner, mode, and success measure already assigned). Update the 2027 calendar.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:32px 1fr;gap:8px;padding:9px 12px;background:var(--surface2);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:16px;font-weight:800;color:var(--forest);line-height:1">5</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65"><strong style="color:var(--ink2)">Update Ba's own development plan.</strong> Review the four gap areas against the year's actions. Identify what changed, what did not, and what the focus should be for the coming year. Document in Ba's records.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-calendar" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — 2026 L&amp;D Calendar</div>
+    <h1 class="page-title">2026 L&amp;D<br><em>Calendar</em></h1>
+    <p class="page-desc">The complete Valentis L&D and governance activity calendar for 2026. Each item is assigned to an owner, connected to a programme, and marked by type. The calendar is Ba's operational delivery plan — reviewed quarterly and updated as the year progresses.</p>
+  </div>
+
+  <div class="info brass"><strong>2026 is the foundation year.</strong>Most baseline data does not exist yet — conversion rates, rubric scores, check-in compliance figures. The 2026 calendar is therefore weighted toward establishment activities in H1 and measurement and reporting activities in H2. From 2027, the calendar will be more evenly balanced because Ba will have a year of baseline data to work from.</div>
+
+  <div class="card">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:1px;margin-bottom:10px">H1 2026 — ESTABLISH &amp; ACTIVATE</div>
+        <div style="display:grid;gap:5px">
+          <div style="padding:10px 13px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--forest);font-weight:700">JANUARY</span><span class="chip chip-muted">Ba</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">SM Annual Development Conversations</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">All four SMs. C1–C4 review. One development focus per SM identified and documented. Myo H. and Wirawan include retention dimension briefing.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4);font-weight:700">JANUARY–FEBRUARY</span><span class="chip chip-muted">Ba</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Pipeline Log Setup + Baseline Data Collection</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Ba establishes the pipeline log. Extracts current headcount, grade, milestone records from site sign-off cards. Sets up check-in tracker. Requests G1 exit data field from SMs for monthly reporting.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4);font-weight:700">FEBRUARY</span><span class="chip chip-muted">Ba + Myanmar G4s</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">G4 Coaching Rubric Baseline Observations (Myanmar)</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Ba conducts 30-min rubric observation per Myanmar G4 before the coaching programme begins. Baseline scores recorded. Programme design confirmed against gaps identified.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--forest);font-weight:700">MARCH</span><span class="chip chip-forest">Ba → COO</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Q1 2026 Pipeline Report — FIRST FORMAL REPORT</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Ba's first quarterly pipeline report to COO. Baseline data only — no year-on-year comparison yet. Establishes the reporting rhythm. Includes Laos G3 retirement risk for the first time in a formal document.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--red);font-weight:700">APRIL ⚠ DEADLINE</span><span class="chip chip-red">Ba → COO</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Laos ROI / Cost of Inaction Brief</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Dedicated brief to COO on the Laos G3 development plan investment case. $6,100 investment vs $28K–$65K cost of inaction. COO approval for plan activation required before June. This brief must precede the June 2026 plan activation deadline.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4);font-weight:700">MARCH–MAY</span><span class="chip chip-muted">Ba + Myanmar G4s + TH SM</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">G4 Coaching Programme — Modules 1–6 (Myanmar)</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Six-module programme. Ba facilitates all modules. Thailand SM co-facilitates modules 2, 4, 6 via video. Myo H. observes modules 1, 3, 5 as sponsor. Field practice between each module.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4);font-weight:700">APRIL–JUNE</span><span class="chip chip-muted">Ba + Zaw M. (Myanmar)</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Zaw M. Below-Minimum Salary Review</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Zaw M. (Myanmar G3) flagged below minimum band. Action required April 2026. Ba manages the correction process and documents the outcome.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--forest);font-weight:700">JUNE</span><span class="chip chip-forest">Ba + Laos SMs + G3s</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Laos G3 Development Plans Activated ⚠ CRITICAL DEADLINE</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Both Laos G3 candidates have signed development plans by end June 2026. Cross-site exposure to Thailand scheduled for Q3. Retiring G4 knowledge transfer sessions begin. This is the retirement cliff mitigation deadline.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--forest);font-weight:700">JUNE</span><span class="chip chip-forest">Ba → COO</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Q2 Pipeline Report + H1 L&amp;D Investment Review + SM Peer Forum 1</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">First quarterly comparison report (Q1 vs Q2 baseline). H1 L&D investment review: G4 coaching programme mid-point. First SM peer forum launches — Thailand SM anchors as change champion.</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:1px;margin-bottom:10px">H2 2026 — MEASURE &amp; POSITION</div>
+        <div style="display:grid;gap:5px">
+          <div style="padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4);font-weight:700">JULY</span><span class="chip chip-muted">Ba + Myanmar G4s + Myo H.</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">G4 Coaching Post-Certification Rubric + Mid-Point Review</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Ba observes and scores each Myanmar G4 post-certification. Rubric score vs baseline — first ROI data point. Mid-point review briefed to COO. Debrief frequency tracking begins (6-month post-certification window).</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4);font-weight:700">JULY–AUGUST</span><span class="chip chip-muted">Ba + Laos G3 candidates + TH SM</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Laos G3 Cross-Site Exposure — Thailand (4 weeks)</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Both Laos G3 candidates (sequentially) spend 4 weeks at the Thailand site. Thailand SM hosts and provides written readiness assessment to Ba at the end of each placement.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--red);font-weight:700">SEPTEMBER ⚠ DEADLINE</span><span class="chip chip-red">Ba + COO + Myo H.</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Myo H. Retention Conversation</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Retention conversation held by end September 2026. Retention bonus expiry April 2027. COO approves proposal before Ba initiates the conversation. Non-negotiable deadline — this is the C1 development opportunity for Myo H. as well as a retention risk management action.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--forest);font-weight:700">SEPTEMBER</span><span class="chip chip-forest">Ba → COO</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Q3 Pipeline Report + SM Peer Forum 2</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:500;line-height:1.6">Third quarterly report. First conversion rate trend comparison available (Q1→Q2→Q3). G4 coaching programme impact visible. Laos G3 milestone update. Wirawan engagement sequence: Thailand SM peer reference at this forum.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--red);font-weight:700">OCTOBER ⚠ DEADLINE</span><span class="chip chip-red">Ba + COO + Wirawan</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Wirawan S. Retention Conversation + Country 5 SM Recommendation</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Two concurrent actions: Wirawan retention proposal (bonus expiry Q1 2027). And: Ba submits Country 5 SM candidate recommendation to COO. Decision needed by Q4 2026. If Wirawan is the Country 5 candidate — these conversations are linked.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--ink4);font-weight:700">NOVEMBER</span><span class="chip chip-muted">Ba + identified Country 5 candidate</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Country 5 SM Preparation Programme Launch</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">Once COO has confirmed the Country 5 SM selection, Ba activates the 6-month preparation programme. Shadow placement with Thailand SM scheduled. Development plan signed. Q2 2027 deployment timeline confirmed.</div>
+          </div>
+          <div style="padding:10px 13px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--fm);font-size:9px;color:var(--forest);font-weight:700">DECEMBER</span><span class="chip chip-forest">Ba → COO + CEO</span></div>
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:500;margin-bottom:2px">Q4 Report + Annual People Capability Report + H2 L&amp;D Review + Annual Curriculum Review</div>
+            <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">The year's most significant L&D governance moment. Annual People Capability Report for COO and CEO. Full metric scorecard. G4 coaching programme 12-month conversion rate impact. Laos G3 milestone status. Ba's annual curriculum review. SM peer forum year 1 assessment. 2027 L&D plan and budget recommendation submitted.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <div id="page-library" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Knowledge Library</div>
+    <h1 class="page-title">Knowledge<br><em>Library</em></h1>
+    <p class="page-desc">The Knowledge Library is the reference index for everything Valentis has built, learned, and documented in the L&D system. It is not a document repository — it is a structured index that tells Ba (and any future CHRO) where every key document lives, what it contains, and when it was last reviewed.</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">Why the Library Matters</div>
+    <div class="vx-title">The system Ba has built in 2026 must survive 2027, 2028, and Ba's eventual promotion.</div>
+    <div class="vx-body">When Ba moves into a CHRO role — at Valentis or elsewhere — the next Group HR Manager must be able to pick up the L&D system and operate it without starting from scratch. The Knowledge Library is the handover document. It is also the proof, when Ba interviews for the CHRO role, that Ba built a system — not just a set of tools. The library is updated whenever Ba creates a new document, reviews an existing one, or retires a programme.</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('lib-tools',this)">L&amp;D Toolkit</div>
+    <div class="tab" onclick="showTab('lib-ops',this)">Operational Documents</div>
+    <div class="tab" onclick="showTab('lib-reports',this)">Reports &amp; Records</div>
+    <div class="tab" onclick="showTab('lib-ba',this)">Ba's Development</div>
+  </div>
+
+  <div class="tab-body active" id="tab-lib-tools">
+    <table class="dtable">
+      <thead><tr><th>#</th><th>Document</th><th>Contents</th><th>Last review</th><th>Next review</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:700;color:var(--forest)">T1</td><td style="font-weight:600">L&D Strategy &amp; Framework<br><span class="chip chip-forest" style="margin-top:4px">ld_strategy.html</span></td><td>L&D purpose statement, strategic priorities (driller pipeline, leadership bench, Ba's positioning), investment logic, Valentis L&D principles.</td><td>2026 Q1 (build)</td><td>December 2026 (annual curriculum review)</td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">T2</td><td style="font-weight:600">Training Needs Analysis<br><span class="chip chip-forest" style="margin-top:4px">ld_tna.html</span></td><td>9 capability gaps, 4 critical/now. Tier 1 investment &lt;$15K. Country-specific gap analysis. Myanmar supervisory resistance. Indonesia G3 vacancy root cause. TNA methodology and refresh trigger guide.</td><td>2026 Q1 (build)</td><td>December 2026 (annual curriculum review triggers TNA refresh)</td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">T3</td><td style="font-weight:600">Learning Design Toolkit<br><span class="chip chip-forest" style="margin-top:4px">ld_design.html</span></td><td>ADDIE-based design framework adapted for field L&D. Transfer planning tools. Facilitation guides. Four-question debrief model. Design templates for G4 coaching programme.</td><td>2026 Q1 (build)</td><td>December 2026 (review against any new programmes added)</td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">T4</td><td style="font-weight:600">G1→G4 Development Pathway<br><span class="chip chip-forest" style="margin-top:4px">ld_pathway.html</span></td><td>Grade-by-grade milestone journey. 30-day induction plan. Month-3 check-in protocol. Transition decision framework. Country pathway adaptations. Interactive candidate progress tracker.</td><td>2026 Q1 (build)</td><td>December 2026 — check milestone standards against any equipment or site changes.</td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">T5</td><td style="font-weight:600">Leadership Development Programme<br><span class="chip chip-forest" style="margin-top:4px">ld_leadership.html</span></td><td>Valentis Leadership Framework (C1–C4). SM peer forum design. Individual SM development plans (Thailand, Myo H., Wirawan, Laos SM). G4 rubric (5 dimensions). Ba's development plan. Country 5 readiness build plan.</td><td>2026 Q1 (build)</td><td>December 2026 — review SM plans against year outcomes. Update Ba's development plan.</td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">T6</td><td style="font-weight:600">L&D Measurement &amp; ROI<br><span class="chip chip-forest" style="margin-top:4px">ld_measurement.html</span></td><td>11 Valentis metrics. Kirkpatrick–Phillips framework applied. G4 coaching ROI case. Laos cost of inaction ROI. Data collection system. Reporting cadence. ROI calculator. COO brief builder.</td><td>2026 Q1 (build)</td><td>December 2026 — update metric targets based on first year of actual data.</td></tr>
+        <tr><td style="font-weight:700;color:var(--forest)">T7</td><td style="font-weight:600">Learning Governance &amp; Curriculum Map<br><span class="chip chip-forest" style="margin-top:4px">ld_governance.html</span></td><td>Full curriculum map (operational, leadership, core, Ba's own development). Governance structure. Roles and accountabilities. Quality assurance standards. 2026 L&D calendar. Knowledge library. Annual plan builder.</td><td>2026 Q1 (build)</td><td>December 2026 — full annual curriculum review. Update calendar for 2027.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tab-body" id="tab-lib-ops">
+    <table class="dtable">
+      <thead><tr><th>Document</th><th>Contents</th><th>Owner</th><th>Review trigger</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">G1 Milestone Sign-off Cards (by country)</td><td>Physical cards on site. One per trainee. Milestones 1–5 with date, G4 signature, and one-line observation note.</td><td>G4 (complete) · SM (holds physical copies) · Ba (audits quarterly sample)</td><td>Quarterly audit sample. Replaced if: standard changes, equipment changes, country-specific milestone adaptation approved by Ba.</td></tr>
+        <tr><td style="font-weight:600">G2 Milestone Sign-off Cards</td><td>Physical cards. Milestones 1–4. G4 signs M1–M3. SM reviews M4 before Ba counter-sign.</td><td>G4 (M1–M3) · SM (M4 recommendation) · Ba (M4 counter-sign)</td><td>As above. M4 standard is reviewed annually — this is the G3 promotion gate.</td></tr>
+        <tr><td style="font-weight:600">G3 Milestone Sign-off Cards</td><td>Physical cards. Milestones 1–5. M4 and M5 are the G4 readiness gates — reviewed by Ba before counter-sign. People-avoidance pattern flagged at M4 review if present.</td><td>SM (M1–M3) · Ba (M4 and M5 counter-sign)</td><td>As above. M4 and M5 standards reviewed annually against G4 performance data from the coaching rubric.</td></tr>
+        <tr><td style="font-weight:600">Month-3 Check-in Forms</td><td>Standard form: trainee name, G4, date, four areas assessed, risk level (Green/Amber/Red), intervention plan if Amber/Red. Held by G4 and Ba.</td><td>G4 (complete) · Ba (track in check-in log)</td><td>Review format annually. If Amber/Red flags consistently occur without intervention plans — redesign the form to make the intervention plan section mandatory.</td></tr>
+        <tr><td style="font-weight:600">G4 Debrief Tally Sheet</td><td>Simple tally: G4 name, month, trainee names, debrief dates (two per trainee per fortnight target). Reviewed by SM monthly, spot-checked by Ba quarterly.</td><td>G4 (complete) · SM (monthly review)</td><td>If tally sheets are not being completed — review format with G4. Simplify if necessary. The form must be easier to complete than not to.</td></tr>
+        <tr><td style="font-weight:600">G4 Coaching Rubric Observation Record</td><td>Five dimensions. Score per dimension (1–5). Qualitative observation notes. Pre-programme baseline + annual post-programme observations.</td><td>Ba (complete and hold)</td><td>Reviewed after each observation cycle. If any dimension consistently scores below 3.0 across multiple G4s — the coaching programme module for that dimension is redesigned.</td></tr>
+        <tr><td style="font-weight:600">SM Peer Forum Record</td><td>Session date, attendees, agenda items covered, commitments made (SM name, specific action, agreed date), follow-through status from prior session.</td><td>Ba (complete and hold)</td><td>Reviewed before each session. If follow-through rate drops below 50% — redesign the commitment format at the next session.</td></tr>
+        <tr><td style="font-weight:600">G3 Development Plans (G4 candidates)</td><td>Candidate name, country, SM sponsor, development focus areas, cross-site exposure plan, retiring G4 knowledge transfer schedule, projected certification date, quarterly milestone status.</td><td>Ba (design and hold) · SM (execute)</td><td>Reviewed monthly for Laos candidates (retirement urgency). Quarterly for all other countries. Redesigned if candidate is stalled at 3 months.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tab-body" id="tab-lib-reports">
+    <table class="dtable">
+      <thead><tr><th>Report</th><th>Audience</th><th>Contents</th><th>Archive</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Q1 2026 Pipeline Report</td><td>COO</td><td>Baseline conversion rates, active G4 candidates, check-in compliance status, programme delivery %. Country-by-country table. First formal Laos retirement risk statement.</td><td>Ba's records. March 2026.</td></tr>
+        <tr><td style="font-weight:600">April 2026 Laos ROI Brief</td><td>COO</td><td>Laos G3 development investment case. $6,100 investment vs $28K–$65K cost of inaction. COO action item: approval for plan activation before June.</td><td>Ba's records. April 2026.</td></tr>
+        <tr><td style="font-weight:600">Q2 2026 Pipeline Report + H1 L&D Review</td><td>COO</td><td>First quarterly comparison (Q1 vs Q2). G4 coaching programme H1 update. H1 L&D investment review. Laos G3 plan activation confirmation.</td><td>Ba's records. June 2026.</td></tr>
+        <tr><td style="font-weight:600">G4 Coaching Mid-Point Review</td><td>COO + Myo H.</td><td>Post-certification rubric scores vs baseline. First conversion rate data point (if available). Debrief frequency compliance. ROI projection update.</td><td>Ba's records. July 2026.</td></tr>
+        <tr><td style="font-weight:600">Q3 2026 Pipeline Report + SM Forum 2 Record</td><td>COO</td><td>Conversion rate trend (Q1→Q3). Laos G3 cross-site exposure update. Myo H. and Wirawan retention conversation status. Country 5 SM assessment timeline.</td><td>Ba's records. September 2026.</td></tr>
+        <tr><td style="font-weight:600">Country 5 SM Recommendation Brief</td><td>COO</td><td>SM candidate assessment. Internal candidate(s) vs external hire analysis. Succession criteria scorecard. Recommended candidate and deployment plan.</td><td>Ba's records. October 2026.</td></tr>
+        <tr><td style="font-weight:600">Annual People Capability Report 2026</td><td>COO + CEO</td><td>Full-year metric scorecard vs targets. G4 coaching ROI (12-month conversion rate). Laos G3 milestone status. Leadership development outcomes (SM forum, G4 rubric). Ba's positioning — what changed in 2026 and what the 2027 priorities are. Budget recommendation.</td><td>Ba's records. December 2026. This is Ba's primary strategic document.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tab-body" id="tab-lib-ba">
+    <div class="card">
+      <div class="card-title">Ba's Professional Development Record</div>
+      <table class="dtable">
+        <thead><tr><th>Item</th><th>Status</th><th>Target completion</th><th>Evidence</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">AIHR Strategic Talent Acquisition Certification</td><td><span class="chip chip-brass">In progress — mid Module 2</span></td><td>Q2 2026</td><td>Certification document. Module completion records. Applied learning: TA strategy integrated into Valentis workforce planning model.</td></tr>
+          <tr><td style="font-weight:600">AIHR Compensation &amp; Benefits Certification</td><td><span class="chip chip-brass">In progress</span></td><td>Q3 2026</td><td>Certification document. Applied learning: C&B toolkit (8 tools) built as part of Valentis HR toolkit.</td></tr>
+          <tr><td style="font-weight:600">COO quarterly pipeline report delivered</td><td><span class="chip chip-muted">Not yet started</span></td><td>March 2026 (first delivery)</td><td>Report delivery records. COO response/acknowledgement. Over time: evidence that COO references Ba's data in decisions.</td></tr>
+          <tr><td style="font-weight:600">Laos ROI brief delivered to COO</td><td><span class="chip chip-muted">Not yet started</span></td><td>April 2026</td><td>Brief document. COO decision outcome (approval for plan activation). Evidence of commercial framing capability.</td></tr>
+          <tr><td style="font-weight:600">Business planning meeting participation</td><td><span class="chip chip-red">Not yet achieved</span></td><td>Q3 2026 (target)</td><td>Meeting records. Ba's contribution to a business planning discussion. COO or CEO reference to HR data in a planning context.</td></tr>
+          <tr><td style="font-weight:600">Annual People Capability Report delivered to CEO</td><td><span class="chip chip-muted">Not yet started</span></td><td>December 2026</td><td>Report document. CEO acknowledgement. Evidence of CHRO-level strategic thinking.</td></tr>
+          <tr><td style="font-weight:600">External HR peer connection (mining / exploration sector)</td><td><span class="chip chip-muted">Not yet started</span></td><td>Q3 2026</td><td>Contact record. At least one insight applied to Valentis and cited in a COO brief or internal document.</td></tr>
+          <tr><td style="font-weight:600">Valentis HR Toolkit — 10 departments complete</td><td><span class="chip chip-brass">6 departments complete · L&D in progress</span></td><td>2026–2027</td><td>Toolkit files. Evidence of Ba using specific tools in real Valentis decisions (pipeline reports, COO briefs, salary reviews).</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+  <div id="page-planner" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Annual Plan Builder</div>
+    <h1 class="page-title">Annual<br><em>Plan Builder</em></h1>
+    <p class="page-desc">Generate a structured L&D annual plan for any year. Select the Valentis context conditions and priority focus — the builder produces a recommended plan with budget framing, priority sequencing, and COO brief language. Use in December each year as part of the annual curriculum review.</p>
+  </div>
+
+  <div class="cal-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0ede4;margin-bottom:4px">L&amp;D Annual Plan Builder</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:22px">Select the conditions that describe Valentis at the time of planning — the builder generates a recommended annual plan.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
+      <div>
+        <span class="cal-label">Planning year</span>
+        <select class="cal-select" id="p-year">
+          <option value="">Select…</option>
+          <option>2027</option><option>2028</option><option>2029</option>
+        </select>
+        <span class="cal-label">Driller pipeline health</span>
+        <select class="cal-select" id="p-pipeline">
+          <option value="">Select…</option>
+          <option value="critical">Critical — conversion below 65% and/or G4 vacancy</option>
+          <option value="recovering">Recovering — conversion 65–72%, G4 pipeline active</option>
+          <option value="healthy">Healthy — conversion ≥72%, G4 pipeline well-stocked</option>
+        </select>
+      </div>
+      <div>
+        <span class="cal-label">Leadership bench status</span>
+        <select class="cal-select" id="p-leadership">
+          <option value="">Select…</option>
+          <option value="gap">Gap — SM or G4 succession risk unresolved</option>
+          <option value="managed">Managed — succession risks identified and in progress</option>
+          <option value="strong">Strong — succession pipeline confident for all SM and G4 roles</option>
+        </select>
+        <span class="cal-label">Expansion status</span>
+        <select class="cal-select" id="p-expansion">
+          <option value="">Select…</option>
+          <option value="none">No new country expansion in plan year</option>
+          <option value="prep">Country 5 preparation underway</option>
+          <option value="launch">Country 5 launching in plan year</option>
+        </select>
+      </div>
+      <div>
+        <span class="cal-label">Ba's CHRO readiness stage</span>
+        <select class="cal-select" id="p-ba">
+          <option value="">Select…</option>
+          <option value="building">Building — not yet in business planning, certifications in progress</option>
+          <option value="visible">Visible — quarterly reports established, one AIHR certification complete</option>
+          <option value="ready">Ready — in business planning, both certifications complete, strong COO relationship</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-forest" onclick="buildPlan()">Generate Annual Plan &#8594;</button>
+      <button class="btn btn-ghost" onclick="clearPlan()">Reset</button>
+    </div>
+    <div class="cal-result" id="plan-result"></div>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tab-body').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+
+function buildPlan(){
+  var year=document.getElementById('p-year').value;
+  var pipeline=document.getElementById('p-pipeline').value;
+  var leadership=document.getElementById('p-leadership').value;
+  var expansion=document.getElementById('p-expansion').value;
+  var ba=document.getElementById('p-ba').value;
+  if(!year||!pipeline||!leadership||!expansion||!ba){alert('Please complete all fields.');return;}
+
+  var p1='',p2='',p3='',p4='',budget='',coo='';
+
+  // Priority 1 — always pipeline-led
+  if(pipeline==='critical'){
+    p1='<strong>PRIORITY 1 — EMERGENCY PIPELINE STABILISATION.</strong> G4 coaching programme (or extension/refresh if previously delivered) is the top investment. Conversion rate below 65% means the operational base is eroding faster than the pipeline can replenish it. Ba\'s entire H1 focus is on G4 coaching delivery, month-3 check-in compliance (100% target), and G1 cohort attrition root cause analysis. No new programmes until conversion reaches 65%.';
+    budget='~$8,000–$12,000 (pipeline stabilisation — G4 coaching, check-in redesign if needed, emergency sourcing support for open G3 vacancies)';
+  } else if(pipeline==='recovering'){
+    p1='<strong>PRIORITY 1 — PIPELINE CONSOLIDATION.</strong> G4 coaching programme outcomes are visible but not yet at target. H1 focus: post-certification rubric observations, debrief frequency tracking, and 6-month conversion rate check. If conversion has moved from below 65% to 65–72%, the coaching programme is working — the investment in year 2 is sustaining the practice, not repeating the programme. Add G4 coaching refresher session (half-day) if any rubric dimension has dropped below 3.0.';
+    budget='~$4,000–$6,000 (pipeline consolidation — G4 refresher, rubric observations, milestone audit)';
+  } else {
+    p1='<strong>PRIORITY 1 — PIPELINE EXPANSION.</strong> With conversion at 72%+ and a well-stocked G4 pipeline, the primary L&D investment shifts from remediation to capacity building. This means: increasing cohort intake in the country with the strongest G4 coaching quality, exploring the G4-to-SM development pathway for high-performers, and using Thailand SM\'s practice as a cross-site model.';
+    budget='~$3,000–$5,000 (pipeline expansion — increased cohort support, G4 cross-site facilitation, milestone system review for quality standards uplift)';
+  }
+
+  // Priority 2 — leadership
+  if(leadership==='gap'){
+    p2='<strong>PRIORITY 2 — LEADERSHIP SUCCESSION EMERGENCY.</strong> An unresolved SM or G4 succession risk in '+year+' is the highest leadership investment priority. Ba\'s actions: run the SM succession criteria assessment immediately, identify whether an internal G4 candidate is activatable, and brief the COO within 30 days with a recommendation. The SM peer forum continues but its agenda for Q1 and Q2 is focused on the succession risk — specifically, which SM can extend their own tenure or serve as interim if needed.';
+  } else if(leadership==='managed'){
+    p2='<strong>PRIORITY 2 — LEADERSHIP DEVELOPMENT CONTINUATION.</strong> Succession risks are in progress. SM peer forum continues quarterly. Individual SM development conversations happen in January. Focus: mid-cycle review of each SM\'s development focus — what changed in the prior year, what needs to deepen in '+year+'. Ba checks whether the Country 5 SM candidate (if identified) is advancing through the preparation programme on schedule.';
+  } else {
+    p2='<strong>PRIORITY 2 — LEADERSHIP DEEPENING.</strong> With succession risks resolved and a confident pipeline, the leadership investment in '+year+' can shift to capability deepening rather than gap-filling. Specific focus: does each G4 have a clear sense of what they are developing in their own practice? Is the SM peer forum producing cross-country learning rather than just accountability? Can Ba introduce one new leadership development mechanism (e.g., a cross-country G4 skills exchange)?';
+  }
+
+  // Priority 3 — expansion
+  if(expansion==='none'){
+    p3='<strong>PRIORITY 3 — SYSTEM SUSTAINABILITY.</strong> No expansion in '+year+' means Ba\'s third priority is ensuring the L&D system quality does not degrade. Annual curriculum review in December prior year should have produced a Keep/Improve/Retire list. In '+year+', any programme rated "Improve" gets its redesign completed and tested. Measurement system reviewed — are the eleven metrics still the right metrics? Are there new baseline data points available that improve ROI calculations?';
+  } else if(expansion==='prep'){
+    p4='<strong>ADDITIONAL PRIORITY — COUNTRY 5 PREPARATION.</strong> If the Country 5 SM candidate is identified, Ba activates the 6-month preparation programme in '+year+'. Shadow placement scheduled. Development plan signed. COO briefed on deployment readiness. The curriculum map is extended to include Country 5 — which means a country adaptation of the G1→G4 pathway must be completed before the SM deploys. Ba should complete the Country 5 pathway adaptation by Q3 '+year+' at the latest.';
+    p3='<strong>PRIORITY 3 — CURRICULUM ADAPTATION FOR COUNTRY 5.</strong> Country 5 brings a new operating context — different labour law, potentially different equipment, and an SM who is new to the role. Ba\'s third priority is building the Country 5 curriculum adaptation: pathway milestone standards reviewed for the new country context, HSE compliance requirements mapped, and a 30-day induction plan for Country 5 designed before the first cohort starts.';
+  } else {
+    p3='<strong>PRIORITY 3 — COUNTRY 5 LAUNCH SUPPORT.</strong> Country 5 is launching in '+year+'. This is the highest-complexity L&D delivery year since the system was built. Priorities: SM is prepared and has completed the 6-month preparation programme. First G1 cohort has a G4 assigned (likely the internal candidate who joined as Country 5\'s first G4). Ba runs a remote 30-day induction check-in with the Country 5 SM in weeks 2, 4, and 8. Country 5 is added to the quarterly pipeline report from its first full quarter of operation.';
+    p4='<strong>NOTE — SYSTEM CAPACITY.</strong> A Country 5 launch in '+year+' means Ba\'s L&D bandwidth is significantly stretched. Ba should consider whether any lower-priority programmes in the existing four countries can be deferred to '+parseInt(year)+1+' — or whether the Annual People Capability Report to the COO includes a case for additional HR resourcing to support the expanded system.';
+  }
+
+  // Ba's development
+  var baDev='';
+  if(ba==='building'){
+    baDev='<strong>BA\'S DEVELOPMENT FOCUS IN '+year+':</strong> Complete remaining AIHR certifications. Deliver all quarterly pipeline reports on schedule. Achieve at least one business planning meeting inclusion. Priority: establish the commercial fluency habit — every COO brief must include at least one revenue or margin figure. The gap between Ba\'s current positioning and CHRO readiness is primarily about visibility and language, not competence.';
+  } else if(ba==='visible'){
+    baDev='<strong>BA\'S DEVELOPMENT FOCUS IN '+year+':</strong> Deepen C-suite credibility. The quarterly pipeline reports are established — now Ba needs the COO to reference Ba\'s data in business decisions. One specific target: request inclusion in one commercial planning meeting and prepare a people-impact analysis of the scenario being discussed. External profile: cite one external HR insight per quarter in COO briefs or internal documents.';
+  } else {
+    baDev='<strong>BA\'S DEVELOPMENT FOCUS IN '+year+':</strong> Ba is operating at CHRO level. The development focus shifts to positioning — building the external profile and track record that supports a CHRO appointment. Specific actions: ensure the Valentis HR toolkit and its business outcomes are documented in a format suitable for a portfolio or interview. Connect with two external CHRO peers in the resources / exploration sector. Consider whether a formal CHRO application at Valentis or elsewhere is the right move in '+year+' or '+parseInt(year)+1+'.';
+  }
+
+  var html='<div style="color:rgba(255,255,255,0.7)">'
+    +'<div style="font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;margin-bottom:2px">Valentis L&D Annual Plan — '+year+'</div>'
+    +'<div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:18px">Generated from: Pipeline='+pipeline+' · Leadership='+leadership+' · Expansion='+expansion+' · Ba='+ba+'</div>'
+    +'<div style="display:grid;gap:10px">'
+    +'<div style="padding:13px 16px;background:rgba(31,77,53,0.15);border:1px solid rgba(31,77,53,0.3);border-radius:3px;font-size:13px;line-height:1.8">'+p1+'</div>'
+    +'<div style="padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:3px;font-size:13px;line-height:1.8">'+p2+'</div>'
+    +'<div style="padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:3px;font-size:13px;line-height:1.8">'+p3+'</div>'
+    +(p4?'<div style="padding:13px 16px;background:rgba(122,92,20,0.1);border:1px solid rgba(122,92,20,0.3);border-radius:3px;font-size:13px;line-height:1.8">'+p4+'</div>':'')
+    +'<div style="padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:3px;font-size:13px;line-height:1.8">'+baDev+'</div>'
+    +'<div style="padding:11px 14px;background:rgba(255,255,255,0.03);border-radius:3px;font-size:12px;color:rgba(255,255,255,0.4)">'
+    +'<strong style="color:rgba(255,255,255,0.6)">Budget framing for COO submission:</strong> '+budget+'. This estimate excludes Ba\'s internal time cost. Ba should include a "value of Ba\'s time" line in the investment case — at G6 effective rate, Ba\'s L&D facilitation and oversight represents ~$15,000–$20,000 of internal investment annually that does not appear in the cash budget but is part of the total L&D cost. Presenting the full cost (cash + internal time) makes the ROI case more credible, not less — it shows Ba understands the total investment.'
+    +'</div>'
+    +'</div></div>';
+
+  var res=document.getElementById('plan-result');
+  res.innerHTML=html;res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearPlan(){
+  ['p-year','p-pipeline','p-leadership','p-expansion','p-ba'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('plan-result').style.display='none';
+}
+</script>
+</body>
+</html>

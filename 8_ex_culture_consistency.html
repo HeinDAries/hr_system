@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Culture Consistency Across Countries — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral:#c0533a; --coral2:#d4664c; --coral-dim:rgba(192,83,58,0.08);
+  --teal:#1a5f6a; --teal2:#226673; --teal-dim:rgba(26,95,106,0.08);
+  --gold:#b8962e; --gold2:#c9a93a; --gold-dim:rgba(184,150,46,0.10);
+  --cream:#faf6f0; --cream2:#f3ede4;
+  --ink:#1c1a17; --ink2:#2e2b26; --ink3:#4a4540; --ink4:#6b6560; --ink5:#9a9390;
+  --surface:#ffffff; --surface2:#f7f2eb; --surface3:#ede7dd;
+  --green:#2d7a4a; --green-dim:rgba(45,122,74,0.10);
+  --red:#b03a2e; --red-dim:rgba(176,58,46,0.08);
+  --amber:#c47a1e; --amber-dim:rgba(196,122,30,0.10);
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fs:'IBM Plex Sans',sans-serif;
+  --fm:'IBM Plex Mono',monospace;
+  --r:4px; --r2:8px; --r3:12px;
+  --sh:0 1px 3px rgba(28,26,23,0.08),0 4px 12px rgba(28,26,23,0.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:var(--fs);background:var(--cream);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+
+.topbar{background:var(--ink);color:var(--cream);padding:0 28px;height:44px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-left{display:flex;align-items:center;gap:16px}
+.tb-logo{font-family:var(--fm);font-size:10px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase}
+.tb-sep{width:1px;height:18px;background:rgba(250,246,240,0.15)}
+.tb-title{font-family:var(--fs);font-size:11px;color:rgba(250,246,240,0.6);letter-spacing:0.04em}
+.tb-right{font-family:var(--fm);font-size:9px;color:rgba(250,246,240,0.35);letter-spacing:0.06em}
+
+.header{background:var(--surface);border-bottom:1px solid var(--surface3);padding:28px 28px 0}
+.header-meta{font-family:var(--fm);font-size:9px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px}
+.header-title{font-family:var(--fd);font-size:38px;font-weight:300;color:var(--ink);line-height:1.1;margin-bottom:4px}
+.header-title em{color:var(--coral);font-style:italic}
+.header-sub{font-size:12px;color:var(--ink4);font-weight:300;margin-bottom:20px;max-width:640px;line-height:1.6}
+.nav{display:flex;gap:0;border-top:1px solid var(--surface3);overflow-x:auto}
+.nav-item{font-family:var(--fs);font-size:11px;font-weight:500;color:var(--ink4);padding:11px 18px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .18s;letter-spacing:0.02em}
+.nav-item:hover{color:var(--coral)}
+.nav-item.active{color:var(--coral);border-bottom-color:var(--coral)}
+
+.main{flex:1;padding:28px;max-width:1100px;width:100%}
+.page{display:none}.page.active{display:block}
+
+.card{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--r2);padding:20px 24px;margin-bottom:16px;box-shadow:var(--sh)}
+.card:last-child{margin-bottom:0}
+.ct{font-family:var(--fd);font-size:19px;font-weight:500;color:var(--ink);margin-bottom:14px}
+.ct em{color:var(--coral);font-style:italic}
+
+.pe{font-family:var(--fm);font-size:9px;color:var(--coral);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px}
+.pt{font-family:var(--fd);font-size:32px;font-weight:300;color:var(--ink);line-height:1.15;margin-bottom:12px}
+.pt em{color:var(--coral);font-style:italic}
+.pd{font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7;max-width:740px;margin-bottom:20px}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+
+.kpi{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--r2);padding:16px 18px;box-shadow:var(--sh)}
+.kpi-label{font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-family:var(--fd);font-size:30px;font-weight:500;line-height:1}
+.kpi-val.coral{color:var(--coral)} .kpi-val.teal{color:var(--teal)} .kpi-val.gold{color:var(--gold)} .kpi-val.green{color:var(--green)}
+.kpi-sub{font-size:11px;color:var(--ink4);margin-top:6px;font-weight:300;line-height:1.4}
+
+.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt th{font-family:var(--fm);font-size:8.5px;font-weight:500;color:var(--ink5);letter-spacing:0.08em;text-transform:uppercase;padding:8px 10px;text-align:left;border-bottom:1px solid var(--surface3);background:var(--cream2)}
+.dt td{padding:9px 10px;border-bottom:1px solid var(--surface3);color:var(--ink3);vertical-align:top;line-height:1.45}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--cream2)}
+
+.chip{display:inline-block;font-family:var(--fm);font-size:8px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:2px 7px;border-radius:2px}
+.ch-cr{background:var(--coral-dim);color:var(--coral)} .ch-tl{background:var(--teal-dim);color:var(--teal)}
+.ch-gd{background:var(--gold-dim);color:var(--gold)} .ch-gn{background:var(--green-dim);color:var(--green)}
+.ch-rd{background:var(--red-dim);color:var(--red)} .ch-am{background:var(--amber-dim);color:var(--amber)}
+
+.risk-row{display:flex;gap:12px;align-items:baseline;padding:10px 14px;border-radius:var(--r);margin-bottom:6px}
+.risk-row.high{background:var(--red-dim);border-left:3px solid var(--red)}
+.risk-row.med{background:var(--amber-dim);border-left:3px solid var(--amber)}
+.risk-row.low{background:var(--green-dim);border-left:3px solid var(--green)}
+.risk-label{font-family:var(--fm);font-size:9px;font-weight:500;min-width:36px;letter-spacing:0.05em}
+.risk-text{font-size:12.5px;color:var(--ink);font-weight:400;line-height:1.45;flex:1}
+.risk-owner{font-family:var(--fm);font-size:9px;color:var(--ink5);text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap}
+
+.pstep{display:flex;gap:14px;margin-bottom:12px}
+.pstep-num{font-family:var(--fd);font-size:24px;font-weight:300;color:var(--teal);min-width:28px;line-height:1.1}
+.pstep-body{flex:1}
+.pstep-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.pstep-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55}
+
+.std-row{padding:10px 14px;background:var(--surface2);border-radius:var(--r);margin-bottom:6px;border-left:3px solid var(--teal)}
+.std-title{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.std-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5}
+
+.formula{background:var(--ink);border-radius:var(--r2);padding:14px 18px;margin:12px 0;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.formula-label{font-family:var(--fm);font-size:8.5px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.formula-eq{font-family:var(--fm);font-size:13px;color:var(--cream);letter-spacing:0.03em}
+.formula-note{font-size:11px;color:rgba(250,246,240,0.5);font-weight:300;line-height:1.5;max-width:340px;text-align:right}
+
+.insight{background:var(--teal-dim);border:1px solid rgba(26,95,106,0.15);border-radius:var(--r2);padding:14px 18px;margin:12px 0}
+.insight-label{font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px}
+.insight-body{font-size:12.5px;color:var(--ink);font-weight:400;line-height:1.6}
+
+.tl-item{display:flex;gap:16px;margin-bottom:14px}
+.tl-dot-col{display:flex;flex-direction:column;align-items:center;min-width:28px}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:4px}
+.tl-line{flex:1;width:1px;background:var(--surface3)}
+.tl-content{flex:1;padding-bottom:4px}
+.tl-when{font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:3px}
+.tl-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.tl-body{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5}
+
+/* ── CULTURE-SPECIFIC ── */
+.pillar{border-radius:var(--r2);overflow:hidden;border:1px solid var(--surface3);margin-bottom:10px}
+.pillar-head{padding:12px 16px;display:flex;align-items:center;gap:12px}
+.pillar-icon{font-family:var(--fd);font-size:28px;font-weight:300;color:#fff;min-width:36px;line-height:1}
+.pillar-label{font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.6);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px}
+.pillar-name{font-size:15px;font-weight:700;color:#fff}
+.pillar-body{padding:12px 16px;background:var(--surface2)}
+.pillar-def{font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:8px}
+.pillar-non{font-size:11.5px;color:var(--ink4);font-style:italic;font-weight:300;line-height:1.5;border-top:1px solid var(--surface3);padding-top:8px}
+
+.country-col{border:1px solid var(--surface3);border-radius:var(--r2);overflow:hidden}
+.country-head{padding:10px 14px;font-family:var(--fm);font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#fff}
+.country-body{padding:12px 14px;background:var(--surface)}
+.country-trait{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55;padding:5px 0;border-bottom:1px solid var(--surface3)}
+.country-trait:last-child{border-bottom:none}
+.country-trait strong{font-weight:600;color:var(--ink)}
+
+.adapt-row{display:grid;grid-template-columns:160px 1fr 1fr;gap:0;border-bottom:1px solid var(--surface3)}
+.adapt-row:last-child{border-bottom:none}
+.adapt-row:hover{background:var(--cream2)}
+.adapt-cell{padding:10px 12px;font-size:12px;color:var(--ink3);font-weight:300;line-height:1.45;vertical-align:top}
+.adapt-head{font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;background:var(--cream2)}
+
+.cadence-item{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;border-radius:var(--r2);background:var(--surface2);margin-bottom:8px}
+.cadence-freq{font-family:var(--fm);font-size:9px;color:var(--teal);letter-spacing:0.08em;text-transform:uppercase;min-width:72px;padding-top:2px}
+.cadence-body{flex:1}
+.cadence-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.cadence-desc{font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5}
+
+.sm-card{border:1px solid var(--surface3);border-radius:var(--r2);overflow:hidden;margin-bottom:10px}
+.sm-head{padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.sm-name{font-size:13px;font-weight:700;color:var(--ink)}
+.sm-country{font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.08em;text-transform:uppercase}
+.sm-body{padding:10px 14px;background:var(--surface2)}
+.sm-row{display:flex;gap:8px;margin-bottom:5px;font-size:12px}
+.sm-row:last-child{margin-bottom:0}
+.sm-key{color:var(--ink5);font-weight:400;min-width:120px}
+.sm-val{color:var(--ink3);font-weight:300;flex:1;line-height:1.45}
+
+.footer{background:var(--ink2);color:rgba(250,246,240,0.35);font-family:var(--fm);font-size:9px;padding:14px 28px;display:flex;justify-content:space-between;letter-spacing:0.05em;margin-top:auto}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-left">
+    <div class="tb-logo">Valentis Group</div>
+    <div class="tb-sep"></div>
+    <div class="tb-title">Employee Experience &amp; Culture · Tool 08 of 08</div>
+  </div>
+  <div class="tb-right">GROUP HR · CONFIDENTIAL</div>
+</div>
+
+<div class="header">
+  <div class="header-meta">EX &amp; Culture Department · Culture Consistency Across Countries</div>
+  <div class="header-title">Culture Consistency<br><em>Across Countries</em></div>
+  <div class="header-sub">How Valentis maintains one culture identity across four countries, four site managers, and four distinct local contexts — without imposing uniformity where flexibility is the right answer. This tool defines what must be the same everywhere, what is deliberately adapted, and how Group HR holds culture coherence across the group.</div>
+  <nav class="nav">
+    <div class="nav-item active" onclick="showPage('page-overview',this)">01 Overview</div>
+    <div class="nav-item" onclick="showPage('page-pillars',this)">02 Culture Pillars</div>
+    <div class="nav-item" onclick="showPage('page-non-negotiables',this)">03 Non-Negotiables</div>
+    <div class="nav-item" onclick="showPage('page-adaptation',this)">04 Local Adaptation</div>
+    <div class="nav-item" onclick="showPage('page-sm',this)">05 SM as Culture Carrier</div>
+    <div class="nav-item" onclick="showPage('page-rhythm',this)">06 Culture Rhythm</div>
+    <div class="nav-item" onclick="showPage('page-health',this)">07 Culture Health</div>
+    <div class="nav-item" onclick="showPage('page-coo',this)">08 COO Brief</div>
+  </nav>
+</div>
+
+<div class="main">
+  <div id="page-overview" class="page active"></div>
+  <div id="page-pillars" class="page"></div>
+  <div id="page-non-negotiables" class="page"></div>
+  <div id="page-adaptation" class="page"></div>
+  <div id="page-sm" class="page"></div>
+  <div id="page-rhythm" class="page"></div>
+  <div id="page-health" class="page"></div>
+  <div id="page-coo" class="page"></div>
+</div>
+
+<div class="footer">
+  <span>Valentis Group · Employee Experience &amp; Culture · Tool 08 — Culture Consistency Across Countries</span>
+  <span>Group HR · Confidential · 2025</span>
+</div>
+
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+
+<!-- ═══════════════════════════════════════════════ PAGE 01 — OVERVIEW -->
+<script>
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">Section 01 — Overview</div>
+<div class="pt">One Company,<br><em>Four Countries</em></div>
+<p class="pd">Valentis operates across Laos, Myanmar, Indonesia, and Thailand — four countries with distinct languages, labour norms, management cultures, and social expectations. The culture challenge is not to make all four sites identical. It is to ensure that the things that define Valentis as an employer are recognisably the same everywhere, while the things that should adapt to local context do so without apology.</p>
+
+<div class="g4">
+  <div class="kpi">
+    <div class="kpi-label">Operating Countries</div>
+    <div class="kpi-val teal">4</div>
+    <div class="kpi-sub">Laos · Myanmar · Indonesia · Thailand — each with a distinct local culture context</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Culture Pillars</div>
+    <div class="kpi-val coral">5</div>
+    <div class="kpi-sub">Five non-negotiable culture anchors that define Valentis identity in every country</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">SM Culture Carriers</div>
+    <div class="kpi-val gold">4</div>
+    <div class="kpi-sub">Each SM is the primary culture carrier for their site — Group HR cannot be present on the ground</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Culture Score Gap</div>
+    <div class="kpi-val coral">2.1 <span style="font-size:15px;font-weight:300">pts</span></div>
+    <div class="kpi-sub">Spread between highest and lowest D1 culture pillar scores across four countries</div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">The Core <em>Tension</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:14px">Every multi-country organisation faces the same structural tension. Impose too much uniformity and local teams feel culturally disrespected — local SMs lose trust, local employees disengage, and the culture becomes a compliance exercise. Allow too much local variation and the group loses coherence — employees in different countries have meaningfully different experiences of what it means to work for Valentis.</p>
+    <div class="formula">
+      <div>
+        <div class="formula-label">The Valentis resolution</div>
+        <div class="formula-eq">Fixed pillars + flexible expression</div>
+      </div>
+      <div class="formula-note">What Valentis stands for is fixed. How it shows up in each country is locally adapted. Group HR holds the boundary between the two.</div>
+    </div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      <div style="display:flex;gap:10px;padding:9px 12px;background:var(--teal-dim);border-radius:var(--r);border-left:3px solid var(--teal)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);min-width:52px;letter-spacing:0.07em;text-transform:uppercase;padding-top:1px">Fixed</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Culture pillars, grade standards, safety and welfare minimums, recognition principles, how progression is communicated, and how Group HR engages with each country.</div>
+      </div>
+      <div style="display:flex;gap:10px;padding:9px 12px;background:var(--gold-dim);border-radius:var(--r);border-left:3px solid var(--gold)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--gold);min-width:52px;letter-spacing:0.07em;text-transform:uppercase;padding-top:1px">Flexible</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Language, communication style, celebration format, team ritual design, hierarchy expression within the SM-team relationship, and how feedback is delivered.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Current <em>Culture State</em></div>
+    <p style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:12px">Culture consistency across Valentis is currently SM-dependent. There is no group-level culture framework, no articulated pillars, and no mechanism for Group HR to assess whether the Valentis culture is travelling across sites. The result is high variance — Thailand functions as a benchmark; Myanmar functions in relative isolation.</p>
+    <div style="display:grid;gap:6px">
+      <div class="risk-row high"><span class="risk-label" style="color:var(--red)">HIGH</span><div class="risk-text"><strong>No documented culture standards.</strong> SMs are making culture decisions independently — what behaviour is acceptable, how progression is discussed, what welfare looks like. Without a framework, culture drift is inevitable.</div></div>
+      <div class="risk-row high"><span class="risk-label" style="color:var(--red)">HIGH</span><div class="risk-text"><strong>No SM culture briefing or onboarding.</strong> New SMs receive no structured guidance on the Valentis culture — they default to their own style and prior experience. Myo H. (Myanmar) has had no Group HR culture touchpoint since appointment.</div></div>
+      <div class="risk-row med"><span class="risk-label" style="color:var(--amber)">MED</span><div class="risk-text"><strong>No culture measurement between countries.</strong> Culture score variance is estimated from exit data and pulse surveys — there is no systematic comparison. Group HR cannot currently identify culture divergence before it becomes an attrition driver.</div></div>
+      <div class="risk-row low"><span class="risk-label" style="color:var(--green)">LOW</span><div class="risk-text"><strong>Thailand culture is strong and organic.</strong> Thailand SM has built a high-trust site culture without a formal framework. This is an asset — it must be documented and codified before the SM rotates or departs.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Why Culture Consistency <em>Matters for Valentis</em></div>
+  <div class="g3" style="margin-bottom:0">
+    <div style="padding:12px 14px;border-radius:var(--r2);background:var(--coral-dim);border-top:2px solid var(--coral)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--coral);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Pipeline coherence</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">The driller pipeline spans all four countries. G3s developed in Laos may eventually support Indonesia operations. If the Valentis culture is significantly different at each site, cross-country deployment becomes culturally disorienting — a friction that adds to attrition risk.</div>
+    </div>
+    <div style="padding:12px 14px;border-radius:var(--r2);background:var(--teal-dim);border-top:2px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Country 5 readiness</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Valentis&rsquo;s next expansion requires the ability to replicate a site culture from day one. Without a documented, transferable culture framework, Country 5 will start from scratch — with all the SM-dependent variability that creates.</div>
+    </div>
+    <div style="padding:12px 14px;border-radius:var(--r2);background:var(--gold-dim);border-top:2px solid var(--gold)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--gold);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Employer brand</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Valentis competes for a scarce pool of trainee drillers. An employer with a clear, consistent culture identity — known in the communities where it recruits — has a structural advantage over one whose reputation is site-specific and variable.</div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ═══════════════════════════════════════════════ PAGE 02 — CULTURE PILLARS -->
+<script>
+document.getElementById('page-pillars').innerHTML=`
+<div class="pe">Section 02 — Culture Pillars</div>
+<div class="pt">The Five Valentis<br><em>Culture Pillars</em></div>
+<p class="pd">The five culture pillars are the non-negotiable anchors of Valentis identity. They do not describe aspirational values on a wall — they describe observable behaviours and standards that every employee should experience at every site, regardless of country. Each pillar has a definition, a set of observable indicators, and a clear statement of what it does not mean.</p>
+
+<div class="g2">
+  <div>
+    <div class="pillar">
+      <div class="pillar-head" style="background:var(--teal)">
+        <div class="pillar-icon">01</div>
+        <div><div class="pillar-label">Pillar One</div><div class="pillar-name">Safety First, Always</div></div>
+      </div>
+      <div class="pillar-body">
+        <div class="pillar-def">At Valentis, no drilling target, no production deadline, and no commercial pressure overrides the physical safety of the people on site. Every employee has the right — and the responsibility — to stop work if they believe a safety standard is being breached. This is not a policy. It is the first test of whether a manager belongs at Valentis.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">You see this when</div>
+            <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">SMs pause operations for safety concerns without needing approval. G1 trainees feel safe raising hazards. PPE is non-negotiable at all grades. Fatigue is managed, not hidden.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">Culture breach signals</div>
+            <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">Production pressure overriding rest periods. PPE non-compliance tolerated. Employees afraid to report near-misses. Double-shifts becoming routine without approval.</div>
+          </div>
+        </div>
+        <div class="pillar-non">Does not mean: Risk-averse to the point of operational paralysis. Drilling is inherently physical work. This pillar defines the floor, not a zero-risk operating philosophy.</div>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <div class="pillar-head" style="background:var(--coral)">
+        <div class="pillar-icon">02</div>
+        <div><div class="pillar-label">Pillar Two</div><div class="pillar-name">The Pipeline is the Priority</div></div>
+      </div>
+      <div class="pillar-body">
+        <div class="pillar-def">Valentis exists to develop skilled drillers. Every manager at every grade is, in part, a developer of the people below them. G4s develop G3s. G3s mentor G2s. SMs coach G4s. This is not optional — it is how Valentis creates value and how it earns loyalty from the people it invests in.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;color:var(--coral);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">You see this when</div>
+            <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">G4s are actively coaching G3s on-site. Grade milestones are celebrated, not just noted. SMs discuss individual development plans with Group HR quarterly. Trainees know what G4 looks like.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">Culture breach signals</div>
+            <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">G4s hoarding knowledge. Trainees unclear on grade requirements. SMs not discussing development in check-ins. No celebration of milestone progression at site level.</div>
+          </div>
+        </div>
+        <div class="pillar-non">Does not mean: Constant formal training. Most development happens on-site during actual work. The pillar is about intent and attention, not structured programmes at every grade.</div>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <div class="pillar-head" style="background:var(--gold2)">
+        <div class="pillar-icon">03</div>
+        <div><div class="pillar-label">Pillar Three</div><div class="pillar-name">Respect Across All Grades</div></div>
+      </div>
+      <div class="pillar-body">
+        <div class="pillar-def">At Valentis, grade determines responsibility and decision-making authority — not respect. A G1 trainee on their first month is treated with the same basic human dignity as a G4. This is particularly important in the context of remote site work, where power dynamics are amplified and the SM holds disproportionate influence over an employee&rsquo;s daily experience.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">You see this when</div>
+            <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">Trainees raise concerns without fear. SM feedback is delivered in private. Recognition is specific and grade-appropriate. No public humiliation or shouting on-site.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">Culture breach signals</div>
+            <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">Public criticism of junior grades. Trainees afraid to approach SMs with problems. Feedback delivered as humiliation. Grade used as a weapon rather than a role descriptor.</div>
+          </div>
+        </div>
+        <div class="pillar-non">Does not mean: Flat hierarchy. Valentis operates with clear grade authority. The pillar defines how authority is exercised — not whether it exists.</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="pillar">
+      <div class="pillar-head" style="background:var(--ink2)">
+        <div class="pillar-icon">04</div>
+        <div><div class="pillar-label">Pillar Four</div><div class="pillar-name">Welfare is Operational</div></div>
+      </div>
+      <div class="pillar-body">
+        <div class="pillar-def">Valentis is a remote-site mining company. Welfare is not a corporate wellness programme — it is the set of physical and psychological conditions that allow people to show up and perform. Adequate rest, acceptable living conditions, connectivity, and access to support are operational inputs, not discretionary benefits. Neglecting welfare is not cost management — it is production risk.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;color:var(--ink3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">You see this when</div>
+            <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">Rest periods are respected. Living conditions are reviewed and improved. SMs monitor fatigue and report proactively. Employees can contact family. Return-from-leave is acknowledged.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">Culture breach signals</div>
+            <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">Welfare complaints dismissed. Rest breaches normalised. No response to site condition issues. Isolation treated as normal. Employees showing fatigue or distress without SM acknowledgement.</div>
+          </div>
+        </div>
+        <div class="pillar-non">Does not mean: Luxurious site conditions. The standard is adequate and humane, not premium. The pillar draws a floor, not a ceiling.</div>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <div class="pillar-head" style="background:var(--green)">
+        <div class="pillar-icon">05</div>
+        <div><div class="pillar-label">Pillar Five</div><div class="pillar-name">One Standard, Many Expressions</div></div>
+      </div>
+      <div class="pillar-body">
+        <div class="pillar-def">Valentis is a multi-country employer. The way things are done at a Thai site will look different from the way they are done at a Myanmar site — and that is right and expected. The culture pillar is not the style. It is the standard underneath the style. Every SM must understand the difference between adapting the expression and abandoning the principle.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;color:var(--green);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">You see this when</div>
+            <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">SMs adapt communication style to local norms while maintaining Valentis standards. Celebration looks different across sites but happens everywhere. Local language is used in HR materials. Group HR respects local SM judgement on style while holding pillar compliance.</div>
+          </div>
+          <div>
+            <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">Culture breach signals</div>
+            <div style="font-size:11.5px;color:var(--ink3);font-weight:300;line-height:1.55">Pillar standards used as an excuse for cultural insensitivity. Local adaptation used as an excuse to avoid pillar compliance. Group HR imposing Thai cultural norms on Myanmar as &ldquo;the Valentis way&rdquo;.</div>
+          </div>
+        </div>
+        <div class="pillar-non">Does not mean: Anything goes if you call it local adaptation. The five pillars are fixed. Local adaptation applies to the expression of those pillars — not to whether they apply.</div>
+      </div>
+    </div>
+
+    <div class="insight" style="margin-top:4px;margin-bottom:0">
+      <div class="insight-label">Pillar coherence test</div>
+      <div class="insight-body">Ask of any site decision: does this reflect at least one Valentis pillar, and does it violate none of the others? If both conditions are met, the decision is culturally appropriate. If either condition fails, escalate to Group HR.</div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ═══════════════════════════════════════════════ PAGE 03 — NON-NEGOTIABLES -->
+<script>
+document.getElementById('page-non-negotiables').innerHTML=`
+<div class="pe">Section 03 — Non-Negotiables</div>
+<div class="pt">What Is the Same<br><em>Everywhere</em></div>
+<p class="pd">Non-negotiables are the standards and behaviours that must be present at every Valentis site, in every country, regardless of SM style, local norms, or operational pressure. These are not aspirations. They are compliance requirements. Group HR monitors them. Deviations are escalated to COO.</p>
+
+<div class="card" style="margin-bottom:16px">
+  <div class="ct">The Non-Negotiable <em>Standards Register</em></div>
+  <table class="dt">
+    <thead>
+      <tr><th>Standard</th><th>What compliance looks like</th><th>Who owns it</th><th>Breach consequence</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Grade scale is consistent</strong></td>
+        <td>G1–G8 grades carry the same competency definitions at every site. A G3 in Thailand and a G3 in Myanmar hold the same standard.</td>
+        <td><span class="chip ch-tl">Group HR</span></td>
+        <td>Grade inflation at any site distorts pay equity and pipeline comparisons across the group.</td>
+      </tr>
+      <tr>
+        <td><strong>Safety minimums are met</strong></td>
+        <td>PPE provision, first aid officer, documented evacuation route, emergency contacts posted. All four sites must meet or exceed this baseline.</td>
+        <td><span class="chip ch-cr">SM + Group HR</span></td>
+        <td>Immediate COO escalation. Non-compliant site flagged in board-level people report.</td>
+      </tr>
+      <tr>
+        <td><strong>Welfare floor is maintained</strong></td>
+        <td>Rest periods respected, basic living standards met, no isolation without connectivity support. Welfare audit minimum D3 score: 6.0 across all sites.</td>
+        <td><span class="chip ch-cr">SM + Group HR</span></td>
+        <td>Remediation plan within 30 days. Investment approved by COO. Myanmar currently in breach — audit Q2 2026.</td>
+      </tr>
+      <tr>
+        <td><strong>Grade progression communicated</strong></td>
+        <td>Every employee knows what they need to do to reach the next grade. This is communicated at onboarding, at 90 days, and at each annual review.</td>
+        <td><span class="chip ch-cr">SM</span></td>
+        <td>Failure to communicate progression is a driver of DEV-PROG exits. Monitored via exit interview data.</td>
+      </tr>
+      <tr>
+        <td><strong>Exit interviews conducted</strong></td>
+        <td>Group HR conducts an exit interview for every voluntary departure. SM notifies Group HR within 24 hours. Capture rate target: 90%.</td>
+        <td><span class="chip ch-tl">Group HR</span></td>
+        <td>Below 70% capture rate for two consecutive months triggers escalation. Data quality failure undermines the early warning system.</td>
+      </tr>
+      <tr>
+        <td><strong>Pillar-consistent feedback delivery</strong></td>
+        <td>Feedback is delivered privately, constructively, and without public humiliation. Applies to all grades. SM is the primary feedback giver on-site.</td>
+        <td><span class="chip ch-cr">SM</span></td>
+        <td>Violation of this standard is a leadership quality issue. Consistent breach triggers SM coaching review by Group HR.</td>
+      </tr>
+      <tr>
+        <td><strong>Group HR access for all employees</strong></td>
+        <td>Every employee at every site knows how to contact Group HR directly, independent of their SM. This channel must always be available and must never be discouraged by SMs.</td>
+        <td><span class="chip ch-tl">Group HR</span></td>
+        <td>Suppression of Group HR contact by an SM is a disciplinary matter — not a management style issue.</td>
+      </tr>
+      <tr>
+        <td><strong>Milestone recognition occurs</strong></td>
+        <td>Every grade step-up is acknowledged publicly within the team. The format adapts to local context — the act does not. Thailand is the benchmark.</td>
+        <td><span class="chip ch-cr">SM</span></td>
+        <td>Absence of recognition at milestone is a culture breach — monitored via pulse survey engagement data.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Current Compliance <em>by Country</em></div>
+    <div style="border:1px solid var(--surface3);border-radius:var(--r2);overflow:hidden">
+      <div style="display:grid;grid-template-columns:160px 1fr 1fr 1fr 1fr;background:var(--cream2);padding:8px 10px">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase">Standard</div>
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;text-align:center">Laos</div>
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;text-align:center">Myanmar</div>
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;text-align:center">Indonesia</div>
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;text-align:center">Thailand</div>
+      </div>
+      ${[
+        ['Grade consistency',    '✓','✓','✓','✓'],
+        ['Safety minimums',      '✓','✗','~','✓'],
+        ['Welfare floor',        '~','✗','~','✓'],
+        ['Progression comms',    '~','✗','~','✓'],
+        ['Exit interviews',      '~','✗','~','~'],
+        ['Feedback standard',    '✓','~','✓','✓'],
+        ['Group HR access',      '✓','~','✓','✓'],
+        ['Milestone recognition','~','✗','~','✓'],
+      ].map(([label,...vals])=>`
+      <div style="display:grid;grid-template-columns:160px 1fr 1fr 1fr 1fr;padding:8px 10px;border-top:1px solid var(--surface3)">
+        <div style="font-size:12px;color:var(--ink3);font-weight:300">${label}</div>
+        ${vals.map(v=>`<div style="text-align:center;font-size:13px">${v==='✓'?'<span style="color:var(--green)">✓</span>':v==='✗'?'<span style="color:var(--red)">✗</span>':'<span style="color:var(--amber)">~</span>'}</div>`).join('')}
+      </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px;font-family:var(--fm);font-size:8.5px;color:var(--ink5)">
+      <span><span style="color:var(--green)">✓</span> Compliant</span>
+      <span><span style="color:var(--amber)">~</span> Partial</span>
+      <span><span style="color:var(--red)">✗</span> Non-compliant</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Non-Negotiable <em>Breach Protocol</em></div>
+    <p style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:12px">When a non-negotiable standard is breached, Group HR follows a defined escalation path. The response is proportional to severity and persistence — a first breach triggers coaching; a repeated breach triggers COO escalation.</p>
+    <div style="display:grid;gap:0">
+      <div class="pstep">
+        <div class="pstep-num">01</div>
+        <div class="pstep-body">
+          <div class="pstep-title">Identify and document the breach</div>
+          <div class="pstep-desc">Group HR identifies breach through exit data, pulse survey, SM report, or direct employee contact. Breach is logged with date, country, standard, and evidence. Not yet communicated to SM.</div>
+        </div>
+      </div>
+      <div class="pstep">
+        <div class="pstep-num">02</div>
+        <div class="pstep-body">
+          <div class="pstep-title">SM coaching conversation</div>
+          <div class="pstep-desc">Group HR raises breach with SM in a private, non-adversarial conversation. Frame: "Here is what we are observing — help me understand the context." SM given opportunity to explain and develop a correction plan. 30-day correction window.</div>
+        </div>
+      </div>
+      <div class="pstep">
+        <div class="pstep-num">03</div>
+        <div class="pstep-body">
+          <div class="pstep-title">Follow-up check — 30 days</div>
+          <div class="pstep-desc">Group HR follows up at 30 days. If breach is resolved: logged as closed, SM development noted positively. If breach persists: escalate to COO with documented evidence and Group HR recommendation.</div>
+        </div>
+      </div>
+      <div class="pstep">
+        <div class="pstep-num">04</div>
+        <div class="pstep-body">
+          <div class="pstep-title">COO escalation — repeated or serious breach</div>
+          <div class="pstep-desc">COO receives a one-page brief: nature of breach, country, SM, evidence, Group HR recommendation. COO decides on response — may include SM performance management, site visit, or structural intervention.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ═══════════════════════════════════════════════ PAGE 04 — LOCAL ADAPTATION -->
+<script>
+document.getElementById('page-adaptation').innerHTML=`
+<div class="pe">Section 04 — Local Adaptation</div>
+<div class="pt">What Adapts<br><em>by Country</em></div>
+<p class="pd">Local adaptation is not an exception to Valentis culture — it is a designed feature. The five pillars define what is consistent. Everything else is available for local expression. This section documents the adaptations that are already in place or recommended across the four countries, organised by the cultural dimension they address.</p>
+
+<div class="card" style="margin-bottom:16px">
+  <div class="ct">Local Adaptation <em>Framework</em></div>
+  <div style="border:1px solid var(--surface3);border-radius:var(--r2);overflow:hidden">
+    <div class="adapt-row adapt-head">
+      <div class="adapt-cell">Cultural dimension</div>
+      <div class="adapt-cell">What adapts (approved)</div>
+      <div class="adapt-cell">What does NOT adapt</div>
+    </div>
+    <div class="adapt-row">
+      <div class="adapt-cell" style="font-weight:600;color:var(--ink)">Communication style</div>
+      <div class="adapt-cell">Directness level, use of formal vs informal address, feedback tone (indirect in Myanmar and Laos contexts), preferred messaging channel (verbal vs written).</div>
+      <div class="adapt-cell">Feedback must still happen. Recognition must still be given. Problems cannot go unaddressed because direct conversation is culturally uncomfortable.</div>
+    </div>
+    <div class="adapt-row">
+      <div class="adapt-cell" style="font-weight:600;color:var(--ink)">Recognition format</div>
+      <div class="adapt-cell">Whether recognition is public or private (adapts to local norms around public praise), what the celebration looks like (meal, token, group acknowledgement), language used.</div>
+      <div class="adapt-cell">Recognition must occur at every grade milestone. The pillar is the act — not the format. Absence of recognition is not a cultural adaptation, it is a culture breach.</div>
+    </div>
+    <div class="adapt-row">
+      <div class="adapt-cell" style="font-weight:600;color:var(--ink)">Hierarchy expression</div>
+      <div class="adapt-cell">Level of deference shown to SM and G4 grades in daily interaction. Formality of address. Whether juniors speak first or wait to be addressed.</div>
+      <div class="adapt-cell">All grades have access to Group HR. All grades have the right to raise safety concerns. No adaptation permits a junior employee to be silenced on these channels.</div>
+    </div>
+    <div class="adapt-row">
+      <div class="adapt-cell" style="font-weight:600;color:var(--ink)">Team rituals</div>
+      <div class="adapt-cell">End-of-rotation celebration format, shared meal traditions, group prayer before shift start (where culturally practised), team storytelling formats.</div>
+      <div class="adapt-cell">Rituals cannot exclude any employee on grounds of grade, nationality, or religion. Inclusion is a non-negotiable even when the specific ritual is local.</div>
+    </div>
+    <div class="adapt-row">
+      <div class="adapt-cell" style="font-weight:600;color:var(--ink)">HR materials &amp; language</div>
+      <div class="adapt-cell">Translation of grade descriptors, safety cards, onboarding materials, and pulse surveys into local language. Visual formats adjusted for literacy levels where relevant.</div>
+      <div class="adapt-cell">The content of the materials — what a grade requires, what welfare standards are, what Group HR contact details are — is fixed. Only the language adapts.</div>
+    </div>
+    <div class="adapt-row">
+      <div class="adapt-cell" style="font-weight:600;color:var(--ink)">Feedback timing</div>
+      <div class="adapt-cell">Frequency of informal feedback check-ins can adapt to SM style and team preference. Monthly is the floor — more is always appropriate.</div>
+      <div class="adapt-cell">Annual review is mandatory at all sites. Probation check-in at 30/60/90 days is mandatory for all new trainees. These timings do not adapt.</div>
+    </div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Country Adaptation <em>Profiles</em></div>
+    <div style="display:grid;gap:10px">
+      <div class="country-col">
+        <div class="country-head" style="background:var(--teal)">🇱🇦 &nbsp;Laos — Key Adaptations</div>
+        <div class="country-body">
+          <div class="country-trait"><strong>Indirect communication norm:</strong> Feedback delivered through observation and suggestion rather than direct critique. G4s and SMs are trained to frame corrections as guidance rather than error-identification.</div>
+          <div class="country-trait"><strong>Collective recognition:</strong> Public individual recognition can cause discomfort — team-level acknowledgement is preferred. Grade milestones celebrated as a shared team achievement.</div>
+          <div class="country-trait"><strong>Seniority deference:</strong> Older employees and senior grades are addressed with formal titles. Group HR materials use appropriate honorifics in Lao translations.</div>
+        </div>
+      </div>
+      <div class="country-col">
+        <div class="country-head" style="background:var(--red)">🇲🇲 &nbsp;Myanmar — Key Adaptations</div>
+        <div class="country-body">
+          <div class="country-trait"><strong>Highly indirect feedback culture:</strong> Direct criticism is experienced as face-loss. SMs (particularly Myo H.) need coaching on delivering feedback in a way that preserves respect while still communicating the development need.</div>
+          <div class="country-trait"><strong>Strong in-group loyalty:</strong> Team cohesion is built through shared hardship and loyalty to the immediate group. Group HR recognition can reinforce the site as the team&rsquo;s primary identity anchor.</div>
+          <div class="country-trait"><strong>Language priority:</strong> Myanmar-language safety cards and onboarding materials are a non-negotiable given low English proficiency at G1–G2 grades. This is an active Q2 2026 action.</div>
+        </div>
+      </div>
+      <div class="country-col">
+        <div class="country-head" style="background:var(--amber)">🇮🇩 &nbsp;Indonesia — Key Adaptations</div>
+        <div class="country-body">
+          <div class="country-trait"><strong>Relationship-first culture:</strong> Trust between SM and team is built through personal relationship, not authority. Wirawan&rsquo;s management effectiveness depends on his personal credibility with the team — not his grade authority.</div>
+          <div class="country-trait"><strong>Gotong royong (mutual cooperation):</strong> Group accomplishment is a cultural value. Team-based recognition and collective responsibility for site outcomes resonates strongly at the Indonesia site.</div>
+          <div class="country-trait"><strong>Religious practice accommodation:</strong> Prayer schedule and Ramadan adaptation are operational considerations for the Indonesia site manager and must be built into shift planning without creating welfare issues.</div>
+        </div>
+      </div>
+      <div class="country-col">
+        <div class="country-head" style="background:var(--green)">🇹🇭 &nbsp;Thailand — Key Adaptations</div>
+        <div class="country-body">
+          <div class="country-trait"><strong>Kreng jai (consideration norm):</strong> Employees avoid expressing disagreement or discomfort to avoid causing discomfort to others. SMs must create explicit permission for honest feedback — silence does not mean satisfaction.</div>
+          <div class="country-trait"><strong>Benchmark site:</strong> Thailand requires the least adaptation because the existing SM has intuitively built a pillar-consistent culture. The adaptation here is documentation — preserving what works before it becomes SM-dependent.</div>
+          <div class="country-trait"><strong>Sanuk (enjoyment) value:</strong> Work that has an element of enjoyment and positive atmosphere has cultural significance in Thai workplaces. This maps directly onto Valentis&rsquo;s milestone recognition and team ritual approach.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Adaptation <em>Decision Guide</em></div>
+    <p style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:12px">SMs often face decisions about whether a local practice is a legitimate adaptation or a culture drift. This guide gives them a three-question test to apply before making that call independently.</p>
+    <div style="display:grid;gap:8px">
+      <div style="padding:12px 14px;background:var(--teal-dim);border-radius:var(--r2);border-left:3px solid var(--teal)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:4px">Question 1 — Pillar test</div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">Does this practice violate any of the five culture pillars?</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">If yes — it is not a local adaptation. It is a culture breach. Stop. If no — continue to Question 2.</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--teal-dim);border-radius:var(--r2);border-left:3px solid var(--teal)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:4px">Question 2 — Non-negotiable test</div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">Does this practice affect a non-negotiable standard?</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">If yes — it must comply with the standard regardless of local norm. Contact Group HR for guidance on how to apply the standard in local context. If no — continue to Question 3.</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--teal-dim);border-radius:var(--r2);border-left:3px solid var(--teal)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:4px">Question 3 — Inclusion test</div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">Does this practice exclude or disadvantage any employee?</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">If yes — even if locally common, the practice must be modified so that no employee is excluded. If no — the practice is a legitimate local adaptation. Document it and share with Group HR for the culture register.</div>
+      </div>
+    </div>
+    <div class="insight" style="margin-bottom:0">
+      <div class="insight-label">SM guidance</div>
+      <div class="insight-body">When in doubt, contact Group HR before acting — not after. A five-minute call to check whether a local adaptation is appropriate is always cheaper than correcting a culture breach six months later.</div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ═══════════════════════════════════════════════ PAGE 05 — SM AS CULTURE CARRIER -->
+<script>
+document.getElementById('page-sm').innerHTML=`
+<div class="pe">Section 05 — SM as Culture Carrier</div>
+<div class="pt">The Site Manager<br><em>Carries the Culture</em></div>
+<p class="pd">Group HR cannot be present on any Valentis site. The site manager is the primary culture carrier — the human through whom every pillar, standard, and adaptation is either enacted or eroded. At Valentis, with four remote sites across four countries and approximately 28 employees, the SM&rsquo;s culture capability is the most important people variable in the group.</p>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">SM Culture <em>Responsibilities</em></div>
+    <div style="display:grid;gap:7px">
+      <div class="std-row">
+        <div class="std-title">Live the pillars visibly</div>
+        <div class="std-desc">SMs cannot only enforce culture — they must embody it. How a SM responds to a safety concern, how they deliver feedback, how they acknowledge a grade step-up: these daily moments are the culture. Employees read the SM constantly. Inconsistency between stated values and SM behaviour destroys culture faster than any structural failure.</div>
+      </div>
+      <div class="std-row">
+        <div class="std-title">Translate Group HR to local context</div>
+        <div class="std-desc">When Group HR issues a standard, policy, or initiative, the SM is responsible for translating it into language and a format that makes sense at their site. This is not re-interpreting the standard — it is contextualising the communication. The SM who says "head office says we have to do this" is failing this responsibility.</div>
+      </div>
+      <div class="std-row">
+        <div class="std-title">Surface culture signals early</div>
+        <div class="std-desc">The SM is closest to the team. Culture drift, low morale, interpersonal friction, and welfare concerns show up at site level weeks before they appear in pulse data. SMs are expected to proactively raise these signals in monthly Group HR calls — not wait for them to show up in an exit interview.</div>
+      </div>
+      <div class="std-row">
+        <div class="std-title">Protect the Group HR channel</div>
+        <div class="std-desc">Every employee must be able to contact Group HR directly. SMs must never — explicitly or implicitly — discourage this. An SM who knows their team&rsquo;s culture is healthy will not fear this channel. An SM who fears it is the signal that something needs to change.</div>
+      </div>
+      <div class="std-row">
+        <div class="std-title">Milestone recognition — every time</div>
+        <div class="std-desc">Grade step-ups must be acknowledged publicly and specifically at site level. The SM is the person who does this. It cannot be delegated to a digital message from Group HR. Recognition has to land in the moment, on-site, from the person the team respects.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="card">
+      <div class="ct">SM Culture <em>Profiles</em></div>
+      <div style="display:grid;gap:8px">
+        <div class="sm-card">
+          <div class="sm-head" style="background:var(--surface2)">
+            <div class="sm-name">Thailand SM</div>
+            <div><span class="chip ch-gn">Culture benchmark</span></div>
+          </div>
+          <div class="sm-body">
+            <div class="sm-row"><span class="sm-key">Pillar alignment</span><span class="sm-val">High — all five pillars consistently enacted. Culture is intuitive rather than documented.</span></div>
+            <div class="sm-row"><span class="sm-key">Development need</span><span class="sm-val">Documentation. Practices need codifying before they become SM-dependent.</span></div>
+            <div class="sm-row"><span class="sm-key">Group HR priority</span><span class="sm-val">Structured knowledge capture. Site visit to document what is working and why.</span></div>
+          </div>
+        </div>
+        <div class="sm-card">
+          <div class="sm-head" style="background:var(--surface2)">
+            <div class="sm-name">Wirawan (Indonesia)</div>
+            <div><span class="chip ch-am">Culture under pressure</span></div>
+          </div>
+          <div class="sm-body">
+            <div class="sm-row"><span class="sm-key">Pillar alignment</span><span class="sm-val">Moderate — relationship-first approach is pillar-consistent but welfare and progression standards are partial.</span></div>
+            <div class="sm-row"><span class="sm-key">Development need</span><span class="sm-val">Grade progression communication. Welfare standards during G3 vacancy period. Shift compliance reporting.</span></div>
+            <div class="sm-row"><span class="sm-key">Group HR priority</span><span class="sm-val">Monthly coaching calls. Explicit briefing on G3 vacancy welfare risk. SM wellbeing support — Wirawan is carrying an overworked team.</span></div>
+          </div>
+        </div>
+        <div class="sm-card">
+          <div class="sm-head" style="background:var(--surface2)">
+            <div class="sm-name">Laos SM</div>
+            <div><span class="chip ch-tl">Culture stable, succession risk</span></div>
+          </div>
+          <div class="sm-body">
+            <div class="sm-row"><span class="sm-key">Pillar alignment</span><span class="sm-val">Moderate to high — safety and respect pillars strong. Pipeline communication and recognition are partial.</span></div>
+            <div class="sm-row"><span class="sm-key">Development need</span><span class="sm-val">G4 retirement succession planning. Knowledge transfer from retiring G4s. Recognition programme activation.</span></div>
+            <div class="sm-row"><span class="sm-key">Group HR priority</span><span class="sm-val">Succession conversation Q2 2026. Retirement protocol activation. Culture documentation before SM rotation.</span></div>
+          </div>
+        </div>
+        <div class="sm-card">
+          <div class="sm-head" style="background:var(--surface2)">
+            <div class="sm-name">Myo H. (Myanmar)</div>
+            <div><span class="chip ch-rd">Culture development priority</span></div>
+          </div>
+          <div class="sm-body">
+            <div class="sm-row"><span class="sm-key">Pillar alignment</span><span class="sm-val">Low on welfare and progression pillars. Safety pillar compliance unknown — no documented protocols. Respect pillar evidence is limited.</span></div>
+            <div class="sm-row"><span class="sm-key">Development need</span><span class="sm-val">Welfare standards training, safety protocol activation, feedback delivery, grade progression communication, Group HR channel promotion to team.</span></div>
+            <div class="sm-row"><span class="sm-key">Group HR priority</span><span class="sm-val">Highest-priority SM development in the group. Structured culture briefing Q2 2026. Monthly check-ins. Myanmar-language materials support. Potential site visit before end of 2026.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">SM Culture <em>Cadence</em></div>
+      <div class="cadence-item">
+        <div class="cadence-freq">Monthly</div>
+        <div class="cadence-body"><div class="cadence-title">Group HR — SM culture check-in (30 min)</div><div class="cadence-desc">Covers: team pulse, any welfare or safety flags, recognition delivered, team morale signal, any escalation items. Structured agenda — not an open chat.</div></div>
+      </div>
+      <div class="cadence-item">
+        <div class="cadence-freq">Quarterly</div>
+        <div class="cadence-body"><div class="cadence-title">Culture compliance review — all four SMs</div><div class="cadence-desc">Group HR assesses non-negotiable compliance by country. Any breaches raised with the relevant SM. Aggregate culture health presented to COO in quarterly people brief.</div></div>
+      </div>
+      <div class="cadence-item">
+        <div class="cadence-freq">Annual</div>
+        <div class="cadence-body"><div class="cadence-title">SM culture capability assessment</div><div class="cadence-desc">Group HR conducts a structured assessment of each SM against the culture carrier responsibilities. Results inform SM development plan and, where relevant, performance management.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ═══════════════════════════════════════════════ PAGE 06 — CULTURE RHYTHM -->
+<script>
+document.getElementById('page-rhythm').innerHTML=`
+<div class="pe">Section 06 — Culture Rhythm</div>
+<div class="pt">The Culture<br><em>Rhythm</em></div>
+<p class="pd">Culture consistency is not maintained through documents alone — it is maintained through repeated, structured touchpoints that keep Group HR connected to all four sites and ensure the pillars are being lived, not just stated. This section defines the annual culture rhythm: what happens, when, who owns it, and what it produces.</p>
+
+<div class="card" style="margin-bottom:16px">
+  <div class="ct">Annual Culture <em>Calendar</em></div>
+  <table class="dt">
+    <thead><tr><th>Touchpoint</th><th>Frequency</th><th>Owner</th><th>Output</th><th>Connects to</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Monthly SM culture call</strong></td><td>Monthly — all four SMs individually</td><td>Group HR</td><td>Flagged issues, culture signals, SM coaching notes</td><td>Non-negotiable compliance, SM development</td></tr>
+      <tr><td><strong>Trainee 30/60/90-day check-in</strong></td><td>Per new hire — all sites</td><td>Group HR</td><td>Early retention signal, expectation gap identification</td><td>Exit analytics, onboarding (Tool 03)</td></tr>
+      <tr><td><strong>Pulse survey — all employees</strong></td><td>Quarterly (or bi-annual minimum)</td><td>Group HR</td><td>Culture pillar scores by country, engagement data</td><td>Engagement tool (Tool 04), culture health</td></tr>
+      <tr><td><strong>Grade milestone recognition log</strong></td><td>Per milestone — all sites</td><td>SM + Group HR</td><td>Recognition register, progression visibility data</td><td>Recognition programme (Tool 05)</td></tr>
+      <tr><td><strong>Non-negotiable compliance check</strong></td><td>Quarterly</td><td>Group HR</td><td>Country compliance status, breach log, COO brief input</td><td>COO quarterly people report</td></tr>
+      <tr><td><strong>Exit intelligence review</strong></td><td>Quarterly</td><td>Group HR</td><td>Root cause patterns, country attrition themes</td><td>Exit analytics (Tool 07), COO brief</td></tr>
+      <tr><td><strong>SM culture capability assessment</strong></td><td>Annual</td><td>Group HR</td><td>SM development plan, performance input</td><td>Leadership capability (Tool 08 — next dept)</td></tr>
+      <tr><td><strong>Annual culture health report</strong></td><td>Annual — Q4</td><td>Group HR</td><td>Year-on-year culture trend, country comparison, pillar scores, strategic recommendations</td><td>Board-level people report, annual strategy</td></tr>
+      <tr><td><strong>Site welfare audit</strong></td><td>Annual (Myanmar Q2 2026 emergency)</td><td>Group HR</td><td>Welfare compliance by country, investment recommendations</td><td>Wellbeing tool (Tool 06), COO brief</td></tr>
+      <tr><td><strong>Country 5 culture readiness brief</strong></td><td>Ad hoc — pre-expansion</td><td>Group HR + COO</td><td>Culture transplant plan, SM selection criteria, non-negotiable activation checklist</td><td>Expansion planning, strategic TA</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Culture Rhythm — <em>Q1 2026 State</em></div>
+    <p style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:12px">Of the ten recurring touchpoints in the culture calendar, only two are currently operating consistently. Eight are either absent or ad hoc. This is the single biggest structural gap in the Valentis HR function.</p>
+    <div style="display:grid;gap:6px">
+      <div class="risk-row low"><span class="risk-label" style="color:var(--green)">ACTIVE</span><div class="risk-text">Trainee check-ins exist informally at some sites. Thailand SM has an intuitive version of the monthly culture call built into his management style.</div></div>
+      <div class="risk-row high"><span class="risk-label" style="color:var(--red)">ABSENT</span><div class="risk-text"><strong>No formal monthly SM culture calls.</strong> Group HR contact with SMs is reactive — triggered by problems, not structured proactively.</div></div>
+      <div class="risk-row high"><span class="risk-label" style="color:var(--red)">ABSENT</span><div class="risk-text"><strong>No consistent pulse survey cadence.</strong> Pulse data is collected irregularly and not systematically compared across countries.</div></div>
+      <div class="risk-row high"><span class="risk-label" style="color:var(--red)">ABSENT</span><div class="risk-text"><strong>No non-negotiable compliance review.</strong> Group HR has no structured process to assess whether the eight non-negotiable standards are being met at each country quarterly.</div></div>
+      <div class="risk-row high"><span class="risk-label" style="color:var(--red)">ABSENT</span><div class="risk-text"><strong>No SM culture capability assessment.</strong> SMs are assessed on operational performance but not on culture carrier capability. There is no formal mechanism for Group HR to identify and address SM culture gaps.</div></div>
+      <div class="risk-row med"><span class="risk-label" style="color:var(--amber)">PARTIAL</span><div class="risk-text">Exit interviews exist but at 31% capture rate. Grade milestone recognition happens at Thailand — inconsistent elsewhere. Welfare audit done reactively, not annually.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Rhythm Activation <em>Plan</em></div>
+    <div style="display:grid;gap:0">
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">April 2026</div><div class="tl-title">Monthly SM culture call — all four SMs activated</div><div class="tl-body">Structured 30-minute call template developed by Group HR. All four SMs briefed on purpose and format. First calls completed before end of April. Myanmar and Indonesia calls are first priority.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">April 2026</div><div class="tl-title">Trainee 30/60/90-day check-in protocol formalised</div><div class="tl-body">Consistent check-in format issued to Group HR. All new trainees from April 2026 enrolled automatically on hire. Connected to onboarding tool (Tool 03) and exit analytics (Tool 07).</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--coral)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q2 2026</div><div class="tl-title">Non-negotiable compliance review — first quarterly run</div><div class="tl-body">Group HR runs first structured non-negotiable compliance check across all four countries. Results presented to COO as part of Q2 people brief. Breach remediation plans activated where required.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--gold)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q3 2026</div><div class="tl-title">Pulse survey cadence established — quarterly</div><div class="tl-body">Quarterly pulse survey activated across all four countries. Country-level pillar scores published to Group HR. Year-on-year comparison baseline established from Q3 data.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q4 2026</div><div class="tl-title">First annual culture health report</div><div class="tl-body">Group HR compiles the first annual culture health report — pillar scores by country, trend from Q2, SM culture capability summary, recommended actions for 2027. Input to board-level people report and Country 5 readiness assessment.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ═══════════════════════════════════════════════ PAGE 07 — CULTURE HEALTH -->
+<script>
+document.getElementById('page-health').innerHTML=`
+<div class="pe">Section 07 — Culture Health</div>
+<div class="pt">Measuring<br><em>Culture Health</em></div>
+<p class="pd">Culture health at Valentis is measured across three lenses: the pulse survey (what employees report experiencing), the exit data (what leavers tell us was wrong), and the non-negotiable compliance register (what Group HR observes structurally). No single lens is sufficient. Culture health is the convergence of all three.</p>
+
+<div class="g4" style="margin-bottom:16px">
+  <div class="kpi">
+    <div class="kpi-label">Thailand Culture Score</div>
+    <div class="kpi-val green">7.8 <span style="font-size:15px;font-weight:300">/ 10</span></div>
+    <div class="kpi-sub">Benchmark — all five pillars above 7.0. Reference model for group.</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Laos Culture Score</div>
+    <div class="kpi-val teal">6.9 <span style="font-size:15px;font-weight:300">/ 10</span></div>
+    <div class="kpi-sub">Stable — retirement risk and recognition gaps are the drag on score.</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Indonesia Culture Score</div>
+    <div class="kpi-val gold">5.8 <span style="font-size:15px;font-weight:300">/ 10</span></div>
+    <div class="kpi-sub">Under pressure — vacancy spiral affecting all pillar scores. SM support required.</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Myanmar Culture Score</div>
+    <div class="kpi-val coral">4.4 <span style="font-size:15px;font-weight:300">/ 10</span></div>
+    <div class="kpi-sub">Lowest in group — welfare and progression pillars in breach. Intervention priority.</div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Culture Health <em>Framework</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:12px">Each of the five culture pillars is scored across four measurement inputs. The composite score is averaged for a country-level culture health index. Scores below 5.0 trigger a country-level culture intervention. Scores below 6.0 trigger an SM coaching conversation.</p>
+    <table class="dt">
+      <thead>
+        <tr><th>Pillar</th><th>Measurement inputs</th><th>Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Safety First, Always</strong></td><td>Incident rate, near-miss reporting rate, pulse Q: "I feel safe raising a safety concern", SM PPE compliance log</td><td style="font-family:var(--fm)">20%</td></tr>
+        <tr><td><strong>Pipeline is Priority</strong></td><td>Grade progression rate, exit code DEV-PROG frequency, pulse Q: "I can see my path to the next grade", G4 coaching activity</td><td style="font-family:var(--fm)">25%</td></tr>
+        <tr><td><strong>Respect Across Grades</strong></td><td>Pulse Q: "I am treated with respect regardless of my grade", exit interview domain D (management), SM breach reports</td><td style="font-family:var(--fm)">20%</td></tr>
+        <tr><td><strong>Welfare is Operational</strong></td><td>Welfare audit score (D3), pulse Q: "My wellbeing is taken seriously", rest period compliance, exit code SITE-COND frequency</td><td style="font-family:var(--fm)">20%</td></tr>
+        <tr><td><strong>One Standard, Many Expressions</strong></td><td>Non-negotiable compliance score, cross-country pillar score variance, pulse Q: "I feel like I belong to a team with clear values"</td><td style="font-family:var(--fm)">15%</td></tr>
+      </tbody>
+    </table>
+    <div class="insight" style="margin-bottom:0">
+      <div class="insight-label">Scoring note</div>
+      <div class="insight-body">Country culture scores are composites — they are designed to surface patterns, not to rank countries against each other. The goal is all four countries above 7.0 within 24 months. Currently only Thailand meets that threshold.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Country Culture <em>Pillar Heatmap</em></div>
+    <p style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:10px">Estimated pillar scores by country based on current exit data and pulse signals. Formal measurement begins Q2 2026.</p>
+    <div style="border:1px solid var(--surface3);border-radius:var(--r2);overflow:hidden">
+      <div style="display:grid;grid-template-columns:180px 1fr 1fr 1fr 1fr;background:var(--cream2);padding:8px 10px">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase">Pillar</div>
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;text-align:center">Laos</div>
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;text-align:center">Myanmar</div>
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;text-align:center">Indonesia</div>
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;text-align:center">Thailand</div>
+      </div>
+      ${[
+        ['Safety First',    [7.2,3.8,6.1,8.2]],
+        ['Pipeline Priority',[6.4,3.2,5.5,7.8]],
+        ['Respect',         [7.1,5.0,6.8,8.0]],
+        ['Welfare',         [6.0,3.5,4.9,7.5]],
+        ['One Standard',    [7.2,4.8,6.2,7.8]],
+      ].map(([label,scores])=>{
+        const colors = scores.map(s=>s>=7?'var(--green)':s>=6?'var(--teal)':s>=5?'var(--amber)':'var(--red)');
+        return `<div style="display:grid;grid-template-columns:180px 1fr 1fr 1fr 1fr;padding:8px 10px;border-top:1px solid var(--surface3)">
+          <div style="font-size:12px;color:var(--ink3);font-weight:300">${label}</div>
+          ${scores.map((s,i)=>`<div style="text-align:center;font-family:var(--fm);font-size:12px;font-weight:500;color:${colors[i]}">${s.toFixed(1)}</div>`).join('')}
+        </div>`;
+      }).join('')}
+      <div style="display:grid;grid-template-columns:180px 1fr 1fr 1fr 1fr;padding:8px 10px;border-top:2px solid var(--surface3);background:var(--cream2)">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase">Composite score</div>
+        ${[['6.9','var(--teal)'],['4.4','var(--red)'],['5.8','var(--amber)'],['7.8','var(--green)']].map(([v,c])=>`<div style="text-align:center;font-family:var(--fd);font-size:18px;font-weight:500;color:${c}">${v}</div>`).join('')}
+      </div>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:8px;font-family:var(--fm);font-size:8.5px;color:var(--ink5)">
+      <span style="color:var(--green)">■ 7.0+ Strong</span>
+      <span style="color:var(--teal)">■ 6.0–6.9 Good</span>
+      <span style="color:var(--amber)">■ 5.0–5.9 Developing</span>
+      <span style="color:var(--red)">■ &lt;5.0 Needs intervention</span>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Culture Recovery <em>Pathways</em></div>
+  <div class="g3" style="margin-bottom:0">
+    <div style="padding:12px 14px;background:var(--red-dim);border-radius:var(--r2);border-left:3px solid var(--red)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--red);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Myanmar — score 4.4 — Full recovery plan</div>
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px">Target: 6.5 by Q4 2026</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Welfare investment, SM culture briefing, Myanmar-language materials, monthly Group HR — Myo H. calls, safety protocol activation, progression communication training. Recovery is SM-dependent — Myo H. must be a development priority.</div>
+    </div>
+    <div style="padding:12px 14px;background:var(--amber-dim);border-radius:var(--r2);border-left:3px solid var(--amber)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--amber);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Indonesia — score 5.8 — Stabilisation plan</div>
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px">Target: 6.8 by Q3 2026</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">G3 hiring resolves the structural pressure. Pay review addresses the compensation signal. SM support for Wirawan — his own wellbeing affects culture quality. Culture score should recover quickly once the vacancy spiral is broken.</div>
+    </div>
+    <div style="padding:12px 14px;background:var(--teal-dim);border-radius:var(--r2);border-left:3px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8.5px;color:var(--teal);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:5px">Laos — score 6.9 — Maintenance + succession</div>
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px">Target: 7.3 by Q4 2026</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">Recognition programme activation and G3 succession planning are the two primary levers. Retirement knowledge transfer must not create culture disruption — careful sequencing by Group HR is the risk management action here.</div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+<!-- ═══════════════════════════════════════════════ PAGE 08 — COO BRIEF -->
+<script>
+document.getElementById('page-coo').innerHTML=`
+<div class="pe">Section 08 — COO Brief</div>
+<div class="pt">Executive Brief —<br><em>Culture Strategy</em></div>
+<p class="pd">A COO briefing on the Valentis culture consistency strategy — the structural approach to maintaining one company identity across four countries, the current culture health by site, and the decisions required to move from an SM-dependent culture model to a documented, scalable one.</p>
+
+<div style="background:var(--ink);border-radius:var(--r3);padding:28px;margin-bottom:16px;color:var(--cream)">
+  <div style="font-family:var(--fm);font-size:8.5px;color:rgba(250,246,240,0.4);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px">Valentis Group — Culture Strategy Brief · Q2 2026</div>
+  <div style="font-family:var(--fd);font-size:30px;font-weight:300;line-height:1.15;margin-bottom:16px">Culture at Valentis is<br><em style="color:var(--coral)">currently carried by four people</em></div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+    <div style="padding:14px 16px;background:rgba(250,246,240,0.06);border-radius:var(--r2);border-top:2px solid var(--green)">
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Thailand</div>
+      <div style="font-family:var(--fd);font-size:28px;color:var(--green);font-weight:500">7.8</div>
+      <div style="font-size:11px;color:rgba(250,246,240,0.55);margin-top:4px;font-weight:300">Benchmark — undocumented</div>
+    </div>
+    <div style="padding:14px 16px;background:rgba(250,246,240,0.06);border-radius:var(--r2);border-top:2px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Laos</div>
+      <div style="font-family:var(--fd);font-size:28px;color:var(--teal);font-weight:500">6.9</div>
+      <div style="font-size:11px;color:rgba(250,246,240,0.55);margin-top:4px;font-weight:300">Stable — succession risk building</div>
+    </div>
+    <div style="padding:14px 16px;background:rgba(250,246,240,0.06);border-radius:var(--r2);border-top:2px solid var(--gold)">
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Indonesia</div>
+      <div style="font-family:var(--fd);font-size:28px;color:var(--gold);font-weight:500">5.8</div>
+      <div style="font-size:11px;color:rgba(250,246,240,0.55);margin-top:4px;font-weight:300">Under pressure — vacancy impact</div>
+    </div>
+    <div style="padding:14px 16px;background:rgba(250,246,240,0.06);border-radius:var(--r2);border-top:2px solid var(--red)">
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(250,246,240,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Myanmar</div>
+      <div style="font-family:var(--fd);font-size:28px;color:var(--coral);font-weight:500">4.4</div>
+      <div style="font-size:11px;color:rgba(250,246,240,0.55);margin-top:4px;font-weight:300">Priority intervention needed</div>
+    </div>
+  </div>
+
+  <div style="display:grid;gap:10px;margin-bottom:20px">
+    <div style="padding:14px 18px;background:rgba(192,83,58,0.15);border-radius:var(--r2);border-left:3px solid var(--coral)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--coral);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">The core risk — culture is person-dependent, not system-dependent</div>
+      <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px">There is no documented Valentis culture. Everything that works at Thailand works because of one SM. If that SM leaves, the culture leaves with them. This is the highest-probability unmanaged risk in the group&rsquo;s people model.</div>
+      <div style="font-size:12px;color:rgba(250,246,240,0.65);font-weight:300;line-height:1.55">The EX &amp; Culture toolkit (Tools 1–8) is the structural response to this risk. It converts person-dependent culture knowledge into documented, transferable systems. Group HR is requesting approval to activate the full culture programme — starting with Myanmar (critical) and building toward Country 5 readiness.</div>
+    </div>
+    <div style="padding:14px 18px;background:rgba(184,150,46,0.10);border-radius:var(--r2);border-left:3px solid var(--gold)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Myanmar — culture score 4.4 — active intervention required</div>
+      <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px">Myanmar is the lowest-performing site on culture health, welfare, and attrition simultaneously. These three signals point to the same root cause: a site that has been operating without structured HR oversight, and an SM who needs development support, not criticism.</div>
+      <div style="font-size:12px;color:rgba(250,246,240,0.65);font-weight:300;line-height:1.55">The recovery plan for Myanmar requires COO endorsement of the welfare investment, Group HR access to Myo H. for monthly coaching calls, and authorisation to develop Myanmar-language HR materials. Target: culture score above 6.5 by Q4 2026.</div>
+    </div>
+    <div style="padding:14px 18px;background:rgba(26,95,106,0.2);border-radius:var(--r2);border-left:3px solid var(--teal)">
+      <div style="font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Country 5 — culture readiness is an expansion prerequisite</div>
+      <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px">Valentis cannot expand to Country 5 by transplanting the current SM-dependent model. The next country launch must begin with a documented culture framework, a trained SM, and Group HR oversight from day one — not built reactively after the first attrition wave.</div>
+      <div style="font-size:12px;color:rgba(250,246,240,0.65);font-weight:300;line-height:1.55">The culture consistency work in FY2026 builds the foundation. Group HR will deliver a Country 5 culture readiness brief as part of the Q4 2026 annual culture health report — in time for any Q1 2027 expansion decisions.</div>
+    </div>
+  </div>
+
+  <div style="padding:14px 18px;background:rgba(26,95,106,0.2);border-radius:var(--r2);border-left:3px solid var(--teal)">
+    <div style="font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px">Decisions Requested</div>
+    <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:8px">Three decisions will enable the FY2026 culture programme to proceed.</div>
+    <div style="display:grid;gap:6px">
+      <div style="display:flex;gap:10px;font-size:12px;color:rgba(250,246,240,0.75)"><span style="font-family:var(--fm);font-size:9px;color:var(--teal);min-width:20px">01</span>Endorse the five Valentis culture pillars as the official group culture framework — to be communicated to all four SMs by Group HR in April 2026.</div>
+      <div style="display:flex;gap:10px;font-size:12px;color:rgba(250,246,240,0.75)"><span style="font-family:var(--fm);font-size:9px;color:var(--teal);min-width:20px">02</span>Confirm Group HR access to all four SMs for monthly culture calls — this is a structural change from reactive to proactive HR engagement. SM cooperation should be confirmed by COO as a role expectation, not a voluntary opt-in.</div>
+      <div style="display:flex;gap:10px;font-size:12px;color:rgba(250,246,240,0.75)"><span style="font-family:var(--fm);font-size:9px;color:var(--teal);min-width:20px">03</span>Approve Group HR bandwidth and budget to develop Myanmar-language HR materials (safety cards, grade descriptors, onboarding guide) — estimated cost $500–$1,000 for professional translation and design.</div>
+    </div>
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">EX &amp; Culture Toolkit — <em>Series Complete</em></div>
+    <p style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65;margin-bottom:14px">Tool 08 completes the Employee Experience &amp; Culture department of the Valentis HR toolkit. Eight tools, built as a coherent system — each one connecting to the others through shared data, shared frameworks, and a shared intent: to make Valentis a company where skilled people choose to stay and develop.</p>
+    <div style="display:grid;gap:6px">
+      ${[
+        ['Tool 01','EX Strategy & Framework','The foundation'],
+        ['Tool 02','Culture Assessment & Framework','Culture mapping and pillars'],
+        ['Tool 03','Onboarding Journey Designer','Month 1–3 retention intervention'],
+        ['Tool 04','Engagement & Pulse Analytics','Listening strategy and action framework'],
+        ['Tool 05','Recognition & Milestone Programme','Progression visibility'],
+        ['Tool 06','Wellbeing & Site Welfare','Remote site welfare standards'],
+        ['Tool 07','Exit Analytics & Insights','Leaver intelligence and pipeline impact'],
+        ['Tool 08','Culture Consistency Across Countries','One culture, four expressions'],
+      ].map(([num,title,desc],i)=>`
+      <div style="display:flex;gap:10px;padding:8px 12px;background:${i===7?'var(--teal-dim)':'var(--surface2)'};border-radius:var(--r);border-left:3px solid ${i===7?'var(--teal)':'var(--surface3)'}">
+        <div style="font-family:var(--fm);font-size:8.5px;color:var(--ink5);letter-spacing:0.07em;text-transform:uppercase;min-width:48px;padding-top:1px">${num}</div>
+        <div>
+          <div style="font-size:12.5px;font-weight:${i===7?'700':'600'};color:var(--ink);margin-bottom:1px">${title}</div>
+          <div style="font-size:11.5px;color:var(--ink4);font-weight:300">${desc}</div>
+        </div>
+        ${i===7?'<div style="margin-left:auto;font-family:var(--fm);font-size:8px;color:var(--teal);letter-spacing:0.07em;text-transform:uppercase;align-self:center">This tool</div>':''}
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">What Changes in <em>FY2026</em></div>
+    <div style="display:grid;gap:0">
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">April 2026</div><div class="tl-title">Culture pillars communicated to all SMs</div><div class="tl-body">Five culture pillars formally shared with all four site managers. SM briefing document issued. Myanmar and Indonesia SMs receive additional context on non-negotiable standards.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">April 2026</div><div class="tl-title">Monthly SM culture calls begin</div><div class="tl-body">Structured Group HR–SM culture call activated for all four countries. Myo H. (Myanmar) and Wirawan (Indonesia) are priority. Call template built, first calls completed before April 30.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--coral)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q2 2026</div><div class="tl-title">Non-negotiable compliance — first quarterly review</div><div class="tl-body">Group HR runs first structured compliance review across all four countries. Results feed into COO Q2 people brief. Myanmar remediation plan progress reviewed.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--gold)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q2–Q3 2026</div><div class="tl-title">Myanmar-language materials developed</div><div class="tl-body">Safety cards, grade descriptors, and onboarding materials translated into Myanmar language. Distributed to Myo H. for site use. Culture score monitoring begins from Q2 baseline.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-line"></div></div>
+        <div class="tl-content"><div class="tl-when">Q4 2026</div><div class="tl-title">First annual culture health report + Country 5 readiness input</div><div class="tl-body">Group HR delivers first annual culture health report to COO. Pillar scores by country, trend data, SM capability summary, and Country 5 culture framework. The foundation for a scalable Valentis employer identity.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+</script>
+
+</body>
+</html>

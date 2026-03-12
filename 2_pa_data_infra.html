@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Data Infrastructure — People Analytics Tool 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f5;--surface:#fff;--surface2:#e8ecf2;--surface3:#dde3ed;
+  --border:#cdd4e0;--border2:#b8c2d4;
+  --ink:#0d1117;--ink2:#1a2332;--ink3:#3d4f6b;--ink4:#6b7d99;--ink5:#a0aec0;
+  --navy:#0a1628;--navy2:#0d1f3c;--navy3:#112240;
+  --blue:#1a6bdb;--blue2:#2979e8;--blue3:#4d94ff;
+  --blue-dim:rgba(26,107,219,0.08);--blue-border:rgba(26,107,219,0.22);
+  --electric:#3d8bff;--electric2:#5c9fff;
+  --silver:#8899b4;--silver2:#aab8cc;
+  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
+  --amber:#b8860b;--amber-dim:rgba(184,134,11,0.08);--amber-border:rgba(184,134,11,0.22);
+  --green:#1a7a4a;--green-dim:rgba(26,122,74,0.08);--green-border:rgba(26,122,74,0.22);
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--blue),rgba(26,107,219,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:rgba(26,107,219,0.15);border:1px solid rgba(26,107,219,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f4ff;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(26,107,219,0.18);border-color:rgba(26,107,219,0.4);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--blue3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--blue)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--blue);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-blue{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.chip-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.blue{background:var(--blue-dim);border-color:var(--blue);color:var(--ink2)}
+.info.amber{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.info.green{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--navy);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--blue);padding:16px 20px;margin:16px 0;background:var(--blue-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--blue)}
+.vx-box{background:var(--navy);border-radius:4px;padding:22px 26px;margin-bottom:14px}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f4ff;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap;margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* dict entry */
+.dict-entry{border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.dict-header{display:grid;grid-template-columns:220px 1fr auto;align-items:center;padding:12px 16px;background:var(--surface2);gap:12px;cursor:pointer;user-select:none}
+.dict-term{font-family:var(--fm);font-size:12px;font-weight:700;color:var(--blue)}
+.dict-preview{font-size:12px;color:var(--ink4);font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dict-toggle{font-family:var(--fm);font-size:10px;color:var(--ink5);flex-shrink:0}
+.dict-body{display:none;padding:16px;background:var(--surface);border-top:1px solid var(--border)}
+.dict-body.open{display:block}
+.dict-field{display:grid;grid-template-columns:140px 1fr;gap:6px;margin-bottom:7px;font-size:12.5px}
+.dict-field-label{font-family:var(--fm);font-size:8px;color:var(--ink5);letter-spacing:.5px;text-transform:uppercase;padding-top:2px}
+.dict-field-val{color:var(--ink3);font-weight:300;line-height:1.6}
+/* arch diagram */
+.arch-layer{border:1px solid var(--border);border-radius:4px;margin-bottom:6px;overflow:hidden}
+.arch-label{background:var(--navy);padding:10px 16px;font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--electric2)}
+.arch-items{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap;background:var(--surface)}
+.arch-item{padding:7px 12px;border-radius:3px;font-size:12px;font-weight:500}
+/* calc */
+.calc-wrap{background:var(--navy);border-radius:4px;padding:28px;margin-bottom:14px}
+.calc-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;display:block}
+.calc-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 13px;font-size:13px;color:#f0f4ff;font-family:var(--fb);outline:none;transition:border .13s;margin-bottom:10px}
+.calc-input:focus{border-color:rgba(26,107,219,0.5)}
+.calc-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 13px;font-size:13px;color:#f0f4ff;font-family:var(--fb);outline:none;cursor:pointer;margin-bottom:10px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:rgba(26,107,219,0.5);color:var(--electric2)}
+.calc-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx-box{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">People Analytics · Tool 2 / 9</div>
+    <div class="sb-title">HR Data<br><em>Infrastructure</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Infrastructure Overview</div>
+    <div class="nav-item" onclick="showPage('dictionary',this)"><span class="nav-num">02</span>HR Data Dictionary</div>
+    <div class="nav-item" onclick="showPage('architecture',this)"><span class="nav-num">03</span>Data Architecture</div>
+    <div class="nav-item" onclick="showPage('ownership',this)"><span class="nav-num">04</span>Data Ownership Register</div>
+    <div class="nav-item" onclick="showPage('quality',this)"><span class="nav-num">05</span>Data Quality Standards</div>
+    <div class="nav-item" onclick="showPage('governance',this)"><span class="nav-num">06</span>Data Governance</div>
+    <div class="nav-item" onclick="showPage('id',this)"><span class="nav-num">07</span>Employee ID System</div>
+    <div class="nav-item" onclick="showPage('checker',this)"><span class="nav-num">08</span>Data Quality Checker</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>People Analytics · Tool 2 of 9</strong>
+      HR Data Infrastructure<br>
+      <span style="color:rgba(255,255,255,0.1)">Consistent definitions. Clean data. Clear ownership. Everything else depends on this.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-overview" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">People Analytics · Tool 2 / 9 — HR Data Infrastructure</div>
+    <h1 class="page-title">HR Data<br><em>Infrastructure</em></h1>
+    <p class="page-desc">Every analytics output is only as good as the data underneath it. This tool defines the infrastructure that makes Valentis people analytics trustworthy: agreed definitions, clear architecture, named ownership, and quality standards that hold at 42 staff and scale to 1,000.</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">The Infrastructure Principle</div>
+    <div class="vx-title">Bad data produces confident wrong answers. The COO stops trusting HR analytics after one confident wrong answer.</div>
+    <div class="vx-body">Data infrastructure is not glamorous work. It does not produce dashboards the COO can point to in a meeting. But it determines whether every other analytics investment pays off. At Valentis, the challenge is not complexity — it is consistency. The pipeline data exists. The salary data exists. The delivery data exists. None of it is defined the same way, collected on the same schedule, or owned by the same person. This tool fixes that.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">What This Tool Contains</div>
+      <div style="display:grid;gap:6px;margin-top:4px">
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:3px"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--blue);line-height:1;flex-shrink:0">02</div><div><div style="font-weight:600;font-size:13px;color:var(--ink)">HR Data Dictionary</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Precise definitions for every HR metric and data field used at Valentis. One definition, everywhere.</div></div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--ink4);line-height:1;flex-shrink:0">03</div><div><div style="font-weight:600;font-size:13px;color:var(--ink)">Data Architecture</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">How data flows from source to analytics output. Layered architecture ready for HRIS integration.</div></div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--ink4);line-height:1;flex-shrink:0">04</div><div><div style="font-weight:600;font-size:13px;color:var(--ink)">Data Ownership Register</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Every data source has a named owner responsible for accuracy and update frequency.</div></div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--ink4);line-height:1;flex-shrink:0">05</div><div><div style="font-weight:600;font-size:13px;color:var(--ink)">Data Quality Standards</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Completeness, accuracy, and timeliness standards. What good looks like — and what triggers an alert.</div></div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--ink4);line-height:1;flex-shrink:0">06</div><div><div style="font-weight:600;font-size:13px;color:var(--ink)">Data Governance</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">How definitions are changed, access is controlled, and the infrastructure is maintained as Valentis grows.</div></div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--ink4);line-height:1;flex-shrink:0">07</div><div><div style="font-weight:600;font-size:13px;color:var(--ink)">Employee ID System</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Structured unique IDs for every Valentis employee — the joining key that links data across all systems.</div></div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--ink4);line-height:1;flex-shrink:0">08</div><div><div style="font-weight:600;font-size:13px;color:var(--ink)">Data Quality Checker</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300">Interactive quarterly data review — flags missing fields, ownership gaps, and update overruns.</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Five Data Principles at Valentis</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:12px 14px;border-left:3px solid var(--blue);background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:3px">One definition, everywhere, permanently</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Every term has exactly one definition. Changes require formal governance — not a quiet workaround in a spreadsheet formula.</div></div>
+        <div style="padding:12px 14px;border-left:3px solid var(--blue);background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:3px">Every data source has exactly one owner</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Shared ownership is no ownership. One named individual is responsible for accuracy and update frequency per source.</div></div>
+        <div style="padding:12px 14px;border-left:3px solid var(--blue);background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:3px">Date and format standards are non-negotiable</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">ISO 8601 dates. Consistent country codes and grade codes. No local variants. Format inconsistency is the most common cause of data join failures in multi-country systems.</div></div>
+        <div style="padding:12px 14px;border-left:3px solid var(--blue);background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:3px">Acknowledge gaps — never fill them with estimates presented as facts</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Missing data is NULL, not a guess. Estimates are labelled as estimates. Trust is built on honesty about data limitations.</div></div>
+        <div style="padding:12px 14px;border-left:3px solid var(--blue);background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:3px">Build for HRIS integration from day one</div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.65">Every field name and definition is chosen as if it will be migrated into an HRIS at 65–80 staff. The cost of HRIS-compatible structures now is zero. The cost of migrating incompatible data at scale is significant.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Valentis Data Infrastructure — Current State vs Target</div>
+    <table class="dtable">
+      <thead><tr><th>Data domain</th><th>Current state</th><th>Target state (Q3 2026)</th><th>Gap to close</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Employee master data</td><td>Payroll system — accurate for pay, incomplete for analytics. Missing grade start dates, milestone data, development status.</td><td>Payroll supplemented by HR employee register. Employee ID assigned. All dictionary fields populated.</td><td>Build HR employee register. Backfill grade start dates. Assign employee IDs to all current staff.</td></tr>
+        <tr><td style="font-weight:600">Pipeline &amp; milestone data</td><td>Physical sign-off cards on site. Known to SMs and G4s. Not consolidated centrally.</td><td>Pipeline log: one row per active candidate, updated monthly. Milestone completion dates recorded and consolidated.</td><td>Design pipeline log structure (this tool). Backfill current trainees. Establish monthly SM data report.</td></tr>
+        <tr><td style="font-weight:600">Attrition &amp; exit data</td><td>Exits recorded in payroll. Exit reason not captured. Month of exit derivable but not tracked.</td><td>Exit reason captured at offboarding. Month, grade, country in attrition register. Rolling attrition rate calculated quarterly.</td><td>Add exit reason to offboarding. Backfill last 12 months from SM recollection where possible.</td></tr>
+        <tr><td style="font-weight:600">Compensation data</td><td>Full salary data in payroll. Grade bands in C&amp;B toolkit. No current comparison of salary against bands.</td><td>Quarterly salary vs band extract. Below-minimum flags actioned. People cost % calculated monthly.</td><td>Build salary-vs-band extract template. Zaw M. below-minimum actioned April 2026.</td></tr>
+        <tr><td style="font-weight:600">Operational delivery data</td><td>Programme delivery % in operations monthly report. Not integrated with HR data. No shared tracking field.</td><td>Delivery % extracted monthly by Group HR and entered into HR metric tracker alongside pipeline data.</td><td>Establish monthly extraction process. Agree delivery % definition with operations.</td></tr>
+        <tr><td style="font-weight:600">Check-in &amp; coaching data</td><td>Month-3 check-in form launched Q1 2026. G4 debrief tally sheets new. No historical baseline.</td><td>All check-in records consolidated by Group HR. Debrief frequency tracked per G4. Rubric scores recorded annually.</td><td>Q1 2026 check-in baseline. First rubric observation Q1 2026. 6 months of data needed before impact analysis.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-dictionary" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — HR Data Dictionary</div>
+    <h1 class="page-title">HR Data<br><em>Dictionary</em></h1>
+    <p class="page-desc">The authoritative source of every HR metric and data field definition at Valentis. These definitions apply across all four countries, all tools in the analytics toolkit, and all reports to the COO. Click any entry to expand the full definition, calculation method, and usage notes.</p>
+  </div>
+
+  <div class="info blue"><strong>How to use this dictionary.</strong>Every HR metric in every report must match the definition here. If a metric is calculated differently in a specific context, that exception must be documented as a named variant — not silently applied. When an SM or G4 asks what "attrition" means, the answer comes from this dictionary.</div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('dc-workforce',this)">Workforce Metrics</div>
+    <div class="tab" onclick="showTab('dc-pipeline',this)">Pipeline Metrics</div>
+    <div class="tab" onclick="showTab('dc-compensation',this)">Compensation Fields</div>
+    <div class="tab" onclick="showTab('dc-employee',this)">Employee Record Fields</div>
+  </div>
+
+  <div class="tab-body active" id="tab-dc-workforce">
+    <div id="dict-active" class="dict-entry"><div class="dict-header" onclick="toggleDict('active')"><span class="dict-term">ACTIVE_EMPLOYEE</span><span class="dict-preview">An employee with a current, active employment contract at Valentis…</span><span class="dict-toggle" id="dt-active">▼</span></div><div class="dict-body" id="db-active"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">An employee with a current, active employment contract at Valentis Group who is expected to perform work in the current month. Includes employees on approved paid leave. Excludes employees on unpaid leave of more than 30 days, employees under notice (from notification date), and contractors.</span></div><div class="dict-field"><span class="dict-field-label">Measured on</span><span class="dict-field-val">Last working day of each calendar month (snapshot date). Always the same date for all countries.</span></div><div class="dict-field"><span class="dict-field-label">Used in</span><span class="dict-field-val">Headcount reporting, attrition rate denominator, people cost % denominator, grade distribution.</span></div><div class="dict-field"><span class="dict-field-label">Exclusions</span><span class="dict-field-val">Do NOT include: contractors, labour hire, secondees from third parties, employees under notice. These may be tracked separately as "extended workforce" but are never included in the active employee count without explicit labelling.</span></div><div class="dict-field"><span class="dict-field-label">HRIS field name</span><span class="dict-field-val">employment_status = 'ACTIVE'</span></div></div></div>
+
+    <div id="dict-headcount" class="dict-entry"><div class="dict-header" onclick="toggleDict('headcount')"><span class="dict-term">HEADCOUNT</span><span class="dict-preview">The count of active employees at the snapshot date, segmented by grade and country…</span><span class="dict-toggle" id="dt-headcount">▼</span></div><div class="dict-body" id="db-headcount"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">The count of active employees at the snapshot date (last working day of the month), segmented by grade and country. Headcount is always a whole number — no FTE weighting unless explicitly stated as "FTE headcount."</span></div><div class="dict-field"><span class="dict-field-label">Standard segments</span><span class="dict-field-val">By grade: G1, G2, G3, G4, G5, G6, G7, G8. By country: LA (Laos), MM (Myanmar), ID (Indonesia), TH (Thailand). Country 5 to be added when deployed.</span></div><div class="dict-field"><span class="dict-field-label">Calculation</span><span class="dict-field-val">COUNT of employees where employment_status = 'ACTIVE' on snapshot date. GROUP BY grade_code, country_code.</span></div><div class="dict-field"><span class="dict-field-label">Variance notes</span><span class="dict-field-val">When headcount is reported in a COO brief for a period (e.g. "Q1 2026 headcount"), it refers to the end-of-quarter snapshot unless explicitly stated as an average. Always specify which snapshot date is being used when reporting a single headcount figure.</span></div></div></div>
+
+    <div id="dict-attrition" class="dict-entry"><div class="dict-header" onclick="toggleDict('attrition')"><span class="dict-term">ATTRITION_RATE</span><span class="dict-preview">The percentage of the workforce that left Valentis in a given period…</span><span class="dict-toggle" id="dt-attrition">▼</span></div><div class="dict-body" id="db-attrition"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">The percentage of the workforce that left Valentis in a given period, calculated as: (Number of leavers in period ÷ Average headcount for period) × 100.</span></div><div class="dict-field"><span class="dict-field-label">Monthly formula</span><span class="dict-field-val">Monthly attrition % = (Leavers in month ÷ ((Opening headcount + Closing headcount) ÷ 2)) × 100</span></div><div class="dict-field"><span class="dict-field-label">Annual formula</span><span class="dict-field-val">Annual attrition % = (Total leavers in 12-month period ÷ Average monthly headcount for that 12-month period) × 100. Do NOT simply sum 12 monthly rates.</span></div><div class="dict-field"><span class="dict-field-label">Rolling 12-month</span><span class="dict-field-val">For trend reporting: sum of leavers in the trailing 12 months ÷ average headcount over that 12-month period. This is the preferred attrition metric for COO reporting as it smooths seasonal variation.</span></div><div class="dict-field"><span class="dict-field-label">Inclusion/exclusion</span><span class="dict-field-val">INCLUDE: All voluntary resignations, involuntary terminations, retirements, end of contract (if employee was in active employee count). EXCLUDE: Internal transfers between countries (these are tracked separately as "mobility").</span></div><div class="dict-field"><span class="dict-field-label">Sub-types</span><span class="dict-field-val">Voluntary attrition: employee-initiated. Involuntary attrition: company-initiated (performance, redundancy). Retirement: retirement-initiated. Report all three separately — combined figure is "total attrition."</span></div></div></div>
+
+    <div id="dict-tenure" class="dict-entry"><div class="dict-header" onclick="toggleDict('tenure')"><span class="dict-term">TENURE</span><span class="dict-preview">Length of continuous employment at Valentis from hire date to snapshot date…</span><span class="dict-toggle" id="dt-tenure">▼</span></div><div class="dict-body" id="db-tenure"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">Length of continuous employment at Valentis from hire_date to snapshot date (or exit_date for leavers). Measured in whole months for reporting purposes (round down to nearest month).</span></div><div class="dict-field"><span class="dict-field-label">Calculation</span><span class="dict-field-val">FLOOR(MONTHS_BETWEEN(snapshot_date, hire_date))</span></div><div class="dict-field"><span class="dict-field-label">Bands for reporting</span><span class="dict-field-val">0–6 months (new hire), 6–12 months, 12–24 months, 24–36 months, 36–60 months, 60+ months (long-tenured). These bands align with milestone progression stages.</span></div><div class="dict-field"><span class="dict-field-label">Note on continuity</span><span class="dict-field-val">If an employee exits and is rehired, tenure restarts from the new hire date unless a specific continuity agreement is documented. Do not combine pre-exit and post-rehire tenure without explicit business reason.</span></div></div></div>
+
+    <div id="dict-peoplecost" class="dict-entry"><div class="dict-header" onclick="toggleDict('peoplecost')"><span class="dict-term">PEOPLE_COST_RATIO</span><span class="dict-preview">Total people cost as a percentage of total revenue for the period…</span><span class="dict-toggle" id="dt-peoplecost">▼</span></div><div class="dict-body" id="db-peoplecost"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">Total people cost as a percentage of total revenue for the period. People cost includes: base salaries, allowances, overtime, employer statutory contributions, L&D investment, and recruitment costs. Excludes: contractor fees (reported separately as "extended workforce cost"), one-off severance unless noted.</span></div><div class="dict-field"><span class="dict-field-label">Formula</span><span class="dict-field-val">People Cost Ratio = (Total people cost for period ÷ Total revenue for period) × 100. Valentis baseline: approximately 43%.</span></div><div class="dict-field"><span class="dict-field-label">Reporting frequency</span><span class="dict-field-val">Monthly from payroll + finance P&amp;L. Quarterly trend in COO report. Annual benchmark comparison.</span></div><div class="dict-field"><span class="dict-field-label">Alert threshold</span><span class="dict-field-val">Flag to COO if people cost ratio exceeds 47% in any month or 45% on a rolling 3-month basis. Investigate driver before next quarterly report.</span></div></div></div>
+  </div>
+
+  <div class="tab-body" id="tab-dc-pipeline">
+    <div id="dict-pipeline" class="dict-entry"><div class="dict-header" onclick="toggleDict('pipeline')"><span class="dict-term">PIPELINE_CANDIDATE</span><span class="dict-preview">An active employee currently progressing through the G1→G4 driller development pathway…</span><span class="dict-toggle" id="dt-pipeline">▼</span></div><div class="dict-body" id="db-pipeline"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">An active employee currently progressing through the G1→G4 driller development pathway. Includes G1, G2, and G3 employees who have not yet been confirmed as G4 and have not exited the pipeline. Does NOT include G4+ employees who have completed the pipeline.</span></div><div class="dict-field"><span class="dict-field-label">Pipeline stages</span><span class="dict-field-val">G1 Trainee (intake to G2 confirmation), G2 Driller's Assistant (G2 confirmation to G3 confirmation), G3 Junior Driller (G3 confirmation to G4 confirmation). Each stage has defined milestones in the sign-off card system.</span></div><div class="dict-field"><span class="dict-field-label">Status categories</span><span class="dict-field-val">ON_TRACK: progressing at expected velocity. AT_RISK: milestone overdue by more than 60 days or check-in flagged. STALLED: no milestone progress in 90+ days. EXITED: left pipeline voluntarily or involuntarily before G4.</span></div></div></div>
+
+    <div id="dict-convrate" class="dict-entry"><div class="dict-header" onclick="toggleDict('convrate')"><span class="dict-term">CONVERSION_RATE</span><span class="dict-preview">The percentage of pipeline candidates entering at G1 who achieve G4 confirmation…</span><span class="dict-toggle" id="dt-convrate">▼</span></div><div class="dict-body" id="db-convrate"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">The percentage of pipeline candidates entering at G1 who achieve G4 confirmation. Calculated as: (Number of G4 confirmations in period ÷ Number of G1 intakes in the same cohort period) × 100. Cohort-based — not period-based.</span></div><div class="dict-field"><span class="dict-field-label">Cohort definition</span><span class="dict-field-val">A cohort is a group of G1 intakes within the same calendar quarter. Cohort conversion rate is only calculable after 54–66 months (the full G1→G4 pathway duration). For current reporting, use "stage conversion rate" as the proxy.</span></div><div class="dict-field"><span class="dict-field-label">Stage conversion rates</span><span class="dict-field-val">G1→G2: (G2 confirmations in period ÷ G1 intakes 18–24 months prior) × 100. G2→G3: (G3 confirmations ÷ G2 confirmations 12–18 months prior) × 100. G3→G4: (G4 confirmations ÷ G3 confirmations 18–24 months prior) × 100.</span></div><div class="dict-field"><span class="dict-field-label">Target</span><span class="dict-field-val">Overall G1→G4 conversion: ≥70%. Current Myanmar baseline: ~58%. Laos and Indonesia: establish baseline Q1 2026.</span></div><div class="dict-field"><span class="dict-field-label">Country-specific note</span><span class="dict-field-val">Conversion rates are always reported by country. Do not report a group-wide conversion rate without also showing the country breakdown — country mix drives the aggregate and can mask individual country deterioration.</span></div></div></div>
+
+    <div id="dict-timeingrade" class="dict-entry"><div class="dict-header" onclick="toggleDict('timeingrade')"><span class="dict-term">TIME_IN_GRADE</span><span class="dict-preview">The number of months an employee has held their current grade…</span><span class="dict-toggle" id="dt-timeingrade">▼</span></div><div class="dict-body" id="db-timeingrade"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">The number of months an employee has held their current grade, measured from grade_start_date to snapshot_date. Distinct from tenure (total time at Valentis) — an employee may have 36 months tenure but only 8 months time-in-grade if recently promoted.</span></div><div class="dict-field"><span class="dict-field-label">Calculation</span><span class="dict-field-val">FLOOR(MONTHS_BETWEEN(snapshot_date, grade_start_date))</span></div><div class="dict-field"><span class="dict-field-label">Target ranges</span><span class="dict-field-val">G1: 18–24 months before G2 confirmation. G2: 12–18 months. G3: 18–24 months. Extended time-in-grade (G3 at 30+ months without G4 confirmation) triggers a pipeline stall review.</span></div><div class="dict-field"><span class="dict-field-label">Alert rule</span><span class="dict-field-val">Flag any G3 with time-in-grade &gt;28 months who has not yet received G4 confirmation as AT_RISK in the pipeline log. Trigger Group HR review within 30 days.</span></div></div></div>
+
+    <div id="dict-milestone" class="dict-entry"><div class="dict-header" onclick="toggleDict('milestone')"><span class="dict-term">MILESTONE_COMPLETION</span><span class="dict-preview">A formal sign-off by an authorised G4 or SM confirming an employee has demonstrated competency…</span><span class="dict-toggle" id="dt-milestone">▼</span></div><div class="dict-body" id="db-milestone"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">A formal sign-off by an authorised G4 or SM confirming an employee has demonstrated competency at a defined milestone standard. A milestone is complete only when the physical sign-off card is signed by an authorised signatory. Verbal confirmation, email, or WhatsApp message does not constitute milestone completion.</span></div><div class="dict-field"><span class="dict-field-label">Required signatories</span><span class="dict-field-val">G1→G2 milestones: G4 signature. G2→G3 milestones: G4 signature + SM countersignature. G3→G4 milestones: SM signature + Group HR notification.</span></div><div class="dict-field"><span class="dict-field-label">Recording</span><span class="dict-field-val">Milestone completion date (YYYY-MM-DD), milestone code, signatory ID, and any qualitative notes are recorded in the pipeline log within 7 days of sign-off. Late recording is flagged in the monthly data quality review.</span></div></div></div>
+
+    <div id="dict-benchstrength" class="dict-entry"><div class="dict-header" onclick="toggleDict('benchstrength')"><span class="dict-term">BENCH_STRENGTH</span><span class="dict-preview">The number of G3 candidates who are within 12 months of G4 confirmation…</span><span class="dict-toggle" id="dt-benchstrength">▼</span></div><div class="dict-body" id="db-benchstrength"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">The number of G3 candidates who are within 12 months of G4 confirmation and have been assessed as ON_TRACK by their SM. Bench strength represents the near-term G4 supply — the leading indicator of operational capacity 12 months out.</span></div><div class="dict-field"><span class="dict-field-label">Calculation</span><span class="dict-field-val">COUNT of G3 employees where: (a) time_in_grade is between 12 and 24 months, (b) pipeline_status = 'ON_TRACK', and (c) SM has assessed as G4-ready within 12 months. Reported by country.</span></div><div class="dict-field"><span class="dict-field-label">Target</span><span class="dict-field-val">Minimum bench strength: 1 G3 candidate per active country at any time. Laos critical risk: only 2 G3 candidates against 5 G4 positions, 3 of which are retirement-risk within 3 years.</span></div></div></div>
+  </div>
+
+  <div class="tab-body" id="tab-dc-compensation">
+    <div id="dict-basesalary" class="dict-entry"><div class="dict-header" onclick="toggleDict('basesalary')"><span class="dict-term">BASE_SALARY</span><span class="dict-preview">The fixed annual or monthly compensation paid to an employee, excluding all variable pay…</span><span class="dict-toggle" id="dt-basesalary">▼</span></div><div class="dict-body" id="db-basesalary"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">The fixed annual or monthly compensation paid to an employee, excluding all variable pay (bonuses, incentives, allowances). This is the number used for grade band adherence analysis and pay equity review. Always expressed in USD for cross-country comparison — local currency in payroll records, USD equivalent for analytics.</span></div><div class="dict-field"><span class="dict-field-label">USD conversion</span><span class="dict-field-val">Convert using the exchange rate on the first working day of January each year (the annual rate). Do not use daily spot rates for compensation analytics — this creates artificial variance. The annual rate is documented in the compensation analytics record each January.</span></div><div class="dict-field"><span class="dict-field-label">Excluded from base salary</span><span class="dict-field-val">Site allowance, housing allowance, transport allowance, per diem, overtime, performance bonus, retention bonus, statutory contributions (employer-side), and benefits in kind. These are tracked separately as "total cash" and "total remuneration."</span></div></div></div>
+
+    <div id="dict-compa" class="dict-entry"><div class="dict-header" onclick="toggleDict('compa')"><span class="dict-term">COMPA_RATIO</span><span class="dict-preview">An employee's base salary as a percentage of the midpoint of their grade band…</span><span class="dict-toggle" id="dt-compa">▼</span></div><div class="dict-body" id="db-compa"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">An employee's base salary as a percentage of the midpoint of their grade band. Compa-ratio = (Employee base salary ÷ Grade band midpoint) × 100. A compa-ratio of 100 means the employee is paid exactly at midpoint.</span></div><div class="dict-field"><span class="dict-field-label">Interpretation</span><span class="dict-field-val">Below 85: significantly below midpoint — possible below-minimum risk, investigate against band floor. 85–95: below midpoint, typically new to grade. 95–105: at midpoint, fully competent in role. 105–115: above midpoint, high performer or long-tenured. Above 115: above midpoint — flag for merit review justification.</span></div><div class="dict-field"><span class="dict-field-label">Country factor application</span><span class="dict-field-val">Grade bands are expressed in USD base rates. Country factors (LA: 85%, MM: 80%, ID: 92%, TH: 105%) adjust the band floor, midpoint, and ceiling for each country. Compa-ratio always uses the country-adjusted midpoint, not the USD base midpoint.</span></div></div></div>
+
+    <div id="dict-bandadherence" class="dict-entry"><div class="dict-header" onclick="toggleDict('bandadherence')"><span class="dict-term">BAND_ADHERENCE</span><span class="dict-preview">The percentage of employees whose base salary falls within the floor and ceiling of their grade band…</span><span class="dict-toggle" id="dt-bandadherence">▼</span></div><div class="dict-body" id="db-bandadherence"><div class="dict-field"><span class="dict-field-label">Definition</span><span class="dict-field-val">The percentage of employees whose base salary (after country factor adjustment) falls within the floor and ceiling of their grade band. Band_Adherence = (Employees within band ÷ Total employees) × 100. Target: ≥95%.</span></div><div class="dict-field"><span class="dict-field-label">Below-minimum</span><span class="dict-field-val">Any employee whose base salary is below the grade band floor (country-adjusted) is a below-minimum case. These must be flagged to the COO within 30 days of identification and remediated within the next payroll cycle unless a formal exception is documented and approved.</span></div><div class="dict-field"><span class="dict-field-label">Live case</span><span class="dict-field-val">Zaw M. (Myanmar, G3): confirmed below-minimum. Action: salary adjustment to band floor by April 2026 payroll. Documented exception until that date.</span></div></div></div>
+  </div>
+
+  <div class="tab-body" id="tab-dc-employee">
+    <div class="info blue"><strong>Employee record fields — the master data set that underpins all HR analytics.</strong>These are the required fields for every active employee. Gaps in these fields reduce the quality of every analytics output that uses employee data.</div>
+    <table class="dtable">
+      <thead><tr><th>Field name</th><th>Definition</th><th>Format</th><th>Required?</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">employee_id</td><td>Unique identifier assigned at hire. Format: [CC]-[GG]-[NNNN]. Never reused. See Section 07.</td><td>MM-G3-0047</td><td><span class="chip chip-red">Required</span></td><td>Group HR at hire</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">full_name</td><td>Legal name as per employment contract and government ID. Used for payroll only — analytics uses employee_id.</td><td>Text</td><td><span class="chip chip-red">Required</span></td><td>HR onboarding</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">country_code</td><td>Two-letter country code for primary work location: LA, MM, ID, TH. Country 5 to be added.</td><td>LA / MM / ID / TH</td><td><span class="chip chip-red">Required</span></td><td>HR onboarding</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">grade_code</td><td>Current grade: G1 through G8. Updated on the effective date of each grade change.</td><td>G1 – G8</td><td><span class="chip chip-red">Required</span></td><td>HR at grade change</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">grade_start_date</td><td>Date current grade became effective (YYYY-MM-DD). Used to calculate time_in_grade. Must be backfilled for all current employees.</td><td>YYYY-MM-DD</td><td><span class="chip chip-red">Required</span></td><td>HR at grade change</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">hire_date</td><td>Date employment commenced (YYYY-MM-DD). First day of employment at Valentis. Used for tenure calculation.</td><td>YYYY-MM-DD</td><td><span class="chip chip-red">Required</span></td><td>HR onboarding</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">employment_status</td><td>ACTIVE, ON_LEAVE, UNDER_NOTICE, EXITED. Updated on status change date.</td><td>Enum</td><td><span class="chip chip-red">Required</span></td><td>HR on status change</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">exit_date</td><td>Date employment ended (YYYY-MM-DD). NULL if still active. Must be set on or before the last day of employment.</td><td>YYYY-MM-DD / NULL</td><td><span class="chip chip-amber">If exited</span></td><td>HR at offboarding</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">exit_reason_category</td><td>Voluntary / Involuntary_Performance / Involuntary_Redundancy / Retirement / Contract_End. Required for all exits.</td><td>Enum</td><td><span class="chip chip-amber">If exited</span></td><td>HR at offboarding</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">base_salary_usd</td><td>Annual base salary in USD equivalent at the annual exchange rate. Updated at merit cycle and on salary change events.</td><td>Numeric (2dp)</td><td><span class="chip chip-red">Required</span></td><td>Payroll / HR</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">pipeline_status</td><td>ON_TRACK / AT_RISK / STALLED / COMPLETE / N/A. Applies to G1–G3 only. Updated quarterly by Group HR from pipeline log.</td><td>Enum</td><td><span class="chip chip-amber">G1–G3 only</span></td><td>Group HR quarterly</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">reporting_manager_id</td><td>employee_id of the direct line manager. Used for SM pipeline accountability tracking and SM development analytics.</td><td>Employee ID</td><td><span class="chip chip-red">Required</span></td><td>HR on hire / change</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-architecture" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Data Architecture</div>
+    <h1 class="page-title">Data<br><em>Architecture</em></h1>
+    <p class="page-desc">How HR data flows from collection at site through to analytics output and COO reporting. A three-layer architecture — collection, consolidation, analytics — designed to work with manual processes today and integrate seamlessly with an HRIS when Valentis is ready.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Three-Layer Architecture</div>
+    <div class="arch-layer">
+      <div class="arch-label">Layer 1 — Collection · Data enters the system here</div>
+      <div class="arch-items">
+        <div class="arch-item" style="background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--ink2)">Payroll system (monthly)</div>
+        <div class="arch-item" style="background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--ink2)">Milestone sign-off cards (site)</div>
+        <div class="arch-item" style="background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--ink2)">Month-3 check-in forms (G4)</div>
+        <div class="arch-item" style="background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--ink2)">G4 debrief tally sheets (monthly)</div>
+        <div class="arch-item" style="background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--ink2)">SM monthly pipeline report</div>
+        <div class="arch-item" style="background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--ink2)">Operations delivery report</div>
+        <div class="arch-item" style="background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--ink2)">Finance P&L (monthly)</div>
+        <div class="arch-item" style="background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--ink2)">HR onboarding / offboarding records</div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:6px;font-family:var(--fm);font-size:10px;color:var(--ink5)">▼ Group HR consolidates monthly ▼</div>
+    <div class="arch-layer">
+      <div class="arch-label">Layer 2 — Consolidation · Group HR master data store</div>
+      <div class="arch-items">
+        <div class="arch-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)">HR Employee Register</div>
+        <div class="arch-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)">Pipeline Log</div>
+        <div class="arch-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)">Attrition Register</div>
+        <div class="arch-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)">Salary vs Band Extract</div>
+        <div class="arch-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)">Check-in Record Log</div>
+        <div class="arch-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)">HR Metric Tracker (11 metrics)</div>
+        <div class="arch-item" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink2)">Coaching Rubric Record</div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:6px;font-family:var(--fm);font-size:10px;color:var(--ink5)">▼ Analytics tools read from Layer 2 ▼</div>
+    <div class="arch-layer">
+      <div class="arch-label">Layer 3 — Analytics &amp; Reporting · Outputs consumed by Group HR and COO</div>
+      <div class="arch-items">
+        <div class="arch-item" style="background:var(--navy);border:1px solid rgba(26,107,219,0.3);color:var(--electric2)">Workforce Dashboard (Tool 3)</div>
+        <div class="arch-item" style="background:var(--navy);border:1px solid rgba(26,107,219,0.3);color:var(--electric2)">Attrition Analysis (Tool 4)</div>
+        <div class="arch-item" style="background:var(--navy);border:1px solid rgba(26,107,219,0.3);color:var(--electric2)">Pipeline Analytics (Tool 5)</div>
+        <div class="arch-item" style="background:var(--navy);border:1px solid rgba(26,107,219,0.3);color:var(--electric2)">Workforce Planning Model (Tool 6)</div>
+        <div class="arch-item" style="background:var(--navy);border:1px solid rgba(26,107,219,0.3);color:var(--electric2)">Compensation Analytics (Tool 7)</div>
+        <div class="arch-item" style="background:var(--navy);border:1px solid rgba(26,107,219,0.3);color:var(--electric2)">COO Quarterly Report (Tool 9)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pipeline Log — Column Specification</div>
+    <div class="card-body" style="margin-bottom:12px">The pipeline log is the most important HR data file at Valentis today. One row per active G1–G3 candidate. Updated monthly by Group HR from SM pipeline reports and site sign-off records. This is the specification for building or migrating the log.</div>
+    <table class="dtable">
+      <thead><tr><th>Column name</th><th>Type</th><th>Definition</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">employee_id</td><td><span class="chip chip-muted">ID</span></td><td>Unique employee ID. Primary key. Links to HR Employee Register.</td><td>MM-G2-0034</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">full_name</td><td><span class="chip chip-muted">Text</span></td><td>Legal name. For display only — all analytics uses employee_id.</td><td>Kyaw Zin Htun</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">country_code</td><td><span class="chip chip-muted">Enum</span></td><td>LA / MM / ID / TH</td><td>MM</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">current_grade</td><td><span class="chip chip-muted">Enum</span></td><td>G1 / G2 / G3</td><td>G2</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">grade_start_date</td><td><span class="chip chip-muted">Date</span></td><td>Date current grade became effective. YYYY-MM-DD.</td><td>2024-09-01</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">hire_date</td><td><span class="chip chip-muted">Date</span></td><td>Date of hire at Valentis. YYYY-MM-DD.</td><td>2023-03-15</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">time_in_grade_months</td><td><span class="chip chip-muted">Int</span></td><td>Calculated: FLOOR(months between grade_start_date and snapshot date).</td><td>6</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">milestones_complete</td><td><span class="chip chip-muted">Int</span></td><td>Count of milestones completed for current grade stage. From sign-off cards.</td><td>3</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">milestones_total</td><td><span class="chip chip-muted">Int</span></td><td>Total milestones required for current grade stage progression.</td><td>6</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">last_checkin_date</td><td><span class="chip chip-muted">Date</span></td><td>Date of most recent month-3 check-in (or subsequent check-in). NULL if not yet conducted.</td><td>2025-12-10</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">checkin_risk_level</td><td><span class="chip chip-muted">Enum</span></td><td>LOW / MEDIUM / HIGH / NULL. Set at check-in by G4.</td><td>MEDIUM</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">g4_supervisor_id</td><td><span class="chip chip-muted">ID</span></td><td>employee_id of the responsible G4. Links to G4 coaching quality tracking.</td><td>MM-G4-0012</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">pipeline_status</td><td><span class="chip chip-muted">Enum</span></td><td>ON_TRACK / AT_RISK / STALLED. Updated monthly by Group HR.</td><td>ON_TRACK</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">g4_candidate_flag</td><td><span class="chip chip-muted">Bool</span></td><td>TRUE if G3 assessed by SM as G4-ready within 12 months. G3 only.</td><td>FALSE</td></tr>
+        <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">notes</td><td><span class="chip chip-muted">Text</span></td><td>Free text. SM or G4 observations. Intervention actions. Max 200 characters.</td><td>Month-3 concern re: equipment familiarity. Targeted debrief scheduled.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-ownership" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Data Ownership Register</div>
+    <h1 class="page-title">Data Ownership<br><em>Register</em></h1>
+    <p class="page-desc">Every data source at Valentis has exactly one owner. Ownership means responsibility for accuracy, update frequency, access control, and quality. This register is the single source of truth for who to contact when data is wrong, missing, or out of date.</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Shared ownership is no ownership. When two people own a data source, neither of them owns it."</p>
+    <cite>Valentis Data Governance Principle · 2026</cite>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Data Ownership Register — All Sources</div>
+    <table class="dtable">
+      <thead><tr><th>Data source</th><th>Owner</th><th>Update frequency</th><th>Format</th><th>Access</th><th>Escalation if missing</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">HR Employee Register</td><td>Group HR</td><td>On event (hire, grade change, exit). Monthly completeness review.</td><td>Spreadsheet (HRIS when available)</td><td>Group HR only. COO: summary view on request.</td><td>Group HR self-escalates to COO if register is more than 30 days out of date.</td></tr>
+        <tr><td style="font-weight:600">Pipeline Log</td><td>Group HR (consolidate). SM (provide monthly data). G4 (sign-off cards).</td><td>Monthly. Group HR consolidates by 10th of each month from SM reports received by 5th.</td><td>Spreadsheet (pipeline log spec, Section 03)</td><td>Group HR full access. SM: own country view shared quarterly.</td><td>If SM report not received by 5th: Group HR follows up directly. Escalate to COO if persistent after 2 months.</td></tr>
+        <tr><td style="font-weight:600">Attrition Register</td><td>Group HR</td><td>Updated within 7 days of each exit event. Monthly reconciliation against payroll.</td><td>Spreadsheet tab within HR Employee Register</td><td>Group HR only.</td><td>Group HR reconciles against payroll monthly. Discrepancies flagged to Finance within 14 days.</td></tr>
+        <tr><td style="font-weight:600">Payroll data</td><td>Finance / Group HR (joint)</td><td>Monthly (payroll run)</td><td>Payroll system export</td><td>Finance: full. Group HR: headcount, grade, salary fields. COO: cost summary.</td><td>Finance escalates payroll discrepancies. Group HR escalates headcount discrepancies to Finance.</td></tr>
+        <tr><td style="font-weight:600">Salary vs Band Extract</td><td>Group HR</td><td>Quarterly (Jan, Apr, Jul, Oct)</td><td>Spreadsheet — payroll export mapped to grade bands</td><td>Group HR only. COO: summary (% in-band, flag count) on request.</td><td>If extract is more than 90 days old, it is not used for any decision. Group HR responsible for maintaining currency.</td></tr>
+        <tr><td style="font-weight:600">Month-3 check-in records</td><td>G4 (complete form). Group HR (consolidate).</td><td>As triggered (trainee month 3). G4 submits within 7 days of check-in date.</td><td>Standard form — paper or shared digital form</td><td>Group HR full. G4: own check-ins. SM: country summary on request.</td><td>If check-in overdue by 14+ days: Group HR contacts G4. If 30+ days: escalate to SM.</td></tr>
+        <tr><td style="font-weight:600">G4 debrief tally sheets</td><td>G4 (complete). SM (review monthly). Group HR (extract count).</td><td>Monthly. SM reviews by end of month. Group HR extracts debrief frequency count by 10th following month.</td><td>Physical tally sheet — SM holds originals</td><td>G4: own tally. SM: all G4s in country. Group HR: frequency count only.</td><td>If SM has not reviewed monthly tallies by end of month: Group HR follows up. Debrief frequency is a coaching quality metric — gaps are reported in quarterly COO brief.</td></tr>
+        <tr><td style="font-weight:600">Operations delivery report</td><td>Operations / COO</td><td>Monthly</td><td>Operations report (existing format)</td><td>COO: full. Group HR: delivery % field only (extracted by Group HR).</td><td>If delivery report not available by 10th: Group HR uses prior month delivery % and notes the gap in the metric tracker.</td></tr>
+        <tr><td style="font-weight:600">Finance P&amp;L</td><td>Finance / COO</td><td>Monthly</td><td>Management accounts</td><td>COO: full. Group HR: revenue and total people cost figures only.</td><td>Group HR requests people cost % figures from Finance by 15th of each month. If not received, COO is requested to share figures directly.</td></tr>
+        <tr><td style="font-weight:600">G4 coaching rubric records</td><td>Group HR</td><td>Annual (Q1). One observation per G4 per year.</td><td>Rubric form — Group HR holds originals and digital copy</td><td>Group HR only. G4: own scores shared in feedback conversation, not as raw document.</td><td>If annual observation window (January–March) closes without a rubric on file for any G4: escalate to SM within 30 days.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-quality" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Data Quality Standards</div>
+    <h1 class="page-title">Data Quality<br><em>Standards</em></h1>
+    <p class="page-desc">Quality standards define what "good data" looks like at Valentis — and what triggers a quality alert. Three dimensions: completeness (are all required fields populated?), accuracy (is the data correct?), and timeliness (is the data current?). Standards are set per data source and reviewed quarterly.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Quality Dimensions</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:14px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:.5px;margin-bottom:4px">COMPLETENESS</div>
+          <div style="font-weight:600;font-size:13.5px;color:var(--ink);margin-bottom:4px">Are all required fields populated?</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Completeness is measured as: (Fields populated ÷ Required fields) × 100. Target: 100% for all required fields in the dictionary. A completeness rate below 95% for any required field in any quarter is a quality alert — Group HR identifies and closes the gap before the next COO report.</div>
+        </div>
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:4px">ACCURACY</div>
+          <div style="font-weight:600;font-size:13.5px;color:var(--ink);margin-bottom:4px">Is the data correct and consistent?</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Accuracy is harder to measure automatically — it requires cross-validation. Key accuracy checks: headcount in HR Employee Register matches payroll headcount (monthly reconciliation). Pipeline log milestone counts plausible for time-in-grade (stage conversion velocity check). Salary vs band: compa-ratios within expected range (outlier review).</div>
+        </div>
+        <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:4px">TIMELINESS</div>
+          <div style="font-weight:600;font-size:13.5px;color:var(--ink);margin-bottom:4px">Is the data current?</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Each data source has a defined update schedule (Section 04). Timeliness is measured as: data age vs scheduled update frequency. A data source that is more than one update cycle out of date is a timeliness alert. Stale data used in a COO report must be labelled with its data date.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Quality Standards by Source</div>
+      <table class="dtable">
+        <thead><tr><th>Source</th><th>Completeness target</th><th>Timeliness standard</th><th>Alert threshold</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">HR Employee Register</td><td>100% required fields</td><td>Updated within 7 days of any employment event</td><td>Any missing required field; any event not recorded within 14 days</td></tr>
+          <tr><td style="font-weight:600">Pipeline Log</td><td>100% required fields for active candidates</td><td>Consolidated by 10th of each month</td><td>Any active G1–G3 candidate missing pipeline_status; log not updated within 45 days</td></tr>
+          <tr><td style="font-weight:600">Attrition Register</td><td>100% exits recorded with exit_reason_category</td><td>Exit recorded within 7 days of last day</td><td>Any exit without exit_reason_category; reconciliation gap vs payroll</td></tr>
+          <tr><td style="font-weight:600">Salary vs Band Extract</td><td>All active employees represented</td><td>Quarterly (within 15 days of quarter end)</td><td>Extract more than 90 days old; any employee missing salary or grade field</td></tr>
+          <tr><td style="font-weight:600">Check-in Records</td><td>100% of trainees reaching month 3 have a check-in record</td><td>Check-in form submitted within 7 days of check-in date</td><td>Any month-3 date passed without check-in record; form submitted more than 14 days late</td></tr>
+          <tr><td style="font-weight:600">G4 Debrief Tallies</td><td>Monthly tally for every active G4</td><td>SM reviews by end of month; Group HR extracts by 10th following</td><td>Any active G4 with no tally for a calendar month; SM review overdue by 15+ days</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Quarterly Data Quality Review — Checklist</div>
+    <div class="card-body" style="margin-bottom:12px">Group HR completes this review in the first two weeks of each quarter before producing the COO report. The review takes approximately 2 hours if the data is well-maintained, 4–6 hours if gaps exist.</div>
+    <table class="dtable">
+      <thead><tr><th>#</th><th>Check</th><th>Pass criteria</th><th>If fail: action</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:700;color:var(--blue)">1</td><td style="font-weight:600">HR Employee Register completeness</td><td>All required fields populated for 100% of active employees. Grade start dates backfilled. Employee IDs assigned to all.</td><td>Identify missing fields. Source from payroll, SM records, or SM conversation. Complete before COO report.</td></tr>
+        <tr><td style="font-weight:700;color:var(--blue)">2</td><td style="font-weight:600">Headcount reconciliation</td><td>HR Employee Register active count = payroll headcount for the snapshot date. Variance of zero.</td><td>Identify discrepancy source. Most common causes: late exit recording, new hire not yet in register, country discrepancy. Reconcile with Finance.</td></tr>
+        <tr><td style="font-weight:700;color:var(--blue)">3</td><td style="font-weight:600">Pipeline log currency</td><td>All active G1–G3 candidates have pipeline_status updated within the current quarter. No candidate with last update more than 90 days ago.</td><td>Contact SM for any country with stale pipeline data. Update before COO report. Flag staleness in report if gap cannot be closed.</td></tr>
+        <tr><td style="font-weight:700;color:var(--blue)">4</td><td style="font-weight:600">Check-in compliance</td><td>100% of trainees who reached month 3 in the quarter have a check-in record. Check-in risk levels recorded.</td><td>Contact G4 for any missing check-ins. If check-in has not occurred: escalate to SM. Record actual check-in or document as missed with reason.</td></tr>
+        <tr><td style="font-weight:700;color:var(--blue)">5</td><td style="font-weight:600">Exit records completeness</td><td>All exits in the quarter have exit_date, exit_reason_category, and final grade recorded. No exit with exit_reason_category = NULL.</td><td>Source exit reason from SM. If voluntary: SM confirms. If involuntary: HR records reason from documentation. Backfill within 14 days.</td></tr>
+        <tr><td style="font-weight:700;color:var(--blue)">6</td><td style="font-weight:600">Salary data currency</td><td>Salary vs band extract reflects current salary data (not more than 90 days old). All below-minimum cases documented with action status.</td><td>Request updated payroll extract from Finance. Update band extract. Verify Zaw M. (and any other flagged cases) action status.</td></tr>
+        <tr><td style="font-weight:700;color:var(--blue)">7</td><td style="font-weight:600">Delivery data received</td><td>Programme delivery % for all four countries received from operations report for each month of the quarter.</td><td>If any month missing: use prior month with notation. Request from COO/operations directly if SM report route has failed.</td></tr>
+        <tr><td style="font-weight:700;color:var(--blue)">8</td><td style="font-weight:600">Data quality score</td><td>Calculate overall data quality score: (Checks passed ÷ 7) × 100. Target: ≥85%. Score below 85% = COO report deferred until gaps are closed.</td><td>Prioritise the highest-impact gaps. Aim to close all Tier 1 data source gaps before COO report. Document any unresolved gaps transparently in the report.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-governance" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Data Governance</div>
+    <h1 class="page-title">Data<br><em>Governance</em></h1>
+    <p class="page-desc">Data governance defines the rules for how the HR data infrastructure is maintained, changed, and protected as Valentis grows. At 42 staff, governance is lightweight — Group HR as sole custodian, COO as approver for major changes. The structure scales as the organisation grows.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Governance Structure</div>
+      <table class="dtable">
+        <thead><tr><th>Decision type</th><th>Who decides</th><th>Process</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">New metric added to dictionary</td><td>Group HR proposes · COO approves</td><td>Group HR documents new metric definition, use case, and data source. COO reviews and confirms. Effective from next quarterly reporting cycle.</td></tr>
+          <tr><td style="font-weight:600">Existing metric definition changed</td><td>Group HR proposes · COO approves</td><td>Same as new metric. In addition: Group HR documents the historical period affected, whether prior reports need a restatement note, and updates all tools that reference the metric.</td></tr>
+          <tr><td style="font-weight:600">New data field added to employee record</td><td>Group HR decides (within defined field categories)</td><td>Group HR adds field to dictionary with definition, format, owner, and backfill plan. Updates employee register template. No COO approval needed unless the field involves sensitive personal data.</td></tr>
+          <tr><td style="font-weight:600">Access to HR data granted to new user</td><td>Group HR</td><td>Access requests documented. Standard access levels (Section 04 ownership register) apply. Any access beyond standard requires COO approval and documentation.</td></tr>
+          <tr><td style="font-weight:600">Data source decommissioned</td><td>Group HR · COO notified</td><td>Group HR documents which analytics outputs were dependent on the source, confirms alternative data source or analytics impact, and notifies COO before decommissioning.</td></tr>
+          <tr><td style="font-weight:600">HRIS selection</td><td>COO decides · Group HR recommends</td><td>Group HR prepares HRIS requirements document (based on Tool 2 data architecture). Provides scored vendor comparison. COO makes final decision. Target: when Valentis reaches 65–80 staff.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Data Protection Rules at Valentis</div>
+      <div class="card-body" style="margin-bottom:10px">At 42 staff across four countries, HR data protection is a matter of professional practice rather than complex policy. These rules apply to all HR data regardless of country.</div>
+      <div style="display:grid;gap:8px">
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink);display:block;margin-bottom:3px">Individual salary data is strictly confidential</strong>An employee's salary, compa-ratio, and position in band is known only to Group HR and the COO. SMs do not have access to salary data for their team members unless the COO has specifically approved this. Analytics shared with SMs always uses grade-level aggregates, never individual salary data.</div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink);display:block;margin-bottom:3px">Check-in risk ratings are confidential to Group HR and the relevant G4/SM</strong>A trainee's check-in risk level is not shared beyond the G4 who conducted it, the SM, and Group HR. It is never included in a COO report with individual identification. Pipeline analytics uses risk level only in aggregate (e.g. "2 of 8 trainees rated HIGH risk in Myanmar Q1 2026").</div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink);display:block;margin-bottom:3px">HR data files are not shared via unencrypted channels</strong>HR data files (employee register, pipeline log, salary extract) are not shared via WhatsApp or unencrypted email. When sharing is necessary, use password-protected files or the company's designated document storage system. This applies especially to cross-border sharing between countries.</div>
+        <div style="padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink);display:block;margin-bottom:3px">Analytics reports to COO use aggregate data only</strong>No individual employee is identified in a COO analytics report unless specifically required for an action item (e.g. "Zaw M. — below minimum, action April 2026"). All trend analyses, conversion rates, and attrition figures are grade/country aggregates.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Governance at Scale — As Valentis Grows</div>
+    <table class="dtable">
+      <thead><tr><th>Stage</th><th>Governance additions</th><th>Trigger</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">65–150 staff</td><td>HRIS implemented — governance moves into HRIS access control system. HR Data Coordinator role created (custodian of data entry quality). Formal data governance policy document published.</td><td>HRIS go-live. HR Data Coordinator hire.</td></tr>
+        <tr><td style="font-weight:600">150–300 staff</td><td>GDPR/data privacy compliance review for all countries of operation. Formal data retention policy (how long employee records are kept after exit). Incident response process for data breach.</td><td>Legal/compliance recommendation. Expansion into new countries triggers country-specific privacy law review.</td></tr>
+        <tr><td style="font-weight:600">300–600 staff</td><td>People Analytics Manager takes data governance ownership from CHRO. Data governance committee formed (CHRO, Finance, Legal, IT). Annual data governance audit.</td><td>People Analytics Manager hire. Board-level people data reporting requirement.</td></tr>
+        <tr><td style="font-weight:600">600–1,000 staff</td><td>Dedicated data governance framework. Data classification policy (public / internal / confidential / restricted). HRIS vendor data processing agreement reviewed annually. ISO 27001 or equivalent certification for HR data systems.</td><td>Enterprise scale. Investor or board requirement for formal data governance.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-id" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Employee ID System</div>
+    <h1 class="page-title">Employee<br><em>ID System</em></h1>
+    <p class="page-desc">A structured unique employee ID is the joining key that links data across every HR system — payroll, pipeline log, check-in records, coaching data, compensation records. Without a consistent ID, every cross-system analysis requires manual name matching. This section defines the Valentis ID format, assignment rules, and the backfill plan for current employees.</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">ID Format</div>
+    <div class="vx-title">[Country Code] – [Grade Code] – [4-digit Sequence]</div>
+    <div class="vx-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:14px"><div style="font-family:var(--fm);font-size:8px;color:var(--electric2);margin-bottom:5px">COUNTRY CODE</div><div style="font-size:22px;font-weight:700;color:#f0f4ff;font-family:var(--fd);margin-bottom:5px">CC</div><div style="font-size:12.5px;color:rgba(255,255,255,0.4)">LA (Laos) · MM (Myanmar) · ID (Indonesia) · TH (Thailand). Country code reflects primary work location at time of hire. Does not change if employee transfers country — a new record is created for a permanent transfer.</div></div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:14px"><div style="font-family:var(--fm);font-size:8px;color:var(--electric2);margin-bottom:5px">GRADE CODE AT HIRE</div><div style="font-size:22px;font-weight:700;color:#f0f4ff;font-family:var(--fd);margin-bottom:5px">GG</div><div style="font-size:12.5px;color:rgba(255,255,255,0.4)">G1 through G8. Grade code in the ID reflects the grade at hire — it does NOT change when the employee is promoted. The ID is permanent. Current grade is tracked in the employee record, not the ID.</div></div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;padding:14px"><div style="font-family:var(--fm);font-size:8px;color:var(--electric2);margin-bottom:5px">SEQUENCE NUMBER</div><div style="font-size:22px;font-weight:700;color:#f0f4ff;font-family:var(--fd);margin-bottom:5px">NNNN</div><div style="font-size:12.5px;color:rgba(255,255,255,0.4)">4-digit zero-padded sequence number within the country-grade combination. Starts at 0001. Increments with each new hire in that country-grade combination. Never reused — retired employee IDs are never reassigned.</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Example IDs</div>
+      <table class="dtable">
+        <thead><tr><th>ID</th><th>Means</th><th>Current grade</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:var(--fm);font-size:13px;color:var(--blue);font-weight:700">MM-G1-0001</td><td>Myanmar. Hired at G1. First G1 hire in Myanmar.</td><td>May now be G2, G3, G4 — the ID reflects hire grade only.</td></tr>
+          <tr><td style="font-family:var(--fm);font-size:13px;color:var(--blue);font-weight:700">LA-G3-0012</td><td>Laos. Hired at G3. 12th G3 hire in Laos.</td><td>Current grade tracked in employee record.</td></tr>
+          <tr><td style="font-family:var(--fm);font-size:13px;color:var(--blue);font-weight:700">ID-G1-0047</td><td>Indonesia. Hired at G1. 47th G1 hire in Indonesia.</td><td>If exited: ID is retired, not reassigned.</td></tr>
+          <tr><td style="font-family:var(--fm);font-size:13px;color:var(--blue);font-weight:700">TH-G5-0003</td><td>Thailand. Hired at G5 (SM level). 3rd G5 hire in Thailand.</td><td>Thailand SM — could be the current SM referenced in toolkit.</td></tr>
+          <tr><td style="font-family:var(--fm);font-size:13px;color:var(--blue);font-weight:700">MM-G5-0001</td><td>Myanmar. Hired at G5. First G5 hire in Myanmar.</td><td>Myo H. — current Myanmar SM (illustrative).</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">ID Assignment Rules</div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:10px 12px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:3px;font-size:13px;font-weight:300;color:var(--ink3);line-height:1.7"><strong style="color:var(--ink)">Assign at hire:</strong> The employee ID is assigned on the first day of employment. It appears in the offer letter and employment contract. It is used in every HR system from day one.</div>
+        <div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;font-weight:300;color:var(--ink3);line-height:1.7"><strong style="color:var(--ink)">Never reuse retired IDs:</strong> When an employee exits, their ID is retired. The sequence number is never reused. This prevents data from a former employee being accidentally merged with a new hire's record.</div>
+        <div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;font-weight:300;color:var(--ink3);line-height:1.7"><strong style="color:var(--ink)">Rehires get a new ID:</strong> If an employee exits and is later rehired, they receive a new employee ID. The old ID is cross-referenced in the notes field. Tenure restarts from the new hire date.</div>
+        <div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;font-weight:300;color:var(--ink3);line-height:1.7"><strong style="color:var(--ink)">Country transfers:</strong> A permanent transfer between countries generates a new employee ID with the new country code. The old ID is cross-referenced. Continuity of service is documented separately — it does not change the ID.</div>
+        <div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;font-weight:300;color:var(--ink3);line-height:1.7"><strong style="color:var(--ink)">Group HR controls the sequence register:</strong> Group HR maintains a sequence register per country-grade combination. This is the source of truth for the next available ID number. It is updated every time an ID is assigned and reviewed in the quarterly data quality check.</div>
+        <div style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;font-weight:300;color:var(--ink3);line-height:1.7"><strong style="color:var(--ink)">Backfill plan for current employees:</strong> All current active employees are assigned an ID in Q1 2026 as part of the data infrastructure build. Group HR uses the payroll file and SM records to reconstruct hire grade and approximate hire sequence for the backfill. Backfilled IDs are flagged with a "backfilled" note in the register — they carry the same validity as newly assigned IDs going forward.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-checker" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Data Quality Checker</div>
+    <h1 class="page-title">Data Quality<br><em>Checker</em></h1>
+    <p class="page-desc">An interactive quarterly data quality review. Rate the current state of each data source across the three quality dimensions — completeness, accuracy, and timeliness. The checker calculates an overall data quality score and generates a prioritised gap-closing action plan for the next COO report cycle.</p>
+  </div>
+
+  <div class="calc-wrap" id="checker-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0f4ff;margin-bottom:4px">Quarterly Data Quality Review</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--fm);margin-bottom:22px">Rate each source on all three dimensions · Overall score generated · Prioritised action plan produced</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div>
+        <label class="calc-label">Review quarter</label>
+        <select id="ck-quarter" class="calc-select">
+          <option value="Q1 2026">Q1 2026</option>
+          <option value="Q2 2026">Q2 2026</option>
+          <option value="Q3 2026">Q3 2026</option>
+          <option value="Q4 2026">Q4 2026</option>
+          <option value="Q1 2027">Q1 2027</option>
+        </select>
+      </div>
+      <div>
+        <label class="calc-label">Reviewer</label>
+        <input id="ck-reviewer" class="calc-input" type="text" placeholder="Group HR" value="Group HR">
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:6px">
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:.5px">DATA SOURCE</div>
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:.5px;text-align:center">COMPLETENESS</div>
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:.5px;text-align:center">ACCURACY</div>
+      <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:.5px;text-align:center">TIMELINESS</div>
+    </div>
+
+    <div id="checker-rows"></div>
+
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-blue" onclick="runChecker()">Calculate Score &#8594;</button>
+      <button class="btn btn-ghost" onclick="resetChecker()">Reset</button>
+    </div>
+
+    <div id="checker-result" class="calc-result"></div>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tab-body').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+function toggleDict(id){
+  var b=document.getElementById('db-'+id);
+  var t=document.getElementById('dt-'+id);
+  if(b){b.classList.toggle('open');if(t)t.textContent=b.classList.contains('open')?'▲':'▼';}
+}
+
+var checkerSources=[
+  {id:'src1',name:'HR Employee Register',actions:{completeness:'Identify missing required fields. Source from payroll and SM records. Complete before COO report.',accuracy:'Reconcile active count against payroll. Investigate any discrepancy. Most common: late exit recording.',timeliness:'Update all employment events from last 45 days. Set reminder for monthly event capture.'}},
+  {id:'src2',name:'Pipeline Log',actions:{completeness:'Contact SM for any country with missing candidate records. Backfill pipeline_status for all active G1–G3.',accuracy:'Cross-check milestone counts against plausible time-in-grade for each candidate. Flag anomalies to SM.',timeliness:'Request SM pipeline report for any country not updated in last 45 days. Escalate to COO if two consecutive months missed.'}},
+  {id:'src3',name:'Attrition Register',actions:{completeness:'Reconcile exits against payroll for the period. Add exit_reason_category for any exit recorded as NULL.',accuracy:'Verify exit dates match payroll offboarding dates. Confirm reason categories with SM where uncertain.',timeliness:'Check all exits in the period have been recorded within 7 days. Catch-up recording before COO report.'}},
+  {id:'src4',name:'Salary vs Band Extract',actions:{completeness:'Request updated payroll extract from Finance. Ensure all active employees represented.',accuracy:'Re-run band adherence calculation. Verify country factors applied correctly. Flag any new below-minimum cases.',timeliness:'If extract is more than 90 days old: refresh from payroll before any compensation analytics. Update Zaw M. action status.'}},
+  {id:'src5',name:'Check-in Records',actions:{completeness:'Identify any G1–G3 who reached month 3 this quarter without a check-in on file. Contact G4 to complete or document as missed.',accuracy:'Review risk levels assigned. Any HIGH risk with no intervention plan — escalate to SM within 14 days.',timeliness:'Verify all forms submitted within 7 days of check-in date. Flag late submissions to G4 for next quarter.'}},
+  {id:'src6',name:'G4 Debrief Tallies',actions:{completeness:'Identify any active G4 with no monthly tally on file. Contact SM to retrieve or reconstruct from memory.',accuracy:'Cross-reference debrief frequency against trainees in G4\'s cohort. Flag any G4 with zero debriefs in a month.',timeliness:'Ensure SM has reviewed all tallies for the quarter. Extract debrief frequency counts for metric tracker.'}},
+  {id:'src7',name:'Delivery Data (Ops)',actions:{completeness:'Identify any country-month with missing delivery %. Request from operations report or COO directly.',accuracy:'Cross-reference delivery % against headcount — significant delivery drop with stable headcount needs investigation.',timeliness:'If operations report not received for any month in the quarter: use prior month with notation in tracker.'}},
+];
+
+var ratingOpts='<option value="">Rate…</option><option value="3">3 — Meets standard</option><option value="2">2 — Partial gap</option><option value="1">1 — Significant gap</option>';
+
+function buildChecker(){
+  var rows=document.getElementById('checker-rows');
+  rows.innerHTML='';
+  checkerSources.forEach(function(s){
+    rows.innerHTML+='<div style="display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:6px">'
+      +'<div style="font-size:12px;color:rgba(255,255,255,0.6);font-weight:500">'+s.name+'</div>'
+      +'<select id="'+s.id+'-c" class="calc-select" style="margin-bottom:0;font-size:11.5px;padding:7px 10px">'+ratingOpts+'</select>'
+      +'<select id="'+s.id+'-a" class="calc-select" style="margin-bottom:0;font-size:11.5px;padding:7px 10px">'+ratingOpts+'</select>'
+      +'<select id="'+s.id+'-t" class="calc-select" style="margin-bottom:0;font-size:11.5px;padding:7px 10px">'+ratingOpts+'</select>'
+      +'</div>';
+  });
+}
+
+function runChecker(){
+  var quarter=document.getElementById('ck-quarter').value;
+  var reviewer=document.getElementById('ck-reviewer').value||'Group HR';
+  var results=[],totalPossible=checkerSources.length*9,totalScore=0,gaps=[];
+  var missing=false;
+  checkerSources.forEach(function(s){
+    var c=parseInt(document.getElementById(s.id+'-c').value||'');
+    var a=parseInt(document.getElementById(s.id+'-a').value||'');
+    var t=parseInt(document.getElementById(s.id+'-t').value||'');
+    if(isNaN(c)||isNaN(a)||isNaN(t)){missing=true;return;}
+    var score=c+a+t;totalScore+=score;
+    results.push({name:s.name,c:c,a:a,t:t,score:score,actions:s.actions});
+    if(c<3)gaps.push({source:s.name,dim:'Completeness',score:c,action:s.actions.completeness});
+    if(a<3)gaps.push({source:s.name,dim:'Accuracy',score:a,action:s.actions.accuracy});
+    if(t<3)gaps.push({source:s.name,dim:'Timeliness',score:t,action:s.actions.timeliness});
+  });
+  if(missing){alert('Please rate all data sources on all three dimensions.');return;}
+  var pct=Math.round((totalScore/totalPossible)*100);
+  var status=pct>=90?'STRONG':'ACCEPTABLE';
+  var statusColor=pct>=90?'rgba(26,122,74,0.9)':pct>=75?'rgba(184,134,11,0.9)':'rgba(192,57,43,0.9)';
+  if(pct<75)status='ACTION REQUIRED';
+  gaps.sort(function(a,b){return a.score-b.score;});
+  var topGaps=gaps.slice(0,5);
+
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">'
+    +'<div style="padding:14px;background:rgba(255,255,255,0.04);border-radius:3px;text-align:center"><div style="font-family:var(--fd);font-size:42px;font-weight:800;color:'+statusColor+';line-height:1">'+pct+'%</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px">QUALITY SCORE</div></div>'
+    +'<div style="padding:14px;background:rgba(255,255,255,0.04);border-radius:3px;text-align:center"><div style="font-family:var(--fd);font-size:24px;font-weight:800;color:'+statusColor+';line-height:1.2;margin-top:6px">'+status+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px">COO REPORT STATUS</div></div>'
+    +'<div style="padding:14px;background:rgba(255,255,255,0.04);border-radius:3px;text-align:center"><div style="font-family:var(--fd);font-size:36px;font-weight:800;color:rgba(26,107,219,0.9);line-height:1">'+gaps.length+'</div><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-top:4px">GAPS TO CLOSE</div></div>'
+    +'</div>';
+
+  if(pct<75){html+='<div style="background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);border-radius:3px;padding:12px 14px;margin-bottom:14px;font-size:12.5px;color:rgba(255,200,180,0.85);line-height:1.7"><strong style="display:block;margin-bottom:3px">⚠ COO Report should be deferred until critical gaps are closed.</strong>A data quality score below 75% means the analytics outputs underpinning the COO report cannot be fully trusted. Close the top priority gaps below before publishing. Flag any gaps that cannot be closed — do not present stale or incomplete data as current without disclosure.</div>';}
+
+  if(topGaps.length>0){
+    html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">PRIORITY ACTION PLAN — CLOSE BEFORE COO REPORT</div><div style="display:grid;gap:6px">';
+    topGaps.forEach(function(g,i){
+      var dimColor=g.score===1?'rgba(192,57,43,0.8)':'rgba(184,134,11,0.8)';
+      html+='<div style="padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">'
+        +'<span style="font-weight:600;font-size:12.5px;color:#f0f4ff">'+g.source+'</span>'
+        +'<span style="font-family:var(--fm);font-size:8px;padding:2px 7px;background:rgba(255,255,255,0.05);border-radius:2px;color:'+dimColor+';white-space:nowrap;margin-left:8px">'+g.dim+' · '+g.score+'/3</span>'
+        +'</div>'
+        +'<div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.65;padding-left:10px;border-left:2px solid rgba(26,107,219,0.35)">'+g.action+'</div>'
+        +'</div>';
+    });
+    html+='</div>';
+  } else {
+    html+='<div style="padding:14px;background:rgba(26,122,74,0.1);border:1px solid rgba(26,122,74,0.3);border-radius:3px;font-size:13px;color:rgba(180,255,200,0.8)">All data sources meet quality standards. Proceed with COO report.</div>';
+  }
+
+  html+='<div style="margin-top:14px;padding:10px 14px;background:rgba(255,255,255,0.03);border-radius:3px;font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.2)">'+quarter+' · Reviewed by '+reviewer+' · Score: '+totalScore+'/'+totalPossible+'</div>';
+
+  var res=document.getElementById('checker-result');
+  res.innerHTML=html;res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function resetChecker(){
+  checkerSources.forEach(function(s){
+    ['c','a','t'].forEach(function(d){var el=document.getElementById(s.id+'-'+d);if(el)el.value='';});
+  });
+  document.getElementById('checker-result').style.display='none';
+}
+buildChecker();
+</script>
+</body>
+</html>

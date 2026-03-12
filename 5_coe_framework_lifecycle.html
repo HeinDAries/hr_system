@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Framework Lifecycle Manager - CoE Tool 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f2ee;--surface:#fff;--surface2:#e8ece6;--border:#c8d0c4;--border2:#b4bfaf;--ink:#0d110c;--ink2:#1a2418;--ink3:#3d5039;--ink4:#6b7d67;--ink5:#a0b09c;--teal:#0a2420;--gold:#b8960a;--gold2:#cfa50c;--gold3:#e6bc2a;--gd:rgba(184,150,10,0.09);--gb:rgba(184,150,10,0.28);--green:#1a6b3a;--gr-d:rgba(26,107,58,0.08);--gr-b:rgba(26,107,58,0.24);--red:#b83225;--rd:rgba(184,50,37,0.07);--rb:rgba(184,50,37,0.22);--amber:#b87010;--ad:rgba(184,112,16,0.08);--ab:rgba(184,112,16,0.24);--ta:#0e7c6e;--td:rgba(14,124,110,0.09);--tb2:rgba(14,124,110,0.26);--sw:280px;--fd:'Cormorant Garamond',Georgia,serif;--fb:'DM Sans',sans-serif;--fm:'Fira Code',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sw);background:var(--teal);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.rule{height:3px;background:linear-gradient(90deg,var(--gold3),var(--gold),rgba(184,150,10,0.3),transparent)}
+.logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);background:rgba(184,150,10,0.15);border:1px solid rgba(184,150,10,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.stitle{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f8f4;line-height:1.1;margin-bottom:4px}
+.stitle em{font-style:italic;color:var(--gold3);font-weight:400}
+.ssub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.snav{padding:12px 8px 6px}
+.sgrp{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.ni:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.ni.active{background:rgba(184,150,10,0.16);border-color:rgba(184,150,10,0.38);color:var(--gold3)}
+.nn{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.ni.active .nn{color:var(--gold2)}
+.tl{color:rgba(255,255,255,0.18);font-size:12px}
+.tl.cur{color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.04)}
+.ns{margin-left:auto;font-family:var(--fm);font-size:8px;padding:1px 5px;border-radius:2px}
+.nd{background:rgba(26,107,58,0.25);color:#6ecf94}
+.nc{background:rgba(184,150,10,0.2);color:var(--gold3)}
+.ns2{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.25)}
+.sfoot{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.snote{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.snote strong{color:var(--gold3);display:block;margin-bottom:3px}
+.main{margin-left:var(--sw);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--ta);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--gold)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--gold);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.vx{background:var(--teal);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vxe{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);margin-bottom:6px}
+.vxt{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f8f4;margin-bottom:8px;line-height:1.2}
+.vxb{font-size:13px;color:rgba(255,255,255,0.42);font-weight:300;line-height:1.85}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kg::before{background:var(--gold)}.kgr::before{background:var(--green)}.ka::before{background:var(--amber)}.kt::before{background:var(--ta)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kg .kv{color:var(--gold)}.kgr .kv{color:var(--green)}.ka .kv{color:var(--amber)}.kt .kv{color:var(--ta)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.ktag{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.tg{background:var(--gd);color:var(--gold)}.tgr{background:var(--gr-d);color:var(--green)}.tt{background:var(--td);color:var(--ta)}.ta2{background:var(--ad);color:var(--amber)}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}.tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.tb{display:none;padding:18px 0}.tb.active{display:block}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--teal);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}.dt tr:hover td{background:var(--surface2)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.go{background:var(--gd);border-color:var(--gold)}.inf.t{background:var(--td);border-color:var(--ta)}.inf.a{background:var(--ad);border-color:var(--amber)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px;color:var(--ink2)}
+.lac{background:var(--gr-d);color:var(--green);border:1px solid var(--gr-b);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px;display:inline-block}
+.lrv{background:var(--ad);color:var(--amber);border:1px solid var(--ab);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px;display:inline-block}
+.lbu{background:var(--td);color:var(--ta);border:1px solid var(--tb2);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px;display:inline-block}
+.lrt{background:var(--rd);color:var(--red);border:1px solid var(--rb);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px;display:inline-block}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cg{background:var(--gd);color:var(--gold);border:1px solid var(--gb)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.ca2{background:var(--ad);color:var(--amber);border:1px solid var(--ab)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx,.page.active .krow{animation:fadeUp .22s ease both}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="rule"></div>
+  <div class="logo">
+    <div class="dept">Centre of Excellence &middot; Tool 5 / 7</div>
+    <div class="stitle">Framework<br><em>Lifecycle</em></div>
+    <div class="ssub">Valentis Group &middot; 2026</div>
+  </div>
+  <div class="snav">
+    <div class="sgrp">Tool 5 Sections</div>
+    <div class="ni active" onclick="showPage('p1',this)"><span class="nn">01</span>Overview</div>
+    <div class="ni" onclick="showPage('p2',this)"><span class="nn">02</span>Lifecycle Stages</div>
+    <div class="ni" onclick="showPage('p3',this)"><span class="nn">03</span>Framework Creation</div>
+    <div class="ni" onclick="showPage('p4',this)"><span class="nn">04</span>Review &amp; Update</div>
+    <div class="ni" onclick="showPage('p5',this)"><span class="nn">05</span>Retirement Protocol</div>
+    <div class="ni" onclick="showPage('p6',this)"><span class="nn">06</span>Framework Register</div>
+    <div class="ni" onclick="showPage('p7',this)"><span class="nn">07</span>Quality Gates</div>
+    <div class="ni" onclick="showPage('p8',this)"><span class="nn">08</span>Active Pipeline</div>
+    <div class="sgrp">All CoE Tools</div>
+    <div class="ni tl"><span class="nn">01</span>CoE Operating Model<span class="ns nd">Done</span></div>
+    <div class="ni tl"><span class="nn">02</span>Standards &amp; Policy Register<span class="ns nd">Done</span></div>
+    <div class="ni tl"><span class="nn">03</span>Knowledge Management<span class="ns nd">Done</span></div>
+    <div class="ni tl"><span class="nn">04</span>Governance &amp; Decision Rights<span class="ns nd">Done</span></div>
+    <div class="ni tl cur"><span class="nn">05</span>Framework Lifecycle<span class="ns nc">Current</span></div>
+    <div class="ni tl"><span class="nn">06</span>Innovation Tracker<span class="ns ns2">Next</span></div>
+    <div class="ni tl"><span class="nn">07</span>CoE Maturity Model<span class="ns ns2">Soon</span></div>
+  </div>
+  <div class="sfoot">
+    <div class="snote">
+      <strong>Centre of Excellence &middot; Tool 5 of 7</strong>
+      Framework Lifecycle Manager<br>
+      <span style="color:rgba(255,255,255,0.1)">A framework never reviewed becomes a relic. A relic used as policy is a governance failure.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="p1" class="page active"></div>
+  <div id="p2" class="page"></div>
+  <div id="p3" class="page"></div>
+  <div id="p4" class="page"></div>
+  <div id="p5" class="page"></div>
+  <div id="p6" class="page"></div>
+  <div id="p7" class="page"></div>
+  <div id="p8" class="page"></div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.ni:not(.tl)').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById(id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.page');
+  if(scope){
+    scope.querySelectorAll('.tb').forEach(function(b){b.classList.remove('active')});
+    scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  }
+  var tb=document.getElementById('tb'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+</script>
+<script>
+
+
+document.getElementById('p1').innerHTML = [
+  '<div class="pe">Centre of Excellence &middot; Tool 5 / 7</div>',
+  '<div class="pt">Framework<br><em>Lifecycle</em></div>',
+  '<p class="pd">Every HR framework at Valentis moves through a defined lifecycle: identified as a need, designed to a standard, piloted in one country, ratified group-wide, maintained through scheduled reviews, and eventually retired or replaced. Without lifecycle management, frameworks accumulate &mdash; old ones linger, new ones duplicate existing work, and the toolkit becomes a graveyard of half-used documents. This tool manages the entire journey from need to retirement.</p>',
+  '<div class="vx"><div class="vxe">Why Lifecycle Management Matters</div><div class="vxt">The moment a framework is published, it begins ageing. The business changes. The law changes. A framework that is not actively managed becomes a liability &mdash; used by managers who do not know it is outdated, ignored by managers who found a better way that no one captured.</div><div class="vxb">At Valentis, the CoE owns the lifecycle of every HR framework. Nothing becomes an official framework without passing through the creation quality gates, and nothing continues without passing through the review gates on schedule. This tool makes that discipline visible and actionable for every framework at every stage of its life.</div></div>',
+  '<div class="krow">',
+  '<div class="kpi kg"><div class="kl">Frameworks in Lifecycle</div><div class="kv">24</div><div class="ks">All HR frameworks actively managed with defined stage and owner</div><div class="ktag tg">Full register Section 06</div></div>',
+  '<div class="kpi kgr"><div class="kl">Active &amp; Healthy</div><div class="kv">17</div><div class="ks">Ratified &middot; current &middot; applied across applicable countries</div><div class="ktag tgr">71% of portfolio</div></div>',
+  '<div class="kpi ka"><div class="kl">In Review</div><div class="kv">4</div><div class="ks">Scheduled or triggered review in progress &middot; update due Q2 2026</div><div class="ktag ta2">Q2 priority</div></div>',
+  '<div class="kpi kt"><div class="kl">In Build</div><div class="kv">3</div><div class="ks">New frameworks in creation phase &middot; target H2 2026</div><div class="ktag tt">Active pipeline</div></div>',
+  '</div>',
+  '<div class="g2">',
+  '<div class="card"><div class="ct">The Five Lifecycle Stages</div>',
+  stageSummary(),
+  '</div>',
+  '<div class="card"><div class="ct">Tool 5 &mdash; <em>Section Map</em></div>',
+  sectionMap(),
+  '</div>',
+  '</div>'
+].join('');
+
+function stageSummary(){
+  var stages=[
+    {s:'01 &middot; Initiation',d:'A need is identified from a business gap, policy finding, benchmark insight, or country request. The CoE decides: build, adapt, or decline.',g:'Gate 1: Build / No-Build',c:'var(--gold)'},
+    {s:'02 &middot; Design',d:'The CoE designs the framework from a brief, following the CoE Design Standard &mdash; purpose, scope, methodology, templates, rollout plan.',g:'Gate 2: Design Quality Review',c:'var(--gold)'},
+    {s:'03 &middot; Pilot',d:'Framework piloted in one country &mdash; typically Thailand as benchmark. Feedback collected, framework refined before group-wide rollout.',g:'Gate 3: Pilot Outcome',c:'var(--ta)'},
+    {s:'04 &middot; Active',d:'Framework ratified, published to toolkit, communicated to all HRBPs, enters maintenance cycle. Review date set at ratification.',g:'Maintenance: Annual or biennial review',c:'var(--green)'},
+    {s:'05 &middot; Retirement',d:'Framework superseded, redundant, or consolidated. Archived &mdash; never deleted &mdash; with a formal retirement record.',g:'Gate 4: Retirement Justification',c:'var(--red)'}
+  ];
+  return '<div style="display:grid;gap:7px;margin-top:4px">' + stages.map(function(d){
+    return '<div style="padding:10px 14px;border-left:3px solid '+d.c+';background:var(--surface2);border-radius:0 3px 3px 0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-weight:700;font-size:13px;color:var(--ink)">'+d.s+'</span><span style="font-family:var(--fm);font-size:9px;color:'+d.c+'">'+d.g+'</span></div><div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6">'+d.d+'</div></div>';
+  }).join('') + '</div>';
+}
+
+function sectionMap(){
+  var secs=[
+    {n:'02',t:'Lifecycle Stages',d:'The five stages in full &mdash; what happens at each, who is responsible, and the success criteria before moving to the next.'},
+    {n:'03',t:'Framework Creation',d:'End-to-end creation process &mdash; from brief through design, pilot, and ratification. Includes the CoE Design Standard.'},
+    {n:'04',t:'Review &amp; Update',d:'The scheduled review process &mdash; triggers, methodology, stakeholder input, and the four possible outcomes.'},
+    {n:'05',t:'Retirement Protocol',d:'When and how frameworks are retired &mdash; justification standard, archiving process, communication requirements.'},
+    {n:'06',t:'Framework Register',d:'Complete register of all 24 frameworks &mdash; stage, owner, version, last review, next review, and countries.'},
+    {n:'07',t:'Quality Gates',d:'The four quality gates &mdash; pass/fail criteria a framework must meet before advancing to the next lifecycle stage.'},
+    {n:'08',t:'Active Pipeline',d:'Live view of all frameworks in build or review &mdash; timelines, owners, blockers, and next actions.'}
+  ];
+  return '<div style="display:grid;gap:7px;margin-top:4px">' + secs.map(function(d){
+    return '<div style="padding:9px 12px;background:var(--surface2);border-radius:3px;display:flex;gap:12px;align-items:flex-start"><span style="font-family:var(--fm);font-size:9px;color:var(--gold);flex-shrink:0;padding-top:2px">'+d.n+'</span><div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px">'+d.t+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">'+d.d+'</div></div></div>';
+  }).join('') + '</div>';
+}
+
+
+document.getElementById('p2').innerHTML = [
+  '<div class="pe">Section 02 &mdash; Lifecycle Stages</div>',
+  '<div class="pt">Lifecycle<br><em>Stages</em></div>',
+  '<p class="pd">Each of the five lifecycle stages has a defined purpose, owner, inputs, outputs, and a quality gate that must be cleared before advancing. No stage can be skipped. No framework enters Active status without passing through all preceding gates.</p>',
+  '<div class="vx"><div class="vxe">The Non-Negotiable Stage Rule</div><div class="vxt">Skipping the pilot stage is the most common lifecycle failure in HR framework design. The CoE designs something in Bangkok, ratifies it group-wide, then discovers six months later it does not work in Myanmar because the operating context was never tested. Pilot first. Always.</div><div class="vxb">The five stages prevent the most common HR framework failure modes: building the wrong thing, building the right thing badly, deploying without testing, never reviewing what was deployed, and never retiring what has been superseded. Each gate exists because there is a specific recurring failure when it is skipped.</div></div>',
+  buildAllStages()
+].join('');
+
+function stageBlock(s){
+  var inputHtml = s.inputs.map(function(i){return '<div style="font-size:12px;color:var(--ink3);font-weight:300;padding:3px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:var(--ink5);flex-shrink:0">&rarr;</span>'+i+'</div>';}).join('');
+  var outputHtml = s.outputs.map(function(o){return '<div style="font-size:12px;color:var(--ink3);font-weight:300;padding:3px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:var(--green);flex-shrink:0">&check;</span>'+o+'</div>';}).join('');
+  var gateHtml = s.gate_q.map(function(q){return '<div style="font-size:12px;color:var(--ink3);font-weight:300;padding:3px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:'+s.col+';flex-shrink:0">?</span>'+q+'</div>';}).join('');
+  return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04)">'
+    + '<div style="background:'+s.col+';padding:12px 22px;display:flex;align-items:center;gap:16px">'
+    + '<div><div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:2px">'+s.stage+'</div>'
+    + '<div style="font-family:var(--fd);font-size:24px;font-weight:700;color:#fff;line-height:1">'+s.title+'</div></div>'
+    + '<div style="margin-left:auto;text-align:right"><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.5)">Owner / Duration</div>'
+    + '<div style="font-family:var(--fm);font-size:11px;color:rgba(255,255,255,0.9)">'+s.owner+'</div>'
+    + '<div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.5)">'+s.dur+'</div></div></div>'
+    + '<div style="padding:18px 22px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">'
+    + '<div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:7px">Inputs</div>'+inputHtml+'</div>'
+    + '<div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:7px">Outputs</div>'+outputHtml+'</div>'
+    + '<div><div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:'+s.col+';margin-bottom:7px">'+s.gate+'</div>'+gateHtml+'</div>'
+    + '</div></div>';
+}
+
+function buildAllStages(){
+  var stages = [
+    {stage:'Stage 01',title:'Initiation',owner:'CoE',dur:'1&ndash;2 weeks',
+     inputs:['Business gap, benchmark insight, policy finding, or country request','Existing frameworks reviewed for relevance &mdash; avoid duplication','Initial scoping conversation with stakeholders'],
+     outputs:['Framework Brief (one page)','Build/No-Build recommendation to CoE','If No-Build: rationale filed in KM'],
+     gate:'Gate 1 &mdash; Build/No-Build Decision',
+     gate_q:['Genuine gap that cannot be met by an existing framework?','Business case justifies CoE time investment?','Within CoE scope (group-wide) or better at country level?','Input data and stakeholder access available?'],col:'var(--gold)'},
+    {stage:'Stage 02',title:'Design',owner:'CoE (with contributors)',dur:'2&ndash;6 weeks',
+     inputs:['Approved Framework Brief from Gate 1','HRBP and SM input where relevant','Benchmark data &mdash; market practice, legal requirements','Existing toolkit items for consistency'],
+     outputs:['Complete framework document to CoE Design Standard','Supporting templates and tools','Draft HRBP communication plan','Pilot scope recommendation'],
+     gate:'Gate 2 &mdash; Design Quality Review',
+     gate_q:['Framework solves the problem defined in the brief?','Written for the user (HRBP/SM) not the designer (CoE)?','Complies with all Tier 1 and Tier 2 policies?','Sense-checked by at least one HRBP before pilot?'],col:'var(--gold)'},
+    {stage:'Stage 03',title:'Pilot',owner:'CoE + Country HRBP',dur:'4&ndash;12 weeks',
+     inputs:['Gate 2 approved framework','Pilot country nominated (default: Thailand)','HRBP briefed and trained','Pilot cohort defined'],
+     outputs:['Pilot feedback report (what worked / what did not)','Framework revisions based on pilot findings','Ratification recommendation: proceed / revise / abandon'],
+     gate:'Gate 3 &mdash; Pilot Outcome',
+     gate_q:['Applied as designed, or significantly adapted in practice?','Achieved intended outcome for pilot cohort?','Country adaptations required? (addendum candidates)','Pilot HRBP recommends group-wide rollout?'],col:'var(--ta)'},
+    {stage:'Stage 04',title:'Active',owner:'CoE (ongoing)',dur:'Until review date',
+     inputs:['Gate 3 approved framework','v1.0 published to toolkit','Communication sent to all HRBPs','Review date set in register'],
+     outputs:['Framework applied consistently across countries','Annual health signals collected','Scheduled review initiated when due'],
+     gate:'Maintenance Gate &mdash; Annual/Biennial',
+     gate_q:['Still fit for purpose given business changes?','Applied consistently across all countries?','Legal or market context changed since last review?','Decision: maintain / update / major redesign / retire?'],col:'var(--green)'},
+    {stage:'Stage 05',title:'Retirement',owner:'CoE',dur:'2&ndash;4 weeks',
+     inputs:['Retirement trigger confirmed','Retirement justification document','Replacement framework Active (if applicable)'],
+     outputs:['Archived framework (read-only, [RETIRED] label)','Retirement record in framework register','Communication to all applicable HRBPs','KM health dashboard updated'],
+     gate:'Gate 4 &mdash; Retirement Justification',
+     gate_q:['Valid retirement reason with evidence?','Replacement Active before retirement proceeds?','No live dependencies that create a gap?','Legal reviewed if framework carried compliance obligations?'],col:'var(--red)'}
+  ];
+  return stages.map(stageBlock).join('');
+}
+
+
+document.getElementById('p3').innerHTML = [
+  '<div class="pe">Section 03 &mdash; Framework Creation</div>',
+  '<div class="pt">Framework<br><em>Creation</em></div>',
+  '<p class="pd">Framework creation follows a structured process from brief to ratification. The CoE Design Standard defines what every framework must contain, how it must be written, and what it must demonstrate before ratification.</p>',
+  '<div class="g2">',
+  buildBrief(),
+  buildDesignStandard(),
+  '</div>',
+  buildCreationTimeline()
+].join('');
+
+function buildBrief(){
+  var fields=[
+    {f:'Framework Name',g:'Provisional name &mdash; clear and descriptive. Not "HR Framework v2" but "G4 Field Coaching Framework" or "Cross-Country Secondment Framework."'},
+    {f:'The Problem It Solves',g:'Two sentences: what is currently happening that should not be, or what should be happening that is not? The specific gap this framework closes.'},
+    {f:'Target Users',g:'Who will use this? Country HRBPs? SMs? G4 coaches? Be specific &mdash; "all HR staff" produces frameworks that work for no one in particular.'},
+    {f:'Scope',g:'Which countries, grades, employment types? Group-wide or country-specific? If country-specific &mdash; why is the CoE building it rather than the HRBP?'},
+    {f:'Success Criteria',g:'How will we know in 12 months this worked? Specific: "G4 conversion rate increases from 62% to 70%." Not "improved coaching quality."'},
+    {f:'What Already Exists',g:'Existing frameworks reviewed? Why insufficient? Demonstrates the build is not duplicating existing toolkit content.'},
+    {f:'Key Risks',g:'What could go wrong in design or deployment? Legal risk? SM resistance? Data dependency? Flag early &mdash; not six weeks into design.'},
+    {f:'Estimated CoE Time',g:'Rough estimate: 20 hours (simple template) or 80 hours (full framework with pilot)? Sets expectation before commitment.'}
+  ];
+  var inner = fields.map(function(d){
+    return '<div style="padding:8px 12px;background:var(--surface2);border-radius:3px"><div style="font-weight:700;font-size:12px;color:var(--gold);margin-bottom:2px">'+d.f+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55">'+d.g+'</div></div>';
+  }).join('');
+  return '<div class="card"><div class="ct">The Framework Brief &mdash; <em>Before Any Design</em></div><div class="inf go"><strong>The Brief Rule</strong>No design work begins without an approved Framework Brief. One page. Two hours to write. Prevents six weeks of designing the wrong thing.</div><div style="display:grid;gap:6px">'+inner+'</div></div>';
+}
+
+function buildDesignStandard(){
+  var elems=[
+    {e:'01 &mdash; Purpose Statement',r:'One paragraph. What this is for, why it exists at Valentis, what problem it solves. Written for a new HRBP who has never heard of it.'},
+    {e:'02 &mdash; Scope &amp; Applicability',r:'Countries, grades, roles, employment types. Explicit exclusions. What happens if a case falls outside scope.'},
+    {e:'03 &mdash; Policy Alignment',r:'The Tier 1 and Tier 2 policies this operates within. Country addenda that apply. Legal requirements it reflects.'},
+    {e:'04 &mdash; The Methodology',r:'How the framework works &mdash; steps, decisions, sequence. Clear enough a first-time user can apply without asking anyone.'},
+    {e:'05 &mdash; Roles &amp; Responsibilities',r:'Who does what &mdash; specifically CoE, HRBP, Country SM, and employee where relevant.'},
+    {e:'06 &mdash; Templates &amp; Tools',r:'Every form, template, or checklist referenced must be included or linked. No references to things that do not yet exist.'},
+    {e:'07 &mdash; Implementation Guide',r:'How a HRBP introduces this in their country. What to tell the SM. The most common misapplications.'},
+    {e:'08 &mdash; Quality Indicators',r:'How a HRBP knows the framework is being applied well. What good looks like. What poor application looks like.'},
+    {e:'09 &mdash; Review Trigger &amp; Schedule',r:'When this will be reviewed &mdash; annual, biennial, or event-triggered. What events should trigger unscheduled review.'},
+    {e:'10 &mdash; Version &amp; Changelog',r:'Version number, date, author, changelog section. Mandatory per the KM version control standard (Tool 3).'}
+  ];
+  var inner = elems.map(function(d){
+    return '<div style="padding:7px 12px;border-left:3px solid var(--gold);background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:11.5px;color:var(--gold);margin-bottom:2px">'+d.e+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">'+d.r+'</div></div>';
+  }).join('');
+  return '<div class="card"><div class="ct">CoE Design Standard &mdash; <em>10 Required Elements</em></div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">A framework that passes Gate 2 must contain all 10 elements. Missing = Gate 2 fail = back to design.</div><div style="display:grid;gap:6px">'+inner+'</div></div>';
+}
+
+function buildCreationTimeline(){
+  var phases=[
+    {p:'Week 1&ndash;2',l:'Brief &amp; Gate 1',a:['Need identified and documented','Brief written (1 page)','Existing toolkit reviewed','Gate 1: Build/No-Build decision'],c:'var(--gold)'},
+    {p:'Week 3&ndash;6',l:'Design',a:['Stakeholder input gathered','Methodology designed','Templates created','Sense-check with HRBP','Gate 2: Quality review'],c:'var(--gold)'},
+    {p:'Week 7&ndash;14',l:'Pilot',a:['Pilot country briefed','Framework applied','Feedback collected','Revisions made','Gate 3: Pilot outcome'],c:'var(--ta)'},
+    {p:'Week 15&ndash;16',l:'Ratification',a:['Final version prepared','CoE ratification','Published to toolkit','HRBPs notified','Review date set'],c:'var(--green)'},
+    {p:'Ongoing',l:'Active Maintenance',a:['Annual health signals','Scheduled review','Update as needed','Retire if superseded'],c:'var(--green)'}
+  ];
+  var cols = phases.map(function(p){
+    var acts = p.a.map(function(a){return '<div style="font-size:11.5px;color:var(--ink3);font-weight:300;padding:3px 0;border-bottom:1px solid var(--border)">'+a+'</div>';}).join('');
+    return '<div style="border-top:3px solid '+p.c+';background:var(--surface2);border-radius:0 0 4px 4px;padding:12px 14px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:'+p.c+';margin-bottom:4px">'+p.p+'</div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:8px">'+p.l+'</div>'+acts+'</div>';
+  }).join('');
+  return '<div class="card"><div class="ct">Creation Timeline &mdash; <em>Brief to Ratification</em></div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:8px">'+cols+'</div></div>';
+}
+
+
+document.getElementById('p4').innerHTML = [
+  '<div class="pe">Section 04 &mdash; Review &amp; Update</div>',
+  '<div class="pt">Review &amp;<br><em>Update</em></div>',
+  '<p class="pd">Every Active framework has a scheduled review date and event triggers for unscheduled review. The review process determines one of four outcomes: maintain, minor update, major redesign, or retire. No Active framework continues beyond its review date without a documented decision &mdash; even if that decision is maintain.</p>',
+  '<div class="vx"><div class="vxe">The Review Discipline</div><div class="vxt">A maintain decision is a legitimate outcome. It means the CoE assessed the framework against current conditions and found it fit for purpose. That assessment is documented. The review date resets. This is fundamentally different from a framework that has simply not been reviewed.</div><div class="vxb">Most HR frameworks do not fail catastrophically &mdash; they drift. The annual review cycle catches drift before it becomes a problem. Event triggers catch changes that cannot wait for the scheduled review. Together, they ensure every framework is actively managed rather than passively assumed to be current.</div></div>',
+  '<div class="g2">',
+  buildReviewSchedule(),
+  buildReviewProcess(),
+  '</div>'
+].join('');
+
+function buildReviewSchedule(){
+  var rows=[
+    {t:'Tier 1 aligned (grade, comp, core HR)',f:'Annual',l:'60 days before due date'},
+    {t:'Tier 2 functional standards',f:'Annual',l:'60 days before due date'},
+    {t:'Operational guides and playbooks',f:'Biennial',l:'45 days before due date'},
+    {t:'Country-specific frameworks and addenda',f:'Annual or on legal change',l:'Immediate on legal trigger'}
+  ];
+  var tableRows = rows.map(function(r){
+    return '<tr><td style="font-weight:500">'+r.t+'</td><td style="color:var(--ta);font-family:var(--fm);font-size:11px">'+r.f+'</td><td style="font-size:12px">'+r.l+'</td></tr>';
+  }).join('');
+  var triggers=[
+    {t:'Legal or regulatory change',d:'Any change to labour law or employment regulation in any country that affects the framework methodology or compliance.',u:'Within 10 working days'},
+    {t:'Material application failure',d:'A case where the framework was applied correctly but produced an outcome that was challenged or clearly unfair &mdash; suggesting a design flaw.',u:'Within 5 working days'},
+    {t:'Significant business model change',d:'New country entry, major headcount growth (&gt;30%), acquisition, or fundamental change to the operating model.',u:'Within 20 working days'},
+    {t:'Multiple country adaptation requests',d:'When 2+ countries request the same adaptation &mdash; this signals a design gap, not a country-specific need. Triggers a group-level review.',u:'At second adaptation request'}
+  ];
+  var tBlocks = triggers.map(function(d){
+    return '<div style="padding:9px 12px;background:var(--surface2);border-radius:3px;margin-bottom:6px;border-left:3px solid var(--amber)"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:3px">'+d.t+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5;margin-bottom:4px">'+d.d+'</div><div style="font-family:var(--fm);font-size:9.5px;color:var(--amber)">&odot; '+d.u+'</div></div>';
+  }).join('');
+  return '<div class="card"><div class="ct">Review Schedule &amp; <em>Event Triggers</em></div>'
+    + '<table class="dt" style="margin-bottom:14px"><thead><tr><th>Framework Type</th><th>Frequency</th><th>Lead Time</th></tr></thead><tbody>'+tableRows+'</tbody></table>'
+    + '<div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:8px;font-family:var(--fd)">Event Triggers &mdash; <em>Immediate Review</em></div>'
+    + tBlocks + '</div>';
+}
+
+function buildReviewProcess(){
+  var outcomes=[
+    {o:'Maintain',d:'No changes required. Legally compliant, fit for purpose, applied consistently. Review date reset. Brief all-clear note to HRBPs.',v:'Version unchanged',c:'var(--green)'},
+    {o:'Minor Update',d:'Corrections, additions, or small clarifications that do not change the methodology. Silent toolkit update unless content changes affect application.',v:'Minor version increment (X.Y &rarr; X.Y+1)',c:'var(--ta)'},
+    {o:'Major Redesign',d:'Methodology, scope, or purpose needs significant change. Treat as new framework creation from Gate 2 onwards &mdash; with pilot before re-ratification.',v:'Major version increment (X.Y &rarr; X+1.0)',c:'var(--amber)'},
+    {o:'Retire',d:'Framework is superseded, redundant, or critically failing. Initiate retirement protocol (Section 05). Current version stays Active until replacement is ratified.',v:'Archived &middot; [RETIRED] prefix',c:'var(--red)'}
+  ];
+  var oHtml = outcomes.map(function(d){
+    return '<div style="padding:10px 14px;border-left:3px solid '+d.c+';background:var(--surface2);border-radius:0 3px 3px 0;margin-bottom:8px;display:flex;gap:12px"><span style="font-weight:700;font-size:13px;color:'+d.c+';flex-shrink:0;min-width:90px">'+d.o+'</span><div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.55;margin-bottom:3px">'+d.d+'</div><div style="font-family:var(--fm);font-size:9.5px;color:'+d.c+'">'+d.v+'</div></div></div>';
+  }).join('');
+  var steps=[
+    {n:'01',t:'Assemble Evidence',d:'Current framework document, feedback since last review, country application reports, legal/market updates, and any formal adaptation requests.'},
+    {n:'02',t:'HRBP Input',d:'Short structured questionnaire to each HRBP in applicable countries: what worked, what did not, what was adapted in practice, what has changed in country context.'},
+    {n:'03',t:'Review Assessment',d:'CoE assesses: legally compliant? Fit for business purpose? Applied consistently? Producing intended outcomes? Documented in one page.'},
+    {n:'04',t:'Outcome Decision',d:'CoE decides: Maintain / Minor Update / Major Redesign / Retire. Documented and stored in framework register. Review date reset accordingly.'},
+    {n:'05',t:'Implement &amp; Communicate',d:'If update: revise, increment version, publish to toolkit, notify HRBPs of what changed and why. If maintain: update date, send all-clear note.'}
+  ];
+  var sHtml = steps.map(function(d){
+    return '<div style="padding:9px 14px;background:var(--surface2);border-radius:3px;display:flex;gap:12px;align-items:flex-start;margin-bottom:6px"><span style="font-family:var(--fm);font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;padding-top:2px">'+d.n+'</span><div><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:3px">'+d.t+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">'+d.d+'</div></div></div>';
+  }).join('');
+  return '<div class="card"><div class="ct">Review Outcomes &amp; <em>Five-Step Process</em></div>'+oHtml+'<div style="font-weight:700;font-size:14px;color:var(--ink);margin-top:14px;margin-bottom:8px;font-family:var(--fd)">Five-Step Review Process</div>'+sHtml+'</div>';
+}
+
+
+document.getElementById('p5').innerHTML = [
+  '<div class="pe">Section 05 &mdash; Retirement Protocol</div>',
+  '<div class="pt">Retirement<br><em>Protocol</em></div>',
+  '<p class="pd">Framework retirement is a formal act &mdash; not a folder deletion or quiet withdrawal. Every retirement is documented, justified, communicated, and archived. A retired framework remains readable forever, clearly marked, so that anyone who encounters a reference to it in a case file understands its status.</p>',
+  '<div class="vx"><div class="vxe">The Retirement Principle</div><div class="vxt">Never delete a framework &mdash; archive it. Case files, coaching logs, and ER records that reference a retired framework still exist. In a legal challenge five years from now, the ability to produce the framework as it existed when a decision was made may be critical.</div><div class="vxb">Framework retirement decisions are made for one of four reasons: superseded by a better replacement; business need eliminated; consolidated into a broader framework; or failed the review gate so severely a major redesign is required. None of these are reasons for deletion &mdash; they require a clearly documented retirement, properly archived file, and clear communication to every country that relied on it.</div></div>',
+  '<div class="g2">',
+  buildRetirementReasons(),
+  buildRetirementProcess(),
+  '</div>',
+  buildRetirementArchive()
+].join('');
+
+function buildRetirementReasons(){
+  var valid=[
+    {r:'Superseded by replacement',d:'A new framework has been designed, piloted, and ratified that performs the same function more effectively. The replacement is Active before retirement proceeds.'},
+    {r:'Business need eliminated',d:'The role, process, or business activity the framework supported no longer exists at Valentis.'},
+    {r:'Consolidated into broader framework',d:'Two or more frameworks merged into a single comprehensive framework. All content from retired frameworks is represented in the replacement.'},
+    {r:'Failed review &mdash; major redesign required',d:'The review concluded the framework cannot be updated incrementally. It must be rebuilt from Gate 2. Current version retired pending redesign.'}
+  ];
+  var invalid=[
+    '"We do not use it anymore" &mdash; if Active and unused, that is an application problem, not a retirement trigger. Investigate why before retiring.',
+    '"The new HRBP prefers a different approach" &mdash; individual preference is not a retirement trigger. Must go through standard review process.',
+    '"It is too complicated" &mdash; simplification is a Minor or Major Update, not a retirement.'
+  ];
+  var vHtml = valid.map(function(d){
+    return '<div style="padding:9px 12px;border-left:3px solid var(--green);background:var(--gr-d);border-radius:0 3px 3px 0;margin-bottom:6px"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:3px">'+d.r+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">'+d.d+'</div></div>';
+  }).join('');
+  var iHtml = invalid.map(function(d){
+    return '<div style="padding:8px 12px;background:var(--rd);border:1px solid var(--rb);border-radius:3px;margin-bottom:6px;font-size:12px;color:var(--ink3);font-weight:300">'+d+'</div>';
+  }).join('');
+  return '<div class="card"><div class="ct">Valid &amp; Invalid <em>Retirement Reasons</em></div><div style="font-weight:700;font-size:13px;color:var(--green);margin-bottom:7px;margin-top:4px">&check; Valid Reasons</div>'+vHtml+'<div style="font-weight:700;font-size:13px;color:var(--red);margin-bottom:7px;margin-top:14px">&times; Invalid Reasons</div>'+iHtml+'</div>';
+}
+
+function buildRetirementProcess(){
+  var steps=[
+    {n:'01',t:'Retirement Trigger Confirmed',d:'CoE confirms a valid retirement reason exists and documents the trigger. If a replacement is required &mdash; confirms it is Active before proceeding.'},
+    {n:'02',t:'Retirement Justification Document',d:'One-page document: framework name and version, retirement reason with evidence, replacement reference (if applicable), countries currently applying, any live cases, planned communication.'},
+    {n:'03',t:'Gate 4 Assessment',d:'CoE reviews justification against Gate 4 criteria. Confirms: valid reason, replacement ready (if needed), no live dependencies that create a gap, legal review if relevant.'},
+    {n:'04',t:'Communication to HRBPs',d:'Formal retirement notification to all HRBPs in applicable countries. Includes: retirement date, reason, replacement framework (if applicable), what to do with in-progress cases.'},
+    {n:'05',t:'Archive',d:'Retired framework moved to /Archive subfolder. Filename prefixed [RETIRED YYYY-MM-DD]. Framework register entry updated to Retired. Removed from active KB but searchable in archive.'},
+    {n:'06',t:'Register Update',d:'Register updated: status Retired, retirement date logged, reason reference logged, replacement cross-referenced. The entry remains permanently &mdash; never deleted.'}
+  ];
+  var sHtml = steps.map(function(d){
+    return '<div style="padding:10px 14px;background:var(--surface2);border-radius:3px;display:flex;gap:12px;align-items:flex-start;margin-bottom:6px"><span style="font-family:var(--fm);font-size:10px;font-weight:700;color:var(--red);flex-shrink:0;padding-top:2px">'+d.n+'</span><div><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:3px">'+d.t+'</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">'+d.d+'</div></div></div>';
+  }).join('');
+  return '<div class="card"><div class="ct">Retirement Process &mdash; <em>Six Steps</em></div>'+sHtml+'</div>';
+}
+
+function buildRetirementArchive(){
+  var rows=[
+    {n:'Individual KPI Scorecard Framework',d:'Performance',dt:'Jun 2025',r:'Superseded',rep:'Performance Management Framework v2.0',v:'v1.4'},
+    {n:'Legacy Recruitment Scoring Sheet',d:'Talent',dt:'Oct 2025',r:'Superseded',rep:'Structured Interview Scorecard v1.2',v:'v1.1'},
+    {n:'Annual Salary Survey Participation Guide',d:'Compensation',dt:'Mar 2025',r:'Business need eliminated',rep:'Compensation Benchmarking Guide v1.0',v:'v1.0'}
+  ];
+  var rHtml = rows.map(function(r){
+    return '<tr><td style="font-weight:600;font-size:12px"><span style="font-family:var(--fm);font-size:9px;color:var(--red);margin-right:5px">[RETIRED]</span>'+r.n+'</td><td><span class="chip cm" style="font-size:8px">'+r.d+'</span></td><td style="font-family:var(--fm);font-size:10px;color:var(--ink5)">'+r.dt+'</td><td><span class="lrt">'+r.r+'</span></td><td style="font-size:12px;font-weight:300;color:var(--ta)">'+r.rep+'</td><td style="font-family:var(--fm);font-size:10px;color:var(--ink5)">'+r.v+'</td></tr>';
+  }).join('');
+  return '<div class="card"><div class="ct">Retired Framework Archive &mdash; <em>Valentis to Date</em></div><div class="inf t"><strong>Clean Retirement Record</strong>Valentis currently has 3 formally retired frameworks &mdash; all properly archived, all with documented justifications. No frameworks have been informally discontinued without a retirement record.</div><table class="dt"><thead><tr><th>Framework Name</th><th>Domain</th><th>Retired</th><th>Reason</th><th>Replacement</th><th>Final Version</th></tr></thead><tbody>'+rHtml+'</tbody></table></div>';
+}
+
+
+document.getElementById('p6').innerHTML = [
+  '<div class="pe">Section 06 &mdash; Framework Register</div>',
+  '<div class="pt">Framework<br><em>Register</em></div>',
+  '<p class="pd">The complete register of all 24 HR frameworks actively managed in the Valentis lifecycle system. Each entry records the current lifecycle stage, owner, version, last review, next review, and countries. The CoE updates this register at every stage transition and every review.</p>',
+  '<div class="tabs" data-tabs>',
+  '<div class="tab active" onclick="showTab(\'perf\',this)">Performance &amp; Talent</div>',
+  '<div class="tab" onclick="showTab(\'comp\',this)">Compensation &amp; Benefits</div>',
+  '<div class="tab" onclick="showTab(\'ops\',this)">HR Operations</div>',
+  '<div class="tab" onclick="showTab(\'coe\',this)">CoE &amp; Governance</div>',
+  '</div>',
+  buildRegisterTab('perf', true),
+  buildRegisterTab('comp', false),
+  buildRegisterTab('ops', false),
+  buildRegisterTab('coe', false)
+].join('');
+
+function stageTag(s){
+  if(s==='active') return '<span class="lac">Active</span>';
+  if(s==='review') return '<span class="lrv">In Review</span>';
+  if(s==='build') return '<span class="lbu">In Build</span>';
+  return '<span class="lrt">Retired</span>';
+}
+
+function buildRegisterTab(id, active){
+  var data = {
+    perf: {label:'Performance &amp; Talent', items:[
+      {n:'Performance Management Framework',t:'T2',v:'2.2',l:'Dec 2025',nx:'Dec 2026',s:'active',o:'CoE',c:'All &middot; Thailand benchmark',no:'G4 coaching standard embedded v2.2. Myanmar application consistency under review.'},
+      {n:'G4 Coaching Framework',t:'T2',v:'1.0',l:'Jan 2026',nx:'Jan 2027',s:'active',o:'CoE',c:'All &middot; G4 roles',no:'New 2026. First annual review Jan 2027. Thailand pilot data positive.'},
+      {n:'Competency Framework &mdash; All Grades',t:'T2',v:'2.0',l:'Jun 2025',nx:'Jun 2026',s:'review',o:'CoE',c:'All',no:'Due for review. G4 coaching competency not yet embedded. Minor update required.'},
+      {n:'Performance Calibration Standard',t:'T2',v:'1.1',l:'Jan 2026',nx:'Jan 2027',s:'active',o:'CoE',c:'All',no:'Grade distribution benchmarks set. First full cycle Q4 2025 positive.'},
+      {n:'Succession &amp; Bench Development Framework',t:'T2',v:'1.1',l:'Jun 2025',nx:'Jun 2026',s:'review',o:'CoE',c:'All',no:'Due review. Laos SM succession gap requires update to SM-readiness criteria.'},
+      {n:'Recruitment Quality Framework',t:'T2',v:'1.2',l:'Oct 2025',nx:'Oct 2026',s:'active',o:'CoE',c:'All',no:'Structured assessment model working well. Agency management gap noted.'},
+      {n:'Onboarding Framework &mdash; 90 Day',t:'T3',v:'1.2',l:'Aug 2025',nx:'Aug 2026',s:'active',o:'CoE',c:'All',no:'Country-specific checklists maintained at Tier 3. Group framework stable.'},
+      {n:'Offboarding &amp; Exit Framework',t:'T2',v:'1.1',l:'Jul 2025',nx:'Jul 2026',s:'active',o:'CoE',c:'All',no:'Knowledge transfer requirements for G4+ exits. Myanmar offboarding compliance gap noted.'},
+      {n:'SM Leadership Development Framework',t:'T2',v:'1.0',l:'Mar 2025',nx:'Mar 2026',s:'review',o:'CoE',c:'All &middot; SM cohort',no:'Due review (overdue). Thailand pilot data not yet fully analysed.'}
+    ]},
+    comp: {label:'Compensation &amp; Benefits', items:[
+      {n:'Grade Band Framework (G1&ndash;G6)',t:'T1',v:'3.0',l:'Jan 2026',nx:'Jan 2027',s:'active',o:'CoE',c:'All &middot; country addenda',no:'Annual review completed Jan 2026. COO endorsed. Next review aligned to budget cycle.'},
+      {n:'Merit Review Framework',t:'T2',v:'2.1',l:'Dec 2025',nx:'Dec 2026',s:'active',o:'CoE',c:'All',no:'Pool allocation methodology embedded. First full cycle Q4 2025.'},
+      {n:'Pay Equity Audit Framework',t:'T2',v:'1.2',l:'Jun 2025',nx:'Jun 2026',s:'review',o:'CoE',c:'All',no:'Due review. Myanmar G3 compression remediation in progress &mdash; audit framework may need updating.'},
+      {n:'Total Reward Framework',t:'T2',v:'0.1',l:'&mdash;',nx:'Q4 2026',s:'build',o:'CoE',c:'All (when complete)',no:'In build. Required for G5+ senior leadership hiring. Design brief approved Q1 2026.'},
+      {n:'Long-Term Incentive Framework',t:'T1',v:'0.1',l:'&mdash;',nx:'Q4 2026',s:'build',o:'CoE',c:'All (when complete)',no:'In initiation. Brief in progress. Required as Valentis scales beyond 50 staff.'},
+      {n:'Benefits Minimum Standard Framework',t:'T2',v:'1.3',l:'Sep 2025',nx:'Sep 2026',s:'active',o:'CoE',c:'All',no:'Group minimum set. Country benefits vary above minimum per local market.'}
+    ]},
+    ops: {label:'HR Operations', items:[
+      {n:'Employment Contracting Framework',t:'T1',v:'2.1',l:'Nov 2025',nx:'Nov 2026',s:'active',o:'CoE',c:'All &middot; country addenda',no:'4 country-specific addenda. Thailand addendum update due &mdash; probation law change.'},
+      {n:'Work Permit &amp; Visa Management Framework',t:'T2',v:'1.1',l:'Apr 2025',nx:'Apr 2026',s:'review',o:'HR Ops',c:'Indonesia &middot; Myanmar &middot; Laos',no:'Due review. Indonesia permit rules changed Q1 2026. Urgent update required.'},
+      {n:'Payroll Governance Framework',t:'T3',v:'1.3',l:'Jan 2026',nx:'Jan 2027',s:'active',o:'HR Ops',c:'All',no:'Country-specific procedures maintained. HRIS authorisation control implemented Q1 2026.'},
+      {n:'HRIS Data Governance Framework',t:'T3',v:'1.1',l:'Sep 2025',nx:'Sep 2026',s:'active',o:'HR Ops',c:'All',no:'Monthly reconciliation standard embedded. Myanmar data quality gap noted Q1 2026.'},
+      {n:'HR Compliance Calendar Framework',t:'T3',v:'2.0',l:'Jan 2026',nx:'Jan 2027',s:'active',o:'CoE + HR Ops',c:'All',no:'Annual cycle mapped. Country-specific compliance items maintained by HRBP.'}
+    ]},
+    coe: {label:'CoE &amp; Governance', items:[
+      {n:'CoE Operating Model',t:'T1',v:'1.0',l:'Jan 2026',nx:'Jan 2027',s:'active',o:'CoE',c:'Group-wide',no:'First version. One-person CoE design. Review at 12 months to assess fit as function scales.'},
+      {n:'HR Governance &amp; Decision Rights Framework',t:'T1',v:'1.0',l:'Jan 2026',nx:'Jan 2027',s:'active',o:'CoE',c:'Group-wide',no:'This tool. Annual review. Governance health target 85% by Q4 2026.'},
+      {n:'People Analytics Framework',t:'T2',v:'1.2',l:'Nov 2025',nx:'Nov 2026',s:'active',o:'CoE',c:'Group-wide',no:'Analytics infrastructure built. Dashboard suite operational. Level 4 maturity target Q4 2026.'},
+      {n:'Whistleblowing &amp; Ethics Framework',t:'T1',v:'0.1',l:'&mdash;',nx:'Q3 2026',s:'build',o:'CoE + Legal',c:'All (when complete)',no:'In build. High governance priority. Anonymous reporting channel to be designed.'}
+    ]}
+  };
+  var d = data[id];
+  var rows = d.items.map(function(i){
+    return '<tr><td style="font-weight:600;font-size:12px">'+i.n+'</td><td><span class="chip cg" style="font-size:8px">'+i.t+'</span></td><td>'+stageTag(i.s)+'</td><td style="font-family:var(--fm);font-size:10px;color:var(--ink4)">'+i.v+'</td><td style="font-family:var(--fm);font-size:10px;color:var(--ink4)">'+i.l+'</td><td style="font-family:var(--fm);font-size:10px;color:'+(i.s==='review'?'var(--amber)':'var(--ink4)')+'">'+i.nx+'</td><td style="font-size:12px;font-weight:300">'+i.o+'</td><td style="font-size:11px;color:var(--ink4)">'+i.c+'</td><td style="font-size:11.5px;font-weight:300;color:var(--ink3)">'+i.no+'</td></tr>';
+  }).join('');
+  return '<div id="tb'+id+'" class="tb'+(active?' active':'')+'"><div class="card"><div class="ct">'+d.label+'</div><div style="overflow-x:auto"><table class="dt"><thead><tr><th style="min-width:180px">Framework</th><th>Tier</th><th>Stage</th><th>Ver</th><th>Last Review</th><th>Next Review</th><th>Owner</th><th>Countries</th><th style="min-width:200px">Notes</th></tr></thead><tbody>'+rows+'</tbody></table></div></div></div>';
+}
+
+
+document.getElementById('p7').innerHTML = [
+  '<div class="pe">Section 07 &mdash; Quality Gates</div>',
+  '<div class="pt">Quality<br><em>Gates</em></div>',
+  '<p class="pd">Four quality gates govern the Valentis framework lifecycle. Each gate is a formal pass/fail assessment a framework must clear before advancing to the next stage. They prevent poorly designed frameworks from reaching Active status and ensure retirement decisions are made on evidence, not convenience.</p>',
+  '<div class="vx"><div class="vxe">The Gate Philosophy</div><div class="vxt">A gate failure is not a project failure &mdash; it is the system working correctly. A framework that fails Gate 2 has been caught before it reaches the field. That is better than a framework that reaches Active status and fails in a live ER case in Myanmar six months later.</div><div class="vxb">Every gate has a clear pass/fail standard. The CoE completes the gate assessment in writing &mdash; not verbally. The assessment is stored in the framework&apos;s KM record. Over time, gate assessments become the institutional memory of why each framework was built the way it was.</div></div>',
+  buildAllGates()
+].join('');
+
+function gateBlock(g){
+  var qHtml = g.qs.map(function(q){
+    return '<div style="background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:8px">'
+      + '<div style="padding:9px 14px;font-weight:700;font-size:12.5px;color:var(--ink);border-bottom:1px solid var(--border)">'+q.q+'</div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr">'
+      + '<div style="padding:8px 14px;background:var(--gr-d);border-right:1px solid var(--border)"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:3px">Pass</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">'+q.pass+'</div></div>'
+      + '<div style="padding:8px 14px;background:var(--rd)"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:3px">Fail</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">'+q.fail+'</div></div>'
+      + '</div></div>';
+  }).join('');
+  return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)">'
+    + '<div style="background:'+g.col+';padding:12px 22px;display:flex;align-items:center;gap:16px">'
+    + '<div><div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:2px">'+g.gate+'</div><div style="font-family:var(--fd);font-size:22px;font-weight:700;color:#fff;line-height:1">'+g.title+'</div></div>'
+    + '<div style="margin-left:auto;text-align:right"><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.5)">Applied at</div><div style="font-family:var(--fm);font-size:10px;color:rgba(255,255,255,0.85)">'+g.stage+'</div><div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.5)">Assessor: '+g.assessor+'</div></div>'
+    + '</div>'
+    + '<div style="padding:18px 22px">'+qHtml
+    + '<div style="padding:10px 14px;background:var(--ad);border:1px solid var(--ab);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:4px">If Gate Fails &mdash; Action</div><div style="font-size:12.5px;color:var(--ink2);font-weight:300;line-height:1.7">'+g.failAction+'</div></div>'
+    + '</div></div>';
+}
+
+function buildAllGates(){
+  var gates=[
+    {gate:'Gate 1',title:'Build / No-Build Decision',stage:'Between Initiation and Design',assessor:'CoE',col:'var(--gold)',
+     qs:[
+       {q:'Is there a genuine, evidence-based gap?',pass:'A specific business need or operational problem documented with supporting evidence.',fail:'The request is based on preference or general best practice curiosity without evidence.'},
+       {q:'Does a suitable framework already exist?',pass:'The toolkit has been reviewed. No existing framework covers this need adequately.',fail:'An existing framework covers this need. The right action is a review/update, not a new build.'},
+       {q:'Is this within CoE scope?',pass:'The need is group-wide (applies to 2+ countries or all grades) and requires standardisation.',fail:'The need is country-specific and can be met by the HRBP through a procedure.'},
+       {q:'Is the time investment justified?',pass:'The CoE has capacity and the expected impact justifies the build time.',fail:'The CoE is at capacity and a lower-priority framework is being proposed ahead of higher-impact work.'}
+     ],failAction:'Document the No-Build decision with rationale. File in KM. If country-specific, route to HRBP. If real but lower priority, add to future build queue.'},
+    {gate:'Gate 2',title:'Design Quality Review',stage:'Between Design and Pilot',assessor:'CoE + one HRBP sense-check',col:'var(--gold)',
+     qs:[
+       {q:'Does the framework contain all 10 CoE Design Standard elements?',pass:'All elements present and complete. No placeholder content. No to-be-developed sections.',fail:'Any of the 10 elements are missing, incomplete, or contain placeholder language.'},
+       {q:'Is it written for the user, not the designer?',pass:'A HRBP unfamiliar with the framework can read and apply it without asking the CoE for interpretation.',fail:'The framework requires CoE explanation to be applied. Designer assumptions are not made explicit.'},
+       {q:'Is it policy-compliant?',pass:'Checked against all relevant Tier 1 and Tier 2 policies. No conflicts identified.',fail:'The framework creates obligations or permissions inconsistent with a Tier 1 or Tier 2 policy.'},
+       {q:'Has it been sense-checked by a HRBP?',pass:'At least one HRBP has reviewed the draft and confirmed it is workable in a country context.',fail:'Only reviewed internally by the CoE. No country perspective has been included.'}
+     ],failAction:'Return to Design with specific feedback on which elements fail and why. Set a 2-week revision deadline. Gate 2 reassessment scheduled immediately after.'},
+    {gate:'Gate 3',title:'Pilot Outcome Assessment',stage:'Between Pilot and Active',assessor:'CoE + Pilot HRBP',col:'var(--ta)',
+     qs:[
+       {q:'Was the framework applied as designed?',pass:'The pilot HRBP applied the framework as written with only minor contextual adaptations.',fail:'The pilot HRBP significantly adapted the framework &mdash; indicating design problems the pilot was designed to catch.'},
+       {q:'Did it produce the intended outcome?',pass:'The framework achieved the success criteria defined in the brief for the pilot cohort.',fail:'The intended outcome was not achieved, or was achieved but the framework was not the cause.'},
+       {q:'Are country adaptations required?',pass:'Any country-specific adaptations are scoped and addressable through a Tier 4 addendum.',fail:'Adaptations are so fundamental they require changes to the core methodology &mdash; triggering a design revision.'},
+       {q:'Is the pilot HRBP confident to recommend group-wide rollout?',pass:'The pilot HRBP confirms the framework is ready for ratification, with or without minor revisions.',fail:'The pilot HRBP identifies significant concerns about applicability in other countries.'}
+     ],failAction:'Assess whether the failure requires: (a) minor revision and re-pilot, (b) major revision and Gate 2 re-assessment, or (c) project abandonment with lessons-learned capture.'},
+    {gate:'Gate 4',title:'Retirement Justification',stage:'Before Retirement',assessor:'CoE',col:'var(--red)',
+     qs:[
+       {q:'Is the retirement reason valid?',pass:'One of the four valid retirement reasons applies and is evidenced.',fail:'The retirement reason is convenience, preference, or "we have not used it lately" &mdash; not a valid reason.'},
+       {q:'If a replacement exists &mdash; is it Active?',pass:'The replacement framework has completed the full lifecycle to Active status before this framework is retired.',fail:'The replacement is still in Design or Pilot. Retirement would create a governance gap.'},
+       {q:'Have live dependencies been identified and resolved?',pass:'All countries using the framework contacted. No live cases or processes depend on it without a transition plan.',fail:'Active cases or country addenda reference this framework and will be left without a governance reference.'},
+       {q:'If compliance-bearing &mdash; has legal reviewed?',pass:'Legal confirmed the retirement does not create compliance exposure.',fail:'Legal review not completed for a framework with compliance obligations.'}
+     ],failAction:'Retirement blocked until Gate 4 criteria are met. If replacement is not Active &mdash; retirement deferred. If dependencies exist &mdash; a transition plan must be agreed before retirement proceeds.'}
+  ];
+  return gates.map(gateBlock).join('');
+}
+
+
+document.getElementById('p8').innerHTML = [
+  '<div class="pe">Section 08 &mdash; Active Pipeline</div>',
+  '<div class="pt">Active<br><em>Pipeline</em></div>',
+  '<p class="pd">The active pipeline shows every framework currently in Build or Review &mdash; with current stage, timeline, owner, blockers, and next action. The CoE reviews this pipeline monthly. Nothing should be stalled for more than 4 weeks without a documented reason.</p>',
+  '<div class="krow">',
+  '<div class="kpi kg"><div class="kl">In Pipeline</div><div class="kv">7</div><div class="ks">3 in Build &middot; 4 in Review &middot; all with defined next actions</div><div class="ktag tg">Q2&ndash;Q4 2026</div></div>',
+  '<div class="kpi kgr"><div class="kl">On Schedule</div><div class="kv">5</div><div class="ks">Within planned timeline &middot; no blockers identified</div><div class="ktag tgr">71% of pipeline</div></div>',
+  '<div class="kpi ka"><div class="kl">Behind Schedule</div><div class="kv">2</div><div class="ks">Comp Benchmarking Guide &middot; SM Development Framework Review</div><div class="ktag ta2">Action required</div></div>',
+  '<div class="kpi kt"><div class="kl">Gate Decisions Due</div><div class="kv">3</div><div class="ks">Gate 1 x1 &middot; Gate 2 x1 &middot; Maintenance Gate x1</div><div class="ktag tt">Q2 2026</div></div>',
+  '</div>',
+  buildBuildCards(),
+  buildReviewTable()
+].join('');
+
+function buildBuildCards(){
+  var builds=[
+    {n:'Total Reward Framework',s:'Design',pct:40,o:'CoE',gate:'Gate 2 &mdash; Apr 2026',pilot:'Thailand &middot; Jun 2026',ratify:'Sep 2026',
+     blocker:'Benchmarking data for SE Asia G5+ roles needed. External advisor appointed Mar 2026.',
+     next:'Complete G5&ndash;G6 band benchmarking by end Mar 2026. Draft framework structure for HRBP sense-check by mid-Apr 2026.',c:'var(--gold)'},
+    {n:'Whistleblowing &amp; Ethics Framework',s:'Design',pct:25,o:'CoE + Legal',gate:'Gate 2 &mdash; May 2026',pilot:'Thailand &middot; Jul 2026',ratify:'Oct 2026',
+     blocker:'Legal co-design required. Internal legal counsel engaged. Anonymous reporting channel technology decision pending.',
+     next:'Legal kick-off meeting Apr 2026. Technology options shortlist to CoE by Apr 2026.',c:'var(--gold)'},
+    {n:'Long-Term Incentive Framework',s:'Initiation',pct:10,o:'CoE',gate:'Gate 1 &mdash; Apr 2026',pilot:'N/A',ratify:'Nov 2026',
+     blocker:'COO input needed on incentive philosophy before brief can be completed.',
+     next:'Schedule COO briefing Apr 2026. Brief to be completed within 2 weeks of session.',c:'var(--ta)'}
+  ];
+  var cards = builds.map(function(d){
+    return '<div style="padding:16px 20px;background:var(--surface2);border-radius:4px;border-left:4px solid '+d.c+'">'
+      + '<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px">'
+      + '<div><div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:4px">'+d.n+'</div><div style="display:flex;gap:6px;align-items:center"><span class="lbu">'+d.s+'</span><span style="font-family:var(--fm);font-size:9px;color:var(--ink5)">Owner: '+d.o+'</span></div></div>'
+      + '<div style="text-align:right"><div style="font-family:var(--fm);font-size:9px;color:var(--ink5);margin-bottom:4px">Progress</div><div style="font-family:var(--fd);font-size:30px;font-weight:800;color:'+d.c+';line-height:1">'+d.pct+'%</div></div>'
+      + '</div>'
+      + '<div style="height:5px;background:var(--border);border-radius:3px;margin-bottom:12px;overflow:hidden"><div style="height:100%;width:'+d.pct+'%;background:'+d.c+';border-radius:3px"></div></div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">'
+      + '<div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-bottom:2px">Next Gate</div><div style="font-size:12px;color:var(--ink);font-weight:600">'+d.gate+'</div></div>'
+      + '<div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-bottom:2px">Pilot Target</div><div style="font-size:12px;color:var(--ink3);font-weight:300">'+d.pilot+'</div></div>'
+      + '<div><div style="font-family:var(--fm);font-size:8px;color:var(--ink5);margin-bottom:2px">Ratification</div><div style="font-size:12px;color:var(--ink3);font-weight:300">'+d.ratify+'</div></div>'
+      + '</div>'
+      + '<div style="padding:8px 12px;background:var(--ad);border:1px solid var(--ab);border-radius:3px;margin-bottom:6px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:3px">Blocker</div><div style="font-size:12px;color:var(--ink3);font-weight:300">'+d.blocker+'</div></div>'
+      + '<div style="padding:8px 12px;background:var(--gr-d);border:1px solid var(--gr-b);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:3px">Next Action</div><div style="font-size:12px;color:var(--ink3);font-weight:300">'+d.next+'</div></div>'
+      + '</div>';
+  }).join('');
+  return '<div class="card"><div class="ct">New Builds &mdash; <em>In Progress</em></div><div style="display:grid;gap:10px;margin-top:4px">'+cards+'</div></div>';
+}
+
+function buildReviewTable(){
+  var rows=[
+    {n:'Competency Framework &mdash; All Grades',t:'Scheduled Annual',due:'Apr 2026',out:'Minor Update &mdash; embed G4 coaching competency',ok:true},
+    {n:'Succession &amp; Bench Development Framework',t:'Scheduled Annual',due:'Apr 2026',out:'Minor Update &mdash; SM-readiness criteria refresh for Laos',ok:true},
+    {n:'Pay Equity Audit Framework',t:'Scheduled Annual',due:'May 2026',out:'Minor Update &mdash; Myanmar G3 compression remediation to be embedded',ok:true},
+    {n:'SM Leadership Development Framework',t:'Scheduled Annual (overdue)',due:'Mar 2026 (missed)',out:'TBD &mdash; Thailand pilot data not yet analysed',ok:false},
+    {n:'Work Permit &amp; Visa Framework',t:'Event-triggered (Indonesia law change)',due:'Apr 2026',out:'Major Update &mdash; Indonesia permit process to change',ok:true},
+    {n:'Compensation Benchmarking Guide',t:'Biennial (overdue)',due:'Jan 2026 (missed)',out:'Major Update &mdash; market data refresh and external advisor integration',ok:false}
+  ];
+  var rHtml = rows.map(function(r){
+    var tc = r.t.includes('overdue')||r.t.includes('triggered') ? 'chip ca2' : 'chip cm';
+    return '<tr><td style="font-weight:600;font-size:12px">'+r.n+'</td><td><span class="'+tc+'" style="font-size:8px">'+r.t+'</span></td><td style="font-family:var(--fm);font-size:10px;color:'+(r.ok?'var(--ink4)':'var(--red)')+'">'+r.due+'</td><td style="font-size:12px;font-weight:300;color:var(--ta)">'+r.out+'</td><td>'+(r.ok?'<span class="lac">On Track</span>':'<span class="lrv">Behind</span>')+'</td></tr>';
+  }).join('');
+  return '<div class="card"><div class="ct">Frameworks In Review &mdash; <em>Q2 2026</em></div><table class="dt"><thead><tr><th>Framework</th><th>Review Type</th><th>Due</th><th>Expected Outcome</th><th>Status</th></tr></thead><tbody>'+rHtml+'</tbody></table></div>';
+}
+
+</script>
+</body>
+</html>

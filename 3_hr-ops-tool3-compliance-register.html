@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regulatory & Labour Law Compliance Register — Valentis Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --slate: #2d3142;
+    --amber: #c9802a;
+    --amber-light: #e8a84a;
+    --amber-pale: #fdf3e3;
+    --steel: #4a5568;
+    --mist: #f4f5f7;
+    --white: #ffffff;
+    --border: #dde1ea;
+    --success: #2d7d46;
+    --success-bg: #edf7f1;
+    --warning: #b45309;
+    --warning-bg: #fef3cd;
+    --danger: #b91c1c;
+    --danger-bg: #fef2f2;
+    --info: #1e5f74;
+    --info-bg: #e8f4f8;
+    --tag-laos: #1e5f74;
+    --tag-myanmar: #6b3a2a;
+    --tag-indonesia: #1a4731;
+    --tag-thailand: #3b2a6e;
+    --tag-group: #2d3142;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--mist); color: var(--ink); min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: var(--slate); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--amber); }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .dept-badge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--amber); letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--amber); padding: 3px 8px; border-radius: 2px; }
+  .header-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); font-weight: 600; }
+  .header-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8899aa; letter-spacing: 1px; }
+
+  /* TOOL HEADER */
+  .tool-header { background: var(--white); padding: 28px 40px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  .tool-title-block h1 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .tool-title-block p { font-size: 13px; color: var(--steel); max-width: 600px; line-height: 1.6; }
+  .tool-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber-light); padding: 4px 10px; border-radius: 2px; letter-spacing: 1px; white-space: nowrap; margin-top: 4px; }
+
+  /* STATS */
+  .stats-bar { background: var(--slate); padding: 16px 40px; display: flex; }
+  .stat-item { flex: 1; text-align: center; padding: 0 16px; border-right: 1px solid rgba(255,255,255,0.1); }
+  .stat-item:last-child { border-right: none; }
+  .stat-number { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; color: var(--amber-light); display: block; }
+  .stat-number.red { color: #f87171; }
+  .stat-number.green { color: #6ee7b7; }
+  .stat-number.yellow { color: #fcd34d; }
+  .stat-label { font-size: 11px; color: #99aabb; letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* MAIN */
+  .main { padding: 28px 40px; display: flex; flex-direction: column; gap: 24px; }
+
+  /* TABS */
+  .tab-bar { display: flex; border-bottom: 2px solid var(--border); }
+  .tab-btn { padding: 10px 22px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--steel); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--ink); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* CONTROLS */
+  .controls-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .search-box { flex: 1; min-width: 200px; display: flex; align-items: center; background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 0 14px; gap: 8px; height: 38px; }
+  .search-box input { border: none; outline: none; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); flex: 1; background: transparent; }
+  .filter-select { height: 38px; padding: 0 12px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: var(--steel); background: var(--white); cursor: pointer; outline: none; }
+  .btn { height: 38px; padding: 0 18px; border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--amber); color: var(--white); }
+  .btn-primary:hover { background: var(--amber-light); }
+  .btn-outline { background: var(--white); color: var(--slate); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* TABLE */
+  .table-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .table-card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .table-card-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--steel); letter-spacing: 1.5px; text-transform: uppercase; }
+  .record-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--amber); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--mist); padding: 10px 14px; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--steel); letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border); font-weight: 500; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--amber-pale); }
+  td { padding: 10px 14px; font-size: 12.5px; color: var(--ink); vertical-align: middle; }
+
+  /* TAGS */
+  .country-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 2px; color: var(--white); letter-spacing: 0.5px; }
+  .ct-laos { background: var(--tag-laos); }
+  .ct-myanmar { background: var(--tag-myanmar); }
+  .ct-indonesia { background: var(--tag-indonesia); }
+  .ct-thailand { background: var(--tag-thailand); }
+  .ct-group { background: var(--tag-group); }
+
+  .status-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 10px; font-family: 'IBM Plex Mono', monospace; }
+  .sp-compliant { background: var(--success-bg); color: var(--success); }
+  .sp-review { background: var(--warning-bg); color: var(--warning); }
+  .sp-gap { background: var(--danger-bg); color: var(--danger); }
+  .sp-na { background: var(--mist); color: var(--steel); }
+
+  .category-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 2px; font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+  .cat-employment { background: #ede9fe; color: #5b21b6; }
+  .cat-safety { background: #fef3cd; color: #92400e; }
+  .cat-payroll { background: var(--info-bg); color: var(--info); }
+  .cat-leave { background: #ecfdf5; color: #065f46; }
+  .cat-termination { background: var(--danger-bg); color: var(--danger); }
+  .cat-foreignwork { background: #f0fdf4; color: #166534; }
+  .cat-reporting { background: #f8f4ff; color: #6d28d9; }
+
+  .priority-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 2px; font-family: 'IBM Plex Mono', monospace; }
+  .p-high { background: var(--danger-bg); color: var(--danger); }
+  .p-med { background: var(--warning-bg); color: var(--warning); }
+  .p-low { background: var(--success-bg); color: var(--success); }
+
+  .action-btns { display: flex; gap: 6px; }
+  .icon-btn { width: 28px; height: 28px; border-radius: 3px; border: 1px solid var(--border); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; color: var(--steel); }
+  .icon-btn:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-pale); }
+
+  /* COUNTRY OVERVIEW GRID */
+  .country-overview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .country-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .country-card-header { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .cc-laos { background: var(--tag-laos); }
+  .cc-myanmar { background: var(--tag-myanmar); }
+  .cc-indonesia { background: var(--tag-indonesia); }
+  .cc-thailand { background: var(--tag-thailand); }
+  .cc-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--white); }
+  .cc-score { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; color: rgba(255,255,255,0.9); }
+  .cc-score-label { font-size: 9px; color: rgba(255,255,255,0.6); font-family: 'IBM Plex Mono', monospace; text-align: right; }
+  .country-card-body { padding: 14px 16px; }
+  .cc-bar { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+  .cc-bar-fill { height: 100%; border-radius: 3px; }
+  .bar-green { background: var(--success); }
+  .bar-amber { background: var(--amber); }
+  .bar-red { background: var(--danger); }
+  .cc-row { display: flex; justify-content: space-between; font-size: 11px; padding: 4px 0; border-bottom: 1px dotted var(--border); }
+  .cc-row:last-child { border-bottom: none; }
+  .cc-row-label { color: var(--steel); }
+  .cc-row-val { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+  .val-green { color: var(--success); }
+  .val-amber { color: var(--warning); }
+  .val-red { color: var(--danger); }
+
+  /* RISK MATRIX */
+  .risk-matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .risk-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .risk-card-header { padding: 12px 16px; background: var(--slate); }
+  .risk-card-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--amber-light); }
+  .risk-card-body { padding: 14px 16px; }
+  .risk-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-num { font-family: 'IBM Plex Mono', monospace; font-size: 10px; background: var(--mist); color: var(--steel); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .risk-info { flex: 1; }
+  .risk-title { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+  .risk-detail { font-size: 11px; color: var(--steel); margin-top: 2px; line-height: 1.4; }
+  .risk-tag { margin-left: auto; flex-shrink: 0; }
+
+  /* UPDATE LOG */
+  .update-log { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .update-entry { display: flex; gap: 14px; padding: 12px 16px; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .update-entry:last-child { border-bottom: none; }
+  .update-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .ud-amber { background: var(--amber); }
+  .ud-green { background: var(--success); }
+  .ud-red { background: var(--danger); }
+  .update-content { flex: 1; }
+  .update-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .update-detail { font-size: 11.5px; color: var(--steel); margin-top: 2px; line-height: 1.4; }
+  .update-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #99aabb; white-space: nowrap; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,26,46,0.6); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--white); border-radius: 8px; width: 100%; max-width: 720px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--white); z-index: 1; }
+  .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); }
+  .modal-close { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 16px; color: var(--steel); display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: var(--mist); }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--mist); border-radius: 0 0 8px 8px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-full { grid-column: 1 / -1; }
+  .form-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--amber-pale); }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 11px; font-weight: 500; color: var(--steel); }
+  .form-group input, .form-group select, .form-group textarea { padding: 8px 11px; border: 1px solid var(--border); border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.15s; background: var(--white); }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--amber); }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+  .form-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+  /* DETAIL */
+  .detail-section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; margin-top: 16px; padding-bottom: 6px; border-bottom: 1px solid var(--amber-pale); }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .detail-item .detail-label { font-size: 10px; color: var(--steel); font-weight: 500; text-transform: uppercase; margin-bottom: 3px; }
+  .detail-item .detail-value { font-size: 13px; color: var(--ink); line-height: 1.4; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--slate); color: var(--white); padding: 12px 20px; border-radius: 6px; font-size: 13px; border-left: 3px solid var(--amber); display: none; z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .toast.show { display: block; animation: slideIn 0.2s ease; }
+  @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  @media (max-width: 1000px) { .country-overview, .risk-matrix { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .header, .tool-header, .main, .stats-bar { padding-left: 16px; padding-right: 16px; } .country-overview { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="dept-badge">HR OPS · D9</div>
+    <div class="header-title">Valentis Group — HR Operations & Compliance</div>
+  </div>
+  <div class="header-meta">TOOL 03 / 09 &nbsp;·&nbsp; REGULATORY COMPLIANCE</div>
+</div>
+
+<div class="tool-header">
+  <div class="tool-title-block">
+    <h1>Regulatory & Labour Law Compliance Register</h1>
+    <p>Country-by-country register of labour law obligations, compliance status, ownership, and last review date. Tracks gaps, assigns accountability, and maintains an update log across Laos, Myanmar, Indonesia, and Thailand.</p>
+  </div>
+  <div class="tool-tag">HR OPS · TOOL 3 OF 9</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-number green" id="sCompliant">—</span><div class="stat-label">Compliant</div></div>
+  <div class="stat-item"><span class="stat-number yellow" id="sReview">—</span><div class="stat-label">Under Review</div></div>
+  <div class="stat-item"><span class="stat-number red" id="sGap">—</span><div class="stat-label">Compliance Gaps</div></div>
+  <div class="stat-item"><span class="stat-number" id="sTotal">—</span><div class="stat-label">Total Obligations</div></div>
+  <div class="stat-item"><span class="stat-number" id="sHighPriority">—</span><div class="stat-label">High Priority Items</div></div>
+  <div class="stat-item"><span class="stat-number" id="sCountries">4</span><div class="stat-label">Jurisdictions</div></div>
+</div>
+
+<div class="main">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('register')">Compliance Register</button>
+    <button class="tab-btn" onclick="switchTab('overview')">Country Overview</button>
+    <button class="tab-btn" onclick="switchTab('risks')">Risk & Gaps</button>
+    <button class="tab-btn" onclick="switchTab('updates')">Update Log</button>
+  </div>
+
+  <!-- TAB 1: REGISTER -->
+  <div class="tab-content active" id="tab-register">
+    <div class="controls-row">
+      <div class="search-box">
+        <span style="color:#99aabb;font-size:14px;">⌕</span>
+        <input type="text" id="regSearch" placeholder="Search obligation, law, keyword…" oninput="filterRegister()">
+      </div>
+      <select class="filter-select" id="fCountry" onchange="filterRegister()">
+        <option value="">All Jurisdictions</option>
+        <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option><option>Group-Wide</option>
+      </select>
+      <select class="filter-select" id="fCategory" onchange="filterRegister()">
+        <option value="">All Categories</option>
+        <option>Employment Contracts</option>
+        <option>Payroll & Wages</option>
+        <option>Leave Entitlements</option>
+        <option>Health & Safety</option>
+        <option>Termination</option>
+        <option>Foreign Workers</option>
+        <option>Reporting & Filing</option>
+      </select>
+      <select class="filter-select" id="fStatus" onchange="filterRegister()">
+        <option value="">All Statuses</option>
+        <option>Compliant</option><option>Under Review</option><option>Gap Identified</option>
+      </select>
+      <button class="btn btn-primary" onclick="openAddModal()">+ Add Obligation</button>
+      <button class="btn btn-outline" onclick="exportRegister()">↓ Export</button>
+    </div>
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">Labour Law Obligations Register</span>
+        <span class="record-count" id="regCount"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>REF</th>
+            <th>JURISDICTION</th>
+            <th>CATEGORY</th>
+            <th>OBLIGATION</th>
+            <th>LEGISLATION / SOURCE</th>
+            <th>STATUS</th>
+            <th>PRIORITY</th>
+            <th>OWNER</th>
+            <th>LAST REVIEWED</th>
+            <th>NEXT REVIEW</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="regTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 2: COUNTRY OVERVIEW -->
+  <div class="tab-content" id="tab-overview">
+    <div class="country-overview" id="countryOverview"></div>
+  </div>
+
+  <!-- TAB 3: RISK & GAPS -->
+  <div class="tab-content" id="tab-risks">
+    <div class="risk-matrix" id="riskMatrix"></div>
+  </div>
+
+  <!-- TAB 4: UPDATE LOG -->
+  <div class="tab-content" id="tab-updates">
+    <div class="table-card-header" style="background:var(--white);border:1px solid var(--border);border-radius:6px 6px 0 0;padding:14px 20px;">
+      <span class="table-card-title">Regulatory Update Log</span>
+      <button class="btn btn-primary" style="height:32px;font-size:11px;padding:0 14px;" onclick="openUpdateModal()">+ Log Update</button>
+    </div>
+    <div class="update-log" style="border-top:none;border-radius:0 0 6px 6px;" id="updateLog"></div>
+  </div>
+</div>
+
+<!-- ADD/EDIT OBLIGATION MODAL -->
+<div class="modal-overlay" id="addModal" onclick="closeMod('addModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="addModalTitle">Add Compliance Obligation</h2>
+      <button class="modal-close" onclick="closeDirect('addModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title" style="margin-top:0;">Obligation Details</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Jurisdiction *</label>
+          <select id="m_country">
+            <option value="">Select…</option>
+            <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option><option>Group-Wide</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Category *</label>
+          <select id="m_cat">
+            <option value="">Select…</option>
+            <option>Employment Contracts</option><option>Payroll & Wages</option>
+            <option>Leave Entitlements</option><option>Health & Safety</option>
+            <option>Termination</option><option>Foreign Workers</option><option>Reporting & Filing</option>
+          </select>
+        </div>
+        <div class="form-group form-full"><label>Obligation / Requirement *</label><input type="text" id="m_obligation" placeholder="e.g. Minimum wage compliance — monthly review"></div>
+        <div class="form-group form-full"><label>Legislation / Regulatory Source</label><input type="text" id="m_legislation" placeholder="e.g. Labour Protection Act B.E. 2541 (Thailand)"></div>
+        <div class="form-group"><label>Compliance Status *</label>
+          <select id="m_status">
+            <option>Compliant</option><option>Under Review</option><option>Gap Identified</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Priority</label>
+          <select id="m_priority">
+            <option>High</option><option>Medium</option><option>Low</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Owner / Responsible</label><input type="text" id="m_owner" placeholder="e.g. Group HR Manager"></div>
+        <div class="form-group"><label>Last Reviewed</label><input type="date" id="m_reviewed"></div>
+        <div class="form-group"><label>Next Review Date</label><input type="date" id="m_nextreview"></div>
+        <div class="form-group form-full"><label>Notes / Action Required</label><textarea id="m_notes" placeholder="Describe gap, action plan, or review notes…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('addModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveObligation()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal" onclick="closeMod('detailModal',event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="detailTitle">Obligation Detail</h2>
+      <button class="modal-close" onclick="closeDirect('detailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('detailModal')">Close</button>
+      <button class="btn btn-primary" id="detailEditBtn">Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPDATE LOG MODAL -->
+<div class="modal-overlay" id="updateModal" onclick="closeMod('updateModal',event)">
+  <div class="modal" style="max-width:520px;" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Log Regulatory Update</h2>
+      <button class="modal-close" onclick="closeDirect('updateModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Jurisdiction</label>
+          <select id="ul_country">
+            <option>Laos</option><option>Myanmar</option><option>Indonesia</option><option>Thailand</option><option>Group-Wide</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Update Type</label>
+          <select id="ul_type">
+            <option>Law Change</option><option>Compliance Confirmed</option><option>Gap Identified</option><option>Action Taken</option><option>Regulatory Notice</option>
+          </select>
+        </div>
+        <div class="form-group form-full"><label>Title *</label><input type="text" id="ul_title" placeholder="e.g. Myanmar minimum wage increase effective Jan 2025"></div>
+        <div class="form-group form-full"><label>Details</label><textarea id="ul_detail" placeholder="Describe the update, impact, and any actions required…"></textarea></div>
+        <div class="form-group"><label>Logged By</label><input type="text" id="ul_by" placeholder="e.g. Group HR Manager" value="Group HR Manager"></div>
+        <div class="form-group"><label>Date</label><input type="date" id="ul_date" value="2025-03-10"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDirect('updateModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveUpdate()">Log Update</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let editingRef = null;
+let obligations = [
+  // ── LAOS ──
+  { ref:'LA-001', country:'Laos', category:'Employment Contracts', obligation:'Written employment contracts required for all employees — in Lao language', legislation:'Labour Law No.43/NA (2013), Art.35', status:'Compliant', priority:'High', owner:'Group HR Manager', reviewed:'2024-09-01', nextReview:'2025-09-01', notes:'All 7 Laos employees have signed contracts on file.' },
+  { ref:'LA-002', country:'Laos', category:'Payroll & Wages', obligation:'Minimum wage compliance — currently LAK 1,100,000/month', legislation:'PM Decree No.160 (2018)', status:'Compliant', priority:'High', owner:'Group HR Manager', reviewed:'2025-01-10', nextReview:'2025-07-01', notes:'All Laos salaries above statutory minimum.' },
+  { ref:'LA-003', country:'Laos', category:'Leave Entitlements', obligation:'Minimum 15 days annual leave after 1 year of service', legislation:'Labour Law No.43/NA (2013), Art.82', status:'Compliant', priority:'Medium', owner:'Group HR Manager', reviewed:'2024-06-01', nextReview:'2025-06-01', notes:'' },
+  { ref:'LA-004', country:'Laos', category:'Health & Safety', obligation:'Employer to provide PPE and conduct safety training at site', legislation:'Labour Law No.43/NA (2013), Art.97', status:'Under Review', priority:'High', owner:'COO', reviewed:'2024-10-01', nextReview:'2025-04-01', notes:'PPE log gaps identified at Vientiane Site B. COO actioning.' },
+  { ref:'LA-005', country:'Laos', category:'Foreign Workers', obligation:'Work permit required for all non-Lao nationals', legislation:'Decree on Foreign Worker Management No.03', status:'Compliant', priority:'High', owner:'Group HR Manager', reviewed:'2025-02-01', nextReview:'2025-08-01', notes:'Sven Andersen and Nguyen Van Duc permits tracked in Tool 2.' },
+  { ref:'LA-006', country:'Laos', category:'Reporting & Filing', obligation:'Annual employee list submission to Ministry of Labour', legislation:'Labour Law No.43/NA (2013), Art.20', status:'Compliant', priority:'Medium', owner:'Group HR Manager', reviewed:'2025-01-15', nextReview:'2026-01-15', notes:'Submitted Jan 2025.' },
+  // ── MYANMAR ──
+  { ref:'MM-001', country:'Myanmar', category:'Employment Contracts', obligation:'Written contracts required; must include wage, hours, leave terms', legislation:'Employment and Skill Development Law (2013)', status:'Gap Identified', priority:'High', owner:'Group HR Manager', reviewed:'2025-01-01', nextReview:'2025-04-01', notes:'Htet Aung (VTG-MM-016) missing signed contract. Action required urgently.' },
+  { ref:'MM-002', country:'Myanmar', category:'Payroll & Wages', obligation:'Minimum wage compliance — MMK 4,800/day (National MW)', legislation:'Minimum Wage Law (2013); Order No.2/2018', status:'Under Review', priority:'High', owner:'Group HR Manager', reviewed:'2024-11-01', nextReview:'2025-05-01', notes:'Minimum wage subject to revision. Monitoring for government updates in 2025.' },
+  { ref:'MM-003', country:'Myanmar', category:'Leave Entitlements', obligation:'10 days annual leave; 6 days casual leave; maternity leave provisions', legislation:'Leave and Holidays Act (1951)', status:'Compliant', priority:'Medium', owner:'Group HR Manager', reviewed:'2024-08-01', nextReview:'2025-08-01', notes:'' },
+  { ref:'MM-004', country:'Myanmar', category:'Health & Safety', obligation:'Employer liability for workplace injuries; safety provisions at site', legislation:'Factories Act (1951); Workmen\'s Compensation Act (1923)', status:'Under Review', priority:'High', owner:'COO', reviewed:'2024-12-01', nextReview:'2025-03-31', notes:'Site safety audit pending at Mandalay. COO to complete.' },
+  { ref:'MM-005', country:'Myanmar', category:'Termination', obligation:'Notice period min. 30 days for permanent staff; severance per length of service', legislation:'Employment and Skill Development Law (2013)', status:'Compliant', priority:'High', owner:'Group HR Manager', reviewed:'2024-10-01', nextReview:'2025-10-01', notes:'' },
+  { ref:'MM-006', country:'Myanmar', category:'Reporting & Filing', obligation:'Register with Township Labour Office; submit workforce returns', legislation:'Employment and Skill Development Law (2013)', status:'Compliant', priority:'Medium', owner:'Group HR Manager', reviewed:'2025-01-01', nextReview:'2026-01-01', notes:'' },
+  // ── INDONESIA ──
+  { ref:'ID-001', country:'Indonesia', category:'Employment Contracts', obligation:'Fixed-term contracts (PKWT) max 5 years; must be registered with Ministry of Manpower', legislation:'Omnibus Law (Cipta Kerja) 2020; PP No.35/2021', status:'Compliant', priority:'High', owner:'Siti Rahayu', reviewed:'2025-02-01', nextReview:'2025-08-01', notes:'' },
+  { ref:'ID-002', country:'Indonesia', category:'Payroll & Wages', obligation:'Regional minimum wage compliance (UMR/UMK) — varies by province', legislation:'PP No.36/2021; Provincial UMK Decree', status:'Compliant', priority:'High', owner:'Siti Rahayu', reviewed:'2025-01-15', nextReview:'2025-07-15', notes:'Kalimantan UMK 2025 confirmed. All salaries above minimum.' },
+  { ref:'ID-003', country:'Indonesia', category:'Leave Entitlements', obligation:'Minimum 12 days annual leave after 12 months; religious holiday entitlements', legislation:'Law No.13/2003; Omnibus Law 2020', status:'Compliant', priority:'Medium', owner:'Siti Rahayu', reviewed:'2024-09-01', nextReview:'2025-09-01', notes:'' },
+  { ref:'ID-004', country:'Indonesia', category:'Health & Safety', obligation:'BPJS Ketenagakerjaan (social security) and BPJS Kesehatan (health) enrollment mandatory', legislation:'Law No.24/2011; Law No.40/2004', status:'Compliant', priority:'High', owner:'Siti Rahayu', reviewed:'2025-01-01', nextReview:'2025-07-01', notes:'All 6 Indonesia employees enrolled.' },
+  { ref:'ID-005', country:'Indonesia', category:'Termination', obligation:'Severance pay (pesangon) mandatory; calculation per Omnibus Law', legislation:'Omnibus Law (Cipta Kerja) 2020, Art.156', status:'Under Review', priority:'High', owner:'Siti Rahayu', reviewed:'2024-10-01', nextReview:'2025-04-01', notes:'Reviewing pesangon calculation methodology for new hires. Legal counsel engaged.' },
+  { ref:'ID-006', country:'Indonesia', category:'Reporting & Filing', obligation:'Wajib lapor ketenagakerjaan (mandatory workforce reporting) — annual', legislation:'Law No.7/1981', status:'Compliant', priority:'Medium', owner:'Siti Rahayu', reviewed:'2025-01-15', nextReview:'2026-01-15', notes:'Filed Jan 2025.' },
+  { ref:'ID-007', country:'Indonesia', category:'Foreign Workers', obligation:'RPTKA (foreign worker utilisation plan) and IMTA work permit for expatriates', legislation:'PP No.34/2021', status:'Gap Identified', priority:'High', owner:'Group HR Manager', reviewed:'2025-02-15', nextReview:'2025-04-01', notes:'3 open G3 positions under consideration for external hire; RPTKA must be updated if expats hired. Monitor.' },
+  // ── THAILAND ──
+  { ref:'TH-001', country:'Thailand', category:'Employment Contracts', obligation:'Written contracts recommended; oral contracts valid but risky', legislation:'Labour Protection Act B.E. 2541 (1998)', status:'Compliant', priority:'Medium', owner:'Group HR Manager', reviewed:'2025-01-01', nextReview:'2026-01-01', notes:'All Bangkok HQ staff have written contracts.' },
+  { ref:'TH-002', country:'Thailand', category:'Payroll & Wages', obligation:'Minimum wage — THB 400/day (Bangkok); regional rates vary', legislation:'Ministerial Regulation (2024)', status:'Compliant', priority:'High', owner:'Group HR Manager', reviewed:'2025-01-15', nextReview:'2025-07-15', notes:'All salaries above minimum. Bangkok rate applies.' },
+  { ref:'TH-003', country:'Thailand', category:'Leave Entitlements', obligation:'Min. 6 working days annual leave after 1 year; sick leave 30 days/year', legislation:'Labour Protection Act B.E. 2541, Sec.30', status:'Compliant', priority:'Medium', owner:'Group HR Manager', reviewed:'2024-08-01', nextReview:'2025-08-01', notes:'' },
+  { ref:'TH-004', country:'Thailand', category:'Health & Safety', obligation:'Social Security Fund (SSF) contributions mandatory for all employees', legislation:'Social Security Act B.E. 2533 (1990)', status:'Compliant', priority:'High', owner:'Group HR Manager', reviewed:'2025-01-01', nextReview:'2025-07-01', notes:'All 5 Thailand employees enrolled.' },
+  { ref:'TH-005', country:'Thailand', category:'Termination', obligation:'Severance pay based on length of service (30 days to 400 days pay)', legislation:'Labour Protection Act B.E. 2541, Sec.118', status:'Compliant', priority:'High', owner:'Group HR Manager', reviewed:'2024-10-01', nextReview:'2025-10-01', notes:'' },
+  { ref:'TH-006', country:'Thailand', category:'Reporting & Filing', obligation:'Annual submission of employee list to Social Security Office', legislation:'Social Security Act B.E. 2533', status:'Compliant', priority:'Medium', owner:'Group HR Manager', reviewed:'2025-01-20', nextReview:'2026-01-20', notes:'' },
+  { ref:'TH-007', country:'Thailand', category:'Foreign Workers', obligation:'Work permit required for non-Thai employees working in Thailand', legislation:'Foreign Workers Act B.E. 2551 (2008)', status:'Compliant', priority:'High', owner:'Group HR Manager', reviewed:'2025-02-01', nextReview:'2025-08-01', notes:'No current foreign nationals in Bangkok HQ.' },
+  // ── GROUP-WIDE ──
+  { ref:'GRP-001', country:'Group-Wide', category:'Employment Contracts', obligation:'Group HR policy — probation periods defined and documented for all new hires', legislation:'Valentis Group HR Policy v1.2', status:'Compliant', priority:'Medium', owner:'Group HR Manager', reviewed:'2025-01-01', nextReview:'2026-01-01', notes:'' },
+  { ref:'GRP-002', country:'Group-Wide', category:'Health & Safety', obligation:'Group safety induction mandatory before first day on site', legislation:'Valentis Group OHS Policy', status:'Under Review', priority:'High', owner:'COO', reviewed:'2024-12-01', nextReview:'2025-03-31', notes:'Induction records incomplete for 2 Myanmar trainees. COO reviewing.' },
+  { ref:'GRP-003', country:'Group-Wide', category:'Reporting & Filing', obligation:'Annual people cost and headcount report to CEO/Board', legislation:'Valentis Group Governance Framework', status:'Compliant', priority:'Medium', owner:'Group HR Manager', reviewed:'2025-02-01', nextReview:'2026-02-01', notes:'' },
+];
+
+let updateLog = [
+  { country:'Myanmar', type:'Gap Identified', title:'Myanmar minimum wage revision expected Q2 2025', detail:'Government signalled MW increase in Q2 2025. All MM salaries above current floor but new rate will require review.', by:'Group HR Manager', date:'2025-03-05', dotClass:'ud-amber' },
+  { country:'Indonesia', type:'Law Change', title:'PP No.34/2021 foreign worker utilisation — RPTKA update required on new hires', detail:'Any new expatriate hire in Indonesia requires RPTKA update with Ministry of Manpower before commencement. Flagged in anticipation of ID G3 recruitment.', by:'Siti Rahayu', date:'2025-02-15', dotClass:'ud-amber' },
+  { country:'Myanmar', type:'Gap Identified', title:'Htet Aung (VTG-MM-016) — signed contract missing from file', detail:'Contract issued at hire but signed copy not returned. HR to follow up within 5 working days.', by:'Group HR Manager', date:'2025-01-20', dotClass:'ud-red' },
+  { country:'Group-Wide', type:'Action Taken', title:'Group safety induction records audit initiated', detail:'COO and HR conducting audit of induction records across all four countries. Completeness gaps identified in Myanmar.', by:'COO', date:'2024-12-10', dotClass:'ud-amber' },
+  { country:'Thailand', type:'Compliance Confirmed', title:'Thailand minimum wage updated to THB 400/day — Valentis compliant', detail:'New Bangkok minimum wage effective Jan 2025. Confirmed all Bangkok HQ salaries remain above floor.', by:'Group HR Manager', date:'2025-01-15', dotClass:'ud-green' },
+  { country:'Indonesia', type:'Compliance Confirmed', title:'BPJS enrollment confirmed for all Indonesia employees', detail:'All 6 Indonesia employees confirmed enrolled in BPJS Ketenagakerjaan and BPJS Kesehatan.', by:'Siti Rahayu', date:'2025-01-01', dotClass:'ud-green' },
+];
+
+let filteredObs = [...obligations];
+
+// ── HELPERS ──────────────────────────────────────────────────
+const catClass = {
+  'Employment Contracts':'cat-employment','Payroll & Wages':'cat-payroll',
+  'Leave Entitlements':'cat-leave','Health & Safety':'cat-safety',
+  'Termination':'cat-termination','Foreign Workers':'cat-foreignwork',
+  'Reporting & Filing':'cat-reporting'
+};
+const ctClass = {Laos:'ct-laos',Myanmar:'ct-myanmar',Indonesia:'ct-indonesia',Thailand:'ct-thailand','Group-Wide':'ct-group'};
+const statusClass = {'Compliant':'sp-compliant','Under Review':'sp-review','Gap Identified':'sp-gap'};
+const priorityClass = {'High':'p-high','Medium':'p-med','Low':'p-low'};
+
+function fmtDate(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+
+// ── RENDER REGISTER ──────────────────────────────────────────────────
+function renderRegister(data) {
+  const tbody = document.getElementById('regTableBody');
+  tbody.innerHTML = data.map(o => `
+    <tr onclick="openDetail('${o.ref}')">
+      <td><span class="emp-id" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);">${o.ref}</span></td>
+      <td><span class="country-tag ${ctClass[o.country]||'ct-group'}">${o.country}</span></td>
+      <td><span class="category-badge ${catClass[o.category]||''}">${o.category}</span></td>
+      <td style="max-width:260px;font-size:12.5px;line-height:1.4;">${o.obligation}</td>
+      <td style="font-size:11px;color:var(--steel);max-width:180px;">${o.legislation}</td>
+      <td><span class="status-pill ${statusClass[o.status]||''}">${o.status}</span></td>
+      <td><span class="priority-badge ${priorityClass[o.priority]||''}">${o.priority}</span></td>
+      <td style="font-size:12px;">${o.owner}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(o.reviewed)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${fmtDate(o.nextReview)}</td>
+      <td onclick="event.stopPropagation()">
+        <div class="action-btns">
+          <button class="icon-btn" title="Edit" onclick="openEdit('${o.ref}')">✎</button>
+          <button class="icon-btn" title="Mark Reviewed" onclick="markReviewed('${o.ref}')">✓</button>
+        </div>
+      </td>
+    </tr>`).join('');
+  document.getElementById('regCount').textContent = `Showing ${data.length} of ${obligations.length} obligations`;
+  updateStats();
+}
+
+function filterRegister() {
+  const q = document.getElementById('regSearch').value.toLowerCase();
+  const country = document.getElementById('fCountry').value;
+  const cat = document.getElementById('fCategory').value;
+  const status = document.getElementById('fStatus').value;
+  filteredObs = obligations.filter(o => {
+    const mq = !q || o.obligation.toLowerCase().includes(q) || o.legislation.toLowerCase().includes(q) || o.ref.toLowerCase().includes(q);
+    const mc = !country || o.country === country;
+    const mcat = !cat || o.category === cat;
+    const ms = !status || o.status === status;
+    return mq && mc && mcat && ms;
+  });
+  renderRegister(filteredObs);
+}
+
+function updateStats() {
+  document.getElementById('sCompliant').textContent = obligations.filter(o=>o.status==='Compliant').length;
+  document.getElementById('sReview').textContent = obligations.filter(o=>o.status==='Under Review').length;
+  document.getElementById('sGap').textContent = obligations.filter(o=>o.status==='Gap Identified').length;
+  document.getElementById('sTotal').textContent = obligations.length;
+  document.getElementById('sHighPriority').textContent = obligations.filter(o=>o.priority==='High').length;
+}
+
+// ── COUNTRY OVERVIEW ──────────────────────────────────────────────────
+function renderOverview() {
+  const countries = ['Laos','Myanmar','Indonesia','Thailand'];
+  const el = document.getElementById('countryOverview');
+  el.innerHTML = countries.map(c => {
+    const obs = obligations.filter(o=>o.country===c||o.country==='Group-Wide');
+    const compliant = obs.filter(o=>o.status==='Compliant').length;
+    const review = obs.filter(o=>o.status==='Under Review').length;
+    const gap = obs.filter(o=>o.status==='Gap Identified').length;
+    const total = obs.length;
+    const pct = Math.round(compliant/total*100);
+    const barClass = pct===100?'bar-green':pct>=70?'bar-amber':'bar-red';
+    const ccClass = {Laos:'cc-laos',Myanmar:'cc-myanmar',Indonesia:'cc-indonesia',Thailand:'cc-thailand'}[c];
+    const scoreColor = pct===100?'rgba(110,231,183,0.9)':pct>=70?'rgba(252,211,77,0.9)':'rgba(248,113,113,0.9)';
+    const countryObs = obligations.filter(o=>o.country===c);
+    const cats = [...new Set(countryObs.map(o=>o.category))];
+    return `
+      <div class="country-card">
+        <div class="country-card-header ${ccClass}">
+          <div><div class="cc-title">${c}</div><div style="font-size:10px;color:rgba(255,255,255,0.6);font-family:'IBM Plex Mono',monospace;margin-top:2px;">${countryObs.length} obligations</div></div>
+          <div style="text-align:right;"><div style="font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500;color:${scoreColor};">${pct}%</div><div style="font-size:9px;color:rgba(255,255,255,0.6);font-family:'IBM Plex Mono',monospace;">compliant</div></div>
+        </div>
+        <div class="country-card-body">
+          <div class="cc-bar"><div class="cc-bar-fill ${barClass}" style="width:${pct}%"></div></div>
+          <div class="cc-row"><span class="cc-row-label">✓ Compliant</span><span class="cc-row-val val-green">${compliant}</span></div>
+          <div class="cc-row"><span class="cc-row-label">⚠ Under Review</span><span class="cc-row-val val-amber">${review}</span></div>
+          <div class="cc-row"><span class="cc-row-label">✗ Gap Identified</span><span class="cc-row-val val-red">${gap}</span></div>
+          <div class="cc-row" style="margin-top:8px;"><span class="cc-row-label" style="font-weight:600;">Categories covered</span></div>
+          ${cats.map(cat=>`<div class="cc-row"><span class="cc-row-label" style="font-size:10px;">→ ${cat}</span></div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── RISK & GAPS ──────────────────────────────────────────────────
+function renderRisks() {
+  const gaps = obligations.filter(o=>o.status==='Gap Identified');
+  const reviews = obligations.filter(o=>o.status==='Under Review');
+  const highPri = obligations.filter(o=>o.priority==='High'&&o.status!=='Compliant');
+  const overdue = obligations.filter(o=>o.nextReview && new Date(o.nextReview) < new Date('2025-03-10'));
+
+  const riskRows = (items, emptyMsg) => items.length
+    ? items.map((o,i)=>`<div class="risk-row">
+        <div class="risk-num">${i+1}</div>
+        <div class="risk-info">
+          <div class="risk-title">${o.obligation.length>60?o.obligation.slice(0,60)+'…':o.obligation}</div>
+          <div class="risk-detail">${o.country} · ${o.category}${o.notes?' — '+o.notes.slice(0,80):''}</div>
+        </div>
+        <div class="risk-tag"><span class="priority-badge ${priorityClass[o.priority]||''}">${o.priority}</span></div>
+      </div>`).join('')
+    : `<div style="padding:16px;font-size:13px;color:#aab;font-style:italic;">${emptyMsg}</div>`;
+
+  document.getElementById('riskMatrix').innerHTML = `
+    <div class="risk-card">
+      <div class="risk-card-header"><span class="risk-card-title">🔴 Compliance Gaps (${gaps.length})</span></div>
+      <div class="risk-card-body">${riskRows(gaps,'No gaps identified.')}</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-card-header"><span class="risk-card-title">⚠ Under Active Review (${reviews.length})</span></div>
+      <div class="risk-card-body">${riskRows(reviews,'No items under review.')}</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-card-header"><span class="risk-card-title">⚡ High Priority Non-Compliant (${highPri.length})</span></div>
+      <div class="risk-card-body">${riskRows(highPri,'All high priority items are compliant.')}</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-card-header"><span class="risk-card-title">📅 Review Overdue (${overdue.length})</span></div>
+      <div class="risk-card-body">${riskRows(overdue,'No overdue reviews.')}</div>
+    </div>`;
+}
+
+// ── UPDATE LOG ──────────────────────────────────────────────────
+function renderUpdateLog() {
+  const el = document.getElementById('updateLog');
+  el.innerHTML = updateLog.map(u => `
+    <div class="update-entry">
+      <div class="update-dot ${u.dotClass}"></div>
+      <div class="update-content">
+        <div class="update-title">${u.title}</div>
+        <div class="update-detail">${u.detail}</div>
+        <div style="display:flex;gap:10px;margin-top:5px;">
+          <span class="country-tag ${ctClass[u.country]||'ct-group'}" style="font-size:9px;">${u.country}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--steel);">${u.type}</span>
+        </div>
+      </div>
+      <div class="update-meta">${fmtDate(u.date)}<br><span style="color:#aab;">${u.by}</span></div>
+    </div>`).join('');
+}
+
+// ── MODALS ──────────────────────────────────────────────────
+function openAddModal() {
+  editingRef = null;
+  document.getElementById('addModalTitle').textContent = 'Add Compliance Obligation';
+  ['m_obligation','m_legislation','m_owner','m_notes'].forEach(id=>document.getElementById(id).value='');
+  ['m_reviewed','m_nextreview'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m_country').value='';
+  document.getElementById('m_cat').value='';
+  document.getElementById('m_status').value='Compliant';
+  document.getElementById('m_priority').value='High';
+  document.getElementById('addModal').classList.add('active');
+}
+function openEdit(ref) {
+  const o = obligations.find(x=>x.ref===ref);
+  if (!o) return;
+  editingRef = ref;
+  document.getElementById('addModalTitle').textContent = `Edit — ${ref}`;
+  document.getElementById('m_country').value = o.country;
+  document.getElementById('m_cat').value = o.category;
+  document.getElementById('m_obligation').value = o.obligation;
+  document.getElementById('m_legislation').value = o.legislation;
+  document.getElementById('m_status').value = o.status;
+  document.getElementById('m_priority').value = o.priority;
+  document.getElementById('m_owner').value = o.owner;
+  document.getElementById('m_reviewed').value = o.reviewed||'';
+  document.getElementById('m_nextreview').value = o.nextReview||'';
+  document.getElementById('m_notes').value = o.notes||'';
+  document.getElementById('addModal').classList.add('active');
+}
+function saveObligation() {
+  const country = document.getElementById('m_country').value;
+  const obligation = document.getElementById('m_obligation').value.trim();
+  if (!country || !obligation) { showToast('⚠ Jurisdiction and Obligation are required'); return; }
+  if (editingRef) {
+    const o = obligations.find(x=>x.ref===editingRef);
+    if (o) {
+      o.country = country; o.category = document.getElementById('m_cat').value;
+      o.obligation = obligation; o.legislation = document.getElementById('m_legislation').value;
+      o.status = document.getElementById('m_status').value; o.priority = document.getElementById('m_priority').value;
+      o.owner = document.getElementById('m_owner').value; o.reviewed = document.getElementById('m_reviewed').value;
+      o.nextReview = document.getElementById('m_nextreview').value; o.notes = document.getElementById('m_notes').value;
+    }
+    showToast('✓ Obligation updated');
+  } else {
+    const codes = {Laos:'LA',Myanmar:'MM',Indonesia:'ID',Thailand:'TH','Group-Wide':'GRP'};
+    const prefix = codes[country]||'XX';
+    const count = obligations.filter(o=>o.country===country).length+1;
+    obligations.push({
+      ref:`${prefix}-${String(count).padStart(3,'0')}`, country, category:document.getElementById('m_cat').value,
+      obligation, legislation:document.getElementById('m_legislation').value,
+      status:document.getElementById('m_status').value, priority:document.getElementById('m_priority').value,
+      owner:document.getElementById('m_owner').value, reviewed:document.getElementById('m_reviewed').value,
+      nextReview:document.getElementById('m_nextreview').value, notes:document.getElementById('m_notes').value
+    });
+    showToast('✓ Obligation added to register');
+  }
+  filteredObs = [...obligations];
+  renderRegister(filteredObs); renderOverview(); renderRisks();
+  closeDirect('addModal');
+}
+function openDetail(ref) {
+  const o = obligations.find(x=>x.ref===ref);
+  if (!o) return;
+  document.getElementById('detailTitle').textContent = o.ref+' — '+o.country;
+  document.getElementById('detailBody').innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+      <span class="country-tag ${ctClass[o.country]||'ct-group'}">${o.country}</span>
+      <span class="category-badge ${catClass[o.category]||''}">${o.category}</span>
+      <span class="status-pill ${statusClass[o.status]||''}">${o.status}</span>
+      <span class="priority-badge ${priorityClass[o.priority]||''}">${o.priority} Priority</span>
+    </div>
+    <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.4;">${o.obligation}</div>
+    <div style="font-size:12px;color:var(--steel);margin-bottom:16px;">${o.legislation}</div>
+    <div class="detail-section-title">Compliance Details</div>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">Owner</div><div class="detail-value">${o.owner||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Last Reviewed</div><div class="detail-value">${fmtDate(o.reviewed)}</div></div>
+      <div class="detail-item"><div class="detail-label">Next Review Due</div><div class="detail-value">${fmtDate(o.nextReview)}</div></div>
+      <div class="detail-item"><div class="detail-label">Reference</div><div class="detail-value">${o.ref}</div></div>
+    </div>
+    ${o.notes?`<div class="detail-section-title" style="margin-top:16px;">Notes / Action Required</div><div style="font-size:13px;color:var(--ink);line-height:1.6;background:var(--amber-pale);padding:12px;border-radius:4px;">${o.notes}</div>`:''}`;
+  document.getElementById('detailEditBtn').onclick = () => { closeDirect('detailModal'); openEdit(ref); };
+  document.getElementById('detailModal').classList.add('active');
+}
+function markReviewed(ref) {
+  const o = obligations.find(x=>x.ref===ref);
+  if (o) {
+    o.reviewed = '2025-03-10';
+    const d = new Date('2025-03-10'); d.setMonth(d.getMonth()+6);
+    o.nextReview = d.toISOString().split('T')[0];
+    renderRegister(filteredObs); showToast(`✓ ${ref} marked as reviewed`);
+  }
+}
+function openUpdateModal() { document.getElementById('updateModal').classList.add('active'); }
+function saveUpdate() {
+  const title = document.getElementById('ul_title').value.trim();
+  if (!title) { showToast('⚠ Title is required'); return; }
+  const typeToClass = {'Gap Identified':'ud-red','Compliance Confirmed':'ud-green','Law Change':'ud-amber','Action Taken':'ud-green','Regulatory Notice':'ud-amber'};
+  updateLog.unshift({
+    country: document.getElementById('ul_country').value,
+    type: document.getElementById('ul_type').value,
+    title, detail: document.getElementById('ul_detail').value,
+    by: document.getElementById('ul_by').value,
+    date: document.getElementById('ul_date').value,
+    dotClass: typeToClass[document.getElementById('ul_type').value]||'ud-amber'
+  });
+  renderUpdateLog(); closeDirect('updateModal'); showToast('✓ Update logged');
+}
+function exportRegister() {
+  const headers = ['Ref','Jurisdiction','Category','Obligation','Legislation','Status','Priority','Owner','Last Reviewed','Next Review','Notes'];
+  const rows = filteredObs.map(o=>[o.ref,o.country,o.category,o.obligation,o.legislation,o.status,o.priority,o.owner,o.reviewed||'',o.nextReview||'',o.notes||'']);
+  const csv = [headers.join(','),...rows.map(r=>r.map(v=>`"${v}"`).join(','))].join('\n');
+  const a = document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='valentis-compliance-register.csv'; a.click(); showToast('✓ Register exported');
+}
+function switchTab(id) {
+  const tabs=['register','overview','risks','updates'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function closeMod(id,e) { if (e.target===document.getElementById(id)) closeDirect(id); }
+function closeDirect(id) { document.getElementById(id).classList.remove('active'); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+
+renderRegister(obligations);
+renderOverview();
+renderRisks();
+renderUpdateLog();
+</script>
+</body>
+</html>

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Standards & Policy Register — Centre of Excellence Tool 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2ee;--surface:#fff;--surface2:#e8ece6;--surface3:#dde3da;
+  --border:#c8d0c4;--border2:#b4bfaf;
+  --ink:#0d110c;--ink2:#1a2418;--ink3:#3d5039;--ink4:#6b7d67;--ink5:#a0b09c;
+  --teal:#0a2420;--teal2:#0d2e29;--teal3:#103330;
+  --gold:#b8960a;--gold2:#cfa50c;--gold3:#e6bc2a;
+  --gold-dim:rgba(184,150,10,0.09);--gold-border:rgba(184,150,10,0.28);
+  --green:#1a6b3a;--green-dim:rgba(26,107,58,0.08);--green-border:rgba(26,107,58,0.24);
+  --red:#b83225;--red-dim:rgba(184,50,37,0.07);--red-border:rgba(184,50,37,0.22);
+  --amber:#b87010;--amber-dim:rgba(184,112,16,0.08);--amber-border:rgba(184,112,16,0.24);
+  --teal-accent:#0e7c6e;--teal-accent2:#12a899;--teal-dim:rgba(14,124,110,0.09);--teal-border:rgba(14,124,110,0.26);
+  --sidebar-w:280px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--teal);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--gold3),var(--gold),rgba(184,150,10,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);background:rgba(184,150,10,0.15);border:1px solid rgba(184,150,10,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f8f4;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--gold3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(184,150,10,0.16);border-color:rgba(184,150,10,0.38);color:var(--gold3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--gold2)}
+.nav-item.tool-link{color:rgba(255,255,255,0.18);font-size:12px}
+.nav-item.tool-link.current-tool{color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.04)}
+.nav-status{margin-left:auto;font-family:var(--fm);font-size:8px;padding:1px 5px;border-radius:2px}
+.status-done{background:rgba(26,107,58,0.25);color:#6ecf94}
+.status-next{background:rgba(184,150,10,0.2);color:var(--gold3)}
+.status-soon{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.25)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--gold3);display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal-accent);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--gold)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--gold);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cgo{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.cgr{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.ca{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.ct2{background:var(--teal-dim);color:var(--teal-accent);border:1px solid var(--teal-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.go{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.inf.gr{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf.r{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.inf.a{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.inf.t{background:var(--teal-dim);border-color:var(--teal-accent);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--teal);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+.vx{background:var(--teal);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f8f4;margin-bottom:8px;line-height:1.2}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.42);font-weight:300;line-height:1.85}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kgo::before{background:var(--gold)}.kgr2::before{background:var(--green)}
+.ka::before{background:var(--amber)}.kt2::before{background:var(--teal-accent)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kgo .kv{color:var(--gold)}.kgr2 .kv{color:var(--green)}
+.ka .kv{color:var(--amber)}.kt2 .kv{color:var(--teal-accent)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.ktag{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktag-go{background:var(--gold-dim);color:var(--gold)}
+.ktag-gr{background:var(--green-dim);color:var(--green)}
+.ktag-t{background:var(--teal-dim);color:var(--teal-accent)}
+.ktag-a{background:var(--amber-dim);color:var(--amber)}
+.ktag-r{background:var(--red-dim);color:var(--red)}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+/* Status badges */
+.s-current{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px;white-space:nowrap}
+.s-review{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px;white-space:nowrap}
+.s-build{background:var(--teal-dim);color:var(--teal-accent);border:1px solid var(--teal-border);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px;white-space:nowrap}
+.s-missing{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px;white-space:nowrap}
+.s-draft{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border);font-family:var(--fm);font-size:8px;padding:2px 7px;border-radius:2px;white-space:nowrap}
+/* Priority bar */
+.pbar{height:6px;border-radius:3px;background:var(--surface2);overflow:hidden;margin-top:5px}
+.pbar-fill{height:100%;border-radius:3px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx,.page.active .krow{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+.page.active .card:nth-child(5){animation-delay:.12s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">Centre of Excellence · Tool 2 / 7</div>
+    <div class="sb-title">Standards &amp;<br><em>Policy Register</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Tool 2 Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('architecture',this)"><span class="nav-num">02</span>Policy Architecture</div>
+    <div class="nav-item" onclick="showPage('register',this)"><span class="nav-num">03</span>Master Policy Register</div>
+    <div class="nav-item" onclick="showPage('standards',this)"><span class="nav-num">04</span>HR Standards Register</div>
+    <div class="nav-item" onclick="showPage('ownership',this)"><span class="nav-num">05</span>Ownership & Review Cadence</div>
+    <div class="nav-item" onclick="showPage('exceptions',this)"><span class="nav-num">06</span>Exception Management</div>
+    <div class="nav-item" onclick="showPage('country',this)"><span class="nav-num">07</span>Country Addenda</div>
+    <div class="nav-item" onclick="showPage('health',this)"><span class="nav-num">08</span>Register Health Dashboard</div>
+
+    <div class="sb-group">All CoE Tools</div>
+    <div class="nav-item tool-link"><span class="nav-num">01</span>CoE Operating Model<span class="nav-status status-done">Done</span></div>
+    <div class="nav-item tool-link current-tool"><span class="nav-num">02</span>Standards &amp; Policy Register<span class="nav-status status-next">Current</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">03</span>Knowledge Management<span class="nav-status status-soon">Next</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">04</span>Governance &amp; Decision Rights<span class="nav-status status-soon">Soon</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">05</span>Framework Lifecycle<span class="nav-status status-soon">Soon</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">06</span>Innovation Tracker<span class="nav-status status-soon">Soon</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">07</span>CoE Maturity Model<span class="nav-status status-soon">Soon</span></div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Centre of Excellence · Tool 2 of 7</strong>
+      HR Standards &amp; Policy Register<br>
+      <span style="color:rgba(255,255,255,0.1)">One register. One source of truth. No shadow policies across four countries.</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+  <div id="page-overview"    class="page active"></div>
+  <div id="page-architecture" class="page"></div>
+  <div id="page-register"    class="page"></div>
+  <div id="page-standards"   class="page"></div>
+  <div id="page-ownership"   class="page"></div>
+  <div id="page-exceptions"  class="page"></div>
+  <div id="page-country"     class="page"></div>
+  <div id="page-health"      class="page"></div>
+</main>
+
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item:not(.tool-link)').forEach(n=>n.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));scope.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+</script>
+
+<script>
+// ══ PAGE 01 — OVERVIEW ══════════════════════════════════════════
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">Centre of Excellence · Tool 2 / 7 — HR Standards &amp; Policy Register</div>
+<div class="pt">Standards &amp;<br><em>Policy Register</em></div>
+<p class="pd">The policy register is the single source of truth for every HR policy, standard, and framework at Valentis. It tells the CoE what exists, who owns it, when it was last reviewed, and when it is next due. Without it, policies accumulate unnoticed, drift out of date, and fragment across countries. With it, the CoE governs HR with precision — at 42 staff and at 1,000.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Register Principle</div>
+  <div class="vx-ti">A policy that is not in the register does not officially exist at Valentis. A policy that has passed its review date without action is a governance failure. The register makes both visible — which is the point.</div>
+  <div class="vx-bo">Most small HR functions accumulate policies the way offices accumulate paper — things get added, nothing gets removed, and nobody is sure which version is current. At Valentis, the policy register solves this permanently. Every policy has a record: what it is, who owns it, when it was created, when it was last reviewed, when it is next due, and what its current status is. The CoE reviews the register monthly and acts on anything approaching a review date. Nothing expires without a decision. Nothing exists without a record.</div>
+</div>
+
+<div class="krow">
+  <div class="kpi kgo"><div class="kl">Total Policies Registered</div><div class="kv">32</div><div class="ks">Across 6 policy domains · Group-wide and country-specific</div><div class="ktag ktag-go">Master register</div></div>
+  <div class="kpi kgr2"><div class="kl">Current & Compliant</div><div class="kv">21</div><div class="ks">Reviewed within schedule · Active and endorsed</div><div class="ktag ktag-gr">66% of register</div></div>
+  <div class="kpi ka"><div class="kl">Due for Review</div><div class="kv">8</div><div class="ks">Within 90-day review window · Action required</div><div class="ktag ktag-a">Q2 2026 priority</div></div>
+  <div class="kpi kt2"><div class="kl">To Be Built</div><div class="kv">3</div><div class="ks">Identified gaps — no policy exists · CoE build queue</div><div class="ktag ktag-t">H2 2026 target</div></div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Register Status — <em>At a Glance</em></div>
+    <div style="display:grid;gap:6px;margin-top:4px">
+      ${[
+        {domain:'Employment & Contracts',total:6,current:5,review:1,build:0,col:'var(--green)'},
+        {domain:'Performance Management',total:5,current:3,review:2,build:0,col:'var(--amber)'},
+        {domain:'Compensation & Benefits',total:6,current:4,review:1,build:1,col:'var(--amber)'},
+        {domain:'Talent Acquisition',total:5,current:4,review:1,build:0,col:'var(--green)'},
+        {domain:'Learning & Development',total:4,current:2,review:2,build:0,col:'var(--amber)'},
+        {domain:'Employee Relations & Conduct',total:6,current:3,review:1,build:2,col:'var(--red)'},
+      ].map(d=>{
+        const pct=Math.round(d.current/d.total*100);
+        return `<div style="padding:10px 14px;background:var(--surface2);border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-weight:600;font-size:13px;color:var(--ink)">${d.domain}</span>
+            <span style="display:flex;gap:5px">
+              <span class="s-current">${d.current} current</span>
+              ${d.review>0?`<span class="s-review">${d.review} due</span>`:''}
+              ${d.build>0?`<span class="s-build">${d.build} to build</span>`:''}
+            </span>
+          </div>
+          <div class="pbar"><div class="pbar-fill" style="width:${pct}%;background:${d.col}"></div></div>
+          <div style="font-family:var(--fm);font-size:9px;color:var(--ink5);margin-top:4px">${pct}% current · ${d.total} total policies</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">What This Tool Covers</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {n:'02',t:'Policy Architecture',d:'The hierarchy of HR policy at Valentis — Group Policy, Functional Standards, Operating Procedures, and Country Addenda. How they relate and which overrides which.'},
+        {n:'03',t:'Master Policy Register',d:'The complete register of all 32 HR policies — domain, owner, version, status, last review, next review. The living record the CoE maintains.'},
+        {n:'04',t:'HR Standards Register',d:'The register of all HR operating standards — the minimum quality bar for every HR process. Distinct from policy: standards define how, policy defines what.'},
+        {n:'05',t:'Ownership & Review Cadence',d:'Who owns each policy, what the review trigger is, and the annual review schedule mapped to the CoE operating rhythm.'},
+        {n:'06',t:'Exception Management',d:'The process for granting policy exceptions — request, assessment, approval, documentation, and the exception register.'},
+        {n:'07',t:'Country Addenda',d:'How country-specific variations are created, approved, and maintained without undermining group policy integrity.'},
+        {n:'08',t:'Register Health Dashboard',d:'The live health view of the policy register — what is current, what is overdue, what needs building, and the CoE action list.'},
+      ].map(d=>`<div style="padding:9px 12px;background:var(--surface2);border-radius:3px;display:flex;gap:12px;align-items:flex-start">
+        <span style="font-family:var(--fm);font-size:9px;color:var(--gold);flex-shrink:0;padding-top:2px">${d.n}</span>
+        <div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px">${d.t}</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">${d.d}</div></div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ══ PAGE 02 — POLICY ARCHITECTURE ═══════════════════════════════
+document.getElementById('page-architecture').innerHTML=`
+<div class="pe">Section 02 — Policy Architecture</div>
+<div class="pt">Policy<br><em>Architecture</em></div>
+<p class="pd">Valentis operates a four-tier policy architecture. Each tier has a distinct purpose, a distinct owner, and a distinct authority level. Understanding the hierarchy prevents the most common HR governance failure: country operations creating their own policies that conflict with group standards.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Architecture Principle</div>
+  <div class="vx-ti">Lower tiers cannot contradict higher tiers. Country Addenda cannot override Group Policy. Operating Procedures cannot redefine Functional Standards. The hierarchy is absolute — the only flexibility is in how lower tiers add specificity within the space the higher tier permits.</div>
+  <div class="vx-bo">The four-tier architecture gives Valentis both consistency and flexibility. Group Policies set the non-negotiables — legal compliance, ethical standards, grade definitions. Functional Standards define how HR processes work group-wide. Operating Procedures give country operations the practical how-to guides they need. Country Addenda allow for legitimate local variation — different labour law requirements, different market practices — within the group framework. Each tier narrows the space for interpretation, without eliminating the judgment that effective HR requires.</div>
+</div>
+
+<div class="card">
+  <div class="ct">The Four-Tier Policy Hierarchy</div>
+  <div style="display:grid;gap:0;margin-top:8px">
+    ${[
+      {tier:'Tier 1',name:'Group Policy',owner:'CoE + COO Endorsement',scope:'Non-negotiable group-wide requirements. Applies to all countries, all staff, all situations. Cannot be varied at country level without board approval.',examples:'Code of Conduct · Anti-Bribery & Corruption · Grade Framework · Equal Opportunity · Data Protection',count:'8 policies',col:'var(--gold)',height:'80px'},
+      {tier:'Tier 2',name:'Functional Standards',owner:'CoE Owned',scope:'The operating standards for each HR function group-wide. Defines the minimum quality bar and methodology for performance management, compensation, recruitment, etc.',examples:'Performance Management Standard · Compensation Band Standard · Recruitment Quality Standard · Coaching Standard',count:'12 standards',col:'var(--teal-accent)',height:'80px'},
+      {tier:'Tier 3',name:'Operating Procedures',owner:'CoE Design · HRBP Maintained',scope:'Step-by-step guides for executing HR processes in each country. Follows Tier 2 standards but includes country-specific process steps, system instructions, and approval workflows.',examples:'Country Recruitment SOP · Onboarding Checklist · Performance Review Process Guide · Payroll Input Procedure',count:'16 procedures',col:'var(--amber)',height:'80px'},
+      {tier:'Tier 4',name:'Country Addenda',owner:'Country HRBP · CoE Endorsed',scope:'Country-specific variations to Tier 1–3 documents, justified by local labour law, regulatory requirements, or legitimate market practice differences. Requires CoE endorsement.',examples:'Thailand Probation Period Addendum · Indonesia Severance Supplement · Myanmar Public Holiday Schedule · Laos Leave Entitlement Addendum',count:'Per country · currently 6',col:'var(--green)',height:'80px'},
+    ].map((t,i)=>`
+      <div style="display:flex;gap:0;margin-bottom:2px">
+        <div style="width:${80+i*20}px;background:${t.col};display:flex;align-items:center;justify-content:center;flex-direction:column;padding:12px;flex-shrink:0;border-radius:4px 0 0 4px;min-height:${t.height}">
+          <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:3px">${t.tier}</div>
+          <div style="font-family:var(--fd);font-size:14px;font-weight:700;color:#fff;text-align:center;line-height:1.2">${t.name}</div>
+        </div>
+        <div style="flex:1;background:var(--surface2);border:1px solid var(--border);border-left:none;padding:14px 18px;border-radius:0 4px 4px 0">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+            <div style="font-size:12.5px;color:var(--ink2);font-weight:300;line-height:1.7;max-width:520px">${t.scope}</div>
+            <div style="text-align:right;flex-shrink:0;margin-left:12px">
+              <span class="chip cgo" style="font-size:8px;display:block;margin-bottom:3px">${t.count}</span>
+              <span style="font-size:10.5px;color:var(--ink5);font-family:var(--fm)">Owner: ${t.owner}</span>
+            </div>
+          </div>
+          <div style="font-family:var(--fm);font-size:10px;color:var(--ink5);line-height:1.6"><span style="color:var(--gold);margin-right:4px">Examples:</span>${t.examples}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Hierarchy Rules — <em>What Each Tier Can and Cannot Do</em></div>
+    <table class="dt">
+      <thead><tr><th>Tier</th><th>Can Do</th><th>Cannot Do</th></tr></thead>
+      <tbody>
+        ${[
+          {t:'Tier 1 · Group Policy',can:'Set absolute requirements applicable group-wide. Override all lower tiers. Require COO or board endorsement.',cannot:'Be varied at country level without board approval. Be interpreted differently by different countries.'},
+          {t:'Tier 2 · Functional Standards',can:'Define the methodology and quality standard for each HR function. Add specificity within Tier 1 constraints. Be updated by CoE without COO sign-off.',cannot:'Contradict Tier 1 policy. Create country-specific variations. Reduce a Tier 1 entitlement or requirement.'},
+          {t:'Tier 3 · Operating Procedures',can:'Provide country-specific step-by-step process guidance. Reference local systems and approval workflows. Be maintained by HRBPs to CoE template.',cannot:'Redefine the standard set in Tier 2. Grant approvals or authorities not established in Tier 1 or 2. Create new entitlements.'},
+          {t:'Tier 4 · Country Addenda',can:'Add country-specific requirements driven by local law or market practice. Supplement Tier 1–3 documents. Be created by HRBPs with CoE endorsement.',cannot:'Remove a group-wide requirement. Contradict Tier 1, 2, or 3 unless explicitly permitted by CoE on documented legal grounds.'},
+        ].map(r=>`<tr><td style="font-weight:600;font-size:12px;color:var(--gold)">${r.t}</td><td style="font-size:12px;color:var(--green);font-weight:300">${r.can}</td><td style="font-size:12px;color:var(--red);font-weight:300">${r.cannot}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">When the Hierarchy Gets <em>Tested</em></div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {s:'Country SM says local practice is different',r:'Local practice is a Tier 4 Addendum candidate — if it is legally required or genuinely market-standard. If it is just habit, the group standard applies. CoE assesses.',col:'var(--amber)'},
+        {s:'Country HRBP drafts a policy that contradicts Tier 1',r:'CoE identifies the contradiction at endorsement stage and sends back for revision. No Tier 4 addendum is endorsed if it contradicts Tier 1. No exceptions.',col:'var(--red)'},
+        {s:'Two countries have different versions of the same procedure',r:'CoE conducts a reconciliation. One version is adopted as Tier 3. The other becomes a country addendum if the difference is legally justified.',col:'var(--amber)'},
+        {s:'A Tier 2 Standard no longer reflects how the business operates',r:'CoE initiates a Tier 2 review. Old version stays active until the new version is complete and endorsed. No gap period without a policy.',col:'var(--teal-accent)'},
+        {s:'A new legal requirement emerges in one country',r:'Country HRBP drafts a Tier 4 Addendum. CoE reviews for consistency with Tier 1–3. If Tier 1 or 2 needs updating group-wide, CoE initiates a Tier 1/2 review.',col:'var(--gold)'},
+      ].map(d=>`<div style="padding:9px 12px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="font-weight:700;font-size:12px;color:var(--ink);margin-bottom:3px">${d.s}</div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.r}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ══ PAGE 03 — MASTER POLICY REGISTER ════════════════════════════
+document.getElementById('page-register').innerHTML=`
+<div class="pe">Section 03 — Master Policy Register</div>
+<div class="pt">Master Policy<br><em>Register</em></div>
+<p class="pd">The complete register of all HR policies at Valentis. Every entry has an owner, a version number, a last-review date, a next-review date, and a current status. The CoE reviews this register monthly and acts on any policy approaching or passing its review date.</p>
+
+<div class="inf go"><strong>Register Maintenance Rule</strong>The register is updated within 5 working days of any policy being created, reviewed, revised, or retired. No policy exists at Valentis without a register entry. No policy is used at Valentis if its status is anything other than "Current".</div>
+
+<div class="tabs" data-tabs>
+  <div class="tab active" onclick="showTab('reg-emp',this)">Employment &amp; Contracts</div>
+  <div class="tab" onclick="showTab('reg-perf',this)">Performance</div>
+  <div class="tab" onclick="showTab('reg-comp',this)">Compensation</div>
+  <div class="tab" onclick="showTab('reg-talent',this)">Talent Acquisition</div>
+  <div class="tab" onclick="showTab('reg-ld',this)">Learning &amp; Dev</div>
+  <div class="tab" onclick="showTab('reg-er',this)">Employee Relations</div>
+</div>
+
+${[
+  {id:'reg-emp',label:'Employment & Contracts',policies:[
+    {name:'Employment Contract Standard',tier:'T1',owner:'CoE',ver:'2.1',last:'Nov 2025',next:'Nov 2026',status:'current',risk:'Low',notes:'4 country-specific addenda in place. Next review: align with any 2026 labour law changes.'},
+    {name:'Probation Period Policy',tier:'T1',owner:'CoE',ver:'1.4',last:'Mar 2025',next:'Mar 2026',status:'review',risk:'Medium',notes:'Due for review. Thailand addendum needs updating — probation period changed under new labour code.'},
+    {name:'Working Hours & Overtime Policy',tier:'T1',owner:'CoE',ver:'1.2',last:'Jun 2025',next:'Jun 2026',status:'current',risk:'Low',notes:'Indonesia addendum covers government contractor overtime rules.'},
+    {name:'Leave Entitlement Policy',tier:'T1',owner:'CoE',ver:'2.0',last:'Jan 2026',next:'Jan 2027',status:'current',risk:'Low',notes:'Freshly reviewed. All country addenda current.'},
+    {name:'Contract Termination Policy',tier:'T1',owner:'CoE',ver:'1.3',last:'Sep 2025',next:'Sep 2026',status:'current',risk:'High',notes:'High-risk policy — legal review recommended at each revision. Myanmar addendum covers specific severance regulations.'},
+    {name:'Work Permit & Visa Policy',tier:'T2',owner:'HR Ops',ver:'1.1',last:'Apr 2025',next:'Apr 2026',status:'review',risk:'High',notes:'Due for review. Indonesia permit rules changed Q1 2026. Urgent update required.'},
+  ]},
+  {id:'reg-perf',label:'Performance Management',policies:[
+    {name:'Performance Management Framework',tier:'T2',owner:'CoE',ver:'2.2',last:'Dec 2025',next:'Dec 2026',status:'current',risk:'Medium',notes:'Core framework current. G4 coaching standard embedded. Thailand applying well — Myanmar applying inconsistently.'},
+    {name:'Performance Improvement Plan (PIP) Policy',tier:'T2',owner:'CoE',ver:'1.3',last:'Oct 2025',next:'Oct 2026',status:'current',risk:'High',notes:'High-risk — legal exposure if misapplied. All managers must use CoE template. No country variations permitted without CoE approval.'},
+    {name:'Performance Review Cycle Procedure',tier:'T3',owner:'HRBP',ver:'1.2',last:'Nov 2025',next:'Nov 2026',status:'current',risk:'Low',notes:'One procedure per country. Thailand and Indonesia current. Laos and Myanmar versions due minor update after Q4 2025 cycle feedback.'},
+    {name:'Underperformance Management Policy',tier:'T2',owner:'CoE',ver:'1.0',last:'Mar 2025',next:'Mar 2026',status:'review',risk:'High',notes:'Due for review. Needs alignment with updated PIP policy. CoE to complete by April 2026.'},
+    {name:'Performance Calibration Standard',tier:'T2',owner:'CoE',ver:'1.1',last:'Jan 2026',next:'Jan 2027',status:'current',risk:'Medium',notes:'New in 2025. Grade distribution benchmarks set. First full-cycle application complete.'},
+  ]},
+  {id:'reg-comp',label:'Compensation & Benefits',policies:[
+    {name:'Compensation Band Framework',tier:'T1',owner:'CoE',ver:'3.0',last:'Jan 2026',next:'Jan 2027',status:'current',risk:'High',notes:'Annual review completed. G1–G6 bands current. COO endorsed. Next review aligned to budget cycle.'},
+    {name:'Merit Review & Pay Increase Policy',tier:'T2',owner:'CoE',ver:'2.1',last:'Dec 2025',next:'Dec 2026',status:'current',risk:'Medium',notes:'Annual merit cycle governed by this policy. Pool allocation methodology included.'},
+    {name:'Pay Equity Policy',tier:'T1',owner:'CoE',ver:'1.2',last:'Jun 2025',next:'Jun 2026',status:'current',risk:'High',notes:'Legal and reputational risk. Annual audit required. Last audit found Myanmar G3 compression — remediation in progress.'},
+    {name:'Benefits Framework',tier:'T2',owner:'CoE',ver:'1.3',last:'Sep 2025',next:'Sep 2026',status:'current',risk:'Low',notes:'Group benefits minimum set. Country benefits vary above the minimum per local market.'},
+    {name:'Expense & Allowance Policy',tier:'T3',owner:'HR Ops',ver:'2.0',last:'Feb 2026',next:'Feb 2027',status:'current',risk:'Low',notes:'Updated Feb 2026. Per diem rates current. Field allowance rates confirmed by country.'},
+    {name:'Long-Term Incentive Policy',tier:'T1',owner:'CoE',ver:'0.1',last:'—',next:'Q4 2026',status:'build',risk:'Medium',notes:'Not yet built. Required as Valentis scales toward senior leadership hires. CoE to design H2 2026.'},
+  ]},
+  {id:'reg-talent',label:'Talent Acquisition',policies:[
+    {name:'Recruitment Policy',tier:'T1',owner:'CoE',ver:'2.0',last:'Nov 2025',next:'Nov 2026',status:'current',risk:'Medium',notes:'Covers all hiring — internal, external, agency. Equal opportunity requirements embedded. JD library referenced.'},
+    {name:'Recruitment Quality Standard',tier:'T2',owner:'CoE',ver:'1.2',last:'Oct 2025',next:'Oct 2026',status:'current',risk:'Medium',notes:'Minimum interview stages, assessment methods, and offer approval workflows per grade.'},
+    {name:'Internal Mobility & Promotion Policy',tier:'T1',owner:'CoE',ver:'1.1',last:'Mar 2025',next:'Mar 2026',status:'review',risk:'Medium',notes:'Due for review. G3→G4 promotion criteria need updating to reflect new coaching competency requirements.'},
+    {name:'Onboarding Standard',tier:'T2',owner:'CoE',ver:'1.3',last:'Aug 2025',next:'Aug 2026',status:'current',risk:'Low',notes:'90-day onboarding framework. Country-specific checklists in Tier 3.'},
+    {name:'Offboarding & Exit Standard',tier:'T2',owner:'CoE',ver:'1.1',last:'Jul 2025',next:'Jul 2026',status:'current',risk:'Medium',notes:'Exit interview framework included. Knowledge transfer requirements for G4+ exits.'},
+  ]},
+  {id:'reg-ld',label:'Learning & Development',policies:[
+    {name:'Learning & Development Policy',tier:'T1',owner:'CoE',ver:'1.2',last:'Apr 2025',next:'Apr 2026',status:'review',risk:'Low',notes:'Due for review. Needs update to reflect G4 structured coaching programme being rolled out in 2026.'},
+    {name:'G4 Coaching Standard',tier:'T2',owner:'CoE',ver:'1.0',last:'Jan 2026',next:'Jan 2027',status:'current',risk:'Medium',notes:'New in 2026. Defines minimum coaching hours, quality criteria, and conversion rate targets per G4 coach.'},
+    {name:'Training Approval & Budget Policy',tier:'T3',owner:'HRBP',ver:'1.1',last:'Jan 2026',next:'Jan 2027',status:'current',risk:'Low',notes:'Approval thresholds per grade. Country budget allocations set annually.'},
+    {name:'Succession & Bench Development Policy',tier:'T2',owner:'CoE',ver:'1.1',last:'Jun 2025',next:'Jun 2026',status:'review',risk:'High',notes:'Due for review. Laos SM succession gap makes this high-priority. Updated criteria for SM-readiness assessment needed.'},
+  ]},
+  {id:'reg-er',label:'Employee Relations & Conduct',policies:[
+    {name:'Code of Conduct',tier:'T1',owner:'CoE + Legal',ver:'2.0',last:'Jan 2025',next:'Jan 2026',status:'review',risk:'High',notes:'Overdue — triggered annual review not completed. Urgent: complete by April 2026. Covers ethics, conflicts of interest, anti-bribery.'},
+    {name:'Anti-Bribery & Corruption Policy',tier:'T1',owner:'CoE + Legal',ver:'1.3',last:'Jan 2025',next:'Jan 2026',status:'review',risk:'Critical',notes:'Critical — overdue. Mining/exploration sector carries elevated anti-bribery risk. Legal review required. Escalate to COO.'},
+    {name:'Grievance & Disciplinary Policy',tier:'T1',owner:'CoE',ver:'1.4',last:'May 2025',next:'May 2026',status:'current',risk:'High',notes:'Active policy. Country addenda cover jurisdiction-specific disciplinary process requirements.'},
+    {name:'Workplace Harassment & Conduct Policy',tier:'T1',owner:'CoE',ver:'1.2',last:'Jul 2025',next:'Jul 2026',status:'current',risk:'High',notes:'Covers all forms of harassment. Reporting channels defined. Investigation standard embedded.'},
+    {name:'Whistleblowing Policy',tier:'T1',owner:'CoE + Legal',ver:'0.1',last:'—',next:'Q3 2026',status:'build',risk:'High',notes:'Not yet built. Required for governance credibility. Priority build for H2 2026. Anonymous reporting channel needed.'},
+    {name:'Health, Safety & Wellbeing Policy',tier:'T1',owner:'CoE + Ops',ver:'0.1',last:'—',next:'Q4 2026',status:'build',risk:'High',notes:'Not yet built. Field operations in mining/exploration create elevated H&S obligation. Ops to co-own. Build Q3–Q4 2026.'},
+  ]},
+].map(domain=>`
+<div id="tb-${domain.id}" class="tb${domain.id==='reg-emp'?' active':''}">
+  <div class="card">
+    <div class="ct">${domain.label} — Policy Register</div>
+    <div style="overflow-x:auto">
+    <table class="dt">
+      <thead>
+        <tr>
+          <th style="min-width:200px">Policy Name</th>
+          <th>Tier</th>
+          <th>Owner</th>
+          <th>Version</th>
+          <th>Last Review</th>
+          <th>Next Review</th>
+          <th>Status</th>
+          <th>Risk</th>
+          <th style="min-width:220px">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${domain.policies.map(p=>{
+          const statusEl=p.status==='current'?`<span class="s-current">Current</span>`:
+            p.status==='review'?`<span class="s-review">Due Review</span>`:
+            p.status==='build'?`<span class="s-build">To Build</span>`:
+            p.status==='draft'?`<span class="s-draft">Draft</span>`:`<span class="s-missing">Missing</span>`;
+          const riskEl=p.risk==='Critical'?`<span class="cr chip">Critical</span>`:
+            p.risk==='High'?`<span class="chip" style="background:#fff3f3;color:var(--red);border:1px solid var(--red-border);font-size:8px">High</span>`:
+            p.risk==='Medium'?`<span class="ca chip" style="font-size:8px">Medium</span>`:
+            `<span class="cm chip" style="font-size:8px">Low</span>`;
+          return `<tr>
+            <td style="font-weight:600;font-size:12.5px">${p.name}</td>
+            <td><span class="chip cgo" style="font-size:8px">${p.tier}</span></td>
+            <td style="font-size:11.5px">${p.owner}</td>
+            <td style="font-family:var(--fm);font-size:10px;color:var(--ink4)">${p.ver}</td>
+            <td style="font-family:var(--fm);font-size:10px;color:var(--ink4)">${p.last}</td>
+            <td style="font-family:var(--fm);font-size:10px;color:var(--ink4)">${p.next}</td>
+            <td>${statusEl}</td>
+            <td>${riskEl}</td>
+            <td style="font-size:11.5px;color:var(--ink3)">${p.notes}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+`).join('')}
+`;
+
+// ══ PAGE 04 — HR STANDARDS REGISTER ═════════════════════════════
+document.getElementById('page-standards').innerHTML=`
+<div class="pe">Section 04 — HR Standards Register</div>
+<div class="pt">HR Standards<br><em>Register</em></div>
+<p class="pd">HR Standards are distinct from HR Policies. A policy says what must happen. A standard says how well it must happen. The standards register defines the minimum quality bar for every HR process at Valentis — so "we have a performance review process" is not enough. The standard specifies what a good one looks like.</p>
+
+<div class="vx">
+  <div class="vx-ey">Policy vs Standard — The Distinction That Matters</div>
+  <div class="vx-ti">A policy says "all staff must have a performance review annually." A standard says "performance reviews must include a structured self-assessment, a manager-led competency discussion, a documented development plan, and a grade progression recommendation where applicable." The policy creates the obligation. The standard defines quality.</div>
+  <div class="vx-bo">Without standards, policies get technically complied with but practically ignored. A country can run an annual performance review in 10 minutes with no documentation and say they have met the policy. The standard closes that gap — it defines what meeting the policy actually looks like. At Valentis, every HR process covered by a Tier 2 document has a corresponding standard. The CoE owns the standards and audits against them quarterly.</div>
+</div>
+
+<div class="card">
+  <div class="ct">HR Operating Standards — <em>Complete Register</em></div>
+  <table class="dt">
+    <thead><tr><th>Standard</th><th>What It Defines</th><th>Minimum Bar</th><th>Audit Frequency</th><th>Status</th></tr></thead>
+    <tbody>
+      ${[
+        {cat:'TALENT ACQUISITION'},
+        {name:'Recruitment Quality Standard',what:'Minimum process requirements for all external hires',bar:'2+ interviews · structured assessment · documented scoring · offer within band',freq:'Quarterly',status:'current'},
+        {name:'Onboarding Quality Standard',what:'Minimum onboarding experience for all new hires',bar:'Day 1 induction · 30-day check-in · 60-day development plan · 90-day review',freq:'Quarterly',status:'current'},
+        {name:'JD Quality Standard',what:'Minimum content requirements for all job descriptions',bar:'Grade · scope · competencies · reporting line · salary band disclosed',freq:'Annual',status:'current'},
+        {cat:'PERFORMANCE MANAGEMENT'},
+        {name:'Performance Review Standard',what:'Minimum quality for annual performance reviews',bar:'Self-assessment completed · competency discussion documented · development plan agreed · grade recommendation made',freq:'Annual (post-cycle)',status:'current'},
+        {name:'G4 Coaching Standard',what:'Minimum coaching activity for G4 coaches',bar:'4+ hrs/trainee/month · monthly coaching log · conversion rate ≥65% · quarterly quality check',freq:'Quarterly',status:'current'},
+        {name:'Calibration Standard',what:'Minimum requirements for performance calibration',bar:'Cross-manager calibration session · grade distribution reviewed · no more than 20% top rating without justification',freq:'Annual',status:'current'},
+        {name:'PIP Quality Standard',what:'Minimum requirements for a valid PIP',bar:'Written plan · measurable targets · weekly check-ins · HR involvement from day 1 · documented outcomes',freq:'Per PIP',status:'current'},
+        {cat:'COMPENSATION & BENEFITS'},
+        {name:'Pay Decision Standard',what:'Requirements for all salary decisions',bar:'Within approved band · manager + HR approval · documented rationale · equity check completed',freq:'Quarterly',status:'current'},
+        {name:'Merit Review Standard',what:'Annual merit cycle quality requirements',bar:'All in-scope staff reviewed · pool allocation documented · calibration completed · communications sent within 5 days',freq:'Annual',status:'current'},
+        {name:'Pay Equity Audit Standard',what:'Minimum scope of annual pay equity review',bar:'Grade-level analysis · gender analysis where data available · band compression check · exception report to COO',freq:'Annual',status:'current'},
+        {cat:'EMPLOYEE RELATIONS'},
+        {name:'Grievance Investigation Standard',what:'Minimum requirements for grievance investigations',bar:'Acknowledged within 2 days · investigator appointed · findings documented · outcome communicated within 20 working days',freq:'Per case',status:'current'},
+        {name:'Disciplinary Process Standard',what:'Minimum procedural requirements for disciplinary action',bar:'Allegation documented · response opportunity given · HR present · outcome letter issued · appeal right communicated',freq:'Per case',status:'current'},
+        {cat:'HR OPERATIONS'},
+        {name:'Data Accuracy Standard',what:'Minimum HRIS data quality requirements',bar:'Headcount reconciled monthly · grade/salary data verified quarterly · leavers processed within 5 days',freq:'Monthly',status:'review'},
+        {name:'Contract Issuance Standard',what:'Timeliness and completeness of employment contracts',bar:'Contract issued before day 1 · all terms confirmed · countersigned copy filed within 10 days',freq:'Quarterly',status:'current'},
+      ].map(r=>{
+        if(r.cat) return `<tr style="background:var(--teal)"><td colspan="5" style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.55);padding:7px 12px">${r.cat}</td></tr>`;
+        return `<tr>
+          <td style="font-weight:600;font-size:12.5px">${r.name}</td>
+          <td style="font-size:12px;font-weight:300">${r.what}</td>
+          <td style="font-size:11.5px;font-family:var(--fm);color:var(--teal-accent)">${r.bar}</td>
+          <td style="font-size:11.5px;color:var(--ink4)">${r.freq}</td>
+          <td>${r.status==='current'?'<span class="s-current">Current</span>':'<span class="s-review">Due Review</span>'}</td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>
+</div>
+`;
+
+// ══ PAGE 05 — OWNERSHIP & REVIEW CADENCE ═══════════════════════
+document.getElementById('page-ownership').innerHTML=`
+<div class="pe">Section 05 — Ownership &amp; Review Cadence</div>
+<div class="pt">Ownership &amp;<br><em>Review Cadence</em></div>
+<p class="pd">Every policy has one owner. Every policy has one review date. The review date is not optional — it is the commitment the CoE makes to ensuring Valentis never operates on an outdated HR policy. This section maps ownership, review triggers, and the annual review schedule.</p>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Ownership Model — <em>Who Owns What</em></div>
+    <div class="inf go"><strong>The Single Owner Rule</strong>Every policy at Valentis has exactly one owner — the person accountable for ensuring it is current, applied correctly, and reviewed on schedule. "Shared ownership" is not permitted — it means no one owns it.</div>
+    <table class="dt">
+      <thead><tr><th>Owner</th><th>Policy Types</th><th>Review Authority</th><th>Escalation Path</th></tr></thead>
+      <tbody>
+        ${[
+          {owner:'CoE (Group HR Head)',types:'All Tier 1 Group Policies · All Tier 2 Functional Standards · Exception register',auth:'Can review and update independently. Tier 1 changes require COO endorsement.',esc:'COO for Tier 1 changes'},
+          {owner:'HR Operations',types:'Tier 3 Operating Procedures (process-heavy) · Data and contract standards',auth:'Can update procedures within the framework set by Tier 2. Must notify CoE of any change.',esc:'CoE for any change that touches Tier 2'},
+          {owner:'Country HRBP',types:'Tier 3 Country Procedures · Tier 4 Country Addenda',auth:'Can draft and maintain. All changes require CoE endorsement before taking effect.',esc:'CoE for all changes'},
+          {owner:'CoE + Legal (joint)',types:'Code of Conduct · Anti-Bribery · Whistleblowing · any policy with material legal risk',auth:'Joint review required. Legal signs off on compliance. CoE signs off on HR implementation.',esc:'COO + Legal Counsel for Tier 1 changes'},
+        ].map(r=>`<tr><td style="font-weight:600;font-size:12px;color:var(--gold)">${r.owner}</td><td style="font-size:12px;font-weight:300">${r.types}</td><td style="font-size:11.5px;font-weight:300">${r.auth}</td><td style="font-size:11.5px;color:var(--teal-accent);font-weight:300">${r.esc}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Review Triggers — <em>What Forces a Review</em></div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {trigger:'Scheduled Review Date',desc:'Every policy has an annual or biennial review date set at creation. Review starts 60 days before the date to allow for drafting, consultation, and endorsement.',priority:'Standard',col:'var(--teal-accent)'},
+        {trigger:'Legal or Regulatory Change',desc:'Any change to labour law, employment regulation, or tax law in any Valentis country of operation triggers an immediate policy impact assessment.',priority:'Urgent',col:'var(--red)'},
+        {trigger:'Significant Business Change',desc:'New country entry, major headcount growth (>25%), acquisition, or change to operating model triggers a review of all affected policies.',priority:'Urgent',col:'var(--red)'},
+        {trigger:'Material Policy Failure',desc:'Where a policy failure leads to an ER case, legal exposure, or audit finding — the policy is reviewed immediately regardless of review date.',priority:'Immediate',col:'var(--red)'},
+        {trigger:'Country Feedback',desc:'Where HRBP or SM feedback indicates a policy is unworkable in practice — CoE assesses and initiates a review if the feedback is validated.',priority:'Standard',col:'var(--amber)'},
+        {trigger:'Benchmark Review',desc:'Every 2 years, CoE benchmarks key policies against market practice for mineral exploration companies of comparable size in the region.',priority:'Planned',col:'var(--gold)'},
+      ].map(d=>`<div style="padding:9px 12px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+          <span style="font-weight:700;font-size:12.5px;color:var(--ink)">${d.trigger}</span>
+          <span class="chip" style="font-size:8px;background:rgba(0,0,0,0.05);border:1px solid var(--border);color:var(--ink4)">${d.priority}</span>
+        </div>
+        <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.desc}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Annual Review Schedule — <em>2026</em></div>
+  <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">Reviews are spread across the year to prevent CoE capacity overload. High-risk policies (Tier 1, legal-critical) are prioritised and reviewed with legal input.</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+    ${[
+      {q:'Q1 Jan–Mar',reviews:['Code of Conduct (overdue — urgent)','Anti-Bribery Policy (overdue — urgent)','Compensation Band Framework','Probation Period Policy','Work Permit & Visa Policy']},
+      {q:'Q2 Apr–Jun',reviews:['L&D Policy','Succession & Bench Development Policy','Internal Mobility & Promotion Policy','Pay Equity Policy','Underperformance Policy']},
+      {q:'Q3 Jul–Sep',reviews:['Grievance & Disciplinary Policy','Onboarding Standard','Whistleblowing Policy (build)','Health & Safety Policy (build)','Expense & Allowance Policy']},
+      {q:'Q4 Oct–Dec',reviews:['Performance Management Framework','Employment Contract Standard','Recruitment Quality Standard','Merit Review & Pay Increase Policy','Long-Term Incentive Policy (build)']},
+    ].map(q=>`<div style="background:var(--surface2);border-radius:4px;padding:14px;border-top:3px solid var(--gold)">
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">${q.q}</div>
+      ${q.reviews.map(r=>{
+        const isUrgent=r.includes('overdue')||r.includes('urgent');
+        const isBuild=r.includes('(build)');
+        return `<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--border);color:${isUrgent?'var(--red)':isBuild?'var(--teal-accent)':'var(--ink3)'};font-weight:${isUrgent?'600':'300'};line-height:1.4">${r}</div>`;
+      }).join('')}
+    </div>`).join('')}
+  </div>
+</div>
+`;
+
+// ══ PAGE 06 — EXCEPTION MANAGEMENT ══════════════════════════════
+document.getElementById('page-exceptions').innerHTML=`
+<div class="pe">Section 06 — Exception Management</div>
+<div class="pt">Exception<br><em>Management</em></div>
+<p class="pd">A policy exception is a documented, time-limited deviation from a group HR policy — approved by the CoE and recorded in the exception register. Exceptions are not policy failures. They are the formal mechanism through which Valentis accommodates legitimate variation without undermining the integrity of its policy architecture.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Exception Philosophy</div>
+  <div class="vx-ti">Every exception granted without documentation is a policy that exists in practice but not in principle — invisible, untracked, and impossible to reverse. The exception register makes exceptions visible, bounded, and reversible.</div>
+  <div class="vx-bo">The most dangerous HR governance failure at a multi-country company is the informal exception — the "we always do it this way in Indonesia" that has never been approved, is not in writing, and creates legal exposure when someone eventually challenges it. The exception process at Valentis prevents this: if a deviation from group policy is necessary, it must be requested, assessed, approved, documented, and time-limited. Nothing informal. Nothing permanent without a policy update.</div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Exception Process — <em>Five Steps</em></div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {n:'01',t:'Request Submission',d:'Country HRBP or SM submits a written exception request to the CoE. The request must include: the policy being excepted, the specific deviation requested, the business or legal justification, and the proposed duration.',form:'Exception Request Form (Tool 2 Appendix)',col:'var(--gold)'},
+        {n:'02',t:'CoE Assessment',d:'CoE assesses the request within 5 working days. Assessment criteria: Is the deviation legally required? Is it consistent with group principles? Does it create risk for other countries or the group? What is the precedent risk?',form:'CoE Exception Assessment Template',col:'var(--gold)'},
+        {n:'03',t:'Approval or Rejection',d:'CoE approves or rejects the exception. Tier 1 policy exceptions require COO endorsement in addition to CoE approval. All decisions are communicated in writing within 2 working days of assessment completion.',form:'Exception Decision Letter',col:'var(--teal-accent)'},
+        {n:'04',t:'Documentation & Registration',d:'Approved exceptions are entered in the Exception Register immediately. The register records: exception granted, policy affected, country, justification, approver, start date, expiry date, and review trigger.',form:'Exception Register entry',col:'var(--teal-accent)'},
+        {n:'05',t:'Review & Closure',d:'Each exception has a defined expiry date — maximum 12 months. CoE reviews all active exceptions quarterly. On expiry: either the exception is renewed (with fresh assessment), closed, or the group policy is updated to accommodate the variation permanently.',form:'Exception Review Checklist',col:'var(--green)'},
+      ].map(d=>`<div style="padding:11px 14px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0;display:flex;gap:12px">
+        <span style="font-family:var(--fm);font-size:11px;font-weight:700;color:${d.col};flex-shrink:0;padding-top:2px">${d.n}</span>
+        <div>
+          <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:3px">${d.t}</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.6;margin-bottom:4px">${d.d}</div>
+          <div style="font-family:var(--fm);font-size:9.5px;color:${d.col}">→ ${d.form}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Exception Register — <em>Active Exceptions Q1 2026</em></div>
+    <div class="inf a"><strong>Register Status</strong>4 active exceptions currently in place. 2 due for renewal in Q2 2026. 1 flagged for escalation to policy update.</div>
+    <table class="dt">
+      <thead><tr><th>Exception</th><th>Country</th><th>Policy</th><th>Justification</th><th>Approved</th><th>Expires</th><th>Action</th></tr></thead>
+      <tbody>
+        ${[
+          {exc:'G3 salary above band midpoint',country:'Indonesia',policy:'Comp Band Framework',just:'Market rate for qualified G3 in Indonesian mining sector exceeds band midpoint',approved:'COO',expires:'Dec 2026',action:'Review band at next comp review'},
+          {exc:'Extended probation period — 6 months',country:'Thailand',policy:'Probation Period Policy',just:'Thai Labour Protection Act allows extended probation for technical roles by mutual agreement',approved:'CoE',expires:'Jun 2026',action:'Update Tier 4 addendum to make permanent'},
+          {exc:'Paper-based contract process',country:'Laos',policy:'Contract Issuance Standard',just:'Digital signature not legally recognised under Lao law for employment contracts',approved:'CoE',expires:'Dec 2026',action:'Monitor Lao digital law developments — renew if needed'},
+          {exc:'Delayed performance review — Q1 cycle',country:'Myanmar',policy:'Performance Review Cycle',just:'Security situation Q4 2025 disrupted scheduled review cycle. COO approved delay.',approved:'COO',expires:'Apr 2026',action:'Complete by April 2026 — close exception'},
+        ].map(r=>`<tr>
+          <td style="font-weight:600;font-size:12px">${r.exc}</td>
+          <td><span class="chip cm" style="font-size:8px">${r.country}</span></td>
+          <td style="font-size:11.5px;font-weight:300">${r.policy}</td>
+          <td style="font-size:11.5px;font-weight:300;color:var(--ink4)">${r.just}</td>
+          <td style="font-size:11px;font-family:var(--fm)">${r.approved}</td>
+          <td style="font-size:11px;font-family:var(--fm);color:var(--amber)">${r.expires}</td>
+          <td style="font-size:11.5px;color:var(--teal-accent);font-weight:300">${r.action}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+`;
+
+// ══ PAGE 07 — COUNTRY ADDENDA ════════════════════════════════════
+document.getElementById('page-country').innerHTML=`
+<div class="pe">Section 07 — Country Addenda</div>
+<div class="pt">Country<br><em>Addenda</em></div>
+<p class="pd">Country Addenda are the formal mechanism through which Valentis accommodates legitimate country-specific variation in HR policy without fragmenting the group framework. An addendum supplements a group policy — it never overrides it. This section maps all current addenda and the process for creating new ones.</p>
+
+<div class="inf t"><strong>The Addendum Rule</strong>An addendum can add to a group policy requirement (e.g. a longer notice period required by local law). It cannot reduce a group policy requirement (e.g. a shorter performance review process because it is "easier locally"). If local law requires something less than the group standard, the group standard applies unless CoE grants a documented exception.</div>
+
+<div class="card">
+  <div class="ct">Country Addenda Register — <em>All Active Addenda</em></div>
+  <table class="dt">
+    <thead><tr><th>Addendum</th><th>Country</th><th>Parent Policy</th><th>What It Adds</th><th>Legal Basis</th><th>CoE Endorsed</th><th>Next Review</th></tr></thead>
+    <tbody>
+      ${[
+        {add:'Extended Probation Addendum',country:'Thailand',parent:'Probation Period Policy',adds:'6-month probation permitted for G1–G3 technical roles with written mutual agreement',legal:'Thai Labour Protection Act B.E. 2541',endorsed:'Jan 2026',next:'Jan 2027'},
+        {add:'Severance Calculation Supplement',country:'Indonesia',parent:'Contract Termination Policy',adds:'Indonesian Manpower Law severance formula (service-length multiplier) supersedes group notice period calculation',legal:'Indonesian Manpower Act No.13/2003',endorsed:'Mar 2025',next:'Mar 2026'},
+        {add:'Work Permit Reporting Addendum',country:'Indonesia',parent:'Work Permit & Visa Policy',adds:'Monthly reporting to DKPTKI required for all foreign workers — additional step beyond group standard',legal:'Indonesian Immigration Law',endorsed:'Jun 2025',next:'Jun 2026'},
+        {add:'Public Holiday Schedule — Thailand',country:'Thailand',parent:'Leave Entitlement Policy',adds:'13 public holidays per year per Thai Labour law; group standard is 10',legal:'Thai Labour Protection Act',endorsed:'Jan 2026',next:'Jan 2027'},
+        {add:'Public Holiday Schedule — Laos',country:'Laos',parent:'Leave Entitlement Policy',adds:'15 public holidays per year per Lao Labour Law; group standard is 10',legal:'Lao Labour Law 2014',endorsed:'Jan 2026',next:'Jan 2027'},
+        {add:'Annual Leave Entitlement — Myanmar',country:'Myanmar',parent:'Leave Entitlement Policy',adds:'Minimum 10 days annual leave per Myanmar Labour Law; group standard is 15 — group standard applies',legal:'Myanmar Leave & Holidays Act',endorsed:'Jan 2026',next:'Jan 2027'},
+        {add:'Paper Contract Process — Laos',country:'Laos',parent:'Contract Issuance Standard',adds:'Wet-ink signature required on all employment contracts — digital signatures not legally valid',legal:'Lao Contract Law',endorsed:'Jun 2025',next:'Jun 2026'},
+      ].map(r=>`<tr>
+        <td style="font-weight:600;font-size:12.5px">${r.add}</td>
+        <td><span class="chip cm" style="font-size:8px">${r.country}</span></td>
+        <td style="font-size:11.5px;font-weight:300">${r.parent}</td>
+        <td style="font-size:12px;font-weight:300">${r.adds}</td>
+        <td style="font-size:10.5px;font-family:var(--fm);color:var(--ink5)">${r.legal}</td>
+        <td style="font-size:11px;font-family:var(--fm);color:var(--green)">${r.endorsed}</td>
+        <td style="font-size:11px;font-family:var(--fm);color:var(--amber)">${r.next}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Creating a New Addendum — <em>Process</em></div>
+    ${[
+      {n:'01',t:'Identify the Need',d:'Country HRBP identifies a legal requirement or legitimate market practice that differs from the group policy. Documents the specific difference and its source (legislation, case law, market data).'},
+      {n:'02',t:'Draft the Addendum',d:'HRBP drafts the addendum using the CoE Addendum Template. The draft must reference: the parent policy, the specific variation, the legal or market basis, and the intended effective date.'},
+      {n:'03',t:'CoE Review',d:'CoE reviews within 10 working days. Checks: Does it contradict Tier 1? Is the legal basis valid? Does it create group-wide implications? Is there precedent in another country?'},
+      {n:'04',t:'Legal Validation (if required)',d:'For addenda driven by local labour law, CoE may request validation from a local legal adviser before endorsing. Required for all Tier 1 addenda.'},
+      {n:'05',t:'CoE Endorsement',d:'CoE endorses the addendum, assigns a version number, and adds it to the Country Addenda Register. The effective date is confirmed and communicated to the country.'},
+    ].map(d=>`<div style="padding:10px 14px;background:var(--surface2);border-radius:3px;display:flex;gap:12px;margin-bottom:6px">
+      <span style="font-family:var(--fm);font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0">${d.n}</span>
+      <div><div style="font-weight:700;font-size:12.5px;margin-bottom:3px">${d.t}</div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.d}</div></div>
+    </div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Addenda Gaps — <em>What Still Needs Building</em></div>
+    <div class="inf r"><strong>3 addenda identified as required but not yet built</strong>These are known legal or market gaps. CoE to complete in H1 2026.</div>
+    ${[
+      {gap:'Myanmar Disciplinary Process Addendum',parent:'Grievance & Disciplinary Policy',reason:'Myanmar labour law specifies different notice and hearing requirements for disciplinary action vs group standard.',priority:'High',target:'Q2 2026'},
+      {gap:'Indonesia Health & Safety Addendum',parent:'Health & Safety Policy (to be built)',reason:'Indonesian government contractor H&S requirements exceed group standard minimum — separate addendum needed once parent policy built.',priority:'High',target:'Q4 2026'},
+      {gap:'Thailand Trade Union Addendum',parent:'Employee Relations Policy',reason:'Thailand\'s trade union rights under LPA need to be addressed in policy — current policy silent on union recognition.',priority:'Medium',target:'Q3 2026'},
+    ].map(d=>`<div style="padding:12px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:5px">
+        <span style="font-weight:700;font-size:13px;color:var(--ink)">${d.gap}</span>
+        <span class="chip cr" style="flex-shrink:0;margin-left:8px">${d.priority}</span>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);font-weight:300;margin-bottom:4px">${d.reason}</div>
+      <div style="font-family:var(--fm);font-size:9.5px;color:var(--red)">Parent: ${d.parent} · Target: ${d.target}</div>
+    </div>`).join('')}
+  </div>
+</div>
+`;
+
+// ══ PAGE 08 — REGISTER HEALTH DASHBOARD ════════════════════════
+document.getElementById('page-health').innerHTML=`
+<div class="pe">Section 08 — Register Health Dashboard</div>
+<div class="pt">Register<br><em>Health</em></div>
+<p class="pd">The register health dashboard is the CoE's monthly view of policy and standards health across the group. It answers three questions in under 2 minutes: what is current and healthy, what needs action in the next 90 days, and what is the CoE's priority build list.</p>
+
+<div class="krow">
+  <div class="kpi kgr2"><div class="kl">Current &amp; Healthy</div><div class="kv">21</div><div class="ks">Reviewed on schedule · No action required</div><div class="ktag ktag-gr">66% of register</div></div>
+  <div class="kpi ka"><div class="kl">Due Review (&lt;90 days)</div><div class="kv">8</div><div class="ks">Approaching or past review date · CoE action needed</div><div class="ktag ktag-a">Q2 2026 action</div></div>
+  <div class="kpi kt2"><div class="kl">Build Queue</div><div class="kv">3</div><div class="ks">Identified gaps · No policy currently exists</div><div class="ktag ktag-t">H2 2026 target</div></div>
+  <div class="kpi" style="border-top:3px solid var(--red);"><div class="kl">Critical / Overdue</div><div class="kv" style="color:var(--red)">2</div><div class="ks">Code of Conduct + Anti-Bribery — overdue and high-risk</div><div class="ktag ktag-r">Escalate to COO</div></div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">CoE Action List — <em>Q2 2026</em></div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {priority:'Critical',action:'Complete Code of Conduct review',deadline:'April 2026',owner:'CoE + Legal',notes:'Overdue since January. COO to be informed. Legal review required.',col:'var(--red)'},
+        {priority:'Critical',action:'Complete Anti-Bribery & Corruption Policy review',deadline:'April 2026',owner:'CoE + Legal',notes:'Overdue since January. Mining sector risk exposure. COO sign-off required on updated version.',col:'var(--red)'},
+        {priority:'High',action:'Update Work Permit & Visa Policy — Indonesia',deadline:'April 2026',owner:'CoE + HR Ops',notes:'Indonesia permit rules changed Q1 2026. Policy must reflect new DKPTKI requirements.',col:'var(--amber)'},
+        {priority:'High',action:'Review Probation Period Policy',deadline:'April 2026',owner:'CoE',notes:'Thailand addendum update required. Annual review due.',col:'var(--amber)'},
+        {priority:'High',action:'Build Myanmar Disciplinary Process Addendum',deadline:'June 2026',owner:'CoE + Myanmar HRBP',notes:'Labour law gap. Required before next disciplinary case arises in Myanmar.',col:'var(--amber)'},
+        {priority:'Medium',action:'Review Underperformance Management Policy',deadline:'April 2026',owner:'CoE',notes:'Alignment with updated PIP policy required.',col:'var(--gold)'},
+        {priority:'Medium',action:'Review L&D Policy',deadline:'May 2026',owner:'CoE',notes:'Update to reflect 2026 G4 coaching programme.',col:'var(--gold)'},
+        {priority:'Medium',action:'Review Succession & Bench Development Policy',deadline:'June 2026',owner:'CoE',notes:'Laos SM succession gap makes this high-priority context update.',col:'var(--gold)'},
+        {priority:'Planned',action:'Begin Whistleblowing Policy build',deadline:'Q3 2026',owner:'CoE + Legal',notes:'Board governance requirement. Anonymous reporting channel to be designed.',col:'var(--teal-accent)'},
+        {priority:'Planned',action:'Begin Health & Safety Policy build',deadline:'Q3–Q4 2026',owner:'CoE + Operations',notes:'Field operations require dedicated H&S policy. Operations to co-own.',col:'var(--teal-accent)'},
+      ].map(d=>`<div style="padding:9px 14px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0;display:flex;gap:12px;align-items:flex-start">
+        <span class="chip" style="background:rgba(0,0,0,0.05);border:1px solid var(--border);color:var(--ink4);font-size:8px;flex-shrink:0;white-space:nowrap">${d.priority}</span>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:3px">
+            <span style="font-weight:700;font-size:12.5px;color:var(--ink)">${d.action}</span>
+            <span style="font-family:var(--fm);font-size:9.5px;color:${d.col};flex-shrink:0;margin-left:8px">${d.deadline}</span>
+          </div>
+          <div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.notes} <span style="color:var(--ink5)">· Owner: ${d.owner}</span></div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Register Health — <em>Trend</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">The CoE tracks register health quarterly. Target: 85% of policies current at all times. Current: 66%. Two overdue critical policies are the primary driver of the gap.</div>
+    <table class="dt">
+      <thead><tr><th>Quarter</th><th>Current</th><th>Due Review</th><th>Overdue</th><th>Health %</th><th>Trend</th></tr></thead>
+      <tbody>
+        ${[
+          {q:'Q2 2025',c:18,dr:6,od:0,pct:75,trend:'—'},
+          {q:'Q3 2025',c:19,dr:5,od:0,pct:79,trend:'↑'},
+          {q:'Q4 2025',c:20,dr:5,od:0,pct:83,trend:'↑'},
+          {q:'Q1 2026',c:21,dr:8,od:2,pct:66,trend:'↓ (2 overdue critical)'},
+          {q:'Q2 2026 Target',c:27,dr:3,od:0,pct:84,trend:'↑ (action plan)'},
+        ].map(r=>`<tr>
+          <td style="font-weight:600;font-size:12px">${r.q}</td>
+          <td style="color:var(--green);font-weight:600">${r.c}</td>
+          <td style="color:var(--amber)">${r.dr}</td>
+          <td style="color:${r.od>0?'var(--red)':'var(--ink4)'};font-weight:${r.od>0?'700':'300'}">${r.od}</td>
+          <td style="font-weight:700;color:${r.pct>=80?'var(--green)':r.pct>=70?'var(--amber)':'var(--red)'}">${r.pct}%</td>
+          <td style="font-size:11.5px;color:var(--ink4)">${r.trend}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div class="inf go" style="margin-top:12px"><strong>Q2 2026 Health Target: 84%</strong>Completing the 8 due-review policies and closing the 2 overdue criticals brings the register from 66% to 84% health by end of Q2. This is the CoE's single most important Q2 deliverable.</div>
+  </div>
+</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Design Toolkit — L&amp;D Tool 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1eb;--surface:#fff;--surface2:#edeae2;--surface3:#e4e0d6;
+  --border:#d8d3c8;--border2:#c8c2b4;
+  --ink:#1a1a14;--ink2:#2c2b22;--ink3:#524f44;--ink4:#857f72;--ink5:#b4ae9f;
+  --forest:#1f4d35;--forest2:#276044;--forest3:#2e7350;
+  --forest-dim:rgba(31,77,53,0.07);--forest-border:rgba(31,77,53,0.22);
+  --brass:#7a5c14;--brass2:#8f6d1a;
+  --brass-dim:rgba(122,92,20,0.08);--brass-border:rgba(122,92,20,0.22);
+  --sienna:#9b3a1a;--sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.2);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --slate:#2c3a30;
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--forest3),var(--forest),rgba(31,77,53,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;background:rgba(31,77,53,0.2);border:1px solid rgba(31,77,53,0.4);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:#6dbf8a;font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(31,77,53,0.2);border-color:rgba(31,77,53,0.45);color:#6dbf8a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--forest3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#6dbf8a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--forest);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--forest)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--forest);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-forest{background:var(--forest-dim);color:var(--forest);border:1px solid var(--forest-border)}
+.chip-brass{background:var(--brass-dim);color:var(--brass);border:1px solid var(--brass-border)}
+.chip-sienna{background:var(--sienna-dim);color:var(--sienna);border:1px solid var(--sienna-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.forest{background:var(--forest-dim);border-color:var(--forest);color:var(--ink2)}
+.info.brass{background:var(--brass-dim);border-color:var(--brass);color:var(--ink2)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--forest);padding:16px 20px;margin:16px 0;background:var(--forest-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--forest)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--forest);border-bottom-color:var(--forest);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+.acc-item{border:1px solid var(--border);border-radius:4px;margin-bottom:8px;overflow:hidden}
+.acc-header{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--surface);transition:background .12s;font-weight:600;color:var(--ink);font-size:14px}
+.acc-header:hover{background:var(--surface2)}
+.acc-header.open{background:var(--forest-dim);border-bottom:1px solid var(--forest-border)}
+.acc-icon{font-family:var(--fm);font-size:12px;color:var(--forest);transition:transform .2s}
+.acc-header.open .acc-icon{transform:rotate(45deg)}
+.acc-body{display:none;padding:18px;background:var(--surface)}
+.acc-body.open{display:block}
+/* CHECKIN BUILDER */
+.ci-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px}
+.ci-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;display:block}
+.ci-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:10px 14px;font-size:13px;color:#f0ede4;font-family:var(--fb);margin-bottom:12px;outline:none;transition:border .13s}
+.ci-input:focus{border-color:rgba(31,77,53,0.6)}
+.ci-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:10px 14px;font-size:13px;color:#f0ede4;font-family:var(--fb);margin-bottom:12px;outline:none;cursor:pointer}
+.ci-select option{background:var(--slate);color:#f0ede4}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-forest{background:var(--forest);color:#fff}
+.btn-forest:hover{background:var(--forest2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:rgba(31,77,53,0.5);color:#6dbf8a}
+.ci-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">L&amp;D Tool 3 / 7</div>
+    <div class="sb-title">Learning Design<br><em>Toolkit</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('principles',this)"><span class="nav-num">01</span>Adult Learning Principles</div>
+    <div class="nav-item" onclick="showPage('field',this)"><span class="nav-num">02</span>Designing for the Field</div>
+    <div class="nav-item" onclick="showPage('ojt',this)"><span class="nav-num">03</span>On-the-Job Learning Design</div>
+    <div class="nav-item" onclick="showPage('peer',this)"><span class="nav-num">04</span>Peer &amp; Social Learning Design</div>
+    <div class="nav-item" onclick="showPage('formal',this)"><span class="nav-num">05</span>Formal Learning Design</div>
+    <div class="nav-item" onclick="showPage('checkin',this)"><span class="nav-num">06</span>The Month-3 Check-in</div>
+    <div class="nav-item" onclick="showPage('builder',this)"><span class="nav-num">07</span>Check-in Conversation Guide</div>
+    <div class="nav-item" onclick="showPage('quality',this)"><span class="nav-num">08</span>Learning Design Quality Standards</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Learning &amp; Development — Tool 3 of 7</strong>
+      Learning Design Toolkit<br>
+      <span style="color:rgba(255,255,255,0.12)">Design learning for the G1 trainee on a remote drill site — not for a corporate employee in a training room.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-principles" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">L&amp;D Tool 3 / 7 — Learning Design Toolkit</div>
+    <h1 class="page-title">Adult Learning<br><em>Principles</em></h1>
+    <p class="page-desc">Learning design at Valentis starts with one constraint: the learner is a G1 trainee on a remote drill site, working 10–12 hour shifts, with limited literacy in some cases, and a G4 as their primary teacher. Every design decision must pass the field test — will this work in that context?</p>
+  </div>
+  <div class="pull-quote">
+    <p>"Adults do not learn by being told. They learn by doing something, reflecting on what happened, understanding why it happened, and trying again differently. Every piece of learning Valentis designs must create this cycle — not replace it with a presentation."</p>
+    <cite>Valentis L&amp;D Design Principle · 2026</cite>
+  </div>
+  <div class="card">
+    <div class="card-title">The Six Adult Learning Principles — <em>Applied to Valentis</em></div>
+    <div style="display:grid;gap:8px;margin-top:6px">
+      <div style="display:grid;grid-template-columns:200px 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="padding:13px 16px;background:var(--slate);display:flex;flex-direction:column;justify-content:center">
+          <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:#f0ede4;margin-bottom:2px">Self-direction</div>
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:.5px">Principle 1</div>
+        </div>
+        <div style="padding:13px 16px;border-right:1px solid var(--border);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Adults need to understand why they are learning something and feel ownership over their development. They do not respond well to being told what to do without context.</div>
+        <div style="padding:13px 16px;background:var(--forest-dim);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--forest);display:block;margin-bottom:2px">Valentis application</strong>Every G1 induction opens with the G4 explaining the full G1→G4 career pathway and the trainee's specific development plan. The trainee knows where they are heading and why each task connects to that path.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:200px 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="padding:13px 16px;background:var(--slate);display:flex;flex-direction:column;justify-content:center">
+          <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:#f0ede4;margin-bottom:2px">Experience base</div>
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:.5px">Principle 2</div>
+        </div>
+        <div style="padding:13px 16px;border-right:1px solid var(--border);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Adults bring prior experience to learning. New learning is most effective when it connects to or builds on what the learner already knows and has done.</div>
+        <div style="padding:13px 16px;background:var(--forest-dim);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--forest);display:block;margin-bottom:2px">Valentis application</strong>G4 coaches begin every technical session with "tell me what you already know about this." Trainees from mining, construction, or agricultural backgrounds have relevant experience. The G4 builds on this rather than starting from zero.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:200px 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="padding:13px 16px;background:var(--slate);display:flex;flex-direction:column;justify-content:center">
+          <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:#f0ede4;margin-bottom:2px">Readiness</div>
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:.5px">Principle 3</div>
+        </div>
+        <div style="padding:13px 16px;border-right:1px solid var(--border);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Adults learn best when the content is relevant to a challenge they are currently facing. Readiness is created by context — the learner must feel the need before the content lands.</div>
+        <div style="padding:13px 16px;background:var(--forest-dim);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--forest);display:block;margin-bottom:2px">Valentis application</strong>Sequence G1 content to follow the work, not precede it. Teach equipment maintenance after the trainee has operated the equipment and has questions. Teach safety protocols in the context of a real situation they have seen — not in advance of any experience.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:200px 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="padding:13px 16px;background:var(--slate);display:flex;flex-direction:column;justify-content:center">
+          <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:#f0ede4;margin-bottom:2px">Problem-centred</div>
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:.5px">Principle 4</div>
+        </div>
+        <div style="padding:13px 16px;border-right:1px solid var(--border);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Adults are motivated by solving real problems, not by acquiring abstract knowledge. Learning framed as "here is how to solve this specific problem you have" is retained far better than "here is some information."</div>
+        <div style="padding:13px 16px;background:var(--forest-dim);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--forest);display:block;margin-bottom:2px">Valentis application</strong>The G4 coaching programme uses real Myanmar site scenarios, not hypothetical cases. "What would you do if your G1 trainee had not shown up for two days?" is the entry point to a development conversation, not a policy document about attendance.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:200px 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="padding:13px 16px;background:var(--slate);display:flex;flex-direction:column;justify-content:center">
+          <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:#f0ede4;margin-bottom:2px">Intrinsic motivation</div>
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:.5px">Principle 5</div>
+        </div>
+        <div style="padding:13px 16px;border-right:1px solid var(--border);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">The most durable learning motivation comes from internal drivers — competence, autonomy, belonging, purpose. External rewards support but do not sustain learning motivation on their own.</div>
+        <div style="padding:13px 16px;background:var(--forest-dim);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--forest);display:block;margin-bottom:2px">Valentis application</strong>The month-3 check-in is designed to surface intrinsic motivation and identify when it is absent or eroding. A trainee who cannot articulate why they want to be a G4, or whose answer has changed since induction, is an attrition risk that the check-in is designed to catch.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:200px 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="padding:13px 16px;background:var(--slate);display:flex;flex-direction:column;justify-content:center">
+          <div style="font-family:var(--fd);font-size:17px;font-weight:700;color:#f0ede4;margin-bottom:2px">Immediate application</div>
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:.5px">Principle 6</div>
+        </div>
+        <div style="padding:13px 16px;border-right:1px solid var(--border);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Adults retain what they can immediately apply. Content that will be "useful later" is not retained. Every learning session must end with something the learner will do differently tomorrow.</div>
+        <div style="padding:13px 16px;background:var(--forest-dim);font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75"><strong style="color:var(--forest);display:block;margin-bottom:2px">Valentis application</strong>Every G4 coaching session ends with one specific commitment from the trainee: "By end of this week I will…" The G4 asks about this commitment at the start of the next session. Without this loop, the session is conversation, not development.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Kolb's Learning Cycle — <em>The Design Framework</em></div>
+    <div class="card-body" style="margin-bottom:14px">Every structured learning activity at Valentis should complete at least one full cycle. The most common failure mode is designing only stage 3 — giving information — and skipping the experience, reflection, and experimentation stages that make information stick.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden">
+      <div style="padding:16px;border-right:1px solid var(--border);background:var(--surface2)">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--forest);line-height:1;margin-bottom:6px">1</div>
+        <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:5px">Concrete Experience</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The learner does something. At Valentis: operating equipment for the first time, handling an unexpected failure, running a G1 development conversation for the first time.</div>
+        <div style="margin-top:8px;font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px">→ DO IT</div>
+      </div>
+      <div style="padding:16px;border-right:1px solid var(--border)">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--forest);line-height:1;margin-bottom:6px">2</div>
+        <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:5px">Reflective Observation</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">G4 asks: "What did you notice? What worked? What felt uncomfortable?" This is the stage G4s most commonly skip — moving straight from experience to telling the answer.</div>
+        <div style="margin-top:8px;font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px">→ NOTICE IT</div>
+      </div>
+      <div style="padding:16px;border-right:1px solid var(--border);background:var(--surface2)">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--forest);line-height:1;margin-bottom:6px">3</div>
+        <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:5px">Abstract Conceptualisation</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">G4 guides: "So what does that tell you about how to handle this in future?" Then introduces the principle that explains what happened. Information is most useful here — after reflection, not before experience.</div>
+        <div style="margin-top:8px;font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px">→ UNDERSTAND IT</div>
+      </div>
+      <div style="padding:16px">
+        <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--forest);line-height:1;margin-bottom:6px">4</div>
+        <div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:5px">Active Experimentation</div>
+        <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">G4 closes: "What will you do next time you face this? What specifically will you try?" This becomes the opening question next session. The cycle restarts with a new concrete experience.</div>
+        <div style="margin-top:8px;font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px">→ TRY IT DIFFERENTLY</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding:12px 16px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">
+      <strong style="color:var(--red)">The G4 coaching failure mode:</strong> Starting at stage 3 without stages 1–2, and ending at stage 3 without stage 4. "Let me tell you how to handle this" — followed by nothing. The trainee receives information with no experiential anchor and makes no commitment to apply it. The G4 coaching programme must train G4s to hold the discomfort of silence during stage 2.
+    </div>
+  </div>
+</div>
+
+  <div id="page-field" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Designing for the Field</div>
+    <h1 class="page-title">Designing for<br><em>the Field</em></h1>
+    <p class="page-desc">The Valentis learning environment is a remote drill site. Every design decision must account for this reality — no LMS, shift patterns that limit learning time, a multilingual workforce, and a G4 who has never been formally trained to teach.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">The Valentis Learning Environment</div>
+    <div class="vx-title">Design for the G1 on site, not for the L&D manager in the office</div>
+    <div class="vx-body">The learner is physically active, often in difficult conditions, with limited access to written materials, working in a second or third language, supervised by a G4 who has never been formally trained to teach, and aware that their performance is being assessed in real time on work that matters to the operation. This is a high-stakes, low-resource learning environment. Design for it deliberately.</div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Field Learning Constraints</div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">No LMS or digital infrastructure.</strong> All learning design must be deliverable without technology — printed guides, verbal frameworks, structured conversations. If it requires a screen, it will not reach the G1 on site.</div>
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">Shift patterns prevent long sessions.</strong> 10–12 hour shifts leave limited dedicated learning time. Any formal session must be 30–45 minutes maximum. The 70% happens during work, not alongside it.</div>
+        <div style="padding:11px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--brass)">Multilingual workforce.</strong> Myanmar, Lao, Bahasa Indonesia, Thai. All G1-level materials must be in the local language. G4 coaching frameworks must be language-flexible — built around questions, not scripted content.</div>
+        <div style="padding:11px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--brass)">Variable literacy levels.</strong> Visual guides, demonstration-based instruction, and verbal check-ins are more reliable than written assessments. Where documentation is required, keep it minimal — checkboxes and short phrases, not paragraphs.</div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">G4 as untrained teacher.</strong> The G4 is an expert practitioner, not a trained instructor. All frameworks must be simple enough for a G4 to execute without preparation — they need a card, not a course.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Field Learning Design Rules</div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:11px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Rule 1 — One concept per session.</strong> A G4 coaching session covers one thing and does it completely. One skill, one situation, one mistake. Trying to cover three topics in 30 minutes results in none of them landing.</div>
+        <div style="padding:11px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Rule 2 — Show before tell.</strong> Demonstration precedes explanation in all field learning. G4 does the task first, narrating what they are doing and why, then the trainee attempts it.</div>
+        <div style="padding:11px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Rule 3 — End with a specific commitment.</strong> Every learning interaction ends with a specific action: "By Friday you will attempt X and we will debrief Monday." Without this, learning is conversation, not development.</div>
+        <div style="padding:11px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Rule 4 — Simple documentation.</strong> Every milestone completed is documented in a single sign-off — G4 signature, date, brief observation. Documentation exists to make development visible to SM and Group HR, not to burden the G4.</div>
+        <div style="padding:11px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Rule 5 — Design for mistakes.</strong> In field conditions, trainees will make mistakes in real operational conditions. Design learning to use mistakes as development material. A G4 who debriefs a mistake using the Kolb cycle turns an operational problem into a learning event without losing time.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">The Four Field Learning Modes</div>
+    <table class="dtable">
+      <thead><tr><th>Mode</th><th>What it is</th><th>When to use it</th><th>G4 role</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Watch and narrate</td><td>G4 performs the task while explaining what they are doing and why, in real time. Trainee observes without interrupting.</td><td>First exposure to any new task. Complex or high-risk procedures where immediate hands-on is not appropriate.</td><td>Expert practitioner making tacit knowledge explicit by narrating it.</td><td>Task time only.</td></tr>
+        <tr><td style="font-weight:600">Assisted execution</td><td>Trainee performs the task with G4 alongside — G4 intervenes only when needed, asks questions rather than providing answers.</td><td>Second and third exposure. The trainee has seen it; now they try with a safety net.</td><td>Observer and safety net. Resists the instinct to take over.</td><td>Task time + 5–10 min debrief.</td></tr>
+        <tr><td style="font-weight:600">Supervised independent</td><td>Trainee performs the task alone. G4 observes from a distance, available but does not intervene unless there is a safety risk.</td><td>When G4 is confident the trainee is safe to attempt independently. After successful assisted execution.</td><td>Remote observer. Documents what they see for the debrief.</td><td>Task time + debrief.</td></tr>
+        <tr><td style="font-weight:600">Structured debrief</td><td>G4 and trainee review what just happened using four questions aligned to Kolb's cycle. 10–15 minutes maximum.</td><td>After any significant task, mistake, or milestone. Not after every routine repetition.</td><td>Coach and reflective practitioner. Asks, does not tell. Holds silence.</td><td>10–15 minutes.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-ojt" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — On-the-Job Learning Design</div>
+    <h1 class="page-title">On-the-Job<br><em>Learning Design</em></h1>
+    <p class="page-desc">70% of development at Valentis happens through work — structured assignments, stretch tasks, progressive responsibility, and real-time feedback from G4 coaches. This section provides the design frameworks that make the 70% intentional rather than accidental.</p>
+  </div>
+  <div class="info forest"><strong>The 70% is the pipeline.</strong> For G1 trainees, on-the-job learning is not a supplement to a training programme — it is the training programme. The quality of the G1's development experience is determined entirely by whether their G4 structures the work as a learning progression or simply assigns tasks to get the work done. The designs in this section give G4s the tools to do the former.</div>
+  <div class="card">
+    <div class="card-title">The G4 Structured Debrief — <em>Four Questions</em></div>
+    <div class="card-body" style="margin-bottom:14px">The structured debrief is the single most important learning design tool at Valentis. A G4 who uses these four questions consistently after significant work events will develop trainees faster than any formal programme could. The questions follow Kolb's cycle and take 10–15 minutes.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div style="padding:18px 20px;background:var(--forest-dim);border:2px solid var(--forest-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--forest);line-height:1;margin-bottom:8px">Q1</div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px">"What happened? Walk me through it."</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The trainee describes the event in their own words. The G4 listens without interrupting or correcting. This stage serves two purposes: it builds the trainee's habit of observing what they do, and it gives the G4 accurate information about what the trainee actually experienced — not what the G4 thinks they experienced.</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px">KOLB STAGE 1 — CONCRETE EXPERIENCE</div>
+      </div>
+      <div style="padding:18px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--forest);line-height:1;margin-bottom:8px">Q2</div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px">"What did you notice? What surprised you?"</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The trainee reflects on what stood out — what was different from what they expected, what felt difficult, what felt easy. The G4 holds silence here. This is the stage most commonly skipped — G4s feel uncomfortable with silence and fill it with answers. The silence is the development. Give the trainee 15–20 seconds to think before prompting.</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px">KOLB STAGE 2 — REFLECTIVE OBSERVATION</div>
+      </div>
+      <div style="padding:18px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--forest);line-height:1;margin-bottom:8px">Q3</div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px">"What does that tell you about how this works?"</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The trainee forms a principle from their reflection. The G4 adds or corrects here — but only after the trainee has attempted their own interpretation. The G4 should not provide the answer before the trainee has tried. Even a partially correct answer from the trainee is a better foundation than a complete answer from the G4.</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px">KOLB STAGE 3 — ABSTRACT CONCEPTUALISATION</div>
+      </div>
+      <div style="padding:18px 20px;background:var(--forest-dim);border:2px solid var(--forest-border);border-radius:4px">
+        <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:var(--forest);line-height:1;margin-bottom:8px">Q4</div>
+        <div style="font-weight:700;font-size:14px;color:var(--ink);margin-bottom:6px">"What will you do differently next time?"</div>
+        <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75;margin-bottom:8px">The trainee commits to a specific action. "I'll try…" "Next time I'll…" "I want to practice…" This commitment is the bridge from reflection to changed behaviour. The G4 writes it down and opens the next debrief by asking what happened with the commitment. Without this, the cycle is incomplete and the learning does not transfer.</div>
+        <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px">KOLB STAGE 4 — ACTIVE EXPERIMENTATION</div>
+      </div>
+    </div>
+    <div class="info brass"><strong>G4 coaching failure modes — and how to fix them</strong>Most G4 coaching failures happen at Q2 (filling silence with answers) and Q4 (skipping the commitment entirely). The G4 coaching programme must specifically train for silence at Q2 and specificity at Q4. A commitment of "I'll be more careful" is not a commitment. "I'll check the drill angle before starting and call you over to verify" is a commitment.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Stretch Assignment Design — <em>The G1 to G4 Progression</em></div>
+    <div class="card-body" style="margin-bottom:12px">A stretch assignment is any task that requires the learner to operate at the edge of their current capability. Stretch assignments are the primary vehicle for G1→G4 development. They must be deliberately designed — not just "harder work" — with a specific capability target, a support structure, and a debrief attached.</div>
+    <table class="dtable">
+      <thead><tr><th>Grade transition</th><th>Stretch assignment type</th><th>Capability being developed</th><th>G4 support level</th><th>Success indicator</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600">G1 → G1 progression<br><span style="font-weight:300;font-size:11px">First 6 months</span></td>
+          <td>Operate each piece of equipment under G4 supervision. Handle first non-routine situation (equipment fault, weather delay). Brief another G1 on a task they have already mastered.</td>
+          <td>Basic technical competency. Situational awareness. Early communication skills.</td>
+          <td>High. G4 present or nearby. Watch and narrate → assisted execution.</td>
+          <td>G4 can step back to supervised independent without operational risk.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">G1 → G2 transition<br><span style="font-weight:300;font-size:11px">12–18 months</span></td>
+          <td>Lead a routine shift operation without G4 present. Manage a minor equipment issue independently. Train a newer G1 on one skill the G2 has mastered.</td>
+          <td>Operational independence. Problem-solving without immediate support. Early teaching capability.</td>
+          <td>Medium. G4 available but not present. Debrief after, not during.</td>
+          <td>Completes G2 milestone checklist with G4 sign-off. Teaching assignment completed.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">G2 → G3 transition<br><span style="font-weight:300;font-size:11px">12–18 months further</span></td>
+          <td>Lead complex or non-standard operations. Manage a G1 trainee's day-to-day work. Handle a client-facing situation with SM visibility. Identify and solve a recurring operational problem.</td>
+          <td>Technical mastery in non-routine conditions. People supervision. Client context awareness.</td>
+          <td>Low. G4 or SM available for consultation. G3 makes the call.</td>
+          <td>G3 milestone criteria met. SM assessment of readiness. G1 trainee progressing under G3 supervision.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">G3 → G4 transition<br><span style="font-weight:300;font-size:11px">18–24 months further</span></td>
+          <td>Take full development responsibility for a G1 trainee through their first 6 months. Lead the G1's month-3 check-in. Present a development update to the SM. Manage a performance or attendance situation with a G1.</td>
+          <td>Coaching and development capability. Development conversation quality. Performance management basics.</td>
+          <td>Minimal. SM available for escalation. G4 coaches the G3 through the experience, not alongside it.</td>
+          <td>G1 trainee progresses past month 3. G3 demonstrates development conversation quality to G4 standard.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-peer" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — Peer &amp; Social Learning Design</div>
+    <h1 class="page-title">Peer &amp; Social<br><em>Learning Design</em></h1>
+    <p class="page-desc">20% of development at Valentis happens through social learning — conversations with peers, SM peer forum practice transfer, cross-site exposure, and the informal learning that happens when people work alongside others who know more than they do. This section designs the structures that make peer learning intentional.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">Why peer learning matters at Valentis</div>
+    <div class="vx-title">Thailand's practices are not in any document. They live in peer conversation.</div>
+    <div class="vx-body">The highest-value learning at Valentis is currently invisible — the practices that make Thailand the highest-performing country are held by one SM and transferred, if at all, through informal conversations at group meetings. Structured peer learning design makes this transfer explicit, replicable, and resilient to SM departure. The SM peer forum is the primary vehicle. Cross-site exposure is the secondary vehicle.</div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">SM Peer Forum — <em>Design Specification</em></div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:1px;margin-bottom:3px">FREQUENCY</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Quarterly. 90 minutes per session. Ba facilitates. All four SMs attend — video call with fixed agenda. Not a meeting with an optional learning segment; a learning session with a brief operational update.</div>
+        </div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:1px;margin-bottom:3px">STRUCTURE — EVERY SESSION</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="display:block;color:var(--ink2)">10 min — Commitment review.</strong> Each SM reports on what they committed to try at the last session and what happened. No commitment review means no accountability loop.<br><strong style="display:block;color:var(--ink2);margin-top:4px">40 min — Practice share.</strong> One SM presents one practice in depth: what the practice is, what problem it solves, how they implemented it, what the result was. The presenting SM rotates each session. Thailand SM presents first three times — then Myanmar, then Indonesia, then Laos.<br><strong style="display:block;color:var(--ink2);margin-top:4px">30 min — Problem-solving.</strong> One SM brings a live challenge. Group discusses. Ba facilitates — does not solve.<br><strong style="display:block;color:var(--ink2);margin-top:4px">10 min — Commitments.</strong> Each SM commits to one thing they will try before the next session.</div>
+        </div>
+        <div style="padding:11px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:1px;margin-bottom:3px">BA'S ROLE</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Facilitate, not teach. Ask questions that create insight rather than providing answers. Document commitments and share back within 24 hours. For Indonesia SM: the peer forum is the primary influence vehicle — use Thailand's data in the problem-solving segment to demonstrate the value of Group HR approaches.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Cross-Site Exposure — <em>Design Specification</em></div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:1px;margin-bottom:3px">PURPOSE</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Cross-site exposure accelerates G3→G4 development by exposing candidates to different operational conditions, a different SM's approach, and the experience of being unknown — no established reputation, no shortcuts. It is particularly valuable for Laos G3 candidates who need to develop G4-level independence before the retirement cliff hits.</div>
+        </div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:1px;margin-bottom:3px">STRUCTURE — 4–6 WEEKS AT HOST SITE</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="display:block;color:var(--ink2)">Week 1–2:</strong> Observation and assisted work. No independent operation. Candidate observes how the host site runs differently from their home site.<br><strong style="display:block;color:var(--ink2);margin-top:4px">Week 3–4:</strong> Supervised independent work. Candidate runs a full shift with host G4 observing.<br><strong style="display:block;color:var(--ink2);margin-top:4px">Week 5–6:</strong> Stretch assignment. Candidate takes responsibility for one specific challenge: training a G1, leading a non-routine operation, presenting to host SM.<br><strong style="display:block;color:var(--ink2);margin-top:4px">End of placement:</strong> Candidate writes a one-page debrief on three practices from the host site and their application back home.</div>
+        </div>
+        <div style="padding:11px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:1px;margin-bottom:3px">2026 PRIORITIES</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Laos G3 candidate 1 → Thailand site, Q3 2026 (4 weeks). Laos G3 candidate 2 → Indonesia site post-recovery, Q4 2026 (4 weeks). Purpose: accelerate G4 readiness before first Laos G4 retirement in 2027.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Thailand Practice Capture — <em>The First Peer Learning Priority</em></div>
+    <div class="card-body" style="margin-bottom:12px">Before any peer transfer can happen at scale, the Thailand SM's practices must be captured. This is a Ba-led structured interview — not a survey, not a written submission. Ba conducts the interview; the output is a practice library of 3–5 Thailand practices that can be shared at the peer forum.</div>
+    <table class="dtable">
+      <thead><tr><th>Practice capture question</th><th>What it surfaces</th><th>Output format</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">"Walk me through exactly how you run your G1's first week. What do you do and what does your G4 do?"</td><td>Induction and orientation practices that differ from other countries. The specific actions that create early belonging and commitment.</td><td>Annotated process map — 1 page. Suitable for peer forum presentation.</td></tr>
+        <tr><td style="font-weight:600">"Tell me about a trainee who nearly left but didn't. What happened and what did you or your G4 do?"</td><td>Early intervention practices. The specific behaviours that catch at-risk trainees before they exit. Real examples for G4 coaching programme scenarios.</td><td>Case study — 1 page. Used in Myanmar coaching programme as a scenario.</td></tr>
+        <tr><td style="font-weight:600">"What does your best G4 do differently from your weakest G4 when developing a trainee?"</td><td>The specific behaviours that distinguish high-quality from low-quality coaching at G4 level. These become the G4 coaching programme's behavioural framework.</td><td>Behaviour comparison table. Used in G4 coaching programme design.</td></tr>
+        <tr><td style="font-weight:600">"What is one thing you do that you are not sure other SMs do? Something you take for granted but think might be different?"</td><td>The tacit, taken-for-granted practices that are most likely to be Thailand-specific and highest-value for transfer.</td><td>Narrative practice description — 1–2 paragraphs. First item on Peer Forum agenda.</td></tr>
+        <tr><td style="font-weight:600">"If you were setting up the Country 5 site, what would you do in the first 30 days that most SMs probably wouldn't?"</td><td>Forward-looking practice intelligence. Directly relevant to Country 5 onboarding design.</td><td>30-day SM onboarding checklist draft. Feeds L&D Tool 5 (Leadership Development).</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-formal" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — Formal Learning Design</div>
+    <h1 class="page-title">Formal Learning<br><em>Design</em></h1>
+    <p class="page-desc">The 10% — formal learning at Valentis is small in volume but high in impact. It is the only learning that Group HR designs and delivers directly. It must be designed to complement, not duplicate, the 70% and 20% happening on site. This section covers the design of the G4 coaching programme and the SM peer forum formal inputs.</p>
+  </div>
+  <div class="info forest"><strong>The formal learning constraint at Valentis</strong>Valentis has no training budget for external programmes in 2026 beyond what Ba can justify to the COO as direct pipeline investment. The G4 coaching programme is the highest-priority formal learning investment. All formal design must be deliverable by Ba — with Thailand SM as co-facilitator for G4 content — at near-zero cash cost.</div>
+  <div class="card">
+    <div class="card-title">The G4 Coaching Programme — <em>Full Design</em></div>
+    <div class="card-body" style="margin-bottom:14px">The G4 coaching programme is the most important formal learning intervention at Valentis. It directly addresses the capability gap causing Myanmar's 58% conversion rate and establishes the foundation for G4 coaching quality across all countries. The programme is 6 weeks, site-delivered in modular 45-minute sessions, in local language.</div>
+
+    <div class="tabs" id="tabs-formal">
+      <div class="tab active" onclick="showTab('overview',this)">Programme Overview</div>
+      <div class="tab" onclick="showTab('mod1',this)">Module 1</div>
+      <div class="tab" onclick="showTab('mod2',this)">Module 2</div>
+      <div class="tab" onclick="showTab('mod3',this)">Module 3</div>
+      <div class="tab" onclick="showTab('mod4',this)">Module 4</div>
+      <div class="tab" onclick="showTab('mod5',this)">Module 5</div>
+      <div class="tab" onclick="showTab('mod6',this)">Module 6</div>
+    </div>
+
+    <div class="tab-body active" id="tab-overview">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <table class="dtable">
+            <thead><tr><th colspan="2">Programme Specification</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600;width:40%">Target learners</td><td>All G4 Senior Drillers — Myanmar (priority), all countries (rollout Q3)</td></tr>
+              <tr><td style="font-weight:600">Duration</td><td>6 weeks, 1 session per week, 45 minutes per session</td></tr>
+              <tr><td style="font-weight:600">Delivery format</td><td>Site-based. Facilitator: Ba (design + session 1, 3, 5). Co-facilitator: Thailand SM (sessions 2, 4, 6 via video)</td></tr>
+              <tr><td style="font-weight:600">Group size</td><td>Myanmar: 3 G4s. All-country rollout: max 4 per group, country-by-country</td></tr>
+              <tr><td style="font-weight:600">Language</td><td>Myanmar language (Myanmar). Local language for each country rollout.</td></tr>
+              <tr><td style="font-weight:600">Materials</td><td>One laminated reference card per G4. One session workbook (6 pages). No LMS required.</td></tr>
+              <tr><td style="font-weight:600">Prerequisite</td><td>None. Designed for G4s with no formal coaching training.</td></tr>
+              <tr><td style="font-weight:600">Assessment</td><td>Observed coaching conversation at week 6. Ba or SM observes a real G4–trainee debrief and rates using the G4 Coaching Quality rubric.</td></tr>
+              <tr><td style="font-weight:600">Certification</td><td>G4 Coaching Certification — Ba signs off. Included in G4 performance file.</td></tr>
+              <tr><td style="font-weight:600">Cost</td><td>Group HR design time (~40 hrs). Print materials (~$10/participant). Thailand SM co-facilitation via video — no travel cost.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div style="padding:16px 18px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:4px;margin-bottom:10px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:1px;margin-bottom:6px">PROGRAMME LEARNING OUTCOMES</div>
+            <div style="display:grid;gap:5px">
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7;padding-left:12px;border-left:2px solid var(--forest)">G4 can run the four-question structured debrief after a work event without a prompt or reference card.</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7;padding-left:12px;border-left:2px solid var(--forest)">G4 can conduct and document the month-3 check-in conversation using the five-question framework.</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7;padding-left:12px;border-left:2px solid var(--forest)">G4 can identify an at-risk trainee from behavioural signals and knows the escalation path to the SM.</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7;padding-left:12px;border-left:2px solid var(--forest)">G4 can give developmental feedback — specific, behavioural, forward-looking — rather than evaluation or instruction.</div>
+              <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7;padding-left:12px;border-left:2px solid var(--forest)">G4 can design a stretch assignment for a G1 trainee and brief the trainee on the purpose, not just the task.</div>
+            </div>
+          </div>
+          <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:4px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:1px;margin-bottom:6px">SUCCESS MEASURES</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Myanmar conversion rate ≥65% by Q3 2026, ≥70% by Q4 2026. Month-3 check-in completion rate 100% for next two cohorts. G4 Coaching Quality rubric score ≥3/5 at certification observation for all 3 G4s.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-body" id="tab-mod1">
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:16px">
+        <div style="padding:16px;background:var(--slate);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:1px;margin-bottom:6px">MODULE 1 OF 6</div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ede4;margin-bottom:4px">Your Role as a Developer</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px">Week 1 · 45 minutes</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7;margin-bottom:10px">Facilitator: Ba</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7">The G4's job is not only to drill. It is to create the next generation of drillers. This session establishes that the G4's development quality directly affects the pipeline — and the pipeline directly affects the business that pays the G4's salary.</div>
+        </div>
+        <div>
+          <table class="dtable">
+            <thead><tr><th>Segment</th><th>Content</th><th>Time</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Opening hook</td><td>Ba presents the Myanmar conversion rate data: 58% vs 70% target. Cost in real terms: $18K–$36K/year in replacement cost. "This number is about your G4 coaching. Today we start to change it."</td><td>10 min</td></tr>
+              <tr><td style="font-weight:600">The G4's two jobs</td><td>Technical excellence (what G4s currently prioritise) vs. development quality (what drives conversion rate). Discussion: "What percentage of your day currently goes to each?" Most G4s will say 90/10 or 100/0 for technical. This is the reframe.</td><td>15 min</td></tr>
+              <tr><td style="font-weight:600">The career pathway</td><td>G1→G4 pathway shown visually. G4s see the full journey their trainees are on. Discussion: "Think about your own journey from G1 to G4. Who helped you most? What did they do?" This activates the experience base principle and builds empathy for the G1 position.</td><td>12 min</td></tr>
+              <tr><td style="font-weight:600">Commitment</td><td>Each G4 commits to one thing they will observe about how they currently interact with their G1 trainee before next session. Not change — observe. "Just notice what you actually do."</td><td>8 min</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-body" id="tab-mod2">
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:16px">
+        <div style="padding:16px;background:var(--slate);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:1px;margin-bottom:6px">MODULE 2 OF 6</div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ede4;margin-bottom:4px">The Debrief Conversation</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px">Week 2 · 45 minutes</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7;margin-bottom:10px">Facilitator: Thailand SM (video)</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7">The four-question debrief framework. Thailand SM demonstrates live — using a scenario from their own G4 coaching experience. Myanmar G4s practice in pairs before end of session.</div>
+        </div>
+        <div>
+          <table class="dtable">
+            <thead><tr><th>Segment</th><th>Content</th><th>Time</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Commitment review</td><td>Each G4 shares what they observed about their own behaviour with trainees since last session. Ba facilitates — does not evaluate. Thailand SM listens and notes themes.</td><td>10 min</td></tr>
+              <tr><td style="font-weight:600">Thailand SM demonstration</td><td>Thailand SM describes a real scenario: a G1 who made a significant mistake. Walks through exactly how they ran the debrief using the four questions. G4s observe — Ba provides the four-question framework card as the SM speaks.</td><td>15 min</td></tr>
+              <tr><td style="font-weight:600">Pair practice</td><td>Myanmar G4s pair up. One plays the G4, one plays the trainee (using a prepared scenario: a routine task went wrong in a specific way). The "G4" runs the four questions. Switch and repeat. Ba circulates.</td><td>15 min</td></tr>
+              <tr><td style="font-weight:600">Debrief + commitment</td><td>What was hard? Which question was hardest? (Almost always Q2 — holding silence.) Commitment: run one four-question debrief with their real G1 trainee before next session. Document what the trainee committed to at Q4.</td><td>5 min</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-body" id="tab-mod3">
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:16px">
+        <div style="padding:16px;background:var(--slate);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:1px;margin-bottom:6px">MODULE 3 OF 6</div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ede4;margin-bottom:4px">Reading At-Risk Signals</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px">Week 3 · 45 minutes</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7;margin-bottom:10px">Facilitator: Ba</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7">The early warning signals of a trainee who is considering leaving. How to distinguish normal adjustment difficulty (everyone in month 2) from genuine attrition risk. The escalation path to the SM.</div>
+        </div>
+        <div>
+          <table class="dtable">
+            <thead><tr><th>Segment</th><th>Content</th><th>Time</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Debrief review</td><td>Each G4 shares their real debrief attempt from the week: what happened, what question was hardest, what the trainee committed to. Ba uses this as live coaching material.</td><td>12 min</td></tr>
+              <tr><td style="font-weight:600">At-risk signal framework</td><td>Ba presents the seven at-risk signals (see Section 06 — Month-3 Check-in). G4s discuss: "Have you ever seen any of these? Did you know what they meant at the time?" This activates the experience base — G4s will have seen all seven signals, probably without recognising them as attrition precursors.</td><td>15 min</td></tr>
+              <tr><td style="font-weight:600">Myanmar case scenario</td><td>Ba presents a composite scenario (drawn from real exit interview themes, anonymised): a trainee showing 3 of 7 signals across weeks 8–10. G4s discuss: "What would you do? When would you escalate?" Ba introduces the escalation path: G4 → month-3 check-in → SM conversation → Ba notification.</td><td>13 min</td></tr>
+              <tr><td style="font-weight:600">Commitment</td><td>Each G4 commits to: document the current at-risk status of each of their G1 trainees using the signal list, and bring it to session 4.</td><td>5 min</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-body" id="tab-mod4">
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:16px">
+        <div style="padding:16px;background:var(--slate);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:1px;margin-bottom:6px">MODULE 4 OF 6</div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ede4;margin-bottom:4px">The Month-3 Check-in</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px">Week 4 · 45 minutes</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7;margin-bottom:10px">Facilitator: Thailand SM (video)</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7">Full practice of the month-3 check-in conversation. Thailand SM runs a live demonstration. G4s practice in pairs using the five-question framework. Documentation completed for real.</div>
+        </div>
+        <div>
+          <table class="dtable">
+            <thead><tr><th>Segment</th><th>Content</th><th>Time</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">At-risk review</td><td>Each G4 shares their trainee at-risk assessment from the commitment last session. Ba identifies any immediate concerns. Thailand SM comments on patterns they recognise.</td><td>10 min</td></tr>
+              <tr><td style="font-weight:600">Thailand SM month-3 demonstration</td><td>Thailand SM runs a live month-3 check-in role-play with Ba playing a trainee (prepared scenario: trainee showing 2 at-risk signals). G4s observe and note: which questions did the SM ask? What did the SM do when the trainee hesitated? How was the conversation closed?</td><td>15 min</td></tr>
+              <tr><td style="font-weight:600">G4 pair practice</td><td>G4s run the month-3 check-in in pairs. One G4 as coach, one as trainee (using the prepared at-risk scenario from session 3). Complete the documentation form for real. Switch and repeat.</td><td>15 min</td></tr>
+              <tr><td style="font-weight:600">Commitment</td><td>Each G4 who has a trainee approaching month 3 schedules their check-in and confirms date to Ba. All G4s commit to completing the documentation form at the next real check-in.</td><td>5 min</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-body" id="tab-mod5">
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:16px">
+        <div style="padding:16px;background:var(--slate);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:1px;margin-bottom:6px">MODULE 5 OF 6</div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ede4;margin-bottom:4px">Developmental Feedback</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px">Week 5 · 45 minutes</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7;margin-bottom:10px">Facilitator: Ba</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7">The difference between evaluation feedback ("that was wrong"), instruction feedback ("do it this way"), and developmental feedback ("what could you try differently?"). Why developmental feedback builds commitment and evaluation feedback builds compliance — and compliance exits.</div>
+        </div>
+        <div>
+          <table class="dtable">
+            <thead><tr><th>Segment</th><th>Content</th><th>Time</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Month-3 check-in reviews</td><td>G4s who have run real check-ins since session 4 share what happened. Ba facilitates debrief: what worked, what was hard, what would they do differently. This is the 70/20/10 model in action — the formal session reinforces the on-the-job learning.</td><td>12 min</td></tr>
+              <tr><td style="font-weight:600">Three feedback types</td><td>Ba introduces: Evaluation ("you did that wrong"), Instruction ("do it this way"), Developmental ("what would you try differently?"). Discussion: "Which type do you use most?" Almost all G4s default to instruction. Why? It is faster and more comfortable. But instruction creates dependency — the trainee needs the G4 to be present for everything.</td><td>15 min</td></tr>
+              <tr><td style="font-weight:600">SBI feedback framework</td><td>Situation–Behaviour–Impact as the structure for developmental feedback. Practice: Ba gives each G4 a scenario (trainee made a specific mistake). G4 writes their feedback using SBI. Pairs share and improve. Thailand SM scenario used as reference.</td><td>13 min</td></tr>
+              <tr><td style="font-weight:600">Commitment</td><td>Each G4 commits to using one SBI piece of developmental feedback with their trainee before the final session. Document what they said and what the trainee's response was.</td><td>5 min</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-body" id="tab-mod6">
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:16px">
+        <div style="padding:16px;background:var(--slate);border-radius:4px">
+          <div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;letter-spacing:1px;margin-bottom:6px">MODULE 6 OF 6</div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ede4;margin-bottom:4px">Certification &amp; Commitment</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px">Week 6 · 45 minutes + observation</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7;margin-bottom:10px">Facilitator: Thailand SM (video) + Ba (observation)</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.7">Programme review and celebration. Observed coaching conversation for certification. G4 coaching quality rubric. Ongoing commitment. Thailand SM joins to mark completion and share their own ongoing development as a coach.</div>
+        </div>
+        <div>
+          <table class="dtable">
+            <thead><tr><th>Segment</th><th>Content</th><th>Time</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Journey review</td><td>Ba facilitates a 6-week review: what has changed in how each G4 approaches their trainee? What has been hardest? What has the trainee's response been? Thailand SM reflects on their own early coaching and how it developed.</td><td>15 min</td></tr>
+              <tr><td style="font-weight:600">Observed certification</td><td>Within 2 weeks of session 6: Ba observes each G4 run a real coaching conversation with their G1 trainee. Ba uses the G4 Coaching Quality Rubric (5 dimensions, 1–5 scale each). G4 does not know exactly when the observation will happen — scheduled within a 1-week window.</td><td>Separate</td></tr>
+              <tr><td style="font-weight:600">Certification and ongoing</td><td>G4s who score ≥3/5 on all dimensions receive G4 Coaching Certification. Ba signs off. Included in performance file. For G4s below 3/5 on any dimension: targeted follow-up coaching from Ba — one specific session on the failing dimension.</td><td>10 min</td></tr>
+              <tr><td style="font-weight:600">Ongoing commitment</td><td>G4s commit to running the four-question debrief at least twice per week with their G1 trainee. Completing the month-3 check-in for every trainee. Reporting any at-risk trainee to SM within 48 hours of identification. These commitments are included in the G4's next performance review.</td><td>10 min</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-checkin" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — The Month-3 Check-in</div>
+    <h1 class="page-title">The Month-3<br><em>Check-in</em></h1>
+    <p class="page-desc">The month-3 check-in is the single highest-leverage intervention in the Valentis L&D system. It is the primary early warning mechanism for G1 trainee attrition risk — and it currently does not exist in any structured form at any Valentis site. This section provides the complete design.</p>
+  </div>
+  <div class="pull-quote">
+    <p>"Month 3 is when the trainee knows enough to evaluate whether their real experience matches what they were promised. If the gap between promise and reality is too large — they begin to disengage. The check-in catches this moment before the decision is made."</p>
+    <cite>Valentis L&amp;D Framework · 2026</cite>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Why Month 3?</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Month 1:</strong> The trainee is in survival mode — learning everything at once, adjusting to site life, still in the honeymoon period. They have not yet formed a clear view of whether this is the right path.</div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Month 2:</strong> The trainee begins to settle. The novelty wears off. They start comparing the job to the expectations they had when they joined. Dissatisfaction begins to form but is not yet conscious.</div>
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">Month 3:</strong> The decision window. The trainee has enough information to evaluate their experience. If the development investment feels low, the career path feels unclear, or the relationship with the G4 feels unsupporting — they begin actively considering leaving. This is the intervention moment.</div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Month 4+:</strong> By month 4, the decision is often made even if the resignation has not happened yet. Intervention after month 4 is possible but the retention rate drops significantly. Month 3 is the deadline, not a preference.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The Seven At-Risk Signals</div>
+      <div class="card-body" style="margin-bottom:10px">G4s are trained to watch for these signals from week 6 onwards. Two or more signals appearing simultaneously, or any single signal intensifying over 2+ weeks, triggers the check-in early — before month 3 if necessary.</div>
+      <div style="display:grid;gap:5px">
+        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;padding:8px 10px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px"><div style="font-family:var(--fm);font-size:11px;font-weight:700;color:var(--red)">S1</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6">Reduced engagement or enthusiasm compared to first 4 weeks — quieter, less curious, stops asking questions about the work or their development.</div></div>
+        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;padding:8px 10px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px"><div style="font-family:var(--fm);font-size:11px;font-weight:700;color:var(--red)">S2</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6">Increased lateness or unexplained absences — especially short absences for vague reasons.</div></div>
+        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;padding:8px 10px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px"><div style="font-family:var(--fm);font-size:11px;font-weight:700;color:var(--brass)">S3</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6">Mentions of other job opportunities, or questions about what other employers pay for similar work.</div></div>
+        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;padding:8px 10px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px"><div style="font-family:var(--fm);font-size:11px;font-weight:700;color:var(--brass)">S4</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6">Reduced quality or care in work output — not fatigue-related, but motivational. Work that used to be done carefully is now done quickly.</div></div>
+        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;padding:8px 10px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px"><div style="font-family:var(--fm);font-size:11px;font-weight:700;color:var(--brass)">S5</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6">Withdrawal from peer relationships — stops joining others during breaks, reduced communication with other G1s and G2s.</div></div>
+        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fm);font-size:11px;font-weight:700;color:var(--ink4)">S6</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6">Questions about pay, progression timeline, or benefits that were not asked before — indicates the trainee is re-evaluating the deal they made.</div></div>
+        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:3px"><div style="font-family:var(--fm);font-size:11px;font-weight:700;color:var(--ink4)">S7</div><div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6">Mentions of family pressure or personal circumstances — particularly common in Myanmar where family expectations about stable employment are a significant attrition driver.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Check-in Documentation &amp; Escalation</div>
+    <table class="dtable">
+      <thead><tr><th>Check-in outcome</th><th>G4 action</th><th>Timeline</th><th>SM involvement</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">No at-risk signals — trainee engaged and progressing</td><td>Complete documentation form. Note positive engagement. Continue normal development plan.</td><td>Same day as check-in.</td><td>None required. Monthly pipeline report updated.</td></tr>
+        <tr><td style="font-weight:600">1–2 at-risk signals — low concern</td><td>Document signals and trainee's responses. Increase check-in frequency to bi-weekly. Adjust development plan if relevant (e.g. add stretch assignment if trainee seems understimulated).</td><td>Same day as check-in.</td><td>Mention at next SM 1:1 — informal, no formal escalation.</td></tr>
+        <tr><td style="font-weight:600">3+ at-risk signals or 1 high-severity signal (S2 or S3)</td><td>Complete documentation. Flag to SM within 48 hours. Propose specific intervention (development conversation, pay review referral, additional G4 support).</td><td>Within 48 hours of check-in.</td><td>SM formally involved. SM-trainee conversation within 1 week if G4 signals are confirmed.</td></tr>
+        <tr><td style="font-weight:600">Trainee discloses intention to leave</td><td>Do not attempt to counter immediately. Listen. Document. Flag to SM same day. Do not promise anything not authorised.</td><td>Same day.</td><td>SM + Ba involved. Ba assesses whether C&amp;B intervention is appropriate and feasible.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-builder" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Check-in Conversation Guide</div>
+    <h1 class="page-title">Check-in<br><em>Conversation Guide</em></h1>
+    <p class="page-desc">The month-3 check-in is a structured 20–30 minute conversation. This guide gives G4s the exact questions to ask, what to listen for in each answer, and how to respond to different outcomes. Use this to prepare before the conversation or print and use as a reference card.</p>
+  </div>
+  <div class="ci-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0ede4;margin-bottom:4px">Check-in Conversation Planner</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:22px">Select trainee context to generate a tailored conversation guide</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <span class="ci-label">Trainee name (optional)</span>
+        <input class="ci-input" id="ci-name" placeholder="e.g. Aung K." type="text">
+        <span class="ci-label">Country</span>
+        <select class="ci-select" id="ci-country">
+          <option value="">Select country…</option>
+          <option>Myanmar</option>
+          <option>Laos</option>
+          <option>Indonesia</option>
+          <option>Thailand</option>
+        </select>
+        <span class="ci-label">Time with Valentis</span>
+        <select class="ci-select" id="ci-time">
+          <option value="">Select…</option>
+          <option>6–8 weeks (early check-in)</option>
+          <option>10–14 weeks (month-3 standard)</option>
+          <option>15–20 weeks (late check-in)</option>
+        </select>
+      </div>
+      <div>
+        <span class="ci-label">At-risk signals observed (select all that apply)</span>
+        <div style="display:grid;gap:5px;margin-bottom:12px">
+          <label style="display:flex;align-items:start;gap:8px;font-size:13px;color:rgba(255,255,255,0.5);cursor:pointer"><input type="checkbox" class="ci-signal" value="S1" style="margin-top:2px;accent-color:#6dbf8a"> Reduced engagement or enthusiasm (S1)</label>
+          <label style="display:flex;align-items:start;gap:8px;font-size:13px;color:rgba(255,255,255,0.5);cursor:pointer"><input type="checkbox" class="ci-signal" value="S2" style="margin-top:2px;accent-color:#6dbf8a"> Lateness or unexplained absences (S2)</label>
+          <label style="display:flex;align-items:start;gap:8px;font-size:13px;color:rgba(255,255,255,0.5);cursor:pointer"><input type="checkbox" class="ci-signal" value="S3" style="margin-top:2px;accent-color:#6dbf8a"> Mentions of other employers or pay (S3)</label>
+          <label style="display:flex;align-items:start;gap:8px;font-size:13px;color:rgba(255,255,255,0.5);cursor:pointer"><input type="checkbox" class="ci-signal" value="S4" style="margin-top:2px;accent-color:#6dbf8a"> Reduced work quality — motivational not fatigue (S4)</label>
+          <label style="display:flex;align-items:start;gap:8px;font-size:13px;color:rgba(255,255,255,0.5);cursor:pointer"><input type="checkbox" class="ci-signal" value="S5" style="margin-top:2px;accent-color:#6dbf8a"> Withdrawal from peers (S5)</label>
+          <label style="display:flex;align-items:start;gap:8px;font-size:13px;color:rgba(255,255,255,0.5);cursor:pointer"><input type="checkbox" class="ci-signal" value="S6" style="margin-top:2px;accent-color:#6dbf8a"> Questions about pay or progression timeline (S6)</label>
+          <label style="display:flex;align-items:start;gap:8px;font-size:13px;color:rgba(255,255,255,0.5);cursor:pointer"><input type="checkbox" class="ci-signal" value="S7" style="margin-top:2px;accent-color:#6dbf8a"> Family pressure or personal circumstances (S7)</label>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-forest" onclick="genCheckin()">Generate Conversation Guide &#8594;</button>
+      <button class="btn btn-ghost" onclick="clearCheckin()">Reset</button>
+    </div>
+    <div class="ci-result" id="ci-result"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">The Five Check-in Questions — <em>Reference Card</em></div>
+    <div class="card-body" style="margin-bottom:12px">This is the printable reference card for G4s. One card per G4, laminated. Questions are sequenced — do not reorder. Each question has a listen-for note to help the G4 interpret what they are hearing.</div>
+    <div style="display:grid;gap:8px">
+      <div style="display:grid;grid-template-columns:48px 1fr 1fr;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="background:var(--forest);display:flex;align-items:center;justify-content:center"><div style="font-family:var(--fd);font-size:24px;font-weight:800;color:#fff">1</div></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)">
+          <div style="font-weight:700;color:var(--ink);font-size:13px;margin-bottom:4px">"How has the work been for you these past few months?"</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Open question. No framing. The trainee describes their experience in their own words. G4 listens without agreeing or disagreeing. This sets the tone: this is a conversation about the trainee, not a performance review.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--forest-dim)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:4px">LISTEN FOR</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Energy and enthusiasm in the answer. Specific details (engaged trainees reference specific experiences). Vague or short answers ("it's fine, it's okay") are low-energy signals that warrant follow-up.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:48px 1fr 1fr;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="background:var(--forest);display:flex;align-items:center;justify-content:center"><div style="font-family:var(--fd);font-size:24px;font-weight:800;color:#fff">2</div></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)">
+          <div style="font-weight:700;color:var(--ink);font-size:13px;margin-bottom:4px">"What has been the most challenging part — and what helped you through it?"</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Two-part question. The first part names difficulty — normalises that it exists. The second part identifies whether the trainee has support resources. "What helped you" reveals whether the G4, peers, or the job itself are providing adequate support.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--forest-dim)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:4px">LISTEN FOR</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">If the trainee cannot name what helped them — or cannot name anyone who helped them — this is a support gap. G4 coaching has not been present or effective. If challenge is disproportionate to the role, investigate workload or interpersonal issues.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:48px 1fr 1fr;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="background:var(--forest);display:flex;align-items:center;justify-content:center"><div style="font-family:var(--fd);font-size:24px;font-weight:800;color:#fff">3</div></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)">
+          <div style="font-weight:700;color:var(--ink);font-size:13px;margin-bottom:4px">"When you think about becoming a G4 driller — does that still feel like the right direction for you?"</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The most important question in the check-in. Directly tests whether the intrinsic motivation that drove the trainee to join is still present at month 3. The phrase "still feel like" explicitly acknowledges that it might have changed — making it safe to say it has.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--forest-dim)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:4px">LISTEN FOR</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Immediate "yes" with detail = engaged. Hesitation, "I think so", "it's hard to say" = at-risk signal requiring follow-up. "I'm not sure anymore" = immediate escalation conversation. The G4 must not fill this silence — wait for the full answer.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:48px 1fr 1fr;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="background:var(--forest);display:flex;align-items:center;justify-content:center"><div style="font-family:var(--fd);font-size:24px;font-weight:800;color:#fff">4</div></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)">
+          <div style="font-weight:700;color:var(--ink);font-size:13px;margin-bottom:4px">"What would make the biggest difference to your development between now and month 6?"</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Forwards the conversation from evaluation to development. Asks the trainee to be specific about what they need — which often reveals what the G4 has or has not been providing. A trainee who says "more feedback" or "to understand what I need to do to be G2-ready" is telling the G4 exactly what to change.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--forest-dim)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:4px">LISTEN FOR</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Specific development requests (good sign — trainee is invested). If trainee says "nothing" or "I don't know" — probe gently: "If you could change one thing about how you're being developed, what would it be?" Blank answers indicate either disengagement or a very comfortable trainee — context determines which.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:48px 1fr 1fr;border:1px solid var(--border);border-radius:3px;overflow:hidden">
+        <div style="background:var(--forest);display:flex;align-items:center;justify-content:center"><div style="font-family:var(--fd);font-size:24px;font-weight:800;color:#fff">5</div></div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border)">
+          <div style="font-weight:700;color:var(--ink);font-size:13px;margin-bottom:4px">"Is there anything else you want me to know — about the work, about how you're doing, or anything you've been thinking about?"</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">The open close. Creates space for the trainee to raise anything the structured questions did not surface. Family pressures, health concerns, interpersonal issues with peers or the G4 themselves — these often emerge here if the trainee trusts the G4 enough to share them.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--forest-dim)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:4px">LISTEN FOR</div>
+          <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Anything that sounds like it is being said carefully or partially. "Actually there is one thing…" often leads to the most important content of the conversation. Give the trainee time. Do not rush to close. This question is worth the silence.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-quality" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Learning Design Quality Standards</div>
+    <h1 class="page-title">Learning Design<br><em>Quality Standards</em></h1>
+    <p class="page-desc">Every piece of learning that Group HR designs or approves at Valentis is evaluated against these quality standards before it is delivered. The standards exist to prevent the two most common L&D quality failures: designing for the wrong learner and delivering without measuring.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">The G4 Coaching Quality Rubric</div>
+    <div class="card-body" style="margin-bottom:12px">Used by Ba to assess G4 coaching quality at certification observation (end of coaching programme) and at annual performance review. Each dimension rated 1–5. Score ≥3 on all dimensions = certification standard. Score below 3 on any dimension = targeted follow-up coaching on that dimension.</div>
+    <table class="dtable">
+      <thead><tr><th>Dimension</th><th>1 — Not yet</th><th>3 — Developing</th><th>5 — Strong</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600">Question quality</td>
+          <td>Uses predominantly closed or leading questions. Tells more than asks. "Was that because of X?" rather than "What do you think caused that?"</td>
+          <td>Mix of open and closed questions. Uses the four debrief questions with prompting. Occasionally slips into instruction mode.</td>
+          <td>Predominantly open questions, all four debrief stages completed, questions build on the trainee's previous answer rather than following a script.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Silence management</td>
+          <td>Fills every pause immediately. Cannot hold silence for more than 3 seconds. Answers own questions.</td>
+          <td>Can hold silence for up to 10 seconds. Occasionally fills before the trainee is ready. Does not answer own questions.</td>
+          <td>Comfortable with extended silence. Waits for the trainee's full answer. Uses brief acknowledging responses ("uh-huh", "tell me more") rather than answers.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Reflection activation</td>
+          <td>Skips directly from event description to principle. Does not use Q2 (reflective observation). Trainee is told what to learn from the experience.</td>
+          <td>Uses Q2 but does not probe. Accepts first answer. Does not follow up "what did you notice?" with "what else?"</td>
+          <td>Uses Q2 consistently. Probes the first answer. Creates genuine reflection before moving to Q3. The trainee forms the insight, not the G4.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Commitment quality</td>
+          <td>Closes with vague commitment ("think about it," "try to do better") or no commitment at all. Does not ask Q4.</td>
+          <td>Asks Q4 but accepts general commitments. "I'll try harder" or "I'll be more careful" — not specific enough to review.</td>
+          <td>Asks Q4 and challenges vague commitments to specificity. Commitment includes: what the trainee will do, when, and in what situation. G4 writes it down to open next session with.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">At-risk awareness</td>
+          <td>No evidence of signal monitoring. Cannot name current at-risk status of any trainee. Has not run a month-3 check-in.</td>
+          <td>Can name 2–3 at-risk signals. Has run at least one check-in. Would escalate if signals were extreme — but does not monitor regularly.</td>
+          <td>Monitors all seven signals actively. Updates at-risk assessment after each significant interaction. Has run check-in for every trainee at month 3. Escalates within 48 hours when threshold is met.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Learning Design Quality Checklist</div>
+      <div class="card-body" style="margin-bottom:10px">Every learning intervention designed by Group HR must pass this checklist before delivery. If any item is "No," the design is incomplete.</div>
+      <div style="display:grid;gap:5px">
+        <div style="padding:9px 12px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--forest)">✓ Learner profile defined.</strong> We know exactly who the learner is, what they already know, and what context they are learning in (shift pattern, language, literacy).</div>
+        <div style="padding:9px 12px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--forest)">✓ Gap type confirmed.</strong> The TNA confirmed this is a knowledge or ability gap — not a process, motivation, or structural gap that training will not fix.</div>
+        <div style="padding:9px 12px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--forest)">✓ Learning outcomes specific.</strong> Outcomes are written as observable behaviours: "G4 can run the four-question debrief without a prompt," not "G4 understands coaching."</div>
+        <div style="padding:9px 12px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--forest)">✓ Kolb's cycle completed.</strong> The design includes concrete experience, reflective observation, conceptualisation, and experimentation. Does not begin with information and end with information.</div>
+        <div style="padding:9px 12px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--forest)">✓ Field-ready.</strong> Deliverable without digital infrastructure. Sessions ≤45 minutes. Language appropriate. G4 can deliver without preparation beyond a reference card.</div>
+        <div style="padding:9px 12px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--forest)">✓ Success measure defined.</strong> We know how we will measure whether the learning changed behaviour, and when we will measure it. Not "did they enjoy it?" — "did conversion rate improve?"</div>
+        <div style="padding:9px 12px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.6"><strong style="color:var(--forest)">✓ Commitment built in.</strong> Every session ends with a specific, time-bound commitment from the learner. The next session opens by reviewing the commitment.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The Valentis Design Anti-Patterns</div>
+      <div class="card-body" style="margin-bottom:10px">These are the most common L&D design failures at Valentis's scale and context. Recognise them before they are built into a programme.</div>
+      <div style="display:grid;gap:7px">
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">The PowerPoint programme.</strong> A slide deck is not a programme. If the primary delivery vehicle is a presentation, the learner will remember approximately 10% of it by the following week. Design for doing, not for watching.</div>
+        <div style="padding:11px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">The generic framework applied to Valentis.</strong> Buying a coaching course from an external provider and delivering it to Myanmar G4s. The content will not reflect their context, their language, their scenarios. Valentis-specific design beats generic external content at this scale every time.</div>
+        <div style="padding:11px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--brass)">The one-day workshop.</strong> A single full-day session is incompatible with site shift patterns and produces poor retention. Spaced repetition (weekly 45-minute modules over 6 weeks) dramatically outperforms one-day delivery for skill development.</div>
+        <div style="padding:11px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--brass)">Training without transfer support.</strong> Delivering a programme and expecting behaviour to change without any follow-up. Transfer support — commitment review at the next session, SM reinforcement, peer accountability — doubles learning transfer rates. The G4 coaching programme's commitment loop is non-negotiable for this reason.</div>
+        <div style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Measuring satisfaction, not behaviour.</strong> "Did they enjoy it?" is not a success measure. The G4 coaching programme's success measure is Myanmar conversion rate — not whether the G4s rated the programme 4/5. Enjoyment and behaviour change are not correlated. Measure what matters to the pipeline.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  var pg=document.getElementById('page-'+id);
+  if(pg) pg.classList.add('active');
+  if(el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('.page');
+  if(scope){
+    scope.querySelectorAll('.tab-body').forEach(function(b){b.classList.remove('active');});
+    scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  }
+  var tb=document.getElementById('tab-'+id);
+  if(tb) tb.classList.add('active');
+  if(el) el.classList.add('active');
+}
+function toggleAcc(el){
+  var body=el.nextElementSibling;
+  var isOpen=el.classList.contains('open');
+  el.classList.toggle('open',!isOpen);
+  body.classList.toggle('open',!isOpen);
+}
+
+var countryContext={
+  'Myanmar':'Myanmar context: Family financial pressure is the most common attrition driver at month 3. Trainees may not volunteer this directly — listen for indirect references to family needs. S7 (family pressure) is the highest-weight signal in Myanmar. Use local language throughout. The Myanmar supervisor coaching programme is running in parallel — if the G4 is one of the three programme participants, this check-in is also their module 4 practice.',
+  'Laos':'Laos context: Laos workforce is more senior and stable than Myanmar. G1 attrition at month 3 is lower but the retirement cliff means every G1 retained now is critical pipeline for the 2027 G4 gap. Check-in should give extra time to question 4 (what would accelerate their development) — any indication of strong G4 ambition should be documented and flagged as a potential Laos development candidate.',
+  'Indonesia':'Indonesia context: Three G3 vacancies are currently creating operational pressure at the Indonesia site. G1 trainees may be asked to operate above their grade level — this creates both development opportunity and risk. Watch for S4 (quality drop) which may signal overload rather than disengagement. Any G1 showing strong G3-level capacity should be flagged to Ba as an accelerated pipeline candidate.',
+  'Thailand':'Thailand context: Thailand is the highest-converting country. Month-3 check-ins here are likely to show engaged trainees. Use this check-in to document what is working — the trainee\'s experience of Thailand\'s G4 coaching quality is direct evidence for the practice transfer programme. Ask: "What has your G4 done that has been most useful?" and document the answer for the SM peer forum.'
+};
+
+var timeContext={
+  '6–8 weeks (early check-in)':'Early check-in triggered — signals observed before month 3. Focus on Q3 and Q5. Do not wait. The early check-in is not a full month-3 conversation — it is a 15-minute targeted conversation focused on the signals that triggered it. Document and assess whether a full month-3 check-in is needed within 4 weeks.',
+  '10–14 weeks (month-3 standard)':'Standard month-3 check-in. All five questions. 20–30 minutes. Complete the full documentation form.',
+  '15–20 weeks (late check-in)':'Late check-in. The standard window was missed. Do not reference this to the trainee — simply run the conversation. Document reason for lateness in the notes for Ba\'s records. If signals are present, urgency is higher at this stage — a trainee at week 18 who is showing S1–S3 is closer to exit than one at week 12.'
+};
+
+function genCheckin(){
+  var name=document.getElementById('ci-name').value.trim()||'the trainee';
+  var country=document.getElementById('ci-country').value;
+  var time=document.getElementById('ci-time').value;
+  var signals=Array.from(document.querySelectorAll('.ci-signal:checked')).map(function(c){return c.value;});
+  if(!country||!time){alert('Please select a country and time with Valentis.');return;}
+  var sigCount=signals.length;
+  var riskLevel=sigCount===0?'low':sigCount<=2?'medium':'high';
+  var riskLabel=riskLevel==='low'?'Low — standard development check-in':riskLevel==='medium'?'Medium — monitor and support':' High — escalation likely required';
+  var riskColor=riskLevel==='low'?'var(--forest)':riskLevel==='medium'?'var(--brass)':'var(--red)';
+  var signalText=signals.length===0?'No signals currently observed — run standard five-question check-in.':'Signals observed: '+signals.join(', ')+'. '+( signals.includes('S2')||signals.includes('S3')?'S2/S3 are high-priority signals — be prepared to escalate after this conversation if confirmed.':'Watch for confirmation of these signals during Q1 and Q5.');
+  var prep=riskLevel==='high'?'Prepare to escalate after this conversation. Have SM informed in advance that the check-in is happening and that escalation is possible. Do not promise anything to the trainee that Ba and the SM have not approved.':riskLevel==='medium'?'Run the full five-question conversation. Pay particular attention to Q3 (motivation direction) and Q5 (open close). Be ready to follow up within 1 week if answers are ambiguous.':'Standard check-in. Complete all five questions. Update the documentation form. Likely outcome: engaged trainee — document positive signals for the pipeline record.';
+  var html='<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;flex-wrap:wrap;gap:8px">'
+    +'<div><div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ede4">Check-in Guide — '+name+'</div>'
+    +'<div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px">'+country+' · '+time+'</div></div>'
+    +'<div style="padding:6px 14px;border-radius:3px;border:1px solid '+riskColor+';background:rgba(255,255,255,0.03)"><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-bottom:2px">RISK LEVEL</div><div style="font-size:12.5px;font-weight:600;color:'+riskColor+'">'+riskLabel+'</div></div>'
+    +'</div>'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.75;margin-bottom:12px">'+signalText+'</div>'
+    +'<div style="padding:12px 14px;background:rgba(31,77,53,0.1);border:1px solid rgba(31,77,53,0.3);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.6);font-weight:300;line-height:1.75;margin-bottom:12px"><strong style="color:#6dbf8a;display:block;margin-bottom:3px">G4 Preparation</strong>'+prep+'</div>'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.75;margin-bottom:12px"><strong style="color:#6dbf8a;display:block;margin-bottom:3px">Country Context</strong>'+countryContext[country]+'</div>'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.75;margin-bottom:12px"><strong style="color:#6dbf8a;display:block;margin-bottom:3px">Timing Note</strong>'+timeContext[time]+'</div>'
+    +'<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-bottom:8px">FIVE CHECK-IN QUESTIONS — IN ORDER</div>'
+    +'<div style="display:grid;gap:6px">'
+    +makeQ(1,'How has the work been for you these past few months?','Open entry. Listen for energy. Short or vague answers need gentle follow-up: "Tell me a bit more about that."',riskLevel)
+    +makeQ(2,'What has been the most challenging part — and what helped you through it?','Two-part question. If they cannot name what helped them — this is the G4\'s gap to address. Probe if challenge seems disproportionate.',riskLevel)
+    +makeQ(3,'When you think about becoming a G4 driller — does that still feel like the right direction?',riskLevel==='high'?'CRITICAL QUESTION at this risk level. Do not rush. Hold silence after the question. Any hesitation triggers the escalation path.':'The core motivation question. Hold silence. Do not fill it. Wait for the full answer before responding.',riskLevel)
+    +makeQ(4,'What would make the biggest difference to your development between now and month 6?',riskLevel==='high'?'Even at high risk, ask this question — the answer reveals whether a development commitment might retain the trainee.':'Identify specific development needs. Challenge vague answers to specificity. This becomes the G4\'s commitment to the trainee.',riskLevel)
+    +makeQ(5,'Is there anything else you want me to know — about the work, how you\'re doing, or anything you\'ve been thinking about?','The open close. Give it time. Do not rush. The most important content often comes here. Document everything that sounds significant.',riskLevel)
+    +'</div>'
+    +'<div style="margin-top:14px;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.4);font-weight:300;line-height:1.75"><strong style="color:rgba(255,255,255,0.6);display:block;margin-bottom:3px">After the conversation</strong>Complete the documentation form. Update the trainee\'s at-risk status. '+(riskLevel==='high'?'<strong style="color:var(--red)">Escalate to SM within 48 hours.</strong> Notify Ba same day.':riskLevel==='medium'?'Flag to SM at next 1:1. Schedule a follow-up check-in in 4 weeks.':'Update monthly pipeline report. Next scheduled check-in at month 6.')+'</div>';
+  var res=document.getElementById('ci-result');
+  res.innerHTML=html;
+  res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function makeQ(n,q,note,risk){
+  var bg=risk==='high'&&n===3?'rgba(155,26,26,0.08)':'rgba(255,255,255,0.03)';
+  var border=risk==='high'&&n===3?'rgba(155,26,26,0.3)':'rgba(255,255,255,0.07)';
+  return '<div style="padding:11px 14px;background:'+bg+';border:1px solid '+border+';border-radius:3px"><div style="display:flex;gap:10px;align-items:start"><div style="font-family:var(--fd);font-size:18px;font-weight:800;color:#6dbf8a;line-height:1;min-width:20px">'+n+'</div><div><div style="font-size:13px;font-weight:600;color:#f0ede4;margin-bottom:4px">'+q+'</div><div style="font-size:12.5px;color:rgba(255,255,255,0.4);font-weight:300;line-height:1.65">'+note+'</div></div></div></div>';
+}
+function clearCheckin(){
+  document.getElementById('ci-name').value='';
+  document.getElementById('ci-country').value='';
+  document.getElementById('ci-time').value='';
+  document.querySelectorAll('.ci-signal').forEach(function(c){c.checked=false;});
+  document.getElementById('ci-result').style.display='none';
+}
+</script>
+</body>
+</html>

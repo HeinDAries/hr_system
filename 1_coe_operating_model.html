@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoE Operating Model — Centre of Excellence Tool 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2ee;--surface:#fff;--surface2:#e8ece6;--surface3:#dde3da;
+  --border:#c8d0c4;--border2:#b4bfaf;
+  --ink:#0d110c;--ink2:#1a2418;--ink3:#3d5039;--ink4:#6b7d67;--ink5:#a0b09c;
+  --teal:#0a2420;--teal2:#0d2e29;--teal3:#103330;
+  --gold:#b8960a;--gold2:#cfa50c;--gold3:#e6bc2a;
+  --gold-dim:rgba(184,150,10,0.09);--gold-border:rgba(184,150,10,0.28);
+  --green:#1a6b3a;--green-dim:rgba(26,107,58,0.08);--green-border:rgba(26,107,58,0.24);
+  --red:#b83225;--red-dim:rgba(184,50,37,0.07);--red-border:rgba(184,50,37,0.22);
+  --amber:#b87010;--amber-dim:rgba(184,112,16,0.08);--amber-border:rgba(184,112,16,0.24);
+  --teal-accent:#0e7c6e;--teal-accent2:#12a899;--teal-dim:rgba(14,124,110,0.09);--teal-border:rgba(14,124,110,0.26);
+  --sidebar-w:280px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--teal);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--gold3),var(--gold),rgba(184,150,10,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);background:rgba(184,150,10,0.15);border:1px solid rgba(184,150,10,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f8f4;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:var(--gold3);font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
+.nav-item.active{background:rgba(184,150,10,0.16);border-color:rgba(184,150,10,0.38);color:var(--gold3)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--gold2)}
+.nav-item.tool-link{color:rgba(255,255,255,0.18);font-size:12px}
+.nav-item.tool-link.current-tool{color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.04)}
+.nav-item.tool-link .nav-status{margin-left:auto;font-family:var(--fm);font-size:8px;padding:1px 5px;border-radius:2px}
+.status-done{background:rgba(26,107,58,0.25);color:#6ecf94}
+.status-next{background:rgba(184,150,10,0.2);color:var(--gold3)}
+.status-soon{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.25)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:var(--gold3);display:block;margin-bottom:3px}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+
+/* ── PAGE TYPOGRAPHY ── */
+.pe{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal-accent);margin-bottom:10px}
+.pt{font-family:var(--fd);font-size:54px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:12px;letter-spacing:-.5px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.pt em{font-style:italic;font-weight:400;color:var(--gold)}
+.pd{font-size:13.5px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300;margin-bottom:28px}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.ct{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.ct em{font-style:italic;color:var(--gold);font-weight:400}
+.cb{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+
+/* ── CHIPS ── */
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.cgo{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.cgr{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.cr{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.ca{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.ct2{background:var(--teal-dim);color:var(--teal-accent);border:1px solid var(--teal-border)}
+.cm{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+
+/* ── INFO BARS ── */
+.inf{border-radius:3px;padding:13px 16px;margin-bottom:12px;font-size:13px;line-height:1.85;border-left:3px solid;font-weight:300}
+.inf.go{background:var(--gold-dim);border-color:var(--gold);color:var(--ink2)}
+.inf.gr{background:var(--green-dim);border-color:var(--green);color:var(--ink2)}
+.inf.r{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.inf.a{background:var(--amber-dim);border-color:var(--amber);color:var(--ink2)}
+.inf.t{background:var(--teal-dim);border-color:var(--teal-accent);color:var(--ink2)}
+.inf strong{display:block;font-weight:700;margin-bottom:3px}
+
+/* ── TABLES ── */
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{text-align:left;padding:8px 12px;background:var(--teal);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.65}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surface2)}
+
+/* ── VX BOX (dark callout) ── */
+.vx{background:var(--teal);border-radius:4px;padding:20px 24px;margin-bottom:14px}
+.vx-ey{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);margin-bottom:6px}
+.vx-ti{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f8f4;margin-bottom:8px;line-height:1.2}
+.vx-bo{font-size:13px;color:rgba(255,255,255,0.42);font-weight:300;line-height:1.85}
+
+/* ── KPI ROW ── */
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kgo::before{background:var(--gold)}.kgr2::before{background:var(--green)}
+.ka::before{background:var(--amber)}.kt2::before{background:var(--teal-accent)}
+.kl{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:5px}
+.kv{font-family:var(--fd);font-size:40px;font-weight:800;line-height:1;margin-bottom:3px}
+.kgo .kv{color:var(--gold)}.kgr2 .kv{color:var(--green)}
+.ka .kv{color:var(--amber)}.kt2 .kv{color:var(--teal-accent)}
+.ks{font-size:11.5px;color:var(--ink4);font-weight:300;line-height:1.4}
+.ktag{font-family:var(--fm);font-size:9px;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block}
+.ktag-go{background:var(--gold-dim);color:var(--gold)}
+.ktag-gr{background:var(--green-dim);color:var(--green)}
+.ktag-t{background:var(--teal-dim);color:var(--teal-accent)}
+.ktag-a{background:var(--amber-dim);color:var(--amber)}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap;margin-bottom:0}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.tb{display:none;padding:18px 0}
+.tb.active{display:block}
+
+/* ── INTERFACE MAP ── */
+.imap{display:grid;grid-template-columns:1fr 80px 1fr;gap:0;align-items:center;margin-bottom:14px}
+.imap-box{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px}
+.imap-center{display:flex;flex-direction:column;align-items:center;gap:4px}
+.imap-arrow{font-size:18px;color:var(--gold);text-align:center}
+.imap-label{font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);text-align:center}
+
+/* ── PULL QUOTE ── */
+.pq{border-left:4px solid var(--gold);padding:14px 18px;margin:14px 0;background:var(--gold-dim);border-radius:0 4px 4px 0}
+.pq p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6}
+.pq cite{display:block;margin-top:5px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--gold)}
+
+/* ── RESPONSIBILITY MATRIX ── */
+.raci-r{background:#fff3f3;color:var(--red);border:1px solid var(--red-border)}
+.raci-a{background:#fffbf0;color:var(--amber);border:1px solid var(--amber-border)}
+.raci-c{background:var(--teal-dim);color:var(--teal-accent);border:1px solid var(--teal-border)}
+.raci-i{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx,.page.active .krow{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(3){animation-delay:.04s}
+.page.active .card:nth-child(4){animation-delay:.08s}
+.page.active .card:nth-child(5){animation-delay:.12s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">Centre of Excellence · Tool 1 / 7</div>
+    <div class="sb-title">CoE <em>Operating</em><br>Model</div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+
+    <div class="sb-group">Tool 1 Sections</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-num">01</span>Overview</div>
+    <div class="nav-item" onclick="showPage('role',this)"><span class="nav-num">02</span>The One-Person CoE</div>
+    <div class="nav-item" onclick="showPage('scope',this)"><span class="nav-num">03</span>Scope &amp; Mandate</div>
+    <div class="nav-item" onclick="showPage('interfaces',this)"><span class="nav-num">04</span>Interfaces &amp; Relationships</div>
+    <div class="nav-item" onclick="showPage('raci',this)"><span class="nav-num">05</span>Responsibility Model</div>
+    <div class="nav-item" onclick="showPage('charter',this)"><span class="nav-num">06</span>CoE Charter</div>
+    <div class="nav-item" onclick="showPage('rhythm',this)"><span class="nav-num">07</span>Operating Rhythm</div>
+    <div class="nav-item" onclick="showPage('positioning',this)"><span class="nav-num">08</span>CoE to CHRO Positioning</div>
+
+    <div class="sb-group">All CoE Tools</div>
+    <div class="nav-item tool-link current-tool"><span class="nav-num">01</span>CoE Operating Model<span class="nav-status status-next">Current</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">02</span>Standards &amp; Policy Register<span class="nav-status status-soon">Next</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">03</span>Knowledge Management<span class="nav-status status-soon">Soon</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">04</span>Governance &amp; Decision Rights<span class="nav-status status-soon">Soon</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">05</span>Framework Lifecycle<span class="nav-status status-soon">Soon</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">06</span>Innovation Tracker<span class="nav-status status-soon">Soon</span></div>
+    <div class="nav-item tool-link"><span class="nav-num">07</span>CoE Maturity Model<span class="nav-status status-soon">Soon</span></div>
+
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Centre of Excellence · Tool 1 of 7</strong>
+      CoE Operating Model<br>
+      <span style="color:rgba(255,255,255,0.1)">One person. Group-wide standards. The architecture that lets HR scale without losing quality.</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <div id="page-overview"    class="page active"></div>
+  <div id="page-role"        class="page"></div>
+  <div id="page-scope"       class="page"></div>
+  <div id="page-interfaces"  class="page"></div>
+  <div id="page-raci"        class="page"></div>
+  <div id="page-charter"     class="page"></div>
+  <div id="page-rhythm"      class="page"></div>
+  <div id="page-positioning" class="page"></div>
+</main>
+
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item:not(.tool-link)').forEach(n=>n.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('[data-tabs]')||el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));scope.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))}
+  var tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+</script>
+
+<script>
+// ══ PAGE 01 — OVERVIEW ══════════════════════════════════════════════
+document.getElementById('page-overview').innerHTML=`
+<div class="pe">Centre of Excellence · Tool 1 / 7 — CoE Operating Model</div>
+<div class="pt">CoE <em>Operating</em><br>Model</div>
+<p class="pd">The Centre of Excellence is the architectural brain of Valentis's HR function. It sets the standards every country operates to, owns the frameworks every HRBP applies, and governs the policies every SM follows. At 42 staff it is a one-person function. At 1,000 staff it becomes the engine that holds the entire people system together. This tool defines how it works — now and at scale.</p>
+
+<div class="vx">
+  <div class="vx-ey">The CoE Premise at Valentis</div>
+  <div class="vx-ti">Four countries. Four SMs. Four ways of doing HR — unless the CoE sets the standard. The CoE's job is to make sure Valentis has one HR function that operates consistently across geographies, not four country HR practices loosely held together by a Group HR Head.</div>
+  <div class="vx-bo">At 42 staff, the CoE is not a team. It is a role — one person with group-wide authority over HR standards, policy architecture, and framework quality. That authority is not about control. It is about consistency. When Thailand and Myanmar have the same performance management framework, the same grade definitions, the same coaching standard — Valentis can move people across countries, compare performance across operations, and scale its HR capability as headcount grows. Without the CoE, every country drifts. Policies fragment. Standards erode. The HR system that works at 42 will not survive 200 staff without the CoE as its foundation.</div>
+</div>
+
+<div class="krow">
+  <div class="kpi kgo"><div class="kl">Countries Governed</div><div class="kv">4</div><div class="ks">Thailand · Indonesia · Laos · Myanmar — one standard across all</div><div class="ktag ktag-go">Group-wide mandate</div></div>
+  <div class="kpi kgr2"><div class="kl">HR Frameworks Owned</div><div class="kv">7</div><div class="ks">CoE owns the lifecycle of every HR framework used at Valentis</div><div class="ktag ktag-gr">Tool 5 covers lifecycle</div></div>
+  <div class="kpi kt2"><div class="kl">Policy Register</div><div class="kv">1</div><div class="ks">Single master register — no shadow policies, no country variations without approval</div><div class="ktag ktag-t">Tool 2 covers register</div></div>
+  <div class="kpi ka"><div class="kl">CoE Headcount</div><div class="kv">1</div><div class="ks">One person at current scale. Designed to add one CoE specialist per 250 staff added.</div><div class="ktag ktag-a">Scalable model</div></div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">What the CoE Is — and <em>Is Not</em></div>
+    <table class="dt">
+      <thead><tr><th>The CoE Is</th><th>The CoE Is Not</th></tr></thead>
+      <tbody>
+        ${[
+          ['The owner of HR standards and policy architecture','An HR operations function — it does not process payroll, manage contracts, or run admin'],
+          ['The quality governor of HR frameworks across all countries','A line management function — it does not manage HRBPs or Country SMs directly'],
+          ['The source of HR methodology — how performance management, grading, and compensation work','An approval bottleneck — it sets principles and standards, not individual decisions'],
+          ['The keeper of HR institutional knowledge — frameworks, templates, lessons learned','A policing function — it governs through standards and influence, not enforcement'],
+          ['The innovation engine — it tests new HR approaches and scales what works','An advisory function only — it has group-wide authority over standards and policy'],
+          ['The positioning vehicle for CHRO elevation — strategic credibility comes from CoE authority','A permanent one-person team — it scales with headcount to a full CoE function at 500+ staff'],
+        ].map(([a,b])=>`<tr><td style="font-weight:500;font-size:12.5px;color:var(--ink2)">${a}</td><td style="font-size:12px;font-weight:300;color:var(--red)">${b}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct">Tool 1 — <em>Section Map</em></div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {n:'02',t:'The One-Person CoE',d:'What Ba\'s CoE role actually covers day-to-day, what authority it carries, and how it interfaces with operational HR.'},
+        {n:'03',t:'Scope & Mandate',d:'The formal boundaries of the CoE — what is in scope, what is out of scope, and the mandate that gives the CoE group-wide standing.'},
+        {n:'04',t:'Interfaces & Relationships',d:'How the CoE works with HRBPs, SMs, COO, and country operations — the collaboration model, not the org chart.'},
+        {n:'05',t:'Responsibility Model',d:'RACI matrix for all HR functions — who is Responsible, Accountable, Consulted, and Informed across CoE, HRBP, and HR Ops.'},
+        {n:'06',t:'CoE Charter',d:'The formal one-page charter that defines the CoE\'s purpose, authority, scope, and operating principles at Valentis.'},
+        {n:'07',t:'Operating Rhythm',d:'The CoE\'s annual, quarterly, and monthly activity cadence — what gets done when, and how CoE work connects to the HR calendar.'},
+        {n:'08',t:'CoE to CHRO Positioning',d:'How operating as CoE builds the credibility, authority, and strategic track record that positions Group HR Head for CHRO elevation.'},
+      ].map(d=>`<div style="padding:9px 12px;background:var(--surface2);border-radius:3px;display:flex;gap:12px;align-items:flex-start"><span style="font-family:var(--fm);font-size:9px;color:var(--gold);flex-shrink:0;padding-top:2px">${d.n}</span><div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px">${d.t}</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">${d.d}</div></div></div>`).join('')}
+    </div>
+  </div>
+</div>
+`;
+
+// ══ PAGE 02 — THE ONE-PERSON COE ═════════════════════════════════
+document.getElementById('page-role').innerHTML=`
+<div class="pe">Section 02 — The One-Person CoE</div>
+<div class="pt">The One-Person<br><em>CoE</em></div>
+<p class="pd">At 42 staff, the CoE is not a department — it is a discipline. One person, operating with group-wide authority over standards and frameworks, doing the work that prevents HR from fragmenting as Valentis grows. This section defines what that role looks like in practice: the accountabilities, the time allocation, and the non-negotiable boundaries that make it credible.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Core Insight</div>
+  <div class="vx-ti">The one-person CoE is not a compromise — it is the right model for 42 staff. The risk is not being under-resourced. The risk is the CoE role being absorbed into HR operations, leaving no one to hold the standards.</div>
+  <div class="vx-bo">The most common failure mode for a small HR CoE is drift: the person in the CoE role gets pulled into recruitment administration, payroll queries, and contract management because those tasks are urgent and visible. The CoE's work — building frameworks, governing policy, maintaining standards — is important but not urgent. Without deliberate protection of CoE time, the strategic architecture of HR gets built in evenings and weekends, or not at all. The operating model in this section is designed to prevent that drift — by making CoE accountabilities explicit, time-protected, and reported on separately from HR operations.</div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">CoE Role — Core Accountabilities</div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {n:'01',t:'Policy Architecture & Governance',d:'Own the master HR policy register. Initiate, review, and retire policies on schedule. Ensure all policies are current, consistent, and accessible across 4 countries.',time:'~20% of CoE time',col:'var(--gold)'},
+        {n:'02',t:'Framework Design & Quality',d:'Design and maintain all HR frameworks — performance management, grading, compensation bands, coaching standards. Every framework has one owner: the CoE.',time:'~25% of CoE time',col:'var(--gold)'},
+        {n:'03',t:'Knowledge Management',d:'Maintain the HR toolkit as a living knowledge base. Capture lessons learned, update templates, ensure nothing critical lives only in one person\'s head.',time:'~15% of CoE time',col:'var(--teal-accent)'},
+        {n:'04',t:'Standards Assurance',d:'Conduct quarterly standards audits across countries. Identify where country operations have drifted from group standards. Escalate or remediate.',time:'~15% of CoE time',col:'var(--teal-accent)'},
+        {n:'05',t:'Innovation & Improvement',d:'Maintain the HR innovation pipeline. Pilot new approaches in one country, evaluate, and recommend for group rollout. Own the lessons-learned loop.',time:'~15% of CoE time',col:'var(--amber)'},
+        {n:'06',t:'CoE Strategic Reporting',d:'Produce the CoE maturity report quarterly. Report CoE value to COO in business language — frameworks delivered, standards gaps closed, risk mitigated.',time:'~10% of CoE time',col:'var(--amber)'},
+      ].map(d=>`<div style="padding:11px 14px;background:var(--surface2);border-radius:3px;border-left:3px solid ${d.col};display:flex;gap:12px;align-items:flex-start"><span style="font-family:var(--fm);font-size:9px;color:${d.col};flex-shrink:0;padding-top:3px">${d.n}</span><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:3px"><span style="font-weight:700;font-size:13px;color:var(--ink)">${d.t}</span><span class="chip cgo" style="flex-shrink:0;margin-left:8px;font-size:7.5px">${d.time}</span></div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">${d.d}</div></div></div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">What the CoE Role <em>Protects Against</em></div>
+    <div class="inf go"><strong>The Drift Risk</strong>Without deliberate time protection, CoE work gets displaced by operational urgency. The solution is not more willpower — it is a structured weekly schedule and a CoE accountability that is reported to the COO separately from HR operations.</div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {risk:'Being pulled into recruitment admin',protect:'CoE does not process applications, manage ATS, or coordinate interviews. That is HR Ops. CoE designs the recruitment framework — others run it.',col:'var(--red)'},
+        {risk:'Becoming the country HR problem-solver',protect:'CoE sets standards. When a country has an ER issue, the CoE provides the framework — not the resolution. Resolution is the Country HRBP or SM\'s role.',col:'var(--red)'},
+        {risk:'Owning every policy document task',protect:'CoE owns policy governance — review schedule, quality, consistency. Country-specific policy drafting is done by HRBPs to CoE templates.',col:'var(--amber)'},
+        {risk:'Being the only person who knows how HR works',protect:'CoE actively distributes knowledge. Every framework has documentation. Every process has a guide. CoE cannot be a single point of failure.',col:'var(--amber)'},
+        {risk:'Strategy work without visible output',protect:'CoE produces tangible deliverables on a quarterly cadence. If the CoE cannot point to what was built this quarter, the role loses credibility.',col:'var(--teal-accent)'},
+      ].map(d=>`<div style="padding:9px 12px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:12px;color:var(--ink);margin-bottom:3px">⚠ ${d.risk}</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.protect}</div></div>`).join('')}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">Weekly CoE Time Model — <em>42-Staff Scale</em></div>
+  <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:14px">At 42 staff, the Group HR Head is simultaneously CoE, strategic HRBP, and part-time HR Ops. The weekly time model below reflects a realistic allocation — protecting CoE time while acknowledging operational realities.</div>
+  <div class="g3">
+    ${[
+      {day:'Monday',focus:'CoE Architecture Day',tasks:['Framework review or development work','Policy register maintenance','Standards audit progress'],col:'var(--gold)'},
+      {day:'Tuesday–Wednesday',focus:'HRBP & Operations',tasks:['Country HRBP support','Operational HR decisions','Recruitment pipeline management'],col:'var(--teal-accent)'},
+      {day:'Thursday',focus:'CoE Delivery Day',tasks:['Knowledge base updates','CoE reporting and tracking','Innovation pipeline review'],col:'var(--gold)'},
+      {day:'Friday',focus:'Strategic & Reporting',tasks:['COO brief preparation','Cross-country standards review','Next week CoE priority setting'],col:'var(--amber)'},
+      {day:'Monthly: 1 full day',focus:'CoE Deep Work',tasks:['Major framework builds','Quarterly standards audit','CoE maturity self-assessment'],col:'var(--gold)'},
+      {day:'Quarterly: 2 days',focus:'CoE Planning',tasks:['Quarterly CoE output review','Next quarter priorities','CoE value report to COO'],col:'var(--amber)'},
+    ].map(d=>`<div style="background:var(--surface2);border-radius:4px;padding:14px;border-top:3px solid ${d.col}"><div style="font-family:var(--fm);font-size:8px;color:${d.col};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">${d.day}</div><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:6px">${d.focus}</div>${d.tasks.map(t=>`<div style="font-size:12px;color:var(--ink3);font-weight:300;padding:2px 0">→ ${t}</div>`).join('')}</div>`).join('')}
+  </div>
+</div>
+`;
+
+// ══ PAGE 03 — SCOPE & MANDATE ════════════════════════════════════
+document.getElementById('page-scope').innerHTML=`
+<div class="pe">Section 03 — Scope &amp; Mandate</div>
+<div class="pt">Scope &amp;<br><em>Mandate</em></div>
+<p class="pd">Scope defines what the CoE is responsible for. Mandate defines the authority the CoE has to act on that responsibility. Without a clear mandate, the CoE is advisory. With a mandate, it governs. The distinction matters — particularly across four countries with four different country-level interpretations of HR.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Mandate Principle</div>
+  <div class="vx-ti">The CoE's authority is not derived from seniority — it is derived from the COO's endorsement of group-wide HR standards. Without that endorsement visible to Country SMs, the CoE is a suggestion box. With it, the CoE is the standard-setter.</div>
+  <div class="vx-bo">At Valentis, the CoE mandate must be communicated once — clearly, by the COO — to all Country SMs. The message is simple: Group HR (CoE) sets the people standards that all countries operate to. Country operations have flexibility in how they implement — but not in whether they implement. This framing positions the CoE as an enabler, not a compliance enforcer. The CoE helps countries meet the standard. It does not penalise countries for gaps — it closes them.</div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">CoE Scope — <em>In Scope</em></div>
+    <div style="display:grid;gap:6px;margin-top:4px">
+      ${[
+        {area:'HR Policy Architecture',detail:'Owns the master policy register. All Valentis HR policies originate from or are approved by CoE. Country addenda require CoE endorsement.'},
+        {area:'Framework Design',detail:'Designs all group-wide HR frameworks: grading, performance management, compensation bands, coaching standards, succession methodology.'},
+        {area:'Standards Setting',detail:'Defines the minimum operating standard for every HR process across all countries. Countries may exceed the standard — they may not fall below it.'},
+        {area:'Knowledge Management',detail:'Owns the HR toolkit — all templates, guides, playbooks, and frameworks. Maintains version control and ensures current versions are accessible group-wide.'},
+        {area:'HR Governance',detail:'Owns the decision rights framework for HR. Defines who approves what, at what level, in what circumstances. Prevents shadow HR decisions.'},
+        {area:'Framework Lifecycle',detail:'Manages the creation, review, update, and retirement of all HR frameworks. No framework operates without a review date and an owner.'},
+        {area:'HR Innovation',detail:'Owns the HR improvement pipeline. Pilots new approaches, evaluates outcomes, and recommends for group-wide adoption or retirement.'},
+        {area:'CoE Maturity & Reporting',detail:'Measures and reports on the HR function\'s maturity against the group standard. Reports CoE value to the COO quarterly.'},
+      ].map(d=>`<div style="padding:9px 12px;background:var(--surface2);border-radius:3px;display:flex;gap:10px;align-items:flex-start"><span style="color:var(--green);flex-shrink:0;margin-top:1px;font-size:13px">✓</span><div><span style="font-weight:700;font-size:12.5px;color:var(--ink)">${d.area}: </span><span style="font-size:12.5px;color:var(--ink3);font-weight:300">${d.detail}</span></div></div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">CoE Scope — <em>Out of Scope</em></div>
+    <div style="display:grid;gap:6px;margin-top:4px">
+      ${[
+        {area:'HR Operations',detail:'Payroll processing, contract administration, visa and work permit management, HRIS data entry. These are HR Ops functions.'},
+        {area:'Country-Level ER Cases',detail:'Individual employee relations cases are managed by the Country HRBP or SM. CoE provides the framework and policy — not case management.'},
+        {area:'Recruitment Execution',detail:'Job posting, candidate screening, interview coordination, and offer management are HR Ops and HRBP functions. CoE owns the framework, not the process execution.'},
+        {area:'Individual Performance Management',detail:'Managing an individual\'s performance plan is a manager or HRBP function. CoE owns the performance framework — not its application to individuals.'},
+        {area:'Day-to-Day Manager Coaching',detail:'Coaching individual SMs or managers on HR issues is the HRBP role. CoE builds the coaching framework — HRBPs apply it.'},
+        {area:'Country-Specific Policy Drafting',detail:'Country-specific addenda to group policy are drafted by country HRBPs using CoE templates, then submitted to CoE for endorsement.'},
+        {area:'Benefits Administration',detail:'Enrolment, claims processing, and benefits queries are HR Ops. CoE designs the benefits framework and reviews it annually.'},
+      ].map(d=>`<div style="padding:9px 12px;background:#fff8f8;border-radius:3px;border:1px solid var(--red-border);display:flex;gap:10px;align-items:flex-start"><span style="color:var(--red);flex-shrink:0;margin-top:1px;font-size:13px">✕</span><div><span style="font-weight:700;font-size:12.5px;color:var(--ink)">${d.area}: </span><span style="font-size:12.5px;color:var(--ink3);font-weight:300">${d.detail}</span></div></div>`).join('')}
+    </div>
+    <div class="inf go" style="margin-top:12px"><strong>The Boundary Rule</strong>If a task produces a deliverable used by multiple countries or multiple HR processes — it is CoE. If a task produces a result for one person or one situation — it is HRBP or HR Ops. This single rule resolves 90% of scope ambiguity.</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">The CoE Mandate Statement — <em>For COO Communication</em></div>
+  <div class="pq">
+    <p>"The Centre of Excellence is Group HR's standard-setting function. It owns the frameworks, policies, and standards that all Valentis country operations implement. Country SMs and HRBPs have full authority over how HR is executed day-to-day within their operations — within the standards the CoE sets. Where country practice conflicts with group standards, the CoE standard prevails. The CoE is not here to create bureaucracy — it is here to ensure that when we scale to 1,000 staff, our people system scales with us."</p>
+    <cite>COO communication to Country SMs — recommended language · Q2 2026</cite>
+  </div>
+  <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8">This mandate statement should be communicated by the COO at the next Country SM call — not by Group HR. The authority of the CoE is derived from COO endorsement, not from HR asserting its own importance. Once communicated, it should be referenced in the CoE Charter (Tool 1 Section 06) and in the HR Governance framework (Tool 4).</div>
+</div>
+`;
+
+// ══ PAGE 04 — INTERFACES & RELATIONSHIPS ════════════════════════
+document.getElementById('page-interfaces').innerHTML=`
+<div class="pe">Section 04 — Interfaces &amp; Relationships</div>
+<div class="pt">Interfaces &amp;<br><em>Relationships</em></div>
+<p class="pd">The CoE does not operate in isolation. It works through relationships — with the COO who endorses its mandate, the HRBPs who implement its frameworks, the SMs who manage within its standards, and the HR Ops team that executes its policies. This section defines each interface: what the CoE gives, what it receives, and how conflicts are resolved.</p>
+
+<div class="vx">
+  <div class="vx-ey">The Interface Principle</div>
+  <div class="vx-ti">The CoE's relationships are not reporting lines — they are service exchanges. The CoE gives frameworks, standards, and tools. In return, it receives implementation feedback, country context, and operational intelligence that improves what it builds.</div>
+  <div class="vx-bo">The most important interface at Valentis right now is CoE ↔ COO. Until the CoE has demonstrated its value in COO language — delivery-linked frameworks, cost-reducing standards, risk-mitigating governance — it will be perceived as an internal HR function with no business consequence. Every CoE output should be explainable to the COO in one sentence that connects to delivery, cost, or risk. The other interfaces (HRBPs, SMs, HR Ops) are the implementation channels through which the CoE's standards reach the workforce.</div>
+</div>
+
+<div class="card">
+  <div class="ct">Interface Map — <em>CoE at the Centre</em></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    ${[
+      {party:'COO',gives:'Mandate endorsement · Strategic direction · Business priorities that HR must respond to · Budget authority for CoE initiatives',receives:'CoE value report · Policy and standards decisions requiring C-suite authority · Risk flags where country operations diverge from group standard',frequency:'Monthly (CoE update in COO brief) · Quarterly (CoE value report) · Ad hoc (mandate-level issues)',col:'var(--gold)'},
+      {party:'Country HRBPs',gives:'Group HR frameworks · Policy templates · Coaching on framework application · Standards guidance when country practice diverges · Escalation path for complex cases',receives:'Country-level implementation feedback · Local legal and regulatory constraints · Emerging workforce risks not yet visible at group level · Framework gaps identified through use',frequency:'Monthly (standards update) · Quarterly (framework review) · Ad hoc (new country issue or framework gap)',col:'var(--teal-accent)'},
+      {party:'Country SMs',gives:'Clear standards they can brief to their teams · Decision rights clarity — what SMs can decide, what requires HR · Frameworks that make their people management easier, not harder',receives:'Country operational context · Manager-level feedback on whether HR frameworks are practical in the field · Early warning signals on workforce issues',frequency:'Quarterly (country standards briefing) · Ad hoc (SM requests for HR guidance)',col:'var(--amber)'},
+      {party:'HR Operations',gives:'Policy documents and templates for execution · Process designs that HR Ops implements · Quality standards for HR admin outputs',receives:'Operational data that informs framework updates · Compliance gaps identified during process execution · Feedback on whether policies are workable in practice',frequency:'Monthly (policy and process alignment) · Ad hoc (policy clarification requests)',col:'var(--green)'},
+    ].map(d=>`<div style="background:var(--surface2);border-radius:4px;padding:16px;border-top:3px solid ${d.col}"><div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;font-family:var(--fd)">CoE ↔ ${d.party}</div><div style="margin-bottom:7px"><div style="font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:${d.col};margin-bottom:4px">CoE Gives</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">${d.gives}</div></div><div style="margin-bottom:7px"><div style="font-family:var(--fm);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:4px">CoE Receives</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">${d.receives}</div></div><div style="font-family:var(--fm);font-size:10px;color:${d.col};padding:5px 8px;background:rgba(0,0,0,0.03);border-radius:2px">Cadence: ${d.frequency}</div></div>`).join('')}
+  </div>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Conflict Resolution — <em>When Interfaces Break Down</em></div>
+    <div style="display:grid;gap:7px;margin-top:4px">
+      ${[
+        {scenario:'Country SM ignores group HR standard',resolution:'Step 1: CoE raises with Country HRBP to resolve at country level. Step 2: If unresolved in 30 days, CoE escalates to COO with business case for why the standard exists. Step 3: COO direction followed.',col:'var(--red)'},
+        {scenario:'HRBP asks CoE to run an operational HR task',resolution:'CoE politely declines and redirects: "That sits in HR Ops / with you as HRBP. Happy to send you the relevant framework if useful." Consistency here protects CoE time and scope.',col:'var(--amber)'},
+        {scenario:'Country requests a policy exception',resolution:'CoE reviews the request against the policy rationale. If the exception is justified by local legal or operational context, CoE approves a documented country addendum. If not, the group standard holds.',col:'var(--amber)'},
+        {scenario:'Two countries operating to conflicting standards',resolution:'CoE conducts a standards reconciliation — identifies which is more aligned to group principles and implements a migration plan for the divergent country. Timeline: 90 days.',col:'var(--gold)'},
+        {scenario:'COO requests something outside CoE scope',resolution:'CoE delivers the COO request (COO authority overrides scope), but flags that it has displaced CoE-schedule work. Requests COO priority guidance if the displacement is significant.',col:'var(--teal-accent)'},
+      ].map(d=>`<div style="padding:10px 14px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:3px">${d.scenario}</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.6">${d.resolution}</div></div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">What <em>Good</em> Interfaces Look Like</div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">These are the observable signals that CoE interfaces are functioning well. Use them as a quarterly self-check.</div>
+    ${[
+      {signal:'COO cites CoE output in ExCo discussions',what:'COO is using people frameworks or CoE data in business decisions — the highest signal of CoE credibility.',col:'var(--gold)'},
+      {signal:'HRBPs request CoE input before taking country action',what:'HRBPs are treating CoE as the standards authority — not working around it.',col:'var(--teal-accent)'},
+      {signal:'SMs apply HR frameworks without needing HRBP guidance each time',what:'Frameworks are clear and practical enough that managers can use them independently.',col:'var(--amber)'},
+      {signal:'Country operations flag emerging issues to CoE proactively',what:'Countries see CoE as a resource, not a compliance function — they bring problems early.',col:'var(--green)'},
+      {signal:'No shadow HR policies exist in any country',what:'The policy register is the single source of truth — countries are not maintaining parallel versions.',col:'var(--gold)'},
+    ].map(d=>`<div style="margin-bottom:7px;padding:10px 14px;background:var(--surface2);border-radius:3px;border-left:3px solid ${d.col}"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:2px">✓ ${d.signal}</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.what}</div></div>`).join('')}
+  </div>
+</div>
+`;
+
+// ══ PAGE 05 — RESPONSIBILITY MODEL ══════════════════════════════
+document.getElementById('page-raci').innerHTML=`
+<div class="pe">Section 05 — Responsibility Model</div>
+<div class="pt">Responsibility<br><em>Model</em></div>
+<p class="pd">The RACI model defines who does what across the Valentis HR function. At 42 staff, role ambiguity is the primary cause of HR tasks falling through the gaps or being duplicated across CoE, HRBP, and HR Ops. This matrix makes accountability explicit — one page that every HR stakeholder can reference.</p>
+
+<div class="inf go"><strong>RACI Key</strong><span style="display:inline-flex;gap:8px;flex-wrap:wrap;margin-top:4px"><span class="chip" style="background:#fff3c4;color:#8a6200;border:1px solid #d4aa00">R — Responsible (does the work)</span><span class="chip" style="background:#ffe8d6;color:#8a3a00;border:1px solid #d46000">A — Accountable (owns the outcome)</span><span class="chip ct2">C — Consulted (input required)</span><span class="chip cm">I — Informed (kept in the loop)</span></span></div>
+
+<div class="card">
+  <div class="ct">HR Function RACI — Valentis Group</div>
+  <div style="overflow-x:auto">
+  <table class="dt">
+    <thead>
+      <tr>
+        <th style="min-width:200px">HR Activity</th>
+        <th style="text-align:center;min-width:60px">CoE</th>
+        <th style="text-align:center;min-width:80px">Group HR Head</th>
+        <th style="text-align:center;min-width:80px">Country HRBP</th>
+        <th style="text-align:center;min-width:60px">HR Ops</th>
+        <th style="text-align:center;min-width:60px">Country SM</th>
+        <th style="text-align:center;min-width:60px">COO</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${[
+        {cat:'POLICY & GOVERNANCE',items:[
+          {act:'HR Policy — Design & Architecture',coe:'A/R',grp:'C',hrbp:'C',ops:'I',sm:'I',coo:'I'},
+          {act:'HR Policy — Country Addenda',coe:'A',grp:'C',hrbp:'R',ops:'I',sm:'C',coo:'I'},
+          {act:'Policy Register Maintenance',coe:'A/R',grp:'I',hrbp:'I',ops:'I',sm:'I',coo:'I'},
+          {act:'Policy Exception Approval',coe:'A/R',grp:'C',hrbp:'C',ops:'I',sm:'C',coo:'I (unless major)'},
+        ]},
+        {cat:'FRAMEWORKS & STANDARDS',items:[
+          {act:'Grade Framework Design',coe:'A/R',grp:'C',hrbp:'C',ops:'I',sm:'C',coo:'I'},
+          {act:'Performance Mgmt Framework',coe:'A/R',grp:'C',hrbp:'C',ops:'I',sm:'C',coo:'I'},
+          {act:'Compensation Band Design',coe:'A/R',grp:'C',hrbp:'C',ops:'I',sm:'I',coo:'A (approval)'},
+          {act:'Coaching Standards',coe:'A/R',grp:'C',hrbp:'C',ops:'I',sm:'C',coo:'I'},
+          {act:'Standards Audit (Country)',coe:'A/R',grp:'I',hrbp:'C',ops:'I',sm:'C',coo:'I'},
+        ]},
+        {cat:'TALENT & RECRUITMENT',items:[
+          {act:'Recruitment Framework Design',coe:'A/R',grp:'C',hrbp:'C',ops:'I',sm:'C',coo:'I'},
+          {act:'Job Description Library',coe:'A',grp:'C',hrbp:'R',ops:'I',sm:'C',coo:'I'},
+          {act:'Recruitment Execution',coe:'I',grp:'C',hrbp:'A/R',ops:'R',sm:'C',coo:'I'},
+          {act:'Offer Approval (in-band)',coe:'I',grp:'I',hrbp:'A',ops:'R',sm:'C',coo:'I'},
+          {act:'Offer Approval (exception)',coe:'C',grp:'A',hrbp:'R',ops:'I',sm:'C',coo:'A'},
+        ]},
+        {cat:'PERFORMANCE MANAGEMENT',items:[
+          {act:'Perf Review Cycle Design',coe:'A/R',grp:'C',hrbp:'C',ops:'I',sm:'C',coo:'I'},
+          {act:'Perf Review Execution',coe:'I',grp:'I',hrbp:'A/R',ops:'R',sm:'R',coo:'I'},
+          {act:'PIP Design & Standards',coe:'A/R',grp:'C',hrbp:'C',ops:'I',sm:'I',coo:'I'},
+          {act:'PIP Execution (individual)',coe:'I',grp:'C',hrbp:'A/R',ops:'I',sm:'R',coo:'I'},
+          {act:'Termination (performance)',coe:'C',grp:'A',hrbp:'R',ops:'R',sm:'C',coo:'I'},
+        ]},
+        {cat:'PEOPLE ANALYTICS & REPORTING',items:[
+          {act:'Analytics Framework Design',coe:'A/R',grp:'C',hrbp:'C',ops:'I',sm:'I',coo:'I'},
+          {act:'COO Monthly Brief',coe:'C',grp:'A/R',hrbp:'I',ops:'I',sm:'I',coo:'I'},
+          {act:'Country Scorecard',coe:'I',grp:'A',hrbp:'R',ops:'I',sm:'C',coo:'I'},
+          {act:'CoE Value Report',coe:'A/R',grp:'C',hrbp:'I',ops:'I',sm:'I',coo:'I'},
+        ]},
+        {cat:'HR OPERATIONS',items:[
+          {act:'Payroll Processing',coe:'I',grp:'I',hrbp:'I',ops:'A/R',sm:'I',coo:'I'},
+          {act:'Contract Management',coe:'I',grp:'I',hrbp:'C',ops:'A/R',sm:'I',coo:'I'},
+          {act:'Work Permit / Visa Admin',coe:'I',grp:'I',hrbp:'C',ops:'A/R',sm:'C',coo:'I'},
+          {act:'HRIS Data Management',coe:'I',grp:'I',hrbp:'I',ops:'A/R',sm:'I',coo:'I'},
+          {act:'Benefits Administration',coe:'C (framework)',grp:'I',hrbp:'I',ops:'A/R',sm:'I',coo:'I'},
+        ]},
+      ].map(cat=>`
+        <tr style="background:var(--teal)"><td colspan="7" style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.55);padding:7px 12px">${cat.cat}</td></tr>
+        ${cat.items.map(r=>{
+          const raci=v=>v.includes('A/R')?`<td style="text-align:center"><span class="chip" style="background:#fffbf0;color:#8a6200;border:1px solid #d4aa00;font-size:8px">${v}</span></td>`:
+            v==='A'?`<td style="text-align:center"><span class="chip" style="background:#ffe8d6;color:#8a3a00;border:1px solid #d46000;font-size:8px">A</span></td>`:
+            v==='R'?`<td style="text-align:center"><span class="chip cgo" style="font-size:8px">R</span></td>`:
+            v==='C'?`<td style="text-align:center"><span class="chip ct2" style="font-size:8px">C</span></td>`:
+            v.includes('I')?`<td style="text-align:center"><span class="chip cm" style="font-size:8px">${v}</span></td>`:`<td style="text-align:center;color:var(--ink5);font-size:11px">—</td>`;
+          return `<tr><td style="font-size:12px;font-weight:400">${r.act}</td>${raci(r.coe)}${raci(r.grp)}${raci(r.hrbp)}${raci(r.ops)}${raci(r.sm)}${raci(r.coo)}</tr>`;
+        }).join('')}
+      `).join('')}
+    </tbody>
+  </table>
+  </div>
+</div>
+`;
+
+// ══ PAGE 06 — COE CHARTER ═══════════════════════════════════════
+document.getElementById('page-charter').innerHTML=`
+<div class="pe">Section 06 — CoE Charter</div>
+<div class="pt">CoE<br><em>Charter</em></div>
+<p class="pd">The CoE Charter is the formal one-page document that defines the Centre of Excellence's purpose, authority, scope, and operating principles at Valentis. It is the reference document for all CoE mandate questions — the answer to "why does the CoE have authority over this?" starts here.</p>
+
+<div class="card" style="border:2px solid var(--gold);background:linear-gradient(to bottom,#fffdf5,#fff)">
+  <div style="text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--gold-border)">
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Valentis Group · Human Resources</div>
+    <div style="font-family:var(--fd);font-size:36px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:4px">Centre of Excellence</div>
+    <div style="font-family:var(--fd);font-size:20px;font-style:italic;color:var(--gold);margin-bottom:8px">Operating Charter</div>
+    <div style="font-family:var(--fm);font-size:9px;color:var(--ink5)">Version 1.0 · Effective Q2 2026 · Review: Q2 2027</div>
+  </div>
+
+  <div class="g2" style="margin-bottom:16px">
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-accent);margin-bottom:6px">1. Purpose</div>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.85;font-weight:300">The Valentis Centre of Excellence exists to build and maintain the HR architecture that enables consistent, high-quality people management across all group operations — now at 42 staff, and as the group scales to 1,000. The CoE sets the standards. The rest of HR implements them.</div>
+    </div>
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-accent);margin-bottom:6px">2. Authority</div>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.85;font-weight:300">The CoE operates with COO-endorsed group-wide authority over HR standards, policy architecture, and framework design. Country operations implement CoE standards. Deviations require CoE approval. CoE authority is structural — not subject to individual challenge at country level.</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:16px">
+    <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-accent);margin-bottom:8px">3. Scope of Accountability</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      ${['HR Policy Architecture & Register','HR Framework Design & Lifecycle','Knowledge Management & Toolkit','HR Governance & Decision Rights','Standards Assurance (all countries)','HR Innovation & Continuous Improvement','CoE Maturity & Value Reporting','Framework Quality & Version Control'].map(s=>`<div style="padding:8px 10px;background:var(--surface2);border-radius:3px;font-size:11.5px;color:var(--ink2);font-weight:400;border-top:2px solid var(--gold)">✓ ${s}</div>`).join('')}
+    </div>
+  </div>
+
+  <div class="g2" style="margin-bottom:16px">
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-accent);margin-bottom:6px">4. Operating Principles</div>
+      ${['Standards enable, not restrict — every standard the CoE sets must make country operations easier, not harder','Build once, use everywhere — no framework is built for one country; every CoE output is group-wide','Evidence over tradition — CoE standards are revised when evidence shows they are not working, regardless of how long they have been in place','Transparency over authority — CoE earns compliance through quality and relevance, not by asserting hierarchy','Scalability is non-negotiable — every CoE output is designed to work at 1,000 staff, not just 42'].map(p=>`<div style="font-size:12px;color:var(--ink3);font-weight:300;padding:5px 0;border-bottom:1px solid var(--border);line-height:1.5">→ ${p}</div>`).join('')}
+    </div>
+    <div>
+      <div style="font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-accent);margin-bottom:6px">5. Governance &amp; Review</div>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.85;font-weight:300;margin-bottom:8px">The CoE Charter is reviewed annually by the Group HR Head and endorsed by the COO. Material changes to CoE scope or authority require COO approval. The Charter is distributed to all Country SMs, Country HRBPs, and HR Ops on first issue and on each revision.</div>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.85;font-weight:300">The CoE reports its performance against this Charter quarterly to the COO, using the CoE Maturity Model (Tool 7) as the assessment framework.</div>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid var(--gold-border);padding-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+    ${[
+      {role:'Group HR Head / CoE Lead',name:'________________________',label:'Signed'},
+      {role:'Chief Operating Officer',name:'________________________',label:'Endorsed'},
+      {role:'Review Date',name:'Q2 2027',label:'Next Review'},
+    ].map(s=>`<div style="text-align:center"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink5);margin-bottom:8px">${s.label}</div><div style="font-size:13px;color:var(--ink4);font-weight:300;margin-bottom:4px">${s.name}</div><div style="font-family:var(--fm);font-size:9px;color:var(--ink5)">${s.role}</div></div>`).join('')}
+  </div>
+</div>
+`;
+
+// ══ PAGE 07 — OPERATING RHYTHM ══════════════════════════════════
+document.getElementById('page-rhythm').innerHTML=`
+<div class="pe">Section 07 — Operating Rhythm</div>
+<div class="pt">Operating<br><em>Rhythm</em></div>
+<p class="pd">The CoE operating rhythm is the annual calendar of CoE activities — what gets done when, in what sequence, and how CoE work connects to the Valentis business and HR calendar. Without a rhythm, CoE work becomes reactive. With it, the CoE is always ahead of the cycle.</p>
+
+<div class="vx">
+  <div class="vx-ey">Why Rhythm Matters</div>
+  <div class="vx-ti">The CoE that works to a rhythm is always one step ahead — frameworks reviewed before they break, policies updated before they expire, standards audited before they drift. The CoE that works reactively is always one step behind.</div>
+  <div class="vx-bo">At 42 staff and one CoE person, the rhythm is what prevents the CoE from being overwhelmed. If framework reviews, policy audits, and knowledge base updates are scheduled — they happen. If they depend on finding time, they do not. The operating rhythm in this section is calibrated for a one-person CoE with approximately 40% of time available for CoE-specific work.</div>
+</div>
+
+<div class="card">
+  <div class="ct">Annual CoE Calendar — <em>Valentis 2026</em></div>
+  <table class="dt">
+    <thead><tr><th>Period</th><th>CoE Activity</th><th>Output</th><th>Connects To</th></tr></thead>
+    <tbody>
+      ${[
+        {p:'January',acts:['Policy register annual review begins','Framework lifecycle review — Q4 previous year closures','CoE annual plan set'],out:'Updated policy register · CoE annual priorities',conn:'HR Strategy Review output · COO Q4 brief'},
+        {p:'February',acts:['Compensation band review (for March merit cycle)','Knowledge base Q1 update','Country standards check — Thailand & Indonesia'],out:'Updated comp bands · KB refresh · Country audit notes',conn:'Compensation Analytics (PA Tool 7)'},
+        {p:'March',acts:['Performance framework review (end of review cycle)','CoE Q1 delivery report to COO','Policy exceptions review — Q1'],out:'Performance framework update if needed · CoE Q1 report',conn:'Performance cycle close · COO brief'},
+        {p:'April',acts:['Q1 full standards audit (all 4 countries)','HR innovation pipeline Q1 review','Framework quality review — any gaps from Q1 operations'],out:'Standards audit report · Innovation pipeline update',conn:'PA quarterly review · HRBP feedback'},
+        {p:'May',acts:['Succession framework review (mid-year bench update)','Knowledge base Q2 update','Governance review — any decision rights issues in Q1'],out:'Succession framework update · KB refresh',conn:'Workforce Planning (PA Tool 6)'},
+        {p:'June',acts:['CoE H1 value report','Board pack HR section input (frameworks & standards health)','Policy register mid-year health check'],out:'CoE H1 value report · Board pack input',conn:'Semi-annual board pack · COO brief'},
+        {p:'July',acts:['Q2 standards audit (all 4 countries)','Framework lifecycle review — H1 closures, H2 priorities','CoE H2 planning'],out:'Standards audit · H2 CoE plan',conn:'PA Tool 7 quarterly review'},
+        {p:'August',acts:['Budget season — CoE input to HR budget','L&D framework review (for Sept programme cycle)','Innovation pilots — Q3 evaluation'],out:'CoE budget submission · L&D framework update',conn:'Annual budget cycle · L&D Tool'},
+        {p:'September',acts:['Knowledge base Q3 update','Governance framework review — annual','Country standards check — Laos & Myanmar'],out:'KB refresh · Governance update · Country audit notes',conn:'Country scorecard Q3 · HRBP feedback'},
+        {p:'October',acts:['Q3 standards audit (all 4 countries)','Performance framework prep (for Nov/Dec review cycle)','CoE Q3 delivery report'],out:'Standards audit · Perf framework readiness · CoE Q3 report',conn:'Q3 COO brief · Performance cycle prep'},
+        {p:'November',acts:['Annual pay review framework (for Dec merit)','Knowledge base Q4 update','Innovation pipeline — year-end review'],out:'Pay review framework · KB refresh · Innovation annual report',conn:'Compensation cycle · HR innovation log'},
+        {p:'December',acts:['CoE annual review and maturity self-assessment','Full policy register review and archive','CoE Charter annual review','Annual board pack HR section input'],out:'CoE Annual Report · Updated policy register · Charter review · Board input',conn:'December board pack · HR Strategy Review'},
+      ].map(r=>`<tr><td style="font-weight:700;font-size:12px;color:var(--gold);white-space:nowrap">${r.p}</td><td style="font-size:12px;font-weight:300">${r.acts.map(a=>`→ ${a}`).join('<br>')}</td><td style="font-size:11.5px;color:var(--teal-accent);font-weight:300">${r.out}</td><td style="font-size:11.5px;font-weight:300;color:var(--ink5)">${r.conn}</td></tr>`).join('')}
+    </tbody>
+  </table>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">Monthly CoE Standup — <em>15-Minute Self-Check</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">At the start of each month, the CoE runs through this 5-question check. It takes 15 minutes and ensures no CoE commitment is missed.</div>
+    ${[
+      'What is the one CoE deliverable due this month — is it on track?',
+      'Are any frameworks or policies approaching their review date in the next 60 days?',
+      'Did any country operation flag a standards gap or exception request last month that needs a response?',
+      'Is the knowledge base current — are there any outputs from last month that need to be captured?',
+      'What is the one CoE priority for this month that will most directly support the COO brief?',
+    ].map((q,i)=>`<div style="display:flex;gap:12px;align-items:flex-start;padding:9px 12px;background:var(--surface2);border-radius:3px;margin-bottom:6px"><span style="font-family:var(--fm);font-size:10px;color:var(--gold);flex-shrink:0;padding-top:1px">Q${i+1}</span><div style="font-size:12.5px;color:var(--ink2);font-weight:300;line-height:1.6">${q}</div></div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Quarterly CoE Review — <em>2-Hour Deep Work</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:10px">At the end of each quarter, the CoE conducts a 2-hour structured review. Output: the CoE quarterly value report for the COO.</div>
+    ${[
+      {t:'Deliverables Review',d:'What did the CoE commit to delivering this quarter? What was delivered, what was deferred, and why?'},
+      {t:'Standards Audit Results',d:'What did the quarterly standards audit find? How many gaps, in which countries, and what is the remediation plan?'},
+      {t:'Framework Health',d:'Are all active frameworks current? Any approaching review date? Any frameworks flagged as not fit for purpose by HRBPs or SMs?'},
+      {t:'Policy Register Status',d:'How many policies are current, under review, or overdue for review? Any exceptions granted this quarter?'},
+      {t:'Innovation Pipeline',d:'What is in the HR innovation pipeline? What pilots are running? What has been scaled or retired?'},
+      {t:'CoE Value Statement',d:'What is the one-sentence value the CoE delivered this quarter in business language — delivery, cost, or risk?'},
+    ].map(d=>`<div style="margin-bottom:7px;padding:9px 12px;background:var(--surface2);border-radius:3px;border-left:3px solid var(--gold)"><div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:2px">${d.t}</div><div style="font-size:12px;color:var(--ink3);font-weight:300;line-height:1.5">${d.d}</div></div>`).join('')}
+  </div>
+</div>
+`;
+
+// ══ PAGE 08 — COE TO CHRO POSITIONING ═══════════════════════════
+document.getElementById('page-positioning').innerHTML=`
+<div class="pe">Section 08 — CoE to CHRO Positioning</div>
+<div class="pt">CoE to<br><em>CHRO</em></div>
+<p class="pd">Operating as a one-person CoE at a 42-person company is not a limitation — it is the most powerful CHRO-positioning move available. This section maps how every CoE accountability builds the credibility, authority, and strategic track record that earns CHRO elevation — and what that trajectory looks like for Valentis by 2028.</p>
+
+<div class="vx">
+  <div class="vx-ey">The CHRO Positioning Thesis</div>
+  <div class="vx-ti">CHROs are not promoted because they are good at HR operations. They are promoted because they built something — a people system, a framework, a capability that the organisation could not function without. The CoE is that thing at Valentis.</div>
+  <div class="vx-bo">The path from Group HR Head to CHRO at Valentis runs directly through the CoE. Every standard the CoE sets, every framework it builds, every policy it governs — these are evidence of a HR leader who thinks architecturally, operates with group-wide authority, and connects people decisions to business outcomes. By 2027, when Valentis is scaling rapidly toward 500 staff, the COO will need a CHRO who has already built the HR system that scaling requires. The CoE is the proof that system exists — and that Ba built it.</div>
+</div>
+
+<div class="card">
+  <div class="ct">How CoE Accountabilities Build CHRO Credibility</div>
+  <table class="dt">
+    <thead><tr><th>CoE Accountability</th><th>CHRO Credential It Builds</th><th>Evidence by 2027</th></tr></thead>
+    <tbody>
+      ${[
+        {coe:'Owns group-wide HR policy architecture',chro:'Strategic HR governance — the ability to design a people system, not just manage HR processes',ev:'A documented, current policy register with group-wide adoption and zero shadow policies across 4 countries'},
+        {coe:'Designs all HR frameworks (grading, performance, compensation)',chro:'HR architecture capability — building the structures that make a scaling organisation coherent',ev:'7 group-wide frameworks in active use, updated on schedule, producing consistent outputs across all countries'},
+        {coe:'Governs decision rights across HR function',chro:'Organisational design thinking — understanding who should decide what and why',ev:'A functioning HR governance model that COO cites as preventing HR fragmentation as the group grows'},
+        {coe:'Reports CoE value in business language to COO',chro:'Executive communication — talking delivery, cost, and risk instead of HR inputs',ev:'COO includes HR in ExCo agenda monthly; HR seen as a P&L function, not an admin function'},
+        {coe:'Manages HR innovation pipeline',chro:'Continuous improvement leadership — the habit of improving systems, not just maintaining them',ev:'3+ HR innovations piloted and scaled during 2026–2027; at least one directly connected to a delivery improvement'},
+        {coe:'Builds scalable HR architecture for 1,000 staff',chro:'Long-horizon strategic thinking — building for where the organisation is going, not where it is',ev:'When Valentis hits 200 staff, the HR system requires no fundamental rebuild — it scales from what the CoE built at 42'},
+        {coe:'Maintains HR institutional knowledge base',chro:'Knowledge leadership — ensuring the organisation does not lose its people capability when individuals leave',ev:'Complete HR toolkit that any new HRBP can be onboarded from within 2 weeks'},
+      ].map(r=>`<tr><td style="font-weight:500;font-size:12.5px">${r.coe}</td><td style="font-size:12.5px;color:var(--gold);font-weight:400">${r.chro}</td><td style="font-size:12px;font-weight:300;color:var(--teal-accent)">${r.ev}</td></tr>`).join('')}
+    </tbody>
+  </table>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="ct">CHRO Elevation — <em>Timeline</em></div>
+    <div style="display:grid;gap:8px;margin-top:4px">
+      ${[
+        {period:'Now — Q2 2026',title:'Establish the CoE',actions:['CoE Charter signed by COO','Policy register published and communicated','RACI matrix agreed with Country SMs','CoE rhythm operational'],milestone:'CoE has formal mandate and is visible to leadership',col:'var(--gold)'},
+        {period:'Q3–Q4 2026',title:'Demonstrate CoE Value',actions:['First full standards audit completed across all countries','3+ frameworks built or updated and in use','First CoE value report delivered to COO in business language','COO includes HR in strategic planning discussion'],milestone:'COO sees HR as a strategic function, not just an admin function',col:'var(--gold)'},
+        {period:'2027 — H1',title:'CoE at Scale',actions:['HR system holds through first rapid headcount growth (50→100)','CoE cited in board pack as a scaling enabler','CHRO title discussion initiated — either formal proposal or COO suggestion','CoE maturity at Level 4 or above'],milestone:'CHRO elevation is the natural next step — the title catches up to the role',col:'var(--teal-accent)'},
+        {period:'2027 — H2 onward',title:'CHRO',actions:['CHRO title formalised','CoE expands — first CoE specialist hire','HR sits at ExCo as full member','People strategy is a board-level agenda item'],milestone:'CHRO — Group HR is a strategic function at the Valentis leadership table',col:'var(--green)'},
+      ].map(d=>`<div style="padding:12px 16px;border-left:3px solid ${d.col};background:var(--surface2);border-radius:0 3px 3px 0"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><span style="font-weight:700;font-size:13px;color:var(--ink)">${d.title}</span><span class="chip cgo">${d.period}</span></div><div style="display:grid;gap:2px;margin-bottom:6px">${d.actions.map(a=>`<div style="font-size:11.5px;color:var(--ink3);font-weight:300">→ ${a}</div>`).join('')}</div><div style="font-family:var(--fm);font-size:10px;color:${d.col};padding:5px 8px;background:rgba(0,0,0,0.04);border-radius:2px">Milestone: ${d.milestone}</div></div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">The CHRO Conversation — <em>How to Frame It</em></div>
+    <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.8;margin-bottom:12px">When the CHRO conversation happens, it should be framed around what has been built — not what the title implies. These are the three statements that make the case.</div>
+    ${[
+      {label:'Statement 1 — The Architecture',text:'"I have built the HR system that Valentis will scale on. The policy architecture, the grade framework, the performance standards, the governance model — these are not ideas. They are in use across four countries, and they are the reason our HR function is consistent at 42 staff and will still be consistent at 400."'},
+      {label:'Statement 2 — The Business Connection',text:'"Every HR framework I have built connects to a business outcome. The coaching standard explains Thailand\'s delivery advantage. The grading framework enables cross-country mobility. The governance model prevents the country-by-country policy fragmentation that costs senior management time and creates legal exposure."'},
+      {label:'Statement 3 — The Scale Case',text:'"As Valentis grows to 500 staff, the people function needs a leader who has already built at scale — architecturally, not just operationally. The CoE work I have done for the past 18 months is exactly that. The CHRO role is the natural next step for what I am already doing."'},
+    ].map(d=>`<div style="margin-bottom:10px;padding:14px 16px;background:var(--teal);border-radius:4px"><div style="font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold3);margin-bottom:7px">${d.label}</div><div style="font-family:var(--fd);font-size:15px;font-style:italic;color:rgba(255,255,255,0.8);line-height:1.75;font-weight:400">${d.text}</div></div>`).join('')}
+  </div>
+</div>
+`;
+</script>
+</body>
+</html>

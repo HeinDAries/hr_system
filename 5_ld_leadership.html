@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership Development Programme — L&amp;D Tool 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1eb;--surface:#fff;--surface2:#edeae2;--surface3:#e4e0d6;
+  --border:#d8d3c8;--border2:#c8c2b4;
+  --ink:#1a1a14;--ink2:#2c2b22;--ink3:#524f44;--ink4:#857f72;--ink5:#b4ae9f;
+  --forest:#1f4d35;--forest2:#276044;--forest3:#2e7350;
+  --forest-dim:rgba(31,77,53,0.07);--forest-border:rgba(31,77,53,0.22);
+  --brass:#7a5c14;--brass2:#8f6d1a;
+  --brass-dim:rgba(122,92,20,0.08);--brass-border:rgba(122,92,20,0.22);
+  --sienna:#9b3a1a;--sienna-dim:rgba(155,58,26,0.07);--sienna-border:rgba(155,58,26,0.2);
+  --red:#9b1a1a;--red-dim:rgba(155,26,26,0.07);--red-border:rgba(155,26,26,0.2);
+  --slate:#2c3a30;
+  --sidebar-w:272px;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'Fira Code','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--slate);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--forest3),var(--forest),rgba(31,77,53,0.3),transparent)}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;background:rgba(31,77,53,0.2);border:1px solid rgba(31,77,53,0.4);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;line-height:1.1;margin-bottom:4px}
+.sb-title em{font-style:italic;color:#6dbf8a;font-weight:400}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm)}
+.sb-nav{padding:12px 8px 6px}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.3);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.65)}
+.nav-item.active{background:rgba(31,77,53,0.2);border-color:rgba(31,77,53,0.45);color:#6dbf8a}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.15);width:20px;flex-shrink:0}
+.nav-item.active .nav-num{color:var(--forest3)}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-note{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.25);font-family:var(--fm);line-height:1.6}
+.sb-note strong{color:#6dbf8a;display:block;margin-bottom:3px}
+.main{margin-left:var(--sidebar-w);flex:1}
+.page{display:none;padding:44px 56px;max-width:1100px}
+.page.active{display:block}
+.page-header{margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--ink)}
+.page-eyebrow{font-family:var(--fm);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--forest);margin-bottom:10px}
+.page-title{font-family:var(--fd);font-size:58px;font-weight:700;color:var(--ink);line-height:.92;margin-bottom:14px;letter-spacing:-.5px}
+.page-title em{font-style:italic;font-weight:400;color:var(--forest)}
+.page-desc{font-size:14px;color:var(--ink3);max-width:560px;line-height:1.9;font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-family:var(--fd);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.card-title em{font-style:italic;color:var(--forest);font-weight:400}
+.card-body{font-size:13.5px;color:var(--ink3);line-height:1.9;font-weight:300}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:2px;font-family:var(--fm);font-size:8.5px;font-weight:600;letter-spacing:.5px}
+.chip-forest{background:var(--forest-dim);color:var(--forest);border:1px solid var(--forest-border)}
+.chip-brass{background:var(--brass-dim);color:var(--brass);border:1px solid var(--brass-border)}
+.chip-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.chip-muted{background:var(--surface2);color:var(--ink4);border:1px solid var(--border)}
+.info{border-radius:3px;padding:14px 18px;margin-bottom:14px;font-size:13.5px;line-height:1.85;border-left:3px solid;font-weight:300}
+.info.forest{background:var(--forest-dim);border-color:var(--forest);color:var(--ink2)}
+.info.brass{background:var(--brass-dim);border-color:var(--brass);color:var(--ink2)}
+.info.red{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
+.info strong{display:block;font-weight:700;margin-bottom:3px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;padding:9px 14px;background:var(--slate);color:rgba(255,255,255,0.7);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface2)}
+.pull-quote{border-left:4px solid var(--forest);padding:16px 20px;margin:16px 0;background:var(--forest-dim);border-radius:0 4px 4px 0}
+.pull-quote p{font-family:var(--fd);font-size:18px;font-style:italic;color:var(--ink2);line-height:1.6}
+.pull-quote cite{display:block;margin-top:6px;font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--forest)}
+.vx-box{background:var(--slate);border-radius:4px;padding:22px 26px;margin-bottom:14px}
+.vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#6dbf8a;margin-bottom:8px}
+.vx-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ede4;margin-bottom:10px;line-height:1.15}
+.vx-body{font-size:13.5px;color:rgba(255,255,255,0.5);font-weight:300;line-height:1.85}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab:hover{color:var(--ink2)}
+.tab.active{color:var(--forest);border-bottom-color:var(--forest);font-weight:600}
+.tab-body{display:none;padding:20px 0}
+.tab-body.active{display:block}
+/* PLANNER */
+.pl-wrap{background:var(--slate);border-radius:4px;padding:28px;margin-bottom:14px}
+.pl-label{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;display:block}
+.pl-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:9px 13px;font-size:13px;color:#f0ede4;font-family:var(--fb);outline:none;cursor:pointer;margin-bottom:10px}
+.pl-select option{background:var(--slate);color:#f0ede4}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
+.btn-forest{background:var(--forest);color:#fff}
+.btn-forest:hover{background:var(--forest2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
+.btn-ghost:hover{border-color:rgba(31,77,53,0.5);color:#6dbf8a}
+.pl-result{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:22px;margin-top:16px;display:none}
+/* timeline */
+.tl{position:relative;padding-left:24px;margin:12px 0}
+.tl::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--forest-border)}
+.tl-item{position:relative;margin-bottom:14px}
+.tl-dot{position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--forest);border:2px solid var(--bg)}
+.tl-head{font-weight:600;font-size:13px;color:var(--ink);margin-bottom:3px}
+.tl-sub{font-size:12.5px;color:var(--ink4);font-family:var(--fm);margin-bottom:4px}
+.tl-body{font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page.active .card,.page.active .vx-box{animation:fadeUp .25s ease both}
+.page.active .card:nth-child(2){animation-delay:.05s}
+.page.active .card:nth-child(3){animation-delay:.09s}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-rule"></div>
+  <div class="sb-logo">
+    <div class="sb-dept">L&amp;D Tool 5 / 7</div>
+    <div class="sb-title">Leadership<br><em>Development</em></div>
+    <div class="sb-sub">Valentis Group · 2026</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-group">Sections</div>
+    <div class="nav-item active" onclick="showPage('context',this)"><span class="nav-num">01</span>Leadership Context at Valentis</div>
+    <div class="nav-item" onclick="showPage('framework',this)"><span class="nav-num">02</span>Leadership Framework</div>
+    <div class="nav-item" onclick="showPage('sm',this)"><span class="nav-num">03</span>Site Manager Development</div>
+    <div class="nav-item" onclick="showPage('g4dev',this)"><span class="nav-num">04</span>G4 Leadership Development</div>
+    <div class="nav-item" onclick="showPage('succession',this)"><span class="nav-num">05</span>SM Succession Pipeline</div>
+    <div class="nav-item" onclick="showPage('country5',this)"><span class="nav-num">06</span>Country 5 Leadership Readiness</div>
+    <div class="nav-item" onclick="showPage('ba',this)"><span class="nav-num">07</span>Ba's Leadership Development</div>
+    <div class="nav-item" onclick="showPage('planner',this)"><span class="nav-num">08</span>Development Plan Builder</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-note">
+      <strong>Learning &amp; Development — Tool 5 of 7</strong>
+      Leadership Development Programme<br>
+      <span style="color:rgba(255,255,255,0.12)">Leadership at Valentis is operational first. Frameworks that don't work on a remote drill site don't work at all.</span>
+    </div>
+  </div>
+</nav>
+<main class="main">
+  <div id="page-context" class="page active">
+  <div class="page-header">
+    <div class="page-eyebrow">L&amp;D Tool 5 / 7 — Leadership Development Programme</div>
+    <h1 class="page-title">Leadership at<br><em>Valentis</em></h1>
+    <p class="page-desc">Leadership development at Valentis is not a training calendar. It is a deliberate system for building the people accountability that keeps operations running, pipelines full, and the business capable of growth. Every leadership development investment at Valentis is justified by one question: does this make the organisation more resilient or more capable of execution?</p>
+  </div>
+
+  <div class="vx-box">
+    <div class="vx-eyebrow">The Leadership Reality at Valentis</div>
+    <div class="vx-title">Four Site Managers, four countries, four different leadership philosophies. Only one is producing the results Valentis needs.</div>
+    <div class="vx-body">Thailand SM operates at 105% country factor with the highest G1 conversion rate in the group. Myanmar SM has three G4 supervisors with a coaching quality gap driving 58% conversion. Indonesia SM is resistant to Group HR engagement and managing a three-vacancy G3 crisis. Laos SM has a retirement cliff forming beneath their feet and two G3 candidates who may or may not be G4-ready in time. Leadership development at Valentis is not abstract — it is the direct lever on every people risk in the business.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">The Three Leadership Levels at Valentis</div>
+      <div style="display:grid;gap:8px;margin-top:4px">
+        <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:80px 1fr;gap:0">
+            <div style="background:var(--slate);padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:#6dbf8a;line-height:1">G5</div>
+              <div style="font-family:var(--fm);font-size:7px;color:rgba(255,255,255,0.3);text-align:center;margin-top:3px">SITE MGR</div>
+            </div>
+            <div style="padding:13px 15px">
+              <div style="font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:4px">Site Manager</div>
+              <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Country operations leadership. Direct accountability for programme delivery, site safety, client relationships, and the full site workforce. The SM is the most senior leader in-country. Their leadership quality determines site-level outcomes.</div>
+            </div>
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:80px 1fr;gap:0">
+            <div style="background:var(--slate);padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:#6dbf8a;line-height:1">G4</div>
+              <div style="font-family:var(--fm);font-size:7px;color:rgba(255,255,255,0.3);text-align:center;margin-top:3px">LEAD DRLR</div>
+            </div>
+            <div style="padding:13px 15px">
+              <div style="font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:4px">G4 Lead Driller</div>
+              <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Operational team leadership. Direct accountability for technical programme delivery and G1 trainee development. The G4 is a people leader before they are a technical leader — their pipeline impact is their primary leadership measure.</div>
+            </div>
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:80px 1fr;gap:0">
+            <div style="background:var(--slate);padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <div style="font-family:var(--fd);font-size:28px;font-weight:800;color:#6dbf8a;line-height:1">G6</div>
+              <div style="font-family:var(--fm);font-size:7px;color:rgba(255,255,255,0.3);text-align:center;margin-top:3px">GROUP HR</div>
+            </div>
+            <div style="padding:13px 15px">
+              <div style="font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:4px">Group HR Manager (Ba)</div>
+              <div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.7">Group-level people leadership. Accountability for pipeline integrity, workforce planning, and the capability of SMs and G4s to deliver on people outcomes. Ba's leadership development is part of this tool — the CHRO trajectory requires a deliberate programme.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Leadership Risks — Current State</div>
+      <table class="dtable" style="margin-top:4px">
+        <thead><tr><th>Risk</th><th>Who</th><th>Impact</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">G4 coaching quality gap</td><td>Myanmar G4s (3)</td><td>58% G1 conversion — $18K–$36K/yr avoidable cost</td><td><span class="chip chip-red">Active</span></td></tr>
+          <tr><td style="font-weight:600">SM peer learning not structured</td><td>All 4 SMs</td><td>Thailand practices not transferred — single point of failure</td><td><span class="chip chip-red">Active</span></td></tr>
+          <tr><td style="font-weight:600">Indonesia SM resistance</td><td>Wirawan S. (G5)</td><td>Group HR pipeline work blocked at country level</td><td><span class="chip chip-red">Active</span></td></tr>
+          <tr><td style="font-weight:600">Laos SM succession gap</td><td>Laos SM + G3 candidates</td><td>No G4-ready successor identified; 3 retirements in 3 years</td><td><span class="chip chip-red">Urgent</span></td></tr>
+          <tr><td style="font-weight:600">Country 5 SM not identified</td><td>Group HR + COO</td><td>Q2 2027 launch at risk without SM-ready candidate by Q3 2026</td><td><span class="chip chip-brass">Forming</span></td></tr>
+          <tr><td style="font-weight:600">Ba not in business planning</td><td>Ba (G6)</td><td>HR not shaping strategy; reactive positioning limits CHRO trajectory</td><td><span class="chip chip-brass">Personal dev</span></td></tr>
+          <tr><td style="font-weight:600">Myo H. retention cliff</td><td>Myo H. (Myanmar G5)</td><td>Retention bonus expires April 2027 — conversation deadline Sept 2026</td><td><span class="chip chip-brass">Deadline set</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What Leadership Development is NOT at Valentis</div>
+    <div class="card-body" style="margin-bottom:12px">Given Valentis's size, budget, and context, certain common leadership development approaches are not appropriate. This table prevents investment in activity that will not produce results in this environment.</div>
+    <table class="dtable">
+      <thead><tr><th>Approach</th><th>Why it doesn't fit Valentis</th><th>What works instead</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">External leadership courses</td><td>Generic content, wrong context, wrong language, high cost, site unavailability. A 2-day leadership programme off-site for 4 SMs costs $10K+ and produces minimal transfer without follow-up.</td><td>Structured peer forum with Thailand SM as reference practitioner. Ba-facilitated coaching conversations. Real challenge-based learning anchored to actual Valentis problems.</td></tr>
+        <tr><td style="font-weight:600">360-degree feedback without follow-up</td><td>At Valentis's scale, a 360 exercise without a development plan attached is theatre. SMs receive feedback and nothing changes unless Ba has a development conversation with each SM that turns the data into action.</td><td>Ba conducts an annual SM development conversation using a structured framework — performance data, pipeline data, peer observation — with one specific development commitment per SM for the year.</td></tr>
+        <tr><td style="font-weight:600">Leadership competency frameworks (generic)</td><td>A generic 20-competency leadership model is unusable for a G4 on a drill site. It requires translation effort that rarely happens. Valentis needs a minimal, operationally grounded leadership model.</td><td>The Valentis Leadership Framework (Section 02) — four capabilities, directly linked to operational outcomes. Designed to be used in a debrief conversation, not read in an onboarding pack.</td></tr>
+        <tr><td style="font-weight:600">Annual leadership events</td><td>An annual all-manager event requires everyone off-site simultaneously — operationally impossible at Valentis. It also has a poor development ROI compared to quarterly spaced interactions.</td><td>Quarterly SM peer forum (90 minutes, video) with structured agenda. Annual individual SM development conversation with Ba. Ongoing check-ins embedded in regular SM communication rhythm.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-framework" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 02 — Leadership Framework</div>
+    <h1 class="page-title">The Valentis<br><em>Leadership Framework</em></h1>
+    <p class="page-desc">Four capabilities. Not twenty. The Valentis Leadership Framework is built for a drilling operation leader who works in a remote, multilingual, high-stakes environment with limited support infrastructure. Every capability is observable, measurable, and directly connected to a business outcome.</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>"At Valentis, leadership is not about style. It is about whether the people under your leadership develop, perform, and stay — and whether the operation delivers what it promised."</p>
+    <cite>Valentis Leadership Framework · 2026</cite>
+  </div>
+
+  <div style="display:grid;gap:10px;margin-bottom:14px">
+    <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 1fr;gap:0">
+        <div style="background:var(--slate);padding:20px 18px">
+          <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:#6dbf8a;line-height:1;margin-bottom:6px">C1</div>
+          <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:#f0ede4;line-height:1.15;margin-bottom:6px">Develop People</div>
+          <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:.5px">Pipeline accountability</div>
+        </div>
+        <div style="padding:16px 18px;border-right:1px solid var(--border)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT IT MEANS</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Creates deliberate development experiences for the people they lead. Runs structured debrief conversations. Monitors at-risk signals. Gives developmental feedback. Is accountable for the conversion rate of people in their care — not just whether those people are assigned work.</div>
+        </div>
+        <div style="padding:16px 18px;border-right:1px solid var(--border);background:var(--surface2)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">OBSERVABLE INDICATOR</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4: conversion rate ≥70%, check-ins documented. SM: G4 coaching quality improving, G3 pipeline candidates identified and developing. Ba: SM development plans active, pipeline data in COO briefings.</div>
+        </div>
+        <div style="padding:16px 18px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">FAILURE MODE</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Assigns work but does not develop. Sees people development as HR's job, not their job. Avoids difficult conversations. Conversion rate stagnates and attrition is attributed to external factors.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 1fr;gap:0">
+        <div style="background:var(--slate);padding:20px 18px">
+          <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:#6dbf8a;line-height:1;margin-bottom:6px">C2</div>
+          <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:#f0ede4;line-height:1.15;margin-bottom:6px">Deliver Results</div>
+          <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:.5px">Operational accountability</div>
+        </div>
+        <div style="padding:16px 18px;border-right:1px solid var(--border)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT IT MEANS</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Plans and executes operational work to target. Manages resources — people, equipment, time — to deliver programme commitments. Identifies and responds to deviations. Does not just describe problems; presents the response or asks for what they need to respond.</div>
+        </div>
+        <div style="padding:16px 18px;border-right:1px solid var(--border);background:var(--surface2)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">OBSERVABLE INDICATOR</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4: programme delivery ≥93%, shift records complete and accurate. SM: country delivery ≥93%, variance reports include response plan, client commitments met. Ba: workforce planning data used in business planning conversations.</div>
+        </div>
+        <div style="padding:16px 18px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">FAILURE MODE</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Reactive rather than planned. Reports problems without proposals. Accepts underperformance as external. Delivery data is late or incomplete — the SM who does not track is the SM who cannot improve.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 1fr;gap:0">
+        <div style="background:var(--slate);padding:20px 18px">
+          <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:#6dbf8a;line-height:1;margin-bottom:6px">C3</div>
+          <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:#f0ede4;line-height:1.15;margin-bottom:6px">Build Trust</div>
+          <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:.5px">Relational accountability</div>
+        </div>
+        <div style="padding:16px 18px;border-right:1px solid var(--border)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT IT MEANS</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Creates the conditions in which people are willing to share what is really happening — risks, concerns, difficulties — before they become incidents or departures. Follows through on commitments. Is consistent in behaviour regardless of who is watching. Does what they said they would do.</div>
+        </div>
+        <div style="padding:16px 18px;border-right:1px solid var(--border);background:var(--surface2)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">OBSERVABLE INDICATOR</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">G4: trainees raise concerns before they escalate; G4 commitments at end of debrief sessions are followed up. SM: G4s flag at-risk situations proactively; attrition does not include "could not talk to SM" as exit reason.</div>
+        </div>
+        <div style="padding:16px 18px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">FAILURE MODE</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">People do not surface problems until they are crises. Commitments are made in conversations and forgotten. The G4 who says "I'll look into that" and never does loses the trainee's trust — and the trainee exits without warning at month 3.</div>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 1fr;gap:0">
+        <div style="background:var(--slate);padding:20px 18px">
+          <div style="font-family:var(--fd);font-size:32px;font-weight:800;color:#6dbf8a;line-height:1;margin-bottom:6px">C4</div>
+          <div style="font-family:var(--fd);font-size:18px;font-weight:700;color:#f0ede4;line-height:1.15;margin-bottom:6px">Think Ahead</div>
+          <div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:.5px">Strategic accountability</div>
+        </div>
+        <div style="padding:16px 18px;border-right:1px solid var(--border)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:5px">WHAT IT MEANS</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Anticipates risks and opportunities before they become urgent. Plans beyond the current shift or current month. Connects site-level decisions to group-level consequences. Raises concerns with enough lead time for Group HR or COO to act. Does not wait to be asked.</div>
+        </div>
+        <div style="padding:16px 18px;border-right:1px solid var(--border);background:var(--surface2)">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:5px">OBSERVABLE INDICATOR</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">SM: raises succession risks before they become gaps; proposes pipeline solutions at quarterly talent review; initiates conversation with Ba before waiting for directive. G4: flags at-risk trainee before check-in triggers it.</div>
+        </div>
+        <div style="padding:16px 18px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:5px">FAILURE MODE</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Reactive to every situation. No succession plan until a retirement is imminent. Does not raise the Laos retirement risk until a G4 hands in their notice. The SM who waits for Group HR to ask is not demonstrating C4.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Framework Application — By Level</div>
+    <table class="dtable">
+      <thead><tr><th>Capability</th><th>G4 focus</th><th>SM focus</th><th>Ba focus</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">C1 — Develop People</td><td>G1 trainee development. Month-3 check-in quality. Debrief discipline. Conversion rate ownership.</td><td>G4 coaching quality oversight. G3 pipeline candidate identification. SM peer forum facilitation support.</td><td>SM development conversations. G4 coaching programme design and delivery. Pipeline quality across all countries.</td></tr>
+        <tr><td style="font-weight:600">C2 — Deliver Results</td><td>Programme delivery ≥93%. Shift record quality. Equipment maintenance compliance.</td><td>Country delivery ≥93%. Variance reporting with response plans. Client relationship management.</td><td>Workforce planning delivered to COO. Pipeline data in business planning. People cost analysis quality.</td></tr>
+        <tr><td style="font-weight:600">C3 — Build Trust</td><td>Trainee trust — do what you say. Commitment follow-through after each debrief. Psychological safety for near-miss reporting.</td><td>G4 trust — SMs who follow through attract proactive escalation. Group HR relationship — Indonesia SM trust-building is a live leadership development goal.</td><td>SM trust — Ba's influence with SMs is a function of follow-through, not authority. COO trust — consistent delivery of useful people intelligence builds the seat at the business planning table.</td></tr>
+        <tr><td style="font-weight:600">C4 — Think Ahead</td><td>Early at-risk signal identification. Flagging before the month-3 window closes.</td><td>Succession planning — Laos, Country 5. Raising pipeline risks at quarterly talent review before they become crises.</td><td>Workforce planning scenarios. Proactive COO briefings. Building the business case for inclusion in business planning before being asked.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <div id="page-sm" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 03 — Site Manager Development</div>
+    <h1 class="page-title">Site Manager<br><em>Development</em></h1>
+    <p class="page-desc">The four Site Managers are the most important leadership development investment at Valentis. Each SM leads a country operation independently. Their capability directly determines programme delivery, pipeline quality, and whether Group HR's frameworks are actually adopted. This section covers what each SM needs — and how Ba delivers it.</p>
+  </div>
+  <div class="tabs" id="tabs-sm">
+    <div class="tab active" onclick="showTab('sm-overview',this)">Programme Design</div>
+    <div class="tab" onclick="showTab('sm-thailand',this)">Thailand SM</div>
+    <div class="tab" onclick="showTab('sm-myanmar',this)">Myanmar SM / Myo H.</div>
+    <div class="tab" onclick="showTab('sm-indonesia',this)">Indonesia SM / Wirawan</div>
+    <div class="tab" onclick="showTab('sm-laos',this)">Laos SM</div>
+  </div>
+
+  <div class="tab-body active" id="tab-sm-overview">
+    <div class="card">
+      <div class="card-title">SM Development Programme — Design</div>
+      <div class="card-body" style="margin-bottom:14px">The SM development programme is not a course. It is a system of four interlocking mechanisms — quarterly peer forum, annual development conversation, targeted coaching from Ba, and structured cross-SM learning — that collectively build SM capability without requiring any SM to leave their site for extended periods.</div>
+      <table class="dtable">
+        <thead><tr><th>Mechanism</th><th>Frequency</th><th>Format</th><th>Ba's role</th><th>Primary benefit</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">SM Peer Forum</td><td>Quarterly (4×/year)</td><td>90-minute video call. Structured agenda: commitment review → practice share → live problem → commitments. Rotating presenter. Thailand SM presents first 3 sessions.</td><td>Facilitator. Does not solve problems — creates conditions for SMs to solve each other's problems. Distributes Thailand data where it creates learning pressure.</td><td>Practice transfer from Thailand. Peer accountability. Indonesia SM exposure to Group HR methods without compliance framing.</td></tr>
+          <tr><td style="font-weight:600">Annual SM Development Conversation</td><td>Annual (aligned to performance review)</td><td>90-minute structured conversation. Ba leads. Four sections: delivery review (C2), pipeline review (C1), leadership reflection (C3/C4), one development commitment.</td><td>Lead facilitator. Reviews performance data, pipeline data, and peer forum participation before the conversation. One written commitment comes from every conversation — Ba tracks.</td><td>Personalised development focus. Accountability for the one thing that will make the biggest difference that year. Data-informed rather than impressionistic.</td></tr>
+          <tr><td style="font-weight:600">Targeted Ba Coaching</td><td>As needed — triggered by risk flags or SM request</td><td>One-to-one. Ba initiates when a risk flag crosses the escalation threshold: at-risk conversion rate, succession gap, retention concern. SM may also request.</td><td>Coach. Uses the four-question debrief format. The SM is treated as a learner — Ba does not tell, asks.</td><td>Addresses live leadership challenges in real time. Builds Ba's SM relationships. Generates intelligence for Group HR pipeline management.</td></tr>
+          <tr><td style="font-weight:600">Structured Cross-SM Learning</td><td>Embedded in peer forum + cross-site hosting</td><td>Practice presentations at peer forum. Cross-site visit hosting (Laos G3 to Thailand). Annual one-page practice share document from each SM for the group library.</td><td>Curator and documenter. Extracts the practices from peer forum discussions and compiles them for the group library.</td><td>Institutionalises knowledge that currently lives only in individuals. Reduces single-point-of-failure risk when any SM departs.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-sm-thailand">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Thailand SM — Development Profile</div>
+      <div class="vx-title">Reference practitioner, peer forum anchor, and Country 5 succession candidate.</div>
+      <div class="vx-body">The Thailand SM is the group's most effective operational leader. Development for the Thailand SM is not remediation — it is growth toward a larger accountability: Country 5 SM or Group Operations Director. The risk is that the Thailand SM's capability is invisible to the business beyond Thailand — the development programme must make it visible.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Thailand SM — Development Plan 2026</div>
+        <div class="tl" style="margin-top:10px">
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q1 2026 — Practice Capture Interview</div><div class="tl-sub">Ba-led · 90 minutes · documented</div><div class="tl-body">Ba conducts the five-question structured interview (Tool 3, Section 04). Outputs: 3–5 documented practices, 1 case study for Myanmar coaching programme, behaviour comparison table for G4 development programme. Completed by March 2026.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q2 2026 — First Peer Forum Presentation</div><div class="tl-sub">SM peer forum · practice share segment</div><div class="tl-body">Thailand SM presents first documented practice to all SMs. Facilitated by Ba. This is the first visible peer leadership moment for the Thailand SM — how they present, engage, and respond to questions from other SMs reveals their group leadership capability.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q3 2026 — Country 5 Succession Assessment</div><div class="tl-sub">Ba + COO · structured assessment</div><div class="tl-body">Ba and COO assess Thailand SM's readiness for Country 5 SM role. Assessment uses the C1–C4 framework plus operational readiness criteria. If Thailand SM is the Country 5 candidate — Thailand succession plan is activated simultaneously. This is the fork in the road for Thailand SM's development trajectory.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q3 2026 — Cross-Site Host (Laos G3 Candidate)</div><div class="tl-sub">4-week placement · Thailand site</div><div class="tl-body">Thailand SM hosts the first Laos G3 cross-site candidate. This is a leadership development task for the SM — they are not just hosting a visitor, they are developing a G4 candidate from another country. Ba briefs the SM on the specific development goals for the Laos candidate before arrival.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q4 2026 — Annual SM Development Conversation</div><div class="tl-sub">Ba-led · 90 minutes</div><div class="tl-body">Review of 2026 performance data and leadership development against C1–C4. One development commitment for 2027 — likely focused on Country 5 readiness if the succession assessment confirmed the candidacy.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Thailand SM — Leadership Strengths and Development Edge</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:3px">DEMONSTRATED STRENGTHS</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">C1 (Develop People): highest G1 conversion rate in group. C2 (Deliver Results): 105% country factor — consistently exceeds programme targets. C3 (Build Trust): G4s proactively flag at-risk situations — evidence of a trust-based site culture.</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:3px">DEVELOPMENT EDGE — C4 (THINK AHEAD)</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">The transition from country SM to multi-country or group-level leadership requires making C4 visible beyond the Thailand site. The development edge for 2026 is articulating the "why" behind their practices — not just doing things well, but being able to explain why they work and how they translate to other contexts. This is the Group Operations Director capability.</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:3px">RETENTION NOTE</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Thailand SM's retention is strongly linked to growth opportunity. The Country 5 role — or a Group Operations Director role if Valentis creates one — is the retention mechanism. If neither is available or communicated clearly, Thailand SM represents a flight risk to a competitor who offers growth. Ba should ensure the conversation happens by Q3 2026 regardless of Country 5 timing.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-sm-myanmar">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Myanmar SM — Myo H. (G5) · Development Profile</div>
+      <div class="vx-title">Retention deadline September 2026. G4 coaching quality is the immediate leadership development priority.</div>
+      <div class="vx-body">Myo H. is the Myanmar SM with a retention bonus expiring April 2027 and a September 2026 deadline for Ba to initiate the retention conversation. The leadership development priorities for Myo H. are: fixing the G4 coaching quality gap through the coaching programme (which Myo H. sponsors), and building the SM capability needed to retain him past April 2027.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Myo H. — Development Plan 2026</div>
+        <div class="tl" style="margin-top:10px">
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q1–Q2 2026 — G4 Coaching Programme Sponsorship</div><div class="tl-sub">Myo H. as visible sponsor · Ba as facilitator</div><div class="tl-body">Myo H. opens the G4 coaching programme with a brief on why it matters — referencing the conversion rate data. This is both a development act (communicating the business case for people development) and a programme success mechanism (SM endorsement drives G4 engagement). Ba debriefs with Myo H. after each module: "What are you noticing in your G4s?"</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q2 2026 — First SM Peer Forum</div><div class="tl-sub">Presentation on Myanmar challenge</div><div class="tl-body">Myo H. presents the Myanmar challenge — the conversion rate data, what they have tried, and what they are doing with the G4 coaching programme — to the SM peer group. This is a vulnerability and learning act: being honest about a problem publicly. Ba frames this in advance as a strength, not a weakness.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">September 2026 — Retention Conversation Deadline</div><div class="tl-sub">Ba initiates · COO informed in advance</div><div class="tl-body">Ba initiates the retention conversation with Myo H. by September 2026. The conversation covers: what would make Myo H. want to stay beyond April 2027, what the business can offer (growth, recognition, role development), and what the consequence of departure would be for the Myanmar site. Ba prepares a retention proposal for COO approval before the conversation — no improvisation.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q4 2026 — Annual SM Development Conversation</div><div class="tl-sub">Ba-led · 90 minutes</div><div class="tl-body">Review of conversion rate improvement, G4 coaching programme outcomes, and Myo H.'s own C1–C4 development. One commitment for 2027. If retention conversation has been productive, this session also covers Myo H.'s career trajectory — G5 to G6 pathway, or Country 5 candidacy if applicable.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Myo H. — Leadership Profile and Risks</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:3px">C2 STRENGTH (DELIVER RESULTS)</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Myanmar operates at 80% country factor — below Thailand but stable. Myo H. manages a challenging operational environment. C2 delivery in Myanmar context is relatively strong.</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:3px">C1 GAP (DEVELOP PEOPLE) — PRIMARY DEVELOPMENT FOCUS</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">The 58% G1 conversion rate indicates C1 capability is not being transmitted to G4s. Whether this is because Myo H. lacks C1 themselves, or does not hold G4s accountable for it, is the diagnostic question. The G4 coaching programme and Myo H.'s visible sponsorship of it will answer this.</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:.5px;margin-bottom:3px">RETENTION RISK — APRIL 2027 CLIFF</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">If Myo H. departs April 2027, Myanmar loses its SM with full operational context. Replacement time: 3–6 months. Conversion rate impact during SM transition: potentially worse. Retention conversation must be initiated by September 2026 — this is a hard deadline in Ba's 2026 plan.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-sm-indonesia">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Indonesia SM — Wirawan S. (G5) · Development Profile</div>
+      <div class="vx-title">High Power Sceptic. Influence through data and peer — not compliance and policy.</div>
+      <div class="vx-body">Wirawan S. is classified as a High Power Sceptic in Ba's stakeholder map. He has the authority to block Group HR pipeline work at the country level and has demonstrated resistance to Group HR engagement. Development for Wirawan is not a traditional leadership development programme — it is a deliberate influence strategy that uses the SM peer forum, Thailand's performance data, and COO endorsement to shift his relationship with Group HR from resistant to participating.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Wirawan — Influence and Development Plan 2026</div>
+        <div class="tl" style="margin-top:10px">
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q1 2026 — G3 Vacancy Resolution (Trust-Builder)</div><div class="tl-sub">Ba leads · Wirawan as hiring manager</div><div class="tl-body">Ba leads the Indonesia G3 emergency sourcing process with Wirawan as hiring manager. The goal is to solve a problem Wirawan cares about (the G3 vacancy crisis) using Group HR capability. Success here is the single best influence mechanism available — Wirawan experiences Group HR as useful, not intrusive.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q2 2026 — First SM Peer Forum (Observer Role)</div><div class="tl-sub">Low-demand entry · no presentation required</div><div class="tl-body">Wirawan participates in the first peer forum in an observer role — no presentation required, no commitment demanded. Ba frames the invitation as "sharing what is working across countries." Thailand SM presents data including Indonesia comparison. The goal is for Wirawan to see the forum as a resource, not an oversight mechanism.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q3 2026 — Retention Conversation (Wirawan's retention bonus)</div><div class="tl-sub">Ba initiates · retention bonus Q1 2027 expiry</div><div class="tl-body">Wirawan's retention bonus expires Q1 2027. Ba initiates the retention conversation at Q3 2026 — same timing as Myo H. The conversation covers Wirawan's career aspirations. If Wirawan is retention-motivated by growth, the Country 5 SM role is a possible offer — but only if the Indonesia site is stable enough to survive his departure.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q4 2026 — Annual SM Development Conversation</div><div class="tl-sub">Ba-led · 90 minutes</div><div class="tl-body">First formal development conversation with Wirawan. By Q4, if G3 vacancies are filled and Wirawan has participated in two peer forums, the relationship should be sufficiently established to hold a candid development conversation. One commitment — likely focused on G2 pipeline development to prevent the G3 vacancy situation recurring.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Wirawan — Influence Strategy and Constraints</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:3px">WHAT WORKS — DATA AND RESULTS</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Wirawan responds to operational data, not HR frameworks. "Thailand's conversion rate is 72% vs Indonesia's 64% — here's the difference in practice" is more persuasive than "best practice says we should implement a structured check-in." Lead with numbers. Follow with practices. Never lead with frameworks.</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:3px">WHAT WORKS — PEER INFLUENCE</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Thailand SM is a more credible voice with Wirawan than Group HR is. Ba's strategy is to let Thailand SM carry the practice transfer message while Ba facilitates the forum. Wirawan adopting Thailand's practices through peer conversation is a better outcome than Wirawan complying with Ba's directive.</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:3px">BACKSTOP — COO ENDORSEMENT</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">If Wirawan continues to block pipeline work that Ba needs access to, Ba escalates to the COO — not as a complaint, but as a "I need your visible endorsement for the pipeline review process to work in Indonesia." COO directive gives Ba the authority Wirawan has been withholding. This is the last resort — use peer influence and data first.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-body" id="tab-sm-laos">
+    <div class="vx-box" style="margin-top:14px">
+      <div class="vx-eyebrow">Laos SM — Development Profile</div>
+      <div class="vx-title">G3 succession is the immediate leadership development task. The SM must own it — not delegate it to Ba.</div>
+      <div class="vx-body">The Laos SM is managing the most complex succession situation in the group: three G4 retirements within three years and only two G3 candidates to replace them. The leadership development priority for the Laos SM is building their own succession planning capability — so they can identify, develop, and prepare their own replacements rather than waiting for Group HR to tell them what to do.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Laos SM — Development Plan 2026</div>
+        <div class="tl" style="margin-top:10px">
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">March 2026 — G3 Development Plan Co-Design</div><div class="tl-sub">Ba + Laos SM · joint session</div><div class="tl-body">Ba and Laos SM co-design the individual development plans for both G3 candidates — Ba provides the framework (Tool 4), the SM provides the candidate knowledge. The goal is for the SM to own the plans, not for Ba to own them on the SM's behalf. By end of March, both plans are written, signed, and activated.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q2 2026 — Retiring G4 Knowledge Transfer Design</div><div class="tl-sub">Laos SM leads · Ba supports</div><div class="tl-body">The SM identifies which G4 retirements are earliest and pairs each retiring G4 with a G3 candidate as formal mentor. The SM designs the knowledge transfer sessions — what will be covered, how often, for how long. Ba reviews and approves the design. This is the SM as L&D designer — a capability they need for the future.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q3 2026 — Cross-Site Placement Management</div><div class="tl-sub">Laos SM arranges · Thailand SM hosts</div><div class="tl-body">Laos SM coordinates the cross-site placement for G3 candidate 1 — briefing the candidate on what they are going to Thailand to learn, setting specific development goals, and debriefing them on return. This is the SM as development programme manager — end to end, not just "send someone to Thailand."</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q4 2026 — Annual SM Development Conversation</div><div class="tl-sub">Ba-led · 90 minutes</div><div class="tl-body">Review of G3 candidate progress, retiring G4 knowledge transfer quality, and the SM's own C4 development (thinking ahead on succession). One commitment for 2027 — likely focused on ensuring candidate 1 reaches G4 certification before the first retirement.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Laos SM — Leadership Profile and Key Risks</div>
+        <div style="display:grid;gap:7px;margin-top:4px">
+          <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--ink4);letter-spacing:.5px;margin-bottom:3px">STABLE OPERATIONAL BASE</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Laos operates at 85% country factor with a stable existing workforce. The conversion rate is reasonable and the G1 pipeline is functioning. The crisis is at the senior end, not the entry end — which means the SM has bandwidth to focus on the G3→G4 development work.</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--red);letter-spacing:.5px;margin-bottom:3px">C4 GAP (THINK AHEAD) — THE RETIREMENT RISK WAS NOT RAISED PROACTIVELY</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">The Laos retirement cliff was surfaced by Ba's workforce planning analysis — not raised by the Laos SM. This is the clearest evidence of a C4 gap. The development plan must address this directly: by end 2026, the Laos SM should be raising succession risks before Ba's analysis surfaces them. This is the one commitment Ba seeks from the Laos SM in the 2026 development conversation.</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px">
+            <div style="font-family:var(--fm);font-size:8px;color:var(--brass);letter-spacing:.5px;margin-bottom:3px">OWN SUCCESSION — UNKNOWN</div>
+            <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Ba does not yet have visibility on the Laos SM's own tenure plans. This needs to be explored in the annual development conversation — particularly if the SM is approaching retirement age themselves. If so, the Laos succession risk is deeper than the G4 level: it extends to the SM role itself.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="page-g4dev" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 04 — G4 Leadership Development</div>
+    <h1 class="page-title">G4 Leadership<br><em>Development</em></h1>
+    <p class="page-desc">G4 Lead Drillers are not trained managers — they are promoted technical experts. Their leadership development must translate management and coaching concepts into the language and conditions of the drill site. Theory without practice transfer is not development.</p>
+  </div>
+  <div class="info forest"><strong>The G4 leadership development system</strong>The G4 coaching programme (Tool 3, Section 05) is the primary formal development mechanism. This section covers the ongoing leadership development that continues after certification — the quarterly debrief cycle, peer forum participation, and the G4-as-developer role. Together these make G4 leadership development a continuous process, not a six-week event.</div>
+  <div class="card">
+    <div class="card-title">The Four G4 Leadership Capabilities — Applied</div>
+    <div class="card-body" style="margin-bottom:12px">The Valentis Leadership Framework (C1–C4) applies to G4s, but at a scope limited to their team of G1 trainees and their operational programme. This table makes the framework concrete for G4 use — language and examples that work in the field.</div>
+    <table class="dtable">
+      <thead><tr><th>Capability</th><th>For a G4, this means…</th><th>Evidence it is happening</th><th>Evidence it is not</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">C1 — Develop People</td><td>Running the four-question debrief after significant work events. Completing and documenting the month-3 check-in. Noticing at-risk signals before they become exits. Giving specific, forward-looking feedback rather than evaluation.</td><td>Conversion rate ≥70%. Check-in documentation complete. G4 can describe each trainee's development progress at any point in the month.</td><td>Conversion rate stagnating. Check-in not documented. G4 answer to "how's [trainee name] doing?" is "fine" — no specific observation.</td></tr>
+        <tr><td style="font-weight:600">C2 — Deliver Results</td><td>Shift records complete and accurate. Programme targets met. Equipment maintenance on schedule. Non-routine events documented and debriefed.</td><td>Shift records available for SM review without prompting. Programme target tracking current. Maintenance log up to date.</td><td>Shift records completed retrospectively. Equipment issues arise without documentation. Programme target shortfall reported after the fact without a response plan.</td></tr>
+        <tr><td style="font-weight:600">C3 — Build Trust</td><td>Does what they say they will do. Follows up on debrief commitments at the next session. Creates safety for trainees to raise concerns before they escalate. Consistent behaviour regardless of SM visibility.</td><td>Trainees raise concerns in check-ins — they feel safe enough to be honest. G4 commitments from debrief sessions are documented and reviewed. No "I didn't know there was a problem" at the point of trainee exit.</td><td>Commitments made and forgotten. Trainees describe G4 as "unapproachable" in exit interviews. Behaviour visibly different when SM is on site vs. when they are not.</td></tr>
+        <tr><td style="font-weight:600">C4 — Think Ahead</td><td>Flags at-risk trainees before month-3 rather than after. Raises equipment concerns before they become failures. Identifies succession within their trainee cohort — flags strong G4 potential in month-3 check-in documentation.</td><td>At-risk flags come before the check-in triggers them. Monthly pipeline update includes a "watch" category — trainees the G4 is monitoring. Equipment issues have a lead time, not just a failure date.</td><td>Problems surface only when they cannot be ignored. At-risk trainee exits without G4 having raised a concern. Equipment failures are reactive events, not managed risks.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">The Quarterly G4 Development Debrief</div>
+      <div class="card-body" style="margin-bottom:12px">Ba conducts a 30-minute development debrief with each G4 every quarter — immediately after the quarterly pipeline report is submitted. The debrief uses conversion rate data, check-in completion data, and G4's own reflections to generate one development focus for the next quarter.</div>
+      <div style="display:grid;gap:6px;margin-top:4px">
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:3px">Q1 — DATA REVIEW</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">Ba reviews conversion rate, check-in completion, and milestone sign-off quality for the prior quarter. Data is shared with the G4 before the conversation — no surprises. "Here's what the data shows — what do you make of it?"</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:3px">Q2 — REFLECTION</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">"What has been hardest in your coaching this quarter? What have you noticed about yourself as a developer?" Ba holds silence. The four-question debrief format is used — Ba models the coaching behaviour they expect the G4 to use with trainees.</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px">
+          <div style="font-family:var(--fm);font-size:8px;color:var(--forest);letter-spacing:.5px;margin-bottom:3px">Q3 — ONE FOCUS</div>
+          <div style="font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7">"What is the one thing you will focus on in your coaching this quarter that would make the biggest difference to [trainee name]'s development?" Specific, named, time-bound. Ba documents and opens next quarter's debrief by reviewing it.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Myanmar G4 Leadership Development — 2026 Priority</div>
+      <div style="display:grid;gap:7px;margin-top:4px">
+        <div style="padding:10px 14px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--red)">Three G4s, three different capability levels.</strong> Before the coaching programme begins, Ba conducts a brief baseline assessment of each G4: one observed debrief session, rated against the five-dimension rubric. This baseline creates the before/after comparison and tailors the programme to the group's actual starting point.</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">Myo H. as sponsor, not deliverer.</strong> The G4 coaching programme is delivered by Ba and Thailand SM. Myo H. opens each module with a 5-minute statement of why this matters for Myanmar — but does not deliver content. This models C1 (develop people) leadership from the SM level and removes any ambiguity about whether the SM endorses the programme.</div>
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Post-certification accountability.</strong> After certification, all three Myanmar G4s have a quarterly debrief with Ba. Conversion rate is reviewed at each debrief. If one G4's rate is not improving, the debrief becomes a targeted coaching session on the specific rubric dimension that is weakest.</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">G3 candidate identification from G4 coaching quality.</strong> The G4 coaching programme will surface which G4 has the strongest natural coaching instinct — this is the G4 most likely to develop strong G3→G4 candidates over time. Flag this G4 as the Myanmar G4 pipeline leader for 2027 planning.</div>
+      </div>
+    </div>
+  </div>
+</div>
+  <div id="page-succession" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 05 — SM Succession Pipeline</div>
+    <h1 class="page-title">SM Succession<br><em>Pipeline</em></h1>
+    <p class="page-desc">The Site Manager succession pipeline is the most strategic leadership risk at Valentis. Two SM retention bonuses expire within 18 months. A Country 5 SM is needed by Q2 2027. The Laos G4 retirement cliff requires internal SM succession planning. All of this converges in 2026–2027.</p>
+  </div>
+  <div class="vx-box">
+    <div class="vx-eyebrow">Succession Risk Summary — 2026–2027</div>
+    <div class="vx-title">Three SM-level decisions must be made in 2026. None of them can wait for 2027.</div>
+    <div class="vx-body">September 2026: retention conversations with both Myo H. (Myanmar) and Wirawan S. (Indonesia). Q3 2026: Country 5 SM candidacy assessment. By Q4 2026: at least one internal G3→G4 promotion in Laos to begin covering the retirement gap. If Ba does not drive all three of these, none of them will happen proactively — and each will become a crisis in 2027.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">SM Succession Risk Register</div>
+    <table class="dtable">
+      <thead><tr><th>Succession risk</th><th>Probability</th><th>Impact</th><th>Deadline</th><th>Ba action</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600">Myo H. (Myanmar) exits April 2027</td>
+          <td><span class="chip chip-red">High if no retention offer</span></td>
+          <td>Myanmar SM vacancy mid-2027. Conversion rate collapse during transition. G4 coaching programme impact lost if new SM does not maintain it.</td>
+          <td style="font-weight:600;color:var(--red)">Sep 2026</td>
+          <td>Initiate retention conversation. Prepare retention proposal for COO approval. If retention fails — begin succession plan for Myanmar SM immediately.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Wirawan S. (Indonesia) exits Q1 2027</td>
+          <td><span class="chip chip-brass">Medium — retention bonus expiry risk</span></td>
+          <td>Indonesia SM vacancy during G3 recovery. Transition cost high — new SM needs 3–6 months to reach full effectiveness. G3 pipeline fragile if SM changes.</td>
+          <td style="font-weight:600;color:var(--red)">Sep 2026</td>
+          <td>Initiate retention conversation aligned with G3 recovery milestone. If Wirawan is Country 5 candidate — assess whether Indonesia site is stable enough for his departure. Succession plan for Indonesia SM if departure likely.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Laos G4 Retirement Wave (2027–2029)</td>
+          <td><span class="chip chip-red">Certain — 3 retirements confirmed within 3 years</span></td>
+          <td>Net G4 deficit −1 by 2027 without intervention. Programme delivery risk. G1 trainee development quality drops without experienced G4 coverage.</td>
+          <td style="font-weight:600;color:var(--red)">Jun 2026 (dev plans)</td>
+          <td>G3 development plans activated by June 2026. First G4 certification target Q4 2026. Retiring G4 knowledge transfer programme designed by Laos SM, reviewed by Ba.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Country 5 SM — no candidate identified</td>
+          <td><span class="chip chip-brass">High if no assessment by Q3 2026</span></td>
+          <td>Country 5 Q2 2027 launch at risk. External hire lead time 4–6 months minimum. External SM without Valentis context needs 6–12 months to reach full effectiveness.</td>
+          <td style="font-weight:600;color:var(--brass)">Q3 2026</td>
+          <td>Conduct SM succession assessment in Q3 2026 — Thailand SM, Wirawan, and any G5-ready G4 candidates. Present recommendation to COO by end Q3 2026.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Thailand SM departure (undated risk)</td>
+          <td><span class="chip chip-muted">Medium — if no growth opportunity offered</span></td>
+          <td>Loss of benchmark SM and peer forum anchor. Thailand conversion rate at risk. Group knowledge transfer programme loses its primary source.</td>
+          <td style="font-weight:600;color:var(--brass)">Q3 2026</td>
+          <td>Country 5 offer or growth framing conversation by Q3 2026. If Country 5 is not available, identify alternative growth framing — Group Operations Director role, extended scope. Thailand SM succession plan activated if Country 5 confirmed.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Internal SM Succession Criteria</div>
+      <div class="card-body" style="margin-bottom:10px">What does a G4 or G5 candidate need to demonstrate before being considered SM-ready? These criteria supplement the G3→G4 pathway milestones and apply to the next transition up.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Criterion 1 — Country-level delivery ownership.</strong> Has managed a full programme cycle — planning through client reporting — without SM supervision. The G4 who has run a programme segment (G3-M2 milestone quality) is the starting point.</div>
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Criterion 2 — Multi-person leadership.</strong> Has led a team of 4+ people with different grades and experience levels. Not just supervised — developed. Conversion rate and milestone quality are the evidence.</div>
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Criterion 3 — External relationship management.</strong> Has represented Valentis in a client-facing or stakeholder context — programme update, site visit, or safety review. Able to present operational performance clearly to a non-technical audience.</div>
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Criterion 4 — Multi-country or multi-site awareness.</strong> Has operated in a context different from their home country (cross-site exposure) and can connect local decisions to group-level consequences. C4 (Think Ahead) at group scope, not just country scope.</div>
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Criterion 5 — Ba endorsement.</strong> Group HR has assessed the candidate using the C1–C4 framework and confirmed readiness. Ba brings the pipeline intelligence — the SM nomination + Ba endorsement go to COO together.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Succession Pipeline View — 2026</div>
+      <table class="dtable" style="margin-top:4px">
+        <thead><tr><th>SM Role</th><th>Current incumbent</th><th>Succession candidate(s)</th><th>Readiness</th><th>Action required</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Thailand SM</td><td>Current Thailand SM</td><td>Highest-performing G4 at Thailand site</td><td><span class="chip chip-brass">Not assessed</span></td><td>Q3 2026: assess G4 readiness. Activate if Country 5 confirmed.</td></tr>
+          <tr><td style="font-weight:600">Myanmar SM (Myo H.)</td><td>Myo H. — retention cliff Apr 2027</td><td>Unknown — assessment needed</td><td><span class="chip chip-red">No candidate identified</span></td><td>Q3 2026: identify Myanmar SM successor from G4/G5 pool. Development plan if 2+ year horizon.</td></tr>
+          <tr><td style="font-weight:600">Indonesia SM (Wirawan)</td><td>Wirawan S. — retention cliff Q1 2027</td><td>Wirawan may be Country 5 candidate</td><td><span class="chip chip-brass">Depends on Indonesia recovery</span></td><td>Q3 2026: Country 5 assessment. Indonesia succession plan if Wirawan departs.</td></tr>
+          <tr><td style="font-weight:600">Laos SM</td><td>Current Laos SM</td><td>Unknown — tenure check needed</td><td><span class="chip chip-muted">Not assessed</span></td><td>Q4 2026: development conversation includes SM tenure question.</td></tr>
+          <tr><td style="font-weight:600">Country 5 SM (new)</td><td>No incumbent</td><td>Thailand SM (primary) · Wirawan (secondary)</td><td><span class="chip chip-brass">Assessment Q3 2026</span></td><td>Q3 2026: Ba and COO assess candidates. Decision by Q4 2026 for Q2 2027 launch.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+  <div id="page-country5" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 06 — Country 5 Leadership Readiness</div>
+    <h1 class="page-title">Country 5<br><em>Leadership Readiness</em></h1>
+    <p class="page-desc">Country 5 launches Q2 2027. The SM candidate must be identified by Q3 2026. The G4 candidates must be G4-certified before deployment. This section defines what "Country 5 ready" looks like for leadership, and what Ba must build between now and Q2 2027 to make that readiness real.</p>
+  </div>
+  <div class="info red"><strong>The Country 5 leadership readiness deadline is Q3 2026 — not Q2 2027.</strong> Identifying and developing the Country 5 leadership team takes 6–9 months minimum. If the SM candidate is not identified by Q3 2026 and their development plan activated, the Q2 2027 launch will either be delayed or staffed with an underprepared leader. Ba must drive the identification process — it will not happen without Group HR initiating it.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Country 5 SM — What "Ready" Looks Like</div>
+      <div class="card-body" style="margin-bottom:12px">The Country 5 SM will be setting up a new Valentis operation from scratch — without the established team, site infrastructure, and operational norms that exist in Laos, Myanmar, Indonesia, or Thailand. The readiness criteria are higher than for an existing country SM role.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">C1 — Develop People at setup speed.</strong> Country 5 will need to recruit, onboard, and develop a full G1 cohort from day one. The SM must be able to run an induction programme and G4 coaching framework without Group HR on site. Thailand SM's documented practices are the reference resource.</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">C2 — Deliver from day one with an inexperienced team.</strong> Programme targets in Country 5 will need to be met while the team is still in the first 90 days. The SM must manage programme delivery expectations with the client while managing a development-heavy workforce. This requires unusual skill at managing upward and outward simultaneously.</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">C3 — Build trust without history.</strong> The Country 5 SM arrives unknown. They must build trust with a new team, a new client, and a new government regulatory context — simultaneously, from scratch. Their ability to be consistent and follow-through from day one is the foundation everything else is built on.</div>
+        <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--ink2)">C4 — Think ahead at launch.</strong> The Country 5 SM must anticipate setup problems — workforce shortfalls, equipment delays, regulatory friction — and communicate them to the COO early. A Country 5 SM who surfaces problems only when they have already affected operations is not capable of the C4 standard the role requires.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Country 5 G4s — Deployment Criteria</div>
+      <div class="card-body" style="margin-bottom:12px">Country 5 requires at least 2 G4-certified drillers from day one. These G4s must come from the existing internal pipeline — not external hire. External G4 hire with no Valentis context creates a coaching quality risk that undermines the pipeline from the start.</div>
+      <div style="display:grid;gap:6px">
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">G4 Coaching Certification required.</strong> Both Country 5 G4s must have completed the G4 coaching programme and hold G4 Coaching Certification. They will be running G1 induction in Country 5 without Ba on site — the certification standard is the quality gate.</div>
+        <div style="padding:10px 14px;background:var(--forest-dim);border:1px solid var(--forest-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--forest)">Cross-site experience preferred.</strong> G4 candidates for Country 5 should have cross-site exposure — either from their own development path or a specific placement. A G4 who has only operated in one country's conditions is less likely to adapt quickly to Country 5's unknown context.</div>
+        <div style="padding:10px 14px;background:var(--brass-dim);border:1px solid var(--brass-border);border-radius:3px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.7"><strong style="color:var(--brass)">Identification deadline Q4 2026.</strong> Country 5 G4 candidates must be identified by Q4 2026 to allow any development gap to be closed before Q2 2027 deployment. Ba reviews the group-wide G4 pipeline and proposes candidates to COO with SM endorsement.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Country 5 Leadership Readiness — Build Plan</div>
+    <table class="dtable">
+      <thead><tr><th>Milestone</th><th>Owner</th><th>Deadline</th><th>Dependency</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">SM candidate shortlist prepared (internal)</td><td>Ba</td><td>Q3 2026</td><td>SM succession assessment complete. C1–C4 framework applied to candidates.</td></tr>
+        <tr><td style="font-weight:600">SM candidate assessment completed</td><td>Ba + COO</td><td>Q3 2026</td><td>Shortlist agreed. Assessment criteria confirmed. COO available for conversation.</td></tr>
+        <tr><td style="font-weight:600">SM candidate confirmed and notified</td><td>COO (Ba prepares)</td><td>Q4 2026</td><td>Assessment complete. Retention implications of departure from current site understood.</td></tr>
+        <tr><td style="font-weight:600">Thailand SM 30-day setup checklist documented</td><td>Ba (via practice capture interview)</td><td>Q2 2026</td><td>Practice capture interview complete. Output validated by Thailand SM.</td></tr>
+        <tr><td style="font-weight:600">Country 5 G4 candidates identified</td><td>Ba</td><td>Q4 2026</td><td>G4 coaching certification status reviewed group-wide. Cross-site experience audit complete.</td></tr>
+        <tr><td style="font-weight:600">Country 5 G4 development gaps closed</td><td>G4 coaches + Ba</td><td>Q1 2027</td><td>G4 candidates identified Q4 2026. Any missing certification or cross-site exposure addressed.</td></tr>
+        <tr><td style="font-weight:600">Country 5 SM induction package delivered to SM candidate</td><td>Ba</td><td>Q1 2027</td><td>Thailand SM checklist. Group HR onboarding framework. Country 5 operational context briefing from COO.</td></tr>
+        <tr><td style="font-weight:600">Country 5 launch — SM and G4s deployed</td><td>COO (Ba people-readiness sign-off)</td><td>Q2 2027</td><td>All above milestones complete. Ba confirms people readiness to COO before launch.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-ba" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 07 — Ba's Leadership Development</div>
+    <h1 class="page-title">Ba's Own<br><em>Development</em></h1>
+    <p class="page-desc">Ba is building toward a CHRO role. The gap between Group HR Manager (G6) and CHRO is not primarily technical — it is strategic influence, business partnership credibility, and the ability to connect people decisions to business outcomes in a language the COO and board find compelling. This section is Ba's own development plan.</p>
+  </div>
+
+  <div class="pull-quote">
+    <p>"The CHRO is not the person who manages HR processes best. The CHRO is the person who makes the business better through its people — and can prove it with data that the CEO and board cannot ignore."</p>
+    <cite>Ba's Development Framework · 2026</cite>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Gap Analysis — G6 to CHRO</div>
+      <div class="card-body" style="margin-bottom:12px">The gap between Ba's current role and CHRO is across four dimensions. Each has a specific 2026 action that closes it.</div>
+      <div style="display:grid;gap:7px">
+        <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden">
+          <div style="background:var(--slate);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:600;color:#f0ede4;font-size:13px">Strategic influence</div>
+            <span class="chip chip-red">Primary gap</span>
+          </div>
+          <div style="padding:10px 14px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Currently: Ba is not in business planning meetings. The gap is not access — it is positioning. Ba has not yet built the case to be in those meetings based on the value Group HR contributes. <strong style="color:var(--ink2)">2026 action:</strong> Build the COO briefing deck that quantifies the pipeline risk in revenue terms. Deliver it before being asked. Repeat quarterly. The seat at the table follows demonstrated value, not seniority.</div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden">
+          <div style="background:var(--slate);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:600;color:#f0ede4;font-size:13px">Commercial fluency</div>
+            <span class="chip chip-brass">Active gap</span>
+          </div>
+          <div style="padding:10px 14px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Ba has payroll and C&B experience but the CHRO role requires connecting people decisions to P&L outcomes. The $1,000–$2,000 replacement cost per trained driller is the right language. <strong style="color:var(--ink2)">2026 action:</strong> Build the people cost model as a business intelligence tool (HRBP Scorecard). Present to COO using revenue and margin language — not HR metrics.</div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden">
+          <div style="background:var(--slate);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:600;color:#f0ede4;font-size:13px">C-suite credibility</div>
+            <span class="chip chip-brass">Building</span>
+          </div>
+          <div style="padding:10px 14px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">Ba's COO relationship is functional — Ba delivers on requests. The gap is Ba initiating, not just responding. <strong style="color:var(--ink2)">2026 action:</strong> Propose one business planning input to the COO before being asked. Frame it as "I have analysis that's relevant to the Q3 planning conversation." This is the shift from reactive to proactive that defines C-suite HR leadership.</div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden">
+          <div style="background:var(--slate);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:600;color:#f0ede4;font-size:13px">External profile</div>
+            <span class="chip chip-muted">Developing</span>
+          </div>
+          <div style="padding:10px 14px;font-size:13px;color:var(--ink3);font-weight:300;line-height:1.75">CHRO candidacy is strengthened by visibility outside the current employer. Ba is mid-AIHR certification (Strategic TA and C&B). <strong style="color:var(--ink2)">2026 action:</strong> Complete both AIHR certifications. Begin building an external articulation of the Valentis work — what Ba has built, what it has achieved, and how it demonstrates CHRO-level capability. LinkedIn, professional networks, or an HR peer group.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Ba's 2026 Development Plan</div>
+      <div class="tl" style="margin-top:10px">
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q1 2026 — Complete HR Toolkit Departments 6–8</div><div class="tl-sub">L&D, People Analytics, Employee Experience</div><div class="tl-body">The toolkit is the foundation of Ba's CHRO positioning — it demonstrates that Ba can build a strategic HR function from first principles at the relevant scale. Each completed department is a piece of evidence. By Q2 2026, Ba has a 70+ tool HR platform that no CHRO candidate at a comparable company has.</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q1 2026 — AIHR Strategic TA Certification</div><div class="tl-sub">Module 2 in progress — complete by March 2026</div><div class="tl-body">Strategic Talent Acquisition certification closes the gap between Ba's payroll/C&B technical background and the strategic sourcing and workforce planning language the CHRO role requires. Complete before beginning C&B certification final modules.</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q2 2026 — First Proactive COO Business Planning Pitch</div><div class="tl-sub">Ba initiates · pipeline risk as revenue analysis</div><div class="tl-body">Ba prepares a one-page pipeline risk brief — "Here is what the Laos retirement cliff costs in revenue terms and what we are doing about it" — and delivers it to the COO before Q3 planning begins. This is the moment Ba demonstrates that Group HR generates business intelligence, not just HR administration. If it lands, the seat at the table follows.</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q3 2026 — Country 5 SM Assessment Leadership</div><div class="tl-sub">Ba as assessment lead — first CEO/COO-level output</div><div class="tl-body">Ba leads the Country 5 SM succession assessment and presents a recommendation to the COO. This is Ba acting at CHRO scope — making a strategic talent recommendation on a business-critical hire, backed by data and a structured framework. The quality of this recommendation is one of the strongest signals Ba sends about CHRO readiness in 2026.</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q3 2026 — Retention Conversations (Myo H. + Wirawan)</div><div class="tl-sub">Ba initiates both · COO informed</div><div class="tl-body">Initiating two retention conversations simultaneously is a CHRO-level act — it requires commercial awareness (the cost of losing both), stakeholder management (COO briefing without alarming), and people leadership (conducting difficult conversations with senior leaders). Ba prepares retention proposals for both before either conversation happens.</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-head">Q4 2026 — AIHR C&amp;B Certification Completion</div><div class="tl-sub">Closes the C&B strategic gap</div><div class="tl-body">The C&B certification closes the gap between Ba's payroll-based C&B experience and strategic total rewards design. Combined with the Strategic TA certification, Ba's AIHR profile covers the two areas most commonly cited as gaps in CHRO candidates with operational HR backgrounds.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Ba's Leadership Capability Assessment — C1–C4</div>
+    <table class="dtable">
+      <thead><tr><th>Capability</th><th>Current evidence</th><th>Gap</th><th>2026 target</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">C1 — Develop People</td><td>G4 coaching programme designed and delivered. SM development conversations planned. Pipeline framework built. Toolkit creates development infrastructure across all HR domains.</td><td>No formal mentoring of an HR successor. SM relationships not yet deep enough to be development relationships rather than functional ones.</td><td>Annual SM development conversations delivering tangible change in at least 2 of 4 SMs. One G4 coaching programme certified cohort.</td></tr>
+        <tr><td style="font-weight:600">C2 — Deliver Results</td><td>Toolkit built to CHRO-level depth. Pipeline data maintained. Payroll and C&B delivered reliably. HR processes functional across 4 countries.</td><td>Results not yet framed in business language — pipeline data exists but is not presented as revenue risk to COO. HR is seen as cost, not as driver of business outcomes.</td><td>Quarterly COO pipeline brief in revenue and margin language. People cost model presented as business intelligence, not HR reporting.</td></tr>
+        <tr><td style="font-weight:600">C3 — Build Trust</td><td>SM relationships functional. COO relationship stable. Ba follows through on commitments — the toolkit is evidence of this.</td><td>Indonesia SM relationship is low-trust. Ba does not yet have full visibility into all SM workforce situations — some are not surfacing information proactively to Ba.</td><td>Indonesia SM participating in peer forum by Q3 2026. All four SMs sending monthly pipeline updates without being asked.</td></tr>
+        <tr><td style="font-weight:600">C4 — Think Ahead</td><td>Workforce planning scenarios built. Retirement cliff identified. Retention deadlines set. Country 5 people planning initiated before being asked.</td><td>Not yet in business planning meetings — C4 is happening but not visible to COO. The proactive pipeline brief closes this gap.</td><td>COO receiving proactive people intelligence from Ba at least quarterly. Ba present in or contributing to Q3 2026 business planning process.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div id="page-planner" class="page">
+  <div class="page-header">
+    <div class="page-eyebrow">Section 08 — Development Plan Builder</div>
+    <h1 class="page-title">Development Plan<br><em>Builder</em></h1>
+    <p class="page-desc">Use this builder to create a structured leadership development plan for any leader at Valentis — G4, SM, or Ba. The plan covers the four-capability framework, identifies the primary development focus, and generates a structured set of actions and milestones for the plan period.</p>
+  </div>
+  <div class="pl-wrap">
+    <div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0ede4;margin-bottom:4px">Leadership Development Plan Generator</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,0.35);font-family:var(--fm);margin-bottom:22px">Select the leader's role, country, and primary development context</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+      <div>
+        <span class="pl-label">Leader role</span>
+        <select class="pl-select" id="pl-role">
+          <option value="">Select role…</option>
+          <option>G4 — Lead Driller</option>
+          <option>G5 — Site Manager</option>
+          <option>G6 — Group HR Manager (Ba)</option>
+        </select>
+        <span class="pl-label">Country / scope</span>
+        <select class="pl-select" id="pl-country">
+          <option value="">Select…</option>
+          <option>Myanmar</option>
+          <option>Laos</option>
+          <option>Indonesia</option>
+          <option>Thailand</option>
+          <option>Group-level (Ba)</option>
+        </select>
+      </div>
+      <div>
+        <span class="pl-label">Primary capability gap (C1–C4)</span>
+        <select class="pl-select" id="pl-gap">
+          <option value="">Select…</option>
+          <option value="C1">C1 — Develop People (pipeline/coaching)</option>
+          <option value="C2">C2 — Deliver Results (operational)</option>
+          <option value="C3">C3 — Build Trust (relational)</option>
+          <option value="C4">C4 — Think Ahead (strategic)</option>
+        </select>
+        <span class="pl-label">Plan period</span>
+        <select class="pl-select" id="pl-period">
+          <option value="">Select…</option>
+          <option>Q1–Q2 2026 (6 months)</option>
+          <option>Q1–Q4 2026 (full year)</option>
+          <option>Q3 2026–Q2 2027 (12 months)</option>
+        </select>
+      </div>
+      <div>
+        <span class="pl-label">Key live challenge or risk context</span>
+        <select class="pl-select" id="pl-context">
+          <option value="">Select…</option>
+          <option>G1 conversion rate below target</option>
+          <option>Succession gap / retirement risk</option>
+          <option>SM resistance / stakeholder trust gap</option>
+          <option>Country launch / setup</option>
+          <option>Retention risk — own role or key report</option>
+          <option>Pipeline vacancy — G3 or G4</option>
+          <option>CHRO trajectory / career development</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-forest" onclick="buildPlan()">Build Development Plan &#8594;</button>
+      <button class="btn btn-ghost" onclick="clearPlan()">Reset</button>
+    </div>
+    <div class="pl-result" id="pl-result"></div>
+  </div>
+</div>
+</main>
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var pg=document.getElementById('page-'+id);if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');window.scrollTo(0,0);
+}
+function showTab(id,el){
+  var scope=el.closest('.card')||el.closest('.page');
+  if(scope){scope.querySelectorAll('.tab-body').forEach(function(b){b.classList.remove('active')});scope.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')})}
+  var tb=document.getElementById('tab-'+id);if(tb)tb.classList.add('active');if(el)el.classList.add('active');
+}
+
+var capData={
+  C1:{label:'Develop People',focus:'Build coaching and development capability that creates measurable pipeline outcomes.'},
+  C2:{label:'Deliver Results',focus:'Close the gap between activity and outcome — reporting, planning, and accountability for delivery targets.'},
+  C3:{label:'Build Trust',focus:'Create conditions where people surface problems proactively, and where commitments made in conversations are followed through.'},
+  C4:{label:'Think Ahead',focus:'Move from reactive to proactive — raise risks and propose solutions before being asked.'}
+};
+
+var roleActions={
+  'G4 — Lead Driller':{
+    C1:['Complete G4 Coaching Programme (all 6 modules) by June 2026.','Run structured four-question debrief after every significant shift event — minimum 2 per week.','Complete and document month-3 check-in for all assigned trainees within days 85–95.','Review conversion rate data quarterly with Ba. Identify one coaching behaviour to change each quarter.'],
+    C2:['Submit shift records within 24 hours of shift completion — no retrospective documentation.','Review programme target tracking weekly with SM — not monthly.','Document all non-routine events with decision rationale, not just event description.'],
+    C3:['End every debrief session with a written commitment. Open the next session by reviewing it — without exception.','When a trainee raises a concern, respond within 48 hours — even if the response is only "I\'m looking into this."','Conduct the month-3 check-in in a private space — not on the drill floor. Create psychological safety conditions deliberately.'],
+    C4:['Flag at-risk trainees before the month-3 check-in window — at week 8 if signals observed.','Monthly one-line trainee status update to SM: "watching" / "on track" / "concern."','Identify which trainee has G4 potential — note it in quarterly pipeline update to Ba.']
+  },
+  'G5 — Site Manager':{
+    C1:['Conduct quarterly development conversation with each G4 — use the four-question debrief format.','Review G4 coaching quality rubric scores with Ba annually. Hold one G4 accountable for a specific coaching improvement each year.','Identify G3 pipeline candidates by name and activate development plans with Ba by Q2 2026.','Sponsor G4 coaching programme with visible opening statement at each module.'],
+    C2:['Submit monthly pipeline report to Ba by the 5th of each month — no reminders needed.','Include a response plan in every delivery variance report — not just description of the variance.','Present one programme efficiency or quality insight at the quarterly SM peer forum.'],
+    C3:['Follow through on every commitment made in SM-G4 conversations. G4s who trust their SM surface problems early — G4s who do not, don\'t.','With Ba: share honest pipeline data even when it is uncomfortable. Ba can only help with what Ba can see.','In the SM peer forum: share a challenge, not just a success. Vulnerability in peer learning creates the permission for others to be honest too.'],
+    C4:['Raise succession risks at quarterly talent review before Ba\'s analysis surfaces them.','Identify the earliest retention risk in your team (G4 or G3) and bring a proposed response to Ba at least 6 months before the risk crystallises.','Propose one initiative to the COO that is people-related and operationally relevant — not requested, initiated by you.']
+  },
+  'G6 — Group HR Manager (Ba)':{
+    C1:['Deliver annual SM development conversation for all four SMs by Q4 2026.','Certify all Myanmar G4s through the coaching programme by June 2026.','Build Laos G3 development plans with both candidates by end of March 2026.','Track SM and G4 development commitments quarterly — not annually.'],
+    C2:['Quarterly COO pipeline brief in revenue language: vacancy cost, replacement cost, delivery impact. No HR jargon.','People cost model presented as business intelligence tool — connect to P&L.','Complete both AIHR certifications by Q4 2026.'],
+    C3:['Resolve Indonesia SM trust gap through G3 vacancy support, not compliance pressure.','Initiate Myo H. and Wirawan retention conversations by September 2026 — proactively, not reactively.','All four SMs sending monthly pipeline updates without Ba asking — this is the trust measure.'],
+    C4:['Deliver Country 5 SM succession recommendation to COO by Q3 2026 — not when asked.','Proactive Q3 2026 business planning input: pipeline risk as revenue analysis.','Build the CHRO business case: toolkit as evidence, pipeline data as proof, COO trust as the entry point.']
+  }
+};
+
+var contextNotes={
+  'G1 conversion rate below target':'Primary action: G4 coaching programme enrolment and month-3 check-in formalisation. Conversion rate is the outcome metric — all development actions should trace back to the coaching behaviours that drive it. Review conversion data quarterly, not annually.',
+  'Succession gap / retirement risk':'Development plan must include: named successor candidate, signed development plan with activation date, knowledge transfer mechanism (retiring leader as mentor), and a review date that gives enough runway to complete the pipeline before the departure. June 2026 deadline for Laos.',
+  'SM resistance / stakeholder trust gap':'Do not use compliance language or policy references. Lead with data: what is the operational cost of the resistance? Use peer influence (Thailand SM) as the primary transfer mechanism. COO endorsement is the backstop, not the first move. The G3 vacancy resolution is the trust-building opportunity.',
+  'Country launch / setup':'Development focus: C1 (pipeline from day one), C3 (trust without history), and C4 (surface setup problems before they affect delivery). Thailand SM\'s 30-day checklist is the reference resource. G4 candidates must be certified before deployment.',
+  'Retention risk — own role or key report':'Retention conversation deadline: 6 months before bonus expiry or role change date. Ba prepares retention proposal for COO approval before the conversation. The conversation covers growth, not just money. If retention fails — succession plan activates immediately.',
+  'Pipeline vacancy — G3 or G4':'Two tracks must run in parallel: external sourcing for immediate coverage and internal accelerated pathway for structural fix. Identify which G2 or G3 is closest to next-grade readiness and prioritise their G4 coaching time. Do not choose between the tracks.',
+  'CHRO trajectory / career development':'Three evidence streams: toolkit as platform, AIHR certifications as credential, COO relationship as reference. The proactive COO brief is the highest-leverage 2026 action. Complete it before Q3 2026 planning or the window closes for another year.'
+};
+
+function buildPlan(){
+  var role=document.getElementById('pl-role').value;
+  var country=document.getElementById('pl-country').value;
+  var gap=document.getElementById('pl-gap').value;
+  var period=document.getElementById('pl-period').value;
+  var ctx=document.getElementById('pl-context').value;
+  if(!role||!country||!gap||!period||!ctx){alert('Please complete all fields.');return;}
+
+  var cap=capData[gap];
+  var actions=(roleActions[role]&&roleActions[role][gap])||['No specific actions found — review the relevant section of this tool for development guidance.'];
+  var ctxNote=contextNotes[ctx]||'Refer to the relevant section of this tool for specific guidance.';
+
+  var html='<div style="font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ede4;margin-bottom:2px">Leadership Development Plan</div>'
+    +'<div style="font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:14px">'+role+' · '+country+' · '+period+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'
+    +'<div style="padding:12px 14px;background:rgba(31,77,53,0.1);border:1px solid rgba(31,77,53,0.3);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;color:#6dbf8a;margin-bottom:3px">PRIMARY CAPABILITY FOCUS</div><div style="font-size:14px;font-weight:700;color:#f0ede4">'+gap+' — '+cap.label+'</div><div style="font-size:12.5px;color:rgba(255,255,255,0.45);margin-top:4px;font-weight:300;line-height:1.65">'+cap.focus+'</div></div>'
+    +'<div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px"><div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);margin-bottom:3px">LIVE CONTEXT</div><div style="font-size:12px;color:rgba(255,255,255,0.55);font-weight:300;line-height:1.65">'+ctxNote+'</div></div>'
+    +'</div>'
+    +'<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-bottom:7px">DEVELOPMENT ACTIONS — '+period.toUpperCase()+'</div>'
+    +'<div style="display:grid;gap:6px;margin-bottom:12px">';
+  actions.forEach(function(a,i){
+    html+='<div style="display:grid;grid-template-columns:22px 1fr;gap:8px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:3px;align-items:start"><div style="font-family:var(--fm);font-size:10px;font-weight:700;color:#6dbf8a;margin-top:1px">'+(i+1)+'</div><div style="font-size:12.5px;color:rgba(255,255,255,0.6);font-weight:300;line-height:1.7">'+a+'</div></div>';
+  });
+  html+='</div>';
+  html+='<div style="padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:3px;font-size:12.5px;color:rgba(255,255,255,0.4);font-weight:300;line-height:1.75"><strong style="color:rgba(255,255,255,0.6);display:block;margin-bottom:3px">Review cadence</strong>Ba reviews progress against this plan at the quarterly talent review. The leader commits to one observable behaviour change per quarter. Ba notes the commitment and opens the next quarter\'s review by asking what happened with it.</div>';
+
+  var res=document.getElementById('pl-result');
+  res.innerHTML=html;res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearPlan(){
+  ['pl-role','pl-country','pl-gap','pl-period','pl-context'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('pl-result').style.display='none';
+}
+</script>
+</body>
+</html>
