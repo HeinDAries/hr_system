@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="HR Operating Framework — 11 practice areas, 89 modules covering Talent Acquisition, Compensation & Benefits, Performance Management, L&D, People Analytics, HRBP, Employee Experience, Organisation Design, HR Technology, and Centre of Excellence.">
 <title>HR Operating Framework — Master Index</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -381,6 +382,41 @@ footer {
   writing-mode: vertical-rl;
 }
 
+/* ── SEARCH ── */
+.search-wrap {
+  max-width: 1360px; margin: 0 auto;
+  padding: 16px 64px;
+  border-bottom: 1px solid var(--border);
+}
+.search-box { position: relative; display: flex; align-items: center; }
+.search-box svg {
+  position: absolute; left: 14px;
+  color: var(--text3); pointer-events: none;
+  width: 14px; height: 14px;
+}
+.search-input {
+  width: 100%; padding: 9px 80px 9px 38px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 8px; color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 13px;
+  outline: none; transition: border-color 0.2s;
+}
+.search-input::placeholder { color: var(--text3); }
+.search-input:focus { border-color: var(--cb); }
+.search-kbd {
+  position: absolute; right: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: 0.1em;
+  color: var(--text3); background: var(--border);
+  padding: 2px 6px; border-radius: 4px; pointer-events: none;
+}
+.no-results {
+  display: none; text-align: center;
+  padding: 60px 24px; color: var(--text3);
+  font-size: 13px; font-style: italic;
+}
+@media(max-width:768px){ .search-wrap { padding: 12px 24px; } }
+
 /* ── ANIMATIONS ── */
 @keyframes fadeDown { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
 @keyframes fadeUp   { from{opacity:0;transform:translateY(14px)}  to{opacity:1;transform:translateY(0)} }
@@ -472,8 +508,18 @@ footer {
   <a class="chip" href="#coe"    style="--acc:var(--coe)"   ><span class="cdot" style="background:var(--coe)"></span>CoE</a>
 </nav>
 
+<!-- ── SEARCH ── -->
+<div class="search-wrap">
+  <div class="search-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input" id="search" type="search" placeholder="Search modules…" autocomplete="off" aria-label="Search modules">
+    <span class="search-kbd">/ to focus</span>
+  </div>
+</div>
+
 <!-- ── MAIN ── -->
 <main class="main">
+<p class="no-results" id="no-results">No modules match your search.</p>
 
   <!-- ════ OPERATIONAL TIER ════ -->
   <div class="tier-break">
@@ -817,5 +863,54 @@ footer {
   <span>Scroll</span>
 </div>
 
+<script>
+(function () {
+  var inp    = document.getElementById('search');
+  var noRes  = document.getElementById('no-results');
+  var cards  = document.querySelectorAll('.card');
+  var depts  = document.querySelectorAll('.dept');
+  var breaks = document.querySelectorAll('.tier-break');
+
+  function filter(q) {
+    q = q.trim().toLowerCase();
+
+    var totalVisible = 0;
+
+    depts.forEach(function (dept) {
+      var dCards = dept.querySelectorAll('.card');
+      var vis = 0;
+      dCards.forEach(function (c) {
+        var title = (c.querySelector('.c-title') || {}).textContent || '';
+        var desc  = (c.querySelector('.c-desc')  || {}).textContent || '';
+        var match = !q || (title + ' ' + desc).toLowerCase().indexOf(q) !== -1;
+        c.style.display = match ? '' : 'none';
+        if (match) vis++;
+      });
+      dept.style.display = vis ? '' : 'none';
+      totalVisible += vis;
+    });
+
+    // hide tier-break dividers when searching
+    breaks.forEach(function (b) { b.style.display = q ? 'none' : ''; });
+
+    noRes.style.display = (q && totalVisible === 0) ? 'block' : 'none';
+  }
+
+  inp.addEventListener('input', function () { filter(this.value); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === '/' && document.activeElement !== inp && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      inp.focus();
+      inp.select();
+    }
+    if (e.key === 'Escape' && document.activeElement === inp) {
+      inp.value = '';
+      filter('');
+      inp.blur();
+    }
+  });
+}());
+</script>
 </body>
 </html>
