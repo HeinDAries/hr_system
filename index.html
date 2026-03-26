@@ -1,685 +1,1227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="HR Operating Framework — 11 practice areas, 89 modules covering the full people function across multi-site, multi-country operations." />
-  <title>HR Operating Framework — Master Index</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg:          #161616;
-      --bg-mid:      #1e1e1e;
-      --bg-card:     #232323;
-      --bg-hover:    #2a2a2a;
-      --bg-deep:     #121212;
-      --cream:       #f5f0e8;
-      --cream-dim:   #c8c3bb;
-      --cream-muted: #7a7672;
-      --accent-op:   #7eb8d4;
-      --accent-str:  #7ecba1;
-      --accent-ent:  #c09a5a;
-      --border:      rgba(255,255,255,0.07);
-      --border-mid:  rgba(255,255,255,0.12);
-      --radius:      2px;
-      --font-display: 'Playfair Display', Georgia, serif;
-      --font-body:    'IBM Plex Sans', system-ui, sans-serif;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Operating Framework · 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --border: #272727;
+    --border-hover: #404040;
+    --text-primary: #f0ece4;
+    --text-secondary: #7a7570;
+    --text-muted: #3d3a37;
+    --accent: #c9a96e;
+    --accent-dim: #6e5a38;
+    --tag-ops: #1a2e1a;
+    --tag-ops-text: #6dbf6d;
+    --tag-strat: #1a1a2e;
+    --tag-strat-text: #6d8dbf;
+    --tag-ent: #2e1a2e;
+    --tag-ent-text: #bf6dbf;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── LAYOUT ── */
+  .shell {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: 56px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: #0e0e0e;
+    letter-spacing: -0.5px;
+  }
+
+  .brand-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: var(--text-primary);
+    letter-spacing: 0;
+  }
+
+  .brand-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-left: 4px;
+  }
+
+  .topbar-stats {
+    display: flex;
+    gap: 24px;
+  }
+
+  .stat-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-pill strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    grid-column: 1;
+    grid-row: 2;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    padding: 20px 0;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    padding: 16px 20px 6px;
+  }
+
+  .sidebar-section-label:first-child { padding-top: 4px; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 400;
+    user-select: none;
+  }
+
+  .nav-item:hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.03);
+    border-left-color: var(--border-hover);
+  }
+
+  .nav-item.active {
+    color: var(--text-primary);
+    border-left-color: var(--accent);
+    background: rgba(201, 169, 110, 0.06);
+  }
+
+  .nav-item.active .nav-num { color: var(--accent); }
+
+  .nav-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    min-width: 20px;
+    transition: color 0.15s;
+  }
+
+  .nav-label { flex: 1; line-height: 1.3; }
+
+  .nav-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 48px 52px;
+    overflow-y: auto;
+  }
+
+  /* ── SECTION PANEL ── */
+  .section-panel {
+    display: none;
+    animation: fadeUp 0.3s ease forwards;
+  }
+
+  .section-panel.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 3vw, 38px);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+
+  .section-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .tag-operational { background: var(--tag-ops); color: var(--tag-ops-text); }
+  .tag-strategic   { background: var(--tag-strat); color: var(--tag-strat-text); }
+  .tag-enterprise  { background: var(--tag-ent); color: var(--tag-ent-text); }
+
+  .section-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  /* ── MODULE GRID ── */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .module-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .module-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .module-card:hover {
+    border-color: var(--border-hover);
+    background: #1c1c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .module-card:hover::before { opacity: 1; }
+
+  .card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+
+  .card-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .card-arrow {
+    margin-top: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.15s, gap 0.15s;
+  }
+
+  .module-card:hover .card-arrow {
+    color: var(--accent);
+    gap: 8px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .shell {
+      grid-template-columns: 1fr;
+      grid-template-rows: 56px auto 1fr;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--cream);
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 300;
-      line-height: 1.65;
-      min-height: 100vh;
-    }
-
-    /* ── TOPBAR ── */
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(18,18,18,0.97);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
+    .sidebar {
+      grid-column: 1;
+      grid-row: 2;
+      position: static;
+      height: auto;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 3rem;
-      height: 52px;
-    }
-    .topbar-brand {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 400;
-      color: var(--cream);
-      letter-spacing: 0.01em;
-    }
-    .topbar-brand span {
-      color: var(--cream-muted);
-      font-family: var(--font-body);
-      font-size: 0.72rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      margin-left: 1rem;
-    }
-    .topbar-meta {
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--cream-muted);
-    }
-
-    /* ── NAV ── */
-    .nav-strip {
-      background: var(--bg-mid);
-      border-bottom: 1px solid var(--border);
-      overflow-x: auto;
-      scrollbar-width: none;
-      white-space: nowrap;
-      padding: 0 3rem;
-    }
-    .nav-strip::-webkit-scrollbar { display: none; }
-    .nav-strip a {
-      display: inline-block;
-      padding: 0.6rem 0.85rem;
-      font-size: 0.7rem;
-      font-weight: 400;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--cream-muted);
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .nav-strip a:hover {
-      color: var(--cream);
-      border-bottom-color: var(--cream-dim);
-    }
-
-    /* ── SEARCH ── */
-    .search-wrap {
-      background: var(--bg-mid);
-      padding: 0.85rem 3rem;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      gap: 4px;
+      border-right: none;
       border-bottom: 1px solid var(--border);
     }
-    .search-inner { max-width: 480px; position: relative; }
-    #search-input {
-      width: 100%;
-      background: var(--bg-card);
-      border: 1px solid var(--border-mid);
-      border-radius: var(--radius);
-      color: var(--cream);
-      font-family: var(--font-body);
-      font-size: 0.8rem;
-      font-weight: 300;
-      padding: 0.55rem 3.5rem 0.55rem 0.9rem;
-      outline: none;
-      transition: border-color 0.15s;
-      letter-spacing: 0.02em;
-    }
-    #search-input::placeholder { color: var(--cream-muted); }
-    #search-input:focus { border-color: rgba(255,255,255,0.25); }
-    .search-key {
-      position: absolute;
-      right: 0.8rem;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.65rem;
-      color: var(--cream-muted);
-      background: var(--bg-hover);
-      border: 1px solid var(--border-mid);
-      border-radius: 3px;
-      padding: 1px 5px;
-      letter-spacing: 0;
-    }
 
-    /* ── HERO ── */
-    .hero {
-      padding: 5rem 3rem 3.5rem;
-      max-width: 860px;
-      border-bottom: 1px solid var(--border);
-    }
-    .hero-eyebrow {
-      font-size: 0.65rem;
-      font-weight: 500;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--cream-muted);
-      margin-bottom: 1.5rem;
-    }
-    .hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2.4rem, 4.5vw, 3.6rem);
-      font-weight: 400;
-      line-height: 1.1;
-      color: var(--cream);
-      margin-bottom: 1.4rem;
-      letter-spacing: -0.01em;
-    }
-    .hero h1 em {
-      font-style: italic;
-      color: var(--cream-dim);
-    }
-    .hero-sub {
-      font-size: 0.82rem;
-      color: var(--cream-muted);
-      max-width: 480px;
-      line-height: 1.75;
-      margin-bottom: 2.5rem;
-      font-weight: 300;
-    }
-    .hero-stats {
-      display: flex;
-      gap: 3rem;
-    }
-    .stat-num {
-      font-family: var(--font-display);
-      font-size: 2.2rem;
-      font-weight: 400;
-      color: var(--cream);
-      line-height: 1;
-      display: block;
-    }
-    .stat-label {
-      font-size: 0.62rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--cream-muted);
-      margin-top: 0.3rem;
-      display: block;
-    }
+    .sidebar-section-label { display: none; }
 
-    /* ── TIER DIVIDERS ── */
-    .tier-block {
-      padding: 2.5rem 3rem 0;
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-    }
-    .tier-block-text {
-      font-size: 0.6rem;
-      font-weight: 500;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--cream-muted);
-      white-space: nowrap;
-    }
-    .tier-block-rule {
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* ── SYSTEM SECTIONS ── */
-    .system-section { padding: 0 3rem 2rem; }
-
-    .system-header {
-      display: flex;
-      align-items: baseline;
-      gap: 0.9rem;
-      padding: 1.5rem 0 1rem;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 1px;
-    }
-    .system-num {
-      font-size: 0.65rem;
-      color: var(--cream-muted);
-      letter-spacing: 0.08em;
-      font-family: var(--font-body);
-      font-weight: 400;
-    }
-    .system-title {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
-      font-weight: 400;
-      color: var(--cream);
-    }
-    .system-meta {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .badge {
-      font-size: 0.58rem;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.18rem 0.5rem;
-      border-radius: 1px;
-      border: 1px solid;
-    }
-    .badge-op  { color: var(--accent-op);  border-color: rgba(126,184,212,0.2); }
-    .badge-str { color: var(--accent-str); border-color: rgba(126,203,161,0.2); }
-    .badge-ent { color: var(--accent-ent); border-color: rgba(192,154,90,0.2);  }
-    .system-count {
-      font-size: 0.62rem;
-      color: var(--cream-muted);
-      margin-left: 0.4rem;
-    }
-
-    /* ── MODULE GRID ── */
-    .module-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .module-card {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      padding: 1rem 1.2rem;
-      background: var(--bg-card);
-      text-decoration: none;
+    .nav-item {
+      padding: 6px 12px;
+      border-left: none;
+      border-radius: 4px;
+      font-size: 12px;
       border: 1px solid var(--border);
-      margin: -1px 0 0 -1px;
-      position: relative;
-      transition: background 0.15s;
-    }
-    .module-card:hover { background: var(--bg-hover); }
-    .module-card:hover .module-arrow { opacity: 1; transform: translateX(2px); }
-
-    .mod-num {
-      font-size: 0.68rem;
-      font-weight: 400;
-      color: var(--cream-muted);
-      min-width: 1.4rem;
-      padding-top: 0.1rem;
-      font-variant-numeric: tabular-nums;
-    }
-    .mod-body { flex: 1; min-width: 0; }
-    .mod-title {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--cream);
-      margin-bottom: 0.25rem;
-      letter-spacing: 0.01em;
-    }
-    .mod-desc {
-      font-size: 0.7rem;
-      color: var(--cream-muted);
-      line-height: 1.55;
-      font-weight: 300;
-    }
-    .module-arrow {
-      font-size: 0.7rem;
-      color: var(--cream-dim);
-      opacity: 0;
-      transition: opacity 0.15s, transform 0.15s;
-      flex-shrink: 0;
-      padding-top: 0.1rem;
     }
 
-    /* ── NO RESULTS ── */
-    #no-results {
-      display: none;
-      padding: 4rem 3rem;
-      font-size: 0.8rem;
-      color: var(--cream-muted);
-      letter-spacing: 0.06em;
+    .nav-item.active {
+      background: rgba(201,169,110,0.12);
+      border-color: var(--accent-dim);
     }
 
-    /* ── FOOTER ── */
-    footer {
-      margin-top: 4rem;
-      padding: 1.5rem 3rem;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .footer-brand {
-      font-family: var(--font-display);
-      font-size: 0.85rem;
-      color: var(--cream-muted);
-    }
-    .footer-meta {
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--cream-muted);
-      opacity: 0.5;
-    }
+    .nav-count { display: none; }
 
-    /* ── BACK TO TOP ── */
-    #back-top {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 34px;
-      height: 34px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-mid);
-      border-radius: 50%;
-      color: var(--cream-dim);
-      font-size: 0.75rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.25s, background 0.15s;
-      z-index: 50;
+    .main {
+      grid-column: 1;
+      grid-row: 3;
+      padding: 32px 20px;
     }
-    #back-top.show { opacity: 1; }
-    #back-top:hover { background: var(--bg-hover); }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 680px) {
-      .topbar, .nav-strip, .search-wrap,
-      .hero, .tier-block, .system-section,
-      footer { padding-left: 1.25rem; padding-right: 1.25rem; }
-      .hero-stats { gap: 2rem; }
-      .module-grid { grid-template-columns: 1fr; }
-      .system-meta { display: none; }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<header class="topbar">
-  <div class="topbar-brand">HR Operating Framework <span>· 2026</span></div>
-  <div class="topbar-meta">11 Systems &nbsp;·&nbsp; 89 Modules</div>
-</header>
+<div class="shell">
 
-<!-- NAV -->
-<nav class="nav-strip">
-  <a href="#hrops">HR Ops</a>
-  <a href="#ta">Talent Acquisition</a>
-  <a href="#cb">C&amp;B</a>
-  <a href="#pm">Performance</a>
-  <a href="#ld">L&amp;D</a>
-  <a href="#pa">People Analytics</a>
-  <a href="#hrbp">HRBP</a>
-  <a href="#ex">EX &amp; Culture</a>
-  <a href="#od">Org Design</a>
-  <a href="#hrtech">HR Tech</a>
-  <a href="#coe">CoE</a>
-</nav>
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-mark">HR</div>
+      <span class="brand-name">Operating Framework</span>
+      <span class="brand-year">· 2026</span>
+    </div>
+    <div class="topbar-stats">
+      <span class="stat-pill"><strong>11</strong> Systems</span>
+      <span class="stat-pill"><strong>89</strong> Modules</span>
+    </div>
+  </header>
 
-<!-- SEARCH -->
-<div class="search-wrap">
-  <div class="search-inner">
-    <input type="text" id="search-input" placeholder="Search modules…" autocomplete="off" />
-    <span class="search-key">/</span>
-  </div>
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+
+    <div class="sidebar-section-label">Operational Foundation</div>
+
+    <div class="nav-item active" onclick="showSection('hrops', this)" data-id="hrops">
+      <span class="nav-num">01</span>
+      <span class="nav-label">HR Operations</span>
+      <span class="nav-count">9</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('ta', this)" data-id="ta">
+      <span class="nav-num">02</span>
+      <span class="nav-label">Talent Acquisition</span>
+      <span class="nav-count">9</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('cb', this)" data-id="cb">
+      <span class="nav-num">03</span>
+      <span class="nav-label">Compensation &amp; Benefits</span>
+      <span class="nav-count">8</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('pm', this)" data-id="pm">
+      <span class="nav-num">04</span>
+      <span class="nav-label">Performance Management</span>
+      <span class="nav-count">7</span>
+    </div>
+
+    <div class="sidebar-section-label">Strategic Layer</div>
+
+    <div class="nav-item" onclick="showSection('ld', this)" data-id="ld">
+      <span class="nav-num">05</span>
+      <span class="nav-label">Learning &amp; Development</span>
+      <span class="nav-count">7</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('pa', this)" data-id="pa">
+      <span class="nav-num">06</span>
+      <span class="nav-label">People Analytics</span>
+      <span class="nav-count">9</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('hrbp', this)" data-id="hrbp">
+      <span class="nav-num">07</span>
+      <span class="nav-label">HR Business Partnering</span>
+      <span class="nav-count">10</span>
+    </div>
+
+    <div class="sidebar-section-label">Enterprise Infrastructure</div>
+
+    <div class="nav-item" onclick="showSection('ex', this)" data-id="ex">
+      <span class="nav-num">08</span>
+      <span class="nav-label">EX &amp; Culture</span>
+      <span class="nav-count">8</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('od', this)" data-id="od">
+      <span class="nav-num">09</span>
+      <span class="nav-label">Organisation Design</span>
+      <span class="nav-count">9</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('hrtech', this)" data-id="hrtech">
+      <span class="nav-num">10</span>
+      <span class="nav-label">HR Technology</span>
+      <span class="nav-count">9</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('coe', this)" data-id="coe">
+      <span class="nav-num">11</span>
+      <span class="nav-label">Centre of Excellence</span>
+      <span class="nav-count">7</span>
+    </div>
+
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- 01 HR OPS -->
+    <div id="panel-hrops" class="section-panel visible">
+      <div class="section-header">
+        <div class="section-eyebrow">01 / 11 · Operational Foundation</div>
+        <h1 class="section-title">HR Operations</h1>
+        <div class="section-meta">
+          <span class="tag tag-operational">Operational</span>
+          <span class="section-count">9 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_hr-ops-tool1-employee-records.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">Employee Records</div>
+          <div class="card-desc">Central register for all employee data, employment history, and document management.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_hr-ops-tool2-contracts-positions.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">Contracts &amp; Positions</div>
+          <div class="card-desc">Contract lifecycle management and position control across all entity types and grades.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_hr-ops-tool3-compliance-register.html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">Compliance Register</div>
+          <div class="card-desc">Tracking framework for labour law compliance across all operating jurisdictions.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_hr-ops-tool4-onboarding-offboarding.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">Onboarding &amp; Offboarding</div>
+          <div class="card-desc">End-to-end joiners and leavers workflow with checklists, handover, and exit data capture.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_hr-ops-tool5-leave-absence.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">Leave &amp; Absence</div>
+          <div class="card-desc">Leave entitlement management, absence tracking, and statutory compliance by country.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_hr-ops-tool6-policy-library.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">Policy Library</div>
+          <div class="card-desc">Centralised repository of all HR policies with version control and review schedules.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_hr-ops-tool7-disciplinary-grievance.html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">Disciplinary &amp; Grievance</div>
+          <div class="card-desc">Case management workflow for disciplinary processes and formal grievance handling.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/8_hr-ops-tool8-work-permits.html" class="module-card">
+          <div class="card-num">08</div>
+          <div class="card-title">Work Permits</div>
+          <div class="card-desc">Permit and visa tracking for expatriate and cross-border employees across all sites.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/9_hr-ops-tool9-compliance-calendar.html" class="module-card">
+          <div class="card-num">09</div>
+          <div class="card-title">Compliance Calendar</div>
+          <div class="card-desc">Regulatory filing deadlines, renewal dates, and statutory reporting schedule by jurisdiction.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 02 TALENT ACQUISITION -->
+    <div id="panel-ta" class="section-panel">
+      <div class="section-header">
+        <div class="section-eyebrow">02 / 11 · Operational Foundation</div>
+        <h1 class="section-title">Talent Acquisition</h1>
+        <div class="section-meta">
+          <span class="tag tag-operational">Operational</span>
+          <span class="section-count">9 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_Ta_headcount_plan_2026.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">Headcount Plan 2026</div>
+          <div class="card-desc">Annual headcount plan with approved positions, phasing schedule, and budget allocation by department.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_Ta_hc_comms.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">HC Communications</div>
+          <div class="card-desc">Headcount communication templates and stakeholder update cadence for hiring approvals.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_Ta_sourcing_strategy (1).html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">Sourcing Strategy</div>
+          <div class="card-desc">Channel mix, sourcing playbooks, and direct talent attraction strategies by role family.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_Ta_talent_pipeline_master.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">Talent Pipeline Master</div>
+          <div class="card-desc">Master pipeline tracker covering all active requisitions, candidate stages, and anticipated offers.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_Ta_recruitment_tracker.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">Recruitment Tracker</div>
+          <div class="card-desc">Live tracker with time-to-fill metrics, hiring manager accountability, and SLA monitoring.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_Ta_interview_framework.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">Interview Framework</div>
+          <div class="card-desc">Structured interview guides, competency question banks, and scoring rubrics for consistent assessment.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_Ta_ta_completion_kit (1).html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">TA Completion Kit</div>
+          <div class="card-desc">End-of-hire documentation, offer letter templates, and onboarding handover checklists.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/8_Ta_metrics_dashboard.html" class="module-card">
+          <div class="card-num">08</div>
+          <div class="card-title">TA Metrics Dashboard</div>
+          <div class="card-desc">Recruitment analytics covering quality of hire, source effectiveness, and funnel conversion rates.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/9_Ta_ta_toolkit.html" class="module-card">
+          <div class="card-num">09</div>
+          <div class="card-title">TA Toolkit</div>
+          <div class="card-desc">Comprehensive recruiter toolkit including job briefs, EVP messaging, and candidate experience guides.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 03 C&B -->
+    <div id="panel-cb" class="section-panel">
+      <div class="section-header">
+        <div class="section-eyebrow">03 / 11 · Operational Foundation</div>
+        <h1 class="section-title">Compensation &amp; Benefits</h1>
+        <div class="section-meta">
+          <span class="tag tag-operational">Operational</span>
+          <span class="tag tag-strategic">Strategic</span>
+          <span class="section-count">8 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_cb_total_rewards.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">Total Rewards Framework</div>
+          <div class="card-desc">Strategic overview of the complete employee value proposition across all reward elements.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_cb_job_evaluation.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">Job Evaluation &amp; Role Grading</div>
+          <div class="card-desc">Structured methodology for evaluating, classifying, and grading all roles within the organisation.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_cb_salary_bands.html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">Salary Band Management</div>
+          <div class="card-desc">Definition and governance of pay ranges, midpoints, and band structures across all grades.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_cb_merit_matrix.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">Merit &amp; Increment Matrix</div>
+          <div class="card-desc">Performance-linked pay progression guidelines and increment decision-making matrices.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_cb_benefits_allowances.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">Benefits &amp; Allowances Register</div>
+          <div class="card-desc">Comprehensive catalogue of all employee benefits, entitlements, and allowance policies.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_cb_incentive_variable_pay.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">Incentive &amp; Variable Pay</div>
+          <div class="card-desc">Short and long-term incentive structures, bonus schemes, and performance-based pay design.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_cb_trs_generator.html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">Total Rewards Statement Generator</div>
+          <div class="card-desc">Automated generation of personalised total rewards statements for individual employees.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/8_cb_analytics_dashboard.html" class="module-card">
+          <div class="card-num">08</div>
+          <div class="card-title">C&amp;B Analytics Dashboard</div>
+          <div class="card-desc">Real-time compensation analytics, benchmarking insights, and workforce pay equity reporting.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 04 PERFORMANCE -->
+    <div id="panel-pm" class="section-panel">
+      <div class="section-header">
+        <div class="section-eyebrow">04 / 11 · Operational Foundation</div>
+        <h1 class="section-title">Performance Management</h1>
+        <div class="section-meta">
+          <span class="tag tag-operational">Operational</span>
+          <span class="tag tag-strategic">Strategic</span>
+          <span class="section-count">7 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_pm_framework_1.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">PM Framework</div>
+          <div class="card-desc">End-to-end performance management framework covering cycle design, ratings, and calibration.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_pm_review_system.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">Review System</div>
+          <div class="card-desc">Structured performance review workflows, feedback templates, and mid-year check-in processes.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_pm_pip_tracker.html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">PIP Tracker</div>
+          <div class="card-desc">Performance improvement plan management with tracking, milestones, and outcome documentation.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_pm_dashboard_4.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">PM Dashboard</div>
+          <div class="card-desc">Analytics dashboard for tracking performance completion rates, rating distributions, and trends.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_pm_manager_guide.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">Manager Guide</div>
+          <div class="card-desc">Practical guidance for line managers on conducting meaningful performance conversations.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_pm_development.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">Development Planning</div>
+          <div class="card-desc">Individual development planning tools linking performance outcomes to growth opportunities.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_pm_succession.html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">Succession Planning</div>
+          <div class="card-desc">Succession pipeline mapping for critical roles, readiness assessment, and bench strength tracking.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 05 L&D -->
+    <div id="panel-ld" class="section-panel">
+      <div class="section-header">
+        <div class="section-eyebrow">05 / 11 · Strategic Layer</div>
+        <h1 class="section-title">Learning &amp; Development</h1>
+        <div class="section-meta">
+          <span class="tag tag-strategic">Strategic</span>
+          <span class="section-count">7 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_ld_strategy.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">L&amp;D Strategy</div>
+          <div class="card-desc">Learning strategy framework aligned to capability gaps, business priorities, and growth plans.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_ld_tna.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">Training Needs Analysis</div>
+          <div class="card-desc">TNA process for identifying learning gaps across teams, roles, and development cohorts.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_ld_design.html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">Learning Design</div>
+          <div class="card-desc">Instructional design principles and programme architecture for site and office learning.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_ld_pathway.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">Career Pathway</div>
+          <div class="card-desc">Structured development pathways by grade, including the driller G3→G4 progression roadmap.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_ld_leadership.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">Leadership Development</div>
+          <div class="card-desc">Leadership programme design and delivery framework for senior and high-potential cohorts.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_ld_measurement.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">L&amp;D Measurement</div>
+          <div class="card-desc">Kirkpatrick-aligned evaluation tools to measure learning effectiveness and business impact.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_ld_governance.html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">L&amp;D Governance</div>
+          <div class="card-desc">Budget governance, vendor management, and compliance framework for learning investments.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 06 PEOPLE ANALYTICS -->
+    <div id="panel-pa" class="section-panel">
+      <div class="section-header">
+        <div class="section-eyebrow">06 / 11 · Strategic Layer</div>
+        <h1 class="section-title">People Analytics</h1>
+        <div class="section-meta">
+          <span class="tag tag-strategic">Strategic</span>
+          <span class="section-count">9 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_pa_strategy.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">Analytics Strategy</div>
+          <div class="card-desc">People analytics maturity roadmap and data-driven HR decision framework.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_pa_data_infra.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">Data Infrastructure</div>
+          <div class="card-desc">HR data architecture, source systems mapping, and data quality governance standards.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_pa_workforce_dashboard.html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">Workforce Dashboard</div>
+          <div class="card-desc">Live workforce composition, headcount trends, and demographic snapshot across all sites.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_pa_attrition.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">Attrition Analytics</div>
+          <div class="card-desc">Turnover root cause analysis, flight risk modelling, and retention intervention targeting.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_pa_pipeline.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">Pipeline Analytics</div>
+          <div class="card-desc">Talent pipeline funnel analysis, conversion benchmarks, and sourcing effectiveness metrics.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_pa_workforce.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">Workforce Planning Analytics</div>
+          <div class="card-desc">Demand forecasting models and supply-gap visualisation for strategic headcount planning.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_pa_comp.html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">Compensation Analytics</div>
+          <div class="card-desc">Pay equity analysis, market positioning benchmarks, and compa-ratio distribution reporting.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/8_pa_productivity.html" class="module-card">
+          <div class="card-num">08</div>
+          <div class="card-title">Productivity Analytics</div>
+          <div class="card-desc">Workforce output metrics, utilisation rates, and operational productivity benchmarking.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/9_pa_reporting_storytelling.html" class="module-card">
+          <div class="card-num">09</div>
+          <div class="card-title">Reporting &amp; Storytelling</div>
+          <div class="card-desc">Executive reporting frameworks and data narrative techniques for people insights presentation.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 07 HRBP -->
+    <div id="panel-hrbp" class="section-panel">
+      <div class="section-header">
+        <div class="section-eyebrow">07 / 11 · Strategic Layer</div>
+        <h1 class="section-title">HR Business Partnering</h1>
+        <div class="section-meta">
+          <span class="tag tag-strategic">Strategic</span>
+          <span class="section-count">10 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_hrbp_role_model.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">HRBP Role Model</div>
+          <div class="card-desc">Defining the strategic and operational role of HR Business Partners within the organisation.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_hrbp_business_acumen.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">Business Acumen</div>
+          <div class="card-desc">Frameworks for building commercial awareness and business-aligned HR decision-making.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_hrbp_stakeholder.html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">Stakeholder Management</div>
+          <div class="card-desc">Tools and methods for managing relationships with key internal and external stakeholders.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_hrbp_org_diagnostic.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">Org Diagnostic</div>
+          <div class="card-desc">Diagnostic frameworks for assessing organisational health, capability gaps, and people risks.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_hrbp_scorecard.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">HRBP Scorecard</div>
+          <div class="card-desc">Performance measurement tools and KPIs to track the impact and effectiveness of HR business partners.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_hrbp_workforce_planning.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">Workforce Planning</div>
+          <div class="card-desc">Strategic headcount forecasting and workforce planning processes aligned to business cycles.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_hrbp_business_review.html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">Business Review</div>
+          <div class="card-desc">Structured HR business review cadence, reporting templates, and quarterly people insights.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/8_hrbp_change_management.html" class="module-card">
+          <div class="card-num">08</div>
+          <div class="card-title">Change Management</div>
+          <div class="card-desc">HR-led change frameworks, stakeholder impact mapping, and communication planning tools.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/9_hrbp_talent_strategy.html" class="module-card">
+          <div class="card-num">09</div>
+          <div class="card-title">Talent Strategy</div>
+          <div class="card-desc">Business unit talent strategies covering attraction, retention, and critical role succession.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/10_hrbp_leadership_coaching.html" class="module-card">
+          <div class="card-num">10</div>
+          <div class="card-title">Leadership Coaching</div>
+          <div class="card-desc">Coaching frameworks and tools for HRBPs to develop leadership capability across the organisation.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 08 EX & CULTURE -->
+    <div id="panel-ex" class="section-panel">
+      <div class="section-header">
+        <div class="section-eyebrow">08 / 11 · Enterprise Infrastructure</div>
+        <h1 class="section-title">Employee Experience &amp; Culture</h1>
+        <div class="section-meta">
+          <span class="tag tag-strategic">Strategic</span>
+          <span class="tag tag-enterprise">Enterprise</span>
+          <span class="section-count">8 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_ex_strategy.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">EX Strategy</div>
+          <div class="card-desc">Employee experience strategy framework covering moments that matter across the full lifecycle.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_ex_culture.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">Culture Framework</div>
+          <div class="card-desc">Organisational culture definition, values activation, and culture measurement tools.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_ex_onboarding.html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">Onboarding Experience</div>
+          <div class="card-desc">Structured onboarding journey design to accelerate time-to-productivity and early retention.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_ex_engagement.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">Engagement</div>
+          <div class="card-desc">Employee engagement survey design, pulse listening tools, and action planning frameworks.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_ex_recognition.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">Recognition</div>
+          <div class="card-desc">Recognition programme design linking appreciation to values, performance, and retention outcomes.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_ex_wellbeing.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">Wellbeing</div>
+          <div class="card-desc">Holistic wellbeing framework for site and office workforce, including mental health provisions.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_ex_exit_analytics.html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">Exit Analytics</div>
+          <div class="card-desc">Exit interview data analysis, leaver themes, and retention signal reporting by site and grade.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/8_ex_culture_consistency.html" class="module-card">
+          <div class="card-num">08</div>
+          <div class="card-title">Culture Consistency</div>
+          <div class="card-desc">Multi-country culture alignment tools to maintain values coherence across all operating sites.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 09 ORG DESIGN -->
+    <div id="panel-od" class="section-panel">
+      <div class="section-header">
+        <div class="section-eyebrow">09 / 11 · Enterprise Infrastructure</div>
+        <h1 class="section-title">Organisation Design</h1>
+        <div class="section-meta">
+          <span class="tag tag-enterprise">Enterprise</span>
+          <span class="section-count">9 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_od_foundations.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">OD Foundations</div>
+          <div class="card-desc">Core principles and theoretical foundations underpinning organisation design practice.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_od_structure_models.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">Structure Models</div>
+          <div class="card-desc">Comparative structural archetypes and model selection criteria for drilling organisations.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_od_role_design.html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">Role Design</div>
+          <div class="card-desc">Methodology for defining, sizing, and architecting roles to match organisational purpose.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_od_spans_layers.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">Spans &amp; Layers</div>
+          <div class="card-desc">Framework for optimising management spans of control and flattening organisational layers.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_od_org_health.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">Org Health</div>
+          <div class="card-desc">Assessment tools for diagnosing and improving organisational health and team effectiveness.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_od_restructure.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">Restructure Playbook</div>
+          <div class="card-desc">End-to-end restructure planning guide covering design, consultation, and implementation phases.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_od_intervention.html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">OD Interventions</div>
+          <div class="card-desc">Targeted OD intervention strategies to address team dysfunction, culture drift, and capability gaps.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/8_od_scenarios.html" class="module-card">
+          <div class="card-num">08</div>
+          <div class="card-title">OD Scenarios</div>
+          <div class="card-desc">Scenario planning tools for modelling future organisational structures under different growth assumptions.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/9_od_governance.html" class="module-card">
+          <div class="card-num">09</div>
+          <div class="card-title">OD Governance</div>
+          <div class="card-desc">Governance structures, approval frameworks, and accountability mechanisms for OD decisions.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 10 HR TECH -->
+    <div id="panel-hrtech" class="section-panel">
+      <div class="section-header">
+        <div class="section-eyebrow">10 / 11 · Enterprise Infrastructure</div>
+        <h1 class="section-title">HR Technology</h1>
+        <div class="section-meta">
+          <span class="tag tag-enterprise">Enterprise</span>
+          <span class="section-count">9 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_hrtech-tool1-systems-inventory.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">Systems Inventory</div>
+          <div class="card-desc">Complete catalogue of all HR technology systems, owners, and integration dependencies.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_hrtech-tool2-integration-dataflow.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">Integration &amp; Dataflow</div>
+          <div class="card-desc">System integration mapping, data flow architecture, and API dependency documentation.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_hrtech-tool3-vendor-evaluation.html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">Vendor Evaluation</div>
+          <div class="card-desc">Structured vendor assessment framework with scoring criteria and shortlisting methodology.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_hrtech-tool4-data-governance.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">Data Governance</div>
+          <div class="card-desc">HR data governance policies, access controls, privacy compliance, and retention schedules.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_hrtech-tool5-roadmap.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">HR Tech Roadmap</div>
+          <div class="card-desc">Multi-year HR technology transformation roadmap with prioritisation and investment phasing.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_hrtech-tool6-roi-business-case.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">ROI &amp; Business Case</div>
+          <div class="card-desc">Business case templates and ROI modelling tools for HR technology investment proposals.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_hrtech-tool7-automation-ai.html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">Automation &amp; AI</div>
+          <div class="card-desc">HR automation opportunity mapping and AI use case assessment for people processes.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/8_hrtech-tool8-adoption-change.html" class="module-card">
+          <div class="card-num">08</div>
+          <div class="card-title">Adoption &amp; Change</div>
+          <div class="card-desc">Technology adoption playbook with change management, training, and user readiness frameworks.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/9_hrtech-tool9-operating-model.html" class="module-card">
+          <div class="card-num">09</div>
+          <div class="card-title">Tech Operating Model</div>
+          <div class="card-desc">HR technology operating model covering ownership, support tiers, and service delivery roles.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 11 COE -->
+    <div id="panel-coe" class="section-panel">
+      <div class="section-header">
+        <div class="section-eyebrow">11 / 11 · Enterprise Infrastructure</div>
+        <h1 class="section-title">Centre of Excellence</h1>
+        <div class="section-meta">
+          <span class="tag tag-enterprise">Enterprise</span>
+          <span class="section-count">7 modules</span>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="https://heindaries.github.io/hr_system/1_coe_operating_model.html" class="module-card">
+          <div class="card-num">01</div>
+          <div class="card-title">CoE Operating Model</div>
+          <div class="card-desc">Centre of Excellence design principles, operating model, and HR function architecture.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/2_coe_policy_register.html" class="module-card">
+          <div class="card-num">02</div>
+          <div class="card-title">Standards Register</div>
+          <div class="card-desc">Enterprise HR standards, policy register, and cross-functional compliance accountability matrix.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/3_coe_knowledge_management.html" class="module-card">
+          <div class="card-num">03</div>
+          <div class="card-title">Knowledge Management</div>
+          <div class="card-desc">HR knowledge capture, institutional memory systems, and best practice dissemination tools.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/4_coe_governance.html" class="module-card">
+          <div class="card-num">04</div>
+          <div class="card-title">Governance &amp; Decision Rights</div>
+          <div class="card-desc">HR governance structure, RACI frameworks, and decision rights across the function.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/5_coe_framework_lifecycle.html" class="module-card">
+          <div class="card-num">05</div>
+          <div class="card-title">Framework Lifecycle</div>
+          <div class="card-desc">Review cadence, version control, and lifecycle management for all HR frameworks and tools.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/6_coe_innovation_tracker.html" class="module-card">
+          <div class="card-num">06</div>
+          <div class="card-title">Innovation Tracker</div>
+          <div class="card-desc">HR innovation pipeline tracking new initiatives, pilots, and continuous improvement projects.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+        <a href="https://heindaries.github.io/hr_system/7_coe_7_maturity_model.html" class="module-card">
+          <div class="card-num">07</div>
+          <div class="card-title">HR Maturity Model</div>
+          <div class="card-desc">HR function maturity assessment across all eleven practice areas with advancement roadmap.</div>
+          <div class="card-arrow">Open module →</div>
+        </a>
+      </div>
+    </div>
+
+  </main>
 </div>
 
-<!-- HERO -->
-<section class="hero">
-  <p class="hero-eyebrow">People Systems &mdash; Master Index</p>
-  <h1>Eleven practice areas.<br><em>One operating framework.</em></h1>
-  <p class="hero-sub">Structured for execution across multi-site, multi-country operations — from operational foundations through to enterprise-level people infrastructure.</p>
-  <div class="hero-stats">
-    <div><span class="stat-num">11</span><span class="stat-label">Systems</span></div>
-    <div><span class="stat-num">89</span><span class="stat-label">Modules</span></div>
-    <div><span class="stat-num">'26</span><span class="stat-label">Framework</span></div>
-  </div>
-</section>
-
-<!-- ═══════════════════ OPERATIONAL ═══════════════════ -->
-<div class="tier-block" data-tier><span class="tier-block-text">Operational Foundation</span><span class="tier-block-rule"></span></div>
-
-<section class="system-section" id="hrops" data-section>
-  <div class="system-header">
-    <span class="system-num">01 / 11</span>
-    <h2 class="system-title">HR Operations</h2>
-    <div class="system-meta"><span class="badge badge-op">Operational</span><span class="system-count">9 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_hr-ops-tool1-employee-records.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">Employee Records</div><div class="mod-desc">Central register for all employee data, employment history, and document management.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_hr-ops-tool2-contracts-positions.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">Contracts &amp; Positions</div><div class="mod-desc">Contract lifecycle management and position control across all entity types and grades.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_hr-ops-tool3-compliance-register.html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">Compliance Register</div><div class="mod-desc">Tracking framework for labour law compliance across all operating jurisdictions.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_hr-ops-tool4-onboarding-offboarding.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">Onboarding &amp; Offboarding</div><div class="mod-desc">End-to-end joiners and leavers workflow with checklists, handover, and exit data capture.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_hr-ops-tool5-leave-absence.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">Leave &amp; Absence</div><div class="mod-desc">Leave entitlement management, absence tracking, and statutory compliance by country.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_hr-ops-tool6-policy-library.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">Policy Library</div><div class="mod-desc">Centralised repository of all HR policies with version control and review schedules.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_hr-ops-tool7-disciplinary-grievance.html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">Disciplinary &amp; Grievance</div><div class="mod-desc">Case management workflow for disciplinary processes and formal grievance handling.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="8_hr-ops-tool8-work-permits.html"><span class="mod-num">08</span><div class="mod-body"><div class="mod-title">Work Permits</div><div class="mod-desc">Permit and visa tracking for expatriate and cross-border employees across all sites.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="9_hr-ops-tool9-compliance-calendar.html"><span class="mod-num">09</span><div class="mod-body"><div class="mod-title">Compliance Calendar</div><div class="mod-desc">Regulatory filing deadlines, renewal dates, and statutory reporting schedule by jurisdiction.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<section class="system-section" id="ta" data-section>
-  <div class="system-header">
-    <span class="system-num">02 / 11</span>
-    <h2 class="system-title">Talent Acquisition</h2>
-    <div class="system-meta"><span class="badge badge-op">Operational</span><span class="system-count">9 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_Ta_headcount_plan_2026.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">Headcount Plan 2026</div><div class="mod-desc">Annual headcount plan with approved positions, phasing schedule, and budget allocation by department.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_Ta_hc_comms.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">HC Communications</div><div class="mod-desc">Headcount communication templates and stakeholder update cadence for hiring approvals.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_Ta_sourcing_strategy (1).html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">Sourcing Strategy</div><div class="mod-desc">Channel mix, sourcing playbooks, and direct talent attraction strategies by role family.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_Ta_talent_pipeline_master.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">Talent Pipeline Master</div><div class="mod-desc">Master pipeline tracker covering all active requisitions, candidate stages, and anticipated offers.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_Ta_recruitment_tracker.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">Recruitment Tracker</div><div class="mod-desc">Live tracker with time-to-fill metrics, hiring manager accountability, and SLA monitoring.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_Ta_interview_framework.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">Interview Framework</div><div class="mod-desc">Structured interview guides, competency question banks, and scoring rubrics for consistent assessment.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_Ta_ta_completion_kit (1).html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">TA Completion Kit</div><div class="mod-desc">End-of-hire documentation, offer letter templates, and onboarding handover checklists.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="8_Ta_metrics_dashboard.html"><span class="mod-num">08</span><div class="mod-body"><div class="mod-title">TA Metrics Dashboard</div><div class="mod-desc">Recruitment analytics covering quality of hire, source effectiveness, and funnel conversion rates.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="9_Ta_ta_toolkit.html"><span class="mod-num">09</span><div class="mod-body"><div class="mod-title">TA Toolkit</div><div class="mod-desc">Comprehensive recruiter toolkit including job briefs, EVP messaging, and candidate experience guides.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<section class="system-section" id="cb" data-section>
-  <div class="system-header">
-    <span class="system-num">03 / 11</span>
-    <h2 class="system-title">Compensation &amp; Benefits</h2>
-    <div class="system-meta"><span class="badge badge-op">Operational</span><span class="badge badge-str">Strategic</span><span class="system-count">8 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_cb_total_rewards.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">Total Rewards Framework</div><div class="mod-desc">Strategic overview of the complete employee value proposition across all reward elements.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_cb_job_evaluation.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">Job Evaluation &amp; Role Grading</div><div class="mod-desc">Structured methodology for evaluating, classifying, and grading all roles within the organisation.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_cb_salary_bands.html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">Salary Band Management</div><div class="mod-desc">Definition and governance of pay ranges, midpoints, and band structures across all grades.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_cb_merit_matrix.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">Merit &amp; Increment Matrix</div><div class="mod-desc">Performance-linked pay progression guidelines and increment decision-making matrices.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_cb_benefits_allowances.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">Benefits &amp; Allowances Register</div><div class="mod-desc">Comprehensive catalogue of all employee benefits, entitlements, and allowance policies.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_cb_incentive_variable_pay.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">Incentive &amp; Variable Pay</div><div class="mod-desc">Short and long-term incentive structures, bonus schemes, and performance-based pay design.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_cb_trs_generator.html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">Total Rewards Statement Generator</div><div class="mod-desc">Automated generation of personalised total rewards statements for individual employees.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="8_cb_analytics_dashboard.html"><span class="mod-num">08</span><div class="mod-body"><div class="mod-title">C&amp;B Analytics Dashboard</div><div class="mod-desc">Real-time compensation analytics, benchmarking insights, and workforce pay equity reporting.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<section class="system-section" id="pm" data-section>
-  <div class="system-header">
-    <span class="system-num">04 / 11</span>
-    <h2 class="system-title">Performance Management</h2>
-    <div class="system-meta"><span class="badge badge-op">Operational</span><span class="badge badge-str">Strategic</span><span class="system-count">7 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_pm_framework_1.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">PM Framework</div><div class="mod-desc">End-to-end performance management framework covering cycle design, ratings, and calibration.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_pm_review_system.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">Review System</div><div class="mod-desc">Structured performance review workflows, feedback templates, and mid-year check-in processes.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_pm_pip_tracker.html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">PIP Tracker</div><div class="mod-desc">Performance improvement plan management with tracking, milestones, and outcome documentation.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_pm_dashboard_4.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">PM Dashboard</div><div class="mod-desc">Analytics dashboard for tracking performance completion rates, rating distributions, and trends.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_pm_manager_guide.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">Manager Guide</div><div class="mod-desc">Practical guidance for line managers on conducting meaningful performance conversations.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_pm_development.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">Development Planning</div><div class="mod-desc">Individual development planning tools linking performance outcomes to growth opportunities.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_pm_succession.html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">Succession Planning</div><div class="mod-desc">Succession pipeline mapping for critical roles, readiness assessment, and bench strength tracking.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<!-- ═══════════════════ STRATEGIC ═══════════════════ -->
-<div class="tier-block" data-tier><span class="tier-block-text">Strategic Layer</span><span class="tier-block-rule"></span></div>
-
-<section class="system-section" id="ld" data-section>
-  <div class="system-header">
-    <span class="system-num">05 / 11</span>
-    <h2 class="system-title">Learning &amp; Development</h2>
-    <div class="system-meta"><span class="badge badge-str">Strategic</span><span class="system-count">7 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_ld_strategy.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">L&amp;D Strategy</div><div class="mod-desc">Learning strategy framework aligned to capability gaps, business priorities, and growth plans.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_ld_tna.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">Training Needs Analysis</div><div class="mod-desc">TNA process for identifying learning gaps across teams, roles, and development cohorts.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_ld_design.html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">Learning Design</div><div class="mod-desc">Instructional design principles and programme architecture for site and office learning.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_ld_pathway.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">Career Pathway</div><div class="mod-desc">Structured development pathways by grade, including the driller G3→G4 progression roadmap.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_ld_leadership.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">Leadership Development</div><div class="mod-desc">Leadership programme design and delivery framework for senior and high-potential cohorts.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_ld_measurement.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">L&amp;D Measurement</div><div class="mod-desc">Kirkpatrick-aligned evaluation tools to measure learning effectiveness and business impact.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_ld_governance.html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">L&amp;D Governance</div><div class="mod-desc">Budget governance, vendor management, and compliance framework for learning investments.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<section class="system-section" id="pa" data-section>
-  <div class="system-header">
-    <span class="system-num">06 / 11</span>
-    <h2 class="system-title">People Analytics</h2>
-    <div class="system-meta"><span class="badge badge-str">Strategic</span><span class="system-count">9 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_pa_strategy.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">Analytics Strategy</div><div class="mod-desc">People analytics maturity roadmap and data-driven HR decision framework.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_pa_data_infra.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">Data Infrastructure</div><div class="mod-desc">HR data architecture, source systems mapping, and data quality governance standards.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_pa_workforce_dashboard.html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">Workforce Dashboard</div><div class="mod-desc">Live workforce composition, headcount trends, and demographic snapshot across all sites.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_pa_attrition.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">Attrition Analytics</div><div class="mod-desc">Turnover root cause analysis, flight risk modelling, and retention intervention targeting.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_pa_pipeline.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">Pipeline Analytics</div><div class="mod-desc">Talent pipeline funnel analysis, conversion benchmarks, and sourcing effectiveness metrics.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_pa_workforce.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">Workforce Planning Analytics</div><div class="mod-desc">Demand forecasting models and supply-gap visualisation for strategic headcount planning.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_pa_comp.html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">Compensation Analytics</div><div class="mod-desc">Pay equity analysis, market positioning benchmarks, and compa-ratio distribution reporting.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="8_pa_productivity.html"><span class="mod-num">08</span><div class="mod-body"><div class="mod-title">Productivity Analytics</div><div class="mod-desc">Workforce output metrics, utilisation rates, and operational productivity benchmarking.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="9_pa_reporting_storytelling.html"><span class="mod-num">09</span><div class="mod-body"><div class="mod-title">Reporting &amp; Storytelling</div><div class="mod-desc">Executive reporting frameworks and data narrative techniques for people insights presentation.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<section class="system-section" id="hrbp" data-section>
-  <div class="system-header">
-    <span class="system-num">07 / 11</span>
-    <h2 class="system-title">HR Business Partnering</h2>
-    <div class="system-meta"><span class="badge badge-str">Strategic</span><span class="system-count">10 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_hrbp_role_model.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">HRBP Role Model</div><div class="mod-desc">Defining the strategic and operational role of HR Business Partners within the organisation.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_hrbp_business_acumen.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">Business Acumen</div><div class="mod-desc">Frameworks for building commercial awareness and business-aligned HR decision-making.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_hrbp_stakeholder.html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">Stakeholder Management</div><div class="mod-desc">Tools and methods for managing relationships with key internal and external stakeholders.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_hrbp_org_diagnostic.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">Org Diagnostic</div><div class="mod-desc">Diagnostic frameworks for assessing organisational health, capability gaps, and people risks.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_hrbp_scorecard.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">HRBP Scorecard</div><div class="mod-desc">Performance measurement tools and KPIs to track the impact and effectiveness of HR business partners.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_hrbp_workforce_planning.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">Workforce Planning</div><div class="mod-desc">Strategic headcount forecasting and workforce planning processes aligned to business cycles.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_hrbp_business_review.html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">Business Review</div><div class="mod-desc">Structured HR business review cadence, reporting templates, and quarterly people insights.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="8_hrbp_change_management.html"><span class="mod-num">08</span><div class="mod-body"><div class="mod-title">Change Management</div><div class="mod-desc">HR-led change frameworks, stakeholder impact mapping, and communication planning tools.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="9_hrbp_talent_strategy.html"><span class="mod-num">09</span><div class="mod-body"><div class="mod-title">Talent Strategy</div><div class="mod-desc">Business unit talent strategies covering attraction, retention, and critical role succession.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="10_hrbp_leadership_coaching.html"><span class="mod-num">10</span><div class="mod-body"><div class="mod-title">Leadership Coaching</div><div class="mod-desc">Coaching frameworks and tools for HRBPs to develop leadership capability across the organisation.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<!-- ═══════════════════ ENTERPRISE ═══════════════════ -->
-<div class="tier-block" data-tier><span class="tier-block-text">Enterprise Infrastructure</span><span class="tier-block-rule"></span></div>
-
-<section class="system-section" id="ex" data-section>
-  <div class="system-header">
-    <span class="system-num">08 / 11</span>
-    <h2 class="system-title">Employee Experience &amp; Culture</h2>
-    <div class="system-meta"><span class="badge badge-str">Strategic</span><span class="badge badge-ent">Enterprise</span><span class="system-count">8 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_ex_strategy.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">EX Strategy</div><div class="mod-desc">Employee experience strategy framework covering moments that matter across the full lifecycle.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_ex_culture.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">Culture Framework</div><div class="mod-desc">Organisational culture definition, values activation, and culture measurement tools.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_ex_onboarding.html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">Onboarding Experience</div><div class="mod-desc">Structured onboarding journey design to accelerate time-to-productivity and early retention.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_ex_engagement.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">Engagement</div><div class="mod-desc">Employee engagement survey design, pulse listening tools, and action planning frameworks.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_ex_recognition.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">Recognition</div><div class="mod-desc">Recognition programme design linking appreciation to values, performance, and retention outcomes.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_ex_wellbeing.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">Wellbeing</div><div class="mod-desc">Holistic wellbeing framework for site and office workforce, including mental health provisions.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_ex_exit_analytics.html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">Exit Analytics</div><div class="mod-desc">Exit interview data analysis, leaver themes, and retention signal reporting by site and grade.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="8_ex_culture_consistency.html"><span class="mod-num">08</span><div class="mod-body"><div class="mod-title">Culture Consistency</div><div class="mod-desc">Multi-country culture alignment tools to maintain values coherence across all operating sites.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<section class="system-section" id="od" data-section>
-  <div class="system-header">
-    <span class="system-num">09 / 11</span>
-    <h2 class="system-title">Organisation Design</h2>
-    <div class="system-meta"><span class="badge badge-ent">Enterprise</span><span class="system-count">9 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_od_foundations.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">OD Foundations</div><div class="mod-desc">Core principles and theoretical foundations underpinning organisation design practice.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_od_structure_models.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">Structure Models</div><div class="mod-desc">Comparative structural archetypes and model selection criteria for drilling organisations.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_od_role_design.html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">Role Design</div><div class="mod-desc">Methodology for defining, sizing, and architecting roles to match organisational purpose.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_od_spans_layers.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">Spans &amp; Layers</div><div class="mod-desc">Framework for optimising management spans of control and flattening organisational layers.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_od_org_health.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">Org Health</div><div class="mod-desc">Assessment tools for diagnosing and improving organisational health and team effectiveness.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_od_restructure.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">Restructure Playbook</div><div class="mod-desc">End-to-end restructure planning guide covering design, consultation, and implementation phases.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_od_intervention.html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">OD Interventions</div><div class="mod-desc">Targeted OD intervention strategies to address team dysfunction, culture drift, and capability gaps.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="8_od_scenarios.html"><span class="mod-num">08</span><div class="mod-body"><div class="mod-title">OD Scenarios</div><div class="mod-desc">Scenario planning tools for modelling future organisational structures under different growth assumptions.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="9_od_governance.html"><span class="mod-num">09</span><div class="mod-body"><div class="mod-title">OD Governance</div><div class="mod-desc">Governance structures, approval frameworks, and accountability mechanisms for OD decisions.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<section class="system-section" id="hrtech" data-section>
-  <div class="system-header">
-    <span class="system-num">10 / 11</span>
-    <h2 class="system-title">HR Technology</h2>
-    <div class="system-meta"><span class="badge badge-ent">Enterprise</span><span class="system-count">9 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_hrtech-tool1-systems-inventory.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">Systems Inventory</div><div class="mod-desc">Complete catalogue of all HR technology systems, owners, and integration dependencies.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_hrtech-tool2-integration-dataflow.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">Integration &amp; Dataflow</div><div class="mod-desc">System integration mapping, data flow architecture, and API dependency documentation.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_hrtech-tool3-vendor-evaluation.html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">Vendor Evaluation</div><div class="mod-desc">Structured vendor assessment framework with scoring criteria and shortlisting methodology.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_hrtech-tool4-data-governance.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">Data Governance</div><div class="mod-desc">HR data governance policies, access controls, privacy compliance, and retention schedules.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_hrtech-tool5-roadmap.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">HR Tech Roadmap</div><div class="mod-desc">Multi-year HR technology transformation roadmap with prioritisation and investment phasing.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_hrtech-tool6-roi-business-case.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">ROI &amp; Business Case</div><div class="mod-desc">Business case templates and ROI modelling tools for HR technology investment proposals.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_hrtech-tool7-automation-ai.html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">Automation &amp; AI</div><div class="mod-desc">HR automation opportunity mapping and AI use case assessment for people processes.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="8_hrtech-tool8-adoption-change.html"><span class="mod-num">08</span><div class="mod-body"><div class="mod-title">Adoption &amp; Change</div><div class="mod-desc">Technology adoption playbook with change management, training, and user readiness frameworks.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="9_hrtech-tool9-operating-model.html"><span class="mod-num">09</span><div class="mod-body"><div class="mod-title">Tech Operating Model</div><div class="mod-desc">HR technology operating model covering ownership, support tiers, and service delivery roles.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<section class="system-section" id="coe" data-section>
-  <div class="system-header">
-    <span class="system-num">11 / 11</span>
-    <h2 class="system-title">Centre of Excellence</h2>
-    <div class="system-meta"><span class="badge badge-ent">Enterprise</span><span class="system-count">7 modules</span></div>
-  </div>
-  <div class="module-grid">
-    <a class="module-card" href="1_coe_operating_model.html"><span class="mod-num">01</span><div class="mod-body"><div class="mod-title">CoE Operating Model</div><div class="mod-desc">Centre of Excellence design principles, operating model, and HR function architecture.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="2_coe_policy_register.html"><span class="mod-num">02</span><div class="mod-body"><div class="mod-title">Standards Register</div><div class="mod-desc">Enterprise HR standards, policy register, and cross-functional compliance accountability matrix.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="3_coe_knowledge_management.html"><span class="mod-num">03</span><div class="mod-body"><div class="mod-title">Knowledge Management</div><div class="mod-desc">HR knowledge capture, institutional memory systems, and best practice dissemination tools.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="4_coe_governance.html"><span class="mod-num">04</span><div class="mod-body"><div class="mod-title">Governance &amp; Decision Rights</div><div class="mod-desc">HR governance structure, RACI frameworks, and decision rights across the function.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="5_coe_framework_lifecycle.html"><span class="mod-num">05</span><div class="mod-body"><div class="mod-title">Framework Lifecycle</div><div class="mod-desc">Review cadence, version control, and lifecycle management for all HR frameworks and tools.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="6_coe_innovation_tracker.html"><span class="mod-num">06</span><div class="mod-body"><div class="mod-title">Innovation Tracker</div><div class="mod-desc">HR innovation pipeline tracking new initiatives, pilots, and continuous improvement projects.</div></div><span class="module-arrow">→</span></a>
-    <a class="module-card" href="7_coe_7_maturity_model.html"><span class="mod-num">07</span><div class="mod-body"><div class="mod-title">HR Maturity Model</div><div class="mod-desc">HR function maturity assessment across all eleven practice areas with advancement roadmap.</div></div><span class="module-arrow">→</span></a>
-  </div>
-</section>
-
-<div id="no-results">No modules match your search.</div>
-
-<footer>
-  <span class="footer-brand">HR Operating Framework</span>
-  <span class="footer-meta">11 Systems &nbsp;·&nbsp; 89 Modules &nbsp;·&nbsp; Operational → Strategic → Enterprise</span>
-</footer>
-
-<button id="back-top">↑</button>
-
 <script>
-  const input = document.getElementById('search-input');
-  const noResults = document.getElementById('no-results');
-  const sections = document.querySelectorAll('[data-section]');
-  const tiers = document.querySelectorAll('[data-tier]');
-
-  input.addEventListener('input', () => {
-    const q = input.value.trim().toLowerCase();
-    let any = false;
-    sections.forEach(sec => {
-      const cards = sec.querySelectorAll('.module-card');
-      let vis = false;
-      cards.forEach(c => {
-        const show = !q || c.textContent.toLowerCase().includes(q);
-        c.style.display = show ? '' : 'none';
-        if (show) vis = true;
-      });
-      sec.style.display = vis ? '' : 'none';
-      if (vis) any = true;
-    });
-    tiers.forEach(t => t.style.display = q ? 'none' : '');
-    noResults.style.display = any ? 'none' : 'block';
-  });
-
-  document.addEventListener('keydown', e => {
-    if (e.key === '/' && document.activeElement !== input) { e.preventDefault(); input.focus(); }
-    if (e.key === 'Escape') { input.value = ''; input.dispatchEvent(new Event('input')); input.blur(); }
-  });
-
-  const btn = document.getElementById('back-top');
-  window.addEventListener('scroll', () => btn.classList.toggle('show', window.scrollY > 500));
-  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  function showSection(id, navEl) {
+    // hide all panels
+    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('visible'));
+    // show target
+    document.getElementById('panel-' + id).classList.add('visible');
+    // update nav active state
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    navEl.classList.add('active');
+    // scroll main to top
+    document.querySelector('.main').scrollTop = 0;
+  }
 </script>
+
 </body>
 </html>
