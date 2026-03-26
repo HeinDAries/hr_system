@@ -4,36 +4,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Employee Records & Data Management Hub — Valentis Group</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #1a1a2e;
-    --slate: #2d3142;
-    --amber: #c9802a;
-    --amber-light: #e8a84a;
-    --amber-pale: #fdf3e3;
-    --steel: #4a5568;
-    --mist: #f4f5f7;
-    --white: #ffffff;
-    --border: #dde1ea;
-    --success: #2d7d46;
-    --success-bg: #edf7f1;
-    --warning: #b45309;
-    --warning-bg: #fef3cd;
-    --danger: #b91c1c;
-    --danger-bg: #fef2f2;
-    --neutral: #4a5568;
-    --neutral-bg: #f4f5f7;
-    --tag-laos: #1e5f74;
-    --tag-myanmar: #6b3a2a;
-    --tag-indonesia: #1a4731;
-    --tag-thailand: #3b2a6e;
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --border: #272727;
+    --border-hover: #404040;
+    --text-primary: #f0ece4;
+    --text-secondary: #7a7570;
+    --text-muted: #3d3a37;
+    --accent: #c9a96e;
+    --accent-dim: #6e5a38;
+    /* legacy aliases — keep existing CSS rules working */
+    --ink: #f0ece4;
+    --slate: #161616;
+    --amber: #c9a96e;
+    --amber-light: #d4b87a;
+    --amber-pale: rgba(201,169,110,0.10);
+    --steel: #7a7570;
+    --mist: #0e0e0e;
+    --white: #161616;
+    --success: #6ee7b7;
+    --success-bg: rgba(110,231,183,0.10);
+    --warning: #fbbf24;
+    --warning-bg: rgba(251,191,36,0.10);
+    --danger: #f87171;
+    --danger-bg: rgba(248,113,113,0.10);
+    --info: #60a5fa;
+    --info-bg: rgba(96,165,250,0.10);
+    --neutral: #7a7570;
+    --neutral-bg: rgba(255,255,255,0.05);
+    --tag-laos: #1e3a5f;
+    --tag-myanmar: #3a1e2a;
+    --tag-indonesia: #1a3020;
+    --tag-thailand: #2a1a3a;
+    --tag-group: #1c1c2e;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     background: var(--mist);
     color: var(--ink);
     min-height: 100vh;
@@ -51,7 +63,7 @@
   }
   .header-left { display: flex; align-items: center; gap: 16px; }
   .dept-badge {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     color: var(--amber);
     letter-spacing: 2px;
@@ -61,13 +73,13 @@
     border-radius: 2px;
   }
   .header-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-size: 18px;
     color: var(--white);
     font-weight: 600;
   }
   .header-meta {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 11px;
     color: #8899aa;
     letter-spacing: 1px;
@@ -84,7 +96,7 @@
     gap: 24px;
   }
   .tool-title-block h1 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-size: 26px;
     font-weight: 700;
     color: var(--ink);
@@ -97,7 +109,7 @@
     line-height: 1.6;
   }
   .tool-tag {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     background: var(--amber-pale);
     color: var(--amber);
@@ -124,7 +136,7 @@
   }
   .stat-item:last-child { border-right: none; }
   .stat-number {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 22px;
     font-weight: 500;
     color: var(--amber-light);
@@ -167,7 +179,7 @@
   .search-box input {
     border: none;
     outline: none;
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
     color: var(--ink);
     flex: 1;
@@ -180,7 +192,7 @@
     padding: 0 12px;
     border: 1px solid var(--border);
     border-radius: 4px;
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 12px;
     color: var(--steel);
     background: var(--white);
@@ -191,7 +203,7 @@
     height: 38px;
     padding: 0 18px;
     border-radius: 4px;
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -226,14 +238,14 @@
     justify-content: space-between;
   }
   .table-card-title {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 11px;
     color: var(--steel);
     letter-spacing: 1.5px;
     text-transform: uppercase;
   }
   .record-count {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 11px;
     color: var(--amber);
   }
@@ -243,7 +255,7 @@
     background: var(--mist);
     padding: 10px 14px;
     text-align: left;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     color: var(--steel);
     letter-spacing: 1px;
@@ -271,7 +283,7 @@
   }
 
   .emp-id {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 11px;
     color: var(--steel);
   }
@@ -280,7 +292,7 @@
 
   .country-tag {
     display: inline-block;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     font-weight: 500;
     padding: 3px 8px;
@@ -295,7 +307,7 @@
 
   .grade-badge {
     display: inline-block;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 11px;
     font-weight: 500;
     padding: 3px 9px;
@@ -343,7 +355,7 @@
   .fill-med { background: var(--amber); }
   .fill-low { background: var(--danger); }
   .completeness-pct {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     color: var(--steel);
     min-width: 28px;
@@ -367,7 +379,7 @@
   .modal-overlay {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(26,26,46,0.6);
+    background: rgba(0,0,0,0.75);
     z-index: 100;
     align-items: center;
     justify-content: center;
@@ -395,7 +407,7 @@
     z-index: 1;
   }
   .modal-header h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-size: 18px;
     font-weight: 700;
     color: var(--ink);
@@ -419,7 +431,7 @@
   .form-full { grid-column: 1 / -1; }
 
   .form-section-title {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -443,7 +455,7 @@
     padding: 8px 11px;
     border: 1px solid var(--border);
     border-radius: 4px;
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
     color: var(--ink);
     outline: none;
@@ -491,7 +503,7 @@
     justify-content: space-between;
   }
   .panel-header-title {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -518,7 +530,7 @@
   .audit-dot.dot-red { background: var(--danger); }
   .audit-text { font-size: 12px; color: var(--ink); line-height: 1.4; flex: 1; }
   .audit-time {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     color: #99aabb;
     white-space: nowrap;
@@ -550,7 +562,7 @@
     padding: 14px;
   }
   .standard-card-title {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -568,12 +580,12 @@
   .standard-field:last-child { border-bottom: none; }
   .sf-name { color: var(--ink); }
   .sf-req {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     padding: 2px 6px;
     border-radius: 2px;
   }
-  .sf-mandatory { background: #fee2e2; color: var(--danger); }
+  .sf-mandatory { background: rgba(248,113,113,0.10); color: var(--danger); }
   .sf-optional { background: var(--neutral-bg); color: var(--neutral); }
   .sf-system { background: var(--amber-pale); color: var(--amber); }
 
@@ -586,7 +598,7 @@
   }
   .tab-btn {
     padding: 10px 20px;
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 12px;
     font-weight: 500;
     color: var(--steel);
@@ -631,7 +643,7 @@
   /* ── DETAIL VIEW ── */
   .detail-section { margin-bottom: 20px; }
   .detail-section-title {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -659,7 +671,7 @@
     font-size: 10px;
     padding: 2px 8px;
     border-radius: 10px;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'DM Mono', monospace;
   }
   .tag-complete { background: var(--success-bg); color: var(--success); }
   .tag-missing { background: var(--danger-bg); color: var(--danger); }
@@ -669,9 +681,31 @@
     .form-grid, .side-panels, .standards-grid { grid-template-columns: 1fr; }
     .stats-bar { flex-wrap: wrap; }
   }
+
+  /* ── BACK NAVIGATION ── */
+  .back-nav {
+    background: var(--bg);
+    padding: 10px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .back-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--accent); }
 </style>
 </head>
 <body>
+
+<div class="back-nav">
+  <a href="index.html" class="back-link">&#8592; HR Operating Framework</a>
+</div>
+
+
 
 <!-- HEADER -->
 <div class="header">
@@ -859,15 +893,15 @@
     </div>
     <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap;">
       <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--steel);">
-        <span style="background:#fee2e2;color:var(--danger);padding:2px 8px;border-radius:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;">Mandatory</span>
+        <span style="background:rgba(248,113,113,0.10);color:var(--danger);padding:2px 8px;border-radius:2px;font-size:10px;font-family:'DM Mono',monospace;">Mandatory</span>
         Must be completed at time of hire
       </div>
       <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--steel);">
-        <span style="background:var(--neutral-bg);color:var(--neutral);padding:2px 8px;border-radius:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;">Optional</span>
+        <span style="background:var(--neutral-bg);color:var(--neutral);padding:2px 8px;border-radius:2px;font-size:10px;font-family:'DM Mono',monospace;">Optional</span>
         Recommended; complete where applicable
       </div>
       <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--steel);">
-        <span style="background:var(--amber-pale);color:var(--amber);padding:2px 8px;border-radius:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;">System</span>
+        <span style="background:var(--amber-pale);color:var(--amber);padding:2px 8px;border-radius:2px;font-size:10px;font-family:'DM Mono',monospace;">System</span>
         Auto-populated; do not manually edit
       </div>
     </div>
@@ -1193,7 +1227,7 @@ function renderTable(data) {
             <span class="status-dot ${dotClass}"></span>${emp.status}
           </span>
         </td>
-        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${startFmt}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;">${startFmt}</td>
         <td>
           <div class="data-completeness">
             <div class="completeness-bar"><div class="completeness-fill ${fillClass}" style="width:${emp.completeness}%"></div></div>
@@ -1382,9 +1416,9 @@ function openDetail(id) {
 
   document.getElementById('detailBody').innerHTML = `
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-      <div style="width:48px;height:48px;border-radius:50%;background:var(--slate);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;color:var(--amber-light);font-weight:700;">${emp.name.charAt(0)}</div>
+      <div style="width:48px;height:48px;border-radius:50%;background:var(--slate);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:20px;color:var(--amber-light);font-weight:700;">${emp.name.charAt(0)}</div>
       <div>
-        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;">${emp.name}</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:700;">${emp.name}</div>
         <div style="font-size:12px;color:var(--steel);margin-top:2px;">${emp.id} &nbsp;·&nbsp; ${emp.title} &nbsp;·&nbsp; <span class="grade-badge">${emp.grade}</span></div>
       </div>
       <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
