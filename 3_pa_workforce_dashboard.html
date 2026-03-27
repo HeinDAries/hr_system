@@ -4,42 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Workforce Dashboard — People Analytics Tool 3</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@200;300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f0f2f5;--surface:#fff;--surface2:#e8ecf2;--surface3:#dde3ed;
-  --border:#cdd4e0;--border2:#b8c2d4;
-  --ink:#0d1117;--ink2:#1a2332;--ink3:#3d4f6b;--ink4:#6b7d99;--ink5:#a0aec0;
-  --navy:#0a1628;--navy2:#0d1f3c;
-  --blue:#1a6bdb;--blue2:#2979e8;--blue3:#4d94ff;
-  --blue-dim:rgba(26,107,219,0.08);--blue-border:rgba(26,107,219,0.22);
-  --electric:#3d8bff;--electric2:#5c9fff;
-  --red:#c0392b;--red-dim:rgba(192,57,43,0.07);--red-border:rgba(192,57,43,0.2);
-  --amber:#b8860b;--amber-dim:rgba(184,134,11,0.08);--amber-border:rgba(184,134,11,0.22);
-  --green:#1a7a4a;--green-dim:rgba(26,122,74,0.08);--green-border:rgba(26,122,74,0.22);
+  --bg:#0e0e0e;--surface:#161616;--surface2:#1c1c1c;--surface3:#222222;
+  --border:#272727;--border2:#333333;
+  --ink:#f0ece4;--ink2:#c8c4bc;--ink3:#7a7570;--ink4:#5a5654;--ink5:#5a5654;
+  --navy:#161616;--navy2:#1c1c1c;--navy3:#222222;
+  --blue:#c9a96e;--blue2:#d4b87a;--blue3:#dfc88a;
+  --blue-dim:rgba(201,169,110,0.10);--blue-border:rgba(201,169,110,0.25);
+  --electric:#c9a96e;--electric2:#d4b87a;
+  --silver:#7a7570;--silver2:#9a9590;
+  --red:#f87171;--red-dim:rgba(248,113,113,0.08);--red-border:rgba(248,113,113,0.20);
+  --amber:#f09050;--amber-dim:rgba(240,144,80,0.08);--amber-border:rgba(240,144,80,0.20);
+  --green:#34d399;--green-dim:rgba(52,211,153,0.08);--green-border:rgba(52,211,153,0.20);
   --sidebar-w:272px;
-  --fd:'Cormorant Garamond',Georgia,serif;
+  --fd:'DM Serif Display',Georgia,serif;
   --fb:'DM Sans',sans-serif;
-  --fm:'Fira Code','Courier New',monospace;
+  --fm:'DM Mono','Courier New',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;line-height:1.65;display:flex;min-height:100vh}
 .sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
-.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--blue),rgba(26,107,219,0.3),transparent)}
+.sb-rule{height:3px;background:linear-gradient(90deg,var(--electric),var(--blue),rgba(201,169,110,0.15),transparent)}
 .sb-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.07)}
-.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:rgba(26,107,219,0.15);border:1px solid rgba(26,107,219,0.35);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
-.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0f4ff;line-height:1.1;margin-bottom:4px}
+.sb-dept{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);background:rgba(201,169,110,0.10);border:1px solid rgba(201,169,110,0.22);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
+.sb-title{font-family:var(--fd);font-size:22px;font-weight:700;color:#f0ece4;line-height:1.1;margin-bottom:4px}
 .sb-title em{font-style:italic;color:var(--electric2);font-weight:400}
-.sb-sub{font-size:11px;color:rgba(255,255,255,0.2);font-family:var(--fm)}
+.sb-sub{font-size:11px;color:rgba(255,255,255,0.75);font-family:var(--fm)}
 .sb-nav{padding:12px 8px 6px}
-.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.15);padding:0 10px;margin-bottom:5px;margin-top:8px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.28);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
-.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6)}
-.nav-item.active{background:rgba(26,107,219,0.18);border-color:rgba(26,107,219,0.4);color:var(--electric2)}
-.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.12);width:20px;flex-shrink:0}
+.sb-group{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.75);padding:0 10px;margin-bottom:5px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:4px;cursor:pointer;transition:all .13s;color:rgba(255,255,255,0.75);font-size:12.5px;font-weight:400;margin-bottom:1px;border:1px solid transparent;font-family:var(--fb)}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.75)}
+.nav-item.active{background:rgba(201,169,110,0.12);border-color:rgba(201,169,110,0.25);color:var(--electric2)}
+.nav-num{font-family:var(--fm);font-size:9px;color:rgba(255,255,255,0.75);width:20px;flex-shrink:0}
 .nav-item.active .nav-num{color:var(--blue3)}
 .sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
-.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--fm);line-height:1.6}
+.sb-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:12px;font-size:11px;color:rgba(255,255,255,0.75);font-family:var(--fm);line-height:1.6}
 .sb-note strong{color:var(--electric2);display:block;margin-bottom:3px}
 .main{margin-left:var(--sidebar-w);flex:1}
 .page{display:none;padding:40px 52px;max-width:1100px}
@@ -67,14 +68,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
 .info.red{background:var(--red-dim);border-color:var(--red);color:var(--ink2)}
 .info strong{display:block;font-weight:700;margin-bottom:3px}
 .dtable{width:100%;border-collapse:collapse;font-size:13px}
-.dtable th{text-align:left;padding:9px 14px;background:var(--navy);color:rgba(255,255,255,0.65);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
+.dtable th{text-align:left;padding:9px 14px;background:var(--navy);color:rgba(255,255,255,0.75);font-family:var(--fm);font-size:8px;letter-spacing:1.5px;text-transform:uppercase}
 .dtable td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink3);vertical-align:top;font-weight:300;line-height:1.7}
 .dtable tr:last-child td{border-bottom:none}
 .dtable tr:hover td{background:var(--surface2)}
 .vx-box{background:var(--navy);border-radius:4px;padding:20px 24px;margin-bottom:14px}
 .vx-eyebrow{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--electric2);margin-bottom:6px}
-.vx-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0f4ff;margin-bottom:8px;line-height:1.15}
-.vx-body{font-size:13px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.85}
+.vx-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#f0ece4;margin-bottom:8px;line-height:1.15}
+.vx-body{font-size:13px;color:rgba(255,255,255,0.75);font-weight:300;line-height:1.85}
 .tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
 .tab{padding:9px 18px;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .13s}
 .tab:hover{color:var(--ink2)}
@@ -136,18 +137,19 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
 .alert-icon{font-size:15px;flex-shrink:0}
 /* inputs */
 .upd-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
-.upd-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 12px;font-size:12.5px;color:#f0f4ff;font-family:var(--fb);outline:none;transition:border .13s}
-.upd-input:focus{border-color:rgba(26,107,219,0.5)}
-.upd-label{font-family:var(--fm);font-size:7.5px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;display:block}
+.upd-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:8px 12px;font-size:12.5px;color:#f0ece4;font-family:var(--fb);outline:none;transition:border .13s}
+.upd-input:focus{border-color:rgba(201,169,110,0.20)}
+.upd-label{font-family:var(--fm);font-size:7.5px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.75);margin-bottom:5px;display:block}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:3px;border:none;font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all .13s}
 .btn-blue{background:var(--blue);color:#fff}
 .btn-blue:hover{background:var(--blue2)}
-.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5)}
-.btn-ghost:hover{border-color:rgba(26,107,219,0.5);color:var(--electric2)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.75)}
+.btn-ghost:hover{border-color:rgba(201,169,110,0.20);color:var(--electric2)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .page.active .card,.page.active .vx-box,.page.active .kpi,.page.active .c-tile{animation:fadeUp .22s ease both}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.back-nav{background:#0e0e0e;padding:10px 40px;border-bottom:1px solid #272727;}
 </style>
 </head>
 <body>
@@ -173,11 +175,12 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
     <div class="sb-note">
       <strong>People Analytics · Tool 3 of 9</strong>
       Workforce Dashboard<br>
-      <span style="color:rgba(255,255,255,0.1)">One view of workforce health. Updated quarterly. COO-ready in one click.</span>
+      <span style="color:rgba(255,255,255,0.75)">One view of workforce health. Updated quarterly. COO-ready in one click.</span>
     </div>
   </div>
 </nav>
 <main class="main">
+<div class="back-nav"><a href="index.html" style="color:#c9a96e;text-decoration:none;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;opacity:.85">&#8592; HR Operating Framework</a></div>
 
 <div id="page-live" class="page active">
   <div class="page-header">
@@ -620,31 +623,31 @@ function renderUpdater(){
   var D=DATA;
   var el=document.getElementById('update-content');
   var html='<div style="background:var(--navy);border-radius:4px;padding:28px">'
-    +'<div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0f4ff;margin-bottom:4px">Quarterly Data Entry</div>'
-    +'<div style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--fm);margin-bottom:22px">Enter current quarter data · All dashboard views update on Apply</div>';
+    +'<div style="font-family:var(--fd);font-size:20px;font-weight:600;color:#f0ece4;margin-bottom:4px">Quarterly Data Entry</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.75);font-family:var(--fm);margin-bottom:22px">Enter current quarter data · All dashboard views update on Apply</div>';
 
-  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">SNAPSHOT PERIOD</div>';
+  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.75);letter-spacing:1px;margin-bottom:8px">SNAPSHOT PERIOD</div>';
   html+='<div class="upd-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:20px">';
   html+='<div><label class="upd-label">Quarter</label><input id="upd-q" class="upd-input" type="text" value="'+D.quarter+'" placeholder="Q2 2026"></div>';
   html+='<div><label class="upd-label">Snapshot date</label><input id="upd-date" class="upd-input" type="text" value="'+D.snapshotDate+'" placeholder="YYYY-MM-DD"></div>';
   html+='<div><label class="upd-label">Total headcount</label><input id="upd-hc" class="upd-input" type="number" value="'+D.headcount.total+'"></div>';
   html+='</div>';
 
-  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">CONVERSION RATES BY COUNTRY (%)</div>';
+  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.75);letter-spacing:1px;margin-bottom:8px">CONVERSION RATES BY COUNTRY (%)</div>';
   html+='<div class="upd-grid" style="margin-bottom:20px">';
   ['LA','MM','ID','TH'].forEach(function(c){
     html+='<div><label class="upd-label">'+countryName(c)+' conversion %</label><input id="upd-conv-'+c+'" class="upd-input" type="number" value="'+D.pipeline[c].conv+'"></div>';
   });
   html+='</div>';
 
-  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">PROGRAMME DELIVERY BY COUNTRY (%)</div>';
+  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.75);letter-spacing:1px;margin-bottom:8px">PROGRAMME DELIVERY BY COUNTRY (%)</div>';
   html+='<div class="upd-grid" style="margin-bottom:20px">';
   ['LA','MM','ID','TH'].forEach(function(c){
     html+='<div><label class="upd-label">'+countryName(c)+' delivery %</label><input id="upd-del-'+c+'" class="upd-input" type="number" value="'+D.delivery.byCountry[c]+'"></div>';
   });
   html+='</div>';
 
-  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">ATTRITION &amp; PIPELINE</div>';
+  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.75);letter-spacing:1px;margin-bottom:8px">ATTRITION &amp; PIPELINE</div>';
   html+='<div class="upd-grid" style="margin-bottom:20px">';
   html+='<div><label class="upd-label">Rolling 12-month attrition %</label><input id="upd-attr" class="upd-input" type="number" value="'+D.attrition.rolling12+'"></div>';
   html+='<div><label class="upd-label">Month-3 exits this quarter</label><input id="upd-m3" class="upd-input" type="number" value="'+D.attrition.month3exits+'"></div>';
@@ -654,7 +657,7 @@ function renderUpdater(){
   html+='<div><label class="upd-label">LA attrition %</label><input id="upd-attr-la" class="upd-input" type="number" value="'+D.attrition.byCountry.LA+'"></div>';
   html+='</div>';
 
-  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px">COST</div>';
+  html+='<div style="font-family:var(--fm);font-size:8px;color:rgba(255,255,255,0.75);letter-spacing:1px;margin-bottom:8px">COST</div>';
   html+='<div class="upd-grid" style="margin-bottom:22px">';
   html+='<div><label class="upd-label">People cost % of revenue</label><input id="upd-pcpct" class="upd-input" type="number" value="'+D.cost.peopleCostPct+'"></div>';
   html+='<div><label class="upd-label">Revenue $M</label><input id="upd-rev" class="upd-input" type="number" step="0.1" value="'+D.cost.revenueMillion+'"></div>';
@@ -662,7 +665,7 @@ function renderUpdater(){
   html+='</div>';
 
   html+='<div style="display:flex;gap:8px"><button class="btn btn-blue" onclick="applyUpdate()">Apply &amp; Refresh Dashboard &#8594;</button><button class="btn btn-ghost" onclick="resetData()">Reset to defaults</button></div>';
-  html+='<div id="upd-result" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(26,122,74,0.12);border:1px solid rgba(26,122,74,0.3);border-radius:3px;font-size:13px;color:rgba(180,255,200,0.8);font-family:var(--fm)">Dashboard updated. Navigate to any section to see updated data.</div>';
+  html+='<div id="upd-result" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.15);border-radius:3px;font-size:13px;color:rgba(180,255,200,0.8);font-family:var(--fm)">Dashboard updated. Navigate to any section to see updated data.</div>';
   html+='</div>';
   el.innerHTML=html;
 }
