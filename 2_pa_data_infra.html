@@ -159,7 +159,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
   /* Site footer */
   .site-footer{flex-direction:column!important;align-items:flex-start!important;gap:6px!important;padding:14px 16px!important;}
 }
-@media(max-width:479px){
+@media(max-width:599px){
   .krow,.kpi-row,.g3,.g4{grid-template-columns:1fr!important;}
   .pt,.page-title{font-size:clamp(22px,7vw,30px)!important;}
   .g2{grid-template-columns:1fr!important;}
@@ -235,7 +235,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
 
   <div class="card">
     <div class="card-title">BaKuu Holding Data Infrastructure — Current State vs Target</div>
-    <table class="dtable">
+    <div style="overflow-x:auto"><table class="dtable">
       <thead><tr><th>Data domain</th><th>Current state</th><th>Target state (Q3 2026)</th><th>Gap to close</th></tr></thead>
       <tbody>
         <tr><td style="font-weight:600">Employee master data</td><td>Payroll system — accurate for pay, incomplete for analytics. Missing grade start dates, milestone data, development status.</td><td>Payroll supplemented by HR employee register. Employee ID assigned. All dictionary fields populated.</td><td>Build HR employee register. Backfill grade start dates. Assign employee IDs to all current staff.</td></tr>
@@ -245,7 +245,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
         <tr><td style="font-weight:600">Operational delivery data</td><td>Programme delivery % in operations monthly report. Not integrated with HR data. No shared tracking field.</td><td>Delivery % extracted monthly by Group HR and entered into HR metric tracker alongside pipeline data.</td><td>Establish monthly extraction process. Agree delivery % definition with operations.</td></tr>
         <tr><td style="font-weight:600">Check-in &amp; coaching data</td><td>Month-3 check-in form launched Q1 2026. G4 debrief tally sheets new. No historical baseline.</td><td>All check-in records consolidated by Group HR. Debrief frequency tracked per G4. Rubric scores recorded annually.</td><td>Q1 2026 check-in baseline. First rubric observation Q1 2026. 6 months of data needed before impact analysis.</td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
   <div id="page-dictionary" class="page">
@@ -298,7 +298,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
 
   <div class="tab-body" id="tab-dc-employee">
     <div class="info blue"><strong>Employee record fields — the master data set that underpins all HR analytics.</strong>These are the required fields for every active employee. Gaps in these fields reduce the quality of every analytics output that uses employee data.</div>
-    <table class="dtable">
+    <div style="overflow-x:auto"><table class="dtable">
       <thead><tr><th>Field name</th><th>Definition</th><th>Format</th><th>Required?</th><th>Source</th></tr></thead>
       <tbody>
         <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">employee_id</td><td>Unique identifier assigned at hire. Format: [CC]-[GG]-[NNNN]. Never reused. See Section 07.</td><td>MM-G3-0047</td><td><span class="chip chip-red">Required</span></td><td>Group HR at hire</td></tr>
@@ -314,7 +314,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
         <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">pipeline_status</td><td>ON_TRACK / AT_RISK / STALLED / COMPLETE / N/A. Applies to G1–G3 only. Updated quarterly by Group HR from pipeline log.</td><td>Enum</td><td><span class="chip chip-amber">G1–G3 only</span></td><td>Group HR quarterly</td></tr>
         <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">reporting_manager_id</td><td>employee_id of the direct line manager. Used for SM pipeline accountability tracking and SM development analytics.</td><td>Employee ID</td><td><span class="chip chip-red">Required</span></td><td>HR on hire / change</td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
   <div id="page-architecture" class="page">
@@ -369,7 +369,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
   <div class="card">
     <div class="card-title">Pipeline Log — Column Specification</div>
     <div class="card-body" style="margin-bottom:12px">The pipeline log is the most important HR data file at BaKuu Holding today. One row per active G1–G3 candidate. Updated monthly by Group HR from SM pipeline reports and site sign-off records. This is the specification for building or migrating the log.</div>
-    <table class="dtable">
+    <div style="overflow-x:auto"><table class="dtable">
       <thead><tr><th>Column name</th><th>Type</th><th>Definition</th><th>Example</th></tr></thead>
       <tbody>
         <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">employee_id</td><td><span class="chip chip-muted">ID</span></td><td>Unique employee ID. Primary key. Links to HR Employee Register.</td><td>MM-G2-0034</td></tr>
@@ -388,7 +388,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
         <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">g4_candidate_flag</td><td><span class="chip chip-muted">Bool</span></td><td>TRUE if G3 assessed by SM as G4-ready within 12 months. G3 only.</td><td>FALSE</td></tr>
         <tr><td style="font-family:var(--fm);font-size:11px;color:var(--blue)">notes</td><td><span class="chip chip-muted">Text</span></td><td>Free text. SM or G4 observations. Intervention actions. Max 200 characters.</td><td>Month-3 concern re: equipment familiarity. Targeted debrief scheduled.</td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
 
@@ -406,7 +406,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
 
   <div class="card">
     <div class="card-title">Data Ownership Register — All Sources</div>
-    <table class="dtable">
+    <div style="overflow-x:auto"><table class="dtable">
       <thead><tr><th>Data source</th><th>Owner</th><th>Update frequency</th><th>Format</th><th>Access</th><th>Escalation if missing</th></tr></thead>
       <tbody>
         <tr><td style="font-weight:600">HR Employee Register</td><td>Group HR</td><td>On event (hire, grade change, exit). Monthly completeness review.</td><td>Spreadsheet (HRIS when available)</td><td>Group HR only. COO: summary view on request.</td><td>Group HR self-escalates to COO if register is more than 30 days out of date.</td></tr>
@@ -420,7 +420,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
         <tr><td style="font-weight:600">Finance P&amp;L</td><td>Finance / COO</td><td>Monthly</td><td>Management accounts</td><td>COO: full. Group HR: revenue and total people cost figures only.</td><td>Group HR requests people cost % figures from Finance by 15th of each month. If not received, COO is requested to share figures directly.</td></tr>
         <tr><td style="font-weight:600">G4 coaching rubric records</td><td>Group HR</td><td>Annual (Q1). One observation per G4 per year.</td><td>Rubric form — Group HR holds originals and digital copy</td><td>Group HR only. G4: own scores shared in feedback conversation, not as raw document.</td><td>If annual observation window (January–March) closes without a rubric on file for any G4: escalate to SM within 30 days.</td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
 
@@ -454,7 +454,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
     </div>
     <div class="card">
       <div class="card-title">Quality Standards by Source</div>
-      <table class="dtable">
+      <div style="overflow-x:auto"><table class="dtable">
         <thead><tr><th>Source</th><th>Completeness target</th><th>Timeliness standard</th><th>Alert threshold</th></tr></thead>
         <tbody>
           <tr><td style="font-weight:600">HR Employee Register</td><td>100% required fields</td><td>Updated within 7 days of any employment event</td><td>Any missing required field; any event not recorded within 14 days</td></tr>
@@ -464,14 +464,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
           <tr><td style="font-weight:600">Check-in Records</td><td>100% of trainees reaching month 3 have a check-in record</td><td>Check-in form submitted within 7 days of check-in date</td><td>Any month-3 date passed without check-in record; form submitted more than 14 days late</td></tr>
           <tr><td style="font-weight:600">G4 Debrief Tallies</td><td>Monthly tally for every active G4</td><td>SM reviews by end of month; Group HR extracts by 10th following</td><td>Any active G4 with no tally for a calendar month; SM review overdue by 15+ days</td></tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
   </div>
 
   <div class="card">
     <div class="card-title">Quarterly Data Quality Review — Checklist</div>
     <div class="card-body" style="margin-bottom:12px">Group HR completes this review in the first two weeks of each quarter before producing the COO report. The review takes approximately 2 hours if the data is well-maintained, 4–6 hours if gaps exist.</div>
-    <table class="dtable">
+    <div style="overflow-x:auto"><table class="dtable">
       <thead><tr><th>#</th><th>Check</th><th>Pass criteria</th><th>If fail: action</th></tr></thead>
       <tbody>
         <tr><td style="font-weight:700;color:var(--blue)">1</td><td style="font-weight:600">HR Employee Register completeness</td><td>All required fields populated for 100% of active employees. Grade start dates backfilled. Employee IDs assigned to all.</td><td>Identify missing fields. Source from payroll, SM records, or SM conversation. Complete before COO report.</td></tr>
@@ -483,7 +483,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
         <tr><td style="font-weight:700;color:var(--blue)">7</td><td style="font-weight:600">Delivery data received</td><td>Programme delivery % for all four countries received from operations report for each month of the quarter.</td><td>If any month missing: use prior month with notation. Request from COO/operations directly if SM report route has failed.</td></tr>
         <tr><td style="font-weight:700;color:var(--blue)">8</td><td style="font-weight:600">Data quality score</td><td>Calculate overall data quality score: (Checks passed ÷ 7) × 100. Target: ≥85%. Score below 85% = COO report deferred until gaps are closed.</td><td>Prioritise the highest-impact gaps. Aim to close all Tier 1 data source gaps before COO report. Document any unresolved gaps transparently in the report.</td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
   <div id="page-governance" class="page">
@@ -496,7 +496,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
   <div class="grid-2">
     <div class="card">
       <div class="card-title">Governance Structure</div>
-      <table class="dtable">
+      <div style="overflow-x:auto"><table class="dtable">
         <thead><tr><th>Decision type</th><th>Who decides</th><th>Process</th></tr></thead>
         <tbody>
           <tr><td style="font-weight:600">New metric added to dictionary</td><td>Group HR proposes · COO approves</td><td>Group HR documents new metric definition, use case, and data source. COO reviews and confirms. Effective from next quarterly reporting cycle.</td></tr>
@@ -506,7 +506,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
           <tr><td style="font-weight:600">Data source decommissioned</td><td>Group HR · COO notified</td><td>Group HR documents which analytics outputs were dependent on the source, confirms alternative data source or analytics impact, and notifies COO before decommissioning.</td></tr>
           <tr><td style="font-weight:600">HRIS selection</td><td>COO decides · Group HR recommends</td><td>Group HR prepares HRIS requirements document (based on Tool 2 data architecture). Provides scored vendor comparison. COO makes final decision. Target: when BaKuu Holding reaches 65–80 staff.</td></tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
     <div class="card">
       <div class="card-title">Data Protection Rules at BaKuu Holding</div>
@@ -522,7 +522,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
 
   <div class="card">
     <div class="card-title">Governance at Scale — As BaKuu Holding Grows</div>
-    <table class="dtable">
+    <div style="overflow-x:auto"><table class="dtable">
       <thead><tr><th>Stage</th><th>Governance additions</th><th>Trigger</th></tr></thead>
       <tbody>
         <tr><td style="font-weight:600">65–150 staff</td><td>HRIS implemented — governance moves into HRIS access control system. HR Data Coordinator role created (custodian of data entry quality). Formal data governance policy document published.</td><td>HRIS go-live. HR Data Coordinator hire.</td></tr>
@@ -530,7 +530,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
         <tr><td style="font-weight:600">300–600 staff</td><td>People Analytics Manager takes data governance ownership from CHRO. Data governance committee formed (CHRO, Finance, Legal, IT). Annual data governance audit.</td><td>People Analytics Manager hire. Board-level people data reporting requirement.</td></tr>
         <tr><td style="font-weight:600">600–1,000 staff</td><td>Dedicated data governance framework. Data classification policy (public / internal / confidential / restricted). HRIS vendor data processing agreement reviewed annually. ISO 27001 or equivalent certification for HR data systems.</td><td>Enterprise scale. Investor or board requirement for formal data governance.</td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
 
@@ -554,7 +554,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
   <div class="grid-2">
     <div class="card">
       <div class="card-title">Example IDs</div>
-      <table class="dtable">
+      <div style="overflow-x:auto"><table class="dtable">
         <thead><tr><th>ID</th><th>Means</th><th>Current grade</th></tr></thead>
         <tbody>
           <tr><td style="font-family:var(--fm);font-size:13px;color:var(--blue);font-weight:700">MM-G1-0001</td><td>Myanmar. Hired at G1. First G1 hire in Myanmar.</td><td>May now be G2, G3, G4 — the ID reflects hire grade only.</td></tr>
@@ -563,7 +563,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:14px;
           <tr><td style="font-family:var(--fm);font-size:13px;color:var(--blue);font-weight:700">TH-G5-0003</td><td>Thailand. Hired at G5 (SM level). 3rd G5 hire in Thailand.</td><td>Thailand SM — could be the current SM referenced in toolkit.</td></tr>
           <tr><td style="font-family:var(--fm);font-size:13px;color:var(--blue);font-weight:700">MM-G5-0001</td><td>Myanmar. Hired at G5. First G5 hire in Myanmar.</td><td>Myo H. — current Myanmar SM (illustrative).</td></tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
     <div class="card">
       <div class="card-title">ID Assignment Rules</div>
