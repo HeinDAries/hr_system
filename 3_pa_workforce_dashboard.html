@@ -347,10 +347,10 @@ var DATA = {
     }
   },
   pipeline: {
-    LA: { g1:3, g2:4, g3:4, conv:68, benchStrength:2, atRisk:1, g3RetirementRisk:3 },
-    MM: { g1:3, g2:3, g3:2, conv:58, benchStrength:1, atRisk:2, g3RetirementRisk:0 },
-    ID: { g1:2, g2:2, g3:3, conv:63, benchStrength:1, atRisk:1, g3RetirementRisk:0 },
-    TH: { g1:0, g2:1, g3:0, conv:72, benchStrength:0, atRisk:0, g3RetirementRisk:0 }
+    LA: { g1:12, g2:8, g3:3, conv:68, benchStrength:2, atRisk:0, g3RetirementRisk:3 },
+    MM: { g1:4,  g2:2, g3:1, conv:58, benchStrength:1, atRisk:1, g3RetirementRisk:0 },
+    ID: { g1:3,  g2:2, g3:0, conv:63, benchStrength:1, atRisk:0, g3RetirementRisk:0 },
+    TH: { g1:0,  g2:1, g3:0, conv:72, benchStrength:0, atRisk:0, g3RetirementRisk:0 }
   },
   attrition: {
     rolling12: 18, q1Rate: 4.5,
@@ -481,6 +481,41 @@ function renderHeadcount(){
     +'<div class="vx-title">'+D.headcount.total+' active · Target '+D.headcount.target65+' by '+D.headcount.targetDate+' · Net gap: '+net+' FTE</div>'
     +'<div class="vx-body">To reach 65 FTE by Q2 2027 BaKuu Holding needs a net addition of '+net+' FTE over approximately 6 quarters — roughly '+qNeeded+' net FTE per quarter. Against current attrition (~'+D.attrition.rolling12+'% rolling) and conversion rates, the pipeline must intake '+Math.ceil(net*1.4)+' G1 trainees over this period to account for expected attrition before G4. This is the supply deficit the workforce planning model (Tool 6) models in detail.</div></div>';
 
+  // ── Country × Grade Matrix ──────────────────────────────────────────────────
+  html+='<div class="card"><div class="card-title">Headcount by Grade &amp; Country</div>';
+  html+='<table class="dtable"><thead><tr><th>Grade</th><th>Role</th>';
+  ['LA','MM','TH','ID'].forEach(function(c){html+='<th>'+countryName(c)+'</th>';});
+  html+='<th>Group Total</th></tr></thead><tbody>';
+  var gradeRolesShort={G1:'Entry / Helper',G2:'Junior Driller',G3:'Senior Driller',G4:'Supervisor',G5:'Manager / Specialist'};
+  var gradeColors={'G1':'#6b7d99','G2':'#4d6b8a','G3':'var(--blue)','G4':'var(--blue2)','G5':'var(--green)'};
+  ['G1','G2','G3','G4','G5'].forEach(function(g){
+    var total=0;
+    var cells='';
+    ['LA','MM','TH','ID'].forEach(function(c){
+      var v=D.headcount.byCountryGrade[c][g];
+      total+=v;
+      // mini bar proportional to country headcount
+      var pct=Math.round(v/D.headcount.byCountry[c]*100);
+      cells+='<td><span style="font-weight:600;color:var(--ink)">'+v+'</span> <span style="font-family:var(--fm);font-size:9px;color:var(--ink5)">'+pct+'%</span></td>';
+    });
+    html+='<tr><td style="font-weight:700;color:'+gradeColors[g]+';font-family:var(--fm)">'+g+'</td>'
+         +'<td style="color:var(--ink4)">'+gradeRolesShort[g]+'</td>'
+         +cells
+         +'<td style="font-weight:700;color:var(--ink)">'+total+'</td></tr>';
+  });
+  // Totals row
+  var colTotals={LA:0,MM:0,TH:0,ID:0};
+  ['G1','G2','G3','G4','G5'].forEach(function(g){['LA','MM','TH','ID'].forEach(function(c){colTotals[c]+=D.headcount.byCountryGrade[c][g];});});
+  html+='<tr style="background:var(--surface2)">'
+       +'<td style="font-family:var(--fm);font-size:8px;letter-spacing:1px;color:var(--ink3)">TOTAL</td>'
+       +'<td></td>';
+  ['LA','MM','TH','ID'].forEach(function(c){html+='<td style="font-weight:700;color:var(--blue)">'+D.headcount.byCountry[c]+'</td>';});
+  html+='<td style="font-weight:700;color:var(--blue)">'+D.headcount.total+'</td></tr>';
+  html+='</tbody></table>'
+       +'<div style="margin-top:10px;font-size:12px;color:var(--ink4);font-family:var(--fm);font-weight:300">Each cell shows headcount and % of that country\'s total. Industry benchmark: G3–G4 should represent ≥30% of field operations headcount for sustainable site output.</div>'
+       +'</div>';
+  // ── End Country × Grade Matrix ───────────────────────────────────────────────
+
   html+='<div class="grid-2">';
   // Grade mix table
   html+='<div class="card"><div class="card-title">Grade Distribution — All Countries</div>';
@@ -559,9 +594,30 @@ function renderPipeline(){
   html+='</div>';
   html+='<div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75;margin-top:8px">The funnel shows the current population at each stage — not cohort conversion. The G1→G2 step is where most attrition occurs (month-3 window). The G3→G4 step is the longest development stage (18–24 months) and where Laos retirement risk concentrates.</div></div>';
 
+  // Progression timeline
+  html+='<div class="card"><div class="card-title">Progression Timeline — <em>SEA Drilling Benchmark</em></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:6px;align-items:center;margin:10px 0">';
+  var stages=[
+    {from:'G1',to:'G2',role:'Helper → Jr Driller',months:'12–18 mo',note:'Rig familiarity, safety cert, first solo shift'},
+    {from:'G2',to:'G3',role:'Jr → Senior Driller',months:'18–30 mo',note:'Core drilling competency, casing & deviation control'},
+    {from:'G3',to:'G4',role:'Sr Driller → Supervisor',months:'24–36 mo',note:'Site leadership, coaching sign-off, P&L awareness'},
+    {from:'G4',to:'G5',role:'Supervisor → Manager',months:'36–60 mo',note:'Multi-rig management, commercial responsibility'}
+  ];
+  stages.forEach(function(s,i){
+    html+='<div style="text-align:center;padding:12px 8px;border:1px solid var(--blue-border);border-radius:4px;background:var(--blue-dim)">'
+         +'<div style="font-family:var(--fm);font-size:8px;color:var(--blue);letter-spacing:1px;margin-bottom:4px">'+s.from+' → '+s.to+'</div>'
+         +'<div style="font-family:var(--fd);font-size:16px;font-weight:700;color:var(--blue2);line-height:1.2;margin-bottom:3px">'+s.months+'</div>'
+         +'<div style="font-size:10px;color:var(--ink4);font-weight:300;line-height:1.4">'+s.note+'</div>'
+         +'</div>';
+    if(i<3) html+='<div style="text-align:center;font-size:14px;color:var(--ink5)">→</div>';
+  });
+  html+='</div>'
+       +'<div style="font-size:12px;color:var(--ink4);font-weight:300;line-height:1.75;margin-top:6px">Benchmarks based on SEA mineral exploration and contract drilling industry (2020–2025). Myanmar operations typically run 20–30% longer per stage due to higher attrition interruption and training material language barriers. Total G1→G4 pathway: 5–7 years under normal conditions; 7–9 years in high-attrition markets.</div>'
+       +'</div>';
+
   // Country-by-country detail
   html+='<div class="card"><div class="card-title">Pipeline Detail by Country</div>';
-  html+='<table class="dtable"><thead><tr><th>Country</th><th>G1</th><th>G2</th><th>G3</th><th>Conversion</th><th>Bench strength</th><th>At-risk</th><th>Status</th></tr></thead><tbody>';
+  html+='<table class="dtable"><thead><tr><th>Country</th><th>G1→G2</th><th>G2→G3</th><th>G3→G4</th><th>Conversion</th><th>Bench strength</th><th>At-risk</th><th>Status</th></tr></thead><tbody>';
   ['LA','MM','ID','TH'].forEach(function(c){
     var p=D.pipeline[c];
     var status=p.conv>=70&&p.atRisk===0?'On Track':p.conv>=60||p.atRisk<=1?'Monitor':'Critical';
@@ -586,7 +642,43 @@ function renderAttrition(){
   var D=DATA;
   var el=document.getElementById('attrition-content');
   var costTotal=Math.round(D.attrition.totalExits*D.attrition.replacementCostPerPerson);
-  var html='<div class="vx-box"><div class="vx-eyebrow">Attrition Cost Estimate · '+D.quarter+'</div>'
+
+  // ── Per-country attrition tracker table ────────────────────────────────────
+  var html='<div class="card"><div class="card-title">Attrition Tracker — <em>By Country</em></div>';
+  html+='<table class="dtable"><thead><tr><th>Country</th><th>Annualised Rate</th><th>vs Benchmark</th><th>Voluntary %</th><th>Month-3 Exits (Q)</th><th>Cost Est.</th><th>Status</th></tr></thead><tbody>';
+  var avgSalaryK=28; // avg annual salary $K — SEA drilling G1-G4 blended
+  ['MM','LA','ID','TH'].forEach(function(c){
+    var rate=D.attrition.byCountry[c];
+    var vol=D.attrition.byCountryVoluntary[c];
+    var m3=D.attrition.byCountryMonth3[c];
+    var hc=D.headcount.byCountry[c];
+    var exits=Math.round(hc*rate/100);
+    var costK=Math.round(exits*avgSalaryK*1.5);
+    var col=attrColor(rate);
+    var benchmark='15–25%';
+    var vsNote=rate>25?'▲ Above':'≈ Within';
+    var vsCol=rate>25?'var(--red)':rate>20?'var(--amber)':'var(--green)';
+    var statusText=rate<=20?'Healthy':rate<=25?'Elevated':'Critical';
+    var statusChip=statusText==='Healthy'?'chip-green':statusText==='Elevated'?'chip-amber':'chip-red';
+    html+='<tr>'
+         +'<td style="font-weight:600">'+countryName(c)+'</td>'
+         +'<td style="font-weight:700;color:'+col+'">'+rate+'%</td>'
+         +'<td style="font-family:var(--fm);font-size:10px;color:'+vsCol+'">'+vsNote+' ('+benchmark+')</td>'
+         +'<td>'+vol+'%</td>'
+         +'<td style="color:'+(m3>=5?'var(--red)':m3>=3?'var(--amber)':'var(--green)')+'">'+m3+'</td>'
+         +'<td style="font-family:var(--fm);font-size:11px;color:var(--ink4)">~$'+costK+'K</td>'
+         +'<td><span class="chip '+statusChip+'">'+statusText+'</span></td>'
+         +'</tr>';
+  });
+  html+='</tbody></table>'
+       +'<div style="margin-top:10px;font-size:12px;color:var(--ink4);font-weight:300;line-height:1.7">'
+       +'Cost estimate: 1.5× avg annual salary per leaver (~$'+avgSalaryK+'K blended G1–G4). Excludes production downtime during vacancy. '
+       +'SEA drilling/mining industry benchmark: 15–25% annual attrition (ILO, ICMM SEA operator surveys 2022–2024).'
+       +'</div>'
+       +'</div>';
+  // ── End tracker table ───────────────────────────────────────────────────────
+
+  html+='<div class="vx-box"><div class="vx-eyebrow">Attrition Cost Estimate · '+D.quarter+'</div>'
     +'<div class="vx-title">'+D.attrition.totalExits+' exits this rolling 12 months · Est. replacement cost: $'+costTotal.toLocaleString()+'</div>'
     +'<div class="vx-body">At $'+D.attrition.replacementCostPerPerson.toLocaleString()+' per replacement (recruitment + onboarding, excluding production downtime) BaKuu Holding is spending approximately $'+costTotal.toLocaleString()+'/yr on attrition replacement. This excludes the production impact of vacancies during the replacement cycle — the full cost is materially higher. Month-3 exits ('+D.attrition.month3exits+' this quarter) represent the highest-cost attrition event: trainees who exit after 3 months have consumed onboarding investment with zero operational return.</div></div>';
 
@@ -599,7 +691,7 @@ function renderAttrition(){
     var col=attrColor(v);
     html+='<div class="bar-row"><span class="bar-label">'+countryName(c)+'</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.min(v,40)/40*100+'%;background:'+col+'"><span class="bar-val">'+v+'%</span></div></div><span class="bar-cap" style="color:'+col+'">'+(v<=20?'Healthy':v<=28?'Elevated':'High')+'</span></div>';
   });
-  html+='</div><div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Group rolling 12-month: '+D.attrition.rolling12+'%. Myanmar (28%) and Indonesia (24%) are elevated — both are driven by G1 trainee exits at the month-3 window. The targeted intervention is the G4 coaching programme improving early-stage support quality.</div></div>';
+  html+='</div><div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Group rolling 12-month: '+D.attrition.rolling12+'%. Myanmar ('+D.attrition.byCountry.MM+'%) is the critical market — hardship conditions and salary gap vs competitors are the primary exit drivers. Indonesia ('+D.attrition.byCountry.ID+'%) and Laos ('+D.attrition.byCountry.LA+'%) are monitored. G4 coaching programme is the primary intervention — target: ≤20% group rate by Q4 2026.</div></div>';
   // Voluntary split
   html+='<div class="card"><div class="card-title">Exit Type Breakdown</div>';
   html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0">';
@@ -633,7 +725,7 @@ function renderDelivery(){
     var col=delivColor(v);
     html+='<div class="bar-row"><span class="bar-label">'+countryName(c)+'</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.min(v,110)/110*100+'%;background:'+col+'"><span class="bar-val">'+v+'%</span></div></div><span class="bar-cap">Target: '+D.delivery.target+'%</span></div>';
   });
-  html+='</div><div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Thailand (105%) is running above target — high conversion rate and full G4 staffing. Laos (85%) and Indonesia (84%) are below target. Myanmar (80%) is at its country factor level — structural, not a deterioration signal. Indonesia is the concern: delivery dropped from 93% to 84% due to G3 vacancies.</div></div>';
+  html+='</div><div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">Thailand ('+D.delivery.byCountry.TH+'%) is the benchmark site — full G4 staffing, strong senior driller concentration, and lowest attrition in group. Laos ('+D.delivery.byCountry.LA+'%) and Indonesia ('+D.delivery.byCountry.ID+'%) are below the '+D.delivery.target+'% target. Myanmar ('+D.delivery.byCountry.MM+'%) is the critical case — site supervisor shortage and elevated attrition are compounding delivery drag. Indonesia delivery declined from 93% due to 3 open G3 vacancies (40+ days unfilled).</div></div>';
 
   html+='<div class="card"><div class="card-title">People Cost Ratio</div>';
   html+='<div style="text-align:center;padding:20px 0">'
@@ -647,9 +739,57 @@ function renderDelivery(){
     +'<div style="font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75;margin-top:12px">Alert threshold: flag to COO if ratio exceeds 47% in any month or 45% on a rolling 3-month basis. Current position ('+D.cost.peopleCostPct+'%) is within target. Monitor: as BaKuu Holding adds G1 trainees to close the headcount gap, people cost will rise before new G4 capacity generates revenue — plan for a temporary ratio increase in Q3–Q4 2026.</div>'
     +'</div></div>';
 
+  // ── People cost by country + combined summary ───────────────────────────────
+  html+='<div class="card"><div class="card-title">People Cost % of Revenue — <em>By Country</em></div>';
+  html+='<div style="margin-bottom:8px;font-size:11px;color:var(--ink4);font-family:var(--fm)">SEA drilling/exploration industry benchmark: 25–40% · Alert threshold: >42% sustained</div>';
+  html+='<div class="bar-wrap">';
+  // order: MM first (highest cost) → LA → ID → TH
+  ['MM','LA','ID','TH'].forEach(function(c){
+    var v=D.cost.peopleCostByCountry[c];
+    var col=v>40?'var(--red)':v>35?'var(--amber)':'var(--green)';
+    var label=v>40?'Above target':v>35?'Monitor':'Efficient';
+    html+='<div class="bar-row"><span class="bar-label">'+countryName(c)+'</span>'
+         +'<div class="bar-track"><div class="bar-fill" style="width:'+Math.min(v,50)/50*100+'%;background:'+col+'">'
+         +'<span class="bar-val">'+v+'%</span></div></div>'
+         +'<span class="bar-cap" style="color:'+col+'">'+label+'</span></div>';
+  });
+  html+='</div>'
+       +'<div style="margin-top:10px;font-size:12.5px;color:var(--ink3);font-weight:300;line-height:1.75">'
+       +'Myanmar ('+D.cost.peopleCostByCountry.MM+'%) is above the group target band. High cost reflects trainee-heavy grade mix, elevated attrition replacement spend, and site hardship allowances. '
+       +'Thailand ('+D.cost.peopleCostByCountry.TH+'%) is the most efficient — senior-heavy grade mix means less training overhead per productive output unit. '
+       +'Laos ('+D.cost.peopleCostByCountry.LA+'%) reflects the training load of a large G1–G2 cohort (105 of 150 staff). '
+       +'Indonesia ('+D.cost.peopleCostByCountry.ID+'%) is within range but will increase if G3 vacancies remain unfilled.'
+       +'</div>'
+       +'</div>';
+
+  html+='<div class="card"><div class="card-title">Delivery vs Plan &amp; People Cost — <em>Country Comparison</em></div>';
+  html+='<table class="dtable"><thead><tr><th>Country</th><th>Delivery vs Plan</th><th>People Cost % Rev</th><th>Delivery Gap</th><th>Cost Status</th></tr></thead><tbody>';
+  ['TH','LA','ID','MM'].forEach(function(c){
+    var del=D.delivery.byCountry[c];
+    var cost=D.cost.peopleCostByCountry[c];
+    var delCol=delivColor(del);
+    var costCol=cost>40?'var(--red)':cost>35?'var(--amber)':'var(--green)';
+    var gap=del-D.delivery.target;
+    var gapStr=(gap>=0?'+':'')+gap+'pp';
+    var gapCol=gap>=0?'var(--green)':gap>=-10?'var(--amber)':'var(--red)';
+    var costStatus=cost>40?'Above target':cost>35?'Monitor':'Efficient';
+    html+='<tr>'
+         +'<td style="font-weight:600">'+countryName(c)+'</td>'
+         +'<td><div style="display:flex;align-items:center;gap:8px">'
+         +'<div style="flex:1;height:16px;background:var(--surface2);border-radius:2px;overflow:hidden"><div style="height:100%;background:'+delCol+';width:'+Math.min(del,110)/110*100+'%"></div></div>'
+         +'<span style="font-family:var(--fm);font-size:10px;font-weight:700;color:'+delCol+';width:30px">'+del+'%</span>'
+         +'</div></td>'
+         +'<td style="font-weight:700;color:'+costCol+'">'+cost+'%</td>'
+         +'<td style="font-family:var(--fm);font-size:10px;color:'+gapCol+'">'+gapStr+' vs target</td>'
+         +'<td><span style="font-family:var(--fm);font-size:9px;color:'+costCol+'">'+costStatus+'</span></td>'
+         +'</tr>';
+  });
+  html+='</tbody></table></div>';
+  // ── End Section 05 additions ────────────────────────────────────────────────
+
   html+='<div class="info blue"><em>Myanmar is highest cost and lowest delivery \u2014 a compounding risk. Thailand is the benchmark site for efficiency.</em></div>';
 
-  html+='<div class="info blue"><strong>Indonesia delivery signal — G3 vacancy is the root cause.</strong>Delivery dropped from 93% to 84% as 3 G3 positions remained open for 40+ days. Each open G3 role reduces the supervisory layer available to G1–G2 trainees, slowing milestone completion and reducing rig operational hours. The path back to 90%+ delivery in Indonesia is filling the G3 vacancies — which is a sourcing and pipeline acceleration problem, not a training quality problem.</div>';
+  html+='<div class="info blue"><strong>Indonesia delivery signal — G3 vacancy is the root cause.</strong>Delivery dropped from 93% to '+D.delivery.byCountry.ID+'% as 3 G3 positions remained open for 40+ days. Each open G3 role reduces the supervisory layer available to G1–G2 trainees, slowing milestone completion and reducing rig operational hours. The path back to 90%+ delivery in Indonesia is filling the G3 vacancies — which is a sourcing and pipeline acceleration problem, not a training quality problem.</div>';
 
   el.innerHTML=html;
 }
